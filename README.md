@@ -1,6 +1,5 @@
-# SZMatchBuilder
-
-DBZ Sparking Zero Match Builder - A monorepo containing multiple applications
+# SparkingZero
+DBZ Sparking Zero - A monorepo containing multiple applications
 
 ## Applications
 
