@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: '/SZMatchBuilder/analyzer/',
+  base: '/SparkingZero/analyzer/',
   server: {
     port: 5173,
     strictPort: true
