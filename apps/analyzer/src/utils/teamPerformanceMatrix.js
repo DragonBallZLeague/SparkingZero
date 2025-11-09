@@ -147,9 +147,9 @@ function recalculateCharacterStatsForTeam(character, teamMatches, teamName) {
   const avgDefensiveCaps = Math.round((totalDefensiveCaps / Math.max(denom, 1)) * 10) / 10;
   const avgUtilityCaps = Math.round((totalUtilityCaps / Math.max(denom, 1)) * 10) / 10;
   
-  // Calculate derived stats
+  // Calculate derived stats - use total-based efficiency (aggregate then calculate)
   const dps = Math.round((avgDamage / Math.max(avgBattleTime, 0.1)) * 10) / 10;
-  const efficiency = Math.round((avgDamage / Math.max(avgTaken, 1)) * 100) / 100;
+  const efficiency = totalTaken > 0 ? Math.round((totalDamage / totalTaken) * 100) / 100 : 0;
   const healthRetention = avgHPGaugeValueMax > 0 ? (avgHealth / avgHPGaugeValueMax) * 100 : 0;
   const winRate = matchCount > 0 ? (wins / matchCount) * 100 : 0;
   const speedImpactWinRate = totalSpeedImpacts > 0 ? Math.round((totalSpeedImpactWins / totalSpeedImpacts) * 1000) / 10 : 0;
@@ -283,8 +283,20 @@ function calculateTeamAggregates(team) {
     top5TotalRevengeCounters: sumTop5(top5Characters, 'avgRevengeCounters'),
     top5TotalSuperCounters: sumTop5(top5Characters, 'avgSuperCounters'),
     top5TotalZCounters: sumTop5(top5Characters, 'avgZCounters'),
+    top5TotalTags: sumTop5(top5Characters, 'avgTags'),
     
     // Special Abilities - TOP 5 TOTALS
+    // NEW blast tracking
+    top5TotalS1Blast: sumTop5(top5Characters, 'avgS1Blast'),
+    top5TotalS1Hit: sumTop5(top5Characters, 'avgS1Hit'),
+    top5S1HitRate: weightedAverageTop5(top5Characters, 's1HitRateOverall', 'matchCount'),
+    top5TotalS2Blast: sumTop5(top5Characters, 'avgS2Blast'),
+    top5TotalS2Hit: sumTop5(top5Characters, 'avgS2Hit'),
+    top5S2HitRate: weightedAverageTop5(top5Characters, 's2HitRateOverall', 'matchCount'),
+    top5TotalUltBlast: sumTop5(top5Characters, 'avgUltBlast'),
+    top5TotalUltHit: sumTop5(top5Characters, 'avgUltHit'),
+    top5UltHitRate: weightedAverageTop5(top5Characters, 'ultHitRateOverall', 'matchCount'),
+    // Legacy
     top5TotalSuper1: sumTop5(top5Characters, 'avgSPM1'),
     top5TotalSuper2: sumTop5(top5Characters, 'avgSPM2'),
     top5TotalSkill1: sumTop5(top5Characters, 'avgEXA1'),

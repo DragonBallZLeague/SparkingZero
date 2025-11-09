@@ -1,6 +1,5 @@
-# SZMatchBuilder
-
-DBZ Sparking Zero Match Builder - A monorepo containing multiple applications
+# SparkingZero
+DBZ Sparking Zero - A monorepo containing multiple applications
 
 ## Applications
 
@@ -43,8 +42,8 @@ npm run build:all       # Build both applications
 
 Both applications are automatically deployed to GitHub Pages when changes are pushed to the `main` or `dev-branch` branches.
 
-- Main app: https://ge0m.github.io/SZMatchBuilder/
-- Analyzer app: https://ge0m.github.io/SZMatchBuilder/analyzer/
+- Main app: https://dragonballzleague.github.io/SparkingZero/matchbuilder/
+- Analyzer app: https://dragonballzleague.github.io/SparkingZero/analyzer/
 
 ### Automatic Deployment
 
@@ -80,5 +79,5 @@ dist/
 
 ### GitHub Pages Configuration
 
-The main application is configured to be served from the `/SZMatchBuilder/` base path (see `apps/matchbuilder/vite.config.js`).
+The main application is configured to be served from the `/SparkingZero/` base path (see `apps/matchbuilder/vite.config.js`).
 The analyzer application is built to the `/analyzer/` subdirectory.

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document explains the GitHub Pages deployment configuration for the SZMatchBuilder monorepo application. The repository now contains multiple apps under the `apps/` directory:
+This document explains the GitHub Pages deployment configuration for the SparkingZero monorepo application. The repository now contains multiple apps under the `apps/` directory:
 - `apps/matchbuilder` - Main SZ Match Builder application
 - `apps/analyzer` - Battle Result Analyzer application
 
@@ -30,7 +30,7 @@ The GitHub Actions workflow that automates the build and deployment process for 
    - Checks out the code
    - Sets up Node.js 20
    - Installs dependencies for the main app with `npm ci` in `apps/matchbuilder`
-   - Builds the main app with output to `../../dist`
+   - Builds the main app with output to `../../dist/matchbuilder`
    - Installs dependencies for the analyzer app in `apps/analyzer`
    - Builds the analyzer app with output to `../../dist/analyzer`
    - Uploads the `dist` folder as a Pages artifact
@@ -44,10 +44,10 @@ The GitHub Actions workflow that automates the build and deployment process for 
 Configures the base path for the main application.
 
 ```javascript
-base: '/SZMatchBuilder/'
+base: '/SparkingZero/matchbuilder/'
 ```
 
-This ensures all assets are loaded correctly when the app is served from the `/SZMatchBuilder/` subdirectory on GitHub Pages.
+This ensures all assets are loaded correctly when the app is served from the `/SparkingZero/matchbuilder/` subdirectory on GitHub Pages.
 
 ### 3. Root `package.json`
 Contains the workspace configuration and monorepo build scripts.
@@ -84,7 +84,7 @@ To complete the deployment setup, ensure the following settings are configured i
 
 1. Go to **Settings** > **Pages**
 2. Under **Source**, select **GitHub Actions**
-3. The site will be published to: `https://ge0m.github.io/SZMatchBuilder/`
+3. The site will be published to: `https://dragonballzleague.github.io/SparkingZero/`
 
 ## Deployment Process
 
@@ -93,8 +93,9 @@ To complete the deployment setup, ensure the following settings are configured i
 2. GitHub Actions workflow automatically triggers
 3. Both applications are built
 4. Built files are deployed to GitHub Pages
-   - Main app: `https://ge0m.github.io/SZMatchBuilder/`
-   - Analyzer app: `https://ge0m.github.io/SZMatchBuilder/analyzer/`
+   - Landing page: `https://dragonballzleague.github.io/SparkingZero/`
+   - Main app: `https://dragonballzleague.github.io/SparkingZero/matchbuilder/`
+   - Analyzer app: `https://dragonballzleague.github.io/SparkingZero/analyzer/`
 
 ### Manual Deployment via GitHub UI
 1. Go to the **Actions** tab in the repository
@@ -132,7 +133,7 @@ You can then serve the `dist` directory to test how both apps will work when dep
 ### Common Issues
 
 **Issue: Assets not loading (404 errors)**
-- Verify `base: '/SZMatchBuilder/'` is set in `apps/matchbuilder/vite.config.js`
+- Verify `base: '/SparkingZero/matchbuilder/'` is set in `apps/matchbuilder/vite.config.js`
 - Check that the repository name matches the base path
 - For the analyzer app, ensure the build output is correctly set to `../../dist/analyzer`
 
@@ -144,7 +145,7 @@ You can then serve the `dist` directory to test how both apps will work when dep
 
 **Issue: One app works but the other doesn't**
 - Check that both build steps completed successfully
-- Verify output directories are correct (`../../dist` for main app, `../../dist/analyzer` for analyzer)
+- Verify output directories are correct (`../../dist/matchbuilder` for main app, `../../dist/analyzer` for analyzer)
 - Ensure both apps have their dependencies installed separately
 
 **Issue: Pages not updating**
@@ -161,7 +162,8 @@ You can then serve the `dist` directory to test how both apps will work when dep
 
 ## Repository URLs
 
-- **Repository**: https://github.com/Ge0m/SZMatchBuilder
-- **Main App**: https://ge0m.github.io/SZMatchBuilder/
-- **Analyzer App**: https://ge0m.github.io/SZMatchBuilder/analyzer/
-- **Workflow Runs**: https://github.com/Ge0m/SZMatchBuilder/actions
+- **Repository**: https://github.com/DragonBallZLeague/SparkingZero
+- **Landing Page**: https://dragonballzleague.github.io/SparkingZero/
+- **Main App**: https://dragonballzleague.github.io/SparkingZero/matchbuilder/
+- **Analyzer App**: https://dragonballzleague.github.io/SparkingZero/analyzer/
+- **Workflow Runs**: https://github.com/DragonBallZLeague/SparkingZero/actions

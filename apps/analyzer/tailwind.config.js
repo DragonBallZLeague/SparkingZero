@@ -15,6 +15,10 @@ module.exports = {
           600: '#16a34a',
           700: '#15803d',
         },
+        teal: {
+          400: '#2dd4bf',
+          600: '#0d9488',
+        },
       },
       animation: {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',

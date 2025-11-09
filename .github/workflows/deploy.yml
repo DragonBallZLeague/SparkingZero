@@ -35,7 +35,7 @@ jobs:
 
       - name: Build main app
         working-directory: apps/matchbuilder
-        run: npm run build -- --outDir=../../dist/
+        run: npm run build -- --outDir=../../dist/matchbuilder
 
       - name: Install dependencies (analyzer)
         working-directory: apps/analyzer

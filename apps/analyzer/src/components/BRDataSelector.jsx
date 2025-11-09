@@ -121,12 +121,23 @@ export default function BRDataSelector({ onSelect }) {
         }
         const data = await res.json();
         setStructure(data);
-        if (data && data.Tests) {
-          const testsIds = getAllChildIds(data.Tests, ['Tests']);
-          const initialSelected = ['Tests', ...testsIds];
-          setSelected(initialSelected);
+        // Auto-select ALL files in BR_Data (all categories and folders)
+        if (data) {
+          const allIds = [];
+          function collectIds(node, path = []) {
+            Object.entries(node).forEach(([key, value]) => {
+              if (key === 'files' && Array.isArray(value)) {
+                value.forEach(file => allIds.push([...path, file].join('/')));
+              } else if (typeof value === 'object') {
+                allIds.push([...path, key].join('/'));
+                collectIds(value, [...path, key]);
+              }
+            });
+          }
+          collectIds(data);
+          setSelected(allIds);
           if (onSelect) {
-            const fileIds = testsIds.filter(id => id.includes('.json'));
+            const fileIds = allIds.filter(id => id.includes('.json'));
             onSelect(fileIds);
           }
         }
