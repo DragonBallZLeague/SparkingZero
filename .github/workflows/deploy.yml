@@ -41,6 +41,10 @@ jobs:
         working-directory: apps/analyzer
         run: npm ci
 
+      - name: Fix JSON encoding in BR_Data
+        working-directory: apps/analyzer
+        run: node scripts/fix-json-encoding.js
+
       - name: Build analyzer app
         working-directory: apps/analyzer
         run: npm run build -- --outDir=../../dist/analyzer
