@@ -87,6 +87,29 @@ function formatWithPrettier(filePath) {
   }
 }
 
+function findJsonFilesRecursively(dir) {
+  let jsonFiles = [];
+  
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        // Recursively search subdirectories
+        jsonFiles = jsonFiles.concat(findJsonFilesRecursively(fullPath));
+      } else if (entry.isFile() && entry.name.endsWith('.json')) {
+        jsonFiles.push(fullPath);
+      }
+    }
+  } catch (error) {
+    console.error(`❌ Error reading directory ${dir}: ${error.message}`);
+  }
+  
+  return jsonFiles;
+}
+
 function processJsonFiles() {
   if (!fs.existsSync(BR_DATA_DIR)) {
     console.error(`❌ BR_Data directory not found: ${BR_DATA_DIR}`);
@@ -94,13 +117,12 @@ function processJsonFiles() {
   }
   
   console.log('🚀 Starting JSON file encoding check and fix...\n');
+  console.log(`📁 Searching for JSON files in ${BR_DATA_DIR} and subdirectories...\n`);
   
-  const files = fs.readdirSync(BR_DATA_DIR)
-    .filter(file => file.endsWith('.json'))
-    .map(file => path.join(BR_DATA_DIR, file));
+  const files = findJsonFilesRecursively(BR_DATA_DIR);
   
   if (files.length === 0) {
-    console.log('ℹ️  No JSON files found in BR_Data directory');
+    console.log('ℹ️  No JSON files found in BR_Data directory or subdirectories');
     return;
   }
   
@@ -110,7 +132,8 @@ function processJsonFiles() {
   let formattedCount = 0;
   
   for (const filePath of files) {
-    console.log(`\n📄 Processing: ${path.basename(filePath)}`);
+    const relativePath = path.relative(BR_DATA_DIR, filePath);
+    console.log(`\n📄 Processing: ${relativePath}`);
     
     // Fix encoding issues first
     if (detectAndFixEncoding(filePath)) {
@@ -140,4 +163,4 @@ if (require.main === module) {
   processJsonFiles();
 }
 
-module.exports = { processJsonFiles, detectAndFixEncoding, formatWithPrettier };
+module.exports = { processJsonFiles, detectAndFixEncoding, formatWithPrettier, findJsonFilesRecursively };
