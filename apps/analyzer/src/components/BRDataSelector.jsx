@@ -15,6 +15,20 @@ import ScienceIcon from '@mui/icons-material/Science';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
+/**
+ * DEFAULT SELECTION CONFIGURATION
+ * 
+ * Controls which folders/files are selected by default when the app loads.
+ * 
+ * Options:
+ * - 'all': Select all files in BR_Data
+ * - 'none': Select nothing by default
+ * - ['Events']: Select only the Events folder
+ * - ['Events', 'Tests']: Select multiple folders
+ * - ['Events/Season 0 Showcase']: Select specific subfolders (use full path)
+ */
+const DEFAULT_SELECTION = ['Tests'];
+
 // Helper function to get all child IDs of a node (including files)
 function getAllChildIds(node, path = []) {
   const ids = [];
@@ -121,23 +135,63 @@ export default function BRDataSelector({ onSelect }) {
         }
         const data = await res.json();
         setStructure(data);
-        // Auto-select ALL files in BR_Data (all categories and folders)
+        
+        // Apply default selection based on DEFAULT_SELECTION config
         if (data) {
-          const allIds = [];
-          function collectIds(node, path = []) {
-            Object.entries(node).forEach(([key, value]) => {
-              if (key === 'files' && Array.isArray(value)) {
-                value.forEach(file => allIds.push([...path, file].join('/')));
-              } else if (typeof value === 'object') {
-                allIds.push([...path, key].join('/'));
-                collectIds(value, [...path, key]);
+          const selectedIds = [];
+          
+          if (DEFAULT_SELECTION === 'all') {
+            // Select all files in BR_Data
+            function collectAllIds(node, path = []) {
+              Object.entries(node).forEach(([key, value]) => {
+                if (key === 'files' && Array.isArray(value)) {
+                  value.forEach(file => selectedIds.push([...path, file].join('/')));
+                } else if (typeof value === 'object') {
+                  selectedIds.push([...path, key].join('/'));
+                  collectAllIds(value, [...path, key]);
+                }
+              });
+            }
+            collectAllIds(data);
+          } else if (DEFAULT_SELECTION === 'none') {
+            // Don't select anything
+          } else if (Array.isArray(DEFAULT_SELECTION)) {
+            // Select specific folders/subfolders
+            DEFAULT_SELECTION.forEach(folderPath => {
+              const pathParts = folderPath.split('/');
+              let node = data;
+              
+              // Navigate to the folder
+              for (const part of pathParts) {
+                if (node[part]) {
+                  node = node[part];
+                } else {
+                  console.warn(`Folder not found: ${folderPath}`);
+                  return;
+                }
               }
+              
+              // Add the folder itself
+              selectedIds.push(folderPath);
+              
+              // Collect all child IDs
+              function collectIds(n, path) {
+                Object.entries(n).forEach(([key, value]) => {
+                  if (key === 'files' && Array.isArray(value)) {
+                    value.forEach(file => selectedIds.push([...path, file].join('/')));
+                  } else if (typeof value === 'object') {
+                    selectedIds.push([...path, key].join('/'));
+                    collectIds(value, [...path, key]);
+                  }
+                });
+              }
+              collectIds(node, pathParts);
             });
           }
-          collectIds(data);
-          setSelected(allIds);
+          
+          setSelected(selectedIds);
           if (onSelect) {
-            const fileIds = allIds.filter(id => id.includes('.json'));
+            const fileIds = selectedIds.filter(id => id.includes('.json'));
             onSelect(fileIds);
           }
         }

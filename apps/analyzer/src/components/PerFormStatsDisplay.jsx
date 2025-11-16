@@ -11,9 +11,70 @@ function formatNumber(num) {
 }
 
 /**
+ * Default column configuration for per-form stats table
+ */
+const DEFAULT_COLUMNS = [
+  { id: 'form', label: 'Form', align: 'left' },
+  { id: 'dmgDone', label: 'Dmg Done', align: 'right' },
+  { id: 'dmgTaken', label: 'Dmg Taken', align: 'right' },
+  { id: 'efficiency', label: 'Efficiency', align: 'right' },
+  { id: 'dps', label: 'DPS', align: 'right' },
+  { id: 'time', label: 'Time', align: 'right' },
+  { id: 'hpLeft', label: 'HP Left', align: 'right' },
+  { id: 'spms', label: 'SPMs', align: 'right' },
+  { id: 'ults', label: 'Ults', align: 'right' },
+  { id: 's1', label: 'S1', align: 'right' },
+  { id: 's2', label: 'S2', align: 'right' },
+  { id: 'ub', label: 'UB', align: 'right' },
+  { id: 'kos', label: 'KOs', align: 'right' },
+];
+
+/**
+ * Render cell content based on column ID
+ */
+function renderCellContent(columnId, formStat) {
+  switch (columnId) {
+    case 'form':
+      return (
+        <div className="flex items-center gap-2">
+          <span className="formNumber">{formStat.formNumber}</span>
+          <span className="characterName">{formStat.characterName}</span>
+          {formStat.isFinalForm && <span className="finalBadge">Final</span>}
+        </div>
+      );
+    case 'dmgDone':
+      return formatNumber(formStat.damageDone);
+    case 'dmgTaken':
+      return formatNumber(formStat.damageTaken);
+    case 'efficiency':
+      return `${formStat.damageEfficiency.toFixed(2)}×`;
+    case 'dps':
+      return Math.round(formStat.damagePerSecond).toLocaleString();
+    case 'time':
+      return `${Math.round(formStat.battleTime)}s`;
+    case 'hpLeft':
+      return formatNumber(formStat.hpRemaining);
+    case 'spms':
+      return formStat.specialMovesUsed;
+    case 'ults':
+      return formStat.ultimatesUsed;
+    case 's1':
+      return formStat.s1Blast > 0 ? `${formStat.s1HitBlast}/${formStat.s1Blast}` : '-';
+    case 's2':
+      return formStat.s2Blast > 0 ? `${formStat.s2HitBlast}/${formStat.s2Blast}` : '-';
+    case 'ub':
+      return formStat.ultBlast > 0 ? `${formStat.uLTHitBlast}/${formStat.ultBlast}` : '-';
+    case 'kos':
+      return formStat.kills;
+    default:
+      return '';
+  }
+}
+
+/**
  * Compact table row for a single form's stats
  */
-function FormStatRow({ formStat, darkMode }) {
+function FormStatRow({ formStat, darkMode, columns }) {
   // Final form gets visually distinct styling
   const rowBg = formStat.isFinalForm
     ? (darkMode ? 'bg-blue-900/20' : 'bg-blue-50')
@@ -24,86 +85,41 @@ function FormStatRow({ formStat, darkMode }) {
 
   return (
     <tr className={`${rowBg} border-b ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-      {/* Form Number & Name */}
-      <td className="px-3 py-2">
-        <div className="flex items-center gap-2">
-          <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-            darkMode ? 'bg-yellow-900/40 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {formStat.formNumber}
-          </span>
-          <span className={`text-sm font-semibold ${boldColor}`}>
-            {formStat.characterName}
-          </span>
-          {formStat.isFinalForm && (
-            <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
-              darkMode ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-800'
-            }`}>
-              Final
-            </span>
-          )}
-        </div>
-      </td>
-      
-      {/* Damage Done */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formatNumber(formStat.damageDone)}
-      </td>
-      
-      {/* Damage Taken */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formatNumber(formStat.damageTaken)}
-      </td>
-      
-      {/* Efficiency */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.damageEfficiency.toFixed(2)}×
-      </td>
-      
-      {/* DPS */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {Math.round(formStat.damagePerSecond).toLocaleString()}
-      </td>
-      
-      {/* Time */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {Math.round(formStat.battleTime)}s
-      </td>
-      
-      {/* HP */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formatNumber(formStat.hpRemaining)}
-      </td>
-      
-      {/* Specials */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.specialMovesUsed}
-      </td>
-      
-      {/* Ultimates */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.ultimatesUsed}
-      </td>
-      
-      {/* S1 Blasts */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.s1Blast > 0 ? `${formStat.s1HitBlast}/${formStat.s1Blast}` : '-'}
-      </td>
-      
-      {/* S2 Blasts */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.s2Blast > 0 ? `${formStat.s2HitBlast}/${formStat.s2Blast}` : '-'}
-      </td>
-      
-      {/* Ult Blasts */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.ultBlast > 0 ? `${formStat.uLTHitBlast}/${formStat.ultBlast}` : '-'}
-      </td>
-      
-      {/* Kills */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.kills}
-      </td>
+      {columns.map((column) => {
+        const content = renderCellContent(column.id, formStat);
+        const isFormColumn = column.id === 'form';
+        
+        return (
+          <td 
+            key={column.id}
+            className={`px-3 py-2 text-sm ${column.align === 'left' ? 'text-left' : 'text-right'} ${
+              isFormColumn ? '' : textColor
+            }`}
+          >
+            {isFormColumn ? (
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                  darkMode ? 'bg-yellow-900/40 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {formStat.formNumber}
+                </span>
+                <span className={`font-semibold ${boldColor}`}>
+                  {formStat.characterName}
+                </span>
+                {formStat.isFinalForm && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
+                    darkMode ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    Final
+                  </span>
+                )}
+              </div>
+            ) : (
+              content
+            )}
+          </td>
+        );
+      })}
     </tr>
   );
 }
@@ -122,6 +138,8 @@ export function PerFormStatsDisplay({
   darkMode
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [columns, setColumns] = useState(DEFAULT_COLUMNS);
+  const [draggedColumn, setDraggedColumn] = useState(null);
   
   // Don't show if no transformations occurred
   if (!formChangeHistory || formChangeHistory.length === 0) {
@@ -143,6 +161,34 @@ export function PerFormStatsDisplay({
   if (!displayStats || displayStats.length === 0) {
     return null;
   }
+  
+  // Drag and drop handlers
+  const handleDragStart = (e, index) => {
+    setDraggedColumn(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+  
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault();
+    if (draggedColumn === null || draggedColumn === dropIndex) return;
+    
+    const newColumns = [...columns];
+    const draggedItem = newColumns[draggedColumn];
+    newColumns.splice(draggedColumn, 1);
+    newColumns.splice(dropIndex, 0, draggedItem);
+    
+    setColumns(newColumns);
+    setDraggedColumn(null);
+  };
+  
+  const handleDragEnd = () => {
+    setDraggedColumn(null);
+  };
   
   return (
     <div className={`mt-3 rounded-lg border-2 ${
@@ -177,27 +223,34 @@ export function PerFormStatsDisplay({
         {formChangeHistoryText}
       </div>
       
-      {/* Expanded Per-Form Table */}
+      {/* Expanded Aggregated Per-Form Table */}
       {isExpanded && (
-        <div className={`overflow-x-auto border-t ${
+        <div className={`overflow-x-scroll border-t ${
           darkMode ? 'border-yellow-700' : 'border-yellow-200'
-        }`}>
-          <table className="w-full text-sm">
+        }`} style={{ marginBottom: '8px' }}>
+          <table className="w-max text-sm">
             <thead className={`${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
               <tr className={`border-b ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
-                <th className={`px-3 py-2 text-left font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Form</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Dmg Done</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Dmg Taken</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Efficiency</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>DPS</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Time</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>HP Left</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>SPMs</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Ults</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>S1</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>S2</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>UB</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>KOs</th>
+                {columns.map((column, index) => (
+                  <th
+                    key={column.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className={`px-3 py-2 ${column.align === 'left' ? 'text-left' : 'text-right'} font-semibold ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    } cursor-move select-none transition-colors whitespace-nowrap ${
+                      draggedColumn === index 
+                        ? (darkMode ? 'bg-gray-700' : 'bg-gray-200')
+                        : (darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200')
+                    }`}
+                    title="Drag to reorder columns"
+                  >
+                    {column.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -206,6 +259,7 @@ export function PerFormStatsDisplay({
                   key={idx}
                   formStat={formStat}
                   darkMode={darkMode}
+                  columns={columns}
                 />
               ))}
             </tbody>
@@ -217,9 +271,51 @@ export function PerFormStatsDisplay({
 }
 
 /**
+ * Render aggregated cell content based on column ID
+ */
+function renderAggregatedCellContent(columnId, formStat) {
+  switch (columnId) {
+    case 'form':
+      return (
+        <div className="flex items-center gap-2">
+          <span className="formNumber">{formStat.formNumber}</span>
+          <span className="characterName">{formStat.name}</span>
+          {formStat.isFinalForm && <span className="finalBadge">Final</span>}
+        </div>
+      );
+    case 'dmgDone':
+      return formatNumber(formStat.avgDamageDone);
+    case 'dmgTaken':
+      return formatNumber(formStat.avgDamageTaken);
+    case 'efficiency':
+      return `${formStat.damageEfficiency.toFixed(2)}×`;
+    case 'dps':
+      return Math.round(formStat.damagePerSecond).toLocaleString();
+    case 'time':
+      return `${Math.round(formStat.avgBattleTime)}s`;
+    case 'hpLeft':
+      return formatNumber(formStat.avgHPRemaining);
+    case 'spms':
+      return formStat.avgSpecialMoves?.toFixed(1) || '0.0';
+    case 'ults':
+      return formStat.avgUltimates?.toFixed(1) || '0.0';
+    case 's1':
+      return formStat.avgS1Blast > 0 ? `${formStat.avgS1HitBlast?.toFixed(1)}/${formStat.avgS1Blast?.toFixed(1)}` : '-';
+    case 's2':
+      return formStat.avgS2Blast > 0 ? `${formStat.avgS2HitBlast?.toFixed(1)}/${formStat.avgS2Blast?.toFixed(1)}` : '-';
+    case 'ub':
+      return formStat.avgUltBlast > 0 ? `${formStat.avgULTHitBlast?.toFixed(1)}/${formStat.avgUltBlast?.toFixed(1)}` : '-';
+    case 'kos':
+      return formStat.avgKills?.toFixed(1) || '0.0';
+    default:
+      return '';
+  }
+}
+
+/**
  * Compact table row for aggregated form stats
  */
-function FormStatRowAggregated({ formStat, darkMode }) {
+function FormStatRowAggregated({ formStat, darkMode, columns }) {
   // Final form gets visually distinct styling
   const rowBg = formStat.isFinalForm
     ? (darkMode ? 'bg-blue-900/20' : 'bg-blue-50')
@@ -230,86 +326,41 @@ function FormStatRowAggregated({ formStat, darkMode }) {
 
   return (
     <tr className={`${rowBg} border-b ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-      {/* Form Number & Name */}
-      <td className="px-3 py-2">
-        <div className="flex items-center gap-2">
-          <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-            darkMode ? 'bg-yellow-900/40 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {formStat.formNumber}
-          </span>
-          <span className={`text-sm font-semibold ${boldColor}`}>
-            {formStat.name}
-          </span>
-          {formStat.isFinalForm && (
-            <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
-              darkMode ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-800'
-            }`}>
-              Final
-            </span>
-          )}
-        </div>
-      </td>
-      
-      {/* Avg Damage Done */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formatNumber(formStat.avgDamageDone)}
-      </td>
-      
-      {/* Avg Damage Taken */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formatNumber(formStat.avgDamageTaken)}
-      </td>
-      
-      {/* Efficiency */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.damageEfficiency.toFixed(2)}×
-      </td>
-      
-      {/* DPS */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {Math.round(formStat.damagePerSecond).toLocaleString()}
-      </td>
-      
-      {/* Time */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {Math.round(formStat.avgBattleTime)}s
-      </td>
-      
-      {/* HP */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formatNumber(formStat.avgHPRemaining)}
-      </td>
-      
-      {/* Specials */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.avgSpecialMoves?.toFixed(1) || '0.0'}
-      </td>
-      
-      {/* Ultimates */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.avgUltimates?.toFixed(1) || '0.0'}
-      </td>
-      
-      {/* S1 Blasts */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.avgS1Blast > 0 ? `${formStat.avgS1HitBlast?.toFixed(1)}/${formStat.avgS1Blast?.toFixed(1)}` : '-'}
-      </td>
-      
-      {/* S2 Blasts */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.avgS2Blast > 0 ? `${formStat.avgS2HitBlast?.toFixed(1)}/${formStat.avgS2Blast?.toFixed(1)}` : '-'}
-      </td>
-      
-      {/* Ult Blasts */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.avgUltBlast > 0 ? `${formStat.avgULTHitBlast?.toFixed(1)}/${formStat.avgUltBlast?.toFixed(1)}` : '-'}
-      </td>
-      
-      {/* Kills */}
-      <td className={`px-3 py-2 text-sm text-right ${textColor}`}>
-        {formStat.avgKills?.toFixed(1) || '0.0'}
-      </td>
+      {columns.map((column) => {
+        const content = renderAggregatedCellContent(column.id, formStat);
+        const isFormColumn = column.id === 'form';
+        
+        return (
+          <td 
+            key={column.id}
+            className={`px-3 py-2 text-sm ${column.align === 'left' ? 'text-left' : 'text-right'} ${
+              isFormColumn ? '' : textColor
+            }`}
+          >
+            {isFormColumn ? (
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                  darkMode ? 'bg-yellow-900/40 text-yellow-300' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {formStat.formNumber}
+                </span>
+                <span className={`font-semibold ${boldColor}`}>
+                  {formStat.name}
+                </span>
+                {formStat.isFinalForm && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
+                    darkMode ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    Final
+                  </span>
+                )}
+              </div>
+            ) : (
+              content
+            )}
+          </td>
+        );
+      })}
     </tr>
   );
 }
@@ -324,6 +375,8 @@ export function PerFormStatsDisplayAggregated({
   darkMode
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [columns, setColumns] = useState(DEFAULT_COLUMNS);
+  const [draggedColumn, setDraggedColumn] = useState(null);
   
   // Don't show if no form stats
   if (!formStatsArray || formStatsArray.length === 0) {
@@ -332,6 +385,34 @@ export function PerFormStatsDisplayAggregated({
   
   // Sort by form number
   const sortedForms = [...formStatsArray].sort((a, b) => a.formNumber - b.formNumber);
+  
+  // Drag and drop handlers
+  const handleDragStart = (e, index) => {
+    setDraggedColumn(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+  
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault();
+    if (draggedColumn === null || draggedColumn === dropIndex) return;
+    
+    const newColumns = [...columns];
+    const draggedItem = newColumns[draggedColumn];
+    newColumns.splice(draggedColumn, 1);
+    newColumns.splice(dropIndex, 0, draggedItem);
+    
+    setColumns(newColumns);
+    setDraggedColumn(null);
+  };
+  
+  const handleDragEnd = () => {
+    setDraggedColumn(null);
+  };
   
   return (
     <div className={`rounded-lg border-2 ${
@@ -368,25 +449,32 @@ export function PerFormStatsDisplayAggregated({
       
       {/* Expanded Per-Form Table */}
       {isExpanded && (
-        <div className={`overflow-x-auto border-t ${
+        <div className={`overflow-x-scroll border-t ${
           darkMode ? 'border-yellow-700' : 'border-yellow-200'
-        }`}>
-          <table className="w-full text-sm">
+        }`} style={{ marginBottom: '8px' }}>
+          <table className="w-max text-sm">
             <thead className={`${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
               <tr className={`border-b ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
-                <th className={`px-3 py-2 text-left font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Form</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Avg Dmg</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Avg Taken</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Efficiency</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>DPS</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Time</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>HP Left</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>SPMs</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Ults</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>S1</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>S2</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>UB</th>
-                <th className={`px-3 py-2 text-right font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>KOs</th>
+                {columns.map((column, index) => (
+                  <th
+                    key={column.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className={`px-3 py-2 ${column.align === 'left' ? 'text-left' : 'text-right'} font-semibold ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    } cursor-move select-none transition-colors whitespace-nowrap ${
+                      draggedColumn === index 
+                        ? (darkMode ? 'bg-gray-700' : 'bg-gray-200')
+                        : (darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200')
+                    }`}
+                    title="Drag to reorder columns"
+                  >
+                    {column.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -395,6 +483,7 @@ export function PerFormStatsDisplayAggregated({
                   key={idx}
                   formStat={formStat}
                   darkMode={darkMode}
+                  columns={columns}
                 />
               ))}
             </tbody>

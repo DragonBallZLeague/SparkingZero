@@ -176,8 +176,6 @@ export const Combobox = ({
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('close-all-comboboxes', { detail: { except: myComboboxId.current } }));
       }
-      setIsPositioned(false); // Reset positioning state
-      setShowDropdown(false); // Hide dropdown initially
       setOpen(true);
     }
   };
@@ -185,8 +183,6 @@ export const Combobox = ({
   const closeList = () => {
     setOpen(false);
     setHighlight(-1);
-    setIsPositioned(false);
-    setShowDropdown(false);
   };
 
   const commitSelection = (item) => {
@@ -240,15 +236,13 @@ export const Combobox = ({
   // Track when dropdown is positioned to prevent flash
   useEffect(() => {
     if (open && x !== null && y !== null) {
-      // Small delay to ensure positioning is complete
-      const timer = setTimeout(() => {
-        setShowDropdown(true);
-        requestAnimationFrame(() => {
-          setIsPositioned(true);
-        });
-      }, 10); // 10ms delay for positioning
-      
-      return () => clearTimeout(timer);
+      // Set positioned immediately when coordinates are available
+      setIsPositioned(true);
+      setShowDropdown(true);
+    } else if (!open) {
+      // Reset states when closed
+      setIsPositioned(false);
+      setShowDropdown(false);
     }
   }, [open, x, y]);
 
@@ -352,7 +346,7 @@ export const Combobox = ({
             {renderValueRight(selectedItem)}
           </div>
         ) : null}
-      {open && showDropdown && filtered.length > 0 && (
+      {open && filtered.length > 0 && (
           (typeof document !== 'undefined')
           ? createPortal(
             <ul 
@@ -388,8 +382,11 @@ export const Combobox = ({
             <ul 
               ref={listRef} 
               onPointerLeave={() => { if (showTooltip) hideTooltipNow(); }} 
-              className={`absolute z-50 w-full overflow-auto border rounded shadow-lg ${dropdownClasses}`}
-              style={{ maxHeight: '24rem' }}
+              className={`absolute z-50 w-full overflow-auto border rounded shadow-lg transition-opacity duration-150 ease-in ${dropdownClasses}`}
+              style={{ 
+                maxHeight: '24rem',
+                opacity: isPositioned ? 1 : 0
+              }}
             >
               {filtered.map((it, idx) => (
                 <li
