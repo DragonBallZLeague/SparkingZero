@@ -353,7 +353,7 @@ export const Combobox = ({
               ref={(el) => { try { refs.setFloating?.(el); } catch(e){} }} 
               role="listbox" 
               onPointerLeave={() => { if (showTooltip) hideTooltipNow(); }} 
-              className={`z-[9999] max-h-96 overflow-auto border rounded shadow-lg transition-opacity duration-150 ease-in ${dropdownClasses}`}
+              className={`z-[99999] max-h-96 overflow-auto border rounded shadow-lg transition-opacity duration-150 ease-in ${dropdownClasses}`}
               style={{
                 ...floatingStyles,
                 opacity: isPositioned ? 1 : 0

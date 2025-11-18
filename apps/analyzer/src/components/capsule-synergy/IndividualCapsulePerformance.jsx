@@ -27,11 +27,25 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
   const [filterAIStrategy, setFilterAIStrategy] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredCapsule, setHoveredCapsule] = useState(null);
+  const [hoveredUsesData, setHoveredUsesData] = useState(null);
 
-  // Use floating-ui for tooltip positioning
+  // Use floating-ui for capsule name tooltip positioning
   const { x, y, strategy, refs, floatingStyles } = useFloating({
     placement: 'right-start',
     middleware: [offset(20), flip(), shift({ padding: 10 })],
+    whileElementsMounted: autoUpdate,
+  });
+
+  // Use floating-ui for uses tooltip positioning
+  const { 
+    x: usesX, 
+    y: usesY, 
+    strategy: usesStrategy, 
+    refs: usesRefs, 
+    floatingStyles: usesFloatingStyles 
+  } = useFloating({
+    placement: 'right-start',
+    middleware: [offset(10), flip(), shift({ padding: 10 })],
     whileElementsMounted: autoUpdate,
   });
 
@@ -146,6 +160,17 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
     setHoveredCapsule(null);
   };
 
+  // Handle uses tooltip display
+  const handleUsesMouseEnter = (characterMatchCounts, event) => {
+    if (!characterMatchCounts) return;
+    usesRefs.setReference(event.currentTarget);
+    setHoveredUsesData(characterMatchCounts);
+  };
+
+  const handleUsesMouseLeave = () => {
+    setHoveredUsesData(null);
+  };
+
   if (!performanceData || Object.keys(performanceData).length === 0) {
     return (
       <div className="text-center text-gray-400 py-12">
@@ -161,7 +186,7 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
         <div className="flex items-center gap-2 mb-4">
           <Info className="w-5 h-5 text-blue-400" />
           <p className="text-sm text-gray-400">
-            Hover over capsule names for effect details. Click column headers to sort.
+            Hover over capsule names for effect details. Hover over usage count to see which characters used each capsule. Click column headers to sort.
           </p>
         </div>
 
@@ -228,7 +253,7 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
       {/* Scrollable Table Container */}
       <div className="border border-gray-700 rounded-lg bg-gray-900/50 backdrop-blur-sm" style={{ maxHeight: '600px', overflow: 'auto' }}>
         <table className="w-full border-collapse">
-          <thead className="sticky top-0 z-10">
+          <thead className="sticky top-0 z-[5]">
             <tr className="bg-gray-800 text-gray-300 shadow-lg">
               <SortableHeader label="Capsule" column="name" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
               <SortableHeader label="Build Type" column="buildType" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
@@ -273,7 +298,15 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
                     {row.cost}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-300 text-center font-medium">{row.appearances}</td>
+                <td className="px-4 py-3 text-center">
+                  <span 
+                    className="text-gray-300 font-medium cursor-help hover:text-blue-400 transition-colors"
+                    onMouseEnter={(e) => handleUsesMouseEnter(row.characterMatchCounts, e)}
+                    onMouseLeave={handleUsesMouseLeave}
+                  >
+                    {row.appearances}
+                  </span>
+                </td>
                 <td className="px-4 py-3 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${getWinRateDot(row.winRate)}`}></div>
@@ -324,7 +357,7 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
         </table>
       </div>
 
-      {/* Tooltip */}
+      {/* Capsule Name Tooltip */}
       {hoveredCapsule && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
@@ -348,6 +381,33 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
               .split(/\\r\\n|\\n|\r\n|\n/)
               .map((line, idx) => (
                 <div key={idx}>{line}</div>
+              ))
+            }
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Uses Tooltip - Character Match Counts */}
+      {hoveredUsesData && typeof document !== 'undefined' && createPortal(
+        <div
+          ref={usesRefs.setFloating}
+          style={{ ...usesFloatingStyles, minWidth: '20rem' }}
+          className="z-[9999] bg-gray-800 border border-gray-600 rounded-lg shadow-2xl p-4"
+        >
+          <h4 className="font-bold text-white text-base mb-3 border-b border-gray-700 pb-2">
+            Character Usage
+          </h4>
+          <div className="space-y-1 max-h-80 overflow-y-auto">
+            {Object.entries(hoveredUsesData)
+              .sort((a, b) => b[1] - a[1]) // Sort by match count descending
+              .map(([character, count]) => (
+                <div key={character} className="flex justify-between items-center py-1 px-2 hover:bg-gray-700/50 rounded">
+                  <span className="text-gray-300 text-sm">{character}</span>
+                  <span className="text-blue-400 font-semibold text-sm ml-4">
+                    {count} {count === 1 ? 'match' : 'matches'}
+                  </span>
+                </div>
               ))
             }
           </div>

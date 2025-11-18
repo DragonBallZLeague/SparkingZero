@@ -124,7 +124,7 @@ export default function CapsuleSynergyAnalysis({ aggregatedData, darkMode = fals
     <div className="capsule-synergy-analysis">
       {/* Character Filter */}
       {availableCharacters.length > 0 && (
-        <div className={`mb-4 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-50'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`mb-4 p-4 rounded-lg isolate ${darkMode ? 'bg-gray-800' : 'bg-gray-50'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex items-center justify-between mb-3">
             <label className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               Filter by Character(s)
