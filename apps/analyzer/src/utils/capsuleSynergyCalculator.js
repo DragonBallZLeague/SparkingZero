@@ -46,6 +46,7 @@ export function calculateCapsulePerformance(aggregatedData, capsuleMap) {
             totalDamage: 0,
             totalDamageTaken: 0,
             characters: new Set(),
+            characterMatchCounts: {}, // Track number of matches per character
             teams: new Set(),
             aiStrategies: new Set()
           };
@@ -60,6 +61,12 @@ export function calculateCapsulePerformance(aggregatedData, capsuleMap) {
         stats.totalDamageTaken += match.damageTaken || 0;
         
         stats.characters.add(character.name);
+        // Track match count per character
+        if (!stats.characterMatchCounts[character.name]) {
+          stats.characterMatchCounts[character.name] = 0;
+        }
+        stats.characterMatchCounts[character.name]++;
+        
         if (match.team) stats.teams.add(match.team);
         if (match.aiStrategy) stats.aiStrategies.add(match.aiStrategy);
       });
@@ -104,6 +111,7 @@ export function calculateCapsulePerformance(aggregatedData, capsuleMap) {
       // Usage diversity
       characters: Array.from(stat.characters),
       characterCount: stat.characters.size,
+      characterMatchCounts: stat.characterMatchCounts, // Add match counts per character
       teams: Array.from(stat.teams),
       teamCount: stat.teams.size,
       aiStrategies: Array.from(stat.aiStrategies),
