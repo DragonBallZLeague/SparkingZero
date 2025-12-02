@@ -270,8 +270,8 @@ const DataTable = ({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div className="overflow-x-scroll">
+        <table className="w-full min-w-max">
           <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
             <tr>
               {selectable && (
