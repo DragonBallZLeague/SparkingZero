@@ -13,6 +13,8 @@ const CLIENT_ID = import.meta?.env?.VITE_GITHUB_CLIENT_ID || '';
 
 export function assertClientConfig() {
   if (!CLIENT_ID) {
+    const envKeys = import.meta?.env ? Object.keys(import.meta.env).join(', ') : 'no import.meta.env';
+    console.warn('[Upload] Missing VITE_GITHUB_CLIENT_ID. Available env keys:', envKeys);
     throw new Error('Missing VITE_GITHUB_CLIENT_ID in environment. Set it in your .env or Vite config.');
   }
 }
