@@ -4,12 +4,18 @@ on:
   pull_request:
     branches: [ "dev-branch" ]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: List changed files
         id: changed
@@ -17,6 +23,19 @@ jobs:
         with:
           files: |
             apps/analyzer/BR_Data/**
+
+      - name: Normalize changed files list
+        run: |
+          echo '${{ steps.changed.outputs.all_changed_files_json }}' | jq -r '.[]' > changed-files.txt
+          echo "Normalized changed files:";
+          cat changed-files.txt || true
+
+      - name: Debug changed files
+        run: |
+          echo "Any changed: ${{ steps.changed.outputs.any_changed }}"
+          echo "Raw changed files string:\n${{ steps.changed.outputs.all_changed_files }}"
+          echo "Normalized (one per line):";
+          cat changed-files.txt || true
 
       - name: Fail if no BR_Data changes
         if: steps.changed.outputs.any_changed != 'true'
@@ -26,37 +45,39 @@ jobs:
 
       - name: Validate file extensions
         run: |
-          for f in ${{ steps.changed.outputs.all_changed_files }}; do
+          while IFS= read -r f; do
             case "$f" in
               *.json) : ;;
               *) echo "Invalid file type: $f"; exit 1;;
             esac
-          done
+          done < changed-files.txt
 
       - name: Validate paths (under BR_Data only)
         run: |
-          for f in ${{ steps.changed.outputs.all_changed_files }}; do
+          while IFS= read -r f; do
             case "$f" in
               apps/analyzer/BR_Data/*) : ;;
               *) echo "File outside BR_Data: $f"; exit 1;;
             esac
-          done
+          done < changed-files.txt
 
       - name: Basic JSON parse check
         run: |
-          for f in ${{ steps.changed.outputs.all_changed_files }}; do
+          while IFS= read -r f; do
             node -e "JSON.parse(require('fs').readFileSync('$f', 'utf8'))" || { echo "JSON parse failed: $f"; exit 1; }
-          done
+          done < changed-files.txt
 
       - name: Label PR on success
-        if: success()
+        if: success() && github.event.pull_request.head.repo.fork == false
+        continue-on-error: true
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: |
             valid
 
       - name: Label PR on failure
-        if: failure()
+        if: failure() && github.event.pull_request.head.repo.fork == false
+        continue-on-error: true
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: |
