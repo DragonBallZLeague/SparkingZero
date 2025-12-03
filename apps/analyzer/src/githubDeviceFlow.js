@@ -9,13 +9,20 @@ const GITHUB_API = 'https://api.github.com';
 const OWNER = import.meta?.env?.VITE_GITHUB_OWNER || 'DragonBallZLeague';
 const REPO = import.meta?.env?.VITE_GITHUB_REPO || 'SparkingZero';
 const BASE_BRANCH = import.meta?.env?.VITE_GITHUB_BASE_BRANCH || 'dev-branch';
-const CLIENT_ID = import.meta?.env?.VITE_GITHUB_CLIENT_ID || '';
+// Try env first, then runtime config exposed on the page
+let CLIENT_ID = import.meta?.env?.VITE_GITHUB_CLIENT_ID || '';
+if (!CLIENT_ID && typeof window !== 'undefined') {
+  const metaContent = document.querySelector('meta[name="sz-github-client-id"]')?.getAttribute('content') || '';
+  const globalCfg = window.__SZ_CONFIG__ && (window.__SZ_CONFIG__.GITHUB_CLIENT_ID || window.__SZ_CONFIG__.VITE_GITHUB_CLIENT_ID);
+  CLIENT_ID = metaContent || globalCfg || '';
+}
 
 export function assertClientConfig() {
   if (!CLIENT_ID) {
     const envKeys = import.meta?.env ? Object.keys(import.meta.env).join(', ') : 'no import.meta.env';
     console.warn('[Upload] Missing VITE_GITHUB_CLIENT_ID. Available env keys:', envKeys);
-    throw new Error('Missing VITE_GITHUB_CLIENT_ID in environment. Set it in your .env or Vite config.');
+    console.warn('[Upload] Attempt to set via meta tag name="sz-github-client-id" or window.__SZ_CONFIG__.GITHUB_CLIENT_ID at runtime.');
+    throw new Error('Missing VITE_GITHUB_CLIENT_ID in environment. Set it in .env or provide meta/global config on Pages.');
   }
 }
 
