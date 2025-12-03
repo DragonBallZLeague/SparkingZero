@@ -2994,7 +2994,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
             avgKills: matchCount > 0 ? formData.totalKills / matchCount : 0,
             damageEfficiency: damageEfficiency,
             damagePerSecond: damagePerSecond,
-            matchesPlayed: matchCount
+            matchCount: matchCount
           };
         }).sort((a, b) => a.formNumber - b.formNumber);
         
@@ -5067,7 +5067,7 @@ export default function App() {
                                 </div>
                               </div>
 
-                                                            {/* Most Used Builds Section */}
+                              {/* Most Used Builds Section */}
                               {char.topBuilds && char.topBuilds.length > 0 && (
                                 <div className={`rounded-lg p-3 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
                                   <div className="flex items-center justify-between">
@@ -6644,309 +6644,311 @@ export default function App() {
                                         
                                         {/* Expanded Details - Match Aggregated Stats */}
                                         {isCharExpanded && (
-                                          <div className={`px-3 pb-3 grid grid-cols-1 sm:grid-cols-2 gap-3 ${darkMode ? 'border-gray-600' : 'border-gray-200'} pt-3`}>
-                                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
-                                              {/* Combat Performance Section */}
-                                              <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                  <Swords className={`w-5 h-5 ${darkMode ? 'text-red-400' : 'text-red-600'}`} />
-                                                  <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Combat Performance</h4>
-                                                </div>
-                                                <div className="space-y-2 text-sm mb-3">
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Done:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgDamageDealt)}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Taken:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgDamageTaken)}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage/Sec:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{Math.round(dps).toLocaleString()}/sec</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Efficiency:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDamageEfficiency.toFixed(2)}×</strong>
-                                                  </div>
-                                                </div>
-                                                <div className={`grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgThrows || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgVanishingAttacks || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonHoming || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgLightningAttacks || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpacts || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpactWins || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgMaxComboNum || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Damage:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgMaxComboDamage || 0)}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparkingCombo || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgKills || 0}</strong>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              
-                                              {/* Survival & Health Section */}
-                                              <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                  <Heart className={`w-5 h-5 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                                                  <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Survival & Health</h4>
-                                                </div>
-                                                <div className="space-y-2 text-sm mb-2">
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Health:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                      {formatNumber(charStats.avgHealthMax || 0)}
-                                                    </strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Health Remaining:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                      {formatNumber(charStats.avgHealthRemaining || 0)}
-                                                    </strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival Rate:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                      {(charStats.avgHealthRetention * 100).toFixed(1)}%
-                                                    </strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                                    <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{charStats.avgTags || 0}</strong>
-                                                  </div>
-                                                </div>
-                                                <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Guards:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgGuards || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSuperCounters || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgRevengeCounters || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgZCounters || 0}</strong>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
-                                              {/* Special Abilities Section */}
-                                              <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                <div className="flex items-center gap-2 mb-3">
-                                                  <Zap className={`w-5 h-5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                                                  <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Special Abilities</h4>
-                                                </div>
-                                                {/* Display each blast type individually - show hit/thrown format if that specific type has hit rate data, otherwise show legacy format */}
-                                                <div className="space-y-2 text-sm mb-2">
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
-                                                    <div className="flex items-center gap-2">
-                                                      {charStats.s1HitRateOverall !== null && charStats.s1HitRateOverall !== undefined ? (
-                                                        <>
-                                                          <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgS1Hit || 0).toFixed(1)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(1)}
-                                                          </strong>
-                                                          <span className={`text-xs font-mono ${
-                                                            charStats.s1HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                            charStats.s1HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                                            (darkMode ? 'text-red-400' : 'text-red-600')
-                                                          }`}>
-                                                            ({charStats.s1HitRateOverall.toFixed(1)}%)
-                                                          </span>
-                                                        </>
-                                                      ) : (
-                                                        <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                          {(charStats.avgSPM1 || 0).toFixed(1)}
-                                                        </strong>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
-                                                    <div className="flex items-center gap-2">
-                                                      {charStats.s2HitRateOverall !== null && charStats.s2HitRateOverall !== undefined ? (
-                                                        <>
-                                                          <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgS2Hit || 0).toFixed(1)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(1)}
-                                                          </strong>
-                                                          <span className={`text-xs font-mono ${
-                                                            charStats.s2HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                            charStats.s2HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                                            (darkMode ? 'text-red-400' : 'text-red-600')
-                                                          }`}>
-                                                            ({charStats.s2HitRateOverall.toFixed(1)}%)
-                                                          </span>
-                                                        </>
-                                                      ) : (
-                                                        <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                          {(charStats.avgSPM2 || 0).toFixed(1)}
-                                                        </strong>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
-                                                    <div className="flex items-center gap-2">
-                                                      {charStats.ultHitRateOverall !== null && charStats.ultHitRateOverall !== undefined ? (
-                                                        <>
-                                                          <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                            {(charStats.avgUltHit || 0).toFixed(1)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(1)}
-                                                          </strong>
-                                                          <span className={`text-xs font-mono ${
-                                                            charStats.ultHitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                            charStats.ultHitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                                            (darkMode ? 'text-red-400' : 'text-red-600')
-                                                          }`}>
-                                                            ({charStats.ultHitRateOverall.toFixed(1)}%)
-                                                          </span>
-                                                        </>
-                                                      ) : (
-                                                        <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                          {(charStats.avgUltimates || 0).toFixed(1)}
-                                                        </strong>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 1 Usage:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEXA1 || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 2 Usage:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEXA2 || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Charges:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgCharges || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparking || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEnergyBlasts || 0}</strong>
-                                                  </div>
-                                                  <div className="flex justify-between">
-                                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Dash Mileage:</span>
-                                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonDashMileage || 0}</strong>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              
-                                              {/* Most Used Builds Section */}
-                                              {charStats.topBuilds && charStats.topBuilds.length > 0 && (
+                                          <div className={`px-3 pb-3 grid grid-cols-1 sm:grid-cols-1 gap-3 ${darkMode ? 'border-gray-600' : 'border-gray-200'} pt-3`}>
+                                            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                                              <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
+                                                {/* Combat Performance Section */}
                                                 <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                  <div className="flex items-center justify-between mb-3">
-                                                    <div className="flex items-center">
-                                                      <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                                                      <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Most Used Builds</h4>
+                                                  <div className="flex items-center gap-2 mb-3">
+                                                    <Swords className={`w-5 h-5 ${darkMode ? 'text-red-400' : 'text-red-600'}`} />
+                                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Combat Performance</h4>
+                                                  </div>
+                                                  <div className="space-y-2 text-sm mb-3">
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Done:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgDamageDealt)}</strong>
                                                     </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Taken:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgDamageTaken)}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage/Sec:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{Math.round(dps).toLocaleString()}/sec</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Efficiency:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDamageEfficiency.toFixed(2)}×</strong>
+                                                    </div>
+                                                  </div>
+                                                  <div className={`grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgThrows || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgVanishingAttacks || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonHoming || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgLightningAttacks || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpacts || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpactWins || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgMaxComboNum || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Damage:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgMaxComboDamage || 0)}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparkingCombo || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgKills || 0}</strong>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                
+                                                {/* Survival & Health Section */}
+                                                <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
+                                                  <div className="flex items-center gap-2 mb-3">
+                                                    <Heart className={`w-5 h-5 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
+                                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Survival & Health</h4>
+                                                  </div>
+                                                  <div className="space-y-2 text-sm mb-2">
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Health:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                        {formatNumber(charStats.avgHealthMax || 0)}
+                                                      </strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Health Remaining:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                        {formatNumber(charStats.avgHealthRemaining || 0)}
+                                                      </strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival Rate:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                        {(charStats.avgHealthRetention * 100).toFixed(1)}%
+                                                      </strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
+                                                      <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{charStats.avgTags || 0}</strong>
+                                                    </div>
+                                                  </div>
+                                                  <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Guards:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgGuards || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSuperCounters || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgRevengeCounters || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgZCounters || 0}</strong>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
+                                                {/* Special Abilities Section */}
+                                                <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
+                                                  <div className="flex items-center gap-2 mb-3">
+                                                    <Zap className={`w-5 h-5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+                                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Special Abilities</h4>
+                                                  </div>
+                                                  {/* Display each blast type individually - show hit/thrown format if that specific type has hit rate data, otherwise show legacy format */}
+                                                  <div className="space-y-2 text-sm mb-2">
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
+                                                      <div className="flex items-center gap-2">
+                                                        {charStats.s1HitRateOverall !== null && charStats.s1HitRateOverall !== undefined ? (
+                                                          <>
+                                                            <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                                                              {(charStats.avgS1Hit || 0).toFixed(1)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(1)}
+                                                            </strong>
+                                                            <span className={`text-xs font-mono ${
+                                                              charStats.s1HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
+                                                              charStats.s1HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
+                                                              (darkMode ? 'text-red-400' : 'text-red-600')
+                                                            }`}>
+                                                              ({charStats.s1HitRateOverall.toFixed(1)}%)
+                                                            </span>
+                                                          </>
+                                                        ) : (
+                                                          <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                                                            {(charStats.avgSPM1 || 0).toFixed(1)}
+                                                          </strong>
+                                                        )}
+                                                      </div>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
+                                                      <div className="flex items-center gap-2">
+                                                        {charStats.s2HitRateOverall !== null && charStats.s2HitRateOverall !== undefined ? (
+                                                          <>
+                                                            <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                                                              {(charStats.avgS2Hit || 0).toFixed(1)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(1)}
+                                                            </strong>
+                                                            <span className={`text-xs font-mono ${
+                                                              charStats.s2HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
+                                                              charStats.s2HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
+                                                              (darkMode ? 'text-red-400' : 'text-red-600')
+                                                            }`}>
+                                                              ({charStats.s2HitRateOverall.toFixed(1)}%)
+                                                            </span>
+                                                          </>
+                                                        ) : (
+                                                          <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                                                            {(charStats.avgSPM2 || 0).toFixed(1)}
+                                                          </strong>
+                                                        )}
+                                                      </div>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
+                                                      <div className="flex items-center gap-2">
+                                                        {charStats.ultHitRateOverall !== null && charStats.ultHitRateOverall !== undefined ? (
+                                                          <>
+                                                            <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
+                                                              {(charStats.avgUltHit || 0).toFixed(1)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(1)}
+                                                            </strong>
+                                                            <span className={`text-xs font-mono ${
+                                                              charStats.ultHitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
+                                                              charStats.ultHitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
+                                                              (darkMode ? 'text-red-400' : 'text-red-600')
+                                                            }`}>
+                                                              ({charStats.ultHitRateOverall.toFixed(1)}%)
+                                                            </span>
+                                                          </>
+                                                        ) : (
+                                                          <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
+                                                            {(charStats.avgUltimates || 0).toFixed(1)}
+                                                          </strong>
+                                                        )}
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 1 Usage:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEXA1 || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 2 Usage:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEXA2 || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Charges:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgCharges || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparking || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEnergyBlasts || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Dash Mileage:</span>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonDashMileage || 0}</strong>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                
+                                                {/* Most Used Builds Section */}
+                                                {charStats.topBuilds && charStats.topBuilds.length > 0 && (
+                                                  <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
+                                                    <div className="flex items-center justify-between mb-3">
+                                                      <div className="flex items-center">
+                                                        <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                                                        <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Most Used Builds</h4>
+                                                      </div>
+                                                      {(() => {
+                                                        const currentBuildIndex = selectedBuildIndex[charKey] || 0;
+                                                        const currentBuild = charStats.topBuilds[currentBuildIndex];
+                                                        return (
+                                                          <PerformanceScoreBadge 
+                                                            score={currentBuild.avgPerformanceScore || 0} 
+                                                            label="Score" 
+                                                            size="small" 
+                                                            darkMode={darkMode} 
+                                                            allScores={allCharScores} 
+                                                          />
+                                                        );
+                                                      })()}
+                                                    </div>
+                                                    
+                                                    {/* Tabs for build selection */}
+                                                    {charStats.topBuilds.length > 1 && (
+                                                      <div className="flex items-center gap-2 mb-3">
+                                                        {charStats.topBuilds.map((build, index) => {
+                                                          const isSelected = (selectedBuildIndex[charKey] || 0) === index;
+                                                          const labels = ['First', 'Second', 'Third'];
+                                                          return (
+                                                            <button
+                                                              key={index}
+                                                              onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedBuildIndex(prev => ({ ...prev, [charKey]: index }));
+                                                              }}
+                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                                                                isSelected
+                                                                  ? darkMode
+                                                                    ? 'bg-indigo-600 text-white border-2 border-indigo-500'
+                                                                    : 'bg-indigo-500 text-white border-2 border-indigo-600'
+                                                                  : darkMode
+                                                                    ? 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:bg-gray-600'
+                                                                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-100'
+                                                              }`}
+                                                            >
+                                                              {labels[index]}
+                                                            </button>
+                                                          );
+                                                        })}
+                                                      </div>
+                                                    )}
+                                                    
                                                     {(() => {
                                                       const currentBuildIndex = selectedBuildIndex[charKey] || 0;
                                                       const currentBuild = charStats.topBuilds[currentBuildIndex];
+                                                      const tooltipKey = `${charKey}-build-${currentBuildIndex}`;
+                                                      
                                                       return (
-                                                        <PerformanceScoreBadge 
-                                                          score={currentBuild.avgPerformanceScore || 0} 
-                                                          label="Score" 
-                                                          size="small" 
-                                                          darkMode={darkMode} 
-                                                          allScores={allCharScores} 
+                                                        <BuildTypeTooltipWrapper
+                                                          buildComposition={currentBuild.buildComposition}
+                                                          aiStrategy={currentBuild.aiStrategy}
+                                                          count={currentBuild.activeCount}
+                                                          equippedCapsules={currentBuild.equippedCapsules}
+                                                          totalCapsuleCost={currentBuild.totalCapsuleCost}
+                                                          darkMode={darkMode}
+                                                          tooltipKey={tooltipKey}
                                                         />
                                                       );
                                                     })()}
                                                   </div>
-                                                  
-                                                  {/* Tabs for build selection */}
-                                                  {charStats.topBuilds.length > 1 && (
-                                                    <div className="flex items-center gap-2 mb-3">
-                                                      {charStats.topBuilds.map((build, index) => {
-                                                        const isSelected = (selectedBuildIndex[charKey] || 0) === index;
-                                                        const labels = ['First', 'Second', 'Third'];
-                                                        return (
-                                                          <button
-                                                            key={index}
-                                                            onClick={(e) => {
-                                                              e.stopPropagation();
-                                                              setSelectedBuildIndex(prev => ({ ...prev, [charKey]: index }));
-                                                            }}
-                                                            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                                                              isSelected
-                                                                ? darkMode
-                                                                  ? 'bg-indigo-600 text-white border-2 border-indigo-500'
-                                                                  : 'bg-indigo-500 text-white border-2 border-indigo-600'
-                                                                : darkMode
-                                                                  ? 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:bg-gray-600'
-                                                                  : 'bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-100'
-                                                            }`}
-                                                          >
-                                                            {labels[index]}
-                                                          </button>
-                                                        );
-                                                      })}
-                                                    </div>
-                                                  )}
-                                                  
-                                                  {(() => {
-                                                    const currentBuildIndex = selectedBuildIndex[charKey] || 0;
-                                                    const currentBuild = charStats.topBuilds[currentBuildIndex];
-                                                    const tooltipKey = `${charKey}-build-${currentBuildIndex}`;
-                                                    
-                                                    return (
-                                                      <BuildTypeTooltipWrapper
-                                                        buildComposition={currentBuild.buildComposition}
-                                                        aiStrategy={currentBuild.aiStrategy}
-                                                        count={currentBuild.activeCount}
-                                                        equippedCapsules={currentBuild.equippedCapsules}
-                                                        totalCapsuleCost={currentBuild.totalCapsuleCost}
-                                                        darkMode={darkMode}
-                                                        tooltipKey={tooltipKey}
-                                                      />
-                                                    );
-                                                  })()}
-                                                </div>
-                                              )}
+                                                )}
+                                              </div>
                                             </div>
                                             {/* Per-Form Stats - Aggregated */}
                                             {charStats.formStats && charStats.formStats.length > 0 && (
-                                              <div className="col-span-1 sm:col-span-2">
+                                              <div className="col-span-1 sm:col-span-1">
                                                 <PerFormStatsDisplayAggregated
                                                   formStatsArray={charStats.formStats}
                                                   formChangeHistoryText={charStats.formChangeHistoryText}

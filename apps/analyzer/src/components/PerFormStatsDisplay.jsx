@@ -15,6 +15,7 @@ function formatNumber(num) {
  */
 const DEFAULT_COLUMNS = [
   { id: 'form', label: 'Form', align: 'left' },
+  { id: 'matches', label: 'Matches', align: 'right' },
   { id: 'dmgDone', label: 'Dmg Done', align: 'right' },
   { id: 'dmgTaken', label: 'Dmg Taken', align: 'right' },
   { id: 'efficiency', label: 'Efficiency', align: 'right' },
@@ -42,6 +43,8 @@ function renderCellContent(columnId, formStat) {
           {formStat.isFinalForm && <span className="finalBadge">Final</span>}
         </div>
       );
+    case 'matches':
+      return '1';
     case 'dmgDone':
       return formatNumber(formStat.damageDone);
     case 'dmgTaken':
@@ -283,6 +286,8 @@ function renderAggregatedCellContent(columnId, formStat) {
           {formStat.isFinalForm && <span className="finalBadge">Final</span>}
         </div>
       );
+    case 'matches':
+      return formStat.matchCount || 0;
     case 'dmgDone':
       return formatNumber(formStat.avgDamageDone);
     case 'dmgTaken':
