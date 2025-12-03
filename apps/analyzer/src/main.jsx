@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import UploadWidgetLauncher from './UploadWidgetLauncher';
+import UploadWidgetLauncher from './UploadWidgetLauncher.jsx';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
