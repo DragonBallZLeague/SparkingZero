@@ -33,6 +33,7 @@ jobs:
 
       - name: Validate file extensions
         run: |
+          IFS=$'\n';
           for f in ${{ steps.changed.outputs.all_changed_files }}; do
             case "$f" in
               *.json) : ;;
@@ -42,6 +43,7 @@ jobs:
 
       - name: Validate paths (under BR_Data only)
         run: |
+          IFS=$'\n';
           for f in ${{ steps.changed.outputs.all_changed_files }}; do
             case "$f" in
               apps/analyzer/BR_Data/*) : ;;
@@ -51,19 +53,20 @@ jobs:
 
       - name: Basic JSON parse check
         run: |
+          IFS=$'\n';
           for f in ${{ steps.changed.outputs.all_changed_files }}; do
             node -e "JSON.parse(require('fs').readFileSync('$f', 'utf8'))" || { echo "JSON parse failed: $f"; exit 1; }
           done
 
       - name: Label PR on success
-        if: success()
+        if: success() && github.event.pull_request.head.repo.fork == false
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: |
             valid
 
       - name: Label PR on failure
-        if: failure()
+        if: failure() && github.event.pull_request.head.repo.fork == false
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: |
