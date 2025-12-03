@@ -13,15 +13,23 @@ root.render(
 
 // Optional: load runtime config on Pages (sets window.__SZ_CONFIG__)
 if (typeof window !== 'undefined') {
-	const basePath = window.location.pathname.replace(/\/$/, '');
-	const cfgUrl = `${basePath}/config.json`;
-	fetch(cfgUrl).then(r => {
-		if (!r.ok) return;
-		return r.json();
-	}).then(json => {
-		if (json) {
-			window.__SZ_CONFIG__ = Object.assign(window.__SZ_CONFIG__ || {}, json);
-			console.log('[Analyzer] Loaded runtime config:', json);
-		}
-	}).catch(() => {});
+  window.__SZ_CONFIG__ = window.__SZ_CONFIG__ || {};
+  const basePath = window.location.pathname.includes('/analyzer') 
+    ? window.location.pathname.split('/analyzer')[0] + '/analyzer'
+    : '';
+  const cfgUrl = `${basePath}/config.json`;
+  fetch(cfgUrl)
+    .then(r => {
+      if (!r.ok) throw new Error(`Config fetch failed: ${r.status}`);
+      return r.json();
+    })
+    .then(json => {
+      if (json) {
+        Object.assign(window.__SZ_CONFIG__, json);
+        console.log('[Analyzer] Loaded runtime config:', json);
+      }
+    })
+    .catch(err => {
+      console.warn('[Analyzer] Could not load config.json:', err.message);
+    });
 }

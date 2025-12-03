@@ -6,28 +6,42 @@ const GITHUB_OAUTH_DEVICE_CODE = 'https://github.com/login/device/code';
 const GITHUB_OAUTH_TOKEN = 'https://github.com/login/oauth/access_token';
 const GITHUB_API = 'https://api.github.com';
 
-const OWNER = import.meta?.env?.VITE_GITHUB_OWNER || 'DragonBallZLeague';
-const REPO = import.meta?.env?.VITE_GITHUB_REPO || 'SparkingZero';
-const BASE_BRANCH = import.meta?.env?.VITE_GITHUB_BASE_BRANCH || 'dev-branch';
-// Try env first, then runtime config exposed on the page
-let CLIENT_ID = import.meta?.env?.VITE_GITHUB_CLIENT_ID || '';
-if (!CLIENT_ID && typeof window !== 'undefined') {
-  const metaContent = document.querySelector('meta[name="sz-github-client-id"]')?.getAttribute('content') || '';
-  const globalCfg = window.__SZ_CONFIG__ && (window.__SZ_CONFIG__.GITHUB_CLIENT_ID || window.__SZ_CONFIG__.VITE_GITHUB_CLIENT_ID);
-  CLIENT_ID = metaContent || globalCfg || '';
+function getConfig(key, fallback) {
+  // Try env first, then runtime config
+  const envValue = import.meta?.env?.[`VITE_GITHUB_${key}`];
+  if (envValue) return envValue;
+  
+  if (typeof window !== 'undefined') {
+    const metaContent = document.querySelector(`meta[name="sz-github-${key.toLowerCase()}"]`)?.getAttribute('content');
+    if (metaContent) return metaContent;
+    
+    const globalCfg = window.__SZ_CONFIG__?.[key] || window.__SZ_CONFIG__?.[`VITE_GITHUB_${key}`];
+    if (globalCfg) return globalCfg;
+  }
+  
+  return fallback;
 }
 
+const OWNER = getConfig('OWNER', 'DragonBallZLeague');
+const REPO = getConfig('REPO', 'SparkingZero');
+const BASE_BRANCH = getConfig('BASE_BRANCH', 'dev-branch');
+const getClientID = () => getConfig('CLIENT_ID', '');
+
 export function assertClientConfig() {
+  const CLIENT_ID = getClientID();
   if (!CLIENT_ID) {
     const envKeys = import.meta?.env ? Object.keys(import.meta.env).join(', ') : 'no import.meta.env';
+    const globalCfg = typeof window !== 'undefined' && window.__SZ_CONFIG__ ? JSON.stringify(window.__SZ_CONFIG__) : 'no __SZ_CONFIG__';
     console.warn('[Upload] Missing VITE_GITHUB_CLIENT_ID. Available env keys:', envKeys);
-    console.warn('[Upload] Attempt to set via meta tag name="sz-github-client-id" or window.__SZ_CONFIG__.GITHUB_CLIENT_ID at runtime.');
+    console.warn('[Upload] window.__SZ_CONFIG__:', globalCfg);
+    console.warn('[Upload] Set via .env, meta tag name="sz-github-client-id", or window.__SZ_CONFIG__.CLIENT_ID');
     throw new Error('Missing VITE_GITHUB_CLIENT_ID in environment. Set it in .env or provide meta/global config on Pages.');
   }
 }
 
 export async function startDeviceFlow(scope = 'public_repo') {
   assertClientConfig();
+  const CLIENT_ID = getClientID();
   const params = new URLSearchParams();
   params.set('client_id', CLIENT_ID);
   params.set('scope', scope);
@@ -45,6 +59,7 @@ export async function startDeviceFlow(scope = 'public_repo') {
 
 export async function pollForToken(device_code, interval = 5000) {
   assertClientConfig();
+  const CLIENT_ID = getClientID();
   const params = new URLSearchParams();
   params.set('client_id', CLIENT_ID);
   params.set('device_code', device_code);
