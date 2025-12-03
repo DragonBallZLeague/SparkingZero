@@ -1,0 +1,63 @@
+name: Validate BR_Data PR
+
+on:
+  pull_request:
+    branches: [ "dev-branch" ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: List changed files
+        id: changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            apps/analyzer/BR_Data/**
+
+      - name: Fail if no BR_Data changes
+        if: steps.changed.outputs.any_changed != 'true'
+        run: |
+          echo "No BR_Data files changed in this PR.";
+          exit 1
+
+      - name: Validate file extensions
+        run: |
+          for f in ${{ steps.changed.outputs.all_changed_files }}; do
+            case "$f" in
+              *.json) : ;;
+              *) echo "Invalid file type: $f"; exit 1;;
+            esac
+          done
+
+      - name: Validate paths (under BR_Data only)
+        run: |
+          for f in ${{ steps.changed.outputs.all_changed_files }}; do
+            case "$f" in
+              apps/analyzer/BR_Data/*) : ;;
+              *) echo "File outside BR_Data: $f"; exit 1;;
+            esac
+          done
+
+      - name: Basic JSON parse check
+        run: |
+          for f in ${{ steps.changed.outputs.all_changed_files }}; do
+            node -e "JSON.parse(require('fs').readFileSync('$f', 'utf8'))" || { echo "JSON parse failed: $f"; exit 1; }
+          done
+
+      - name: Label PR on success
+        if: success()
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: |
+            valid
+
+      - name: Label PR on failure
+        if: failure()
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: |
+            needs-fix
