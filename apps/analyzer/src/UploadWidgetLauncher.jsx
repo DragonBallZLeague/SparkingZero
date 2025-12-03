@@ -4,9 +4,18 @@ import UploadPanel from './UploadPanel';
 
 export default function UploadWidgetLauncher({ darkMode=false }) {
   const [open, setOpen] = useState(false);
+  const [showBadge, setShowBadge] = useState(false);
+
+  const onClick = () => {
+    console.log('[UploadWidget] Button clicked');
+    setOpen(true);
+    setShowBadge(true);
+    setTimeout(() => setShowBadge(false), 1500);
+  };
+
   const button = (
     <button
-      onClick={() => setOpen(true)}
+      onClick={onClick}
       style={{
         position: 'fixed', bottom: 16, right: 16,
         zIndex: 50000,
@@ -23,10 +32,19 @@ export default function UploadWidgetLauncher({ darkMode=false }) {
     </button>
   );
 
+  const badge = showBadge
+    ? (
+        <div style={{position:'fixed',bottom:72,right:16,zIndex:50000,background:'#10b981',color:'#fff',padding:'6px 8px',borderRadius:6}}>Opening panel...</div>
+      )
+    : null;
+
+  const panel = open ? (<UploadPanel open={open} onClose={() => setOpen(false)} />) : null;
+
   return (
     <>
-      {typeof document !== 'undefined' ? createPortal(button, document.body) : button}
-      {open && typeof document !== 'undefined' ? createPortal(<UploadPanel onClose={() => setOpen(false)} />, document.body) : (open && <UploadPanel onClose={() => setOpen(false)} />)}
+      {createPortal(button, document.body)}
+      {createPortal(badge, document.body)}
+      {createPortal(panel, document.body)}
     </>
   );
 }

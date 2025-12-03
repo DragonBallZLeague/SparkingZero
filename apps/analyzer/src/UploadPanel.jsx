@@ -67,11 +67,43 @@ export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-[560px] max-w-[90vw] rounded-lg shadow-xl border p-4 bg-white text-gray-900">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 50001,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)'
+      }}
+    >
+      <div
+        className="w-[560px] max-w-[90vw] rounded-lg shadow-xl border p-4 bg-white text-gray-900"
+        style={{
+          width: '560px',
+          maxWidth: '90vw',
+          borderRadius: '12px',
+          boxShadow: '0 12px 28px rgba(0,0,0,0.25)',
+          border: '1px solid #e5e7eb',
+          padding: '16px',
+          background: '#ffffff',
+          color: '#111827'
+        }}
+      >
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold">Submit Data to GitHub</h2>
-          <button onClick={onClose} className="px-2 py-1 text-sm rounded border">Close</button>
+          <button
+            onClick={onClose}
+            className="px-2 py-1 text-sm rounded border"
+            style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+          >
+            Close
+          </button>
         </div>
 
         {err && (
