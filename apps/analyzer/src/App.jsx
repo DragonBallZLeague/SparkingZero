@@ -47,6 +47,7 @@ import {
   Filter,
   Download
 } from 'lucide-react';
+import UploadWidgetLauncher from './UploadWidgetLauncher';
 // Reference data CSVs (raw imports)
 import charactersCSV from '../referencedata/characters.csv?raw';
 import capsulesCSV from '../referencedata/capsules.csv?raw';
@@ -7546,6 +7547,16 @@ export default function App() {
       </div>
     </div>
   );
+  // Render Submit Data launcher overlay at the end so it's present across views
+  useEffect(() => {
+    // no-op, placeholder if we need to coordinate darkMode
+  }, [darkMode]);
+  return null;
+}
+
+// Mount helper: render the UploadWidgetLauncher near root of the app
+export function UploadWidgetMount({ darkMode = false }) {
+  return <UploadWidgetLauncher darkMode={darkMode} />;
 }
 
 // Determine performance level for a value given a distribution of values.
