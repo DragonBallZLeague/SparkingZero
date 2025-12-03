@@ -15,8 +15,13 @@ function getConfig(key, fallback) {
     const metaContent = document.querySelector(`meta[name="sz-github-${key.toLowerCase()}"]`)?.getAttribute('content');
     if (metaContent) return metaContent;
     
-    const globalCfg = window.__SZ_CONFIG__?.[key] || window.__SZ_CONFIG__?.[`VITE_GITHUB_${key}`];
-    if (globalCfg) return globalCfg;
+    // Check multiple possible key formats in window.__SZ_CONFIG__
+    const cfg = window.__SZ_CONFIG__;
+    if (cfg) {
+      // Try: GITHUB_CLIENT_ID, CLIENT_ID, VITE_GITHUB_CLIENT_ID
+      const value = cfg[`GITHUB_${key}`] || cfg[key] || cfg[`VITE_GITHUB_${key}`];
+      if (value) return value;
+    }
   }
   
   return fallback;
