@@ -2994,7 +2994,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
             avgKills: matchCount > 0 ? formData.totalKills / matchCount : 0,
             damageEfficiency: damageEfficiency,
             damagePerSecond: damagePerSecond,
-            matchesPlayed: matchCount
+            matchCount: matchCount
           };
         }).sort((a, b) => a.formNumber - b.formNumber);
         
