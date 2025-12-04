@@ -2,10 +2,12 @@
 // Proxies GitHub Device Flow token polling endpoint with CORS enabled
 
 export default async function handler(req, res) {
-  // CORS
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
+  
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -29,17 +31,29 @@ export default async function handler(req, res) {
     params.set('client_id', client_id);
     params.set('device_code', device_code);
     params.set('grant_type', grant_type);
+    
     const ghRes = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'SparkingZero-Uploader',
       },
       body: params.toString(),
     });
+    
     const data = await ghRes.json();
-    res.status(ghRes.status).json(data);
+    
+    if (!ghRes.ok) {
+      console.error('[Device Token] GitHub error:', ghRes.status, data);
+      res.status(ghRes.status).json(data);
+      return;
+    }
+    
+    res.status(200).json(data);
   } catch (e) {
+    console.error('[Device Token] Proxy error:', e);
     res.status(500).json({ error: e.message || 'proxy_failed' });
   }
 }
+
