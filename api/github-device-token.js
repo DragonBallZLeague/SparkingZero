@@ -1,7 +1,7 @@
 // Vercel serverless function: POST /api/github-device-token
 // Proxies GitHub Device Flow token polling endpoint with CORS enabled
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -55,4 +55,4 @@ export default async function handler(req, res) {
     console.error('[Device Token] Proxy error:', e);
     res.status(500).json({ error: e.message || 'proxy_failed' });
   }
-}
+};
