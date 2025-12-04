@@ -2,10 +2,12 @@
 // Proxies GitHub Device Flow start endpoint with CORS enabled
 
 export default async function handler(req, res) {
-  // CORS
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
+  
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -27,17 +29,29 @@ export default async function handler(req, res) {
     const params = new URLSearchParams();
     params.set('client_id', client_id);
     params.set('scope', scope);
+    
     const ghRes = await fetch('https://github.com/login/device/code', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'SparkingZero-Uploader',
       },
       body: params.toString(),
     });
+    
     const data = await ghRes.json();
-    res.status(ghRes.status).json(data);
+    
+    if (!ghRes.ok) {
+      console.error('[Device Start] GitHub error:', ghRes.status, data);
+      res.status(ghRes.status).json(data);
+      return;
+    }
+    
+    res.status(200).json(data);
   } catch (e) {
+    console.error('[Device Start] Proxy error:', e);
     res.status(500).json({ error: e.message || 'proxy_failed' });
   }
 }
+
