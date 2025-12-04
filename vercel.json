@@ -1,10 +1,14 @@
 {
   "functions": {
-    "api/*.js": {
+    "api/github-device-start.js": {
+      "runtime": "nodejs20.x"
+    },
+    "api/github-device-token.js": {
       "runtime": "nodejs20.x"
     }
   }
 }
+
 
 
 
