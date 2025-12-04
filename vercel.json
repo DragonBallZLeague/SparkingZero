@@ -1,13 +1,9 @@
 {
   "functions": {
-    "upload-api/api/**/*.js": {
+    "api/**/*.js": {
       "runtime": "nodejs20.x"
     }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/upload-api/api/$1"
-    }
-  ]
+  }
 }
+
+
