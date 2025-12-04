@@ -30,6 +30,7 @@ function getConfig(key, fallback) {
 const OWNER = getConfig('OWNER', 'DragonBallZLeague');
 const REPO = getConfig('REPO', 'SparkingZero');
 const BASE_BRANCH = getConfig('BASE_BRANCH', 'dev-branch');
+const DEVICE_PROXY_BASE = getConfig('DEVICE_PROXY_BASE', '');
 const getClientID = () => getConfig('CLIENT_ID', '');
 
 export function assertClientConfig() {
@@ -47,6 +48,16 @@ export function assertClientConfig() {
 export async function startDeviceFlow(scope = 'public_repo') {
   assertClientConfig();
   const CLIENT_ID = getClientID();
+  if (DEVICE_PROXY_BASE) {
+    const res = await fetch(`${DEVICE_PROXY_BASE.replace(/\/$/, '')}/api/github-device-start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: CLIENT_ID, scope }),
+      mode: 'cors',
+    });
+    if (!res.ok) throw new Error('Failed to start device flow (proxy)');
+    return res.json();
+  }
   const params = new URLSearchParams();
   params.set('client_id', CLIENT_ID);
   params.set('scope', scope);
@@ -57,8 +68,13 @@ export async function startDeviceFlow(scope = 'public_repo') {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params.toString(),
+    mode: 'cors',
   });
-  if (!res.ok) throw new Error('Failed to start device flow');
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('[Device Flow] Start failed:', res.status, text);
+    throw new Error(`Failed to start device flow: ${res.status} ${text}`);
+  }
   return res.json();
 }
 
@@ -71,14 +87,21 @@ export async function pollForToken(device_code, interval = 5000) {
   params.set('grant_type', 'urn:ietf:params:oauth:grant-type:device_code');
 
   while (true) {
-    const res = await fetch(GITHUB_OAUTH_TOKEN, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-    });
+    const res = DEVICE_PROXY_BASE
+      ? await fetch(`${DEVICE_PROXY_BASE.replace(/\/$/, '')}/api/github-device-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ client_id: CLIENT_ID, device_code }),
+          mode: 'cors',
+        })
+      : await fetch(GITHUB_OAUTH_TOKEN, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params.toString(),
+        });
     if (!res.ok) throw new Error('Token polling failed');
     const data = await res.json();
     if (data.error) {

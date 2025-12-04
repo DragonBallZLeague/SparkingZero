@@ -28,7 +28,8 @@ export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
       setUser(u);
       setStage('ready');
     } catch (e) {
-      setErr(e.message);
+      console.error('[UploadPanel] Sign-in failed:', e);
+      setErr(`Sign-in failed: ${e.message}. Check console for details.`);
       setStage('error');
     }
   };
