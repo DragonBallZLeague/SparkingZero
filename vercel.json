@@ -1,5 +1,11 @@
 {
-  "buildCommand": "echo 'No build needed'"
+  "buildCommand": "echo 'No build needed'",
+  "projects": [
+    {
+      "name": "sparking-zero-api",
+      "rootDirectory": "vercel-api"
+    }
+  ]
 }
 
 
