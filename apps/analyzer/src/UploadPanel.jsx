@@ -22,7 +22,8 @@ export default function UploadPanel({ onClose }) {
   useEffect(() => {
     const loadPaths = async () => {
       try {
-        const res = await fetch('/api/paths');
+        const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+        const res = await fetch(`${apiUrl}/api/paths`);
         if (!res.ok) throw new Error('Failed to load folders');
         const data = await res.json();
         setPathOptions(data.options || []);
@@ -50,6 +51,7 @@ export default function UploadPanel({ onClose }) {
 
     setStage('uploading');
     try {
+      const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
       const filesPayload = [];
       for (const f of files) {
         if (f.size > 10 * 1024 * 1024) throw new Error(`${f.name} exceeds 10MB limit`);
@@ -57,7 +59,7 @@ export default function UploadPanel({ onClose }) {
         filesPayload.push({ name: f.name, content, size: f.size });
       }
 
-      const res = await fetch('/api/submit', {
+      const res = await fetch(`${apiUrl}/api/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
