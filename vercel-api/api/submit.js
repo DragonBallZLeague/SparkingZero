@@ -31,6 +31,8 @@ export default async function handler(req, res) {
   let body = req.body;
   if (typeof body === 'string') {
     try { body = JSON.parse(body || '{}'); } catch { body = {}; }
+  } else if (Buffer.isBuffer(body)) {
+    try { body = JSON.parse(body.toString() || '{}'); } catch { body = {}; }
   }
   const { name, comments = '', targetPath, files } = body || {};
   if (!name || !targetPath || !Array.isArray(files) || files.length === 0) return bad(res, 'name, targetPath, files are required');
