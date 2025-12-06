@@ -5,6 +5,12 @@ function slug(str) {
   return (str || '').toLowerCase().replace(/[^a-z0-9-_]+/g, '-').replace(/^-+|-+$/g, '') || 'user';
 }
 
+function cors(res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
 function bad(res, msg, code = 400) {
   res.status(code).json({ error: msg });
 }
@@ -21,6 +27,11 @@ async function gh(path, options, token) {
 }
 
 export default async function handler(req, res) {
+  cors(res);
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
   if (req.method !== 'POST') return bad(res, 'Method not allowed', 405);
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.OWNER || 'DragonBallZLeague';
