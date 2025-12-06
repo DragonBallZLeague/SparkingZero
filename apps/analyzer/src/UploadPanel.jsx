@@ -1,38 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { startDeviceFlow, pollForToken, getCurrentUser, getBranchSHA, createBranch, uploadFile, openPullRequest, formatIntakePath, assertClientConfig } from './githubDeviceFlow';
 
-export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
-  const [stage, setStage] = useState('idle'); // idle | device | polling | ready | uploading | done | error
-  const [device, setDevice] = useState(null);
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
+// Helper to read file as base64
+const fileToBase64 = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result.split(',')[1]);
+  reader.onerror = reject;
+  reader.readAsDataURL(file);
+});
+
+export default function UploadPanel({ onClose }) {
+  const [stage, setStage] = useState('ready'); // ready | uploading | done | error
   const [files, setFiles] = useState([]);
-  const [subfolder, setSubfolder] = useState(defaultSubfolder);
-  const [message, setMessage] = useState('Upload analyzer data');
+  const [name, setName] = useState('');
+  const [comments, setComments] = useState('');
+  const [pathOptions, setPathOptions] = useState([]);
+  const [selectedPath, setSelectedPath] = useState('');
   const [prUrl, setPrUrl] = useState('');
+  const [submissionId, setSubmissionId] = useState('');
   const [err, setErr] = useState('');
 
   useEffect(() => {
-    try { assertClientConfig(); } catch (e) { setErr(e.message); }
+    const loadPaths = async () => {
+      try {
+        const res = await fetch('/api/paths');
+        if (!res.ok) throw new Error('Failed to load folders');
+        const data = await res.json();
+        setPathOptions(data.options || []);
+        if ((data.options || []).length > 0) {
+          setSelectedPath(data.options[0].value);
+        }
+      } catch (e) {
+        setErr(e.message);
+      }
+    };
+    loadPaths();
   }, []);
-
-  const beginSignIn = async () => {
-    try {
-      setStage('device');
-      const d = await startDeviceFlow('public_repo');
-      setDevice(d); // { device_code, user_code, verification_uri, verification_uri_complete, expires_in, interval }
-      setStage('polling');
-      const tok = await pollForToken(d.device_code, (d.interval || 5) * 1000);
-      setToken(tok.access_token);
-      const u = await getCurrentUser(tok.access_token);
-      setUser(u);
-      setStage('ready');
-    } catch (e) {
-      console.error('[UploadPanel] Sign-in failed:', e);
-      setErr(`Sign-in failed: ${e.message}. Check console for details.`);
-      setStage('error');
-    }
-  };
 
   const onFileChange = (e) => {
     const f = Array.from(e.target.files || []);
@@ -41,25 +43,38 @@ export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
   };
 
   const doUpload = async () => {
-    if (!token || files.length === 0) return;
+    setErr('');
+    if (!name.trim()) { setErr('Name/username is required'); return; }
+    if (!selectedPath) { setErr('Please choose a target folder'); return; }
+    if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
+
     setStage('uploading');
     try {
-      const baseSha = await getBranchSHA(token);
-      const safeUser = (user?.login || 'user').replace(/[^a-zA-Z0-9-_]/g, '-');
-      const branch = `intake/${safeUser}-${Date.now()}`;
-      await createBranch(token, branch, baseSha);
-
-      // upload files
+      const filesPayload = [];
       for (const f of files) {
         if (f.size > 10 * 1024 * 1024) throw new Error(`${f.name} exceeds 10MB limit`);
-        const path = formatIntakePath(f.name, subfolder || 'intake');
-        await uploadFile(token, branch, path, f, message);
+        const content = await fileToBase64(f);
+        filesPayload.push({ name: f.name, content, size: f.size });
       }
 
-      const prTitle = `Intake upload by ${user?.login || 'user'} (${files.length} file${files.length>1?'s':''})`;
-      const prBody = `Automated intake upload from the Analyzer UI.\n\nSubfolder: ${subfolder || 'intake'}\nFiles:\n${files.map(f=>`- ${f.name}`).join('\n')}`;
-      const pr = await openPullRequest(token, branch, prTitle, prBody);
-      setPrUrl(pr.html_url);
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          comments: comments.trim(),
+          targetPath: selectedPath,
+          files: filesPayload
+        })
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Submission failed');
+      }
+      const data = await res.json();
+      setSubmissionId(data.id || '');
+      setPrUrl(data.prUrl || '');
       setStage('done');
     } catch (e) {
       setErr(e.message);
@@ -111,36 +126,24 @@ export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
           <div className="mb-3 p-2 rounded bg-red-50 border border-red-200 text-red-700 text-sm">{err}</div>
         )}
 
-        {stage === 'idle' && (
-          <div className="space-y-3">
-            <p>Sign in with GitHub to upload `.json` files directly to the repository via a pull request for admin approval.</p>
-            <button onClick={beginSignIn} className="px-3 py-2 rounded bg-black text-white">Sign in with GitHub</button>
-          </div>
-        )}
-
-        {stage === 'polling' && device && (
-          <div className="space-y-2">
-            <p className="text-sm">1) Open GitHub verification in a new tab:</p>
-            <p>
-              <a className="text-blue-600 underline" href={device.verification_uri} target="_blank" rel="noreferrer">{device.verification_uri}</a>
-            </p>
-            <p className="text-sm">2) Enter this code:</p>
-            <div className="font-mono text-lg p-2 rounded bg-gray-100 border inline-block">{device.user_code}</div>
-            <p className="text-xs text-gray-600">Waiting for approval... This window will continue automatically.</p>
-          </div>
-        )}
-
         {stage === 'ready' && (
           <div className="space-y-3">
-            <div className="text-sm">Signed in as <span className="font-mono">{user?.login}</span></div>
             <div className="space-y-1">
-              <label className="text-sm font-medium">Target subfolder under BR_Data</label>
-              <input value={subfolder} onChange={e=>setSubfolder(e.target.value)} className="w-full border rounded px-2 py-1" placeholder="intake" />
-              <div className="text-xs text-gray-600">Files will be placed at <code>apps/analyzer/BR_Data/&lt;subfolder&gt;/&lt;filename&gt;</code>.</div>
+              <label className="text-sm font-medium">Your name/username</label>
+              <input value={name} onChange={e=>setName(e.target.value)} className="w-full border rounded px-2 py-1" placeholder="e.g. SparkingFan42" />
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium">Commit message</label>
-              <input value={message} onChange={e=>setMessage(e.target.value)} className="w-full border rounded px-2 py-1" />
+              <label className="text-sm font-medium">Target folder under BR_Data</label>
+              <select value={selectedPath} onChange={e=>setSelectedPath(e.target.value)} className="w-full border rounded px-2 py-1">
+                {pathOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <div className="text-xs text-gray-600">Files will be placed at <code>apps/analyzer/BR_Data/&lt;selected path&gt;/&lt;filename&gt;</code>.</div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Comments (optional)</label>
+              <textarea value={comments} onChange={e=>setComments(e.target.value)} className="w-full border rounded px-2 py-1" rows={2} />
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">JSON files</label>
@@ -151,7 +154,7 @@ export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
                 </ul>
               )}
             </div>
-            <button onClick={doUpload} disabled={files.length===0} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Create PR</button>
+            <button onClick={doUpload} disabled={files.length===0 || !selectedPath || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
           </div>
         )}
 
@@ -161,8 +164,9 @@ export default function UploadPanel({ defaultSubfolder = 'intake', onClose }) {
 
         {stage === 'done' && (
           <div className="space-y-2">
-            <div className="text-green-700 bg-green-50 border border-green-200 p-2 rounded text-sm">Pull request created.</div>
-            <a className="text-blue-600 underline" href={prUrl} target="_blank" rel="noreferrer">View PR</a>
+            <div className="text-green-700 bg-green-50 border border-green-200 p-2 rounded text-sm">Submission received.</div>
+            {submissionId && (<div className="text-sm">Submission ID: <span className="font-mono">{submissionId}</span></div>)}
+            {prUrl && (<a className="text-blue-600 underline" href={prUrl} target="_blank" rel="noreferrer">View PR</a>)}
           </div>
         )}
 
