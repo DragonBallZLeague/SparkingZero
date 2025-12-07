@@ -3,5 +3,10 @@
   "installCommand": "echo skip install",
   "builds": [
     { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/paths", "dest": "/api/paths.js" },
+    { "src": "/api/submit", "dest": "/api/submit.js" },
+    { "src": "/api/status", "dest": "/api/status.js" }
   ]
 }
