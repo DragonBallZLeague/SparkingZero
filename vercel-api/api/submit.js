@@ -29,13 +29,44 @@ function validateJsonFile(filename, base64Content) {
     errors.push(`${filename}: Filename too long (max 255 chars)`);
   }
   
-  // Decode and parse JSON
-  let content;
+  // Decode base64 to buffer
+  let buffer;
   try {
-    content = Buffer.from(base64Content, 'base64').toString('utf8');
+    buffer = Buffer.from(base64Content, 'base64');
   } catch {
     errors.push(`${filename}: Invalid base64 encoding`);
     return errors;
+  }
+  
+  // Detect and decode encoding
+  let content;
+  
+  // Check for UTF-16 LE BOM (FF FE)
+  if (buffer.length >= 2 && buffer[0] === 0xFF && buffer[1] === 0xFE) {
+    try {
+      content = buffer.toString('utf16le');
+    } catch {
+      errors.push(`${filename}: Failed to decode UTF-16 LE`);
+      return errors;
+    }
+  }
+  // Check for UTF-8 BOM (EF BB BF)
+  else if (buffer.length >= 3 && buffer[0] === 0xEF && buffer[1] === 0xBB && buffer[2] === 0xBF) {
+    try {
+      content = buffer.toString('utf8');
+    } catch {
+      errors.push(`${filename}: Failed to decode UTF-8`);
+      return errors;
+    }
+  }
+  // Standard UTF-8
+  else {
+    try {
+      content = buffer.toString('utf8');
+    } catch {
+      errors.push(`${filename}: Failed to decode as UTF-8`);
+      return errors;
+    }
   }
   
   // Remove BOM if present
