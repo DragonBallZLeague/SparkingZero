@@ -245,7 +245,7 @@ export default function UploadPanel({ onClose }) {
                 </ul>
               )}
             </div>
-            <button onClick={doUpload} disabled={files.length===0 || !selectedPath || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
+            <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
           </div>
         )}
 

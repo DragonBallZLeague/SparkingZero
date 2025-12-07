@@ -172,8 +172,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'No files provided' });
   }
 
-  if (files.length > 20) {
-    return res.status(400).json({ error: 'Maximum 20 files per submission' });
+  if (files.length > 50) {
+    return res.status(400).json({ error: 'Maximum 50 files per submission' });
   }
 
   const results = {

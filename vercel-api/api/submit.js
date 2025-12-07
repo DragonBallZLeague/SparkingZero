@@ -119,8 +119,8 @@ function validateSubmission(files) {
     return { errors, warnings };
   }
   
-  if (files.length > 20) {
-    errors.push('Maximum 20 files per submission');
+  if (files.length > 50) {
+    errors.push('Maximum 50 files per submission');
   }
   
   const fileNames = new Set();
@@ -198,7 +198,7 @@ export default async function handler(req, res) {
     console.warn('Upload warnings:', warnings);
   }
   if (comments.length > 500) return bad(res, 'comments too long');
-  if (files.length > 10) return bad(res, 'too many files');
+  if (files.length > 50) return bad(res, 'too many files');
 
   for (const f of files) {
     if (!f.name || !f.content) return bad(res, 'invalid file payload');
