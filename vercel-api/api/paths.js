@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.OWNER || 'DragonBallZLeague';
   const repo = process.env.REPO || 'SparkingZero';
+  const branch = process.env.BRANCH || 'dev-branch';
   const rootPath = 'apps/analyzer/BR_Data';
   if (!token) {
     res.status(500).json({ error: 'Missing GITHUB_TOKEN' });
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
   };
 
   async function listDir(path) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
     const r = await fetch(url, { headers });
     if (!r.ok) throw new Error(`Failed to list ${path}: ${r.status}`);
     return r.json();
@@ -44,14 +45,22 @@ export default async function handler(req, res) {
     const options = [];
     for (const item of level1) {
       if (item.type !== 'dir') continue;
-      const childrenResp = await listDir(item.path);
-      const children = childrenResp
-        .filter(c => c.type === 'dir')
-        .map(c => ({ label: `${item.name} / ${c.name}`, value: `${item.name}/${c.name}` }));
-      if (children.length === 0) {
-        options.push({ label: item.name, value: item.name });
-      } else {
-        options.push(...children);
+      
+      // Always add the parent folder as an option
+      options.push({ label: item.name, value: item.name });
+      
+      // Also add subdirectories if they exist
+      try {
+        const childrenResp = await listDir(item.path);
+        const children = childrenResp
+          .filter(c => c.type === 'dir')
+          .map(c => ({ label: `${item.name} / ${c.name}`, value: `${item.name}/${c.name}` }));
+        if (children.length > 0) {
+          options.push(...children);
+        }
+      } catch (err) {
+        // If we can't list children, that's OK - we already added the parent
+        console.warn(`Could not list children of ${item.path}:`, err.message);
       }
     }
     res.status(200).json({ options });
