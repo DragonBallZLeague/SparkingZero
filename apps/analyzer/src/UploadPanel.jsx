@@ -53,12 +53,42 @@ export default function UploadPanel({ onClose }) {
     try {
       const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
       const filesPayload = [];
+      
+      // Validate files first
       for (const f of files) {
         if (f.size > 10 * 1024 * 1024) throw new Error(`${f.name} exceeds 10MB limit`);
         const content = await fileToBase64(f);
         filesPayload.push({ name: f.name, content, size: f.size });
       }
 
+      // Call validation endpoint
+      const validateRes = await fetch(`${apiUrl}/api/validate.js`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: filesPayload })
+      });
+
+      const validateData = await validateRes.json();
+      
+      // Check validation results
+      if (validateData.invalidFiles > 0) {
+        const errors = validateData.fileResults
+          .filter(f => !f.valid)
+          .map(f => `${f.filename}: ${f.errors.join(', ')}`)
+          .join('; ');
+        throw new Error(`Validation failed: ${errors}`);
+      }
+
+      // Show warnings if any
+      if (validateData.fileResults.some(f => f.warnings.length > 0)) {
+        const warnings = validateData.fileResults
+          .filter(f => f.warnings.length > 0)
+          .map(f => `${f.filename}: ${f.warnings.join(', ')}`)
+          .join('\n');
+        console.warn('Upload warnings:', warnings);
+      }
+
+      // Proceed with submission
       const res = await fetch(`${apiUrl}/api/submit.js`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
