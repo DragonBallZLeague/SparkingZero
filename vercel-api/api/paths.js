@@ -44,14 +44,22 @@ export default async function handler(req, res) {
     const options = [];
     for (const item of level1) {
       if (item.type !== 'dir') continue;
-      const childrenResp = await listDir(item.path);
-      const children = childrenResp
-        .filter(c => c.type === 'dir')
-        .map(c => ({ label: `${item.name} / ${c.name}`, value: `${item.name}/${c.name}` }));
-      if (children.length === 0) {
-        options.push({ label: item.name, value: item.name });
-      } else {
-        options.push(...children);
+      
+      // Always add the parent folder as an option
+      options.push({ label: item.name, value: item.name });
+      
+      // Also add subdirectories if they exist
+      try {
+        const childrenResp = await listDir(item.path);
+        const children = childrenResp
+          .filter(c => c.type === 'dir')
+          .map(c => ({ label: `${item.name} / ${c.name}`, value: `${item.name}/${c.name}` }));
+        if (children.length > 0) {
+          options.push(...children);
+        }
+      } catch (err) {
+        // If we can't list children, that's OK - we already added the parent
+        console.warn(`Could not list children of ${item.path}:`, err.message);
       }
     }
     res.status(200).json({ options });
