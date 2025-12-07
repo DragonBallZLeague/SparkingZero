@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.OWNER || 'DragonBallZLeague';
   const repo = process.env.REPO || 'SparkingZero';
+  const branch = process.env.BRANCH || 'dev-branch';
   const rootPath = 'apps/analyzer/BR_Data';
   if (!token) {
     res.status(500).json({ error: 'Missing GITHUB_TOKEN' });
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
   };
 
   async function listDir(path) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
     const r = await fetch(url, { headers });
     if (!r.ok) throw new Error(`Failed to list ${path}: ${r.status}`);
     return r.json();
