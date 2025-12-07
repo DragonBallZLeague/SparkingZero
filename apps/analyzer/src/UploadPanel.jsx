@@ -14,7 +14,10 @@ export default function UploadPanel({ onClose }) {
   const [name, setName] = useState('');
   const [comments, setComments] = useState('');
   const [pathOptions, setPathOptions] = useState([]);
-  const [selectedPath, setSelectedPath] = useState('');
+  const [parentOptions, setParentOptions] = useState([]);
+  const [selectedParent, setSelectedParent] = useState('');
+  const [leafOptions, setLeafOptions] = useState([]);
+  const [selectedLeaf, setSelectedLeaf] = useState('');
   const [prUrl, setPrUrl] = useState('');
   const [submissionId, setSubmissionId] = useState('');
   const [err, setErr] = useState('');
@@ -26,9 +29,32 @@ export default function UploadPanel({ onClose }) {
         const res = await fetch(`${apiUrl}/api/paths.js`);
         if (!res.ok) throw new Error('Failed to load folders');
         const data = await res.json();
-        setPathOptions(data.options || []);
-        if ((data.options || []).length > 0) {
-          setSelectedPath(data.options[0].value);
+        const opts = data.options || [];
+        setPathOptions(opts);
+        const grouped = {};
+        for (const opt of opts) {
+          const parts = (opt.value || '').split('/');
+          if (!parts[0]) continue;
+          const parent = parts[0];
+          const child = parts.slice(1).join('/');
+          if (!grouped[parent]) grouped[parent] = [];
+          if (child) {
+            grouped[parent].push({ label: child, value: opt.value });
+          } else {
+            // Parent without children; treat as leaf for selection
+            grouped[parent].push({ label: parent, value: opt.value });
+          }
+        }
+        const parents = Object.keys(grouped).sort();
+        setParentOptions(parents);
+        if (parents.length > 0) {
+          const initialParent = parents[0];
+          setSelectedParent(initialParent);
+          const leaves = grouped[initialParent] || [];
+          if (leaves.length > 0) {
+            setLeafOptions(leaves);
+            setSelectedLeaf(leaves[0].value);
+          }
         }
       } catch (e) {
         setErr(e.message);
@@ -36,6 +62,31 @@ export default function UploadPanel({ onClose }) {
     };
     loadPaths();
   }, []);
+
+  // When parent changes, refresh leaf options
+  useEffect(() => {
+    if (!selectedParent) return;
+    const grouped = {};
+    for (const opt of pathOptions) {
+      const parts = (opt.value || '').split('/');
+      if (!parts[0]) continue;
+      const parent = parts[0];
+      const child = parts.slice(1).join('/');
+      if (!grouped[parent]) grouped[parent] = [];
+      if (child) {
+        grouped[parent].push({ label: child, value: opt.value });
+      } else {
+        grouped[parent].push({ label: parent, value: opt.value });
+      }
+    }
+    const leaves = grouped[selectedParent] || [];
+    setLeafOptions(leaves);
+    if (leaves.length > 0) {
+      setSelectedLeaf(leaves[0].value);
+    } else {
+      setSelectedLeaf('');
+    }
+  }, [selectedParent, pathOptions]);
 
   const onFileChange = (e) => {
     const f = Array.from(e.target.files || []);
@@ -46,7 +97,7 @@ export default function UploadPanel({ onClose }) {
   const doUpload = async () => {
     setErr('');
     if (!name.trim()) { setErr('Name/username is required'); return; }
-    if (!selectedPath) { setErr('Please choose a target folder'); return; }
+    if (!selectedLeaf) { setErr('Please choose a target folder'); return; }
     if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
 
     setStage('uploading');
@@ -95,7 +146,7 @@ export default function UploadPanel({ onClose }) {
         body: JSON.stringify({
           name: name.trim(),
           comments: comments.trim(),
-          targetPath: selectedPath,
+          targetPath: selectedLeaf,
           files: filesPayload
         })
       });
@@ -166,12 +217,25 @@ export default function UploadPanel({ onClose }) {
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">Target folder under BR_Data</label>
-              <select value={selectedPath} onChange={e=>setSelectedPath(e.target.value)} className="w-full border rounded px-2 py-1">
-                {pathOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-              <div className="text-xs text-gray-600">Files will be placed at <code>apps/analyzer/BR_Data/&lt;selected path&gt;/&lt;filename&gt;</code>.</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <div className="text-xs text-gray-600">Category</div>
+                  <select value={selectedParent} onChange={e=>setSelectedParent(e.target.value)} className="w-full border rounded px-2 py-1">
+                    {parentOptions.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs text-gray-600">Folder</div>
+                  <select value={selectedLeaf} onChange={e=>setSelectedLeaf(e.target.value)} className="w-full border rounded px-2 py-1" disabled={leafOptions.length === 0}>
+                    {leafOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="text-xs text-gray-600">Only bottom-level folders are selectable. Files will be placed at <code>apps/analyzer/BR_Data/&lt;selected path&gt;/&lt;filename&gt;</code>.</div>
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">Comments (optional)</label>
