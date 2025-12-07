@@ -1,0 +1,71 @@
+name: Validate and Fix Battle Result JSON
+
+on:
+  pull_request:
+    paths:
+      - 'apps/analyzer/BR_Data/**/*.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  validate-and-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: apps/analyzer
+        run: npm ci
+
+      - name: Run JSON encoding fix
+        working-directory: apps/analyzer
+        run: node scripts/fix-json-encoding.js
+
+      - name: Check if files were modified
+        id: check
+        run: |
+          if git diff --quiet; then
+            echo "modified=false" >> $GITHUB_OUTPUT
+          else
+            echo "modified=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit fixes
+        if: steps.check.outputs.modified == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add apps/analyzer/BR_Data/**/*.json
+          git commit -m "fix: Normalize JSON encoding and formatting"
+          git push
+
+      - name: Comment on PR
+        if: steps.check.outputs.modified == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ JSON files have been validated and normalized:\n- UTF-8 encoding verified\n- BOM removed if present\n- Formatting standardized'
+            })
+
+      - name: Validation Summary
+        run: |
+          echo "## JSON Validation Results"
+          echo "✅ All files processed"
+          echo "- UTF-16/UTF-8 encoding checked"
+          echo "- Invalid JSON syntax detected and reported"
+          echo "- Files formatted with Prettier"

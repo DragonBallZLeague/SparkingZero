@@ -15,6 +15,103 @@ function bad(res, msg, code = 400) {
   res.status(code).json({ error: msg });
 }
 
+// Validate individual JSON file
+function validateJsonFile(filename, base64Content) {
+  const errors = [];
+  
+  // Check filename
+  if (!filename.endsWith('.json')) {
+    errors.push(`${filename}: Must be a .json file`);
+    return errors;
+  }
+  
+  if (filename.length > 255) {
+    errors.push(`${filename}: Filename too long (max 255 chars)`);
+  }
+  
+  // Decode and parse JSON
+  let content;
+  try {
+    content = Buffer.from(base64Content, 'base64').toString('utf8');
+  } catch {
+    errors.push(`${filename}: Invalid base64 encoding`);
+    return errors;
+  }
+  
+  // Remove BOM if present
+  content = content.replace(/^\uFEFF/, '');
+  
+  // Validate JSON syntax
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch (e) {
+    errors.push(`${filename}: Invalid JSON - ${e.message}`);
+    return errors;
+  }
+  
+  // Check if it's an object (battle result schema)
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    errors.push(`${filename}: Must be a JSON object, not ${Array.isArray(parsed) ? 'array' : typeof parsed}`);
+    return errors;
+  }
+  
+  // Check for required BR fields (basic validation)
+  const requiredFields = ['battleInfo', 'matchups'];
+  const hasRequiredFields = requiredFields.some(field => field in parsed);
+  if (!hasRequiredFields) {
+    errors.push(`${filename}: Missing expected battle result fields`);
+  }
+  
+  return errors;
+}
+
+// Validate all files in submission
+function validateSubmission(files) {
+  const errors = [];
+  const warnings = [];
+  
+  if (!Array.isArray(files) || files.length === 0) {
+    errors.push('No files provided');
+    return { errors, warnings };
+  }
+  
+  if (files.length > 20) {
+    errors.push('Maximum 20 files per submission');
+  }
+  
+  const fileNames = new Set();
+  for (const f of files) {
+    if (!f.name || !f.content) {
+      errors.push('Each file must have name and content');
+      continue;
+    }
+    
+    // Check for duplicates
+    if (fileNames.has(f.name)) {
+      errors.push(`Duplicate filename: ${f.name}`);
+    }
+    fileNames.add(f.name);
+    
+    // Check file size
+    const sizeKb = (f.size || 0) / 1024;
+    if (sizeKb > 10000) {
+      errors.push(`${f.name}: File too large (${sizeKb.toFixed(2)} KB, max 10 MB)`);
+    }
+    
+    // Validate JSON
+    const fileErrors = validateJsonFile(f.name, f.content);
+    errors.push(...fileErrors);
+    
+    // Warn if filename doesn't match expected pattern
+    if (!f.name.match(/^[A-Za-z0-9_\-]+\.json$/)) {
+      warnings.push(`${f.name}: Filename contains special characters (not A-Z, 0-9, _, -)`);
+    }
+  }
+  
+  return { errors, warnings };
+}
+
 async function gh(path, options, token) {
   const headers = {
     Accept: 'application/vnd.github+json',
@@ -48,6 +145,15 @@ export default async function handler(req, res) {
   const { name, comments = '', targetPath, files } = body || {};
   if (!name || !targetPath || !Array.isArray(files) || files.length === 0) return bad(res, 'name, targetPath, files are required');
   if (name.length > 80) return bad(res, 'name too long');
+  
+  // Validate all files
+  const { errors, warnings } = validateSubmission(files);
+  if (errors.length > 0) {
+    return bad(res, `Validation failed: ${errors.join('; ')}`, 400);
+  }
+  if (warnings.length > 0) {
+    console.warn('Upload warnings:', warnings);
+  }
   if (comments.length > 500) return bad(res, 'comments too long');
   if (files.length > 10) return bad(res, 'too many files');
 
