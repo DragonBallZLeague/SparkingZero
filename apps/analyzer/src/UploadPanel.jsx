@@ -40,9 +40,6 @@ export default function UploadPanel({ onClose }) {
           if (!grouped[parent]) grouped[parent] = [];
           if (child) {
             grouped[parent].push({ label: child, value: opt.value });
-          } else {
-            // Parent without children; treat as leaf for selection
-            grouped[parent].push({ label: parent, value: opt.value });
           }
         }
         const parents = Object.keys(grouped).sort();
@@ -75,8 +72,6 @@ export default function UploadPanel({ onClose }) {
       if (!grouped[parent]) grouped[parent] = [];
       if (child) {
         grouped[parent].push({ label: child, value: opt.value });
-      } else {
-        grouped[parent].push({ label: parent, value: opt.value });
       }
     }
     const leaves = grouped[selectedParent] || [];
