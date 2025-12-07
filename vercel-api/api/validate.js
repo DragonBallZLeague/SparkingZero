@@ -28,24 +28,61 @@ function validateJsonFile(filename, base64Content) {
     result.valid = false;
   }
 
-  // Decode and parse JSON
-  let content;
+  // Decode base64 to buffer
+  let buffer;
   try {
-    content = Buffer.from(base64Content, 'base64').toString('utf8');
+    buffer = Buffer.from(base64Content, 'base64');
   } catch {
     result.errors.push('Invalid base64 encoding');
     result.valid = false;
     return result;
   }
 
-  result.stats.sizeBytes = content.length;
+  result.stats.sizeBytes = buffer.length;
+
+  // Detect encoding
+  let content;
+  let detectedEncoding = 'utf8';
+
+  // Check for UTF-16 LE BOM (FF FE)
+  if (buffer.length >= 2 && buffer[0] === 0xFF && buffer[1] === 0xFE) {
+    detectedEncoding = 'utf16le';
+    result.warnings.push('File is UTF-16 LE encoded (will be converted to UTF-8)');
+    try {
+      content = buffer.toString('utf16le');
+    } catch {
+      result.errors.push('Failed to decode UTF-16 LE');
+      result.valid = false;
+      return result;
+    }
+  }
+  // Check for UTF-8 BOM (EF BB BF)
+  else if (buffer.length >= 3 && buffer[0] === 0xEF && buffer[1] === 0xBB && buffer[2] === 0xBF) {
+    detectedEncoding = 'utf8-bom';
+    result.warnings.push('File has UTF-8 BOM (will be removed)');
+    try {
+      content = buffer.toString('utf8');
+    } catch {
+      result.errors.push('Failed to decode UTF-8');
+      result.valid = false;
+      return result;
+    }
+  }
+  // Standard UTF-8
+  else {
+    try {
+      content = buffer.toString('utf8');
+    } catch {
+      result.errors.push('Failed to decode as UTF-8');
+      result.valid = false;
+      return result;
+    }
+  }
+
+  result.stats.detectedEncoding = detectedEncoding;
 
   // Remove BOM if present
-  const hadBOM = content.startsWith('\uFEFF');
-  if (hadBOM) {
-    result.warnings.push('File has UTF-8 BOM (will be removed)');
-    content = content.slice(1);
-  }
+  content = content.replace(/^\uFEFF/, '');
 
   // Validate JSON syntax
   let parsed;
