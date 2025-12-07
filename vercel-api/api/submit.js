@@ -88,10 +88,22 @@ function validateJsonFile(filename, base64Content) {
   }
   
   // Check for required BR fields (basic validation)
-  const requiredFields = ['battleInfo', 'matchups'];
-  const hasRequiredFields = requiredFields.some(field => field in parsed);
-  if (!hasRequiredFields) {
-    errors.push(`${filename}: Missing expected battle result fields`);
+  // Support both standard schema and TeamBattleResults wrapper
+  let hasValidStructure = false;
+  
+  // Check for standard BR fields
+  const standardFields = ['battleInfo', 'matchups', 'characterRecord', 'mapRecord'];
+  if (standardFields.some(field => field in parsed)) {
+    hasValidStructure = true;
+  }
+  
+  // Check for TeamBattleResults wrapper structure
+  if ('TeamBattleResults' in parsed && parsed.TeamBattleResults.battleResult) {
+    hasValidStructure = true;
+  }
+  
+  if (!hasValidStructure) {
+    errors.push(`${filename}: Missing expected battle result fields or structure`);
   }
   
   return errors;

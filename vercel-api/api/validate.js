@@ -102,12 +102,34 @@ function validateJsonFile(filename, base64Content) {
   }
 
   // Check for common BR fields
-  const brFields = ['battleInfo', 'matchups', 'team1', 'team2', 'winner'];
+  const brFields = ['battleInfo', 'matchups', 'team1', 'team2', 'winner', 'characterRecord', 'mapRecord'];
   const foundFields = brFields.filter(f => f in parsed);
   result.stats.detectedFields = foundFields;
 
-  if (foundFields.length === 0) {
+  // Check for TeamBattleResults wrapper structure
+  if ('TeamBattleResults' in parsed) {
+    result.stats.structure = 'TeamBattleResults';
+    result.warnings.push('File uses TeamBattleResults wrapper structure');
+    const tbr = parsed.TeamBattleResults;
+    
+    // Validate nested battleResult structure
+    if (!tbr.battleResult) {
+      result.errors.push('Missing TeamBattleResults.battleResult field');
+      result.valid = false;
+      return result;
+    }
+    
+    const brResult = tbr.battleResult;
+    const brResultFields = ['characterRecord', 'mapRecord', 'battleWinLose'].filter(f => f in brResult);
+    result.stats.battleResultFields = brResultFields;
+    
+    if (brResultFields.length === 0) {
+      result.warnings.push('No recognized battle result fields in TeamBattleResults.battleResult');
+    }
+  } else if (foundFields.length === 0) {
     result.warnings.push('No recognized battle result fields detected');
+  } else {
+    result.stats.structure = 'standard';
   }
 
   // Warn if filename doesn't match convention
