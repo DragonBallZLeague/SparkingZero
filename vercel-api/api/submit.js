@@ -119,8 +119,8 @@ function validateSubmission(files) {
     return { errors, warnings };
   }
   
-  if (files.length > 20) {
-    errors.push('Maximum 20 files per submission');
+  if (files.length > 50) {
+    errors.push('Maximum 50 files per submission');
   }
   
   const fileNames = new Set();
