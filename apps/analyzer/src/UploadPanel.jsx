@@ -122,7 +122,14 @@ export default function UploadPanel({ onClose }) {
     const previews = [];
     for (const file of filesList) {
       try {
-        const text = await file.text();
+        // Use FileReader to read the file
+        const text = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsText(file);
+        });
+        
         const json = JSON.parse(text);
         const hasTeamData = json.TeamBattleResults?.teams;
         previews.push({
@@ -191,7 +198,14 @@ export default function UploadPanel({ onClose }) {
         if (setTeamData && team1 && team2) {
           // Modify the file to set team data
           try {
-            const text = await f.text();
+            // Read file using FileReader to avoid stream exhaustion
+            const text = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsText(f);
+            });
+            
             const json = JSON.parse(text);
             
             // Set team data if the structure exists
