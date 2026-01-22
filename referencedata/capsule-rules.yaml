@@ -23,6 +23,29 @@ rulesets:
             - "00_0_0111"
             - "00_0_0131"
             - "00_0_0123"
+      - type: max-same-per-team
+        params:
+          maxCount: 2
+      - type: max-cost-group-per-character
+        params:
+          maxCost: 6
+          groupIds:
+            - "00_0_0028"  # Blast Attack Boost 1
+            - "00_0_0029"  # Blast Attack Boost 2
+            - "00_0_0030"  # Blast Attack Boost 3
+            - "00_0_0005"  # Rush Attack Boost 1
+            - "00_0_0006"  # Rush Attack Boost 2
+            - "00_0_0007"  # Rush Attack Boost 3
+            - "00_0_0011"  # Smash Attack Boost 1
+            - "00_0_0012"  # Smash Attack Boost 2
+            - "00_0_0013"  # Smash Attack Boost 3
+      - type: mutually-exclusive-team
+        params:
+          groups:
+            - ids: ["00_0_0000"]  # Master Roshi Training
+              maxCount: 2
+            - ids: ["00_0_0150"]  # King Kai Training
+              maxCount: 1
 
   Standard - Soft:
     metadata:
