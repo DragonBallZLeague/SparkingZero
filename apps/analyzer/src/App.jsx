@@ -48,9 +48,9 @@ import {
   Download
 } from 'lucide-react';
 import UploadWidgetLauncher from './UploadWidgetLauncher';
-// Reference data CSVs (raw imports)
-import charactersCSV from '../referencedata/characters.csv?raw';
-import capsulesCSV from '../referencedata/capsules.csv?raw';
+// Reference data CSVs (raw imports) - now using shared referencedata folder
+import charactersCSV from '../../../referencedata/characters.csv?raw';
+import capsulesCSV from '../../../referencedata/capsules.csv?raw';
 // Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
 // Each entry may be a module object; code uses module.default || module
 const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });

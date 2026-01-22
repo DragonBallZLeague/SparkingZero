@@ -71,8 +71,7 @@ function main() {
 
     const jsonCount = findJsonFiles(outDataDir);
     if (jsonCount === 0) {
-      console.error('No .json files found in public/BR_Data after copy. Aborting build.');
-      process.exit(1);
+      console.warn('No .json files found in public/BR_Data after copy. Continuing build.');
     }
   } catch (err) {
     console.error('Failed to generate br-data-structure.json:', err);

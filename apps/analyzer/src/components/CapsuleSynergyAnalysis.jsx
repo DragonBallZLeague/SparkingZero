@@ -14,7 +14,7 @@ import { MultiSelectCombobox } from './MultiSelectCombobox.jsx';
 import { loadCapsuleData } from '../utils/capsuleDataProcessor.js';
 import { calculateCapsulePerformance, calculateAIStrategyCapsuleCompatibility } from '../utils/capsuleSynergyCalculator.js';
 import IndividualCapsulePerformance from './capsule-synergy/IndividualCapsulePerformance.jsx';
-import capsulesCSV from '../../referencedata/capsules.csv?raw';
+import capsulesCSV from '../../../../referencedata/capsules.csv?raw';
 
 /**
  * Main Capsule Synergy Analysis Component

@@ -21,6 +21,27 @@ export default function UploadPanel({ onClose }) {
   const [prUrl, setPrUrl] = useState('');
   const [submissionId, setSubmissionId] = useState('');
   const [err, setErr] = useState('');
+  const [setTeamData, setSetTeamData] = useState(false);
+  const [team1, setTeam1] = useState('Budokai');
+  const [team2, setTeam2] = useState('');
+  const [teamWarning, setTeamWarning] = useState('');
+  const [filesPreview, setFilesPreview] = useState([]);
+
+  const teams = [
+    '',
+    'Budokai',
+    'Cinema',
+    'Cold Kingdom',
+    'Creations',
+    'Demons',
+    'Malevolent Souls',
+    'Master and Student',
+    'Primal Instincts',
+    'Sentai',
+    'Time Patrol',
+    'Tiny Terrors',
+    'Z-Fighters'
+  ];
 
   useEffect(() => {
     const loadPaths = async () => {
@@ -87,23 +108,122 @@ export default function UploadPanel({ onClose }) {
     const f = Array.from(e.target.files || []);
     const onlyJson = f.filter(x => x.name.toLowerCase().endsWith('.json'));
     setFiles(onlyJson);
+    
+    // Generate preview for team data modification
+    if (setTeamData && onlyJson.length > 0) {
+      generateFilesPreview(onlyJson);
+    } else {
+      setFilesPreview([]);
+    }
   };
+
+  // Generate preview of which files will be modified
+  const generateFilesPreview = async (filesList) => {
+    const previews = [];
+    for (const file of filesList) {
+      try {
+        // Use FileReader to read the file
+        const text = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsText(file);
+        });
+        
+        const json = JSON.parse(text);
+        const hasTeamData = json.TeamBattleResults?.teams;
+        previews.push({
+          name: file.name,
+          hasExistingTeams: !!hasTeamData,
+          existingTeams: hasTeamData ? json.TeamBattleResults.teams : null,
+          willModify: setTeamData && team1 && team2
+        });
+      } catch (e) {
+        previews.push({
+          name: file.name,
+          hasExistingTeams: false,
+          existingTeams: null,
+          willModify: false,
+          error: 'Could not parse JSON'
+        });
+      }
+    }
+    setFilesPreview(previews);
+  };
+
+  // Update preview when team settings change
+  useEffect(() => {
+    if (setTeamData && files.length > 0) {
+      generateFilesPreview(files);
+    } else {
+      setFilesPreview([]);
+    }
+  }, [setTeamData, team1, team2, files]);
+
+  // Validate team selection
+  useEffect(() => {
+    if (setTeamData) {
+      if (!team1 || !team2) {
+        setTeamWarning('');
+      } else if (team1 === team2) {
+        setTeamWarning('Warning: Team 1 and Team 2 are the same. This is allowed but may not be intended.');
+      } else {
+        setTeamWarning('');
+      }
+    } else {
+      setTeamWarning('');
+    }
+  }, [setTeamData, team1, team2]);
 
   const doUpload = async () => {
     setErr('');
     if (!name.trim()) { setErr('Name/username is required'); return; }
     if (!selectedLeaf) { setErr('Please choose a target folder'); return; }
     if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
+    if (setTeamData && (!team1 || !team2)) { 
+      setErr('Please select both Team 1 and Team 2, or disable "Set Team Data"'); 
+      return; 
+    }
 
     setStage('uploading');
     try {
       const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
       const filesPayload = [];
       
-      // Validate files first
+      // Process and validate files
       for (const f of files) {
         if (f.size > 10 * 1024 * 1024) throw new Error(`${f.name} exceeds 10MB limit`);
-        const content = await fileToBase64(f);
+        
+        let content;
+        if (setTeamData && team1 && team2) {
+          // Modify the file to set team data
+          try {
+            // Read file using FileReader to avoid stream exhaustion
+            const text = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsText(f);
+            });
+            
+            const json = JSON.parse(text);
+            
+            // Set team data if the structure exists
+            if (json.TeamBattleResults) {
+              json.TeamBattleResults.teams = [team1, team2];
+            }
+            
+            // Convert back to base64
+            const modifiedJson = JSON.stringify(json, null, 2);
+            content = btoa(unescape(encodeURIComponent(modifiedJson)));
+          } catch (e) {
+            throw new Error(`Failed to modify ${f.name}: ${e.message}`);
+          }
+        } else {
+          // Use original file content
+          content = await fileToBase64(f);
+        }
+        
         filesPayload.push({ name: f.name, content, size: f.size });
       }
 
@@ -211,7 +331,7 @@ export default function UploadPanel({ onClose }) {
               <input value={name} onChange={e=>setName(e.target.value)} className="w-full border rounded px-2 py-1" placeholder="e.g. SparkingFan42" />
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium">Target folder under BR_Data</label>
+              <label className="text-sm font-medium">Select Match Area</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <div className="text-xs text-gray-600">Category</div>
@@ -230,8 +350,92 @@ export default function UploadPanel({ onClose }) {
                   </select>
                 </div>
               </div>
-              <div className="text-xs text-gray-600">Only bottom-level folders are selectable. Files will be placed at <code>apps/analyzer/BR_Data/&lt;selected path&gt;/&lt;filename&gt;</code>.</div>
             </div>
+            
+            {/* Team Data Section */}
+            <div className="space-y-2 p-3 rounded-lg bg-blue-50 border border-blue-200">
+              <div className="flex items-center gap-2">
+                <input 
+                  type="checkbox" 
+                  id="setTeamData" 
+                  checked={setTeamData} 
+                  onChange={e=>setSetTeamData(e.target.checked)}
+                  className="rounded"
+                />
+                <label htmlFor="setTeamData" className="text-sm font-medium cursor-pointer">Set Team Data</label>
+              </div>
+              
+              {setTeamData && (
+                <div className="space-y-2 mt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700">Team 1</label>
+                      <select 
+                        value={team1} 
+                        onChange={e=>setTeam1(e.target.value)} 
+                        className="w-full border rounded px-2 py-1 text-sm"
+                      >
+                        {teams.filter(t => t !== '').map((t) => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700">Team 2</label>
+                      <select 
+                        value={team2} 
+                        onChange={e=>setTeam2(e.target.value)} 
+                        className="w-full border rounded px-2 py-1 text-sm"
+                      >
+                        {teams.map((t) => (
+                          <option key={t} value={t}>{t || '(Not Set)'}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {teamWarning && (
+                    <div className="p-2 rounded bg-yellow-50 border border-yellow-300 text-yellow-800 text-xs">
+                      ⚠️ {teamWarning}
+                    </div>
+                  )}
+                  
+                  {filesPreview.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      <div className="text-xs font-medium text-gray-700">Files Preview:</div>
+                      <div className="max-h-32 overflow-y-auto space-y-1">
+                        {filesPreview.map((preview, i) => (
+                          <div key={i} className="text-xs p-1.5 rounded bg-white border border-blue-200">
+                            <div className="font-medium">{preview.name}</div>
+                            {preview.error ? (
+                              <div className="text-red-600">{preview.error}</div>
+                            ) : (
+                              <>
+                                {preview.hasExistingTeams && (
+                                  <div className="text-gray-600">
+                                    Current: [{preview.existingTeams?.join(', ')}]
+                                  </div>
+                                )}
+                                {preview.willModify ? (
+                                  <div className="text-green-700">
+                                    Will set to: [{team1}, {team2}]
+                                  </div>
+                                ) : (
+                                  <div className="text-gray-500">
+                                    {!team1 || !team2 ? 'Select both teams to modify' : 'No TeamBattleResults structure found'}
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
             <div className="space-y-1">
               <label className="text-sm font-medium">Comments (optional)</label>
               <textarea value={comments} onChange={e=>setComments(e.target.value)} className="w-full border rounded px-2 py-1" rows={2} />
