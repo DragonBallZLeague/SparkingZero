@@ -1,8 +1,8 @@
 version: 1
-default: "standard"
+default: "Standard"
 
 rulesets:
-  standard:
+  Standard:
     metadata:
       name: "Standard"
       description: "Per-character cost limit: 20"
@@ -23,8 +23,31 @@ rulesets:
             - "00_0_0111"
             - "00_0_0131"
             - "00_0_0123"
+      - type: max-same-per-team
+        params:
+          maxCount: 2
+      - type: max-cost-group-per-character
+        params:
+          maxCost: 6
+          groupIds:
+            - "00_0_0028"  # Blast Attack Boost 1
+            - "00_0_0029"  # Blast Attack Boost 2
+            - "00_0_0030"  # Blast Attack Boost 3
+            - "00_0_0005"  # Rush Attack Boost 1
+            - "00_0_0006"  # Rush Attack Boost 2
+            - "00_0_0007"  # Rush Attack Boost 3
+            - "00_0_0011"  # Smash Attack Boost 1
+            - "00_0_0012"  # Smash Attack Boost 2
+            - "00_0_0013"  # Smash Attack Boost 3
+      - type: mutually-exclusive-team
+        params:
+          groups:
+            - ids: ["00_0_0000"]  # Master Roshi Training
+              maxCount: 2
+            - ids: ["00_0_0150"]  # King Kai Training
+              maxCount: 1
 
-  standard-soft:
+  Standard - Soft:
     metadata:
       name: "Standard - Soft"
       description: "Per-character cost limit: 20"
@@ -45,47 +68,26 @@ rulesets:
             - "00_0_0111"
             - "00_0_0131"
             - "00_0_0123"
-
-  star system:
-    metadata:
-      name: "Star System"
-      description: "Per-character cost limit: 12"
-      author: "team"
-      createdAt: "2025-10-04"
-    totalCost: 12
-    scope: per-character
-    mode: hard
-    restrictions:
-      - type: unique-per-character
+      - type: max-same-per-team
         params:
-          enabled: true
-      - type: banned-ids
+          maxCount: 2
+      - type: max-cost-group-per-character
         params:
-          ids:
-            - "00_0_0151"
-            - "00_0_0152"
-            - "00_0_0111"
-            - "00_0_0131"
-            - "00_0_0123"
-
-  star system-soft:
-    metadata:
-      name: "Star System-Soft"
-      description: "Per-character cost limit: 12"
-      author: "team"
-      createdAt: "2025-10-04"
-    totalCost: 12
-    scope: per-character
-    mode: soft
-    restrictions:
-      - type: unique-per-character
+          maxCost: 6
+          groupIds:
+            - "00_0_0028"  # Blast Attack Boost 1
+            - "00_0_0029"  # Blast Attack Boost 2
+            - "00_0_0030"  # Blast Attack Boost 3
+            - "00_0_0005"  # Rush Attack Boost 1
+            - "00_0_0006"  # Rush Attack Boost 2
+            - "00_0_0007"  # Rush Attack Boost 3
+            - "00_0_0011"  # Smash Attack Boost 1
+            - "00_0_0012"  # Smash Attack Boost 2
+            - "00_0_0013"  # Smash Attack Boost 3
+      - type: mutually-exclusive-team
         params:
-          enabled: true
-      - type: banned-ids
-        params:
-          ids:
-            - "00_0_0151"
-            - "00_0_0152"
-            - "00_0_0111"
-            - "00_0_0131"
-            - "00_0_0123"
+          groups:
+            - ids: ["00_0_0000"]  # Master Roshi Training
+              maxCount: 2
+            - ids: ["00_0_0150"]  # King Kai Training
+              maxCount: 1
