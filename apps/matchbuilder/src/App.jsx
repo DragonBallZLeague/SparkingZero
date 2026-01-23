@@ -2075,92 +2075,93 @@ const CharacterSlot = ({
     if (!ruleset) return violations;
     const costMap = Object.fromEntries((capsules||[]).map(c => [c.id, Number(c.cost || 0)]));
     const used = (character.capsules||[]).filter(Boolean);
-    if (ruleset.mode === 'soft') {
-      if (ruleset.scope === 'per-character' && ruleset.totalCost) {
-        const sum = used.reduce((s, id) => s + (costMap[id] || 0), 0);
-        if (sum > (ruleset.totalCost || 0)) {
-          violations.push({ type: 'cost', message: `Character exceeds point limit (${sum} > ${ruleset.totalCost})`, over: sum - (ruleset.totalCost || 0) });
-        }
+    
+    // Check violations in both soft and hard mode (warnings can still appear in hard mode if violations occur)
+    if (ruleset.scope === 'per-character' && ruleset.totalCost) {
+      const sum = used.reduce((s, id) => s + (costMap[id] || 0), 0);
+      if (sum > (ruleset.totalCost || 0)) {
+        violations.push({ type: 'cost', message: `Character exceeds point limit (${sum} > ${ruleset.totalCost})`, over: sum - (ruleset.totalCost || 0) });
       }
-      const uniqueTeam = (ruleset?.restrictions || []).some(r => r.type === 'unique-per-team' && r.params?.enabled);
-      if (uniqueTeam) {
-        const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
-        // duplicates in team
-        const dupSet = used.filter(id => teamUsed.filter(x => x === id).length > 1);
-        if (dupSet.length > 0) violations.push({ type: 'duplicate-team', message: 'Duplicate capsule(s) used within the same team' });
+    }
+    
+    const uniqueTeam = (ruleset?.restrictions || []).some(r => r.type === 'unique-per-team' && r.params?.enabled);
+    if (uniqueTeam) {
+      const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+      // duplicates in team
+      const dupSet = used.filter(id => teamUsed.filter(x => x === id).length > 1);
+      if (dupSet.length > 0) violations.push({ type: 'duplicate-team', message: 'Duplicate capsule(s) used within the same team' });
+    }
+    
+    // Rule 1: max-same-per-team (check in both soft and hard mode)
+    const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
+    if (maxSamePerTeam) {
+      const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+      const maxCount = maxSamePerTeam.params?.maxCount || 2;
+      const counts = {};
+      teamUsed.forEach(id => counts[id] = (counts[id] || 0) + 1);
+      const violations_found = Object.entries(counts).filter(([id, count]) => count > maxCount);
+      violations_found.forEach(([id, count]) => {
+        const cap = capsules.find(c => c.id === id);
+        const capsuleName = cap ? (cap['Item Names'] || cap.name || cap.id) : id;
+        violations.push({ 
+          type: 'max-same-per-team', 
+          message: `Team has more than ${maxCount} of the same capsule: ${capsuleName}` 
+        });
+      });
+    }
+    
+    // Rule 2: max-cost-group-per-character (check in both soft and hard mode)
+    const maxCostGroup = (ruleset?.restrictions || []).find(r => r.type === 'max-cost-group-per-character');
+    if (maxCostGroup) {
+      const groupIds = maxCostGroup.params?.groupIds || [];
+      const maxCost = maxCostGroup.params?.maxCost || 6;
+      const groupCapsules = used.filter(id => groupIds.includes(id));
+      const groupCostSum = groupCapsules.reduce((s, id) => s + (costMap[id] || 0), 0);
+      if (groupCostSum > maxCost) {
+        violations.push({ 
+          type: 'max-cost-group', 
+          message: `Attack boost capsules exceed ${maxCost} point limit (currently at ${groupCostSum})` 
+        });
       }
+    }
+    
+    // Rule 3: mutually-exclusive-team (check in both soft and hard mode)
+    const mutuallyExclusive = (ruleset?.restrictions || []).find(r => r.type === 'mutually-exclusive-team');
+    if (mutuallyExclusive) {
+      const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+      const groups = mutuallyExclusive.params?.groups || [];
       
-      // Rule 1: max-same-per-team
-      const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
-      if (maxSamePerTeam) {
-        const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
-        const maxCount = maxSamePerTeam.params?.maxCount || 2;
-        const counts = {};
-        teamUsed.forEach(id => counts[id] = (counts[id] || 0) + 1);
-        const violations_found = Object.entries(counts).filter(([id, count]) => count > maxCount);
-        violations_found.forEach(([id, count]) => {
-          const cap = capsules.find(c => c.id === id);
-          const capsuleName = cap ? (cap['Item Names'] || cap.name || cap.id) : id;
-          violations.push({ 
-            type: 'max-same-per-team', 
-            message: `Team has more than ${maxCount} of the same capsule: ${capsuleName}` 
-          });
+      // Check if multiple groups are used
+      const usedGroups = groups.map((group, idx) => {
+        const count = teamUsed.filter(id => group.ids.includes(id)).length;
+        return { groupIdx: idx, count, ids: group.ids, maxCount: group.maxCount };
+      }).filter(g => g.count > 0);
+      
+      if (usedGroups.length > 1) {
+        const capsuleNames = usedGroups.map(g => {
+          // Find an actual capsule ID that's being used from this group
+          const usedCapsuleId = teamUsed.find(id => g.ids.includes(id));
+          const cap = capsules.find(c => c.id === usedCapsuleId);
+          return cap ? (cap['Item Names'] || cap.name || cap.id) : (usedCapsuleId || g.ids[0]);
+        }).join(' and ');
+        violations.push({ 
+          type: 'mutually-exclusive', 
+          message: `Cannot use both ${capsuleNames} on the same team` 
         });
       }
       
-      // Rule 2: max-cost-group-per-character
-      const maxCostGroup = (ruleset?.restrictions || []).find(r => r.type === 'max-cost-group-per-character');
-      if (maxCostGroup) {
-        const groupIds = maxCostGroup.params?.groupIds || [];
-        const maxCost = maxCostGroup.params?.maxCost || 6;
-        const groupCapsules = used.filter(id => groupIds.includes(id));
-        const groupCostSum = groupCapsules.reduce((s, id) => s + (costMap[id] || 0), 0);
-        if (groupCostSum > maxCost) {
+      // Check individual group count limits
+      usedGroups.forEach(g => {
+        if (g.count > g.maxCount) {
+          const usedCapsuleId = teamUsed.find(id => g.ids.includes(id));
+          const cap = capsules.find(c => c.id === usedCapsuleId);
+          const name = cap ? (cap['Item Names'] || cap.name || cap.id) : (usedCapsuleId || g.ids[0]);
           violations.push({ 
-            type: 'max-cost-group', 
-            message: `Attack boost capsules exceed ${maxCost} point limit (currently at ${groupCostSum})` 
+            type: 'mutually-exclusive-count', 
+            message: `Team has more than ${g.maxCount} ${name} capsule(s) (currently has ${g.count})` 
           });
         }
-      }
-      
-      // Rule 3: mutually-exclusive-team
-      const mutuallyExclusive = (ruleset?.restrictions || []).find(r => r.type === 'mutually-exclusive-team');
-      if (mutuallyExclusive) {
-        const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
-        const groups = mutuallyExclusive.params?.groups || [];
-        
-        // Check if multiple groups are used
-        const usedGroups = groups.map((group, idx) => {
-          const count = teamUsed.filter(id => group.ids.includes(id)).length;
-          return { groupIdx: idx, count, ids: group.ids, maxCount: group.maxCount };
-        }).filter(g => g.count > 0);
-        
-        if (usedGroups.length > 1) {
-          const capsuleNames = usedGroups.map(g => {
-            // Find an actual capsule ID that's being used from this group
-            const usedCapsuleId = teamUsed.find(id => g.ids.includes(id));
-            const cap = capsules.find(c => c.id === usedCapsuleId);
-            return cap ? (cap['Item Names'] || cap.name || cap.id) : (usedCapsuleId || g.ids[0]);
-          }).join(' and ');
-          violations.push({ 
-            type: 'mutually-exclusive', 
-            message: `Cannot use both ${capsuleNames} on the same team` 
-          });
-        }
-        
-        // Check individual group count limits
-        usedGroups.forEach(g => {
-          if (g.count > g.maxCount) {
-            const usedCapsuleId = teamUsed.find(id => g.ids.includes(id));
-            const cap = capsules.find(c => c.id === usedCapsuleId);
-            const name = cap ? (cap['Item Names'] || cap.name || cap.id) : (usedCapsuleId || g.ids[0]);
-            violations.push({ 
-              type: 'mutually-exclusive-count', 
-              message: `Team has more than ${g.maxCount} ${name} capsule(s) (currently has ${g.count})` 
-            });
-          }
-        });
-      }
+      });
     }
     return violations;
   };
@@ -2289,9 +2290,9 @@ const CharacterSlot = ({
                 available = available.filter(c => c && (c.id === capsuleId || (sumUsedOther + (costMap[c.id] || 0)) <= (ruleset.totalCost || 0)));
               }
 
-              // Rule 1: max-same-per-team (soft mode)
+              // Rule 1: max-same-per-team (hard mode only)
               const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
-              if (maxSamePerTeam && ruleset?.mode === 'soft') {
+              if (maxSamePerTeam && ruleset?.mode === 'hard') {
                 const maxCount = maxSamePerTeam.params?.maxCount || 2;
                 // Count how many times each capsule is used in the team (excluding this slot)
                 const teamUsedWithoutCurrent = teamUsed.filter((id, idx) => {
@@ -2307,9 +2308,9 @@ const CharacterSlot = ({
                 });
               }
 
-              // Rule 2: max-cost-group-per-character (soft mode)
+              // Rule 2: max-cost-group-per-character (hard mode only)
               const maxCostGroup = (ruleset?.restrictions || []).find(r => r.type === 'max-cost-group-per-character');
-              if (maxCostGroup && ruleset?.mode === 'soft') {
+              if (maxCostGroup && ruleset?.mode === 'hard') {
                 const groupIds = maxCostGroup.params?.groupIds || [];
                 const maxCost = maxCostGroup.params?.maxCost || 6;
                 // Calculate current group cost excluding this slot
@@ -2323,9 +2324,9 @@ const CharacterSlot = ({
                 });
               }
 
-              // Rule 3: mutually-exclusive-team (soft mode)
+              // Rule 3: mutually-exclusive-team (hard mode only)
               const mutuallyExclusive = (ruleset?.restrictions || []).find(r => r.type === 'mutually-exclusive-team');
-              if (mutuallyExclusive && ruleset?.mode === 'soft') {
+              if (mutuallyExclusive && ruleset?.mode === 'hard') {
                 const groups = mutuallyExclusive.params?.groups || [];
                 // Check which groups are currently in use by the team
                 const usedGroups = groups.map((group, idx) => {
