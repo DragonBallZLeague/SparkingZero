@@ -180,8 +180,8 @@ export default function UploadPanel({ onClose }) {
     if (!name.trim()) { setErr('Name/username is required'); return; }
     if (!selectedLeaf) { setErr('Please choose a target folder'); return; }
     if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
-    if (setTeamData && (!team1 || !team2)) { 
-      setErr('Please select both Team 1 and Team 2, or disable "Set Team Data"'); 
+    if (setTeamData && !team1) { 
+      setErr('Please select Team 1, or disable "Set Team Data"'); 
       return; 
     }
 
@@ -195,7 +195,7 @@ export default function UploadPanel({ onClose }) {
         if (f.size > 10 * 1024 * 1024) throw new Error(`${f.name} exceeds 10MB limit`);
         
         let content;
-        if (setTeamData && team1 && team2) {
+        if (setTeamData && team1) {
           // Modify the file to set team data
           try {
             // Read file using FileReader to avoid stream exhaustion
@@ -210,7 +210,10 @@ export default function UploadPanel({ onClose }) {
             
             // Set team data if the structure exists
             if (json.TeamBattleResults) {
-              json.TeamBattleResults.teams = [team1, team2];
+              // Only include non-empty teams
+              const teamsArray = [team1];
+              if (team2) teamsArray.push(team2);
+              json.TeamBattleResults.teams = teamsArray;
             }
             
             // Convert back to base64
