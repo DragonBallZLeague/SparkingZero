@@ -210,9 +210,8 @@ export default function UploadPanel({ onClose }) {
             
             // Set team data if the structure exists
             if (json.TeamBattleResults) {
-              // Only include non-empty teams
-              const teamsArray = [team1];
-              if (team2) teamsArray.push(team2);
+              // Always include both teams; use empty string for unset team2
+              const teamsArray = [team1, team2 || ''];
               json.TeamBattleResults.teams = teamsArray;
             }
             
