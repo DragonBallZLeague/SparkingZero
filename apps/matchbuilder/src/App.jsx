@@ -114,7 +114,7 @@ const MatchBuilder = () => {
           return {
             name: charObj.name,
             id: charObj.id || "",
-            costume: m.costume ? (costumes.find(c => (c.name || "").trim().toLowerCase() === (m.costume || "").toString().trim().toLowerCase())?.id || "") : "",
+            costume: m.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || "").trim().toLowerCase() === (m.costume || "").toString().trim().toLowerCase())?.id || "") : "",
             capsules: Array(7).fill("").map((_, i) => {
               if (m.capsules && m.capsules[i]) {
                 const capNameRaw = (m.capsules[i] || "").toString().trim();
@@ -158,7 +158,7 @@ const MatchBuilder = () => {
             // costume: try to resolve by id or name
             if (out.costume) {
               if (!costumes.find(cs => cs.id === out.costume)) {
-                const cs = costumes.find(cs => (cs.name || '').trim().toLowerCase() === (out.costume || '').toString().trim().toLowerCase());
+                const cs = costumes.find(cs => cs.exclusiveFor === out.name && (cs.name || '').trim().toLowerCase() === (out.costume || '').toString().trim().toLowerCase());
                 out.costume = cs ? cs.id : out.costume;
               }
             }
@@ -273,7 +273,7 @@ const MatchBuilder = () => {
           return {
             name: charObj.name,
             id: charObj.id,
-            costume: char.costume ? (costumes.find(c => (c.name || "").trim().toLowerCase() === (char.costume || "").toString().trim().toLowerCase())?.id || "") : "",
+            costume: char.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || "").trim().toLowerCase() === (char.costume || "").toString().trim().toLowerCase())?.id || "") : "",
             capsules: Array(7).fill("").map((_, i) => {
               if (char.capsules && char.capsules[i]) {
                 const capNameRaw = (char.capsules[i] || "").toString().trim();
@@ -293,7 +293,7 @@ const MatchBuilder = () => {
           return {
             name: charObj.name,
             id: charObj.id,
-            costume: char.costume ? (costumes.find(c => (c.name || "").trim().toLowerCase() === (char.costume || "").toString().trim().toLowerCase())?.id || "") : "",
+            costume: char.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || "").trim().toLowerCase() === (char.costume || "").toString().trim().toLowerCase())?.id || "") : "",
             capsules: Array(7).fill("").map((_, i) => {
               if (char.capsules && char.capsules[i]) {
                 const capNameRaw = (char.capsules[i] || "").toString().trim();
@@ -321,7 +321,7 @@ const MatchBuilder = () => {
             }
             if (out.costume) {
               if (!costumes.find(cs => cs.id === out.costume)) {
-                const cs = costumes.find(cs => (cs.name || '').trim().toLowerCase() === (out.costume || '').toString().trim().toLowerCase());
+                const cs = costumes.find(cs => cs.exclusiveFor === out.name && (cs.name || '').trim().toLowerCase() === (out.costume || '').toString().trim().toLowerCase());
                 out.costume = cs ? cs.id : out.costume;
               }
             }
@@ -1132,7 +1132,7 @@ const MatchBuilder = () => {
     }
     if (res.costume) {
       if (!costumes.find(cs => cs.id === res.costume)) {
-        const cs = costumes.find(cs => (cs.name || '').trim().toLowerCase() === (res.costume || '').toString().trim().toLowerCase());
+        const cs = costumes.find(cs => cs.exclusiveFor === res.name && (cs.name || '').trim().toLowerCase() === (res.costume || '').toString().trim().toLowerCase());
         res.costume = cs ? cs.id : res.costume;
       }
     }
@@ -2535,7 +2535,7 @@ const CharacterSlot = ({
                       }
 
                       if (data.costume) {
-                        const costumeObj = costumes.find(c => (c.name || '').toString().trim().toLowerCase() === data.costume.toString().trim().toLowerCase());
+                        const costumeObj = costumes.find(c => c.exclusiveFor === slot.name && (c.name || '').toString().trim().toLowerCase() === data.costume.toString().trim().toLowerCase());
                         slot.costume = costumeObj ? costumeObj.id : '';
                       }
 
