@@ -958,41 +958,56 @@ const MatchBuilder = () => {
     matches.forEach((match, index) => {
       setup.matchCount[index + 1] = { customize: {} };
 
+      // Collect all unique character IDs across both teams
       const allChars = [...match.team1, ...match.team2];
-      const uniqueChars = {};
-
+      const uniqueCharIds = new Set();
+      
       allChars.forEach((char) => {
         if (char.id && char.id !== "") {
-          uniqueChars[char.id] = char;
+          uniqueCharIds.add(char.id);
         }
       });
 
-      Object.values(uniqueChars).forEach((char) => {
-        const key = `(Key="${char.id}")`;
-        const allItems = [];
+      // Process each unique character ID
+      uniqueCharIds.forEach((charId) => {
+        const key = `(Key="${charId}")`;
+        
+        // Find the character's build in team1 (if present)
+        const team1Char = match.team1.find((t) => t.id === charId);
+        const team1Items = [];
+        if (team1Char) {
+          if (team1Char.costume) team1Items.push({ key: team1Char.costume });
+          team1Items.push(
+            ...team1Char.capsules.filter((c) => c).map((c) => ({ key: c }))
+          );
+          if (team1Char.ai) team1Items.push({ key: team1Char.ai });
+          if (team1Char.sparking) team1Items.push({ key: team1Char.sparking });
+        }
+        if (team1Items.length === 0) team1Items.push({ key: "None" });
 
-        if (char.costume) allItems.push({ key: char.costume });
-        allItems.push(
-          ...char.capsules.filter((c) => c).map((c) => ({ key: c }))
-        );
-        if (char.ai) allItems.push({ key: char.ai });
-        if (char.sparking) allItems.push({ key: char.sparking });
-
-        if (allItems.length === 0) allItems.push({ key: "None" });
-
-        const inTeam1 = match.team1.some((t) => t.id === char.id);
-        const inTeam2 = match.team2.some((t) => t.id === char.id);
+        // Find the character's build in team2 (if present)
+        const team2Char = match.team2.find((t) => t.id === charId);
+        const team2Items = [];
+        if (team2Char) {
+          if (team2Char.costume) team2Items.push({ key: team2Char.costume });
+          team2Items.push(
+            ...team2Char.capsules.filter((c) => c).map((c) => ({ key: c }))
+          );
+          if (team2Char.ai) team2Items.push({ key: team2Char.ai });
+          if (team2Char.sparking) team2Items.push({ key: team2Char.sparking });
+        }
+        if (team2Items.length === 0) team2Items.push({ key: "None" });
 
         setup.matchCount[index + 1].customize[key] = {
           targetSettings: [
             { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
             { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
             {
-              equipItems: inTeam1 ? allItems : [{ key: "None" }],
+              equipItems: team1Items,
               sameCharacterEquip: [],
             },
             {
-              equipItems: inTeam2 ? allItems : [{ key: "None" }],
+              equipItems: team2Items,
               sameCharacterEquip: [],
             },
           ],
