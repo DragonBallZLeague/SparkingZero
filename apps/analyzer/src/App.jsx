@@ -3105,6 +3105,7 @@ export default function App() {
     position: false
   }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
   
   // Search and filter state for Aggregated Character Performance
@@ -4781,10 +4782,43 @@ export default function App() {
             
             {!sectionCollapsed.aggregated && (
             <div className="space-y-4">
-              {/* Search and Filter Controls */}
-              <div className={`p-4 rounded-xl border ${
+              {/* Search and Filter Controls - Sticky Floating Panel */}
+              <div className={`sticky top-0 z-[100] rounded-xl border shadow-lg transition-all ${
                 darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
               }`}>
+                {/* Collapse/Expand Header */}
+                <div 
+                  className={`flex items-center justify-between px-4 pt-2 pb-4 cursor-pointer ${
+                    filtersCollapsed ? 'rounded-xl' : 'rounded-t-xl border-b ' + (darkMode ? 'border-gray-600' : 'border-gray-200')
+                  }`}
+                  onClick={() => setFiltersCollapsed(!filtersCollapsed)}
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className={`w-5 h-5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                    <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                      Filters & Sorting
+                    </h3>
+                    {filtersCollapsed && (
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        ({filteredAggregatedData.length} of {aggregatedData.length} characters shown)
+                      </span>
+                    )}
+                  </div>
+                  <div 
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                      darkMode 
+                        ? 'bg-blue-900 text-blue-400 hover:bg-blue-800' 
+                        : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                    }`}
+                    title={filtersCollapsed ? "Expand filters" : "Collapse filters"}
+                  >
+                    {filtersCollapsed ? '+' : '−'}
+                  </div>
+                </div>
+                
+                {/* Filter Controls - Collapsible Content */}
+                {!filtersCollapsed && (
+                <div className="p-4 pt-0">
                 {/* Search Bar */}
                 {/* Character Filter */}
                 <div className="mb-4">
@@ -5112,6 +5146,8 @@ export default function App() {
                 <div className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Showing {filteredAggregatedData.length} of {aggregatedData.length} characters
                 </div>
+                </div>
+                )}
               </div>
               
               {filteredAggregatedData.map((char, i) => {
