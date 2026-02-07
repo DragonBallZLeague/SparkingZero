@@ -117,6 +117,14 @@ export default function UploadPanel({ onClose }) {
     }
   };
 
+  const clearFiles = () => {
+    setFiles([]);
+    setFilesPreview([]);
+    // Reset the file input
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
+  };
+
   // Generate preview of which files will be modified
   const generateFilesPreview = async (filesList) => {
     const previews = [];
@@ -136,7 +144,7 @@ export default function UploadPanel({ onClose }) {
           name: file.name,
           hasExistingTeams: !!hasTeamData,
           existingTeams: hasTeamData ? json.TeamBattleResults.teams : null,
-          willModify: setTeamData && team1 && team2
+          willModify: setTeamData && team1
         });
       } catch (e) {
         previews.push({
@@ -420,11 +428,11 @@ export default function UploadPanel({ onClose }) {
                                 )}
                                 {preview.willModify ? (
                                   <div className="text-green-700">
-                                    Will set to: [{team1}, {team2}]
+                                    Will set to: [{team1}{team2 ? `, ${team2}` : ''}]
                                   </div>
                                 ) : (
                                   <div className="text-gray-500">
-                                    {!team1 || !team2 ? 'Select both teams to modify' : 'No TeamBattleResults structure found'}
+                                    {!team1 ? 'Select Team 1 to modify' : 'No TeamBattleResults structure found'}
                                   </div>
                                 )}
                               </>
@@ -446,12 +454,26 @@ export default function UploadPanel({ onClose }) {
               <label className="text-sm font-medium">JSON files</label>
               <input type="file" accept="application/json,.json" multiple onChange={onFileChange} />
               {files.length > 0 && (
-                <ul className="list-disc ml-6 text-sm">
-                  {files.map((f, i)=> <li key={i}>{f.name} ({Math.ceil(f.size/1024)} KB)</li>)}
-                </ul>
+                <div className="mt-2 rounded border border-gray-200 bg-gray-50">
+                  <div className="p-2 h-24 overflow-y-auto">
+                    <ul className="list-disc ml-6 text-sm space-y-0.5">
+                      {files.map((f, i)=> <li key={i}>{f.name} ({Math.ceil(f.size/1024)} KB)</li>)}
+                    </ul>
+                  </div>
+                </div>
               )}
             </div>
-            <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
+            <div className="flex gap-2">
+              <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
+              {files.length > 0 && (
+                <button
+                  onClick={clearFiles}
+                  className="px-3 py-2 rounded border border-red-300 bg-red-50 text-red-700 hover:bg-red-100"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
         )}
 
