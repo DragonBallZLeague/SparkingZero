@@ -455,6 +455,10 @@ function extractStats(char, charMap, capsuleMap = {}, position = null, aiStrateg
       break; // Found the AI strategy, stop looking
     }
   }
+  // If no AI strategy found, use "Default"
+  if (!aiStrategy) {
+    aiStrategy = 'Default';
+  }
   
   // Categorize capsules by build type using metadata
   const capsuleTypes = {
@@ -1374,6 +1378,14 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           aiStrategy = strategy.name;
           break; // Found the AI strategy, stop looking
         }
+      }
+      // If no AI strategy found, use "Default"
+      if (!aiStrategy) {
+        aiStrategy = 'Default';
+      }
+      // If no AI strategy found, use "Default"
+      if (!aiStrategy) {
+        aiStrategy = 'Default';
       }
       
       // Use original form name as the key for aggregation
@@ -5084,7 +5096,7 @@ export default function App() {
                       <MultiSelectCombobox
                         items={availableAIStrategies.map(ai => ({ 
                           id: ai, 
-                          name: ai === 'Com' ? 'Computer' : ai === 'Player' ? 'Player' : ai 
+                          name: ai === 'Com' ? 'Computer' : ai === 'Player' ? 'Player' : ai === 'Default' ? 'Default' : ai 
                         }))}
                         selectedIds={selectedAIStrategies}
                         placeholder="Search and select AI strategies..."
