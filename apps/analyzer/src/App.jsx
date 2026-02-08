@@ -2018,10 +2018,10 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Calculate top 3 most used builds (similar to Team Rankings implementation)
     const buildGroups = {};
     
-    // Group matches by build composition label
+    // Group matches by build composition label + AI strategy
     char.matches.forEach(match => {
       if (match.buildComposition && match.buildComposition.label) {
-        const buildLabel = match.buildComposition.label;
+        const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
         
         if (!buildGroups[buildLabel]) {
           buildGroups[buildLabel] = {
@@ -2571,7 +2571,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           
           // Track build usage for this matchup
           if (p1Stats.buildComposition && p1Stats.buildComposition.label) {
-            const buildKey = p1Stats.buildComposition.label;
+            const buildKey = `${p1Stats.buildComposition.label}|${p1Stats.aiStrategy || 'Default'}`;
             teamStats[team1Name].opponentRecords[team2Name].characterMatchups[matchupKey].buildUsage[buildKey] = 
               (teamStats[team1Name].opponentRecords[team2Name].characterMatchups[matchupKey].buildUsage[buildKey] || 0) + 1;
             // Store the full build composition data
@@ -2618,7 +2618,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           });
           
           if (p2Stats.buildComposition && p2Stats.buildComposition.label) {
-            const p2BuildKey = p2Stats.buildComposition.label;
+            const p2BuildKey = `${p2Stats.buildComposition.label}|${p2Stats.aiStrategy || 'Default'}`;
             teamStats[team2Name].opponentRecords[team1Name].characterMatchups[reverseMatchupKey].buildUsage[p2BuildKey] = 
               (teamStats[team2Name].opponentRecords[team1Name].characterMatchups[reverseMatchupKey].buildUsage[p2BuildKey] || 0) + 1;
             // Store the full build composition data
@@ -3382,10 +3382,10 @@ export default function App() {
       // Recalculate top 3 most used builds based on FILTERED matches
       const buildGroups = {};
       
-      // Group filtered matches by build composition label
+      // Group filtered matches by build composition label + AI strategy
       filteredMatches.forEach(match => {
         if (match.buildComposition && match.buildComposition.label) {
-          const buildLabel = match.buildComposition.label;
+          const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
           
           if (!buildGroups[buildLabel]) {
             buildGroups[buildLabel] = {
