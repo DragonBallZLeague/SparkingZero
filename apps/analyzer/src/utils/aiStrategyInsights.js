@@ -18,7 +18,6 @@ export const PRIMARY_ARCHETYPES = {
     description: 'Relies on close-range melee combat with minimal blast usage',
     thresholds: {
       // Low blast indicators
-      energyBlasts: { max: 40 },
       s1Blast: { max: 40 },
       s2Blast: { max: 40 },
       ultBlast: { max: 40 },
@@ -34,9 +33,8 @@ export const PRIMARY_ARCHETYPES = {
   'Blast Spammer': {
     description: 'Heavy user of Super 1 and Super 2 blast attacks',
     thresholds: {
-      // High blast indicators (at least one must be high)
-      s1Blast: { min: 60, ideal: 80 },
-      s2Blast: { min: 60, ideal: 80 },
+      // High blast indicators (combined S1 + S2 must be high)
+      combinedBlasts: { min: 60, ideal: 80 },
       // Supporting indicators
       charges: { min: 55 },
       ultBlast: { min: 45 }
@@ -76,22 +74,29 @@ export const SUBTYPE_ARCHETYPES = {
   'Skill User': {
     description: 'Makes heavy use of special skills and abilities',
     thresholds: {
-      exa1Count: { min: 60, ideal: 85 },
-      exa2Count: { min: 60, ideal: 85 }
+      combinedSkills: { min: 60, ideal: 85 }
     },
     emoji: '🎯',
-    matchLogic: 'either' // At least one skill must be high
+    matchLogic: 'combined' // Combined Exa1 + Exa2
   },
-  'Chasedown Fighter': {
+  'Rushdown Fighter': {
     description: 'Aggressively pursues opponents with follow-up attacks',
     thresholds: {
       vanishingAttacks: { min: 65, ideal: 85 },
       dragonHoming: { min: 60, ideal: 80 },
       lightningAttacks: { min: 60, ideal: 80 },
-      dragonDash: { min: 60, ideal: 80 }
+      dragonDash: { min: 60, ideal: 80 } // Supporting indicator
     },
     emoji: '🏃',
-    matchLogic: 'multiple' // Need at least 2 indicators high
+    matchLogic: 'rushdown' // Need 2 core indicators (lower thresholds if Dragon Dash present)
+  },
+  'Grappler': {
+    description: 'Specializes in throw techniques and grappling',
+    thresholds: {
+      throws: { min: 65, ideal: 85 }
+    },
+    emoji: '🤼',
+    matchLogic: 'standard'
   },
   'Sparking User': {
     description: 'Frequently activates Sparking Mode',
@@ -106,10 +111,10 @@ export const SUBTYPE_ARCHETYPES = {
     thresholds: {
       maxCombo: { min: 70, ideal: 90 },
       maxComboDamage: { min: 65, ideal: 85 },
-      sparkingCombo: { min: 60, ideal: 80 }
+      sparkingCombo: { min: 60, ideal: 80 } // Supporting indicator
     },
     emoji: '🥊',
-    matchLogic: 'multiple' // Need at least combo hits or damage high
+    matchLogic: 'combo' // Need 1+ core indicators (maxCombo OR maxComboDamage)
   },
   'Ki-Blast Spammer': {
     description: 'Uses energy blasts extensively for zoning',
@@ -376,8 +381,8 @@ function detectPrimaryArchetype(normalizedScores) {
     
     // Special handling for archetypes with multiple optional indicators
     if (archetypeName === 'Melee Fighter') {
-      // Must have low blast usage (all conditions)
-      const lowBlastCriteria = ['energyBlasts', 's1Blast', 's2Blast', 'ultBlast'];
+      // Must have low blast usage (all 3 conditions)
+      const lowBlastCriteria = ['s1Blast', 's2Blast', 'ultBlast'];
       let lowBlastMet = 0;
       lowBlastCriteria.forEach(metric => {
         const score = normalizedScores[metric];
@@ -407,25 +412,29 @@ function detectPrimaryArchetype(normalizedScores) {
         }
       });
     } else if (archetypeName === 'Blast Spammer') {
-      // Need high S1 OR S2 blasts (at least one)
+      // Need high combined S1 + S2 blasts
       const s1Score = normalizedScores.s1Blast || 0;
       const s2Score = normalizedScores.s2Blast || 0;
-      const hasHighBlast = s1Score >= 60 || s2Score >= 60;
+      const combinedScore = (s1Score + s2Score) / 2; // Average to keep on 0-100 scale
       
-      if (hasHighBlast) {
+      const threshold = archetype.thresholds.combinedBlasts;
+      criteriaCount++;
+      
+      if (combinedScore >= threshold.min) {
         matchScore += 150; // Strong indicator
-        criteriaCount++;
-        // Add bonus for both being high
-        if (s1Score >= 60 && s2Score >= 60) {
-          matchScore += 50;
+        if (threshold.ideal && combinedScore >= threshold.ideal) {
+          matchScore += 20;
         }
+      } else {
+        const proximity = combinedScore / threshold.min;
+        matchScore += proximity * 75;
       }
       
       // Supporting indicators
       ['charges', 'ultBlast'].forEach(metric => {
         const score = normalizedScores[metric];
-        const threshold = archetype.thresholds[metric];
-        if (score !== undefined && threshold && score >= (threshold.min || 0)) {
+        const supportThreshold = archetype.thresholds[metric];
+        if (score !== undefined && supportThreshold && score >= (supportThreshold.min || 0)) {
           matchScore += 50; // Lower weight for supporting criteria
           criteriaCount++;
         }
@@ -516,23 +525,112 @@ function detectSubTypes(normalizedScores) {
     
     const matchLogic = subType.matchLogic || 'standard';
     
-    if (matchLogic === 'either') {
-      // For "either" logic (like Skill User), at least one must be high
+    if (matchLogic === 'combined') {
+      // For "combined" logic (like Skill User), use sum of metrics
       if (subTypeName === 'Skill User') {
         const exa1Score = normalizedScores.exa1Count || 0;
         const exa2Score = normalizedScores.exa2Count || 0;
-        const hasHighSkill = exa1Score >= 60 || exa2Score >= 60;
+        const combinedScore = (exa1Score + exa2Score) / 2; // Average to keep on 0-100 scale
         
-        if (hasHighSkill) {
+        const threshold = subType.thresholds.combinedSkills;
+        criteriaCount++;
+        
+        if (combinedScore >= threshold.min) {
           matchScore += 150;
-          criteriaCount++;
-          // Bonus for both
-          if (exa1Score >= 60 && exa2Score >= 60) {
-            matchScore += 50;
+          if (threshold.ideal && combinedScore >= threshold.ideal) {
+            matchScore += 20;
           }
         } else {
-          criteriaCount++;
+          const proximity = combinedScore / threshold.min;
+          matchScore += proximity * 75;
         }
+      }
+    } else if (matchLogic === 'rushdown') {
+      // For Rushdown Fighter: need 2 core indicators, Dragon Dash is supporting
+      const vanishingScore = normalizedScores.vanishingAttacks || 0;
+      const homingScore = normalizedScores.dragonHoming || 0;
+      const lightningScore = normalizedScores.lightningAttacks || 0;
+      const dragonDashScore = normalizedScores.dragonDash || 0;
+      
+      const dragonDashThreshold = subType.thresholds.dragonDash;
+      const hasDragonDash = dragonDashScore >= (dragonDashThreshold.min || 0);
+      
+      // Lower thresholds slightly if Dragon Dash is present
+      const adjustedThreshold = hasDragonDash ? 0.9 : 1.0;
+      
+      const coreMetrics = [
+        { name: 'vanishingAttacks', score: vanishingScore },
+        { name: 'dragonHoming', score: homingScore },
+        { name: 'lightningAttacks', score: lightningScore }
+      ];
+      
+      coreMetrics.forEach(metric => {
+        const threshold = subType.thresholds[metric.name];
+        if (metric.score !== undefined && threshold) {
+          criteriaCount++;
+          const effectiveMin = (threshold.min || 0) * adjustedThreshold;
+          
+          if (metric.score >= effectiveMin) {
+            highCriteriaCount++;
+            matchScore += 100;
+            if (threshold.ideal && metric.score >= threshold.ideal) {
+              matchScore += 20;
+            }
+          } else {
+            const proximity = metric.score / effectiveMin;
+            matchScore += proximity * 30;
+          }
+        }
+      });
+      
+      // Add Dragon Dash as supporting indicator
+      if (hasDragonDash) {
+        matchScore += 40; // Bonus for having supporting indicator
+      }
+      
+      // Require at least 2 core indicators high
+      if (highCriteriaCount < 2) {
+        matchScore *= 0.5; // Heavily penalize if less than 2 are high
+      }
+    } else if (matchLogic === 'combo') {
+      // For Combo Fighter: need 1+ core indicators (maxCombo OR maxComboDamage)
+      const maxComboScore = normalizedScores.maxCombo || 0;
+      const maxComboDamageScore = normalizedScores.maxComboDamage || 0;
+      const sparkingComboScore = normalizedScores.sparkingCombo || 0;
+      
+      // Check core indicators
+      let hasCoreIndicator = false;
+      
+      ['maxCombo', 'maxComboDamage'].forEach(metric => {
+        const score = metric === 'maxCombo' ? maxComboScore : maxComboDamageScore;
+        const threshold = subType.thresholds[metric];
+        
+        if (score !== undefined && threshold) {
+          criteriaCount++;
+          
+          if (score >= threshold.min) {
+            hasCoreIndicator = true;
+            highCriteriaCount++;
+            matchScore += 100;
+            if (threshold.ideal && score >= threshold.ideal) {
+              matchScore += 20;
+            }
+          } else {
+            const proximity = score / threshold.min;
+            matchScore += proximity * 50;
+          }
+        }
+      });
+      
+      // Add supporting indicator (Sparking Combo)
+      const sparkingThreshold = subType.thresholds.sparkingCombo;
+      if (sparkingComboScore >= (sparkingThreshold.min || 0)) {
+        matchScore += 40; // Bonus for supporting indicator
+      }
+      
+      // Require at least 1 core indicator
+      if (!hasCoreIndicator) {
+        matchScore *= 0.5; // Penalize if no core indicators
       }
     } else if (matchLogic === 'multiple') {
       // For "multiple" logic, need at least 2 high indicators
