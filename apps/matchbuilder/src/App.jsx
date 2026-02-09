@@ -2013,30 +2013,41 @@ const TeamPanel = ({
       {!collapsed && (
         <>
           <div className="space-y-3 relative z-10">
-            {team.map((char, index) => (
-              <CharacterSlot
-                key={index}
-                index={index}
-                teamName={teamName}
-                matchId={matchId}
-                matchName={matchName}
-                character={char}
-                team={team}
-                characters={characters}
-                capsules={capsules}
-                costumes={costumes}
-                sparkingMusic={sparkingMusic}
-                aiItems={aiItems}
-                rulesets={rulesets}
-                activeRulesetKey={activeRulesetKey}
-                onRemove={() => onRemoveCharacter(index)}
-                onUpdate={(field, value) => onUpdateCharacter(index, field, value)}
-                onUpdateCapsule={(capsuleIndex, value) =>
-                  onUpdateCapsule(index, capsuleIndex, value)
-                }
-                onReplaceCharacter={(slotObj) => onReplaceCharacter(index, slotObj)}
-              />
-            ))}
+            {team.map((char, index) => {
+              // Filter out characters already selected in other slots on this team
+              const availableCharacters = characters.filter((c) => {
+                // Keep the character if it's not selected in any other slot
+                const selectedInOtherSlots = team.some((teamChar, teamIndex) => 
+                  teamIndex !== index && teamChar.id === c.id && teamChar.id !== ""
+                );
+                return !selectedInOtherSlots;
+              });
+              
+              return (
+                <CharacterSlot
+                  key={index}
+                  index={index}
+                  teamName={teamName}
+                  matchId={matchId}
+                  matchName={matchName}
+                  character={char}
+                  team={team}
+                  characters={availableCharacters}
+                  capsules={capsules}
+                  costumes={costumes}
+                  sparkingMusic={sparkingMusic}
+                  aiItems={aiItems}
+                  rulesets={rulesets}
+                  activeRulesetKey={activeRulesetKey}
+                  onRemove={() => onRemoveCharacter(index)}
+                  onUpdate={(field, value) => onUpdateCharacter(index, field, value)}
+                  onUpdateCapsule={(capsuleIndex, value) =>
+                    onUpdateCapsule(index, capsuleIndex, value)
+                  }
+                  onReplaceCharacter={(slotObj) => onReplaceCharacter(index, slotObj)}
+                />
+              );
+            })}
           </div>
           <button
             onClick={onAddCharacter}
