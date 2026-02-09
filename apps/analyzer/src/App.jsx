@@ -948,7 +948,12 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
     setTooltipOpen(false);
   };
 
-  if (!stats.equippedCapsules || stats.equippedCapsules.length === 0) {
+  // Check if we have any build data to display
+  const hasEquipment = stats.equippedCapsules && stats.equippedCapsules.length > 0;
+  const hasAI = stats.aiStrategy && stats.aiStrategy !== 'Unknown' && stats.aiStrategy !== 'Com' && stats.aiStrategy !== 'Player';
+  
+  // If no equipment and no AI, show "No Equipment Data"
+  if (!hasEquipment && !hasAI) {
     return (
       <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
         <div className="flex items-center gap-2 mb-2">
@@ -986,8 +991,8 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
 
   return (
     <div className={`space-y-2`}>
-      {/* Build Composition (New System) */}
-      {stats.buildComposition && (
+      {/* Build Composition (New System) - only show if we have equipment */}
+      {stats.buildComposition && hasEquipment && (
         <div className="flex items-center justify-between">
           <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Build Type</span>
           <div
@@ -1002,7 +1007,7 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
       )}
 
       {/* Tooltip Portal - renders in document.body */}
-      {tooltipOpen && stats.buildComposition && typeof document !== 'undefined' && createPortal(
+      {tooltipOpen && stats.buildComposition && hasEquipment && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
           style={{ ...floatingStyles, width: '16rem' }}
@@ -1035,35 +1040,55 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
         </div>,
         document.body
       )}
+
+      {/* AI Strategy - show in non-detailed view if no equipment but has AI */}
+      {!showDetailed && hasAI && !hasEquipment && (
+        <div className="flex items-center justify-between">
+          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI Strategy</span>
+          <span className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+            {stats.aiStrategy}
+          </span>
+        </div>
+      )}
       
       {showDetailed && (
         <>
-          {/* Capsules List */}
-          <div className="space-y-1.5 pt-1">
-            {stats.equippedCapsules.map((capsule, idx) => (
-              <div key={idx} className={`flex items-center justify-between text-xs p-1.5 rounded ${
-                darkMode ? 'bg-gray-600/50' : 'bg-gray-100'
-              }`}>
-                <span className={`${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                  {capsule.name}
-                </span>
-                <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                  {capsule.capsule.cost}
-                </span>
+          {/* Capsules List - only show if we have equipment */}
+          {hasEquipment && (
+            <>
+              <div className="space-y-1.5 pt-1">
+                {stats.equippedCapsules.map((capsule, idx) => (
+                  <div key={idx} className={`flex items-center justify-between text-xs p-1.5 rounded ${
+                    darkMode ? 'bg-gray-600/50' : 'bg-gray-100'
+                  }`}>
+                    <span className={`${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                      {capsule.name}
+                    </span>
+                    <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                      {capsule.capsule.cost}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className={`flex items-center justify-between text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            <span>Capsules ({stats.equippedCapsules.length})</span>
-            <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{stats.totalCapsuleCost}</span></span>
-          </div>
-          {/* AI Strategy */}
-          {stats.aiStrategy && (
+              <div className={`flex items-center justify-between text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <span>Capsules ({stats.equippedCapsules.length})</span>
+                <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{stats.totalCapsuleCost}</span></span>
+              </div>
+            </>
+          )}
+          {/* AI Strategy - show if available */}
+          {hasAI && (
             <div className="flex items-center justify-between">
               <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI Strategy</span>
               <span className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                 {stats.aiStrategy}
               </span>
+            </div>
+          )}
+          {/* Show "No Capsules" message if AI exists but no equipment */}
+          {hasAI && !hasEquipment && (
+            <div className={`text-xs italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+              No capsules equipped
             </div>
           )}
         </>
