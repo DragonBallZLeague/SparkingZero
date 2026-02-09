@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import UploadPanel from './UploadPanel';
 
 export default function UploadWidgetLauncher({ darkMode=false }) {
   const [open, setOpen] = useState(false);
   const [showBadge, setShowBadge] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Check for AI details modal and update button position
+    const checkModal = () => {
+      const modal = document.querySelector('[data-ai-details-modal="true"]');
+      setIsAIModalOpen(!!modal);
+    };
+
+    // Initial check
+    checkModal();
+
+    // Watch for DOM changes
+    const observer = new MutationObserver(checkModal);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
 
   const onClick = () => {
     console.log('[UploadWidget] Button clicked');
@@ -17,14 +35,18 @@ export default function UploadWidgetLauncher({ darkMode=false }) {
     <button
       onClick={onClick}
       style={{
-        position: 'fixed', bottom: 16, right: 16,
-        zIndex: 50000,
-        padding: '10px 14px', borderRadius: 8,
+        position: 'fixed',
+        bottom: isAIModalOpen ? '5vh' : 16,
+        right: 16,
+        zIndex: isAIModalOpen ? 9998 : 50000,
+        padding: '10px 14px',
+        borderRadius: 8,
         boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
         border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
         background: darkMode ? '#1f2937' : '#ffffff',
         color: darkMode ? '#ffffff' : '#111827',
-        pointerEvents: 'auto'
+        pointerEvents: 'auto',
+        transition: 'bottom 0.3s ease, z-index 0.3s ease'
       }}
       title="Submit Data to GitHub"
     >

@@ -14,6 +14,7 @@ import { exportToExcel } from './utils/excelExport.js';
 import { PerFormStatsDisplay, PerFormStatsDisplayAggregated } from './components/PerFormStatsDisplay.jsx';
 import { calculatePerFormStats } from './utils/formStatsCalculator.js';
 import CapsuleSynergyAnalysis from './components/CapsuleSynergyAnalysis.jsx';
+import AIStrategyAnalysis from './components/ai-strategy/AIStrategyAnalysis.jsx';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
 import { 
   Trophy, 
@@ -45,7 +46,9 @@ import {
   X,
   ArrowUpDown,
   Filter,
-  Download
+  Download,
+  Brain,
+  Minus
 } from 'lucide-react';
 import UploadWidgetLauncher from './UploadWidgetLauncher';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
@@ -1070,7 +1073,10 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
 }
 
 // Meta Analysis Component
-function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, darkMode = false }) {
+function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, charMap, darkMode = false }) {
+  const [isAIStrategyExpanded, setIsAIStrategyExpanded] = useState(true);
+  const [isCapsuleExpanded, setIsCapsuleExpanded] = useState(true);
+  
   if (aggregatedData.length === 0) {
     return (
       <div className="text-center py-8">
@@ -1083,21 +1089,70 @@ function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, darkMod
 
   return (
     <div className="space-y-6">
-      {/* Phase 1.1: Capsule Performance Analysis */}
+      {/* AI Strategy Effectiveness Analysis */}
+      <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-purple-50'} border ${darkMode ? 'border-purple-900/30' : 'border-purple-200'}`}>
+        <div className="flex items-center gap-3 mb-4">
+          <Brain className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+          <h3 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+            AI Strategy Effectiveness
+          </h3>
+          <button 
+            onClick={() => setIsAIStrategyExpanded(!isAIStrategyExpanded)}
+            className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              darkMode 
+                ? 'bg-purple-600 hover:bg-purple-500 text-white' 
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+            aria-label={isAIStrategyExpanded ? 'Collapse section' : 'Expand section'}
+          >
+            {isAIStrategyExpanded ? (
+              <Minus className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        {isAIStrategyExpanded && (
+          <>
+            <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Compare AI strategy performance, behavioral patterns, character synergies, and build compatibility.
+            </p>
+            <AIStrategyAnalysis aggregatedData={aggregatedData} charMap={charMap} darkMode={darkMode} />
+          </>
+        )}
+      </div>
+      
+      {/* Capsule Performance Analysis */}
       <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-blue-50'} border ${darkMode ? 'border-blue-900/30' : 'border-blue-200'}`}>
         <div className="flex items-center gap-3 mb-4">
           <Zap className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
           <h3 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
             Capsule Performance Analysis
           </h3>
-          <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${darkMode ? 'bg-green-900/50 text-green-300' : 'bg-green-100 text-green-700'}`}>
-            Phase 1
-          </span>
+          <button 
+            onClick={() => setIsCapsuleExpanded(!isCapsuleExpanded)}
+            className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              darkMode 
+                ? 'bg-blue-600 hover:bg-blue-500 text-white' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+            aria-label={isCapsuleExpanded ? 'Collapse section' : 'Expand section'}
+          >
+            {isCapsuleExpanded ? (
+              <Minus className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
         </div>
-        <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          Analyze individual capsule performance across matches, characters, and AI strategies.
-        </p>
-        <CapsuleSynergyAnalysis aggregatedData={aggregatedData} darkMode={darkMode} />
+        {isCapsuleExpanded && (
+          <>
+            <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Analyze individual capsule performance across matches, characters, and AI strategies.
+            </p>
+            <CapsuleSynergyAnalysis aggregatedData={aggregatedData} darkMode={darkMode} />
+          </>
+        )}
       </div>
     </div>
   );
@@ -5983,7 +6038,7 @@ export default function App() {
               </div>
             </div>
             
-            <MetaAnalysisContent aggregatedData={aggregatedData} capsuleMap={capsuleMap} aiStrategies={aiStrategies} darkMode={darkMode} />
+            <MetaAnalysisContent aggregatedData={aggregatedData} capsuleMap={capsuleMap} aiStrategies={aiStrategies} charMap={charMap} darkMode={darkMode} />
           </div>
         )}
 
