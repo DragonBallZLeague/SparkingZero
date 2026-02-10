@@ -26,6 +26,8 @@ export default function UploadPanel({ onClose }) {
   const [team2, setTeam2] = useState('');
   const [teamWarning, setTeamWarning] = useState('');
   const [filesPreview, setFilesPreview] = useState([]);
+  const [existingFiles, setExistingFiles] = useState([]);
+  const [duplicateFiles, setDuplicateFiles] = useState([]);
 
   const teams = [
     '',
@@ -104,6 +106,44 @@ export default function UploadPanel({ onClose }) {
     }
   }, [selectedParent, pathOptions]);
 
+  // Fetch existing files when selectedLeaf changes
+  useEffect(() => {
+    const fetchExistingFiles = async () => {
+      if (!selectedLeaf) {
+        setExistingFiles([]);
+        return;
+      }
+      try {
+        const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+        const res = await fetch(`${apiUrl}/api/list-files.js?path=${encodeURIComponent(selectedLeaf)}`);
+        if (!res.ok) {
+          console.warn('Failed to fetch existing files');
+          setExistingFiles([]);
+          return;
+        }
+        const data = await res.json();
+        setExistingFiles(data.files || []);
+      } catch (e) {
+        console.warn('Error fetching existing files:', e);
+        setExistingFiles([]);
+      }
+    };
+    fetchExistingFiles();
+  }, [selectedLeaf]);
+
+  // Check for duplicate files whenever files or existingFiles change
+  useEffect(() => {
+    if (files.length === 0 || existingFiles.length === 0) {
+      setDuplicateFiles([]);
+      return;
+    }
+    const existingFileNames = new Set(existingFiles.map(f => f.name));
+    const duplicates = files
+      .filter(f => existingFileNames.has(f.name))
+      .map(f => f.name);
+    setDuplicateFiles(duplicates);
+  }, [files, existingFiles]);
+
   const onFileChange = (e) => {
     const f = Array.from(e.target.files || []);
     const onlyJson = f.filter(x => x.name.toLowerCase().endsWith('.json'));
@@ -120,6 +160,7 @@ export default function UploadPanel({ onClose }) {
   const clearFiles = () => {
     setFiles([]);
     setFilesPreview([]);
+    setDuplicateFiles([]);
     // Reset the file input
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = '';
@@ -188,6 +229,10 @@ export default function UploadPanel({ onClose }) {
     if (!name.trim()) { setErr('Name/username is required'); return; }
     if (!selectedLeaf) { setErr('Please choose a target folder'); return; }
     if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
+    if (duplicateFiles.length > 0) {
+      setErr(`The following file(s) already exist in the selected folder: ${duplicateFiles.join(', ')}. Please remove or rename them.`);
+      return;
+    }
     if (setTeamData && !team1) { 
       setErr('Please select Team 1, or disable "Set Team Data"'); 
       return; 
@@ -459,14 +504,27 @@ export default function UploadPanel({ onClose }) {
                 <div className="mt-2 rounded border border-gray-200 bg-gray-50">
                   <div className="p-2 h-14 overflow-y-auto">
                     <ul className="list-disc ml-6 text-sm space-y-0.5">
-                      {files.map((f, i)=> <li key={i}>{f.name} ({Math.ceil(f.size/1024)} KB)</li>)}
+                      {files.map((f, i)=> {
+                        const isDuplicate = duplicateFiles.includes(f.name);
+                        return (
+                          <li key={i} className={isDuplicate ? 'text-red-600 font-medium' : ''}>
+                            {f.name} ({Math.ceil(f.size/1024)} KB)
+                            {isDuplicate && ' ⚠️ Already exists'}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </div>
               )}
+              {duplicateFiles.length > 0 && (
+                <div className="mt-2 p-2 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+                  ⚠️ Warning: {duplicateFiles.length} file(s) already exist in the selected folder and cannot be uploaded.
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
-              <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
+              <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim() || duplicateFiles.length > 0} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
               {files.length > 0 && (
                 <button
                   onClick={clearFiles}
