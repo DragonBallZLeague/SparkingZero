@@ -413,32 +413,34 @@ export default function UploadPanel({ onClose }) {
                   {filesPreview.length > 0 && (
                     <div className="mt-2 space-y-1">
                       <div className="text-xs font-medium text-gray-700">Files Preview:</div>
-                      <div className="max-h-32 overflow-y-auto space-y-1">
-                        {filesPreview.map((preview, i) => (
-                          <div key={i} className="text-xs p-1.5 rounded bg-white border border-blue-200">
-                            <div className="font-medium">{preview.name}</div>
-                            {preview.error ? (
-                              <div className="text-red-600">{preview.error}</div>
-                            ) : (
-                              <>
-                                {preview.hasExistingTeams && (
-                                  <div className="text-gray-600">
-                                    Current: [{preview.existingTeams?.join(', ')}]
-                                  </div>
-                                )}
-                                {preview.willModify ? (
-                                  <div className="text-green-700">
-                                    Will set to: [{team1}{team2 ? `, ${team2}` : ''}]
-                                  </div>
-                                ) : (
-                                  <div className="text-gray-500">
-                                    {!team1 ? 'Select Team 1 to modify' : 'No TeamBattleResults structure found'}
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        ))}
+                      <div className="rounded border border-gray-200 bg-gray-50">
+                        <div className="p-2 h-48 overflow-y-auto space-y-1">
+                          {filesPreview.map((preview, i) => (
+                            <div key={i} className="text-xs p-1.5 rounded bg-white border border-blue-200">
+                              <div className="font-medium">{preview.name}</div>
+                              {preview.error ? (
+                                <div className="text-red-600">{preview.error}</div>
+                              ) : (
+                                <>
+                                  {preview.hasExistingTeams && (
+                                    <div className="text-gray-600">
+                                      Current: [{preview.existingTeams?.join(', ')}]
+                                    </div>
+                                  )}
+                                  {preview.willModify ? (
+                                    <div className="text-green-700">
+                                      Will set to: [{team1}{team2 ? `, ${team2}` : ''}]
+                                    </div>
+                                  ) : (
+                                    <div className="text-gray-500">
+                                      {!team1 ? 'Select Team 1 to modify' : 'No TeamBattleResults structure found'}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}
