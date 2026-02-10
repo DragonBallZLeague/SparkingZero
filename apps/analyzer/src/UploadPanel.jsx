@@ -457,7 +457,7 @@ export default function UploadPanel({ onClose }) {
               <input type="file" accept="application/json,.json" multiple onChange={onFileChange} />
               {files.length > 0 && (
                 <div className="mt-2 rounded border border-gray-200 bg-gray-50">
-                  <div className="p-2 h-24 overflow-y-auto">
+                  <div className="p-2 h-14 overflow-y-auto">
                     <ul className="list-disc ml-6 text-sm space-y-0.5">
                       {files.map((f, i)=> <li key={i}>{f.name} ({Math.ceil(f.size/1024)} KB)</li>)}
                     </ul>
