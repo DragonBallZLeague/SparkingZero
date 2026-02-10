@@ -8,6 +8,16 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
+// Helper to get API URL - in dev use proxy, in prod use full URL
+const getApiUrl = () => {
+  // In development, Vite proxy handles /api requests
+  if (import.meta.env.DEV) {
+    return '';
+  }
+  // In production or if VITE_API_URL is set
+  return import.meta.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+};
+
 export default function UploadPanel({ onClose }) {
   const [stage, setStage] = useState('ready'); // ready | uploading | done | error
   const [files, setFiles] = useState([]);
@@ -48,7 +58,7 @@ export default function UploadPanel({ onClose }) {
   useEffect(() => {
     const loadPaths = async () => {
       try {
-        const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+        const apiUrl = getApiUrl();
         const res = await fetch(`${apiUrl}/api/paths.js`);
         if (!res.ok) throw new Error('Failed to load folders');
         const data = await res.json();
@@ -114,33 +124,46 @@ export default function UploadPanel({ onClose }) {
         return;
       }
       try {
-        const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+        const apiUrl = getApiUrl();
+        console.log('[UploadPanel] Fetching existing files for path:', selectedLeaf);
         const res = await fetch(`${apiUrl}/api/list-files.js?path=${encodeURIComponent(selectedLeaf)}`);
         if (!res.ok) {
-          console.warn('Failed to fetch existing files');
+          console.warn('[UploadPanel] Failed to fetch existing files:', res.status);
           setExistingFiles([]);
           return;
         }
         const data = await res.json();
+        console.log('[UploadPanel] Existing files:', data.files);
         setExistingFiles(data.files || []);
       } catch (e) {
-        console.warn('Error fetching existing files:', e);
+        console.warn('[UploadPanel] Error fetching existing files:', e);
         setExistingFiles([]);
       }
     };
     fetchExistingFiles();
   }, [selectedLeaf]);
 
-  // Check for duplicate files whenever files or existingFiles change
+  // Check for duplicate file names whenever files or existingFiles change
   useEffect(() => {
     if (files.length === 0 || existingFiles.length === 0) {
       setDuplicateFiles([]);
       return;
     }
-    const existingFileNames = new Set(existingFiles.map(f => f.name));
+    console.log('[UploadPanel] Checking for duplicates...');
+    console.log('[UploadPanel] Selected files:', files.map(f => f.name));
+    console.log('[UploadPanel] Existing files:', existingFiles.map(f => f.name));
+    
+    // Create a map of lowercase names to actual names for case-insensitive comparison
+    const existingFileNamesMap = new Map(
+      existingFiles.map(f => [f.name.toLowerCase(), f.name])
+    );
+    
+    // Find files with names that match existing files (case-insensitive)
     const duplicates = files
-      .filter(f => existingFileNames.has(f.name))
+      .filter(f => existingFileNamesMap.has(f.name.toLowerCase()))
       .map(f => f.name);
+    
+    console.log('[UploadPanel] Duplicate files found:', duplicates);
     setDuplicateFiles(duplicates);
   }, [files, existingFiles]);
 
@@ -230,7 +253,7 @@ export default function UploadPanel({ onClose }) {
     if (!selectedLeaf) { setErr('Please choose a target folder'); return; }
     if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
     if (duplicateFiles.length > 0) {
-      setErr(`The following file(s) already exist in the selected folder: ${duplicateFiles.join(', ')}. Please remove or rename them.`);
+      setErr(`Cannot upload: The following file name(s) already exist in the selected folder: ${duplicateFiles.join(', ')}. Please remove these files from your selection or rename them before uploading.`);
       return;
     }
     if (setTeamData && !team1) { 
@@ -240,7 +263,7 @@ export default function UploadPanel({ onClose }) {
 
     setStage('uploading');
     try {
-      const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+      const apiUrl = getApiUrl();
       const filesPayload = [];
       
       // Process and validate files
@@ -519,7 +542,7 @@ export default function UploadPanel({ onClose }) {
               )}
               {duplicateFiles.length > 0 && (
                 <div className="mt-2 p-2 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
-                  ⚠️ Warning: {duplicateFiles.length} file(s) already exist in the selected folder and cannot be uploaded.
+                  ⚠️ Warning: {duplicateFiles.length} file name{duplicateFiles.length > 1 ? 's' : ''} already exist{duplicateFiles.length === 1 ? 's' : ''} in the selected folder. Files with duplicate names cannot be uploaded.
                 </div>
               )}
             </div>
