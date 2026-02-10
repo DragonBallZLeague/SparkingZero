@@ -414,7 +414,7 @@ export default function UploadPanel({ onClose }) {
                     <div className="mt-2 space-y-1">
                       <div className="text-xs font-medium text-gray-700">Files Preview:</div>
                       <div className="rounded border border-gray-200 bg-gray-50">
-                        <div className="p-2 h-48 overflow-y-auto space-y-1">
+                        <div className="p-2 h-24 overflow-y-auto space-y-1">
                           {filesPreview.map((preview, i) => (
                             <div key={i} className="text-xs p-1.5 rounded bg-white border border-blue-200">
                               <div className="font-medium">{preview.name}</div>
