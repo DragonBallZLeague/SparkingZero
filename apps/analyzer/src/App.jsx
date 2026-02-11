@@ -57,6 +57,21 @@ import capsulesCSV from '../../../referencedata/capsules.csv?raw';
 // Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
 // Each entry may be a module object; code uses module.default || module
 const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });
+
+/**
+ * Natural sort comparator for files and folders
+ * Handles numeric parts correctly so "Test 10" comes after "Test 9"
+ */
+function naturalSort(a, b) {
+  const aName = a.name || a;
+  const bName = b.name || b;
+  
+  return aName.localeCompare(bName, undefined, {
+    numeric: true,
+    sensitivity: 'base'
+  });
+}
+
 // Small stat bar used in the match panels
 function StatBar({ value, maxValue, displayValue, type = 'damage', isInverse = false, label = '', icon: Icon = Target, darkMode = false }) {
   const percentage = Math.min((value / maxValue) * 100, 100);
@@ -4805,7 +4820,7 @@ export default function App() {
                       Select a match to analyze:
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {manualFiles.filter(f => !f.error).map((file) => (
+                      {manualFiles.filter(f => !f.error).sort(naturalSort).map((file) => (
                         <button
                           key={file.name}
                           onClick={() => handleManualFileSelect(file.name)}
@@ -6078,9 +6093,9 @@ export default function App() {
               <Combobox
                 valueId={analysisSelectedFilePath?.[0] || ''}
                 items={mode === 'manual' 
-                  ? manualFiles.filter(f => !f.error).map(f => ({ id: f.name, name: f.name }))
+                  ? manualFiles.filter(f => !f.error).map(f => ({ id: f.name, name: f.name })).sort(naturalSort)
                   : Array.isArray(fileContent) 
-                    ? fileContent.filter(fc => fc.name).map(fc => ({ id: fc.name, name: fc.name }))
+                    ? fileContent.filter(fc => fc.name).map(fc => ({ id: fc.name, name: fc.name })).sort(naturalSort)
                     : []
                 }
                 placeholder="Search match to analyze..."

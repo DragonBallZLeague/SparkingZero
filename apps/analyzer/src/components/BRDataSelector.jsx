@@ -16,6 +16,20 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 /**
+ * Natural sort comparator for files and folders
+ * Handles numeric parts correctly so "Test 10" comes after "Test 9"
+ */
+function naturalSort(a, b) {
+  const aName = a.name || a;
+  const bName = b.name || b;
+  
+  return aName.localeCompare(bName, undefined, {
+    numeric: true,
+    sensitivity: 'base'
+  });
+}
+
+/**
  * DEFAULT SELECTION CONFIGURATION
  * 
  * Controls which folders/files are selected by default when the app loads.
@@ -630,12 +644,12 @@ export default function BRDataSelector({ onSelect }) {
                 const CategoryIcon = getCategoryIcon(category);
                 // Show immediate child folders under the category (path.length === 2).
                 // Use flatItems so we can include folders that don't match the query but contain matching descendants.
-                const immediateFolders = flatItems.filter(it => it.type === 'folder' && it.path.length === 2 && it.category === category);
+                const immediateFolders = flatItems.filter(it => it.type === 'folder' && it.path.length === 2 && it.category === category).sort(naturalSort);
                 const folders = immediateFolders.filter(folderItem => {
                   // Include the folder if any filtered item's full path starts with this folder's id
                   return filteredItems.some(fi => fi.path.join('/').startsWith(folderItem.id));
                 });
-                const files = items.filter(item => item.type === 'file');
+                const files = items.filter(item => item.type === 'file').sort(naturalSort);
                 return (
                   <Box key={category} sx={{ marginBottom: 2 }}>
                                 <Box sx={{ 
@@ -668,14 +682,14 @@ export default function BRDataSelector({ onSelect }) {
                         const isExpanded = expandedFolders.includes(folder.id);
                         const ItemIcon = CategoryIcon;
                         // Find files/subfolders belonging to this folder
-                        const childFiles = items.filter(item => item.type === 'file' && item.path.slice(0, folder.path.length).join('/') === folder.id);
+                        const childFiles = items.filter(item => item.type === 'file' && item.path.slice(0, folder.path.length).join('/') === folder.id).sort(naturalSort);
                         const childFolders = flatItems.filter(item =>
                           item.type === 'folder' &&
                           item.path.length > folder.path.length &&
                           item.path.slice(0, folder.path.length).join('/') === folder.id &&
                           // only include subfolders that contain at least one filtered item (match or descendant)
                           filteredItems.some(fi => fi.path.join('/').startsWith(item.id))
-                        );
+                        ).sort(naturalSort);
                         return (
                           <Box key={folder.id}>
                             <Box
@@ -804,7 +818,7 @@ export default function BRDataSelector({ onSelect }) {
                                       {isSubExpanded && (
                                         <Box sx={{ pl: 4, pt: 0.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                                           {/* Child files for subfolder */}
-                                          {items.filter(item => item.type === 'file' && item.path.slice(0, subfolder.path.length).join('/') === subfolder.id).map(file => {
+                                          {items.filter(item => item.type === 'file' && item.path.slice(0, subfolder.path.length).join('/') === subfolder.id).sort(naturalSort).map(file => {
                                             const isFileSelected = selected.includes(file.id);
                                             return (
                                               <Box
@@ -900,7 +914,7 @@ export default function BRDataSelector({ onSelect }) {
                         );
                       })}
                       {/* Render files not in folders (if any) */}
-                      {files.filter(file => file.path.length === 1).map(file => {
+                      {files.filter(file => file.path.length === 1).sort(naturalSort).map(file => {
                         const isFileSelected = selected.includes(file.id);
                         return (
                           <Box
@@ -958,9 +972,9 @@ export default function BRDataSelector({ onSelect }) {
               const isFully = isCategoryFullySelected(category);
               const isPartial = !isFully && allChildIds.some(id => selected.includes(id));
               // immediate child folders under this category
-              const immediateFolders = flatItems.filter(it => it.type === 'folder' && it.path.length === 2 && it.category === category);
+              const immediateFolders = flatItems.filter(it => it.type === 'folder' && it.path.length === 2 && it.category === category).sort(naturalSort);
               // files directly under category (path length === 1)
-              const directFiles = flatItems.filter(it => it.type === 'file' && it.path.length === 1 && it.category === category);
+              const directFiles = flatItems.filter(it => it.type === 'file' && it.path.length === 1 && it.category === category).sort(naturalSort);
               const isExpanded = expandedFolders.includes(category);
               return (
                 <Box key={category} sx={{ marginBottom: 2 }}>
@@ -1011,7 +1025,7 @@ export default function BRDataSelector({ onSelect }) {
                       {immediateFolders.map(folder => {
                         const isSel = selected.includes(folder.id);
                         const isFldExp = expandedFolders.includes(folder.id);
-                        const childFiles = flatItems.filter(it => it.type === 'file' && it.path.slice(0, folder.path.length).join('/') === folder.id);
+                        const childFiles = flatItems.filter(it => it.type === 'file' && it.path.slice(0, folder.path.length).join('/') === folder.id).sort(naturalSort);
                         return (
                           <Box key={folder.id}>
                             <Box sx={{ display: 'flex', alignItems: 'center', padding: '6px 10px', borderRadius: '4px', backgroundColor: isSel ? 'rgba(33, 150, 243, 0.2)' : 'rgba(255, 255, 255, 0.05)', border: '1px solid', borderColor: isSel ? 'rgba(33, 150, 243, 0.5)' : 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }} onClick={() => handleSearchItemToggle(folder)}>
