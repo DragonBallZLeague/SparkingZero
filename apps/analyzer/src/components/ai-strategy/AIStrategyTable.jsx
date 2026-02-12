@@ -281,10 +281,8 @@ export default function AIStrategyTable({
     return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
   });
   
-  // Apply row limit - convert string numbers to integers for comparison
-  const displayedStrategies = rowLimit === 'all' 
-    ? sortedStrategies 
-    : sortedStrategies.slice(0, Number(rowLimit));
+  // Display all strategies - row limit controls visible height via maxHeight, not data displayed
+  const displayedStrategies = sortedStrategies;
   
   console.log('AIStrategyTable - rowLimit:', rowLimit, 'displayedStrategies count:', displayedStrategies.length, 'sortedStrategies count:', sortedStrategies.length);
   
@@ -339,8 +337,8 @@ export default function AIStrategyTable({
         }`}
         style={{ 
           overflowX: 'auto',
-          overflowY: 'auto',
-          maxHeight: rowLimit === 'all' ? '1250px' : rowLimit === 10 ? '850px' : '450px',
+          overflowY: 'scroll',
+          maxHeight: rowLimit === 'all' ? '1250px' : rowLimit === 10 ? '760px' : '410px',
           position: 'relative'
         }}
       >
@@ -983,11 +981,11 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgDragonHoming, 0)}
+                    {formatNumber(ai.avgDragonHoming, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgLightningAttacks, 0)}
+                    {formatNumber(ai.avgLightningAttacks, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>

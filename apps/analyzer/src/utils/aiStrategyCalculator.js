@@ -300,8 +300,8 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       ai.totalExa2Count += match.exa2Count || 0;
       ai.totalThrows += match.throwCount || 0;
       ai.totalVanishingAttacks += match.vanishingAttackCount || 0;
-      ai.totalDragonHoming += match.dragonHomingCount || 0;
-      ai.totalLightningAttacks += match.lightningAttackCount || 0;
+      ai.totalDragonHoming += match.dragonHomingCount || match.dragonHoming || 0;
+      ai.totalLightningAttacks += match.lightningAttackCount || match.lightningAttack || 0;
       ai.totalSpeedImpacts += match.speedImpactCount || 0;
       ai.totalSpeedImpactWins += match.speedImpactWins || 0;
       
@@ -392,8 +392,8 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       charData.totalExa2Count += match.exa2Count || 0;
       charData.totalThrows += match.throwCount || 0;
       charData.totalVanishingAttacks += match.vanishingAttackCount || 0;
-      charData.totalDragonHoming += match.dragonHomingCount || 0;
-      charData.totalLightningAttacks += match.lightningAttackCount || 0;
+      charData.totalDragonHoming += match.dragonHomingCount || match.dragonHoming || 0;
+      charData.totalLightningAttacks += match.lightningAttackCount || match.lightningAttack || 0;
       charData.totalSpeedImpacts += match.speedImpactCount || 0;
       charData.totalSpeedImpactWins += match.speedImpactWins || 0;
       charData.totalGuards += match.guardCount || 0;
