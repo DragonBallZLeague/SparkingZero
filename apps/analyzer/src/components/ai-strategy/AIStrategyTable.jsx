@@ -119,6 +119,10 @@ export default function AIStrategyTable({
     let aVal, bVal;
     
     switch (tableSortBy) {
+      case 'name':
+        return sortDirection === 'asc' 
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
       case 'usage':
         aVal = a.totalMatches;
         bVal = b.totalMatches;
@@ -130,6 +134,10 @@ export default function AIStrategyTable({
       case 'performance':
         aVal = a.combatPerformanceScore;
         bVal = b.combatPerformanceScore;
+        break;
+      case 'battleTime':
+        aVal = a.avgBattleTime;
+        bVal = b.avgBattleTime;
         break;
       case 'damageDealt':
         aVal = a.avgDamageDealt;
@@ -147,14 +155,124 @@ export default function AIStrategyTable({
         aVal = a.damageEfficiency;
         bVal = b.damageEfficiency;
         break;
-      case 'battleTime':
-        aVal = a.avgBattleTime;
-        bVal = b.avgBattleTime;
+      case 'throws':
+        aVal = a.avgThrows || 0;
+        bVal = b.avgThrows || 0;
+        break;
+      case 'vanishingAttacks':
+        aVal = a.avgVanishingAttacks || 0;
+        bVal = b.avgVanishingAttacks || 0;
+        break;
+      case 'dragonHoming':
+        aVal = a.avgDragonHoming || 0;
+        bVal = b.avgDragonHoming || 0;
+        break;
+      case 'lightningAttacks':
+        aVal = a.avgLightningAttacks || 0;
+        bVal = b.avgLightningAttacks || 0;
+        break;
+      case 'speedImpacts':
+        aVal = a.avgSpeedImpacts || 0;
+        bVal = b.avgSpeedImpacts || 0;
+        break;
+      case 'speedImpactWins':
+        aVal = a.avgSpeedImpactWins || 0;
+        bVal = b.avgSpeedImpactWins || 0;
+        break;
+      case 'maxCombo':
+        aVal = a.avgMaxCombo || 0;
+        bVal = b.avgMaxCombo || 0;
+        break;
+      case 'maxComboDamage':
+        aVal = a.avgMaxComboDamage || 0;
+        bVal = b.avgMaxComboDamage || 0;
+        break;
+      case 'sparkingComboHits':
+        aVal = a.avgSparkingComboHits || 0;
+        bVal = b.avgSparkingComboHits || 0;
+        break;
+      case 'kills':
+        aVal = a.avgKills || 0;
+        bVal = b.avgKills || 0;
+        break;
+      case 'maxHealth':
+        aVal = a.avgMaxHealth || 0;
+        bVal = b.avgMaxHealth || 0;
+        break;
+      case 'healthRemaining':
+        aVal = a.avgHealthRemaining || 0;
+        bVal = b.avgHealthRemaining || 0;
+        break;
+      case 'survivalRate':
+        aVal = a.avgSurvivalRate || 0;
+        bVal = b.avgSurvivalRate || 0;
+        break;
+      case 'tags':
+        aVal = a.avgTags || 0;
+        bVal = b.avgTags || 0;
+        break;
+      case 'guards':
+        aVal = a.avgGuards || 0;
+        bVal = b.avgGuards || 0;
+        break;
+      case 'superCounters':
+        aVal = a.avgSuperCounters || 0;
+        bVal = b.avgSuperCounters || 0;
+        break;
+      case 'revengeCounters':
+        aVal = a.avgRevengeCounters || 0;
+        bVal = b.avgRevengeCounters || 0;
+        break;
+      case 'zCounters':
+        aVal = a.avgZCounters || 0;
+        bVal = b.avgZCounters || 0;
+        break;
+      case 's1Blast':
+        aVal = a.avgS1Blast || 0;
+        bVal = b.avgS1Blast || 0;
+        break;
+      case 's2Blast':
+        aVal = a.avgS2Blast || 0;
+        bVal = b.avgS2Blast || 0;
+        break;
+      case 'ultBlast':
+        aVal = a.avgUltBlast || 0;
+        bVal = b.avgUltBlast || 0;
+        break;
+      case 'kiBlasts':
+        aVal = a.avgEnergyBlasts || 0;
+        bVal = b.avgEnergyBlasts || 0;
+        break;
+      case 'skill1':
+        aVal = a.avgExa1Count || 0;
+        bVal = b.avgExa1Count || 0;
+        break;
+      case 'skill2':
+        aVal = a.avgExa2Count || 0;
+        bVal = b.avgExa2Count || 0;
+        break;
+      case 'charges':
+        aVal = a.avgCharges || 0;
+        bVal = b.avgCharges || 0;
+        break;
+      case 'sparking':
+        aVal = a.avgSparkingCount || 0;
+        bVal = b.avgSparkingCount || 0;
+        break;
+      case 'dragonDashDistance':
+        aVal = a.avgDragonDashDistance || 0;
+        bVal = b.avgDragonDashDistance || 0;
         break;
       case 'characters':
         aVal = a.uniqueCharacters;
         bVal = b.uniqueCharacters;
         break;
+      case 'topCharacter':
+        const aTop = a.characterUsage && a.characterUsage.length > 0 ? a.characterUsage[0].name : '';
+        const bTop = b.characterUsage && b.characterUsage.length > 0 ? b.characterUsage[0].name : '';
+        return sortDirection === 'asc' 
+          ? aTop.localeCompare(bTop)
+          : bTop.localeCompare(aTop);
       default:
         aVal = a.totalMatches;
         bVal = b.totalMatches;
@@ -368,273 +486,389 @@ export default function AIStrategyTable({
               </th>
               
               <th 
+                onClick={() => handleSort('throws')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '90px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Throws
+                <div className="flex items-center gap-1">
+                  Throws
+                  <SortIcon columnKey="throws" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('vanishingAttacks')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Vanishing Attacks
+                <div className="flex items-center gap-1">
+                  Vanishing Attacks
+                  <SortIcon columnKey="vanishingAttacks" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('dragonHoming')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Dragon Homings
+                <div className="flex items-center gap-1">
+                  Dragon Homings
+                  <SortIcon columnKey="dragonHoming" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('lightningAttacks')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Lightning Attacks
+                <div className="flex items-center gap-1">
+                  Lightning Attacks
+                  <SortIcon columnKey="lightningAttacks" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('speedImpacts')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Speed Impacts
+                <div className="flex items-center gap-1">
+                  Speed Impacts
+                  <SortIcon columnKey="speedImpacts" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('speedImpactWins')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Speed Impact Wins
+                <div className="flex items-center gap-1">
+                  Speed Impact Wins
+                  <SortIcon columnKey="speedImpactWins" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('maxCombo')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Max Combo Hits
+                <div className="flex items-center gap-1">
+                  Max Combo Hits
+                  <SortIcon columnKey="maxCombo" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('maxComboDamage')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '160px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Max Combo Damage
+                <div className="flex items-center gap-1">
+                  Max Combo Damage
+                  <SortIcon columnKey="maxComboDamage" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('sparkingComboHits')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '170px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Sparking Combo Hits
+                <div className="flex items-center gap-1">
+                  Sparking Combo Hits
+                  <SortIcon columnKey="sparkingComboHits" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('kills')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '80px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
-                Kills
+                <div className="flex items-center gap-1">
+                  Kills
+                  <SortIcon columnKey="kills" />
+                </div>
               </th>
               
               {/* SURVIVAL & HEALTH SECTION - GREEN */}
               <th 
+                onClick={() => handleSort('maxHealth')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '110px' }}
-                className={`px-4 py-3 text-left font-semibold border-l-2 ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors border-l-2 ${
                   darkMode 
                     ? 'bg-green-900/40 text-green-200 border-green-600' 
                     : 'bg-green-100 text-green-800 border-green-300'
                 }`}
               >
-                Max Health
+                <div className="flex items-center gap-1">
+                  Max Health
+                  <SortIcon columnKey="maxHealth" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('healthRemaining')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Health Remaining
+                <div className="flex items-center gap-1">
+                  Health Remaining
+                  <SortIcon columnKey="healthRemaining" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('survivalRate')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Survival Rate
+                <div className="flex items-center gap-1">
+                  Survival Rate
+                  <SortIcon columnKey="survivalRate" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('tags')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Swaps (Tags)
+                <div className="flex items-center gap-1">
+                  Swaps (Tags)
+                  <SortIcon columnKey="tags" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('guards')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '90px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Guards
+                <div className="flex items-center gap-1">
+                  Guards
+                  <SortIcon columnKey="guards" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('superCounters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Super Counters
+                <div className="flex items-center gap-1">
+                  Super Counters
+                  <SortIcon columnKey="superCounters" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('revengeCounters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Revenge Counters
+                <div className="flex items-center gap-1">
+                  Revenge Counters
+                  <SortIcon columnKey="revengeCounters" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('zCounters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '110px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
-                Z-Counters
+                <div className="flex items-center gap-1">
+                  Z-Counters
+                  <SortIcon columnKey="zCounters" />
+                </div>
               </th>
               
               {/* SPECIAL ABILITIES SECTION - PURPLE */}
               <th 
+                onClick={() => handleSort('s1Blast')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
-                className={`px-4 py-3 text-left font-semibold border-l-2 ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors border-l-2 ${
                   darkMode 
                     ? 'bg-purple-900/40 text-purple-200 border-purple-600' 
                     : 'bg-purple-100 text-purple-800 border-purple-300'
                 }`}
               >
-                S1 Blasts
+                <div className="flex items-center gap-1">
+                  S1 Blasts
+                  <SortIcon columnKey="s1Blast" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('s2Blast')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                S2 Blasts
+                <div className="flex items-center gap-1">
+                  S2 Blasts
+                  <SortIcon columnKey="s2Blast" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('ultBlast')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Ult Blasts
+                <div className="flex items-center gap-1">
+                  Ult Blasts
+                  <SortIcon columnKey="ultBlast" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('kiBlasts')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '100px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Ki Blasts
+                <div className="flex items-center gap-1">
+                  Ki Blasts
+                  <SortIcon columnKey="kiBlasts" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('skill1')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Skill 1 Usage
+                <div className="flex items-center gap-1">
+                  Skill 1 Usage
+                  <SortIcon columnKey="skill1" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('skill2')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Skill 2 Usage
+                <div className="flex items-center gap-1">
+                  Skill 2 Usage
+                  <SortIcon columnKey="skill2" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('charges')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '100px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Charges
+                <div className="flex items-center gap-1">
+                  Charges
+                  <SortIcon columnKey="charges" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('sparking')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '100px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Sparking
+                <div className="flex items-center gap-1">
+                  Sparking
+                  <SortIcon columnKey="sparking" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('dragonDashDistance')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '170px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
-                Dragon Dash Mileage
+                <div className="flex items-center gap-1">
+                  Dragon Dash Mileage
+                  <SortIcon columnKey="dragonDashDistance" />
+                </div>
               </th>
               
               {/* END COLUMNS */}
               <th 
+                onClick={() => handleSort('characters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '110px' }}
-                className={`px-4 py-3 text-left font-semibold border-l-2 ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors border-l-2 ${
                   darkMode 
                     ? 'bg-gray-700 text-gray-200 border-gray-500' 
                     : 'bg-gray-50 text-gray-700 border-gray-300'
                 }`}
               >
-                Characters
+                <div className="flex items-center gap-1">
+                  Characters
+                  <SortIcon columnKey="characters" />
+                </div>
               </th>
               
               <th 
+                onClick={() => handleSort('topCharacter')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
-                className={`px-4 py-3 text-left font-semibold ${
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-50 text-gray-700'
                 }`}
               >
-                Top Character
+                <div className="flex items-center gap-1">
+                  Top Character
+                  <SortIcon columnKey="topCharacter" />
+                </div>
               </th>
             </tr>
           </thead>
