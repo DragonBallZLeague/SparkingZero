@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom';
 import { Brain, Filter, TrendingUp, Target, User } from 'lucide-react';
 import { calculateAIStrategyMetrics, generateAIInsights, extractUniqueCharacters, filterAIMetricsByCharacter } from '../../utils/aiStrategyCalculator.js';
 import { Combobox } from '../Combobox.jsx';
-import AIStrategyCard from './AIStrategyCard.jsx';
+// import AIStrategyCard from './AIStrategyCard.jsx'; // Replaced with table view
+import AIStrategyTable from './AIStrategyTable.jsx';
 import AIStrategyExpandedPanel from './AIStrategyExpandedPanel.jsx';
 
 /**
@@ -230,20 +231,17 @@ export default function AIStrategyAnalysis({ aggregatedData, charMap = {}, darkM
         </div>
       </div>
       
-      {/* Strategy Cards */}
+      {/* Strategy Table */}
       {filteredAndSortedStrategies.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-          {filteredAndSortedStrategies.map(ai => (
-            <AIStrategyCard
-              key={ai.name}
-              aiMetrics={ai}
-              darkMode={darkMode}
-              onClick={() => setSelectedAI(ai)}
-              characterFiltered={!!selectedCharacter}
-              selectedCharacter={selectedCharacterName}
-            />
-          ))}
-        </div>
+        <AIStrategyTable
+          strategies={filteredAndSortedStrategies}
+          darkMode={darkMode}
+          onRowClick={(ai) => setSelectedAI(ai)}
+          characterFiltered={!!selectedCharacter}
+          selectedCharacter={selectedCharacterName}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+        />
       )}
       
       {/* No Results Message */}
