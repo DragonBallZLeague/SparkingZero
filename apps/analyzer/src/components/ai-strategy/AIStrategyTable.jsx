@@ -1001,11 +1001,11 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgMaxComboDamage, 0)}
+                    {formatNumber(ai.avgMaxComboDamage, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgSparkingComboHits, 0)}
+                    {formatNumber(ai.avgSparkingComboHits, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
@@ -1034,7 +1034,7 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
-                    {formatNumber(ai.avgGuards, 0)}
+                    {formatNumber(ai.avgGuards, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
@@ -1067,7 +1067,7 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                    {formatNumber(ai.avgEnergyBlasts, 0)}
+                    {formatNumber(ai.avgEnergyBlasts, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
@@ -1079,11 +1079,11 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                    {formatNumber(ai.avgCharges, 0)}
+                    {formatNumber(ai.avgCharges, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                    {formatNumber(ai.avgSparkingCount, 0)}
+                    {formatNumber(ai.avgSparkingCount, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
