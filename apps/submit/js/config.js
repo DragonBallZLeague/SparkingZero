@@ -2,10 +2,8 @@
 // This file contains all configuration values and constants used throughout the app
 
 const CONFIG = {
-    // API base URL - toggle between local and production
-    // Local: 'http://localhost:3000'
-    // Production: 'https://sparking-zero-iota.vercel.app'
-    API_BASE_URL: 'http://localhost:3000',
+    // API base URL - points to Vercel deployment
+    API_BASE_URL: 'https://sparking-zero-iota.vercel.app',
     
     // File upload constraints
     MAX_FILES: 50,
