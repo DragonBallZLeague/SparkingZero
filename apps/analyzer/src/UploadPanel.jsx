@@ -8,6 +8,16 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
+// Helper to get API URL - in dev use proxy, in prod use full URL
+const getApiUrl = () => {
+  // In development, Vite proxy handles /api requests
+  if (import.meta.env.DEV) {
+    return '';
+  }
+  // In production or if VITE_API_URL is set
+  return import.meta.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+};
+
 export default function UploadPanel({ onClose }) {
   const [stage, setStage] = useState('ready'); // ready | uploading | done | error
   const [files, setFiles] = useState([]);
@@ -26,6 +36,8 @@ export default function UploadPanel({ onClose }) {
   const [team2, setTeam2] = useState('');
   const [teamWarning, setTeamWarning] = useState('');
   const [filesPreview, setFilesPreview] = useState([]);
+  const [existingFiles, setExistingFiles] = useState([]);
+  const [duplicateFiles, setDuplicateFiles] = useState([]);
 
   const teams = [
     '',
@@ -46,7 +58,7 @@ export default function UploadPanel({ onClose }) {
   useEffect(() => {
     const loadPaths = async () => {
       try {
-        const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+        const apiUrl = getApiUrl();
         const res = await fetch(`${apiUrl}/api/paths.js`);
         if (!res.ok) throw new Error('Failed to load folders');
         const data = await res.json();
@@ -104,6 +116,57 @@ export default function UploadPanel({ onClose }) {
     }
   }, [selectedParent, pathOptions]);
 
+  // Fetch existing files when selectedLeaf changes
+  useEffect(() => {
+    const fetchExistingFiles = async () => {
+      if (!selectedLeaf) {
+        setExistingFiles([]);
+        return;
+      }
+      try {
+        const apiUrl = getApiUrl();
+        console.log('[UploadPanel] Fetching existing files for path:', selectedLeaf);
+        const res = await fetch(`${apiUrl}/api/list-files.js?path=${encodeURIComponent(selectedLeaf)}`);
+        if (!res.ok) {
+          console.warn('[UploadPanel] Failed to fetch existing files:', res.status);
+          setExistingFiles([]);
+          return;
+        }
+        const data = await res.json();
+        console.log('[UploadPanel] Existing files:', data.files);
+        setExistingFiles(data.files || []);
+      } catch (e) {
+        console.warn('[UploadPanel] Error fetching existing files:', e);
+        setExistingFiles([]);
+      }
+    };
+    fetchExistingFiles();
+  }, [selectedLeaf]);
+
+  // Check for duplicate file names whenever files or existingFiles change
+  useEffect(() => {
+    if (files.length === 0 || existingFiles.length === 0) {
+      setDuplicateFiles([]);
+      return;
+    }
+    console.log('[UploadPanel] Checking for duplicates...');
+    console.log('[UploadPanel] Selected files:', files.map(f => f.name));
+    console.log('[UploadPanel] Existing files:', existingFiles.map(f => f.name));
+    
+    // Create a map of lowercase names to actual names for case-insensitive comparison
+    const existingFileNamesMap = new Map(
+      existingFiles.map(f => [f.name.toLowerCase(), f.name])
+    );
+    
+    // Find files with names that match existing files (case-insensitive)
+    const duplicates = files
+      .filter(f => existingFileNamesMap.has(f.name.toLowerCase()))
+      .map(f => f.name);
+    
+    console.log('[UploadPanel] Duplicate files found:', duplicates);
+    setDuplicateFiles(duplicates);
+  }, [files, existingFiles]);
+
   const onFileChange = (e) => {
     const f = Array.from(e.target.files || []);
     const onlyJson = f.filter(x => x.name.toLowerCase().endsWith('.json'));
@@ -120,6 +183,7 @@ export default function UploadPanel({ onClose }) {
   const clearFiles = () => {
     setFiles([]);
     setFilesPreview([]);
+    setDuplicateFiles([]);
     // Reset the file input
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = '';
@@ -188,6 +252,10 @@ export default function UploadPanel({ onClose }) {
     if (!name.trim()) { setErr('Name/username is required'); return; }
     if (!selectedLeaf) { setErr('Please choose a target folder'); return; }
     if (files.length === 0) { setErr('Please attach at least one JSON file'); return; }
+    if (duplicateFiles.length > 0) {
+      setErr(`Cannot upload: The following file name(s) already exist in the selected folder: ${duplicateFiles.join(', ')}. Please remove these files from your selection or rename them before uploading.`);
+      return;
+    }
     if (setTeamData && !team1) { 
       setErr('Please select Team 1, or disable "Set Team Data"'); 
       return; 
@@ -195,7 +263,7 @@ export default function UploadPanel({ onClose }) {
 
     setStage('uploading');
     try {
-      const apiUrl = process.env.VITE_API_URL || 'https://sparking-zero-iota.vercel.app';
+      const apiUrl = getApiUrl();
       const filesPayload = [];
       
       // Process and validate files
@@ -413,32 +481,34 @@ export default function UploadPanel({ onClose }) {
                   {filesPreview.length > 0 && (
                     <div className="mt-2 space-y-1">
                       <div className="text-xs font-medium text-gray-700">Files Preview:</div>
-                      <div className="max-h-32 overflow-y-auto space-y-1">
-                        {filesPreview.map((preview, i) => (
-                          <div key={i} className="text-xs p-1.5 rounded bg-white border border-blue-200">
-                            <div className="font-medium">{preview.name}</div>
-                            {preview.error ? (
-                              <div className="text-red-600">{preview.error}</div>
-                            ) : (
-                              <>
-                                {preview.hasExistingTeams && (
-                                  <div className="text-gray-600">
-                                    Current: [{preview.existingTeams?.join(', ')}]
-                                  </div>
-                                )}
-                                {preview.willModify ? (
-                                  <div className="text-green-700">
-                                    Will set to: [{team1}{team2 ? `, ${team2}` : ''}]
-                                  </div>
-                                ) : (
-                                  <div className="text-gray-500">
-                                    {!team1 ? 'Select Team 1 to modify' : 'No TeamBattleResults structure found'}
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        ))}
+                      <div className="rounded border border-gray-200 bg-gray-50">
+                        <div className="p-2 h-24 overflow-y-auto space-y-1">
+                          {filesPreview.map((preview, i) => (
+                            <div key={i} className="text-xs p-1.5 rounded bg-white border border-blue-200">
+                              <div className="font-medium">{preview.name}</div>
+                              {preview.error ? (
+                                <div className="text-red-600">{preview.error}</div>
+                              ) : (
+                                <>
+                                  {preview.hasExistingTeams && (
+                                    <div className="text-gray-600">
+                                      Current: [{preview.existingTeams?.join(', ')}]
+                                    </div>
+                                  )}
+                                  {preview.willModify ? (
+                                    <div className="text-green-700">
+                                      Will set to: [{team1}{team2 ? `, ${team2}` : ''}]
+                                    </div>
+                                  ) : (
+                                    <div className="text-gray-500">
+                                      {!team1 ? 'Select Team 1 to modify' : 'No TeamBattleResults structure found'}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -455,16 +525,29 @@ export default function UploadPanel({ onClose }) {
               <input type="file" accept="application/json,.json" multiple onChange={onFileChange} />
               {files.length > 0 && (
                 <div className="mt-2 rounded border border-gray-200 bg-gray-50">
-                  <div className="p-2 h-24 overflow-y-auto">
+                  <div className="p-2 h-14 overflow-y-auto">
                     <ul className="list-disc ml-6 text-sm space-y-0.5">
-                      {files.map((f, i)=> <li key={i}>{f.name} ({Math.ceil(f.size/1024)} KB)</li>)}
+                      {files.map((f, i)=> {
+                        const isDuplicate = duplicateFiles.includes(f.name);
+                        return (
+                          <li key={i} className={isDuplicate ? 'text-red-600 font-medium' : ''}>
+                            {f.name} ({Math.ceil(f.size/1024)} KB)
+                            {isDuplicate && ' ⚠️ Already exists'}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </div>
               )}
+              {duplicateFiles.length > 0 && (
+                <div className="mt-2 p-2 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+                  ⚠️ Warning: {duplicateFiles.length} file name{duplicateFiles.length > 1 ? 's' : ''} already exist{duplicateFiles.length === 1 ? 's' : ''} in the selected folder. Files with duplicate names cannot be uploaded.
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
-              <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim()} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
+              <button onClick={doUpload} disabled={files.length===0 || !selectedLeaf || !name.trim() || duplicateFiles.length > 0} className="px-3 py-2 rounded bg-blue-600 text-white disabled:opacity-50">Submit</button>
               {files.length > 0 && (
                 <button
                   onClick={clearFiles}

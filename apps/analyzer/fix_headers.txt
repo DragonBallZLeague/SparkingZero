@@ -1,0 +1,14 @@
+Need to convert all header cells from:
+className={`sticky top-0 z-10 ...`}
+style={{ minWidth: '...' }}
+
+To:
+style={{ position: 'sticky', top: 0, zIndex: 5, minWidth: '...' }}
+className={`...`} (without sticky/z-index)
+
+And for AI Name body cells from:
+className={`sticky left-0 z-20 ...`}
+
+To:
+style={{ position: 'sticky', left: 0, zIndex: 50 }}
+className={`...`} (without sticky/z-index)

@@ -14,6 +14,7 @@ import { exportToExcel } from './utils/excelExport.js';
 import { PerFormStatsDisplay, PerFormStatsDisplayAggregated } from './components/PerFormStatsDisplay.jsx';
 import { calculatePerFormStats } from './utils/formStatsCalculator.js';
 import CapsuleSynergyAnalysis from './components/CapsuleSynergyAnalysis.jsx';
+import AIStrategyAnalysis from './components/ai-strategy/AIStrategyAnalysis.jsx';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
 import { 
   Trophy, 
@@ -45,7 +46,9 @@ import {
   X,
   ArrowUpDown,
   Filter,
-  Download
+  Download,
+  Brain,
+  Minus
 } from 'lucide-react';
 import UploadWidgetLauncher from './UploadWidgetLauncher';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
@@ -54,6 +57,21 @@ import capsulesCSV from '../../../referencedata/capsules.csv?raw';
 // Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
 // Each entry may be a module object; code uses module.default || module
 const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });
+
+/**
+ * Natural sort comparator for files and folders
+ * Handles numeric parts correctly so "Test 10" comes after "Test 9"
+ */
+function naturalSort(a, b) {
+  const aName = a.name || a;
+  const bName = b.name || b;
+  
+  return aName.localeCompare(bName, undefined, {
+    numeric: true,
+    sensitivity: 'base'
+  });
+}
+
 // Small stat bar used in the match panels
 function StatBar({ value, maxValue, displayValue, type = 'damage', isInverse = false, label = '', icon: Icon = Target, darkMode = false }) {
   const percentage = Math.min((value / maxValue) * 100, 100);
@@ -454,6 +472,10 @@ function extractStats(char, charMap, capsuleMap = {}, position = null, aiStrateg
       aiStrategy = strategy.name;
       break; // Found the AI strategy, stop looking
     }
+  }
+  // If no AI strategy found, use "Default"
+  if (!aiStrategy) {
+    aiStrategy = 'Default';
   }
   
   // Categorize capsules by build type using metadata
@@ -941,7 +963,12 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
     setTooltipOpen(false);
   };
 
-  if (!stats.equippedCapsules || stats.equippedCapsules.length === 0) {
+  // Check if we have any build data to display
+  const hasEquipment = stats.equippedCapsules && stats.equippedCapsules.length > 0;
+  const hasAI = stats.aiStrategy && stats.aiStrategy !== 'Unknown' && stats.aiStrategy !== 'Com' && stats.aiStrategy !== 'Player';
+  
+  // If no equipment and no AI, show "No Equipment Data"
+  if (!hasEquipment && !hasAI) {
     return (
       <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
         <div className="flex items-center gap-2 mb-2">
@@ -979,8 +1006,8 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
 
   return (
     <div className={`space-y-2`}>
-      {/* Build Composition (New System) */}
-      {stats.buildComposition && (
+      {/* Build Composition (New System) - only show if we have equipment */}
+      {stats.buildComposition && hasEquipment && (
         <div className="flex items-center justify-between">
           <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Build Type</span>
           <div
@@ -995,7 +1022,7 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
       )}
 
       {/* Tooltip Portal - renders in document.body */}
-      {tooltipOpen && stats.buildComposition && typeof document !== 'undefined' && createPortal(
+      {tooltipOpen && stats.buildComposition && hasEquipment && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
           style={{ ...floatingStyles, width: '16rem' }}
@@ -1028,35 +1055,55 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
         </div>,
         document.body
       )}
+
+      {/* AI Strategy - show in non-detailed view if no equipment but has AI */}
+      {!showDetailed && hasAI && !hasEquipment && (
+        <div className="flex items-center justify-between">
+          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI Strategy</span>
+          <span className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+            {stats.aiStrategy}
+          </span>
+        </div>
+      )}
       
       {showDetailed && (
         <>
-          {/* Capsules List */}
-          <div className="space-y-1.5 pt-1">
-            {stats.equippedCapsules.map((capsule, idx) => (
-              <div key={idx} className={`flex items-center justify-between text-xs p-1.5 rounded ${
-                darkMode ? 'bg-gray-600/50' : 'bg-gray-100'
-              }`}>
-                <span className={`${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                  {capsule.name}
-                </span>
-                <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                  {capsule.capsule.cost}
-                </span>
+          {/* Capsules List - only show if we have equipment */}
+          {hasEquipment && (
+            <>
+              <div className="space-y-1.5 pt-1">
+                {stats.equippedCapsules.map((capsule, idx) => (
+                  <div key={idx} className={`flex items-center justify-between text-xs p-1.5 rounded ${
+                    darkMode ? 'bg-gray-600/50' : 'bg-gray-100'
+                  }`}>
+                    <span className={`${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                      {capsule.name}
+                    </span>
+                    <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                      {capsule.capsule.cost}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className={`flex items-center justify-between text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            <span>Capsules ({stats.equippedCapsules.length})</span>
-            <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{stats.totalCapsuleCost}</span></span>
-          </div>
-          {/* AI Strategy */}
-          {stats.aiStrategy && (
+              <div className={`flex items-center justify-between text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <span>Capsules ({stats.equippedCapsules.length})</span>
+                <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{stats.totalCapsuleCost}</span></span>
+              </div>
+            </>
+          )}
+          {/* AI Strategy - show if available */}
+          {hasAI && (
             <div className="flex items-center justify-between">
               <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI Strategy</span>
               <span className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                 {stats.aiStrategy}
               </span>
+            </div>
+          )}
+          {/* Show "No Capsules" message if AI exists but no equipment */}
+          {hasAI && !hasEquipment && (
+            <div className={`text-xs italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+              No capsules equipped
             </div>
           )}
         </>
@@ -1066,7 +1113,10 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
 }
 
 // Meta Analysis Component
-function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, darkMode = false }) {
+function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, charMap, darkMode = false }) {
+  const [isAIStrategyExpanded, setIsAIStrategyExpanded] = useState(true);
+  const [isCapsuleExpanded, setIsCapsuleExpanded] = useState(true);
+  
   if (aggregatedData.length === 0) {
     return (
       <div className="text-center py-8">
@@ -1079,21 +1129,70 @@ function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, darkMod
 
   return (
     <div className="space-y-6">
-      {/* Phase 1.1: Capsule Performance Analysis */}
+      {/* AI Strategy Effectiveness Analysis */}
+      <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-purple-50'} border ${darkMode ? 'border-purple-900/30' : 'border-purple-200'}`}>
+        <div className="flex items-center gap-3 mb-4">
+          <Brain className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+          <h3 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+            AI Strategy Effectiveness
+          </h3>
+          <button 
+            onClick={() => setIsAIStrategyExpanded(!isAIStrategyExpanded)}
+            className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              darkMode 
+                ? 'bg-purple-600 hover:bg-purple-500 text-white' 
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+            aria-label={isAIStrategyExpanded ? 'Collapse section' : 'Expand section'}
+          >
+            {isAIStrategyExpanded ? (
+              <Minus className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        {isAIStrategyExpanded && (
+          <>
+            <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Compare AI strategy performance, behavioral patterns, character synergies, and build compatibility.
+            </p>
+            <AIStrategyAnalysis aggregatedData={aggregatedData} charMap={charMap} darkMode={darkMode} />
+          </>
+        )}
+      </div>
+      
+      {/* Capsule Performance Analysis */}
       <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-blue-50'} border ${darkMode ? 'border-blue-900/30' : 'border-blue-200'}`}>
         <div className="flex items-center gap-3 mb-4">
           <Zap className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
           <h3 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
             Capsule Performance Analysis
           </h3>
-          <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${darkMode ? 'bg-green-900/50 text-green-300' : 'bg-green-100 text-green-700'}`}>
-            Phase 1
-          </span>
+          <button 
+            onClick={() => setIsCapsuleExpanded(!isCapsuleExpanded)}
+            className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              darkMode 
+                ? 'bg-blue-600 hover:bg-blue-500 text-white' 
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+            aria-label={isCapsuleExpanded ? 'Collapse section' : 'Expand section'}
+          >
+            {isCapsuleExpanded ? (
+              <Minus className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
         </div>
-        <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          Analyze individual capsule performance across matches, characters, and AI strategies.
-        </p>
-        <CapsuleSynergyAnalysis aggregatedData={aggregatedData} darkMode={darkMode} />
+        {isCapsuleExpanded && (
+          <>
+            <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Analyze individual capsule performance across matches, characters, and AI strategies.
+            </p>
+            <CapsuleSynergyAnalysis aggregatedData={aggregatedData} darkMode={darkMode} />
+          </>
+        )}
       </div>
     </div>
   );
@@ -1375,6 +1474,14 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           break; // Found the AI strategy, stop looking
         }
       }
+      // If no AI strategy found, use "Default"
+      if (!aiStrategy) {
+        aiStrategy = 'Default';
+      }
+      // If no AI strategy found, use "Default"
+      if (!aiStrategy) {
+        aiStrategy = 'Default';
+      }
       
       // Use original form name as the key for aggregation
       const originalForm = char.battlePlayCharacter?.originalCharacter?.key;
@@ -1586,6 +1693,17 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         won = stats.hPGaugeValue > 0;
       }
       
+      // Calculate per-form stats for this match if transformations occurred
+      let perFormStatsForMatch = null;
+      if (characterIdRecord && char.formChangeHistory && char.formChangeHistory.length > 0) {
+        perFormStatsForMatch = calculatePerFormStats(
+          char,
+          characterIdRecord,
+          char.formChangeHistory,
+          originalForm
+        );
+      }
+      
       // Add individual match data for meta analysis
       charData.matches.push({
         damageDone: stats.damageDone,
@@ -1640,6 +1758,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         sparkingComboCount: stats.sparkingComboCount,
         formChangeHistory: formChangeHistory,
         formChangeCount: formChangeCount,
+        perFormStats: perFormStatsForMatch, // Store per-form stats with each match
         won: won,
         fileName: fileName
       });
@@ -1654,18 +1773,10 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         });
       }
       
-      // Aggregate per-form stats from characterIdRecord if available
-      if (characterIdRecord && char.formChangeHistory && char.formChangeHistory.length > 0) {
-        // Calculate per-form stats for this match using the calculator
-        const perFormStats = calculatePerFormStats(
-          char,
-          characterIdRecord,
-          char.formChangeHistory,
-          originalForm
-        );
-        
+      // Aggregate per-form stats from stored per-match form data
+      if (perFormStatsForMatch && Array.isArray(perFormStatsForMatch)) {
         // Aggregate each form's stats
-        perFormStats.forEach(formStat => {
+        perFormStatsForMatch.forEach(formStat => {
           const formId = formStat.formId;
           const formName = charMap[formId] || formId;
           
@@ -2002,10 +2113,10 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Calculate top 3 most used builds (similar to Team Rankings implementation)
     const buildGroups = {};
     
-    // Group matches by build composition label
+    // Group matches by build composition label + AI strategy
     char.matches.forEach(match => {
       if (match.buildComposition && match.buildComposition.label) {
-        const buildLabel = match.buildComposition.label;
+        const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
         
         if (!buildGroups[buildLabel]) {
           buildGroups[buildLabel] = {
@@ -2158,6 +2269,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
   const singleBuildChars = aggregated.filter(char => 
     char.topBuilds && 
     char.topBuilds.length === 1 && 
+    char.topBuilds[0] &&
     char.activeMatchCount === char.topBuilds[0].activeCount
   );
   
@@ -2554,7 +2666,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           
           // Track build usage for this matchup
           if (p1Stats.buildComposition && p1Stats.buildComposition.label) {
-            const buildKey = p1Stats.buildComposition.label;
+            const buildKey = `${p1Stats.buildComposition.label}|${p1Stats.aiStrategy || 'Default'}`;
             teamStats[team1Name].opponentRecords[team2Name].characterMatchups[matchupKey].buildUsage[buildKey] = 
               (teamStats[team1Name].opponentRecords[team2Name].characterMatchups[matchupKey].buildUsage[buildKey] || 0) + 1;
             // Store the full build composition data
@@ -2601,7 +2713,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           });
           
           if (p2Stats.buildComposition && p2Stats.buildComposition.label) {
-            const p2BuildKey = p2Stats.buildComposition.label;
+            const p2BuildKey = `${p2Stats.buildComposition.label}|${p2Stats.aiStrategy || 'Default'}`;
             teamStats[team2Name].opponentRecords[team1Name].characterMatchups[reverseMatchupKey].buildUsage[p2BuildKey] = 
               (teamStats[team2Name].opponentRecords[team1Name].characterMatchups[reverseMatchupKey].buildUsage[p2BuildKey] || 0) + 1;
             // Store the full build composition data
@@ -3100,6 +3212,7 @@ export default function App() {
     position: false
   }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
   
   // Search and filter state for Aggregated Character Performance
@@ -3218,8 +3331,44 @@ export default function App() {
       const totalEnergyBlasts = filteredMatches.reduce((sum, m) => sum + (m.shotEnergyBulletCount || 0), 0);
       const totalZCounters = filteredMatches.reduce((sum, m) => sum + (m.zCounterCount || 0), 0);
       const totalSuperCounters = filteredMatches.reduce((sum, m) => sum + (m.superCounterCount || 0), 0);
+      const totalRevengeCounters = filteredMatches.reduce((sum, m) => sum + (m.revengeCounterCount || 0), 0);
+      const totalTags = filteredMatches.reduce((sum, m) => sum + (m.tags || 0), 0);
       const maxComboNumTotal = filteredMatches.reduce((sum, m) => sum + (m.maxComboNum || 0), 0);
       const maxComboDamageTotal = filteredMatches.reduce((sum, m) => sum + (m.maxComboDamage || 0), 0);
+      
+      // Special Abilities - NEW blast tracking
+      const totalS1Blast = filteredMatches.reduce((sum, m) => sum + (m.s1Blast || 0), 0);
+      const totalS2Blast = filteredMatches.reduce((sum, m) => sum + (m.s2Blast || 0), 0);
+      const totalUltBlast = filteredMatches.reduce((sum, m) => sum + (m.ultBlast || 0), 0);
+      const totalS1HitBlast = filteredMatches.reduce((sum, m) => sum + (m.s1HitBlast || 0), 0);
+      const totalS2HitBlast = filteredMatches.reduce((sum, m) => sum + (m.s2HitBlast || 0), 0);
+      const totalULTHitBlast = filteredMatches.reduce((sum, m) => sum + (m.uLTHitBlast || 0), 0);
+      // Track separately for hit rate calculation (only matches with hasAdditionalCounts would have accurate data)
+      let totalS1BlastTrackable = 0;
+      let totalS2BlastTrackable = 0;
+      let totalUltBlastTrackable = 0;
+      filteredMatches.forEach(m => {
+        // Only count trackable if match has the new format data
+        if (m.s1HitRate !== undefined || m.s2HitRate !== undefined || m.ultHitRate !== undefined) {
+          totalS1BlastTrackable += (m.s1Blast || 0);
+          totalS2BlastTrackable += (m.s2Blast || 0);
+          totalUltBlastTrackable += (m.ultBlast || 0);
+        }
+      });
+      
+      // Legacy blast tracking
+      const totalEXA1 = filteredMatches.reduce((sum, m) => sum + (m.exa1Count || 0), 0);
+      const totalEXA2 = filteredMatches.reduce((sum, m) => sum + (m.exa2Count || 0), 0);
+      const totalDragonDashMileage = filteredMatches.reduce((sum, m) => sum + (m.dragonDashMileage || 0), 0);
+      
+      // Combat Performance
+      const totalThrows = filteredMatches.reduce((sum, m) => sum + (m.throwCount || 0), 0);
+      const totalLightningAttacks = filteredMatches.reduce((sum, m) => sum + (m.lightningAttackCount || 0), 0);
+      const totalVanishingAttacks = filteredMatches.reduce((sum, m) => sum + (m.vanishingAttackCount || 0), 0);
+      const totalDragonHoming = filteredMatches.reduce((sum, m) => sum + (m.dragonHomingCount || 0), 0);
+      const totalSpeedImpacts = filteredMatches.reduce((sum, m) => sum + (m.speedImpactCount || 0), 0);
+      const totalSpeedImpactWins = filteredMatches.reduce((sum, m) => sum + (m.speedImpactWins || 0), 0);
+      const totalSparkingCombo = filteredMatches.reduce((sum, m) => sum + (m.sparkingComboCount || 0), 0);
   const denom = activeMatchCount > 0 ? activeMatchCount : matchCount;
       
       // Calculate survival count from filtered matches (only count if survived AND participated)
@@ -3263,8 +3412,50 @@ export default function App() {
   const avgEnergyBlasts = Math.round((totalEnergyBlasts / Math.max(denom, 1)) * 10) / 10;
   const avgZCounters = Math.round((totalZCounters / Math.max(denom, 1)) * 10) / 10;
   const avgSuperCounters = Math.round((totalSuperCounters / Math.max(denom, 1)) * 10) / 10;
+  const avgRevengeCounters = Math.round((totalRevengeCounters / Math.max(denom, 1)) * 10) / 10;
+  const avgTags = Math.round((totalTags / Math.max(denom, 1)) * 10) / 10;
   const avgMaxCombo = Math.round((maxComboNumTotal / Math.max(denom, 1)) * 10) / 10;
   const avgMaxComboDamage = Math.round(maxComboDamageTotal / Math.max(denom, 1));
+  
+  // Special Abilities - NEW blast tracking averages
+  const avgS1Blast = Math.round((totalS1Blast / Math.max(denom, 1)) * 10) / 10;
+  const avgS2Blast = Math.round((totalS2Blast / Math.max(denom, 1)) * 10) / 10;
+  const avgUltBlast = Math.round((totalUltBlast / Math.max(denom, 1)) * 10) / 10;
+  const avgS1Hit = Math.round((totalS1HitBlast / Math.max(denom, 1)) * 10) / 10;
+  const avgS2Hit = Math.round((totalS2HitBlast / Math.max(denom, 1)) * 10) / 10;
+  const avgUltHit = Math.round((totalULTHitBlast / Math.max(denom, 1)) * 10) / 10;
+  // Hit rates (overall across all filtered matches)
+  const s1HitRateOverall = totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null;
+  const s2HitRateOverall = totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null;
+  const ultHitRateOverall = totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null;
+  
+  // Special Abilities - Legacy blast tracking (for backwards compatibility)
+  const avgSPM1 = avgS1Blast; // Same as avgS1Blast
+  const avgSPM2 = avgS2Blast; // Same as avgS2Blast
+  const avgEXA1 = Math.round((totalEXA1 / Math.max(denom, 1)) * 10) / 10;
+  const avgEXA2 = Math.round((totalEXA2 / Math.max(denom, 1)) * 10) / 10;
+  const avgDragonDashMileage = Math.round((totalDragonDashMileage / Math.max(denom, 1)) * 10) / 10;
+  
+  // Combat Performance averages
+  const avgThrows = Math.round((totalThrows / Math.max(denom, 1)) * 10) / 10;
+  const avgLightningAttacks = Math.round((totalLightningAttacks / Math.max(denom, 1)) * 10) / 10;
+  const avgVanishingAttacks = Math.round((totalVanishingAttacks / Math.max(denom, 1)) * 10) / 10;
+  const avgDragonHoming = Math.round((totalDragonHoming / Math.max(denom, 1)) * 10) / 10;
+  const avgSpeedImpacts = Math.round((totalSpeedImpacts / Math.max(denom, 1)) * 10) / 10;
+  const avgSpeedImpactWins = Math.round((totalSpeedImpactWins / Math.max(denom, 1)) * 10) / 10;
+  const avgSparkingCombo = Math.round((totalSparkingCombo / Math.max(denom, 1)) * 10) / 10;
+  
+  // Calculate win/loss stats
+  const totalWins = filteredMatches.filter(m => m.won).length;
+  const totalLosses = filteredMatches.filter(m => !m.won).length;
+  const winRate = activeMatches.length > 0 
+    ? Math.round((activeMatches.filter(m => m.won).length / activeMatches.length) * 1000) / 10 
+    : (filteredMatches.length > 0 ? Math.round((totalWins / filteredMatches.length) * 1000) / 10 : 0);
+  
+  // Calculate speed impact win rate
+  const speedImpactWinRate = totalSpeedImpacts > 0 
+    ? Math.round((totalSpeedImpactWins / totalSpeedImpacts) * 1000) / 10 
+    : 0;
       
       // Calculate DPS and efficiency - use totals for DPS and efficiency
       const dps = totalBattleTime > 0 ? totalDamage / totalBattleTime : 0;
@@ -3282,6 +3473,277 @@ export default function App() {
   // Experience multiplier based on matches played; prefer active matches for weighting
   const experienceMultiplier = Math.min(1.25, 1.0 + ((activeMatchCount > 0 ? activeMatchCount : matchCount) - 1) * (0.25 / 11));
       const combatPerformanceScore = Math.round((baseScore * experienceMultiplier) * 100) / 100;
+      
+      // Recalculate top 3 most used builds based on FILTERED matches
+      const buildGroups = {};
+      
+      // Group filtered matches by build composition label + AI strategy
+      filteredMatches.forEach(match => {
+        if (match.buildComposition && match.buildComposition.label) {
+          const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+          
+          if (!buildGroups[buildLabel]) {
+            buildGroups[buildLabel] = {
+              buildComposition: match.buildComposition,
+              aiStrategy: match.aiStrategy || null,
+              equippedCapsules: match.equippedCapsules || [],
+              totalCapsuleCost: match.totalCapsuleCost || 0,
+              count: 0,
+              activeCount: 0,
+              totalDamageDealt: 0,
+              totalDamageTaken: 0,
+              totalBattleDuration: 0,
+              totalHealthRemaining: 0,
+              totalHealthMax: 0
+            };
+          }
+          
+          buildGroups[buildLabel].count++;
+          // Only count as active if battleTime > 0
+          if (match.battleTime && match.battleTime > 0) {
+            buildGroups[buildLabel].activeCount++;
+            buildGroups[buildLabel].totalBattleDuration += match.battleTime;
+            // Only accumulate stats for active matches
+            buildGroups[buildLabel].totalDamageDealt += match.damageDone || 0;
+            buildGroups[buildLabel].totalDamageTaken += match.damageTaken || 0;
+            buildGroups[buildLabel].totalHealthRemaining += match.hPGaugeValue || 0;
+            buildGroups[buildLabel].totalHealthMax += match.hPGaugeValueMax || 0;
+          }
+        }
+      });
+      
+      // Calculate performance score for each build and sort
+      const sortedBuilds = Object.values(buildGroups)
+        .filter(build => build.activeCount > 0) // Only include builds with active matches
+        .map(build => {
+          // Use activeCount for averages (non-zero battleTime), fallback to count
+          const denominator = build.activeCount > 0 ? build.activeCount : build.count;
+          // Round averages to match character-level calculation precision
+          const avgDamageDealt = Math.round(build.totalDamageDealt / denominator);
+          const avgDamageTaken = Math.round(build.totalDamageTaken / denominator);
+          const avgBattleDuration = Math.round((build.totalBattleDuration / (build.activeCount > 0 ? build.activeCount : 1)) * 10) / 10;
+          const avgHealthRemaining = Math.round(build.totalHealthRemaining / denominator);
+          const avgHealthMax = Math.round(build.totalHealthMax / denominator);
+          
+          // Calculate derived stats (use totals, not rounded averages, for accuracy)
+          const damageEfficiency = build.totalDamageTaken > 0 
+            ? build.totalDamageDealt / build.totalDamageTaken 
+            : build.totalDamageDealt;
+          const damagePerSecond = build.totalBattleDuration > 0 
+            ? build.totalDamageDealt / build.totalBattleDuration 
+            : 0;
+          const healthRetention = avgHealthMax > 0 ? avgHealthRemaining / avgHealthMax : 0;
+          
+          // Calculate base score using same formula as character performance
+          const baseScore = (
+            (avgDamageDealt / 100000) * 35 +        // Damage dealt weight: 35%
+            (damageEfficiency) * 25 +                // Damage efficiency weight: 25%
+            (damagePerSecond / 1000) * 25 +          // Damage per second weight: 25%
+            (healthRetention) * 15                   // Health retention weight: 15%
+          );
+          
+          // Apply experience multiplier
+          const experienceMultiplier = Math.min(1.25, 1.0 + ((build.activeCount > 0 ? build.activeCount : build.count) - 1) * (0.25 / 11));
+          const performanceScore = Math.round((baseScore * experienceMultiplier) * 100) / 100;
+          
+          return {
+            ...build,
+            avgPerformanceScore: performanceScore
+          };
+        })
+        .sort((a, b) => {
+          // Primary sort: by usage count (descending)
+          if (b.count !== a.count) return b.count - a.count;
+          // Tie-breaker: by average performance score (descending)
+          return b.avgPerformanceScore - a.avgPerformanceScore;
+        });
+      
+      // Get top 3 most used builds from filtered data
+      const topBuilds = sortedBuilds.slice(0, 3);
+      
+      // Recalculate form stats from FILTERED matches
+      const formStatsMap = {};
+      const allFormsUsedFiltered = new Set();
+      
+      filteredMatches.forEach(match => {
+        // Track all forms from filtered matches
+        if (match.formChangeHistory && match.formChangeHistory !== '—') {
+          // Extract form IDs from the formatted string if needed
+          // The formChangeHistory could be stored as a formatted string
+          // We need the actual formId data which is in perFormStats
+        }
+        
+        // Aggregate per-form stats from this match
+        if (match.perFormStats && Array.isArray(match.perFormStats)) {
+          match.perFormStats.forEach(formStat => {
+            const formId = formStat.formId;
+            
+            // Track this form as used
+            allFormsUsedFiltered.add(formId);
+            
+            if (!formStatsMap[formId]) {
+              formStatsMap[formId] = {
+                formId: formId,
+                formNumber: formStat.formNumber,
+                name: formStat.name || charMap[formId] || formId,
+                isFirstForm: formStat.isFirstForm,
+                isFinalForm: formStat.isFinalForm,
+                // Combat stats
+                totalDamageDone: 0,
+                totalDamageTaken: 0,
+                totalBattleTime: 0,
+                totalBattleCount: 0,
+                // Health
+                totalHPRemaining: 0,
+                totalHPMax: 0,
+                // Special abilities
+                totalSpecialMoves: 0,
+                totalUltimates: 0,
+                totalSkills: 0,
+                // Blast tracking
+                totalS1Blast: 0,
+                totalS2Blast: 0,
+                totalUltBlast: 0,
+                totalS1HitBlast: 0,
+                totalS2HitBlast: 0,
+                totalULTHitBlast: 0,
+                // Survival & Defense
+                totalSparking: 0,
+                totalCharges: 0,
+                totalGuards: 0,
+                totalEnergyBlasts: 0,
+                totalZCounters: 0,
+                totalSuperCounters: 0,
+                totalRevengeCounters: 0,
+                // Combat mechanics
+                totalMaxComboNum: 0,
+                totalMaxComboDamage: 0,
+                totalThrows: 0,
+                totalLightningAttacks: 0,
+                totalVanishingAttacks: 0,
+                totalDragonHoming: 0,
+                totalSpeedImpacts: 0,
+                totalSpeedImpactWins: 0,
+                totalSparkingCombo: 0,
+                totalDragonDashMileage: 0,
+                // Kills
+                totalKills: 0,
+                matchCount: 0
+              };
+            }
+            
+            const formData = formStatsMap[formId];
+            
+            // Accumulate stats for this form
+            formData.totalDamageDone += formStat.damageDone || 0;
+            formData.totalDamageTaken += formStat.damageTaken || 0;
+            formData.totalBattleTime += formStat.battleTime || 0;
+            formData.totalBattleCount += formStat.battleCount || 0;
+            formData.totalHPRemaining += formStat.hPGaugeValue || 0;
+            formData.totalHPMax += formStat.hPGaugeValueMax || 0;
+            formData.totalSpecialMoves += formStat.specialMovesUsed || 0;
+            formData.totalUltimates += formStat.ultimatesUsed || 0;
+            formData.totalSkills += formStat.skillsUsed || 0;
+            formData.totalS1Blast += formStat.s1Blast || 0;
+            formData.totalS2Blast += formStat.s2Blast || 0;
+            formData.totalUltBlast += formStat.ultBlast || 0;
+            formData.totalS1HitBlast += formStat.s1HitBlast || 0;
+            formData.totalS2HitBlast += formStat.s2HitBlast || 0;
+            formData.totalULTHitBlast += formStat.uLTHitBlast || 0;
+            formData.totalSparking += formStat.sparkingCount || 0;
+            formData.totalCharges += formStat.chargeCount || 0;
+            formData.totalGuards += formStat.guardCount || 0;
+            formData.totalEnergyBlasts += formStat.shotEnergyBulletCount || 0;
+            formData.totalZCounters += formStat.zCounterCount || 0;
+            formData.totalSuperCounters += formStat.superCounterCount || 0;
+            formData.totalRevengeCounters += formStat.revengeCounterCount || 0;
+            formData.totalMaxComboNum += formStat.maxComboNum || 0;
+            formData.totalMaxComboDamage += formStat.maxComboDamage || 0;
+            formData.totalThrows += formStat.throwCount || 0;
+            formData.totalLightningAttacks += formStat.lightningAttackCount || 0;
+            formData.totalVanishingAttacks += formStat.vanishingAttackCount || 0;
+            formData.totalDragonHoming += formStat.dragonHomingCount || 0;
+            formData.totalSpeedImpacts += formStat.speedImpactCount || 0;
+            formData.totalSpeedImpactWins += formStat.speedImpactWins || 0;
+            formData.totalSparkingCombo += formStat.sparkingComboCount || 0;
+            formData.totalDragonDashMileage += formStat.dragonDashMileage || 0;
+            formData.totalKills += formStat.kills || 0;
+            formData.matchCount += 1;
+          });
+        }
+      });
+      
+      // Calculate averages and format form stats array
+      const formStatsArray = Object.values(formStatsMap).map(formStat => {
+        const matchCount = formStat.matchCount || 1;
+        const damagePerSecond = (formStat.totalBattleTime || 0) > 0 
+          ? (formStat.totalDamageDone || 0) / formStat.totalBattleTime 
+          : 0;
+        const damageEfficiency = (formStat.totalDamageTaken || 0) > 0
+          ? (formStat.totalDamageDone || 0) / formStat.totalDamageTaken
+          : ((formStat.totalDamageDone || 0) > 0 ? 999 : 0);
+        
+        return {
+          ...formStat,
+          // Averages
+          avgDamageDone: Math.round((formStat.totalDamageDone || 0) / matchCount),
+          avgDamageTaken: Math.round((formStat.totalDamageTaken || 0) / matchCount),
+          avgBattleTime: Math.round(((formStat.totalBattleTime || 0) / matchCount) * 10) / 10,
+          avgBattleCount: Math.round(((formStat.totalBattleCount || 0) / matchCount) * 10) / 10,
+          avgHPRemaining: Math.round((formStat.totalHPRemaining || 0) / matchCount),
+          avgHPMax: Math.round((formStat.totalHPMax || 0) / matchCount),
+          avgSpecialMoves: Math.round(((formStat.totalSpecialMoves || 0) / matchCount) * 10) / 10,
+          avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 10) / 10,
+          avgSkills: Math.round(((formStat.totalSkills || 0) / matchCount) * 10) / 10,
+          avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 10) / 10,
+          avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 10) / 10,
+          avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 10) / 10,
+          avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 10) / 10,
+          avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 10) / 10,
+          avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 10) / 10,
+          avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 10) / 10,
+          avgCharges: Math.round(((formStat.totalCharges || 0) / matchCount) * 10) / 10,
+          avgGuards: Math.round(((formStat.totalGuards || 0) / matchCount) * 10) / 10,
+          avgEnergyBlasts: Math.round(((formStat.totalEnergyBlasts || 0) / matchCount) * 10) / 10,
+          avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 10) / 10,
+          avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 10) / 10,
+          avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 10) / 10,
+          avgMaxComboNum: Math.round(((formStat.totalMaxComboNum || 0) / matchCount) * 10) / 10,
+          avgMaxComboDamage: Math.round((formStat.totalMaxComboDamage || 0) / matchCount),
+          avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 10) / 10,
+          avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 10) / 10,
+          avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 10) / 10,
+          avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 10) / 10,
+          avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 10) / 10,
+          avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 10) / 10,
+          avgSparkingCombo: Math.round(((formStat.totalSparkingCombo || 0) / matchCount) * 10) / 10,
+          avgDragonDashMileage: Math.round(((formStat.totalDragonDashMileage || 0) / matchCount) * 10) / 10,
+          avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 10) / 10,
+          // Calculated stats
+          damagePerSecond: Math.round(damagePerSecond * 10) / 10,
+          damageEfficiency: Math.round(damageEfficiency * 100) / 100,
+          // Hit rates
+          s1HitRate: (formStat.totalS1Blast || 0) > 0
+            ? Math.round(((formStat.totalS1HitBlast || 0) / formStat.totalS1Blast) * 1000) / 10
+            : null,
+          s2HitRate: (formStat.totalS2Blast || 0) > 0
+            ? Math.round(((formStat.totalS2HitBlast || 0) / formStat.totalS2Blast) * 1000) / 10
+            : null,
+          ultHitRate: (formStat.totalUltBlast || 0) > 0
+            ? Math.round(((formStat.totalULTHitBlast || 0) / formStat.totalUltBlast) * 1000) / 10
+            : null,
+          speedImpactWinRate: (formStat.totalSpeedImpacts || 0) > 0
+            ? Math.round(((formStat.totalSpeedImpactWins || 0) / formStat.totalSpeedImpacts) * 1000) / 10
+            : null,
+        };
+      });
+      
+      // Generate form history from filtered forms
+      const allFormsFiltered = Array.from(allFormsUsedFiltered);
+      const formHistory = allFormsFiltered.length > 1 
+        ? allFormsFiltered.map(f => charMap[f] || f).join(', ') 
+        : '';
+      const hasMultipleForms = allFormsFiltered.length > 1;
       
       return {
         ...char,
@@ -3302,12 +3764,33 @@ export default function App() {
         totalEnergyBlasts,
         totalZCounters,
         totalSuperCounters,
+        totalRevengeCounters,
+        totalTags,
+        totalS1Blast,
+        totalS2Blast,
+        totalUltBlast,
+        totalS1HitBlast,
+        totalS2HitBlast,
+        totalULTHitBlast,
+        totalS1BlastTrackable,
+        totalS2BlastTrackable,
+        totalUltBlastTrackable,
+        totalEXA1,
+        totalEXA2,
+        totalDragonDashMileage,
+        totalThrows,
+        totalLightningAttacks,
+        totalVanishingAttacks,
+        totalDragonHoming,
+        totalSpeedImpacts,
+        totalSpeedImpactWins,
+        totalSparkingCombo,
         maxComboNumTotal,
         maxComboDamageTotal,
-  avgDamage,
-  avgTaken,
-  avgHealth,
-  avgBattleTime,
+        avgDamage,
+        avgTaken,
+        avgHealth,
+        avgBattleTime,
         avgHPGaugeValueMax,
         avgSpecial,
         avgUltimates,
@@ -3319,16 +3802,48 @@ export default function App() {
         avgEnergyBlasts,
         avgZCounters,
         avgSuperCounters,
+        avgRevengeCounters,
+        avgTags,
         avgMaxCombo,
         avgMaxComboDamage,
+        avgS1Blast,
+        avgS2Blast,
+        avgUltBlast,
+        avgS1Hit,
+        avgS2Hit,
+        avgUltHit,
+        s1HitRateOverall,
+        s2HitRateOverall,
+        ultHitRateOverall,
+        avgSPM1,
+        avgSPM2,
+        avgEXA1,
+        avgEXA2,
+        avgDragonDashMileage,
+        avgThrows,
+        avgLightningAttacks,
+        avgVanishingAttacks,
+        avgDragonHoming,
+        avgSpeedImpacts,
+        avgSpeedImpactWins,
+        avgSparkingCombo,
         dps,
         efficiency,
         survivalRate,
         combatPerformanceScore,
+        wins: totalWins,
+        losses: totalLosses,
+        winRate: winRate,
+        speedImpactWinRate: speedImpactWinRate,
         teamsUsed: teamsArray,
         aiStrategiesUsed: aiStrategiesArray,
         primaryTeam,
         primaryAIStrategy,
+        topBuilds: topBuilds, // Recalculated based on filtered matches
+        // Form stats - Recalculated based on filtered matches
+        formStatsArray: formStatsArray,
+        hasMultipleForms: hasMultipleForms,
+        formHistory: formHistory,
         matches: filteredMatches
       };
     }).filter(char => char !== null); // Remove characters with no matching matches
@@ -4305,7 +4820,7 @@ export default function App() {
                       Select a match to analyze:
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {manualFiles.filter(f => !f.error).map((file) => (
+                      {manualFiles.filter(f => !f.error).sort(naturalSort).map((file) => (
                         <button
                           key={file.name}
                           onClick={() => handleManualFileSelect(file.name)}
@@ -4374,10 +4889,43 @@ export default function App() {
             
             {!sectionCollapsed.aggregated && (
             <div className="space-y-4">
-              {/* Search and Filter Controls */}
-              <div className={`p-4 rounded-xl border ${
+              {/* Search and Filter Controls - Sticky Floating Panel */}
+              <div className={`sticky top-0 z-[100] rounded-xl border shadow-lg transition-all ${
                 darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
               }`}>
+                {/* Collapse/Expand Header */}
+                <div 
+                  className={`flex items-center justify-between px-4 pt-2 pb-4 cursor-pointer ${
+                    filtersCollapsed ? 'rounded-xl' : 'rounded-t-xl border-b ' + (darkMode ? 'border-gray-600' : 'border-gray-200')
+                  }`}
+                  onClick={() => setFiltersCollapsed(!filtersCollapsed)}
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className={`w-5 h-5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                    <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                      Filters & Sorting
+                    </h3>
+                    {filtersCollapsed && (
+                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        ({filteredAggregatedData.length} of {aggregatedData.length} characters shown)
+                      </span>
+                    )}
+                  </div>
+                  <div 
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                      darkMode 
+                        ? 'bg-blue-900 text-blue-400 hover:bg-blue-800' 
+                        : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                    }`}
+                    title={filtersCollapsed ? "Expand filters" : "Collapse filters"}
+                  >
+                    {filtersCollapsed ? '+' : '−'}
+                  </div>
+                </div>
+                
+                {/* Filter Controls - Collapsible Content */}
+                {!filtersCollapsed && (
+                <div className="p-4 pt-0">
                 {/* Search Bar */}
                 {/* Character Filter */}
                 <div className="mb-4">
@@ -4643,7 +5191,7 @@ export default function App() {
                       <MultiSelectCombobox
                         items={availableAIStrategies.map(ai => ({ 
                           id: ai, 
-                          name: ai === 'Com' ? 'Computer' : ai === 'Player' ? 'Player' : ai 
+                          name: ai === 'Com' ? 'Computer' : ai === 'Player' ? 'Player' : ai === 'Default' ? 'Default' : ai 
                         }))}
                         selectedIds={selectedAIStrategies}
                         placeholder="Search and select AI strategies..."
@@ -4705,6 +5253,8 @@ export default function App() {
                 <div className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Showing {filteredAggregatedData.length} of {aggregatedData.length} characters
                 </div>
+                </div>
+                )}
               </div>
               
               {filteredAggregatedData.map((char, i) => {
@@ -5078,10 +5628,10 @@ export default function App() {
                                     </div>
                                     {(() => {
                                       const currentBuildIndex = selectedBuildIndex[char.name] || 0;
-                                      const currentBuild = char.topBuilds[currentBuildIndex];
+                                      const currentBuild = char.topBuilds?.[currentBuildIndex];
                                       return (
                                         <PerformanceScoreBadge 
-                                          score={currentBuild.avgPerformanceScore || 0} 
+                                          score={currentBuild?.avgPerformanceScore || 0} 
                                           label="Score" 
                                           size="small" 
                                           darkMode={darkMode} 
@@ -5122,8 +5672,10 @@ export default function App() {
 
                                   {(() => {
                                     const currentBuildIndex = selectedBuildIndex[char.name] || 0;
-                                    const currentBuild = char.topBuilds[currentBuildIndex];
+                                    const currentBuild = char.topBuilds?.[currentBuildIndex];
                                     const tooltipKey = `${char.name}-build-${currentBuildIndex}`;
+                                    
+                                    if (!currentBuild) return null;
                                     
                                     return (
                                       <BuildTypeTooltipWrapper
@@ -5526,7 +6078,7 @@ export default function App() {
               </div>
             </div>
             
-            <MetaAnalysisContent aggregatedData={aggregatedData} capsuleMap={capsuleMap} aiStrategies={aiStrategies} darkMode={darkMode} />
+            <MetaAnalysisContent aggregatedData={aggregatedData} capsuleMap={capsuleMap} aiStrategies={aiStrategies} charMap={charMap} darkMode={darkMode} />
           </div>
         )}
 
@@ -5541,9 +6093,9 @@ export default function App() {
               <Combobox
                 valueId={analysisSelectedFilePath?.[0] || ''}
                 items={mode === 'manual' 
-                  ? manualFiles.filter(f => !f.error).map(f => ({ id: f.name, name: f.name }))
+                  ? manualFiles.filter(f => !f.error).map(f => ({ id: f.name, name: f.name })).sort(naturalSort)
                   : Array.isArray(fileContent) 
-                    ? fileContent.filter(fc => fc.name).map(fc => ({ id: fc.name, name: fc.name }))
+                    ? fileContent.filter(fc => fc.name).map(fc => ({ id: fc.name, name: fc.name })).sort(naturalSort)
                     : []
                 }
                 placeholder="Search match to analyze..."
@@ -6883,10 +7435,10 @@ export default function App() {
                                                       </div>
                                                       {(() => {
                                                         const currentBuildIndex = selectedBuildIndex[charKey] || 0;
-                                                        const currentBuild = charStats.topBuilds[currentBuildIndex];
+                                                        const currentBuild = charStats.topBuilds?.[currentBuildIndex];
                                                         return (
                                                           <PerformanceScoreBadge 
-                                                            score={currentBuild.avgPerformanceScore || 0} 
+                                                            score={currentBuild?.avgPerformanceScore || 0} 
                                                             label="Score" 
                                                             size="small" 
                                                             darkMode={darkMode} 
@@ -6928,8 +7480,10 @@ export default function App() {
                                                     
                                                     {(() => {
                                                       const currentBuildIndex = selectedBuildIndex[charKey] || 0;
-                                                      const currentBuild = charStats.topBuilds[currentBuildIndex];
+                                                      const currentBuild = charStats.topBuilds?.[currentBuildIndex];
                                                       const tooltipKey = `${charKey}-build-${currentBuildIndex}`;
+                                                      
+                                                      if (!currentBuild) return null;
                                                       
                                                       return (
                                                         <BuildTypeTooltipWrapper

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit battle result data to Sparking Zero League database">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Submit Data - Sparking Zero League</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Submit Data to GitHub</h1>
+            <p>Upload your battle result files to the Sparking Zero League database</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="card">
+            <!-- Error Message (shown when errors occur) -->
+            <div id="errorMessage" class="alert alert-error hidden"></div>
+
+            <!-- Stage 1: Ready to Upload -->
+            <div id="readyStage">
+                <form id="uploadForm" onsubmit="return false;">
+                    <!-- Name Input -->
+                    <div class="form-group">
+                        <label for="nameInput" class="form-label">Your name/username</label>
+                        <input 
+                            type="text" 
+                            id="nameInput" 
+                            class="form-input" 
+                            placeholder="e.g. SparkingFan42"
+                            maxlength="80"
+                            required
+                        >
+                    </div>
+
+                    <!-- Folder Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Select Match Area</label>
+                        <div class="grid grid-cols-2">
+                            <div>
+                                <span class="form-sublabel">Category</span>
+                                <select id="parentSelect" class="form-select">
+                                    <option value="">Loading...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span class="form-sublabel">Folder</span>
+                                <select id="leafSelect" class="form-select">
+                                    <option value="">Select category first</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Data Section -->
+                    <div class="form-group">
+                        <div class="team-data-section">
+                            <div class="checkbox-group">
+                                <input 
+                                    type="checkbox" 
+                                    id="setTeamData" 
+                                    class="form-checkbox"
+                                >
+                                <label for="setTeamData" class="checkbox-label">Set Team Data</label>
+                            </div>
+
+                            <div id="teamDataControls" class="hidden mt-2">
+                                <div class="grid grid-cols-2">
+                                    <div>
+                                        <span class="form-sublabel">Team 1</span>
+                                        <select id="team1Select" class="form-select">
+                                            <!-- Populated by JS -->
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <span class="form-sublabel">Team 2</span>
+                                        <select id="team2Select" class="form-select">
+                                            <!-- Populated by JS -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="teamWarning" class="alert alert-warning mt-2 hidden"></div>
+
+                                <!-- Files Preview -->
+                                <div id="filesPreview" class="preview-section hidden">
+                                    <div class="preview-header">Files Preview:</div>
+                                    <div id="filesPreviewContent" class="preview-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments -->
+                    <div class="form-group">
+                        <label for="commentsInput" class="form-label">Comments (optional)</label>
+                        <textarea 
+                            id="commentsInput" 
+                            class="form-textarea" 
+                            placeholder="Add any additional context about your submission..."
+                            maxlength="500"
+                        ></textarea>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="form-group">
+                        <label for="fileInput" class="form-label">JSON Files</label>
+                        <input 
+                            type="file" 
+                            id="fileInput" 
+                            class="file-input" 
+                            accept=".json"
+                            multiple
+                        >
+                        <div id="filesCount" class="files-count mt-1">No files selected</div>
+                        
+                        <!-- Duplicate Warning Banner -->
+                        <div id="duplicateWarning" class="alert alert-error mt-2 hidden"></div>
+                    </div>
+
+                    <!-- Files List -->
+                    <div class="form-group">
+                        <div id="filesList" class="files-list">
+                            <div class="empty-state">No files selected</div>
+                        </div>
+                    </div>
+
+                    <!-- Clear Files Button -->
+                    <div class="form-group">
+                        <button type="button" id="clearFilesBtn" class="btn btn-secondary">
+                            Clear Files
+                        </button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group">
+                        <button type="submit" id="submitBtn" class="btn btn-primary btn-block">
+                            Submit Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Stage 2: Uploading -->
+            <div id="uploadingStage" class="hidden">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Uploading your data...</div>
+                    <p class="text-secondary mt-2">
+                        Please wait while we validate and submit your files.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stage 3: Done -->
+            <div id="doneStage" class="hidden">
+                <div class="success-message">
+                    <div class="success-icon">✓</div>
+                    <h2>Submission Successful!</h2>
+                    <p>Your data has been submitted and a pull request has been created.</p>
+                    
+                    <div class="alert alert-success">
+                        <strong>What's Next?</strong><br>
+                        Your submission will be reviewed by the team. You can track the status of your pull request at the link below.
+                    </div>
+
+                    <a id="prLink" href="#" target="_blank" class="pr-link">
+                        View Pull Request
+                    </a>
+
+                    <div class="mt-3">
+                        <button id="newSubmissionBtn" class="btn btn-primary">
+                            Submit More Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-3">
+            <p class="text-secondary" style="font-size: 0.85rem;">
+                Sparking Zero League Data Submission Portal
+            </p>
+        </footer>
+    </div>
+
+    <!-- Load JavaScript in dependency order -->
+    <script src="js/config.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/teamData.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Populate team dropdowns with JavaScript -->
+    <script>
+        // Populate team select dropdowns once DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const team1Select = document.getElementById('team1Select');
+            const team2Select = document.getElementById('team2Select');
+            
+            if (team1Select) {
+                // Team 1: no empty option (must select)
+                team1Select.innerHTML = TEAMS
+                    .filter(t => t !== '')
+                    .map(t => `<option value="${t}">${t}</option>`)
+                    .join('');
+                team1Select.value = 'Budokai';
+            }
+            
+            if (team2Select) {
+                // Team 2: includes empty option
+                team2Select.innerHTML = TEAMS
+                    .map(t => `<option value="${t}">${t || '(Not Set)'}</option>`)
+                    .join('');
+                team2Select.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

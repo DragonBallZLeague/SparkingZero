@@ -211,6 +211,36 @@ export default async function handler(req, res) {
   const prBody = `Automated submission via analyzer UI.\n\nSubmitter: ${name}\nComments: ${comments || 'n/a'}\nTarget path: ${targetPath}\nFiles:\n${files.map(f=>`- ${f.name}`).join('\n')}`;
 
   try {
+    // Check for duplicate files BEFORE creating branch
+    console.log(`Checking for duplicates in: apps/analyzer/BR_Data/${targetPath}`);
+    const folderPath = `apps/analyzer/BR_Data/${targetPath}`;
+    const contentsResp = await gh(`/repos/${owner}/${repo}/contents/${encodeURIComponent(folderPath)}?ref=${encodeURIComponent(baseBranch)}`, { method: 'GET' }, token);
+    
+    let existingFiles = [];
+    if (contentsResp.ok) {
+      const contents = await contentsResp.json();
+      existingFiles = Array.isArray(contents) ? contents.map(item => item.name.toLowerCase()) : [];
+      console.log(`Found ${existingFiles.length} existing files in folder`);
+    } else if (contentsResp.status === 404) {
+      // Folder doesn't exist yet, no duplicates possible
+      console.log('Folder does not exist yet, no duplicates possible');
+    } else {
+      console.warn(`Failed to check existing files: ${contentsResp.status}`);
+      // Continue anyway - will fail on actual upload if there's a real issue
+    }
+    
+    // Check for duplicates (case-insensitive)
+    const duplicates = files
+      .filter(f => existingFiles.includes(f.name.toLowerCase()))
+      .map(f => f.name);
+    
+    if (duplicates.length > 0) {
+      const duplicateList = duplicates.map(name => `  • ${name}`).join('\n');
+      return bad(res, `Cannot upload - the following file(s) already exist in "${targetPath}":\n\n${duplicateList}\n\nPlease rename or remove these files from your submission.`, 400);
+    }
+    
+    console.log('No duplicates found, proceeding with branch creation');
+    
     // get base sha
     const refResp = await gh(`/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(baseBranch)}`, { method: 'GET' }, token);
     if (!refResp.ok) return bad(res, `Failed base branch: ${refResp.status}`, 500);
@@ -234,8 +264,25 @@ export default async function handler(req, res) {
         body: JSON.stringify({ message: `Add ${f.name} to ${targetPath}`, content: f.content, branch })
       }, token);
       if (!putResp.ok) {
-        const text = await putResp.text();
-        return bad(res, `Failed to upload ${f.name}: ${text}`, 500);
+        const errorText = await putResp.text();
+        
+        // Parse GitHub API error for better user message
+        let userMessage = `Failed to upload ${f.name}`;
+        try {
+          const errorJson = JSON.parse(errorText);
+          
+          // Check if it's a duplicate file error (422 status with "sha" message)
+          if (putResp.status === 422 && errorJson.message && errorJson.message.includes('sha')) {
+            userMessage = `Cannot upload "${f.name}" - this file already exists in the folder "${targetPath}". Please rename your file or remove it from your selection.`;
+          } else if (errorJson.message) {
+            userMessage = `Failed to upload ${f.name}: ${errorJson.message}`;
+          }
+        } catch (e) {
+          // If we can't parse JSON, use the raw text
+          userMessage = `Failed to upload ${f.name}: ${errorText}`;
+        }
+        
+        return bad(res, userMessage, 400);
       }
     }
 
