@@ -49,6 +49,12 @@ jobs:
         working-directory: apps/analyzer
         run: npm run build -- --outDir=../../dist/analyzer
 
+      - name: Copy submit app (static site)
+        shell: bash
+        run: |
+          mkdir -p dist/submit
+          cp -r apps/submit/* dist/submit/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
