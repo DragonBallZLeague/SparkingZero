@@ -6,6 +6,8 @@
   ],
   "routes": [
     { "src": "/api/paths", "dest": "/api/paths.js" },
+    { "src": "/api/list-files", "dest": "/api/list-files.js" },
+    { "src": "/api/validate", "dest": "/api/validate.js" },
     { "src": "/api/submit", "dest": "/api/submit.js" },
     { "src": "/api/status", "dest": "/api/status.js" }
   ]
