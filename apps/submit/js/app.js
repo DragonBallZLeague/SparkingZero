@@ -229,6 +229,14 @@ async function handleSubmit() {
  * Setup all event listeners
  */
 function setupEventListeners() {
+    // Prevent duplicate listener setup
+    if (AppState.listenersSetup) {
+        console.log('[App] Event listeners already set up, skipping');
+        return;
+    }
+    
+    console.log('[App] Setting up event listeners...');
+    
     // Name input
     const nameInput = document.getElementById('nameInput');
     if (nameInput) {
@@ -344,12 +352,19 @@ function setupEventListeners() {
     const newSubmissionBtn = document.getElementById('newSubmissionBtn');
     if (newSubmissionBtn) {
         newSubmissionBtn.addEventListener('click', () => {
-            resetState();
+            console.log('[App] Submit More Data clicked - preserving form state');
+            // Reset only file-related state, keep user inputs and folder selections
+            resetFilesOnly();
             setStage(STAGES.READY);
             clearFiles();
-            init();
+            // Don't call init() again - it would add duplicate listeners
+            updateUI();
         });
     }
+    
+    // Mark listeners as set up
+    updateState({ listenersSetup: true });
+    console.log('[App] Event listeners setup complete');
 }
 
 /**

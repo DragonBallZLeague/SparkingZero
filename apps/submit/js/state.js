@@ -32,7 +32,10 @@ const AppState = {
     // Submission results
     prUrl: '',
     submissionId: '',
-    error: ''
+    error: '',
+    
+    // Track if event listeners have been set up
+    listenersSetup: false
 };
 
 /**
@@ -61,6 +64,21 @@ function resetState() {
         team1: 'Budokai',
         team2: '',
         teamWarning: '',
+        prUrl: '',
+        submissionId: '',
+        error: ''
+    });
+}
+
+/**
+ * Reset only file-related state, preserving user inputs and selections
+ */
+function resetFilesOnly() {
+    updateState({
+        stage: STAGES.READY,
+        files: [],
+        filesPreview: [],
+        duplicateFiles: [],
         prUrl: '',
         submissionId: '',
         error: ''
