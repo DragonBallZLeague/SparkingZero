@@ -87,46 +87,13 @@ export default async function handler(req, res) {
     }
     let prData = await prResp.json();
 
-    // 2. Check if PR is still draft, if so mark as ready
+    // 2. Check if PR is still draft - if so, reject with helpful message
     if (prData.draft) {
-      console.log(`PR #${prNumber} is draft, marking as ready using user token...`);
-      
-      // Mark as ready for review using user's token (they have proven permissions)
-      const readyResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ draft: false })
-      }, userToken);
-
-      if (!readyResp.ok) {
-        const readyError = await readyResp.json().catch(() => ({ message: 'Unknown error' }));
-        console.error('Failed to mark PR as ready:', readyError);
-        return res.status(500).json({ 
-          error: 'Failed to mark PR as ready for review',
-          details: readyError.message
-        });
-      }
-      
-      // Wait for GitHub to process the draft->ready transition
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Refetch PR data to get updated status and verify it's no longer draft
-      const updatedPrResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, { method: 'GET' }, botToken);
-      if (updatedPrResp.ok) {
-        prData = await updatedPrResp.json();
-        console.log(`PR #${prNumber} after marking ready - draft: ${prData.draft}, mergeable_state: ${prData.mergeable_state}`);
-        
-        // Verify it's no longer a draft
-        if (prData.draft) {
-          console.error('PR is still marked as draft after conversion attempt');
-          return res.status(500).json({ 
-            error: 'Failed to convert PR from draft to ready. Please manually mark as "Ready for review" on GitHub.',
-            details: 'GitHub did not complete the draft->ready transition'
-          });
-        }
-      } else {
-        console.error('Failed to refetch PR data after marking as ready');
-      }
+      console.log(`PR #${prNumber} is draft, cannot auto-merge`);
+      return res.status(400).json({ 
+        error: 'This PR is still a draft. Please open the PR on GitHub and click "Ready for review" first, then try approving again.',
+        isDraft: true
+      });
     }
 
     // If mergeable is null, refetch once more to get the computed value
