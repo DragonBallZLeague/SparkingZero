@@ -32,7 +32,8 @@ import {
   Download,
   ExternalLink,
   ChevronDown,
-  FileJson
+  FileJson,
+  AlertTriangle
 } from 'lucide-react';
 import { fetchSubmissionDetails, approveSubmission, rejectSubmission } from '../utils/api';
 
@@ -171,6 +172,31 @@ function SubmissionDetail({ user, onLogout }) {
           <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
         )}
 
+        {/* Conflict Warning */}
+        {submission.files && submission.files.some(f => f.exists) && (
+          <Alert 
+            severity="warning" 
+            icon={<AlertTriangle size={20} />}
+            sx={{ mb: 3 }}
+          >
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+              File Conflicts Detected
+            </Typography>
+            <Typography variant="body2">
+              Some files in this submission already exist in the target branch and will be overwritten if approved:
+            </Typography>
+            <Box component="ul" sx={{ mt: 1, mb: 0, pl: 2 }}>
+              {submission.files.filter(f => f.exists).map((file, idx) => (
+                <li key={idx}>
+                  <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                    {file.filename}
+                  </Typography>
+                </li>
+              ))}
+            </Box>
+          </Alert>
+        )}
+
         {/* PR Info Card */}
         <Paper sx={{ p: 3, mb: 3, bgcolor: '#1a1f2e' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
@@ -276,6 +302,14 @@ function SubmissionDetail({ user, onLogout }) {
                   <Typography sx={{ flexGrow: 1, fontFamily: 'monospace' }}>
                     {file.filename.split('/').pop()}
                   </Typography>
+                  {file.exists && (
+                    <Chip
+                      label="Conflicts"
+                      size="small"
+                      icon={<AlertTriangle size={14} />}
+                      sx={{ bgcolor: '#f91880', color: '#fff' }}
+                    />
+                  )}
                   {file.teamData?.hasTeamData && (
                     <Chip
                       label="Has Team Data"

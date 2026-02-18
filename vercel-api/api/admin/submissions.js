@@ -45,6 +45,34 @@ function parseSubmissionBody(body) {
   return data;
 }
 
+function extractTeamData(jsonContent) {
+  try {
+    const data = JSON.parse(jsonContent);
+    
+    // Check for TeamBattleResults wrapper
+    if (data.TeamBattleResults) {
+      return {
+        team: data.TeamBattleResults.team || null,
+        event: data.TeamBattleResults.event || null,
+        season: data.TeamBattleResults.season || null
+      };
+    }
+    
+    // Check for standard battle result with team metadata
+    if (data.team || data.event || data.season) {
+      return {
+        team: data.team || null,
+        event: data.event || null,
+        season: data.season || null
+      };
+    }
+    
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
 export default async function handler(req, res) {
   cors(res);
   
@@ -77,11 +105,62 @@ export default async function handler(req, res) {
     
     const allPRs = await prResp.json();
     
-    // Filter for data-submission labeled PRs
-    const submissions = allPRs
+    // Filter for data-submission labeled PRs and fetch detailed data
+    const submissionPromises = allPRs
       .filter(pr => pr.labels.some(label => label.name === 'data-submission'))
-      .map(pr => {
+      .map(async (pr) => {
         const metadata = parseSubmissionBody(pr.body || '');
+        
+        // Fetch PR files to extract team data
+        let teams = new Set();
+        let hasConflicts = false;
+        
+        try {
+          const filesResp = await gh(`/repos/${owner}/${repo}/pulls/${pr.number}/files`, { method: 'GET' }, token);
+          
+          if (filesResp.ok) {
+            const filesData = await filesResp.json();
+            
+            // Check for conflicts and extract team data
+            const fileChecks = await Promise.all(
+              filesData.slice(0, 5).map(async (file) => { // Limit to first 5 files for performance
+                try {
+                  // Check if file exists in base branch
+                  const existsResp = await gh(
+                    `/repos/${owner}/${repo}/contents/${file.filename}?ref=${baseBranch}`,
+                    { method: 'GET' },
+                    token
+                  );
+                  
+                  if (existsResp.ok) {
+                    hasConflicts = true;
+                  }
+                  
+                  // Fetch content from PR branch to extract team
+                  const contentResp = await gh(
+                    `/repos/${owner}/${repo}/contents/${file.filename}?ref=${pr.head.ref}`,
+                    { method: 'GET' },
+                    token
+                  );
+                  
+                  if (contentResp.ok) {
+                    const contentData = await contentResp.json();
+                    const content = Buffer.from(contentData.content, 'base64').toString('utf8');
+                    const teamData = extractTeamData(content);
+                    
+                    if (teamData?.team) {
+                      teams.add(teamData.team);
+                    }
+                  }
+                } catch (err) {
+                  console.error(`Error checking file ${file.filename}:`, err);
+                }
+              })
+            );
+          }
+        } catch (err) {
+          console.error(`Error fetching files for PR ${pr.number}:`, err);
+        }
         
         return {
           number: pr.number,
@@ -97,9 +176,13 @@ export default async function handler(req, res) {
           comments: metadata.comments,
           targetPath: metadata.targetPath,
           fileCount: metadata.files.length,
-          files: metadata.files
+          files: metadata.files,
+          teams: Array.from(teams),
+          hasConflicts: hasConflicts
         };
       });
+
+    const submissions = await Promise.all(submissionPromises);
 
     res.status(200).json({ submissions });
 

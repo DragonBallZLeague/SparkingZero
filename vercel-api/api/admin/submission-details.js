@@ -125,6 +125,19 @@ export default async function handler(req, res) {
     const filesWithContent = await Promise.all(
       filesData.map(async (file) => {
         try {
+          // Check if file exists in base branch
+          let exists = false;
+          try {
+            const baseCheckResp = await gh(
+              `/repos/${owner}/${repo}/contents/${file.filename}?ref=${prData.base.ref}`,
+              { method: 'GET' },
+              token
+            );
+            exists = baseCheckResp.ok;
+          } catch (e) {
+            exists = false;
+          }
+
           // Only fetch content for JSON files
           if (!file.filename.endsWith('.json')) {
             return {
@@ -135,6 +148,7 @@ export default async function handler(req, res) {
               changes: file.changes,
               content: null,
               teamData: null,
+              exists: exists,
               error: 'Not a JSON file'
             };
           }
@@ -155,6 +169,7 @@ export default async function handler(req, res) {
               changes: file.changes,
               content: null,
               teamData: null,
+              exists: exists,
               error: 'Failed to fetch content'
             };
           }
@@ -175,6 +190,7 @@ export default async function handler(req, res) {
             changes: file.changes,
             content: content,
             teamData: teamData,
+            exists: exists,
             size: contentData.size
           };
         } catch (error) {
@@ -184,6 +200,7 @@ export default async function handler(req, res) {
             status: file.status,
             content: null,
             teamData: null,
+            exists: false,
             error: error.message
           };
         }
