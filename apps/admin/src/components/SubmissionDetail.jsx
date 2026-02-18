@@ -332,13 +332,13 @@ function SubmissionDetail({ user, onLogout }) {
                             Team Data
                           </Typography>
                           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 2 }}>
-                            {file.teamData.team && (
+                            {file.teamData.teams && file.teamData.teams.length > 0 && (
                               <Box>
                                 <Typography variant="caption" sx={{ color: '#8b98a5' }}>
-                                  Team
+                                  Teams
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#e7e9ea' }}>
-                                  {file.teamData.team}
+                                  {file.teamData.teams.join(' vs ')}
                                 </Typography>
                               </Box>
                             )}

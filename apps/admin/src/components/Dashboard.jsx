@@ -27,7 +27,7 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
-import { LogOut, Eye, Search, RefreshCw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { LogOut, Search, RefreshCw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { fetchSubmissions, approveSubmission, rejectSubmission } from '../utils/api';
 
 function Dashboard({ user, onLogout }) {
@@ -362,19 +362,24 @@ function Dashboard({ user, onLogout }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredSubmissions.map((submission) => (
+                {filteredSubmissions.map((submission, index) => (
                   <TableRow
                     key={submission.number}
+                    onClick={() => navigate(`/submission/${submission.number}`)}
                     sx={{
+                      cursor: 'pointer',
                       '&:hover': { bgcolor: '#0f1419' },
-                      bgcolor: submission.hasConflicts ? 'rgba(249, 24, 128, 0.05)' : 'transparent'
+                      bgcolor: submission.hasConflicts 
+                        ? 'rgba(249, 24, 128, 0.05)' 
+                        : index % 2 === 0 
+                          ? '#1a1f2e' 
+                          : '#161b28'
                     }}
                   >
-                    <TableCell padding="checkbox">
+                    <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selected.includes(submission.number)}
                         onChange={() => handleSelect(submission.number)}
-                        onClick={(e) => e.stopPropagation()}
                         sx={{
                           color: '#8b98a5',
                           '&.Mui-checked': { color: '#1d9bf0' }
@@ -407,44 +412,34 @@ function Dashboard({ user, onLogout }) {
                       {formatDate(submission.createdAt)}
                     </TableCell>
                     <TableCell>{getStatusChip(submission)}</TableCell>
-                    <TableCell align="right">
-                      <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
+                    <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                         <Tooltip title="Approve">
                           <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleApprove(submission.number, submission.branch);
-                            }}
+                            onClick={() => handleApprove(submission.number, submission.branch)}
                             disabled={actionLoading}
-                            sx={{ color: '#00ba7c', '&:hover': { bgcolor: 'rgba(0, 186, 124, 0.1)' } }}
-                            size="small"
+                            sx={{ 
+                              color: '#00ba7c', 
+                              '&:hover': { bgcolor: 'rgba(0, 186, 124, 0.1)' },
+                              padding: '10px'
+                            }}
+                            size="medium"
                           >
-                            <CheckCircle size={18} />
+                            <CheckCircle size={24} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Reject">
                           <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleReject(submission.number, submission.branch);
-                            }}
+                            onClick={() => handleReject(submission.number, submission.branch)}
                             disabled={actionLoading}
-                            sx={{ color: '#f91880', '&:hover': { bgcolor: 'rgba(249, 24, 128, 0.1)' } }}
-                            size="small"
-                          >
-                            <XCircle size={18} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="View Details">
-                          <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/submission/${submission.number}`);
+                            sx={{ 
+                              color: '#f91880', 
+                              '&:hover': { bgcolor: 'rgba(249, 24, 128, 0.1)' },
+                              padding: '10px'
                             }}
-                            sx={{ color: '#1d9bf0', '&:hover': { bgcolor: 'rgba(29, 155, 240, 0.1)' } }}
-                            size="small"
+                            size="medium"
                           >
-                            <Eye size={18} />
+                            <XCircle size={24} />
                           </IconButton>
                         </Tooltip>
                       </Box>

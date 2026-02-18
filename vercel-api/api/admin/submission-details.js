@@ -49,21 +49,23 @@ function extractTeamData(jsonContent) {
   try {
     const data = JSON.parse(jsonContent);
     
-    // Check for TeamBattleResults wrapper
+    // Check for TeamBattleResults wrapper with teams array
     if (data.TeamBattleResults) {
+      const teams = data.TeamBattleResults.teams || [];
       return {
         hasTeamData: true,
-        team: data.TeamBattleResults.team || null,
+        teams: teams.filter(t => t && t.trim() !== ''),
         event: data.TeamBattleResults.event || null,
         season: data.TeamBattleResults.season || null
       };
     }
     
     // Check for standard battle result with team metadata
-    if (data.team || data.event || data.season) {
+    if (data.teams || data.team || data.event || data.season) {
+      const teams = data.teams || (data.team ? [data.team] : []);
       return {
         hasTeamData: true,
-        team: data.team || null,
+        teams: teams.filter(t => t && t.trim() !== ''),
         event: data.event || null,
         season: data.season || null
       };
