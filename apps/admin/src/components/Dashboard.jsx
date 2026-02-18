@@ -55,9 +55,13 @@ function Dashboard({ user, onLogout }) {
         sub.targetPath?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sub.title?.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      // Sort oldest to newest
+      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       setFilteredSubmissions(filtered);
     } else {
-      setFilteredSubmissions(submissions);
+      // Sort oldest to newest
+      const sorted = [...submissions].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      setFilteredSubmissions(sorted);
     }
   }, [searchTerm, submissions]);
 
@@ -98,27 +102,20 @@ function Dashboard({ user, onLogout }) {
     );
   };
 
-  const handleApprove = async (prNumber, branch) => {
+  const handleApprove = async (prNumber, branch, isDraft) => {
     setActionLoading(true);
     setError(null);
     try {
       const token = sessionStorage.getItem('gh_admin_token');
       await approveSubmission(token, prNumber, branch);
-      setSuccessMessage(`Submission #${prNumber} approved successfully!`);
+      const message = isDraft 
+        ? `Draft converted and submission #${prNumber} approved successfully!`
+        : `Submission #${prNumber} approved successfully!`;
+      setSuccessMessage(message);
       setTimeout(() => setSuccessMessage(null), 3000);
       await loadSubmissions();
       setSelected(prev => prev.filter(num => num !== prNumber));
     } catch (err) {
-      // Check if this is a draft PR error
-      if (err.message.includes('draft')) {
-        const submission = filteredSubmissions.find(s => s.number === prNumber);
-        const openPR = window.confirm(
-          `${err.message}\n\nWould you like to open this PR on GitHub now to mark it as ready?`
-        );
-        if (openPR && submission) {
-          window.open(submission.url, '_blank');
-        }
-      }
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -464,10 +461,10 @@ function Dashboard({ user, onLogout }) {
                     <TableCell>{getStatusChip(submission)}</TableCell>
                     <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                        <Tooltip title="Approve">
+                        <Tooltip title={submission.isDraft ? "Approve (will auto-convert draft)" : "Approve"}>
                           <span>
                             <IconButton
-                              onClick={() => handleApprove(submission.number, submission.branch)}
+                              onClick={() => handleApprove(submission.number, submission.branch, submission.isDraft)}
                               disabled={actionLoading}
                               sx={{ 
                                 color: '#00ba7c', 
