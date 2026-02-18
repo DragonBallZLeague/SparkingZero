@@ -109,6 +109,16 @@ function Dashboard({ user, onLogout }) {
       await loadSubmissions();
       setSelected(prev => prev.filter(num => num !== prNumber));
     } catch (err) {
+      // Check if this is a draft PR error
+      if (err.message.includes('draft')) {
+        const submission = filteredSubmissions.find(s => s.number === prNumber);
+        const openPR = window.confirm(
+          `${err.message}\n\nWould you like to open this PR on GitHub now to mark it as ready?`
+        );
+        if (openPR && submission) {
+          window.open(submission.url, '_blank');
+        }
+      }
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -223,7 +233,7 @@ function Dashboard({ user, onLogout }) {
   };
   const getStatusChip = (submission) => {
     if (submission.isDraft) {
-      return <Chip label="Pending Review" color="warning" size="small" />;
+      return <Chip label="Draft" color="warning" size="small" />;
     }
     return <Chip label="Ready" color="success" size="small" />;
   };
