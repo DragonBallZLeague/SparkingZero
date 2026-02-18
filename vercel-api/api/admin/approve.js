@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     try { body = JSON.parse(body || '{}'); } catch { body = {}; }
   }
 
-  const { prNumber, branch } = body;
+  const { prNumber, branch, force = false } = body;
   
   if (!prNumber || !branch) {
     return res.status(400).json({ error: 'prNumber and branch are required' });
@@ -167,15 +167,26 @@ export default async function handler(req, res) {
     // Wait for GitHub to process the approval
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // 4. Merge the PR
+    // 4. Merge the PR (with optional admin bypass for status checks)
+    const mergeBody = {
+      commit_title: `Merge PR #${prNumber}: ${prData.title}`,
+      commit_message: `Approved and merged by @${username}${force ? ' (force merged)' : ''}`,
+      merge_method: 'squash'
+    };
+    
+    // Force merge note: Admin bypass requires:
+    // 1. GITHUB_TOKEN user has Admin permissions on the repo
+    // 2. Branch protection enables "Allow administrators to bypass required pull requests"
+    if (force) {
+      console.log('Force merge requested - admin bypass will apply if token has admin permissions');
+    }
+    
     const mergeResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}/merge`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        commit_title: `Merge PR #${prNumber}: ${prData.title}`,
-        commit_message: `Approved and merged by @${username}`,
-        merge_method: 'squash'
-      })
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(mergeBody)
     }, botToken);
 
     if (!mergeResp.ok) {
@@ -193,6 +204,13 @@ export default async function handler(req, res) {
         
         if (reasons.length > 0) {
           errorMessage = `PR cannot be merged because it ${reasons.join(' and ')}.`;
+          if (prData.mergeable_state === 'unstable') {
+            if (force) {
+              errorMessage += ' Force merge failed. Ensure the GitHub bot token has Admin permissions and branch protection allows admin bypass.';
+            } else {
+              errorMessage += ' Use force merge to attempt admin bypass of status checks.';
+            }
+          }
         } else {
           errorMessage = `PR cannot be merged. Status: ${prData.mergeable_state}. ${errorData.message || ''}`;
         }

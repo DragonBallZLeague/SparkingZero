@@ -98,17 +98,26 @@ function Dashboard({ user, onLogout }) {
     );
   };
 
-  const handleApprove = async (prNumber, branch) => {
+  const handleApprove = async (prNumber, branch, force = false) => {
     setActionLoading(true);
     setError(null);
     try {
       const token = sessionStorage.getItem('gh_admin_token');
-      await approveSubmission(token, prNumber, branch);
+      await approveSubmission(token, prNumber, branch, force);
       setSuccessMessage(`Submission #${prNumber} approved successfully!`);
       setTimeout(() => setSuccessMessage(null), 3000);
       await loadSubmissions();
       setSelected(prev => prev.filter(num => num !== prNumber));
     } catch (err) {
+      // If it failed due to status checks, offer to force merge
+      if (err.message.includes('failing status checks') && !force) {
+        const shouldForce = window.confirm(
+          `${err.message}\n\nDo you want to force merge anyway (bypassing status checks)?`
+        );
+        if (shouldForce) {
+          return handleApprove(prNumber, branch, true);
+        }
+      }
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -145,25 +154,41 @@ function Dashboard({ user, onLogout }) {
     }
   };
 
-  const handleBatchApprove = async () => {
-    if (!window.confirm(`Approve ${selected.length} submission(s)?`)) return;
+  const handleBatchApprove = async (force = false) => {
+    const message = force 
+      ? `Force approve ${selected.length} submission(s) (bypassing status checks)?`
+      : `Approve ${selected.length} submission(s)?`;
+      
+    if (!window.confirm(message)) return;
 
     setActionLoading(true);
     setError(null);
     const token = sessionStorage.getItem('gh_admin_token');
+    let failedCount = 0;
     
     for (const prNumber of selected) {
       const submission = submissions.find(s => s.number === prNumber);
       if (submission) {
         try {
-          await approveSubmission(token, prNumber, submission.branch);
+          await approveSubmission(token, prNumber, submission.branch, force);
         } catch (err) {
           console.error(`Failed to approve #${prNumber}:`, err);
+          failedCount++;
         }
       }
     }
 
-    setSuccessMessage(`${selected.length} submission(s) approved!`);
+    if (failedCount > 0 && !force) {
+      const shouldForce = window.confirm(
+        `${failedCount} submission(s) failed, likely due to failing status checks.\n\nDo you want to retry with force merge (bypassing checks)?`
+      );
+      if (shouldForce) {
+        setActionLoading(false);
+        return handleBatchApprove(true);
+      }
+    }
+
+    setSuccessMessage(`${selected.length - failedCount} submission(s) approved!${failedCount > 0 ? ` (${failedCount} failed)` : ''}`);
     setTimeout(() => setSuccessMessage(null), 3000);
     setSelected([]);
     await loadSubmissions();
