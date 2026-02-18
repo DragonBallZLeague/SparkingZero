@@ -46,14 +46,14 @@ export async function fetchSubmissionDetails(token, prNumber) {
   return response.json();
 }
 
-export async function approveSubmission(token, prNumber, branch) {
+export async function approveSubmission(token, prNumber, branch, force = false) {
   const response = await fetch(`${API_BASE}/admin/approve`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({ prNumber, branch })
+    body: JSON.stringify({ prNumber, branch, force })
   });
 
   if (!response.ok) {

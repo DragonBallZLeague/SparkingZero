@@ -66,8 +66,12 @@ function SubmissionDetail({ user, onLogout }) {
     }
   };
 
-  const handleApprove = async () => {
-    if (!window.confirm('Are you sure you want to approve and merge this submission?')) {
+  const handleApprove = async (force = false) => {
+    const message = force
+      ? 'Are you sure you want to FORCE merge this submission (bypassing status checks)?'
+      : 'Are you sure you want to approve and merge this submission?';
+      
+    if (!window.confirm(message)) {
       return;
     }
 
@@ -75,10 +79,20 @@ function SubmissionDetail({ user, onLogout }) {
     setError(null);
     try {
       const token = sessionStorage.getItem('gh_admin_token');
-      await approveSubmission(token, prNumber, submission.pr.branch);
+      await approveSubmission(token, prNumber, submission.pr.branch, force);
       setSuccessMessage('Submission approved and merged successfully!');
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {
+      // If it failed due to status checks, offer to force merge
+      if (err.message.includes('failing status checks') && !force) {
+        const shouldForce = window.confirm(
+          `${err.message}\n\nDo you want to force merge anyway (bypassing status checks)?`
+        );
+        if (shouldForce) {
+          setActionLoading(false);
+          return handleApprove(true);
+        }
+      }
       setError(err.message);
     } finally {
       setActionLoading(false);
