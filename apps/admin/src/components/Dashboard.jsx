@@ -98,26 +98,17 @@ function Dashboard({ user, onLogout }) {
     );
   };
 
-  const handleApprove = async (prNumber, branch, force = false) => {
+  const handleApprove = async (prNumber, branch) => {
     setActionLoading(true);
     setError(null);
     try {
       const token = sessionStorage.getItem('gh_admin_token');
-      await approveSubmission(token, prNumber, branch, force);
+      await approveSubmission(token, prNumber, branch);
       setSuccessMessage(`Submission #${prNumber} approved successfully!`);
       setTimeout(() => setSuccessMessage(null), 3000);
       await loadSubmissions();
       setSelected(prev => prev.filter(num => num !== prNumber));
     } catch (err) {
-      // If it failed due to status checks, offer to force merge
-      if (err.message.includes('failing status checks') && !force) {
-        const shouldForce = window.confirm(
-          `${err.message}\n\nDo you want to force merge anyway (bypassing status checks)?`
-        );
-        if (shouldForce) {
-          return handleApprove(prNumber, branch, true);
-        }
-      }
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -433,7 +424,21 @@ function Dashboard({ user, onLogout }) {
                       {submission.teams && submission.teams[1] ? submission.teams[1] : '-'}
                     </TableCell>
                     <TableCell sx={{ color: '#e7e9ea' }} align="center">
-                      <Chip label={submission.fileCount} size="small" sx={{ bgcolor: '#38444d', color: '#e7e9ea' }} />
+                      <Tooltip 
+                        title={
+                          <Box>
+                            {submission.files && submission.files.length > 0 ? (
+                              submission.files.map((file, idx) => (
+                                <div key={idx} style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>{file}</div>
+                              ))
+                            ) : (
+                              'No files'
+                            )}
+                          </Box>
+                        }
+                      >
+                        <Chip label={submission.fileCount} size="small" sx={{ bgcolor: '#38444d', color: '#e7e9ea', cursor: 'pointer' }} />
+                      </Tooltip>
                     </TableCell>
                     <TableCell sx={{ color: '#8b98a5', fontSize: '0.875rem' }}>
                       {formatDate(submission.createdAt)}
