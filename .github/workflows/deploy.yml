@@ -49,6 +49,14 @@ jobs:
         working-directory: apps/analyzer
         run: npm run build -- --outDir=../../dist/analyzer
 
+      - name: Install dependencies (admin)
+        working-directory: apps/admin
+        run: npm ci
+
+      - name: Build admin app
+        working-directory: apps/admin
+        run: npm run build -- --outDir=../../dist/admin
+
       - name: Copy submit app (static site)
         shell: bash
         run: |
