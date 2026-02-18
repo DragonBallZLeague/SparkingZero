@@ -416,7 +416,9 @@ function Dashboard({ user, onLogout }) {
                         {submission.submitter || 'Unknown'}
                         {submission.hasConflicts && (
                           <Tooltip title="Files conflict with existing data">
-                            <AlertTriangle size={16} color="#f91880" />
+                            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+                              <AlertTriangle size={16} color="#f91880" />
+                            </Box>
                           </Tooltip>
                         )}
                       </Box>
@@ -440,32 +442,36 @@ function Dashboard({ user, onLogout }) {
                     <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                         <Tooltip title="Approve">
-                          <IconButton
-                            onClick={() => handleApprove(submission.number, submission.branch)}
-                            disabled={actionLoading}
-                            sx={{ 
-                              color: '#00ba7c', 
-                              '&:hover': { bgcolor: 'rgba(0, 186, 124, 0.1)' },
-                              padding: '10px'
-                            }}
-                            size="medium"
-                          >
-                            <CheckCircle size={24} />
-                          </IconButton>
+                          <span>
+                            <IconButton
+                              onClick={() => handleApprove(submission.number, submission.branch)}
+                              disabled={actionLoading}
+                              sx={{ 
+                                color: '#00ba7c', 
+                                '&:hover': { bgcolor: 'rgba(0, 186, 124, 0.1)' },
+                                padding: '10px'
+                              }}
+                              size="medium"
+                            >
+                              <CheckCircle size={24} />
+                            </IconButton>
+                          </span>
                         </Tooltip>
                         <Tooltip title="Reject">
-                          <IconButton
-                            onClick={() => handleReject(submission.number, submission.branch)}
-                            disabled={actionLoading}
-                            sx={{ 
-                              color: '#f91880', 
-                              '&:hover': { bgcolor: 'rgba(249, 24, 128, 0.1)' },
-                              padding: '10px'
-                            }}
-                            size="medium"
-                          >
-                            <XCircle size={24} />
-                          </IconButton>
+                          <span>
+                            <IconButton
+                              onClick={() => handleReject(submission.number, submission.branch)}
+                              disabled={actionLoading}
+                              sx={{ 
+                                color: '#f91880', 
+                                '&:hover': { bgcolor: 'rgba(249, 24, 128, 0.1)' },
+                                padding: '10px'
+                              }}
+                              size="medium"
+                            >
+                              <XCircle size={24} />
+                            </IconButton>
+                          </span>
                         </Tooltip>
                       </Box>
                     </TableCell>
