@@ -18,6 +18,51 @@ async function gh(path, options, token) {
   return resp;
 }
 
+async function graphql(query, token) {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'User-Agent': 'SparkingZero-Admin'
+  };
+  const resp = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ query })
+  });
+  return resp;
+}
+
+async function markPRReady(prNumber, nodeId, token) {
+  const mutation = `
+    mutation {
+      markPullRequestReadyForReview(input: { pullRequestId: "${nodeId}" }) {
+        pullRequest {
+          id
+          number
+          isDraft
+        }
+      }
+    }
+  `;
+
+  const graphqlResp = await graphql(mutation, token);
+  
+  if (!graphqlResp.ok) {
+    const errorData = await graphqlResp.json().catch(() => ({ message: 'Unknown error' }));
+    console.error('GraphQL mutation failed:', graphqlResp.status, errorData);
+    throw new Error('Failed to mark PR as ready for review');
+  }
+
+  const mutationResult = await graphqlResp.json();
+  
+  if (mutationResult.errors) {
+    console.error('GraphQL mutation returned errors:', mutationResult.errors);
+    throw new Error(mutationResult.errors[0]?.message || 'GraphQL mutation failed');
+  }
+
+  return mutationResult;
+}
+
 export default async function handler(req, res) {
   cors(res);
   
@@ -87,13 +132,48 @@ export default async function handler(req, res) {
     }
     let prData = await prResp.json();
 
-    // 2. Check if PR is still draft - if so, reject with helpful message
+    // 2. If PR is draft, automatically mark it as ready for review using GraphQL
     if (prData.draft) {
-      console.log(`PR #${prNumber} is draft, cannot auto-merge`);
-      return res.status(400).json({ 
-        error: 'This PR is still a draft. Please open the PR on GitHub and click "Ready for review" first, then try approving again.',
-        isDraft: true
-      });
+      console.log(`PR #${prNumber} is draft, marking as ready for review...`);
+      
+      try {
+        await markPRReady(prNumber, prData.node_id, userToken);
+        console.log('GraphQL mutation succeeded, polling to verify...');
+        
+        // Poll to verify the conversion completed (up to 10 seconds)
+        let verified = false;
+        for (let i = 0; i < 10; i++) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          const checkResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, { method: 'GET' }, botToken);
+          if (checkResp.ok) {
+            const checkData = await checkResp.json();
+            console.log(`Poll ${i + 1}/10: draft=${checkData.draft}`);
+            
+            if (!checkData.draft) {
+              verified = true;
+              prData = checkData; // Update prData with the non-draft version
+              console.log('Draft conversion verified!');
+              break;
+            }
+          }
+        }
+        
+        if (!verified) {
+          console.warn('Could not verify draft conversion within 10 seconds');
+          return res.status(500).json({ 
+            error: 'PR conversion may be in progress. Please wait a moment and try approving again.',
+            details: 'Conversion initiated but not yet verified'
+          });
+        }
+      } catch (error) {
+        console.error('Failed to mark PR as ready:', error);
+        return res.status(400).json({ 
+          error: 'Failed to mark PR as ready for review. Please mark it manually on GitHub.',
+          details: error.message,
+          isDraft: true
+        });
+      }
     }
 
     // If mergeable is null, refetch once more to get the computed value
