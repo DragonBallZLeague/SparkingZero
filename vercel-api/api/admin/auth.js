@@ -55,38 +55,23 @@ export default async function handler(req, res) {
     const userData = await userResp.json();
     const username = userData.login;
 
-    // Check if user has push access to the repository
-    const permResp = await gh(`/repos/${owner}/${repo}/collaborators/${username}/permission`, { method: 'GET' }, token);
+    // Check if user has access by trying to get repo details
+    // This works for both public and private repos if the user has access
+    const repoResp = await gh(`/repos/${owner}/${repo}`, { method: 'GET' }, token);
     
-    if (!permResp.ok) {
-      // If we can't check permissions, try to verify they're at least a collaborator
-      const collabResp = await gh(`/repos/${owner}/${repo}/collaborators/${username}`, { method: 'GET' }, token);
-      
-      if (collabResp.ok) {
-        // User is a collaborator, allow access
-        return res.status(200).json({
-          authorized: true,
-          user: {
-            username: userData.login,
-            name: userData.name,
-            avatarUrl: userData.avatar_url
-          }
-        });
-      }
-      
+    if (!repoResp.ok) {
       return res.status(403).json({ 
-        error: 'Not a contributor to this repository', 
+        error: 'Cannot access repository. You may not have permissions.', 
         authorized: false 
       });
     }
     
-    const permData = await permResp.json();
-    const permission = permData.permission;
+    const repoData = await repoResp.json();
     
-    // Check if user has push, maintain, or admin access
-    const hasAccess = ['push', 'maintain', 'admin'].includes(permission);
+    // Check if user has push access by checking their permissions in the repo response
+    const userPermissions = repoData.permissions;
     
-    if (!hasAccess) {
+    if (!userPermissions || (!userPermissions.push && !userPermissions.admin && !userPermissions.maintain)) {
       return res.status(403).json({ 
         error: 'Insufficient permissions. Push access required.', 
         authorized: false 
@@ -99,7 +84,7 @@ export default async function handler(req, res) {
         username: userData.login,
         name: userData.name,
         avatarUrl: userData.avatar_url,
-        permission: permission
+        permission: userPermissions.admin ? 'admin' : (userPermissions.maintain ? 'maintain' : 'push')
       }
     });
 
