@@ -55,6 +55,8 @@ jobs:
 
       - name: Build admin app
         working-directory: apps/admin
+        env:
+          VITE_ADMIN_CLIENT_ID: ${{ secrets.VITE_ADMIN_CLIENT_ID }}
         run: npm run build -- --outDir=../../dist/admin
 
       - name: Copy submit app (static site)

@@ -3,7 +3,7 @@ import { initiateDeviceFlow, waitForAuthorization } from '../utils/githubAuth';
 import { Box, Button, Typography, CircularProgress, Alert, Paper, Link } from '@mui/material';
 import { Lock, Github } from 'lucide-react';
 
-const ADMIN_CLIENT_ID = import.meta.env.VITE_ADMIN_CLIENT_ID || 'Ov23liTQltvZTXR2OaG2';
+const ADMIN_CLIENT_ID = import.meta.env.VITE_ADMIN_CLIENT_ID || 'Ov23lie3nldyoWZagbG3';
 
 function LoginPage({ onLogin }) {
   const [loading, setLoading] = useState(false);
