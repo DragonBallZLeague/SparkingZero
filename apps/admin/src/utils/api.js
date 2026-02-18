@@ -81,3 +81,21 @@ export async function rejectSubmission(token, prNumber, reason, branch) {
 
   return response.json();
 }
+
+export async function markAsReady(token, prNumber) {
+  const response = await fetch(`${API_BASE}/admin/mark-ready`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ prNumber })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to mark PR as ready');
+  }
+
+  return response.json();
+}

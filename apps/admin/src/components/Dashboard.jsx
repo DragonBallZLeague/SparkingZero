@@ -27,8 +27,8 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
-import { LogOut, Search, RefreshCw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
-import { fetchSubmissions, approveSubmission, rejectSubmission } from '../utils/api';
+import { LogOut, Search, RefreshCw, CheckCircle, XCircle, AlertTriangle, PlayCircle } from 'lucide-react';
+import { fetchSubmissions, approveSubmission, rejectSubmission, markAsReady } from '../utils/api';
 
 function Dashboard({ user, onLogout }) {
   const navigate = useNavigate();
@@ -55,9 +55,13 @@ function Dashboard({ user, onLogout }) {
         sub.targetPath?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sub.title?.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      // Sort oldest to newest
+      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       setFilteredSubmissions(filtered);
     } else {
-      setFilteredSubmissions(submissions);
+      // Sort oldest to newest
+      const sorted = [...submissions].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      setFilteredSubmissions(sorted);
     }
   }, [searchTerm, submissions]);
 
@@ -119,6 +123,22 @@ function Dashboard({ user, onLogout }) {
           window.open(submission.url, '_blank');
         }
       }
+      setError(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleMarkReady = async (prNumber) => {
+    setActionLoading(true);
+    setError(null);
+    try {
+      const token = sessionStorage.getItem('gh_admin_token');
+      await markAsReady(token, prNumber);
+      setSuccessMessage(`PR #${prNumber} marked as ready for review!`);
+      setTimeout(() => setSuccessMessage(null), 3000);
+      await loadSubmissions();
+    } catch (err) {
       setError(err.message);
     } finally {
       setActionLoading(false);
@@ -464,11 +484,29 @@ function Dashboard({ user, onLogout }) {
                     <TableCell>{getStatusChip(submission)}</TableCell>
                     <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                        {submission.isDraft && (
+                          <Tooltip title="Mark as Ready">
+                            <span>
+                              <IconButton
+                                onClick={() => handleMarkReady(submission.number)}
+                                disabled={actionLoading}
+                                sx={{ 
+                                  color: '#1d9bf0', 
+                                  '&:hover': { bgcolor: 'rgba(29, 155, 240, 0.1)' },
+                                  padding: '10px'
+                                }}
+                                size="medium"
+                              >
+                                <PlayCircle size={24} />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                        )}
                         <Tooltip title="Approve">
                           <span>
                             <IconButton
                               onClick={() => handleApprove(submission.number, submission.branch)}
-                              disabled={actionLoading}
+                              disabled={actionLoading || submission.isDraft}
                               sx={{ 
                                 color: '#00ba7c', 
                                 '&:hover': { bgcolor: 'rgba(0, 186, 124, 0.1)' },
