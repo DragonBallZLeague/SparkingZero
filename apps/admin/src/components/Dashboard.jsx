@@ -426,16 +426,24 @@ function Dashboard({ user, onLogout }) {
                     <TableCell sx={{ color: '#e7e9ea' }} align="center">
                       <Tooltip 
                         title={
-                          <Box>
+                          <Box sx={{ maxWidth: 600 }}>
                             {submission.files && submission.files.length > 0 ? (
                               submission.files.map((file, idx) => (
-                                <div key={idx} style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>{file}</div>
+                                <div key={idx} style={{ fontFamily: 'monospace', fontSize: '0.875rem', whiteSpace: 'nowrap' }}>{file}</div>
                               ))
                             ) : (
                               'No files'
                             )}
                           </Box>
                         }
+                        componentsProps={{
+                          tooltip: {
+                            sx: {
+                              maxWidth: 'none',
+                              bgcolor: 'rgba(0, 0, 0, 0.95)'
+                            }
+                          }
+                        }}
                       >
                         <Chip label={submission.fileCount} size="small" sx={{ bgcolor: '#38444d', color: '#e7e9ea', cursor: 'pointer' }} />
                       </Tooltip>
