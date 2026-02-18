@@ -131,7 +131,10 @@ export default async function handler(req, res) {
       });
     }
     
-    if (prData.mergeable_state === 'blocked') {
+    // Only block if truly blocked by branch protection, not just failing checks
+    // 'unstable' means checks are failing but not required
+    // 'blocked' means branch protection is actively preventing merge
+    if (prData.mergeable_state === 'blocked' && prData.mergeable !== true) {
       return res.status(409).json({ 
         error: 'PR is blocked. Check branch protection rules or required status checks.',
         mergeable_state: prData.mergeable_state
@@ -200,17 +203,12 @@ export default async function handler(req, res) {
         if (prData.mergeable_state === 'dirty') reasons.push('has merge conflicts');
         if (prData.mergeable_state === 'behind') reasons.push('is behind the base branch');
         if (prData.mergeable_state === 'blocked') reasons.push('is blocked by branch protection rules');
-        if (prData.mergeable_state === 'unstable') reasons.push('has failing status checks');
         
         if (reasons.length > 0) {
           errorMessage = `PR cannot be merged because it ${reasons.join(' and ')}.`;
-          if (prData.mergeable_state === 'unstable') {
-            if (force) {
-              errorMessage += ' Force merge failed. Ensure the GitHub bot token has Admin permissions and branch protection allows admin bypass.';
-            } else {
-              errorMessage += ' Use force merge to attempt admin bypass of status checks.';
-            }
-          }
+        } else if (prData.mergeable_state === 'unstable') {
+          // Unstable means checks are failing, but if there's no branch protection, this shouldn't block
+          errorMessage = `PR has failing status checks but merge was still attempted and failed. GitHub API error: ${errorData.message || 'Unknown error'}`;
         } else {
           errorMessage = `PR cannot be merged. Status: ${prData.mergeable_state}. ${errorData.message || ''}`;
         }
