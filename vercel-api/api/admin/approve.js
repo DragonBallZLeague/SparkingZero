@@ -208,7 +208,8 @@ export default async function handler(req, res) {
           errorMessage = `PR cannot be merged because it ${reasons.join(' and ')}.`;
         } else if (prData.mergeable_state === 'unstable') {
           // Unstable means checks are failing, but if there's no branch protection, this shouldn't block
-          errorMessage = `PR has failing status checks but merge was still attempted and failed. GitHub API error: ${errorData.message || 'Unknown error'}`;
+          // However GitHub API still rejects the merge - this is a GitHub limitation
+          errorMessage = `Unable to merge: ${errorData.message || 'GitHub API rejected the merge request. This may be due to incomplete CI checks.'}`;
         } else {
           errorMessage = `PR cannot be merged. Status: ${prData.mergeable_state}. ${errorData.message || ''}`;
         }

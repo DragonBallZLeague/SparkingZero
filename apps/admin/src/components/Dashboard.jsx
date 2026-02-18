@@ -98,26 +98,17 @@ function Dashboard({ user, onLogout }) {
     );
   };
 
-  const handleApprove = async (prNumber, branch, force = false) => {
+  const handleApprove = async (prNumber, branch) => {
     setActionLoading(true);
     setError(null);
     try {
       const token = sessionStorage.getItem('gh_admin_token');
-      await approveSubmission(token, prNumber, branch, force);
+      await approveSubmission(token, prNumber, branch);
       setSuccessMessage(`Submission #${prNumber} approved successfully!`);
       setTimeout(() => setSuccessMessage(null), 3000);
       await loadSubmissions();
       setSelected(prev => prev.filter(num => num !== prNumber));
     } catch (err) {
-      // If it failed due to status checks, offer to force merge
-      if (err.message.includes('failing status checks') && !force) {
-        const shouldForce = window.confirm(
-          `${err.message}\n\nDo you want to force merge anyway (bypassing status checks)?`
-        );
-        if (shouldForce) {
-          return handleApprove(prNumber, branch, true);
-        }
-      }
       setError(err.message);
     } finally {
       setActionLoading(false);
