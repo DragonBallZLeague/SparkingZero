@@ -80,13 +80,14 @@ export default async function handler(req, res) {
 
     // Now use bot token for the actual operations
     
-    // 1. Check if PR is still draft, if so mark as ready
+    // 1. Fetch PR details
     const prResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, { method: 'GET' }, botToken);
     if (!prResp.ok) {
       return res.status(404).json({ error: 'Pull request not found' });
     }
-    const prData = await prResp.json();
+    let prData = await prResp.json();
 
+    // 2. Check if PR is still draft, if so mark as ready
     if (prData.draft) {
       // Mark as ready for review
       const readyResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, {
@@ -96,11 +97,48 @@ export default async function handler(req, res) {
       }, botToken);
 
       if (!readyResp.ok) {
-        return res.status(500).json({ error: 'Failed to mark PR as ready' });
+        const readyError = await readyResp.json().catch(() => ({ message: 'Unknown error' }));
+        return res.status(500).json({ 
+          error: 'Failed to mark PR as ready',
+          details: readyError.message
+        });
+      }
+      
+      // Wait for GitHub to process the draft->ready transition
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Refetch PR data to get updated status
+      const updatedPrResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, { method: 'GET' }, botToken);
+      if (updatedPrResp.ok) {
+        prData = await updatedPrResp.json();
       }
     }
 
-    // 2. Add approval comment
+    // If mergeable is null, refetch once more to get the computed value
+    if (prData.mergeable === null) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const refetchResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, { method: 'GET' }, botToken);
+      if (refetchResp.ok) {
+        prData = await refetchResp.json();
+      }
+    }
+
+    // Check if PR is mergeable
+    if (prData.mergeable === false) {
+      return res.status(409).json({ 
+        error: 'PR has conflicts that must be resolved before merging',
+        mergeable_state: prData.mergeable_state
+      });
+    }
+    
+    if (prData.mergeable_state === 'blocked') {
+      return res.status(409).json({ 
+        error: 'PR is blocked. Check branch protection rules or required status checks.',
+        mergeable_state: prData.mergeable_state
+      });
+    }
+
+    // 3. Add approval comment
     const commentResp = await gh(`/repos/${owner}/${repo}/issues/${prNumber}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -113,7 +151,7 @@ export default async function handler(req, res) {
       console.warn('Failed to add approval comment');
     }
 
-    // 3. Merge the PR
+    // 4. Merge the PR
     const mergeResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}/merge`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -125,22 +163,40 @@ export default async function handler(req, res) {
     }, botToken);
 
     if (!mergeResp.ok) {
-      const errorData = await mergeResp.json();
-      return res.status(500).json({ 
-        error: 'Failed to merge PR', 
-        details: errorData.message 
+      const errorData = await mergeResp.json().catch(() => ({ message: 'Unknown error' }));
+      console.error('Merge failed:', mergeResp.status, errorData);
+      
+      let errorMessage = 'Failed to merge PR';
+      if (mergeResp.status === 405) {
+        errorMessage = 'PR cannot be merged. It may have conflicts or required checks are not passing.';
+      } else if (mergeResp.status === 409) {
+        errorMessage = 'PR is not mergeable. Please check for conflicts or branch protection requirements.';
+      } else if (errorData.message) {
+        errorMessage = `Failed to merge: ${errorData.message}`;
+      }
+      
+      return res.status(mergeResp.status).json({ 
+        error: errorMessage,
+        details: errorData.message,
+        status: mergeResp.status
       });
     }
 
     const mergeData = await mergeResp.json();
 
-    // 4. Delete the branch
-    const deleteResp = await gh(`/repos/${owner}/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
-      method: 'DELETE'
-    }, botToken);
+    // 5. Delete the branch
+    try {
+      const branchName = branch.replace('refs/heads/', '');
+      const deleteResp = await gh(`/repos/${owner}/${repo}/git/refs/heads/${encodeURIComponent(branchName)}`, {
+        method: 'DELETE'
+      }, botToken);
 
-    if (!deleteResp.ok) {
-      console.warn(`Failed to delete branch ${branch}: ${deleteResp.status}`);
+      if (!deleteResp.ok) {
+        console.warn(`Failed to delete branch ${branchName}: ${deleteResp.status}`);
+        // Don't fail the request if branch deletion fails
+      }
+    } catch (deleteError) {
+      console.warn('Error deleting branch:', deleteError);
       // Don't fail the request if branch deletion fails
     }
 
