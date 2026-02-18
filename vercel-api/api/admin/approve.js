@@ -138,18 +138,34 @@ export default async function handler(req, res) {
       });
     }
 
-    // 3. Add approval comment
-    const commentResp = await gh(`/repos/${owner}/${repo}/issues/${prNumber}/comments`, {
+    // 3. Add approval review (required for branch protection)
+    const reviewResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}/reviews`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
+        event: 'APPROVE',
         body: `✅ Approved by @${username} via admin dashboard` 
       })
     }, botToken);
 
-    if (!commentResp.ok) {
-      console.warn('Failed to add approval comment');
+    if (!reviewResp.ok) {
+      console.warn('Failed to add approval review');
+      // Still add a comment as fallback
+      const commentResp = await gh(`/repos/${owner}/${repo}/issues/${prNumber}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          body: `✅ Approved by @${username} via admin dashboard` 
+        })
+      }, botToken);
+
+      if (!commentResp.ok) {
+        console.warn('Failed to add approval comment');
+      }
     }
+
+    // Wait for GitHub to process the approval
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // 4. Merge the PR
     const mergeResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}/merge`, {
@@ -168,7 +184,18 @@ export default async function handler(req, res) {
       
       let errorMessage = 'Failed to merge PR';
       if (mergeResp.status === 405) {
-        errorMessage = 'PR cannot be merged. It may have conflicts or required checks are not passing.';
+        // 405 usually means merge button is not available
+        const reasons = [];
+        if (prData.mergeable_state === 'dirty') reasons.push('has merge conflicts');
+        if (prData.mergeable_state === 'behind') reasons.push('is behind the base branch');
+        if (prData.mergeable_state === 'blocked') reasons.push('is blocked by branch protection rules');
+        if (prData.mergeable_state === 'unstable') reasons.push('has failing status checks');
+        
+        if (reasons.length > 0) {
+          errorMessage = `PR cannot be merged because it ${reasons.join(' and ')}.`;
+        } else {
+          errorMessage = `PR cannot be merged. Status: ${prData.mergeable_state}. ${errorData.message || ''}`;
+        }
       } else if (mergeResp.status === 409) {
         errorMessage = 'PR is not mergeable. Please check for conflicts or branch protection requirements.';
       } else if (errorData.message) {
@@ -178,6 +205,7 @@ export default async function handler(req, res) {
       return res.status(mergeResp.status).json({ 
         error: errorMessage,
         details: errorData.message,
+        mergeable_state: prData.mergeable_state,
         status: mergeResp.status
       });
     }
