@@ -62,17 +62,21 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Invalid authorization token' });
     }
     const userData = await userResp.json();
-    const username = userData.login;
 
-    // Check user permissions
-    const permResp = await gh(`/repos/${owner}/${repo}/collaborators/${username}/permission`, { method: 'GET' }, userToken);
-    if (permResp.ok) {
-      const permData = await permResp.json();
-      const hasAccess = ['push', 'maintain', 'admin'].includes(permData.permission);
-      if (!hasAccess) {
-        return res.status(403).json({ error: 'Insufficient permissions' });
-      }
+    // Check user permissions by getting repo with their token
+    const repoResp = await gh(`/repos/${owner}/${repo}`, { method: 'GET' }, userToken);
+    if (!repoResp.ok) {
+      return res.status(403).json({ error: 'Cannot access repository' });
     }
+    
+    const repoData = await repoResp.json();
+    const userPermissions = repoData.permissions;
+    
+    if (!userPermissions || (!userPermissions.push && !userPermissions.admin && !userPermissions.maintain)) {
+      return res.status(403).json({ error: 'Insufficient permissions. Push access required.' });
+    }
+
+    const username = userData.login;
 
     // Now use bot token for the actual operations
     
