@@ -206,9 +206,46 @@ function clearFiles() {
 }
 
 /**
+ * Sync form inputs with current state
+ */
+function syncFormInputs() {
+    // Name input
+    const nameInput = document.getElementById('nameInput');
+    if (nameInput && AppState.name !== undefined) {
+        nameInput.value = AppState.name;
+    }
+    
+    // Comments input
+    const commentsInput = document.getElementById('commentsInput');
+    if (commentsInput && AppState.comments !== undefined) {
+        commentsInput.value = AppState.comments;
+    }
+    
+    // Team data checkbox
+    const setTeamDataCheckbox = document.getElementById('setTeamData');
+    if (setTeamDataCheckbox) {
+        setTeamDataCheckbox.checked = AppState.setTeamData;
+    }
+    
+    // Team selections
+    const team1Select = document.getElementById('team1Select');
+    if (team1Select && AppState.team1) {
+        team1Select.value = AppState.team1;
+    }
+    
+    const team2Select = document.getElementById('team2Select');
+    if (team2Select && AppState.team2 !== undefined) {
+        team2Select.value = AppState.team2;
+    }
+    
+    console.log('[UI] Form inputs synced with state');
+}
+
+/**
  * Master UI update function - updates all UI elements based on current state
  */
 function updateUI() {
+    syncFormInputs();
     updatePathDropdowns();
     updateTeamDataUI();
     updateFilesList();

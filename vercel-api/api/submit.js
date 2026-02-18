@@ -295,6 +295,17 @@ export default async function handler(req, res) {
     if (!prResp.ok) return bad(res, `Failed to open PR: ${prResp.status}`, 500);
     const prData = await prResp.json();
 
+    // Add data-submission label to PR
+    const labelResp = await gh(`/repos/${owner}/${repo}/issues/${prData.number}/labels`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ labels: ['data-submission'] })
+    }, token);
+    if (!labelResp.ok) {
+      console.warn(`Failed to add label to PR #${prData.number}: ${labelResp.status}`);
+      // Don't fail the request if labeling fails
+    }
+
     res.status(200).json({ id: branch, prUrl: prData.html_url });
   } catch (e) {
     res.status(500).json({ error: e.message || 'submit failed' });
