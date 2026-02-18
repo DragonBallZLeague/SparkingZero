@@ -89,14 +89,14 @@ export default async function handler(req, res) {
 
     // 2. Check if PR is still draft, if so mark as ready
     if (prData.draft) {
-      console.log(`PR #${prNumber} is draft, marking as ready...`);
+      console.log(`PR #${prNumber} is draft, marking as ready using user token...`);
       
-      // Mark as ready for review
+      // Mark as ready for review using user's token (they have proven permissions)
       const readyResp = await gh(`/repos/${owner}/${repo}/pulls/${prNumber}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ draft: false })
-      }, botToken);
+      }, userToken);
 
       if (!readyResp.ok) {
         const readyError = await readyResp.json().catch(() => ({ message: 'Unknown error' }));
