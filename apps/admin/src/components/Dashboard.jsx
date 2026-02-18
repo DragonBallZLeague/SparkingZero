@@ -424,7 +424,21 @@ function Dashboard({ user, onLogout }) {
                       {submission.teams && submission.teams[1] ? submission.teams[1] : '-'}
                     </TableCell>
                     <TableCell sx={{ color: '#e7e9ea' }} align="center">
-                      <Chip label={submission.fileCount} size="small" sx={{ bgcolor: '#38444d', color: '#e7e9ea' }} />
+                      <Tooltip 
+                        title={
+                          <Box>
+                            {submission.files && submission.files.length > 0 ? (
+                              submission.files.map((file, idx) => (
+                                <div key={idx} style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>{file}</div>
+                              ))
+                            ) : (
+                              'No files'
+                            )}
+                          </Box>
+                        }
+                      >
+                        <Chip label={submission.fileCount} size="small" sx={{ bgcolor: '#38444d', color: '#e7e9ea', cursor: 'pointer' }} />
+                      </Tooltip>
                     </TableCell>
                     <TableCell sx={{ color: '#8b98a5', fontSize: '0.875rem' }}>
                       {formatDate(submission.createdAt)}
