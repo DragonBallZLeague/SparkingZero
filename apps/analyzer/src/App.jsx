@@ -54,6 +54,7 @@ import UploadWidgetLauncher from './UploadWidgetLauncher';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
 import capsulesCSV from '../../../referencedata/capsules.csv?raw';
+import mapsCSV from '../../../referencedata/maps.csv?raw';
 // Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
 // Each entry may be a module object; code uses module.default || module
 const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });
@@ -1438,11 +1439,11 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
   return positionStats;
 }
 
-function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}) {
+function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
   const characterStats = {};
   
   // Helper function to process a characterRecord (extracted to avoid duplication)
-  function processCharacterRecord(characterRecord, characterIdRecord, teams = null, fileName = '', battleWinLose = null) {
+  function processCharacterRecord(characterRecord, characterIdRecord, teams = null, fileName = '', battleWinLose = null, mapId = null) {
     Object.keys(characterRecord).forEach(key => {
       const char = characterRecord[key];
       const stats = extractStats(char, charMap, capsuleMap, null); // No position for aggregated data
@@ -1555,7 +1556,8 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           formStats: {}, // Track per-form aggregated stats
           matches: [], // Track individual match data for meta analysis
           teamsUsed: {}, // Track which teams this character played on with counts
-          aiStrategiesUsed: {} // Track AI strategies used with counts
+          aiStrategiesUsed: {}, // Track AI strategies used with counts
+          mapsUsed: {} // Track which maps this character fought on with counts
         };
       }
       
@@ -1567,6 +1569,11 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       }
       if (aiStrategy) {
         charData.aiStrategiesUsed[aiStrategy] = (charData.aiStrategiesUsed[aiStrategy] || 0) + 1;
+      }
+      // Track which maps this character fought on
+      if (mapId) {
+        const mapName = mapsMap[mapId] || mapId; // Use friendly name or fall back to ID
+        charData.mapsUsed[mapName] = (charData.mapsUsed[mapName] || 0) + 1;
       }
       
       charData.matchCount += 1;
@@ -1719,6 +1726,8 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         team: teamName,
         opponentTeam: opponentTeam,
         aiStrategy: aiStrategy,
+        map: mapId ? (mapsMap[mapId] || mapId) : null, // Map friendly name
+        mapId: mapId, // Store raw map ID for reference
         kills: stats.kills,
         specialMovesUsed: stats.specialMovesUsed,
         ultimatesUsed: stats.ultimatesUsed,
@@ -1877,7 +1886,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     if (file.error) return;
     
     const fileName = file.name || file.fileName || '';
-    let characterRecord, characterIdRecord, teams, battleWinLose;
+    let characterRecord, characterIdRecord, teams, battleWinLose, mapId;
     
     // Handle TeamBattleResults format (current BR_Data structure)
     if (file.content.TeamBattleResults) {
@@ -1887,18 +1896,21 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         characterRecord = file.content.TeamBattleResults.battleResult.characterRecord;
         characterIdRecord = file.content.TeamBattleResults.battleResult.characterIdRecord;
         battleWinLose = file.content.TeamBattleResults.battleResult.battleWinLose;
+        mapId = file.content.TeamBattleResults.battleResult.originalMap?.key;
       }
       // Check for BattleResults (capital R) - Cinema files format
       else if (file.content.TeamBattleResults.BattleResults) {
         characterRecord = file.content.TeamBattleResults.BattleResults.characterRecord;
         characterIdRecord = file.content.TeamBattleResults.BattleResults.characterIdRecord;
         battleWinLose = file.content.TeamBattleResults.BattleResults.battleWinLose;
+        mapId = file.content.TeamBattleResults.BattleResults.originalMap?.key;
       }
       // Check if data is directly in TeamBattleResults (new wrapper format)
       else if (file.content.TeamBattleResults.characterRecord) {
         characterRecord = file.content.TeamBattleResults.characterRecord;
         characterIdRecord = file.content.TeamBattleResults.characterIdRecord;
         battleWinLose = file.content.TeamBattleResults.battleWinLose;
+        mapId = file.content.TeamBattleResults.originalMap?.key;
       }
     }
     // Handle new format with teams array at the top
@@ -1918,10 +1930,12 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         if (teamCharRecord) {
           // Extract battleWinLose for team format
           let teamBattleWinLose;
+          let teamMapId;
           if (team.BattleResults) {
             teamBattleWinLose = team.BattleResults.battleWinLose;
+            teamMapId = team.BattleResults.originalMap?.key;
           }
-          processCharacterRecord(teamCharRecord, teamCharIdRecord, file.content.teams, fileName, teamBattleWinLose);
+          processCharacterRecord(teamCharRecord, teamCharIdRecord, file.content.teams, fileName, teamBattleWinLose, teamMapId);
         }
       });
       return; // Already processed all teams
@@ -1931,6 +1945,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       characterRecord = file.content.BattleResults.characterRecord;
       characterIdRecord = file.content.BattleResults.characterIdRecord;
       battleWinLose = file.content.BattleResults.battleWinLose;
+      mapId = file.content.BattleResults.originalMap?.key;
       teams = file.content.teams;
     } 
     // Handle legacy format with direct properties
@@ -1938,12 +1953,13 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       characterRecord = file.content.characterRecord;
       characterIdRecord = file.content.characterIdRecord;
       battleWinLose = file.content.battleWinLose;
+      mapId = file.content.originalMap?.key;
       teams = file.content.teams;
     }
     
     if (!characterRecord) return;
     
-    processCharacterRecord(characterRecord, characterIdRecord, teams, fileName, battleWinLose);
+    processCharacterRecord(characterRecord, characterIdRecord, teams, fileName, battleWinLose, mapId);
   });
   
   // Calculate averages and format form history
@@ -1955,6 +1971,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Convert objects to arrays and find most common team and AI strategy
     const teamsArray = Object.keys(char.teamsUsed);
     const aiStrategiesArray = Object.keys(char.aiStrategiesUsed);
+    const mapsArray = Object.keys(char.mapsUsed);
     
     // Find most commonly used team (highest count)
     const primaryTeam = teamsArray.length > 0 
@@ -1964,6 +1981,11 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Find most commonly used AI strategy (highest count)
     const primaryAIStrategy = aiStrategiesArray.length > 0
       ? aiStrategiesArray.reduce((a, b) => char.aiStrategiesUsed[a] > char.aiStrategiesUsed[b] ? a : b)
+      : null;
+    
+    // Find most commonly used map (highest count)
+    const primaryMap = mapsArray.length > 0
+      ? mapsArray.reduce((a, b) => char.mapsUsed[a] > char.mapsUsed[b] ? a : b)
       : null;
     
     // Calculate averages for per-form stats
@@ -2038,8 +2060,10 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       hasMultipleForms: allForms.length > 1,
       teamsUsed: teamsArray,
       aiStrategiesUsed: aiStrategiesArray,
+      mapsUsed: mapsArray,
       primaryTeam,
       primaryAIStrategy,
+      primaryMap,
       // Use activeMatchCount (non-zero battleTime) for all averages when available
       _activeMatches: char.activeMatchCount || 0,
       avgDamage: Math.round(char.totalDamage / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
@@ -3225,10 +3249,30 @@ export default function App() {
   const [sortDirection, setSortDirection] = useState('desc');
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [selectedAIStrategies, setSelectedAIStrategies] = useState([]);
+  const [selectedMaps, setSelectedMaps] = useState([]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
   const capsuleMap = capsuleInfo.capsuleMap;
+  
+  // Parse maps.csv to create map ID to name lookup
+  const mapsMap = useMemo(() => {
+    const map = {};
+    const lines = mapsCSV.trim().split('\n');
+    
+    for (let i = 1; i < lines.length; i++) { // Skip header
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const [mapName, mapId] = line.split(',').map(s => s.trim());
+      if (mapId && mapName) {
+        map[mapId] = mapName;
+      }
+    }
+    
+    return map;
+  }, []);
+  
   // Convert AI strategies array to map for efficient lookup by ID
   const aiStrategies = useMemo(() => {
     const map = {};
@@ -3250,9 +3294,9 @@ export default function App() {
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
-      return getAggregatedCharacterData(filesArr, charMap, capsuleMap, aiStrategies);
+      return getAggregatedCharacterData(filesArr, charMap, capsuleMap, aiStrategies, mapsMap);
     } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && manualFiles.length > 0) {
-      return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies);
+      return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies, mapsMap);
     }
     return [];
   }, [mode, viewType, charMap, capsuleMap, aiStrategies, manualFiles, fileContent, selectedFilePath]);
@@ -3302,6 +3346,13 @@ export default function App() {
       if (selectedAIStrategies.length > 0) {
         filteredMatches = filteredMatches.filter(match => 
           match.aiStrategy && selectedAIStrategies.includes(match.aiStrategy)
+        );
+      }
+      
+      // Apply map filter to matches
+      if (selectedMaps.length > 0) {
+        filteredMatches = filteredMatches.filter(match => 
+          match.map && selectedMaps.includes(match.map)
         );
       }
       
@@ -3378,6 +3429,8 @@ export default function App() {
       // Recalculate teams and AI strategies used from filtered matches
       const teamsUsed = {};
       const aiStrategiesUsed = {};
+      const mapsUsed = {};
+      
       filteredMatches.forEach(match => {
         if (match.team) {
           teamsUsed[match.team] = (teamsUsed[match.team] || 0) + 1;
@@ -3385,15 +3438,25 @@ export default function App() {
         if (match.aiStrategy) {
           aiStrategiesUsed[match.aiStrategy] = (aiStrategiesUsed[match.aiStrategy] || 0) + 1;
         }
+        if (match.map) {
+          mapsUsed[match.map] = (mapsUsed[match.map] || 0) + 1;
+        }
       });
       
       const teamsArray = Object.keys(teamsUsed);
       const aiStrategiesArray = Object.keys(aiStrategiesUsed);
+      const mapsArray = Object.keys(mapsUsed);
+      
       const primaryTeam = teamsArray.length > 0 
         ? teamsArray.reduce((a, b) => teamsUsed[a] > teamsUsed[b] ? a : b)
         : null;
+      
       const primaryAIStrategy = aiStrategiesArray.length > 0
         ? aiStrategiesArray.reduce((a, b) => aiStrategiesUsed[a] > aiStrategiesUsed[b] ? a : b)
+        : null;
+      
+      const primaryMap = mapsArray.length > 0
+        ? mapsArray.reduce((a, b) => mapsUsed[a] > mapsUsed[b] ? a : b)
         : null;
       
   // Calculate averages (use denom which prefers active matches if present)
@@ -3837,8 +3900,10 @@ export default function App() {
         speedImpactWinRate: speedImpactWinRate,
         teamsUsed: teamsArray,
         aiStrategiesUsed: aiStrategiesArray,
+        mapsUsed: mapsArray,
         primaryTeam,
         primaryAIStrategy,
+        primaryMap,
         topBuilds: topBuilds, // Recalculated based on filtered matches
         // Form stats - Recalculated based on filtered matches
         formStatsArray: formStatsArray,
@@ -3911,7 +3976,7 @@ export default function App() {
     });
     
     return filtered;
-  }, [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection, selectedTeams, selectedAIStrategies]);
+  }, [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps]);
 
   // Extract unique teams and AI strategies from aggregated data
   const availableCharacters = useMemo(() => {
@@ -3936,6 +4001,16 @@ export default function App() {
       }
     });
     return Array.from(strategies).sort();
+  }, [aggregatedData]);
+
+  const availableMaps = useMemo(() => {
+    const maps = new Set();
+    aggregatedData.forEach(char => {
+      if (char.mapsUsed && Array.isArray(char.mapsUsed)) {
+        char.mapsUsed.forEach(map => maps.add(map));
+      }
+    });
+    return Array.from(maps).sort();
   }, [aggregatedData]);
 
   // Helper to toggle expanded state
@@ -5198,6 +5273,61 @@ export default function App() {
                         onAdd={(id) => setSelectedAIStrategies(prev => [...prev, id])}
                         darkMode={darkMode}
                         focusColor="purple"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {/* Map Filter */}
+                {availableMaps.length > 0 && (
+                  <div className="mb-4">
+                    {/* Selected Maps as Chips */}
+                    {selectedMaps.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {selectedMaps.map(map => (
+                          <button
+                            key={map}
+                            onClick={() => {
+                              setSelectedMaps(prev => prev.filter(m => m !== map));
+                            }}
+                            className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all flex items-center gap-1 ${
+                              darkMode 
+                                ? 'bg-green-900 border-green-600 text-green-300 hover:bg-green-800' 
+                                : 'bg-green-100 border-green-500 text-green-700 hover:bg-green-200'
+                            }`}
+                          >
+                            {map}
+                            <X className="w-3 h-3" />
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setSelectedMaps([])}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            darkMode 
+                              ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
+                              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          Clear all
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Search Input with Dropdown */}
+                    <div className="mb-2">
+                      <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
+                        <Target className="w-5 h-5" />
+                        Maps
+                      </div>
+                      <MultiSelectCombobox
+                        items={availableMaps.map(map => ({ id: map, name: map }))}
+                        selectedIds={selectedMaps}
+                        placeholder="Search and select maps..."
+                        onAdd={(id) => setSelectedMaps(prev => [...prev, id])}
+                        darkMode={darkMode}
+                        focusColor="green"
                       />
                     </div>
                   </div>
