@@ -50,7 +50,6 @@ import {
   Brain,
   Minus
 } from 'lucide-react';
-import UploadWidgetLauncher from './UploadWidgetLauncher';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
 import capsulesCSV from '../../../referencedata/capsules.csv?raw';
@@ -8236,11 +8235,6 @@ export default function App() {
     // no-op, placeholder if we need to coordinate darkMode
   }, [darkMode]);
   return null;
-}
-
-// Mount helper: render the UploadWidgetLauncher near root of the app
-export function UploadWidgetMount({ darkMode = false }) {
-  return <UploadWidgetLauncher darkMode={darkMode} />;
 }
 
 // Determine performance level for a value given a distribution of values.

@@ -7,13 +7,7 @@ export default defineConfig({
   base: '/SparkingZero/analyzer/',
   server: {
     port: 5173,
-    strictPort: true,
-    proxy: {
-      '/api': {
-        target: 'https://sparking-zero-iota.vercel.app',
-        changeOrigin: true
-      }
-    }
+    strictPort: true
   },
   build: {
     outDir: '../../dist/analyzer',
