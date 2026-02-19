@@ -758,6 +758,8 @@ function calculateColumnWidth(header, key) {
     'name': 30,  // Reduced from 35, headers can wrap
     'primaryTeam': 20,  // Expanded back to 20 for max value sizes
     'primaryAIStrategy': 35,  // Expanded to 35 for longer strategy names
+    'primaryMap': 30,  // Wide enough for "Tournament of Power Area Undamaged (Story Mode)"
+    'map': 30,  // Wide enough for longest map name
     
     // Narrow numeric columns (1-4 digit numbers) - optimized
     'matchCount': 8,  // Reduced from 10
@@ -1055,6 +1057,7 @@ async function generateTeamPerformanceMatrix(workbook, data, includeFormatting) 
     'wins': 'Wins',
     'losses': 'Losses',
     'primaryTeam': 'Win Rate',
+    'primaryMap': 'Primary Map',
     'avgDamage': 'Damage',
     'avgTaken': 'Taken',
     'efficiency': 'Efficiency',

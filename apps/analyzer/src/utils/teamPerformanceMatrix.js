@@ -164,10 +164,24 @@ function recalculateCharacterStatsForTeam(character, teamMatches, teamName) {
   const experienceMultiplier = Math.min(1.25, 1.0 + ((activeMatchCount > 0 ? activeMatchCount : matchCount) - 1) * (0.25 / 11));
   const combatPerformanceScore = baseScore * experienceMultiplier;
   
+  // Calculate primaryMap (most frequently used map in these matches)
+  const mapCounts = {};
+  let primaryMap = 'Unknown';
+  let maxMapCount = 0;
+  teamMatches.forEach(match => {
+    const map = match.map || 'Unknown';
+    mapCounts[map] = (mapCounts[map] || 0) + 1;
+    if (mapCounts[map] > maxMapCount) {
+      maxMapCount = mapCounts[map];
+      primaryMap = map;
+    }
+  });
+  
   // Return character with recalculated stats for this team only
   return {
     ...character,
     primaryTeam: teamName,
+    primaryMap: primaryMap,
     matchCount,
     activeMatchCount,
     wins,
@@ -324,6 +338,7 @@ function calculateTeamAggregates(team) {
     top5TotalDefenseCapsules: sumTop5(top5Characters, 'avgDefensiveCaps'),
     top5TotalUtilityCapsules: sumTop5(top5Characters, 'avgUtilityCaps'),
     topCapsules: combineMostCommon(top5Characters, 'topCapsules'),
+    primaryMap: getMostCommon(top5Characters, 'primaryMap'),
     
     // Form Changes - aggregate values from top 5
     hasMultipleForms: top5Characters.some(c => c.hasMultipleForms === 'Yes') ? 'Yes' : 'No',

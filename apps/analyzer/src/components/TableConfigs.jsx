@@ -37,7 +37,7 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
   description: 'Aggregated statistics showing overall performance across all matches',
   
   columnGroups: [
-    { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'matchCount', 'wins', 'losses'] },
+    { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'primaryMap', 'matchCount', 'wins', 'losses'] },
     { name: 'Combat Performance', columns: ['avgDamage', 'avgTaken', 'efficiency', 'dps', 'combatScore', 'avgBattleTime', 'totalKills', 'avgKills'] },
     { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags'] },
     { name: 'Special Abilities', columns: ['avgS1Blast', 'avgS1Hit', 's1HitRate', 'avgS2Blast', 'avgS2Hit', 's2HitRate', 'avgUltBlast', 'avgUltHit', 'ultHitRate', 'avgSkill1', 'avgSkill2', 'avgUltimates', 'avgEnergyBlasts', 'avgCharges', 'avgSparking', 'avgDragonDashMileage'] },
@@ -76,6 +76,22 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       exportFormat: { alignment: 'left' },
       render: (row, value) => (
         <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'primaryMap',
+      header: 'Primary Map',
+      accessor: (row) => row.primaryMap || 'Unknown',
+      sortable: true,
+      filterable: true,
+      group: 'Identity & Context',
+      exportFormat: { alignment: 'left' },
+      render: (row, value) => (
+        <span className={`text-sm ${
+          darkMode ? 'text-gray-300' : 'text-gray-700'
+        }`}>
           {value}
         </span>
       )
@@ -1005,6 +1021,7 @@ export const prepareCharacterAveragesData = (aggregatedData) => {
     name: char.name || 'Unknown',
     primaryTeam: char.primaryTeam || 'Unknown',
     primaryAIStrategy: char.primaryAIStrategy || 'Unknown',
+    primaryMap: char.primaryMap || 'Unknown',
   matchCount: char.matchCount || 0,
   // Number of matches with non-zero battle time
   activeMatchCount: char.activeMatchCount || 0,
@@ -1098,7 +1115,7 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
   description: 'Per-match statistics for detailed analysis and trend identification',
   
   columnGroups: [
-    { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'matchResult', 'fileName'] },
+    { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'map', 'matchResult', 'fileName'] },
     { name: 'Combat Performance', columns: ['damageDone', 'damageTaken', 'efficiency', 'dps', 'battleDuration', 'kills'] },
     { name: 'Survival & Health', columns: ['hpRemaining', 'hpMax', 'hpRetention', 'guards', 'revengeCounters', 'superCounters', 'zCounters', 'tags'] },
     { name: 'Special Abilities', columns: ['s1Blast', 's1HitBlast', 's1HitRate', 's2Blast', 's2HitBlast', 's2HitRate', 'ultBlast', 'uLTHitBlast', 'ultHitRate', 'skill1', 'skill2', 'ultimates', 'kiBlasts', 'charges', 'sparkings', 'dragonDashMileage'] },
@@ -1166,6 +1183,20 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
       exportFormat: { alignment: 'left' },
       render: (row, value) => (
         <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'map',
+      header: 'Map',
+      accessor: (row) => row.map || 'Unknown',
+      sortable: true,
+      filterable: true,
+      group: 'Match Identity',
+      exportFormat: { alignment: 'left' },
+      render: (row, value) => (
+        <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
           {value}
         </span>
       )
@@ -2067,6 +2098,7 @@ export const prepareMatchDetailsData = (aggregatedData) => {
         matchNumber: index + 1,
         team: match.team || char.primaryTeam || 'Unknown',
         opponentTeam: match.opponentTeam || 'Unknown',
+        map: match.map || 'Unknown',
         matchResult: match.won ? 'Win' : 'Loss',
         fileName: match.fileName || match.source || '',
         
