@@ -141,7 +141,7 @@ function parseCapsules(csvText) {
   return { capsules, aiStrategies };
 }
 
-function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = false, darkMode = false }) {
+function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = false, darkMode = false, size = 'medium' }) {
   // For inverse, flip the values for robust stats
   let values = allValues;
   let val = value;
@@ -168,11 +168,22 @@ function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = f
     default:
       colorClass = darkMode ? 'bg-gray-900/30 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-800 border-gray-200';
   }
+  
+  // Size configurations
+  const sizeClasses = {
+    'extra-small': { padding: 'px-1.5 py-0.5', text: 'text-xs', icon: 'w-3 h-3', gap: 'gap-1', border: 'border' },
+    'small': { padding: 'px-2 py-1', text: 'text-sm', icon: 'w-3 h-3', gap: 'gap-1.5', border: 'border' },
+    'medium': { padding: 'px-2 py-2', text: 'text-base', icon: 'w-4 h-4', gap: 'gap-2', border: 'border-2' },
+    'large': { padding: 'px-3 py-2', text: 'text-lg', icon: 'w-5 h-5', gap: 'gap-2', border: 'border-2' }
+  };
+  
+  const sizeConfig = sizeClasses[size] || sizeClasses['medium'];
+  
   return (
-    <span className={`inline-flex items-center gap-2 px-2 py-2 rounded-lg text-base font-bold border-2 ${colorClass}`}>
-      <Star className="w-4 h-4" />
+    <span className={`inline-flex items-center ${sizeConfig.gap} ${sizeConfig.padding} rounded-lg ${sizeConfig.text} font-bold ${sizeConfig.border} ${colorClass}`}>
+      <Star className={sizeConfig.icon} />
       <span>Score:</span>
-      <span className="text-base">{Math.round(value)}</span>
+      <span className={sizeConfig.text}>{Math.round(value)}</span>
     </span>
   );
 }
@@ -247,14 +258,17 @@ function PerformanceScoreBadge({ score, label = 'Score', size = 'medium', darkMo
   };
 
   const sizeClasses = {
+    'extra-small': 'text-xs px-1.5 py-0.5',
     small: 'text-sm px-2 py-0',
     medium: 'text-base px-3 py-1.5',
     large: 'text-lg px-4 py-2'
   };
 
+  const iconSize = size === 'extra-small' ? 'w-3 h-3' : size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-4 h-4' : 'w-5 h-5';
+  
   return (
-    <div className={`inline-flex items-center gap-2 rounded-lg border font-bold ${colorClasses[level]} ${sizeClasses[size]}`}>
-      <Star className={size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-4 h-4' : 'w-5 h-5'} />
+    <div className={`inline-flex items-center gap-1 rounded-lg border font-bold ${colorClasses[level]} ${sizeClasses[size]}`}>
+      <Star className={iconSize} />
       <span>{label}: {Math.round(score)}</span>
     </div>
   );
@@ -1198,58 +1212,52 @@ function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, charMap
   );
 }
 
-function getPositionBasedData(files, charMap, capsuleMap = {}) {
+function getPositionBasedData(files, charMap, capsuleMap = {}, positionMatchTypeFilters = ['2v2', '3v3', '4v4', '5v5']) {
   const positionStats = {
-    1: { totalMatches: 0, characters: {} }, // Position 1 (Lead)
-    2: { totalMatches: 0, characters: {} }, // Position 2 (Middle)
-    3: { totalMatches: 0, characters: {} }  // Position 3 (Anchor)
+    1: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 1 (Lead)
+    2: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 2 (Middle)
+    3: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }  // Position 3 (Anchor)
   };
   
   // Helper function to process a characterRecord
-  function processCharacterRecord(characterRecord) {
+  function processCharacterRecord(characterRecord, fileIndex = 0, recordIndex = 0) {
     if (!characterRecord) return;
+    
+    // Create a unique match ID based on file and record indices
+    const matchId = `${fileIndex}-${recordIndex}`;
     
     // Process each team separately to determine team size
     const alliesKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember'));
     const enemyKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember'));
+    const allies1PKey = Object.keys(characterRecord).find(k => k.includes('１Ｐ'));
+    const enemy2PKey = Object.keys(characterRecord).find(k => k.includes('２Ｐ'));
     
-    // Process allies team
-    const alliesTeamSize = alliesKeys.length;
-    alliesKeys.forEach(key => {
-      const char = characterRecord[key];
-      if (!char) return;
-      
-      // Extract slot number from key (e.g., "AlliesTeamMember1" -> 1)
-      const slotMatch = key.match(/Member(\d+)/);
-      const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
-      if (!slotNumber) return;
-      
-      // Determine position: 1 = lead (first), 2 = middle (everyone else), 3 = anchor (last)
-      let position;
-      if (slotNumber === 1) {
-        position = 1; // Lead
-      } else if (slotNumber === alliesTeamSize) {
-        position = 3; // Anchor
-      } else {
-        position = 2; // Middle
-      }
-      
+    // True team size = lead (1P) + AlliesTeamMember slots
+    const alliesTeamSize = alliesKeys.length + (allies1PKey ? 1 : 0);
+    const matchType = `${alliesTeamSize}v${alliesTeamSize}`;
+    if (!positionMatchTypeFilters.includes(matchType)) {
+      return; // Skip this match if it doesn't match the selected filters
+    }
+    
+    // Helper to accumulate stats into a position
+    function accumulateCharStats(char, position) {
       const stats = extractStats(char, charMap, capsuleMap, position);
       if (!stats.name || stats.name === '-') return;
       
       const characterName = stats.name;
-      
       positionStats[position].totalMatches++;
+      positionStats[position].uniqueMatches.add(matchId);
       
       if (!positionStats[position].characters[characterName]) {
         positionStats[position].characters[characterName] = {
           name: characterName,
           matchCount: 0,
-          // activeMatchCount counts matches where battleTime > 0
           activeMatchCount: 0,
+          survivalCount: 0,
           totalDamage: 0,
           totalTaken: 0,
           totalHealth: 0,
+          totalHPGaugeValueMax: 0,
           totalBattleTime: 0,
           totalSpecialMoves: 0,
           totalUltimates: 0,
@@ -1264,16 +1272,16 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
       }
       
       const charData = positionStats[position].characters[characterName];
-      // Always increment visible match count
       charData.matchCount++;
-      // Only count as an "active" match if battleTime > 0
       if (stats.battleTime && stats.battleTime > 0) {
         charData.activeMatchCount += 1;
         charData.totalBattleTime += stats.battleTime;
       }
+      if (stats.hPGaugeValue > 0) charData.survivalCount++;
       charData.totalDamage += stats.damageDone;
       charData.totalTaken += stats.damageTaken;
       charData.totalHealth += stats.hPGaugeValue;
+      charData.totalHPGaugeValueMax += stats.hPGaugeValueMax;
       charData.totalSpecialMoves += stats.specialMovesUsed;
       charData.totalUltimates += stats.ultimatesUsed;
       charData.totalSkills += stats.skillsUsed;
@@ -1283,84 +1291,50 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
       charData.totalEnergyBlasts += stats.shotEnergyBulletCount;
       charData.totalComboNum += stats.maxComboNum;
       charData.totalComboDamage += stats.maxComboDamage;
-    });
+    }
     
-    // Process enemy team
-    const enemyTeamSize = enemyKeys.length;
-    enemyKeys.forEach(key => {
+    // Process allies lead (1P key) as Position 1 (Lead)
+    if (allies1PKey && characterRecord[allies1PKey]) {
+      accumulateCharStats(characterRecord[allies1PKey], 1);
+    }
+    
+    // Process allies team members: last AlliesTeamMember = Anchor (3), rest = Middle (2)
+    alliesKeys.forEach(key => {
       const char = characterRecord[key];
       if (!char) return;
-      
-      // Extract slot number from key (e.g., "EnemyTeamMember1" -> 1)
       const slotMatch = key.match(/Member(\d+)/);
       const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
       if (!slotNumber) return;
       
-      // Determine position: 1 = lead (first), 2 = middle (everyone else), 3 = anchor (last)
-      let position;
-      if (slotNumber === 1) {
-        position = 1; // Lead
-      } else if (slotNumber === enemyTeamSize) {
-        position = 3; // Anchor
-      } else {
-        position = 2; // Middle
-      }
+      // Last AlliesTeamMember slot is the Anchor; all others are Middle
+      const position = slotNumber === alliesKeys.length ? 3 : 2;
+      accumulateCharStats(char, position);
+    });
+    
+    // Process enemy lead (2P key) as Position 1 (Lead)
+    if (enemy2PKey && characterRecord[enemy2PKey]) {
+      accumulateCharStats(characterRecord[enemy2PKey], 1);
+    }
+    
+    // Process enemy team members: last EnemyTeamMember = Anchor (3), rest = Middle (2)
+    enemyKeys.forEach(key => {
+      const char = characterRecord[key];
+      if (!char) return;
+      const slotMatch = key.match(/Member(\d+)/);
+      const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
+      if (!slotNumber) return;
       
-      if (!positionStats[position]) return;
-      
-      const stats = extractStats(char, charMap, capsuleMap, position);
-      if (!stats.name || stats.name === '-') return;
-      
-      const characterName = stats.name;
-      
-      positionStats[position].totalMatches++;
-      
-      if (!positionStats[position].characters[characterName]) {
-        positionStats[position].characters[characterName] = {
-          name: characterName,
-          matchCount: 0,
-          totalDamage: 0,
-          totalTaken: 0,
-          totalHealth: 0,
-          totalBattleTime: 0,
-          totalSpecialMoves: 0,
-          totalUltimates: 0,
-          totalSkills: 0,
-          totalSparking: 0,
-          totalCharges: 0,
-          totalGuards: 0,
-          totalEnergyBlasts: 0,
-          totalComboNum: 0,
-          totalComboDamage: 0
-        };
-      }
-      
-      const charData = positionStats[position].characters[characterName];
-      charData.matchCount++;
-      charData.totalDamage += stats.damageDone;
-      charData.totalTaken += stats.damageTaken;
-      charData.totalHealth += stats.hPGaugeValue;
-      // Only include battleTime in totals if it's > 0. This keeps averages consistent when excluding zero-duration matches.
-      if (stats.battleTime && stats.battleTime > 0) {
-        charData.totalBattleTime += stats.battleTime;
-      }
-      charData.totalSpecialMoves += stats.specialMovesUsed;
-      charData.totalUltimates += stats.ultimatesUsed;
-      charData.totalSkills += stats.skillsUsed;
-      charData.totalSparking += stats.sparkingCount;
-      charData.totalCharges += stats.chargeCount;
-      charData.totalGuards += stats.guardCount;
-      charData.totalEnergyBlasts += stats.shotEnergyBulletCount;
-      charData.totalComboNum += stats.maxComboNum;
-      charData.totalComboDamage += stats.maxComboDamage;
+      const position = slotNumber === enemyKeys.length ? 3 : 2;
+      accumulateCharStats(char, position);
     });
   }
   
-  files.forEach(file => {
+  files.forEach((file, fileIndex) => {
     if (file.error) return;
     
     const fileContent = file.content;
     let characterRecord;
+    let recordIndex = 0;
     
     // Handle TeamBattleResults format (current BR_Data structure)
     if (fileContent.TeamBattleResults) {
@@ -1380,7 +1354,7 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
     // Handle new format with teams array at the top
     else if (fileContent.teams && Array.isArray(fileContent.teams)) {
       // Process all teams in the array
-      fileContent.teams.forEach(team => {
+      fileContent.teams.forEach((team, teamIndex) => {
         let teamCharRecord;
         
         if (team.BattleResults) {
@@ -1390,7 +1364,7 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
         }
         
         if (teamCharRecord) {
-          processCharacterRecord(teamCharRecord);
+          processCharacterRecord(teamCharRecord, fileIndex, teamIndex);
         }
       });
       return; // Already processed all teams
@@ -1404,22 +1378,58 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
       characterRecord = fileContent.characterRecord;
     }
     
-    processCharacterRecord(characterRecord);
+    processCharacterRecord(characterRecord, fileIndex, recordIndex);
   });
   
   // Calculate averages and format data
   Object.keys(positionStats).forEach(position => {
     const posData = positionStats[position];
+    
+    // Convert uniqueMatches Set to count and clean up
+    posData.uniqueMatchCount = posData.uniqueMatches.size;
+    delete posData.uniqueMatches; // Clean up Set object
+    
     posData.sortedCharacters = Object.values(posData.characters)
+      .filter(char => {
+        // Only include characters that actually participated in battles
+        // Filter out characters with 0 battle time and 0 active matches
+        return (char.activeMatchCount && char.activeMatchCount > 0) || char.totalBattleTime > 0;
+      })
       .map(char => {
         // Use activeMatchCount if available (exclude zero battleTime matches), fallback to matchCount
         const denom = (char.activeMatchCount && char.activeMatchCount > 0) ? char.activeMatchCount : char.matchCount || 1;
+        
+        // Calculate averages
+        const avgDamage = char.totalDamage / denom;
+        const avgTaken = char.totalTaken / denom;
+        const avgHealth = char.totalHealth / denom;
+        const avgBattleTime = char.totalBattleTime / denom;
+        const avgDPS = char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0;
+        const damageEfficiency = char.totalTaken > 0 ? (char.totalDamage / char.totalTaken) : char.totalDamage;
+        const avgHPGaugeValueMax = char.totalHPGaugeValueMax / denom;
+        
+        // Calculate performance score
+        const healthRetention = avgHPGaugeValueMax > 0 ? avgHealth / avgHPGaugeValueMax : 0;
+        const baseScore = (
+          (avgDamage / 100000) * 35 +
+          (damageEfficiency) * 25 +
+          (avgDPS / 1000) * 25 +
+          (healthRetention) * 15
+        );
+        const experienceMatches = char.activeMatchCount || char.matchCount || 1;
+        const experienceMultiplier = Math.min(1.25, 1.0 + (experienceMatches - 1) * (0.25 / 11));
+        const combatPerformanceScore = Math.round(baseScore * experienceMultiplier * 100) / 100;
+        
+        // Calculate survival rate (percentage of matches survived)
+        const survivalRate = char.matchCount > 0 ? (char.survivalCount / char.matchCount) : 0;
+        
         return ({
           ...char,
-          avgDamage: char.totalDamage / denom,
-          avgTaken: char.totalTaken / denom,
-          avgHealth: char.totalHealth / denom,
-          avgBattleTime: char.totalBattleTime / denom,
+          avgDamage,
+          avgTaken,
+          avgHealth,
+          avgBattleTime,
+          avgDPS,
           avgSpecialMoves: char.totalSpecialMoves / denom,
           avgUltimates: char.totalUltimates / denom,
           avgSkills: char.totalSkills / denom,
@@ -1429,13 +1439,68 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
           avgEnergyBlasts: char.totalEnergyBlasts / denom,
           avgComboNum: char.totalComboNum / denom,
           avgComboDamage: char.totalComboDamage / denom,
-          damageEfficiency: char.totalTaken > 0 ? (char.totalDamage / char.totalTaken) : char.totalDamage
+          damageEfficiency,
+          healthRetention,
+          survivalRate,
+          combatPerformanceScore
         });
       })
-      .sort((a, b) => b.avgDamage - a.avgDamage);
+      .sort((a, b) => b.combatPerformanceScore - a.combatPerformanceScore);
   });
   
   return positionStats;
+}
+
+// Helper functions for position analysis
+function calculatePositionAverage(posData, metric) {
+  if (!posData.sortedCharacters || posData.sortedCharacters.length === 0) return 0;
+  const sum = posData.sortedCharacters.reduce((acc, char) => acc + (char[metric] || 0), 0);
+  return sum / posData.sortedCharacters.length;
+}
+
+function calculatePositionSurvivalRate(posData) {
+  if (!posData.sortedCharacters || posData.sortedCharacters.length === 0) return 0;
+  // Sum up actual survival counts across all characters
+  const totalSurvivals = posData.sortedCharacters.reduce((acc, char) => 
+    acc + (char.survivalCount || 0), 0);
+  // Sum up total match counts
+  const totalMatches = posData.sortedCharacters.reduce((acc, char) => 
+    acc + char.matchCount, 0);
+  return totalMatches > 0 ? Math.round((totalSurvivals / totalMatches) * 100) : 0;
+}
+
+function getPositionInsight(posData, positionName) {
+  if (!posData || !posData.sortedCharacters || posData.sortedCharacters.length === 0) {
+    return 'No data available';
+  }
+  
+  const avgDamage = calculatePositionAverage(posData, 'avgDamage');
+  const avgEfficiency = calculatePositionAverage(posData, 'damageEfficiency');
+  const survivalRate = calculatePositionSurvivalRate(posData);
+  
+  const insights = [];
+  
+  if (avgDamage > 120000) {
+    insights.push('high damage output');
+  } else if (avgDamage < 80000) {
+    insights.push('lower damage output');
+  } else {
+    insights.push('moderate damage output');
+  }
+  
+  if (avgEfficiency > 1.5) {
+    insights.push('efficient trading');
+  } else if (avgEfficiency < 1.0) {
+    insights.push('taking more damage than dealing');
+  }
+  
+  if (survivalRate > 60) {
+    insights.push('good survivability');
+  } else if (survivalRate < 40) {
+    insights.push('low survival rate');
+  }
+  
+  return insights.join(', ') || 'balanced performance';
 }
 
 function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
@@ -3236,6 +3301,9 @@ export default function App() {
   }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
   const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
+  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Lead, 2=Middle, 3=Anchor)
+  const [positionCharacterFilters, setPositionCharacterFilters] = useState({ 1: [], 2: [], 3: [] }); // Character filters for each position
+  const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
   
   // Search and filter state for Aggregated Character Performance
@@ -3306,12 +3374,12 @@ export default function App() {
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
-      return getPositionBasedData(filesArr, charMap, capsuleMap);
+      return getPositionBasedData(filesArr, charMap, capsuleMap, positionMatchTypeFilters);
     } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && manualFiles.length > 0) {
-      return getPositionBasedData(manualFiles, charMap, capsuleMap);
+      return getPositionBasedData(manualFiles, charMap, capsuleMap, positionMatchTypeFilters);
     }
     return {};
-  }, [mode, viewType, charMap, capsuleMap, manualFiles, fileContent, selectedFilePath]);
+  }, [mode, viewType, charMap, capsuleMap, manualFiles, fileContent, selectedFilePath, positionMatchTypeFilters]);
 
   // Team aggregated data for team rankings
   const teamAggregatedData = useMemo(() => {
@@ -5879,6 +5947,56 @@ export default function App() {
             
             {!sectionCollapsed.position && (
             <div>
+              {/* Match Type Filter */}
+              <div className="mb-6">
+                <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
+                  darkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  <Filter className="w-4 h-4" />
+                  Match Type
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {/* All button */}
+                  <button
+                    onClick={() => {
+                      const allMatchTypes = ['2v2', '3v3', '4v4', '5v5'];
+                      const allSelected = allMatchTypes.every(type => positionMatchTypeFilters.includes(type));
+                      setPositionMatchTypeFilters(allSelected ? [] : allMatchTypes);
+                    }}
+                    className={`px-3 py-1.5 rounded border-2 text-sm font-medium transition-colors ${
+                      positionMatchTypeFilters.length === 4
+                        ? (darkMode ? 'bg-green-900 border-green-500 text-green-200' : 'bg-green-100 border-green-500 text-green-700')
+                        : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
+                    }`}
+                  >
+                    All
+                  </button>
+                  {['2v2', '3v3', '4v4', '5v5'].map(matchType => {
+                    const isActive = positionMatchTypeFilters.includes(matchType);
+                    
+                    return (
+                      <button
+                        key={matchType}
+                        onClick={() => {
+                          setPositionMatchTypeFilters(prev => 
+                            isActive 
+                              ? prev.filter(f => f !== matchType)
+                              : [...prev, matchType]
+                          );
+                        }}
+                        className={`px-3 py-1.5 rounded border-2 text-sm font-medium transition-colors ${
+                          isActive 
+                            ? (darkMode ? 'bg-blue-900 border-blue-500 text-blue-200' : 'bg-blue-100 border-blue-500 text-blue-700')
+                            : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
+                        }`}
+                      >
+                        {matchType}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map(position => {
                 const posData = positionData[position];
@@ -5890,43 +6008,277 @@ export default function App() {
                 ];
                 const colors = positionColors[position - 1];
                 
+                // Hide position if it has no matches
+                if (!posData || !posData.sortedCharacters || posData.sortedCharacters.length === 0) {
+                  return null;
+                }
+                
                 return (
                   <div key={position} className={`rounded-xl border p-4 ${
                     darkMode 
                       ? `${colors.darkBg} ${colors.darkBorder}` 
                       : `${colors.bg} ${colors.border}`
                   }`}>
-                    <div className="flex items-center gap-2 mb-4">
-                      <Target className={`w-5 h-5 ${darkMode ? colors.dark : colors.light}`} />
-                      <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                        Position {position}: {positionNames[position - 1]}
-                      </h3>
+                    <div 
+                      className="flex items-center justify-between mb-4 cursor-pointer"
+                      onClick={() => setCollapsedPositions(prev => ({
+                        ...prev,
+                        [position]: !prev[position]
+                      }))}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Target className={`w-5 h-5 ${darkMode ? colors.dark : colors.light}`} />
+                        <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                          Position {position}: {positionNames[position - 1]}
+                        </h3>
+                      </div>
+                      {collapsedPositions[position] ? 
+                        <ChevronDown className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} /> : 
+                        <ChevronUp className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                      }
                     </div>
                     
+                    {!collapsedPositions[position] && (
+                      <>
+                    {/* Character Filter - Above Character Appearances */}
+                    <div className="mb-3 flex justify-end">
+                      <div className="max-w-xs w-full">
+                        {/* Selected Characters Pills */}
+                        {positionCharacterFilters[position]?.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-2 justify-end">
+                            {positionCharacterFilters[position].map((character, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => setPositionCharacterFilters(prev => ({
+                                  ...prev,
+                                  [position]: prev[position].filter(c => c !== character)
+                                }))}
+                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                                  darkMode 
+                                    ? position === 1 
+                                      ? 'bg-red-900/30 text-red-300 hover:bg-red-900/50'
+                                      : position === 2
+                                      ? 'bg-blue-900/30 text-blue-300 hover:bg-blue-900/50'
+                                      : 'bg-purple-900/30 text-purple-300 hover:bg-purple-900/50'
+                                    : position === 1
+                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                    : position === 2
+                                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                                }`}
+                              >
+                                {character}
+                                <X className="w-3 h-3" />
+                              </button>
+                            ))}
+                            <button
+                              onClick={() => setPositionCharacterFilters(prev => ({
+                                ...prev,
+                                [position]: []
+                              }))}
+                              className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
+                                darkMode 
+                                  ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
+                                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              Clear all
+                            </button>
+                          </div>
+                        )}
+                        
+                        <div className={`text-xs font-medium mb-1 flex items-center gap-1 justify-end ${
+                          darkMode ? 'text-gray-300' : 'text-gray-700'
+                        }`}>
+                          <Search className="w-3 h-3" />
+                          Characters
+                        </div>
+                        <MultiSelectCombobox
+                          items={posData.sortedCharacters.map(char => ({ id: char.name, name: char.name }))}
+                          selectedIds={positionCharacterFilters[position] || []}
+                          placeholder="Search and select characters..."
+                          onAdd={(id) => setPositionCharacterFilters(prev => ({
+                            ...prev,
+                            [position]: [...(prev[position] || []), id]
+                          }))}
+                          darkMode={darkMode}
+                          focusColor={position === 1 ? 'red' : position === 2 ? 'blue' : 'purple'}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Character Appearances */}
                     <div className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Total Matches: {posData.totalMatches}
+                      <div className="flex items-center gap-2">
+                        <span>Character Appearances: {posData.totalMatches}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded cursor-help ${
+                          darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'
+                        }`} title="Total times any character appeared in this position across all matches (counts both teams)">
+                          ?
+                        </span>
+                      </div>
+                      <div className="text-xs mt-1 opacity-75">
+                        {posData.uniqueMatchCount || Math.round(posData.totalMatches / 2)} unique matches
+                      </div>
+                    </div>
+                    
+                    {/* Position Summary Stats */}
+                    <div className={`mb-4 p-3 rounded-lg border ${
+                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+                    }`}>
+                      <h4 className={`text-xl text-center font-bold mb-2 mt-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                        {positionNames[position - 1]} Average
+                      </h4>
+                      <div className="flex justify-center mb-3">
+                        <PerformanceIndicator 
+                          value={calculatePositionAverage(posData, 'combatPerformanceScore')} 
+                          allValues={Object.values(positionData).map(pd => calculatePositionAverage(pd, 'combatPerformanceScore'))}
+                          darkMode={darkMode}
+                          size="small"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 gap-3 text-sm">
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Avg Damage
+                          </div>
+                          <div className={`font-bold ${darkMode ? colors.dark : colors.light}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgDamage')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Avg Taken
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgTaken')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Battle Time
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                            {calculatePositionAverage(posData, 'avgBattleTime').toFixed(1)}s
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            DPS
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgDPS')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Efficiency
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                            {calculatePositionAverage(posData, 'damageEfficiency').toFixed(1)}x
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Survival
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
+                            {calculatePositionSurvivalRate(posData)}%
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Avg Health
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgHealth')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Characters
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                            {posData.sortedCharacters.length}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     
                     {posData.sortedCharacters.length > 0 ? (
-                      <div className="space-y-3">
-                        {posData.sortedCharacters.slice(0, 5).map((char, idx) => (
+                      <>
+                      <div 
+                        className="overflow-y-auto pr-2"
+                        style={{ 
+                          maxHeight: posData.sortedCharacters.filter(char => 
+                            positionCharacterFilters[position]?.length === 0 || 
+                            positionCharacterFilters[position]?.includes(char.name)
+                          ).length > 5 ? '550px' : 'none' 
+                        }}
+                      >
+                        <div className="space-y-3">
+                        {posData.sortedCharacters
+                          .filter(char => 
+                            positionCharacterFilters[position]?.length === 0 || 
+                            positionCharacterFilters[position]?.includes(char.name)
+                          )
+                          .map((char, idx) => (
                           <div key={idx} className={`p-3 rounded-lg border ${
                             darkMode 
                               ? 'bg-gray-700 border-gray-600' 
                               : 'bg-white border-gray-200'
                           }`}>
                             <div className="flex items-center justify-between mb-2">
-                              <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                {char.name}
-                              </span>
-                              <span className={`text-xs px-2 py-1 rounded ${
-                                darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'
-                              }`}>
-                                {char.activeMatchCount || char.matchCount} active match{(char.activeMatchCount || char.matchCount) !== 1 ? 'es' : ''}
-                              </span>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                                  {char.name}
+                                </span>
+                                {/* Performance Badges */}
+                                {char.avgDamage > calculatePositionAverage(posData, 'avgDamage') * 1.5 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-100 text-amber-800'
+                                  }`} title="Significantly above position average damage">
+                                    🔥 High Output
+                                  </span>
+                                )}
+                                {char.damageEfficiency > 2.0 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-800'
+                                  }`} title="Exceptional damage efficiency (2.0x or higher)">
+                                    ⚡ Efficient
+                                  </span>
+                                )}
+                                {char.avgHealth > (char.totalHealth / (char.activeMatchCount || char.matchCount)) * 0.8 && char.avgHealth > 8000 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-800'
+                                  }`} title="Consistently survives with high health">
+                                    🛡️ Survivor
+                                  </span>
+                                )}
+                                {(char.activeMatchCount || char.matchCount) < 3 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-yellow-900/30 text-yellow-300' : 'bg-yellow-100 text-yellow-700'
+                                  }`} title="Small sample size - stats may not be representative">
+                                    ⚠️ Limited Data
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <PerformanceIndicator 
+                                  value={char.combatPerformanceScore} 
+                                  allValues={posData.sortedCharacters.map(c => c.combatPerformanceScore)}
+                                  darkMode={darkMode}
+                                  size="small"
+                                />
+                                <span className={`text-xs px-2 py-1 rounded cursor-help ${
+                                  darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'
+                                }`} title={`Used ${char.activeMatchCount || char.matchCount} time${(char.activeMatchCount || char.matchCount) !== 1 ? 's' : ''} in this position${char.matchCount > (char.activeMatchCount || 0) ? ` (${char.matchCount - (char.activeMatchCount || 0)} with 0 battle time)` : ''}`}>
+                                  {char.activeMatchCount || char.matchCount} Matches
+                                </span>
+                              </div>
                             </div>
                             
-                            <div className="grid grid-cols-3 gap-2 text-xs">
+                            <div className="grid grid-cols-4 gap-2 text-sm">
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Damage</div>
                                 <div className={`font-medium ${darkMode ? colors.dark : colors.light}`}>
@@ -5948,13 +6300,19 @@ export default function App() {
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>DPS</div>
                                 <div className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                  {formatNumber(Math.round(char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0))}
+                                  {formatNumber(Math.round(char.avgDPS))}
                                 </div>
                               </div>
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Efficiency</div>
                                 <div className={`font-medium ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
                                   {(char.damageEfficiency).toFixed(1)}x
+                                </div>
+                              </div>
+                              <div>
+                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival</div>
+                                <div className={`font-medium ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
+                                  {Math.round(char.survivalRate * 100)}%
                                 </div>
                               </div>
                               <div>
@@ -5966,17 +6324,37 @@ export default function App() {
                             </div>
                           </div>
                         ))}
-                        
-                        {posData.sortedCharacters.length > 5 && (
-                          <div className={`text-center text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            +{posData.sortedCharacters.length - 5} more characters...
-                          </div>
-                        )}
+                        </div>
                       </div>
+                      {(() => {
+                        const filteredCount = posData.sortedCharacters.filter(char => 
+                          positionCharacterFilters[position]?.length === 0 || 
+                          positionCharacterFilters[position]?.includes(char.name)
+                        ).length;
+                        return filteredCount > 5 && (
+                          <div className={`text-center text-xs mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                            Scroll to see all {filteredCount} characters
+                          </div>
+                        );
+                      })()}
+                      </>
                     ) : (
                       <div className={`text-center text-sm py-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                         No data available for this position
                       </div>
+                    )}
+                    
+                    {/* Show message when filters result in no characters */}
+                    {posData.sortedCharacters.length > 0 && 
+                     posData.sortedCharacters.filter(char => 
+                       positionCharacterFilters[position]?.length === 0 || 
+                       positionCharacterFilters[position]?.includes(char.name)
+                     ).length === 0 && (
+                      <div className={`text-center text-sm py-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        No characters match the selected filters
+                      </div>
+                    )}
+                    </>
                     )}
                   </div>
                 );
@@ -6066,125 +6444,6 @@ export default function App() {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-            </div>
-            
-            {/* Position Meta Summary */}
-            <div className={`mt-6 p-4 rounded-xl border ${
-              darkMode 
-                ? 'bg-gray-700 border-gray-600' 
-                : 'bg-gray-50 border-gray-200'
-            }`}>
-              <h4 className={`text-lg font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                Position Meta Summary
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                {[1, 2, 3].map(position => {
-                  const posData = positionData[position];
-                  const positionNames = ['Lead', 'Middle', 'Anchor'];
-                  const topPerformer = posData.sortedCharacters[0];
-                  
-                  return (
-                    <div key={position} className={`p-3 rounded-lg ${
-                      darkMode ? 'bg-gray-600' : 'bg-white'
-                    }`}>
-                      <div className={`font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                        {positionNames[position - 1]} Position
-                      </div>
-                      {topPerformer ? (
-                        <>
-                          <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                            Top: {topPerformer.name}
-                          </div>
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {formatNumber(Math.round(topPerformer.avgDamage))} avg damage
-                          </div>
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {posData.sortedCharacters.length} unique characters
-                          </div>
-                        </>
-                      ) : (
-                        <div className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                          No data available
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            
-            {/* Strategic Position Insights */}
-            <div className={`mt-6 p-4 rounded-xl border ${
-              darkMode 
-                ? 'bg-indigo-900/20 border-indigo-600' 
-                : 'bg-indigo-50 border-indigo-200'
-            }`}>
-              <h4 className={`text-lg font-bold mb-3 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                <Target className={`w-5 h-5 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                Strategic Position Insights
-              </h4>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Lead Position Insights */}
-                <div className={`p-3 rounded-lg ${
-                  darkMode ? 'bg-red-900/20 border border-red-600' : 'bg-red-50 border border-red-200'
-                }`}>
-                  <div className={`font-semibold mb-2 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                    🥇 Lead Position (1)
-                  </div>
-                  <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <div>• First to engage opponents</div>
-                    <div>• Should have strong neutral game</div>
-                    <div>• Often needs good defensive options</div>
-                    <div>• Sets the pace for the team</div>
-                  </div>
-                  {positionData[1]?.sortedCharacters[0] && (
-                    <div className={`mt-2 text-xs ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                      <strong>Top Pick:</strong> {positionData[1].sortedCharacters[0].name}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Middle Position Insights */}
-                <div className={`p-3 rounded-lg ${
-                  darkMode ? 'bg-blue-900/20 border border-blue-600' : 'bg-blue-50 border border-blue-200'
-                }`}>
-                  <div className={`font-semibold mb-2 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                    🛡️ Middle Position (2)
-                  </div>
-                  <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <div>• Balanced role and utility</div>
-                    <div>• Can support lead or clean up</div>
-                    <div>• Often versatile characters</div>
-                    <div>• Adapts to team needs</div>
-                  </div>
-                  {positionData[2]?.sortedCharacters[0] && (
-                    <div className={`mt-2 text-xs ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}>
-                      <strong>Top Pick:</strong> {positionData[2].sortedCharacters[0].name}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Anchor Position Insights */}
-                <div className={`p-3 rounded-lg ${
-                  darkMode ? 'bg-purple-900/20 border border-purple-600' : 'bg-purple-50 border border-purple-200'
-                }`}>
-                  <div className={`font-semibold mb-2 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                    ⚡ Anchor Position (3)
-                  </div>
-                  <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <div>• Last character standing</div>
-                    <div>• High damage potential needed</div>
-                    <div>• Strong comeback mechanics</div>
-                    <div>• Often carries the team</div>
-                  </div>
-                  {positionData[3]?.sortedCharacters[0] && (
-                    <div className={`mt-2 text-xs ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                      <strong>Top Pick:</strong> {positionData[3].sortedCharacters[0].name}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
