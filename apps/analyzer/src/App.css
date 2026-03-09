@@ -331,9 +331,12 @@ body {
 .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
 .py-0 { padding-top: 0; padding-bottom: 0; }
 .px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
 .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
 .px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
+.px-15 { padding-left: 3.75rem; padding-right: 3.75rem; }
 .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
 .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
 .rounded-full { border-radius: 9999px; }
@@ -1708,3 +1711,63 @@ table {
 .dark .ai-strategy-scrollable::-webkit-scrollbar-thumb:hover {
   background: rgba(156, 163, 175, 0.6);
 }
+
+/* =============================================== */
+/* BuildTableView — missing utilities             */
+/* =============================================== */
+
+/* Table layout */
+.table-fixed { table-layout: fixed; }
+
+/* Text transform / spacing */
+.uppercase { text-transform: uppercase; }
+.tracking-wide { letter-spacing: 0.025em; }
+.whitespace-nowrap { white-space: nowrap; }
+
+/* Small margin */
+.ml-0\.5 { margin-left: 0.125rem; }
+
+/* Left-side border */
+.border-l   { border-left-width: 1px; border-left-style: solid; }
+.border-l-2 { border-left-width: 2px; border-left-style: solid; }
+
+/* Transparent border (used to reserve space for selected highlight) */
+.border-transparent { border-color: transparent; }
+
+/* gray-900 with opacity (table header + panel header backgrounds) */
+.bg-gray-900\/80 { background-color: rgba(17, 24, 39, 0.8); }
+.bg-gray-900\/60 { background-color: rgba(17, 24, 39, 0.6); }
+.bg-gray-900\/50 { background-color: rgba(17, 24, 39, 0.5); }
+
+/* indigo-950 — very dark indigo for selected row */
+.bg-indigo-950 { background-color: #1e1b4b; }
+
+/* gray-700 with opacity (dark-mode row hover) */
+.bg-gray-700\/60 { background-color: rgba(55, 65, 81, 0.6); }
+.hover\:bg-gray-700\/60:hover { background-color: rgba(55, 65, 81, 0.6); }
+
+/* gray-50 hover (light-mode row hover) */
+.hover\:bg-gray-50:hover { background-color: #f9fafb; }
+
+/* Indigo hover text (sortable header hover) */
+.hover\:text-indigo-300:hover { color: #a5b4fc; }
+.hover\:text-indigo-600:hover { color: #4f46e5; }
+
+/* red-700 hover (× close button) */
+.hover\:bg-red-700:hover { background-color: #b91c1c; }
+
+/* divide-y — horizontal rule between table rows */
+.divide-y > * + * {
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+.divide-gray-600 > * + * { border-top-color: #4b5563; }
+.divide-gray-200 > * + * { border-top-color: #e5e7eb; }
+
+/* scrollbar-dark — thin dark scrollbar for the build table scroll container */
+.scrollbar-dark::-webkit-scrollbar { width: 5px; }
+.scrollbar-dark::-webkit-scrollbar-track { background: rgba(55, 65, 81, 0.3); border-radius: 3px; }
+.scrollbar-dark::-webkit-scrollbar-thumb { background: rgba(107, 114, 128, 0.6); border-radius: 3px; }
+.scrollbar-dark::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.8); }
+.border-gray-500\/25 { border-color: rgba(107, 114, 128, 0.25); }
+.border-gray-400\/20 { border-color: rgba(156, 163, 175, 0.20); }
