@@ -2201,10 +2201,14 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Calculate top 3 most used builds (similar to Team Rankings implementation)
     const buildGroups = {};
     
-    // Group matches by build composition label + AI strategy
+    // Group matches by exact capsule loadout + AI strategy so different capsule sets are tracked separately
     char.matches.forEach(match => {
       if (match.buildComposition && match.buildComposition.label) {
-        const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+        const capsuleKey = (match.equippedCapsules || [])
+          .map(c => c.name || c.id || '')
+          .sort()
+          .join(',');
+        const buildLabel = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
         
         if (!buildGroups[buildLabel]) {
           buildGroups[buildLabel] = {
@@ -2276,8 +2280,8 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         };
       })
       .sort((a, b) => {
-        // Primary sort: by usage count (descending)
-        if (b.count !== a.count) return b.count - a.count;
+        // Primary sort: by active usage count (descending)
+        if (b.activeCount !== a.activeCount) return b.activeCount - a.activeCount;
         // Tie-breaker: by average performance score (descending)
         return b.avgPerformanceScore - a.avgPerformanceScore;
       });
@@ -3020,10 +3024,15 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         };
         
         // Track build usage for this character
+        // Key by exact capsule loadout + AI strategy so different capsule sets are tracked separately
         const buildUsageMap = {};
         matches.forEach(match => {
           if (match.buildComposition && match.buildComposition.label) {
-            const buildKey = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+            const capsuleKey = (match.equippedCapsules || [])
+              .map(c => c.name || c.id || '')
+              .sort()
+              .join(',');
+            const buildKey = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
             if (!buildUsageMap[buildKey]) {
               buildUsageMap[buildKey] = {
                 buildLabel: match.buildComposition.label,
@@ -3092,8 +3101,8 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
             };
           })
           .sort((a, b) => {
-            // Primary sort: by usage count (descending)
-            if (b.count !== a.count) return b.count - a.count;
+            // Primary sort: by active usage count (descending)
+            if (b.activeCount !== a.activeCount) return b.activeCount - a.activeCount;
             // Tie-breaker: by average performance score (descending)
             return b.avgPerformanceScore - a.avgPerformanceScore;
           });
@@ -3317,6 +3326,11 @@ export default function App() {
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [selectedAIStrategies, setSelectedAIStrategies] = useState([]);
   const [selectedMaps, setSelectedMaps] = useState([]);
+
+  // Reset selected build tabs to "First" whenever any filter changes so stale indices don't produce blank cards
+  useEffect(() => {
+    setSelectedBuildIndex({});
+  }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
@@ -3607,10 +3621,14 @@ export default function App() {
       // Recalculate top 3 most used builds based on FILTERED matches
       const buildGroups = {};
       
-      // Group filtered matches by build composition label + AI strategy
+      // Group filtered matches by exact capsule loadout + AI strategy so different capsule sets are tracked separately
       filteredMatches.forEach(match => {
         if (match.buildComposition && match.buildComposition.label) {
-          const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+          const capsuleKey = (match.equippedCapsules || [])
+            .map(c => c.name || c.id || '')
+            .sort()
+            .join(',');
+          const buildLabel = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
           
           if (!buildGroups[buildLabel]) {
             buildGroups[buildLabel] = {
@@ -3682,8 +3700,8 @@ export default function App() {
           };
         })
         .sort((a, b) => {
-          // Primary sort: by usage count (descending)
-          if (b.count !== a.count) return b.count - a.count;
+          // Primary sort: by active usage count (descending)
+          if (b.activeCount !== a.activeCount) return b.activeCount - a.activeCount;
           // Tie-breaker: by average performance score (descending)
           return b.avgPerformanceScore - a.avgPerformanceScore;
         });
