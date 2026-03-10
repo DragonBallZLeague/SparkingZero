@@ -889,7 +889,7 @@ function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equipped
       {tooltipOpen && buildComposition && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
-          style={{ ...floatingStyles, width: '16rem' }}
+          style={{ ...floatingStyles, width: '16rem', zIndex: 10000 }}
           className={`p-3 rounded-lg shadow-xl border z-[10000] ${
             darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'
           }`}
@@ -1351,7 +1351,7 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
       {tooltipOpen && stats.buildComposition && hasEquipment && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
-          style={{ ...floatingStyles, width: '16rem' }}
+          style={{ ...floatingStyles, width: '16rem', zIndex: 10000 }}
           className={`p-3 rounded-lg shadow-xl border z-[10000] ${
             darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'
           }`}
