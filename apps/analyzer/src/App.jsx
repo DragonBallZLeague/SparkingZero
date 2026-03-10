@@ -968,6 +968,8 @@ function BuildTableView({
   setSelectedBuildSort,
   allScores,       // for PerformanceScoreBadge colour context
   primaryTeam,     // optional — shown in detail panel footer
+  activeBuildFilters,      // track active build filter per character
+  setActiveBuildFilters,   // setter for active build filter
   darkMode,
 }) {
   if (!builds || builds.length === 0) return null;
@@ -984,6 +986,14 @@ function BuildTableView({
   // Sort state for this character's table: { col, dir }
   const sortState = selectedBuildSort[buildKey] || { col: 'activeCount', dir: 'desc' };
   const selectedIndex = selectedBuildIndex[buildKey] ?? 0;
+
+  // Build filter helpers
+  const getBuildFilterKey = (build) => {
+    const capsuleKey = (build.equippedCapsules || [])
+      .map(c => c.name || c.id || '').sort().join(',');
+    return `${capsuleKey}|${build.aiStrategy || 'Default'}`;
+  };
+  const characterActiveFilter = activeBuildFilters ? activeBuildFilters[buildKey] : null;
 
   // Close on outside click or Escape
   useEffect(() => {
@@ -1034,6 +1044,10 @@ function BuildTableView({
   const currentBuild = sortedForTable[selectedIndex] || sortedForTable[0];
   const bestScoreIdx = sortedForTable.reduce((best, b, i) =>
     b.avgPerformanceScore > sortedForTable[best].avgPerformanceScore ? i : best, 0);
+  // Find the build that is currently applied as a filter (for the clear pill)
+  const activeFilterBuild = characterActiveFilter
+    ? sortedForTable.find(b => getBuildFilterKey(b) === characterActiveFilter) || null
+    : null;
 
   const handleRowClick = (e, i) => {
     e.stopPropagation();
@@ -1062,6 +1076,39 @@ function BuildTableView({
 
   return (
     <div ref={tableRef}>
+      {/* Active build filter clear pill — shown above the table when a filter is active */}
+      {characterActiveFilter && activeFilterBuild && (
+        <div className={`flex items-center justify-between gap-2 px-3 py-2.5 mb-2 rounded-lg text-xs font-medium border ${
+          darkMode ? 'bg-amber-950/40 border-amber-700 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-800'
+        }`}>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Filter className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">
+              <span className="font-semibold">{activeFilterBuild.buildComposition?.label || '—'}</span>
+              {activeFilterBuild.aiStrategy && (
+                <span className={darkMode ? 'text-amber-400' : 'text-amber-600'}> · {activeFilterBuild.aiStrategy}</span>
+              )}
+            </span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveBuildFilters(prev => {
+                const next = { ...prev };
+                delete next[buildKey];
+                return next;
+              });
+            }}
+            className={`flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded text-xs font-bold transition-colors bg-transparent ${
+              darkMode ? 'hover:bg-amber-800 text-amber-300 hover:text-white' : 'hover:bg-amber-200 text-amber-700 hover:text-amber-900'
+            }`}
+            title="Clear build filter"
+          >
+            <X className="w-3 h-3" />
+            Clear
+          </button>
+        </div>
+      )}
       <div className={`rounded-lg overflow-hidden border ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
         {/* Fixed header */}
         <table className="w-full text-xs table-fixed">
@@ -1096,9 +1143,12 @@ function BuildTableView({
               {sortedForTable.map((build, i) => {
                 const isSelected = i === selectedIndex && panelOpen;
                 const isBestScore = i === bestScoreIdx;
+                const isActiveFilter = getBuildFilterKey(build) === characterActiveFilter;
                 const rowBase = isSelected
                   ? darkMode ? 'bg-indigo-950 border-l-2 border-indigo-400' : 'bg-indigo-100 border-l-2 border-indigo-500'
-                  : darkMode ? 'hover:bg-gray-700/60 border-l-2 border-transparent' : 'hover:bg-gray-50 border-l-2 border-transparent';
+                  : isActiveFilter
+                    ? darkMode ? 'bg-amber-950/40 border-l-2 border-amber-500' : 'bg-amber-50 border-l-2 border-amber-500'
+                    : darkMode ? 'hover:bg-gray-700/60 border-l-2 border-transparent' : 'hover:bg-gray-50 border-l-2 border-transparent';
                 return (
                   <tr
                     key={i}
@@ -1178,6 +1228,40 @@ function BuildTableView({
                 <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{primaryTeam}</span>
               </div>
             )}
+            {/* Apply / Remove build filter button */}
+            {setActiveBuildFilters && currentBuild && (() => {
+              const fKey = getBuildFilterKey(currentBuild);
+              const isCurrentFilter = characterActiveFilter === fKey;
+              return (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveBuildFilters(prev => {
+                      if (isCurrentFilter) {
+                        const next = { ...prev };
+                        delete next[buildKey];
+                        return next;
+                      }
+                      return { ...prev, [buildKey]: fKey };
+                    });
+                    setPanelOpen(false);
+                  }}
+                  className={`mt-2 w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                    isCurrentFilter
+                      ? darkMode
+                        ? 'bg-amber-800/60 hover:bg-red-800/60 text-amber-200 border border-amber-600'
+                        : 'bg-amber-100 hover:bg-red-100 text-amber-800 border border-amber-400'
+                      : darkMode
+                        ? 'bg-indigo-800/60 hover:bg-indigo-700/60 text-indigo-200 border border-indigo-600'
+                        : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300'
+                  }`}
+                >
+                  {isCurrentFilter
+                    ? <><X className="w-3 h-3" /> Remove Build Filter</>
+                    : <><Filter className="w-3 h-3" /> Apply as Filter</>}
+                </button>
+              );
+            })()}
           </div>
         </div>,
         document.body
@@ -2596,6 +2680,125 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
   return aggregated;
 }
 
+// Helper: recompute team character averages from a filtered subset of raw match data
+// Used by the build filter feature in the teams view to re-scope stats without full re-aggregation
+function recomputeTeamCharStats(rawMatches, originalStats) {
+  const activeMatches = rawMatches.filter(m => m.battleDuration && m.battleDuration > 0);
+  const matchesToAggregate = activeMatches.length > 0 ? activeMatches : rawMatches;
+  const matchCount = rawMatches.length;
+  const activeMatchCount = matchesToAggregate.length;
+  const denom = Math.max(activeMatchCount, 1);
+
+  const totalDamageDealt = matchesToAggregate.reduce((s, m) => s + (m.damageDealt || 0), 0);
+  const totalDamageTaken = matchesToAggregate.reduce((s, m) => s + (m.damageTaken || 0), 0);
+  const totalBattleDuration = matchesToAggregate.reduce((s, m) => s + (m.battleDuration || 0), 0);
+  const totalHealthRemaining = matchesToAggregate.reduce((s, m) => s + (m.healthRemaining || 0), 0);
+  const totalHealthMax = matchesToAggregate.reduce((s, m) => s + (m.healthMax || 0), 0);
+
+  const avgDamageDealt = Math.round(totalDamageDealt / denom);
+  const avgDamageTaken = Math.round(totalDamageTaken / denom);
+  const avgBattleDuration = totalBattleDuration / denom;
+  const avgHealthRemaining = totalHealthRemaining / denom;
+  const avgHealthMax = totalHealthMax / denom;
+
+  const damageEfficiency = totalDamageTaken > 0
+    ? Math.round((totalDamageDealt / totalDamageTaken) * 100) / 100
+    : (totalDamageDealt > 0 ? 999 : 0);
+  const damagePerSecond = totalBattleDuration > 0
+    ? Math.round((totalDamageDealt / totalBattleDuration) * 100) / 100 : 0;
+  const healthRetention = avgHealthMax > 0 ? avgHealthRemaining / avgHealthMax : 0;
+
+  const baseScore = ((avgDamageDealt / 100000) * 35) + (damageEfficiency * 25) + ((damagePerSecond / 1000) * 25) + (healthRetention * 15);
+  const experienceMultiplier = Math.min(1.25, 1.0 + (activeMatchCount - 1) * (0.25 / 11));
+  const performanceScore = Math.round((baseScore * experienceMultiplier) * 100) / 100;
+
+  const totalSpecialMoves = rawMatches.reduce((s, m) => s + (m.specialMovesUsed || 0), 0);
+  const totalUltimates = rawMatches.reduce((s, m) => s + (m.ultimatesUsed || 0), 0);
+  const totalSPM1 = rawMatches.reduce((s, m) => s + (m.spm1Count || 0), 0);
+  const totalSPM2 = rawMatches.reduce((s, m) => s + (m.spm2Count || 0), 0);
+  const totalEXA1 = rawMatches.reduce((s, m) => s + (m.exa1Count || 0), 0);
+  const totalEXA2 = rawMatches.reduce((s, m) => s + (m.exa2Count || 0), 0);
+  const totalS1Blast = rawMatches.reduce((s, m) => s + (m.s1Blast || m.spm1Count || 0), 0);
+  const totalS2Blast = rawMatches.reduce((s, m) => s + (m.s2Blast || m.spm2Count || 0), 0);
+  const totalUltBlast = rawMatches.reduce((s, m) => s + (m.ultBlast || 0), 0);
+  const totalS1HitBlast = rawMatches.reduce((s, m) => s + (m.s1HitBlast || 0), 0);
+  const totalS2HitBlast = rawMatches.reduce((s, m) => s + (m.s2HitBlast || 0), 0);
+  const totalULTHitBlast = rawMatches.reduce((s, m) => s + (m.uLTHitBlast || 0), 0);
+  const totalS1BlastTrackable = rawMatches.reduce((s, m) => s + ((m.s1HitBlast !== undefined && m.s1HitBlast !== null) ? (m.s1Blast || 0) : 0), 0);
+  const totalS2BlastTrackable = rawMatches.reduce((s, m) => s + ((m.s2HitBlast !== undefined && m.s2HitBlast !== null) ? (m.s2Blast || 0) : 0), 0);
+  const totalUltBlastTrackable = rawMatches.reduce((s, m) => s + ((m.uLTHitBlast !== undefined && m.uLTHitBlast !== null) ? (m.ultBlast || 0) : 0), 0);
+  const totalTags = rawMatches.reduce((s, m) => s + (m.tags || 0), 0);
+  const totalSparking = rawMatches.reduce((s, m) => s + (m.sparkingCount || 0), 0);
+  const totalCharges = rawMatches.reduce((s, m) => s + (m.chargeCount || 0), 0);
+  const totalGuards = rawMatches.reduce((s, m) => s + (m.guardCount || 0), 0);
+  const totalEnergyBlasts = rawMatches.reduce((s, m) => s + (m.shotEnergyBulletCount || 0), 0);
+  const totalZCounters = rawMatches.reduce((s, m) => s + (m.zCounterCount || 0), 0);
+  const totalSuperCounters = rawMatches.reduce((s, m) => s + (m.superCounterCount || 0), 0);
+  const totalRevengeCounters = rawMatches.reduce((s, m) => s + (m.revengeCounterCount || 0), 0);
+  const totalMaxComboNum = rawMatches.reduce((s, m) => s + (m.maxComboNum || 0), 0);
+  const totalMaxComboDamage = rawMatches.reduce((s, m) => s + (m.maxComboDamage || 0), 0);
+  const totalThrows = rawMatches.reduce((s, m) => s + (m.throwCount || 0), 0);
+  const totalDragonHoming = rawMatches.reduce((s, m) => s + (m.dragonHomingCount || 0), 0);
+  const totalSpeedImpacts = rawMatches.reduce((s, m) => s + (m.speedImpactCount || 0), 0);
+  const totalSpeedImpactWins = rawMatches.reduce((s, m) => s + (m.speedImpactWins || 0), 0);
+  const totalSparkingCombo = rawMatches.reduce((s, m) => s + (m.sparkingComboCount || 0), 0);
+  const totalDragonDashMileage = rawMatches.reduce((s, m) => s + (m.dragonDashMileage || 0), 0);
+  const totalKills = rawMatches.reduce((s, m) => s + (m.kills || 0), 0);
+  const speedImpactWinRate = totalSpeedImpacts > 0
+    ? Math.round((totalSpeedImpactWins / totalSpeedImpacts) * 1000) / 10 : 0;
+
+  return {
+    ...originalStats,
+    avgDamageDealt,
+    avgDamageTaken,
+    avgDamageEfficiency: damageEfficiency,
+    avgDamagePerSecond: damagePerSecond,
+    avgHealthRetention: healthRetention,
+    avgHealthMax: Math.round(avgHealthMax),
+    avgHealthRemaining: Math.round(avgHealthRemaining),
+    avgBattleDuration: Math.round(avgBattleDuration),
+    performanceScore,
+    matchesPlayed: matchCount,
+    activeMatchesPlayed: activeMatchCount,
+    avgSpecialMoves: Math.round((totalSpecialMoves / denom) * 10) / 10,
+    avgUltimates: Math.round((totalUltimates / denom) * 10) / 10,
+    avgSPM1: Math.round((totalSPM1 / denom) * 10) / 10,
+    avgSPM2: Math.round((totalSPM2 / denom) * 10) / 10,
+    avgEXA1: Math.round((totalEXA1 / denom) * 10) / 10,
+    avgEXA2: Math.round((totalEXA2 / denom) * 10) / 10,
+    avgS1Blast: Math.round((totalS1Blast / denom) * 10) / 10,
+    avgS2Blast: Math.round((totalS2Blast / denom) * 10) / 10,
+    avgUltBlast: Math.round((totalUltBlast / denom) * 10) / 10,
+    avgS1Hit: Math.round((totalS1HitBlast / denom) * 10) / 10,
+    avgS2Hit: Math.round((totalS2HitBlast / denom) * 10) / 10,
+    avgUltHit: Math.round((totalULTHitBlast / denom) * 10) / 10,
+    s1HitRateOverall: totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null,
+    s2HitRateOverall: totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null,
+    ultHitRateOverall: totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null,
+    avgTags: Math.round((totalTags / denom) * 10) / 10,
+    totalTags,
+    avgSparking: Math.round((totalSparking / denom) * 10) / 10,
+    avgCharges: Math.round((totalCharges / denom) * 10) / 10,
+    avgGuards: Math.round((totalGuards / denom) * 10) / 10,
+    avgEnergyBlasts: Math.round((totalEnergyBlasts / denom) * 10) / 10,
+    avgZCounters: Math.round((totalZCounters / denom) * 10) / 10,
+    avgSuperCounters: Math.round((totalSuperCounters / denom) * 10) / 10,
+    avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 10) / 10,
+    avgMaxComboNum: Math.round((totalMaxComboNum / denom) * 10) / 10,
+    avgMaxComboDamage: Math.round(totalMaxComboDamage / denom),
+    avgThrows: Math.round((totalThrows / denom) * 10) / 10,
+    avgDragonHoming: Math.round((totalDragonHoming / denom) * 10) / 10,
+    avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 10) / 10,
+    speedImpactWinRate,
+    avgSparkingCombo: Math.round((totalSparkingCombo / denom) * 10) / 10,
+    avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
+    avgKills: Math.round((totalKills / denom) * 10) / 10,
+    // Keep topBuilds from the original so the full builds table is unchanged
+    topBuilds: originalStats.topBuilds,
+    rawMatches: originalStats.rawMatches,
+  };
+}
+
 function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}) {
   const teamStats = {};
   
@@ -3248,7 +3451,9 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           speedImpactWinRate: speedImpactWinRate,
           avgSparkingCombo: Math.round((totalSparkingCombo / denom) * 10) / 10,
           avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
-          avgKills: Math.round((totalKills / denom) * 10) / 10
+          avgKills: Math.round((totalKills / denom) * 10) / 10,
+          // Raw match data for build filter recomputation
+          rawMatches: matches
         };
         
         // Track build usage for this character
@@ -3533,6 +3738,7 @@ export default function App() {
   const [expandedCharacters, setExpandedCharacters] = useState({}); // Expanded state for individual character cards in matchups
   const [selectedBuildIndex, setSelectedBuildIndex] = useState({}); // Track selected build index per character
   const [selectedBuildSort, setSelectedBuildSort] = useState({}); // Track sort column+dir per character build table
+  const [activeBuildFilters, setActiveBuildFilters] = useState({}); // Track active build filter per character
   const [sectionCollapsed, setSectionCollapsed] = useState({
     aggregated: false,
     position: false
@@ -3560,6 +3766,7 @@ export default function App() {
   useEffect(() => {
     setSelectedBuildIndex({});
     setSelectedBuildSort({});
+    setActiveBuildFilters({});
   }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
@@ -3665,6 +3872,20 @@ export default function App() {
         filteredMatches = filteredMatches.filter(match => 
           match.map && selectedMaps.includes(match.map)
         );
+      }
+
+      // Snapshot matches after team/AI/map filters but before build filter.
+      // Used to compute a stable rank score so build filters don't reorder the list.
+      const preBuildMatches = filteredMatches;
+
+      // Apply active build filter
+      const activeBuildKey = activeBuildFilters[char.name];
+      if (activeBuildKey) {
+        filteredMatches = filteredMatches.filter(match => {
+          const capsuleKey = (match.equippedCapsules || [])
+            .map(c => c.name || c.id || '').sort().join(',');
+          return `${capsuleKey}|${match.aiStrategy || 'Default'}` === activeBuildKey;
+        });
       }
       
       // If no matches remain after filtering, return null to filter out later
@@ -3847,6 +4068,31 @@ export default function App() {
   // Experience multiplier based on matches played; prefer active matches for weighting
   const experienceMultiplier = Math.min(1.25, 1.0 + ((activeMatchCount > 0 ? activeMatchCount : matchCount) - 1) * (0.25 / 11));
       const combatPerformanceScore = Math.round((baseScore * experienceMultiplier) * 100) / 100;
+
+      // Compute baseRankScore from pre-build-filter matches so team/AI/map filters influence
+      // ranking order but a build filter does not shift a character's position in the list.
+      let baseRankScore;
+      const activeBuildKeyForRank = activeBuildFilters[char.name];
+      if (activeBuildKeyForRank && preBuildMatches.length > 0) {
+        const pbActive = preBuildMatches.filter(m => m.battleTime && m.battleTime > 0);
+        const pbDenom = pbActive.length > 0 ? pbActive.length : preBuildMatches.length;
+        const pbDmg   = pbActive.reduce((s, m) => s + m.damageDone, 0);
+        const pbTaken = pbActive.reduce((s, m) => s + m.damageTaken, 0);
+        const pbHP    = pbActive.reduce((s, m) => s + m.hPGaugeValue, 0);
+        const pbHPMax = pbActive.reduce((s, m) => s + m.hPGaugeValueMax, 0);
+        const pbTime  = pbActive.reduce((s, m) => s + m.battleTime, 0);
+        const pbAvgDmg = Math.round(pbDmg / Math.max(pbDenom, 1));
+        const pbAvgHP  = Math.round(pbHP  / Math.max(pbDenom, 1));
+        const pbAvgHPMax = Math.round(pbHPMax / Math.max(pbDenom, 1));
+        const pbEff  = pbTaken > 0 ? pbDmg / pbTaken : 0;
+        const pbDps  = pbTime  > 0 ? pbDmg / pbTime  : 0;
+        const pbHRet = pbAvgHPMax > 0 ? pbAvgHP / pbAvgHPMax : 0;
+        const pbBase = (pbAvgDmg / 100000) * 35 + pbEff * 25 + (pbDps / 1000) * 25 + pbHRet * 15;
+        const pbExp  = Math.min(1.25, 1.0 + ((pbActive.length > 0 ? pbActive.length : preBuildMatches.length) - 1) * (0.25 / 11));
+        baseRankScore = Math.round(pbBase * pbExp * 100) / 100;
+      } else {
+        baseRankScore = combatPerformanceScore;
+      }
       
       // Recalculate top 3 most used builds based on FILTERED matches
       const buildGroups = {};
@@ -4224,7 +4470,8 @@ export default function App() {
         formStatsArray: formStatsArray,
         hasMultipleForms: hasMultipleForms,
         formHistory: formHistory,
-        matches: filteredMatches
+        matches: filteredMatches,
+        baseRankScore // Unfiltered score used to keep rank order stable across build filters
       };
     }).filter(char => char !== null); // Remove characters with no matching matches
     
@@ -4255,8 +4502,8 @@ export default function App() {
       let aVal, bVal;
       switch(sortBy) {
         case 'combatScore':
-          aVal = a.combatPerformanceScore;
-          bVal = b.combatPerformanceScore;
+          aVal = a.baseRankScore ?? a.combatPerformanceScore;
+          bVal = b.baseRankScore ?? b.combatPerformanceScore;
           break;
         case 'totalDamage':
           aVal = a.totalDamage;
@@ -4291,7 +4538,7 @@ export default function App() {
     });
     
     return filtered;
-  }, [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps]);
+  }, [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters]);
 
   // Extract unique teams and AI strategies from aggregated data
   const availableCharacters = useMemo(() => {
@@ -6079,6 +6326,8 @@ export default function App() {
                                     setSelectedBuildSort={setSelectedBuildSort}
                                     allScores={combatPerformanceScores}
                                     primaryTeam={char.primaryTeam}
+                                    activeBuildFilters={activeBuildFilters}
+                                    setActiveBuildFilters={setActiveBuildFilters}
                                     darkMode={darkMode}
                                   />
                                 </div>
@@ -7683,10 +7932,22 @@ export default function App() {
                                   return Object.entries(team.characterAverages)
                                     .sort((a, b) => b[1].performanceScore - a[1].performanceScore)
                                     .slice(0, 8)
-                                    .map(([charName, charStats], charIndex) => {
+                                    .map(([charName, _charStats], charIndex) => {
+                                      const charKey = `team_${i}_char_${charName}`;
+                                      // Apply build filter if active for this character in the teams view
+                                      let charStats = _charStats;
+                                      const teamActiveBuildFilterKey = activeBuildFilters[charKey];
+                                      if (teamActiveBuildFilterKey && _charStats.rawMatches) {
+                                        const filteredRawMatches = _charStats.rawMatches.filter(m => {
+                                          const cKey = (m.equippedCapsules || []).map(c => c.name || c.id || '').sort().join(',');
+                                          return `${cKey}|${m.aiStrategy || 'Default'}` === teamActiveBuildFilterKey;
+                                        });
+                                        if (filteredRawMatches.length > 0) {
+                                          charStats = recomputeTeamCharStats(filteredRawMatches, _charStats);
+                                        }
+                                      }
                                       const avgDamageTaken = charStats.avgDamageTaken || 1;
                                       const dps = charStats.avgDamagePerSecond || 0;
-                                      const charKey = `team_${i}_char_${charName}`;
                                       const isCharExpanded = expandedRows[charKey];
                                       const isTop5 = team.top5CharacterNames && team.top5CharacterNames.includes(charName);
                                     
@@ -8010,13 +8271,15 @@ export default function App() {
                                                       <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Builds ({charStats.topBuilds.length})</h4>
                                                     </div>
                                                     <BuildTableView
-                                                      builds={charStats.topBuilds}
+                                                      builds={_charStats.topBuilds}
                                                       buildKey={charKey}
                                                       selectedBuildIndex={selectedBuildIndex}
                                                       setSelectedBuildIndex={setSelectedBuildIndex}
                                                       selectedBuildSort={selectedBuildSort}
                                                       setSelectedBuildSort={setSelectedBuildSort}
                                                       allScores={allCharScores}
+                                                      activeBuildFilters={activeBuildFilters}
+                                                      setActiveBuildFilters={setActiveBuildFilters}
                                                       darkMode={darkMode}
                                                     />
                                                   </div>
