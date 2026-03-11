@@ -18,6 +18,50 @@ const findAiIdFromValue = (val, aiItems) => {
   return byName ? byName.id : "";
 };
 
+// Returns the Set of all character IDs connected to `charId` via transformation chains
+// (following transformsTo in both directions — forward transforms and back-transforms).
+const getTransformationGroup = (charId, transformations) => {
+  const visited = new Set();
+  if (!charId || !transformations) return visited;
+  const queue = [charId];
+  while (queue.length > 0) {
+    const id = queue.shift();
+    if (visited.has(id)) continue;
+    visited.add(id);
+    // Forward: where this form transforms to
+    const entry = transformations[id];
+    if (entry && Array.isArray(entry.transformsTo)) {
+      for (const t of entry.transformsTo) {
+        if (t && !visited.has(t)) queue.push(t);
+      }
+    }
+    // Reverse: forms that list this id in their transformsTo
+    for (const [otherId, otherEntry] of Object.entries(transformations)) {
+      if (!visited.has(otherId) && Array.isArray(otherEntry.transformsTo) && otherEntry.transformsTo.includes(id)) {
+        queue.push(otherId);
+      }
+    }
+  }
+  return visited;
+};
+
+// Given a team array and the transformations map, returns all fusions where the team
+// contains at least 2 of the fusion's constituent characters.
+// Returns: [{ fusionId, fusionName, constituentIdsOnTeam: [charId, ...] }]
+const getActiveFusions = (team, transformations) => {
+  if (!team || !transformations) return [];
+  const teamIds = new Set(team.map(c => c.id).filter(Boolean));
+  const result = [];
+  for (const [id, entry] of Object.entries(transformations)) {
+    if (!Array.isArray(entry.fusionOf) || entry.fusionOf.length < 2) continue;
+    const onTeam = entry.fusionOf.filter(cid => teamIds.has(cid));
+    if (onTeam.length >= 2) {
+      result.push({ fusionId: id, fusionName: entry.name, constituentIdsOnTeam: onTeam });
+    }
+  }
+  return result;
+};
+
 // Hoisted RulesetSelector so it's available before it's referenced in JSX
 function RulesetSelector({ rulesets, activeKey, onChange }) {
   const items = Object.keys((rulesets && rulesets.rulesets) || {}).map((k) => ({
@@ -355,7 +399,10 @@ const MatchBuilder = () => {
   const [costumes, setCostumes] = useState([]);
   const [sparkingMusic, setSparkingMusic] = useState([]);
   const [aiItems, setAiItems] = useState([]);
+  const [transformations, setTransformations] = useState({});
   const [matches, setMatches] = useState([]);
+  // fusionAISelections: { [matchId]: { [fusionId]: constituentCharId | null } }
+  const [fusionAISelections, setFusionAISelections] = useState({});
   const [rulesets, setRulesets] = useState(null);
   const [activeRulesetKey, setActiveRulesetKey] = useState(null);
   const [collapsedMatches, setCollapsedMatches] = useState({});
@@ -428,6 +475,7 @@ const MatchBuilder = () => {
   useEffect(() => {
     loadCSVFiles();
     loadRulesets();
+    loadTransformations();
   }, []);
 
   // Focus trap and keyboard handling for the import modal
@@ -477,6 +525,27 @@ const MatchBuilder = () => {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [showImportModal]);
+
+  const loadTransformations = async () => {
+    try {
+      const candidates = ['transformations.json', '/transformations.json'];
+      if (import.meta && import.meta.env && import.meta.env.BASE_URL) {
+        try { candidates.unshift(new URL('transformations.json', import.meta.env.BASE_URL).href); } catch(e) {}
+      }
+      let data = null;
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          data = await res.json();
+          break;
+        } catch (e) { continue; }
+      }
+      if (data) setTransformations(data);
+    } catch (e) {
+      console.warn('Failed to load transformations.json', e);
+    }
+  };
 
   // Fallback ruleset used when capsule-rules.yaml cannot be loaded or parsed.
   // This represents the "no rules" behavior the site had before rulesets existed.
@@ -826,11 +895,56 @@ const MatchBuilder = () => {
             }
           }
 
+          // When AI is set, propagate to all transformation siblings on the same team
+          if (field === "ai") {
+            const updatedCharId = team[index].id;
+            if (updatedCharId) {
+              const group = getTransformationGroup(updatedCharId, transformations);
+              for (let i = 0; i < team.length; i++) {
+                if (i !== index && team[i].id && group.has(team[i].id)) {
+                  team[i] = { ...team[i], ai: value };
+                }
+              }
+            }
+          }
+
           return { ...match, [teamName]: team };
         }
         return match;
       })
     );
+  };
+
+  // Update fusion AI selection and propagate the chosen constituent's AI to all
+  // fusion-chain slots on the given team.
+  const updateFusionAI = (matchId, teamName, fusionId, constituentCharId) => {
+    setFusionAISelections(prev => ({
+      ...prev,
+      [matchId]: { ...(prev[matchId] || {}), [`${teamName}:${fusionId}`]: constituentCharId }
+    }));
+
+    setMatches(prev => prev.map(match => {
+      if (match.id !== matchId) return match;
+      const team = [...match[teamName]].map(c => ({ ...c }));
+
+      // Determine AI to apply: look up the chosen constituent's current AI on this team
+      let aiToApply = "";
+      if (constituentCharId) {
+        const constituentSlot = team.find(c => c.id === constituentCharId);
+        aiToApply = constituentSlot ? (constituentSlot.ai || "") : "";
+      }
+
+      // Get the full transformation group for the fusion character
+      const fusionGroup = getTransformationGroup(fusionId, transformations);
+      fusionGroup.add(fusionId);
+      for (let i = 0; i < team.length; i++) {
+        if (team[i].id && fusionGroup.has(team[i].id)) {
+          team[i] = { ...team[i], ai: aiToApply };
+        }
+      }
+
+      return { ...match, [teamName]: team };
+    }));
   };
 
   // Replace entire character slot atomically to avoid merge/race conditions
@@ -957,62 +1071,77 @@ const MatchBuilder = () => {
 
     matches.forEach((match, index) => {
       setup.matchCount[index + 1] = { customize: {} };
+      const customize = setup.matchCount[index + 1].customize;
+      const matchFusionSelections = fusionAISelections[match.id] || {};
 
-      // Collect all unique character IDs across both teams
-      const allChars = [...match.team1, ...match.team2];
-      const uniqueCharIds = new Set();
-      
-      allChars.forEach((char) => {
-        if (char.id && char.id !== "") {
-          uniqueCharIds.add(char.id);
-        }
-      });
-
-      // Process each unique character ID
-      uniqueCharIds.forEach((charId) => {
+      // Creates or retrieves a customize entry and sets the items for a specific team slot.
+      // teamSlot: 2 = team1 (com1), 3 = team2 (com2)
+      const addCharEntry = (charId, teamSlot, items) => {
+        if (!charId || charId === "None" || charId === "") return;
         const key = `(Key="${charId}")`;
-        
-        // Find the character's build in team1 (if present)
-        const team1Char = match.team1.find((t) => t.id === charId);
-        const team1Items = [];
-        if (team1Char) {
-          if (team1Char.costume) team1Items.push({ key: team1Char.costume });
-          team1Items.push(
-            ...team1Char.capsules.filter((c) => c).map((c) => ({ key: c }))
-          );
-          if (team1Char.ai) team1Items.push({ key: team1Char.ai });
-          if (team1Char.sparking) team1Items.push({ key: team1Char.sparking });
+        if (!customize[key]) {
+          customize[key] = {
+            targetSettings: [
+              { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
+              { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
+              { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
+              { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
+            ],
+          };
         }
-        if (team1Items.length === 0) team1Items.push({ key: "None" });
+        customize[key].targetSettings[teamSlot].equipItems = items.length > 0 ? items : [{ key: "None" }];
+      };
 
-        // Find the character's build in team2 (if present)
-        const team2Char = match.team2.find((t) => t.id === charId);
-        const team2Items = [];
-        if (team2Char) {
-          if (team2Char.costume) team2Items.push({ key: team2Char.costume });
-          team2Items.push(
-            ...team2Char.capsules.filter((c) => c).map((c) => ({ key: c }))
-          );
-          if (team2Char.ai) team2Items.push({ key: team2Char.ai });
-          if (team2Char.sparking) team2Items.push({ key: team2Char.sparking });
-        }
-        if (team2Items.length === 0) team2Items.push({ key: "None" });
+      // Process one team. Explicit slots first (preserving all capsules/costume/ai/sparking),
+      // then auto-generate entries for reachable transformation forms (AI only).
+      const processTeam = (team, teamSlot, teamName) => {
+        const processedIds = new Set();
 
-        setup.matchCount[index + 1].customize[key] = {
-          targetSettings: [
-            { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
-            { equipItems: [{ key: "None" }], sameCharacterEquip: [] },
-            {
-              equipItems: team1Items,
-              sameCharacterEquip: [],
-            },
-            {
-              equipItems: team2Items,
-              sameCharacterEquip: [],
-            },
-          ],
-        };
-      });
+        // 1. Explicit character slots
+        team.forEach((char) => {
+          if (!char.id) return;
+          const items = [];
+          if (char.costume) items.push({ key: char.costume });
+          (char.capsules || []).filter(Boolean).forEach((c) => items.push({ key: c }));
+          if (char.ai) items.push({ key: char.ai });
+          if (char.sparking) items.push({ key: char.sparking });
+          addCharEntry(char.id, teamSlot, items);
+          processedIds.add(char.id);
+        });
+
+        // 2. Transformation forms for each slot — propagate AI only
+        team.forEach((char) => {
+          if (!char.id || !char.ai || !transformations) return;
+          const group = getTransformationGroup(char.id, transformations);
+          group.forEach((formId) => {
+            if (!processedIds.has(formId)) {
+              addCharEntry(formId, teamSlot, [{ key: char.ai }]);
+              processedIds.add(formId);
+            }
+          });
+        });
+
+        // 3. Fusion characters and their transformation chains when a fusion AI is selected
+        Object.entries(matchFusionSelections).forEach(([selKey, constituentCharId]) => {
+          if (!selKey.startsWith(`${teamName}:`)) return;
+          const fusionId = selKey.slice(`${teamName}:`.length);
+          if (!constituentCharId) return;
+          const constituentSlot = team.find((c) => c.id === constituentCharId);
+          const fusionAI = constituentSlot ? constituentSlot.ai : "";
+          if (!fusionAI) return;
+          const fusionGroup = getTransformationGroup(fusionId, transformations);
+          fusionGroup.add(fusionId);
+          fusionGroup.forEach((formId) => {
+            if (!processedIds.has(formId)) {
+              addCharEntry(formId, teamSlot, [{ key: fusionAI }]);
+              processedIds.add(formId);
+            }
+          });
+        });
+      };
+
+      processTeam(match.team1, 2, "team1");
+      processTeam(match.team2, 3, "team2");
     });
 
     return setup;
@@ -1395,6 +1524,9 @@ const MatchBuilder = () => {
               aiItems={aiItems}
               rulesets={rulesets || null}
               activeRulesetKey={activeRulesetKey}
+              transformations={transformations}
+              fusionAISelections={fusionAISelections[match.id] || {}}
+              onUpdateFusionAI={(teamName, fusionId, constituentCharId) => updateFusionAI(match.id, teamName, fusionId, constituentCharId)}
               onDuplicate={() => duplicateMatch(match.id)}
               onRemove={() => removeMatch(match.id)}
               onAddCharacter={(teamName) => addCharacter(match.id, teamName)}
@@ -1781,6 +1913,9 @@ const MatchCard = ({
   sparkingMusic,
   rulesets,
   activeRulesetKey,
+  transformations,
+  fusionAISelections,
+  onUpdateFusionAI,
   onDuplicate,
   onRemove,
   onAddCharacter,
@@ -1872,6 +2007,9 @@ const MatchCard = ({
             aiItems={aiItems}
             rulesets={rulesets || null}
             activeRulesetKey={activeRulesetKey}
+            transformations={transformations}
+            fusionAISelections={fusionAISelections}
+            onUpdateFusionAI={(fusionId, constituentCharId) => onUpdateFusionAI("team1", fusionId, constituentCharId)}
             onAddCharacter={() => onAddCharacter("team1")}
             onRemoveCharacter={(index) => onRemoveCharacter("team1", index)}
             onUpdateCharacter={(index, field, value) =>
@@ -1899,6 +2037,9 @@ const MatchCard = ({
             aiItems={aiItems}
             rulesets={rulesets || null}
             activeRulesetKey={activeRulesetKey}
+            transformations={transformations}
+            fusionAISelections={fusionAISelections}
+            onUpdateFusionAI={(fusionId, constituentCharId) => onUpdateFusionAI("team2", fusionId, constituentCharId)}
             onAddCharacter={() => onAddCharacter("team2")}
             onRemoveCharacter={(index) => onRemoveCharacter("team2", index)}
             onUpdateCharacter={(index, field, value) =>
@@ -1931,6 +2072,9 @@ const TeamPanel = ({
   aiItems,
   rulesets,
   activeRulesetKey,
+  transformations,
+  fusionAISelections,
+  onUpdateFusionAI,
   onAddCharacter,
   onRemoveCharacter,
   onUpdateCharacter,
@@ -2039,6 +2183,7 @@ const TeamPanel = ({
                   aiItems={aiItems}
                   rulesets={rulesets}
                   activeRulesetKey={activeRulesetKey}
+                  transformations={transformations}
                   onRemove={() => onRemoveCharacter(index)}
                   onUpdate={(field, value) => onUpdateCharacter(index, field, value)}
                   onUpdateCapsule={(capsuleIndex, value) =>
@@ -2049,6 +2194,13 @@ const TeamPanel = ({
               );
             })}
           </div>
+          <FusionPanel
+            team={team}
+            transformations={transformations}
+            fusionAISelections={fusionAISelections}
+            teamName={teamName}
+            onUpdateFusionAI={onUpdateFusionAI}
+          />
           <button
             onClick={onAddCharacter}
             className={`w-full mt-4 bg-gradient-to-r ${buttonColor} text-white py-2 rounded-lg font-bold text-sm shadow-md hover:scale-105 transition-all border-2 relative z-0`}
@@ -2062,6 +2214,57 @@ const TeamPanel = ({
   );
 };
     
+const FusionPanel = ({ team, transformations, fusionAISelections, teamName, onUpdateFusionAI }) => {
+  const activeFusions = getActiveFusions(team, transformations);
+  if (activeFusions.length === 0) return null;
+
+  return (
+    <div className="mt-3 space-y-2">
+      {activeFusions.map(({ fusionId, fusionName, constituentIdsOnTeam }) => {
+        const selectionKey = `${teamName}:${fusionId}`;
+        const selectedConstituent = fusionAISelections[selectionKey] || null;
+        return (
+          <div key={fusionId} className="bg-slate-800/70 border border-yellow-500/40 rounded-lg p-3">
+            <div className="text-xs font-bold text-yellow-300 uppercase tracking-wide mb-2 flex items-center gap-1">
+              <span>⚡</span>
+              <span>Possible Fusion: {fusionName}</span>
+            </div>
+            <div className="text-xs text-slate-300 mb-2">Apply whose AI to this fusion?</div>
+            <div className="flex flex-wrap gap-2">
+              <label className="flex items-center gap-1 cursor-pointer text-xs text-slate-300">
+                <input
+                  type="radio"
+                  name={`fusion-ai-${fusionId}-${teamName}`}
+                  checked={!selectedConstituent}
+                  onChange={() => onUpdateFusionAI(fusionId, null)}
+                  className="accent-yellow-400"
+                />
+                <span>None</span>
+              </label>
+              {constituentIdsOnTeam.map(cid => {
+                const slot = team.find(c => c.id === cid);
+                const label = slot ? (slot.name || cid) : cid;
+                return (
+                  <label key={cid} className="flex items-center gap-1 cursor-pointer text-xs text-slate-200">
+                    <input
+                      type="radio"
+                      name={`fusion-ai-${fusionId}-${teamName}`}
+                      checked={selectedConstituent === cid}
+                      onChange={() => onUpdateFusionAI(fusionId, cid)}
+                      className="accent-yellow-400"
+                    />
+                    <span>{label}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const CharacterSlot = ({
   index,
   teamName,
@@ -2076,6 +2279,7 @@ const CharacterSlot = ({
   aiItems,
   rulesets,
   activeRulesetKey,
+  transformations,
   onRemove,
   onUpdate,
   onUpdateCapsule,
@@ -2497,6 +2701,17 @@ const CharacterSlot = ({
                 <Trash2 size={12} />
               </button>
             </div>
+            {(() => {
+              if (!character.id || !transformations) return null;
+              const group = getTransformationGroup(character.id, transformations);
+              const siblings = (team || []).filter(c => c.id && c.id !== character.id && group.has(c.id));
+              if (siblings.length === 0) return null;
+              return (
+                <div className="mt-1 text-xs text-slate-400 italic">
+                  AI also applied to: {siblings.map(c => c.name || c.id).join(', ')}
+                </div>
+              );
+            })()}
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
