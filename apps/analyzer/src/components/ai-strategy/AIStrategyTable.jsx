@@ -211,6 +211,10 @@ export default function AIStrategyTable({
         aVal = a.avgTags || 0;
         bVal = b.avgTags || 0;
         break;
+      case 'transformations':
+        aVal = a.avgTransformations || 0;
+        bVal = b.avgTransformations || 0;
+        break;
       case 'guards':
         aVal = a.avgGuards || 0;
         bVal = b.avgGuards || 0;
@@ -669,6 +673,19 @@ export default function AIStrategyTable({
               </th>
               
               <th 
+                onClick={() => handleSort('transformations')}
+                style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
+                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                }`}
+              >
+                <div className="flex items-center gap-1">
+                  Transformations
+                  <SortIcon columnKey="transformations" />
+                </div>
+              </th>
+              
+              <th 
                 onClick={() => handleSort('guards')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '90px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
@@ -1031,6 +1048,10 @@ export default function AIStrategyTable({
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
                     {formatNumber(ai.avgTags, 1)}
+                  </td>
+                  
+                  <td className={`px-4 py-3 ${darkMode ? 'text-violet-300' : 'text-violet-700'}`}>
+                    {formatNumber(ai.avgTransformations, 1)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>

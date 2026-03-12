@@ -319,6 +319,7 @@ function MetricDisplay({ label, value, icon: Icon, color = 'gray', darkMode = fa
     purple: darkMode ? 'text-purple-400' : 'text-purple-600',
     orange: darkMode ? 'text-orange-400' : 'text-orange-600',
     teal: darkMode ? 'text-teal-400' : 'text-teal-600',
+    violet: darkMode ? 'text-violet-300' : 'text-violet-600',
     gray: darkMode ? 'text-gray-400' : 'text-gray-600'
   };
 
@@ -615,6 +616,7 @@ function extractStats(char, charMap, capsuleMap = {}, position = null, aiStrateg
     superCounterCount: numCount.superCounterCount || 0,
     revengeCounterCount: numCount.revengeCounter || 0,
     tags, // New: Character swap tracking
+    formChangeCount: Array.isArray(char.formChangeHistory) ? char.formChangeHistory.length : 0, // Number of transformations
     // Special Abilities - detailed blast tracking (NEW SYSTEM)
     hasAdditionalCounts, // Flag to determine if new format with additionalCounts
     s1Blast,        // Super 1 thrown
@@ -1886,6 +1888,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           totalSuperCounters: 0,
           totalRevengeCounters: 0,
           totalTags: 0, // New: Character swaps
+          totalTransformations: 0, // New: Character transformations
           // Special Abilities - NEW blast tracking system
           totalS1Blast: 0,
           totalS2Blast: 0,
@@ -1981,6 +1984,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       charData.totalSuperCounters += stats.superCounterCount;
       charData.totalRevengeCounters += stats.revengeCounterCount;
       charData.totalTags += stats.tags;
+      charData.totalTransformations += stats.formChangeCount || 0;
       // Special Abilities - NEW blast tracking system
       charData.totalS1Blast += stats.s1Blast;
       charData.totalS2Blast += stats.s2Blast;
@@ -2460,6 +2464,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       avgSuperCounters: Math.round((char.totalSuperCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgRevengeCounters: Math.round((char.totalRevengeCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgTags: Math.round((char.totalTags / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgTransformations: Math.round((char.totalTransformations / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       // Special Abilities - NEW blast tracking averages
       avgS1Blast: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgS2Blast: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
@@ -2728,6 +2733,7 @@ function recomputeTeamCharStats(rawMatches, originalStats) {
   const totalS2BlastTrackable = rawMatches.reduce((s, m) => s + ((m.s2HitBlast !== undefined && m.s2HitBlast !== null) ? (m.s2Blast || 0) : 0), 0);
   const totalUltBlastTrackable = rawMatches.reduce((s, m) => s + ((m.uLTHitBlast !== undefined && m.uLTHitBlast !== null) ? (m.ultBlast || 0) : 0), 0);
   const totalTags = rawMatches.reduce((s, m) => s + (m.tags || 0), 0);
+  const totalTransformations = rawMatches.reduce((s, m) => s + (m.formChangeCount || 0), 0);
   const totalSparking = rawMatches.reduce((s, m) => s + (m.sparkingCount || 0), 0);
   const totalCharges = rawMatches.reduce((s, m) => s + (m.chargeCount || 0), 0);
   const totalGuards = rawMatches.reduce((s, m) => s + (m.guardCount || 0), 0);
@@ -2777,6 +2783,7 @@ function recomputeTeamCharStats(rawMatches, originalStats) {
     ultHitRateOverall: totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null,
     avgTags: Math.round((totalTags / denom) * 10) / 10,
     totalTags,
+    avgTransformations: Math.round((totalTransformations / denom) * 10) / 10,
     avgSparking: Math.round((totalSparking / denom) * 10) / 10,
     avgCharges: Math.round((totalCharges / denom) * 10) / 10,
     avgGuards: Math.round((totalGuards / denom) * 10) / 10,
@@ -3021,6 +3028,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           superCounterCount: stats.superCounterCount || 0,
           revengeCounterCount: stats.revengeCounterCount || 0,
           tags: stats.tags || 0,
+          formChangeCount: stats.formChangeCount || 0,
           // Combat Performance
           maxComboNum: stats.maxComboNum || 0,
           maxComboDamage: stats.maxComboDamage || 0,
@@ -3047,7 +3055,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           if (!teamStats[team1Name].buildCompositions[compositionLabel]) {
             teamStats[team1Name].buildCompositions[compositionLabel] = 0;
           }
-          teamStats[team1Name].buildCompositions[compositionLabel]++;
+          teamStats[team1Name].buildCompositions[compositionLabel]++;;
         }
       }
     });
@@ -3110,6 +3118,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           superCounterCount: stats.superCounterCount || 0,
           revengeCounterCount: stats.revengeCounterCount || 0,
           tags: stats.tags || 0,
+          formChangeCount: stats.formChangeCount || 0,
           // Combat Performance
           maxComboNum: stats.maxComboNum || 0,
           maxComboDamage: stats.maxComboDamage || 0,
@@ -3136,7 +3145,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           if (!teamStats[team2Name].buildCompositions[compositionLabel]) {
             teamStats[team2Name].buildCompositions[compositionLabel] = 0;
           }
-          teamStats[team2Name].buildCompositions[compositionLabel]++;
+          teamStats[team2Name].buildCompositions[compositionLabel]++;;
         }
       }
     });
@@ -3321,6 +3330,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         const totalS2HitBlast = matches.reduce((sum, match) => sum + (match.s2HitBlast || 0), 0);
         const totalULTHitBlast = matches.reduce((sum, match) => sum + (match.uLTHitBlast || 0), 0);
         const totalTags = matches.reduce((sum, match) => sum + (match.tags || 0), 0);
+        const totalTransformations = matches.reduce((sum, match) => sum + (match.formChangeCount || 0), 0);
         
         // Track separately for hit rate calculation (only from matches with additionalCounts data)
         // Check each blast type individually - a match is trackable for a blast type only if that specific blast type has hit data
@@ -3430,6 +3440,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           
           avgTags: Math.round((totalTags / denom) * 10) / 10,
           totalTags: totalTags,
+          avgTransformations: Math.round((totalTransformations / denom) * 10) / 10,
           
           // Survival & Health averages
           avgSparking: Math.round((totalSparking / denom) * 10) / 10,
@@ -3916,6 +3927,7 @@ export default function App() {
       const totalSuperCounters = filteredMatches.reduce((sum, m) => sum + (m.superCounterCount || 0), 0);
       const totalRevengeCounters = filteredMatches.reduce((sum, m) => sum + (m.revengeCounterCount || 0), 0);
       const totalTags = filteredMatches.reduce((sum, m) => sum + (m.tags || 0), 0);
+      const totalTransformations = filteredMatches.reduce((sum, m) => sum + (m.formChangeCount || 0), 0);
       const maxComboNumTotal = filteredMatches.reduce((sum, m) => sum + (m.maxComboNum || 0), 0);
       const maxComboDamageTotal = filteredMatches.reduce((sum, m) => sum + (m.maxComboDamage || 0), 0);
       
@@ -4009,6 +4021,7 @@ export default function App() {
   const avgSuperCounters = Math.round((totalSuperCounters / Math.max(denom, 1)) * 10) / 10;
   const avgRevengeCounters = Math.round((totalRevengeCounters / Math.max(denom, 1)) * 10) / 10;
   const avgTags = Math.round((totalTags / Math.max(denom, 1)) * 10) / 10;
+  const avgTransformations = Math.round((totalTransformations / Math.max(denom, 1)) * 10) / 10;
   const avgMaxCombo = Math.round((maxComboNumTotal / Math.max(denom, 1)) * 10) / 10;
   const avgMaxComboDamage = Math.round(maxComboDamageTotal / Math.max(denom, 1));
   
@@ -4389,6 +4402,7 @@ export default function App() {
         totalZCounters,
         totalSuperCounters,
         totalRevengeCounters,
+        totalTransformations,
         totalTags,
         totalS1Blast,
         totalS2Blast,
@@ -4427,6 +4441,7 @@ export default function App() {
         avgZCounters,
         avgSuperCounters,
         avgRevengeCounters,
+        avgTransformations,
         avgTags,
         avgMaxCombo,
         avgMaxComboDamage,
@@ -6163,6 +6178,10 @@ export default function App() {
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
                                     <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{char.avgTags || 0}</strong>
                                   </div>
+                                  <div className="flex justify-between">
+                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
+                                    <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{char.avgTransformations || 0}</strong>
+                                  </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t border-gray-600">
                                   <div className="flex justify-between">
@@ -7113,6 +7132,9 @@ export default function App() {
                             {stats.tags > 0 && (
                               <MetricDisplay label="Tags" value={stats.tags} color="teal" darkMode={darkMode} size="small" />
                             )}
+                            {stats.formChangeCount > 0 && (
+                              <MetricDisplay label="Transformations" value={stats.formChangeCount} color="violet" darkMode={darkMode} size="small" />
+                            )}
                           </div>
                         </StatGroup>
                         
@@ -7393,6 +7415,9 @@ export default function App() {
                             )}
                             {stats.tags > 0 && (
                               <MetricDisplay label="Tags" value={stats.tags} color="teal" darkMode={darkMode} size="small" />
+                            )}
+                            {stats.formChangeCount > 0 && (
+                              <MetricDisplay label="Transformations" value={stats.formChangeCount} color="violet" darkMode={darkMode} size="small" />
                             )}
                           </div>
                         </StatGroup>
@@ -8134,6 +8159,10 @@ export default function App() {
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
                                                       <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{charStats.avgTags || 0}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
+                                                      <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{charStats.avgTransformations || 0}</strong>
                                                     </div>
                                                   </div>
                                                   <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>

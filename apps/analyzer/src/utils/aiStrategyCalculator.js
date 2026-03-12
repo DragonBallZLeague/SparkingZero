@@ -244,6 +244,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
           totalEnergyBlasts: 0,
           totalCharges: 0,
           totalTags: 0,
+          totalTransformations: 0,
           
           // Character tracking
           characterUsage: {},
@@ -317,6 +318,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       ai.totalEnergyBlasts += match.shotEnergyBulletCount || 0;
       ai.totalCharges += match.chargeCount || 0;
       ai.totalTags += match.tags || 0;
+      ai.totalTransformations += match.formChangeCount || 0;
       
       // Character tracking - accumulate ALL stats per character
       const charName = character.name;
@@ -359,6 +361,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
           totalEnergyBlasts: 0,
           totalCharges: 0,
           totalTags: 0,
+          totalTransformations: 0,
           buildTypeUsage: {},
           buildTypeActions: {}, // Track actions per build type for this character
           capsuleUsage: {}, // Track capsule usage for this character
@@ -405,6 +408,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       charData.totalEnergyBlasts += match.shotEnergyBulletCount || 0;
       charData.totalCharges += match.chargeCount || 0;
       charData.totalTags += match.tags || 0;
+      charData.totalTransformations += match.formChangeCount || 0;
       
       // Track build type for this character
       if (match.buildComposition && match.buildComposition.label) {
@@ -685,7 +689,8 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       avgDragonDashDistance: Math.round(ai.totalDragonDashDistance / matches),
       avgEnergyBlasts: Math.round((ai.totalEnergyBlasts / matches) * 10) / 10,
       avgCharges: Math.round((ai.totalCharges / matches) * 10) / 10,
-      avgTags: Math.round((ai.totalTags / matches) * 10) / 10
+      avgTags: Math.round((ai.totalTags / matches) * 10) / 10,
+      avgTransformations: Math.round((ai.totalTransformations / matches) * 10) / 10
     };
     
     // Calculate win rate
@@ -1003,6 +1008,7 @@ export function calculateCharacterBaseline(aiMetrics, characterName) {
     totalEnergyBlasts: 0,
     totalCharges: 0,
     totalTags: 0,
+    totalTransformations: 0,
     totalSurvived: 0,
     totalKills: 0
   };
@@ -1045,6 +1051,7 @@ export function calculateCharacterBaseline(aiMetrics, characterName) {
     baseline.totalEnergyBlasts += rawCharData.totalEnergyBlasts || 0;
     baseline.totalCharges += rawCharData.totalCharges || 0;
     baseline.totalTags += rawCharData.totalTags || 0;
+    baseline.totalTransformations += rawCharData.totalTransformations || 0;
     baseline.totalSurvived += rawCharData.totalSurvived || 0;
     baseline.totalKills += rawCharData.totalKills || 0;
   });
@@ -1087,6 +1094,7 @@ export function calculateCharacterBaseline(aiMetrics, characterName) {
     avgEnergyBlasts: Math.round((baseline.totalEnergyBlasts / matches) * 10) / 10,
     avgCharges: Math.round((baseline.totalCharges / matches) * 10) / 10,
     avgTags: Math.round((baseline.totalTags / matches) * 10) / 10,
+    avgTransformations: Math.round((baseline.totalTransformations / matches) * 10) / 10,
     avgSurvivalRate: Math.round((baseline.totalSurvived / matches) * 1000) / 10,
     avgKills: Math.round((baseline.totalKills / matches) * 10) / 10,
     avgDPS: (baseline.totalBattleTime > 0) ? Math.round(baseline.totalDamage / baseline.totalBattleTime) : 0,
@@ -1175,7 +1183,8 @@ export function filterAIMetricsByCharacter(aiMetrics, characterName, charMap = {
       avgDragonDashDistance: matches > 0 ? Math.round(rawCharData.totalDragonDashDistance / matches) : 0,
       avgEnergyBlasts: matches > 0 ? Math.round((rawCharData.totalEnergyBlasts / matches) * 10) / 10 : 0,
       avgCharges: matches > 0 ? Math.round((rawCharData.totalCharges / matches) * 10) / 10 : 0,
-      avgTags: matches > 0 ? Math.round((rawCharData.totalTags / matches) * 10) / 10 : 0
+      avgTags: matches > 0 ? Math.round((rawCharData.totalTags / matches) * 10) / 10 : 0,
+      avgTransformations: matches > 0 ? Math.round((rawCharData.totalTransformations / matches) * 10) / 10 : 0
     };
     
     // Build type distribution for this character with action averages

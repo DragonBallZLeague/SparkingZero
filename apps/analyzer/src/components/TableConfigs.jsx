@@ -39,7 +39,7 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
   columnGroups: [
     { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'primaryMap', 'matchCount', 'wins', 'losses'] },
     { name: 'Combat Performance', columns: ['avgDamage', 'avgTaken', 'efficiency', 'dps', 'combatScore', 'avgBattleTime', 'totalKills', 'avgKills'] },
-    { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags'] },
+    { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags', 'avgTransformations'] },
     { name: 'Special Abilities', columns: ['avgS1Blast', 'avgS1Hit', 's1HitRate', 'avgS2Blast', 'avgS2Hit', 's2HitRate', 'avgUltBlast', 'avgUltHit', 'ultHitRate', 'avgSkill1', 'avgSkill2', 'avgUltimates', 'avgEnergyBlasts', 'avgCharges', 'avgSparking', 'avgDragonDashMileage'] },
     { name: 'Combat Mechanics', columns: ['avgMaxCombo', 'avgMaxComboDamage', 'avgThrows', 'avgLightningAttacks', 'avgVanishingAttacks', 'avgDragonHoming', 'avgSpeedImpacts', 'speedImpactWinRate', 'avgSparkingCombo'] },
     { name: 'Build & Equipment', columns: ['buildComposition', 'meleeCost', 'blastCost', 'kiBlastCost', 'defenseCost', 'skillCost', 'kiEfficiencyCost', 'utilityCost', 'topCapsules', 'primaryAIStrategy'] },
@@ -399,6 +399,19 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
       render: (row, value) => (
         <span className="font-mono text-teal-600">{value.toFixed(1)}</span>
+      )
+    },
+    {
+      key: 'avgTransformations',
+      header: 'Avg Transformations',
+      accessor: (row) => row.avgTransformations,
+      sortType: 'number',
+      sortable: true,
+      filterable: false,
+      group: 'Survival & Health',
+      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      render: (row, value) => (
+        <span className="font-mono text-violet-600">{(value || 0).toFixed(1)}</span>
       )
     },
 
@@ -1117,7 +1130,7 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
   columnGroups: [
     { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'map', 'matchResult', 'fileName'] },
     { name: 'Combat Performance', columns: ['damageDone', 'damageTaken', 'efficiency', 'dps', 'battleDuration', 'kills'] },
-    { name: 'Survival & Health', columns: ['hpRemaining', 'hpMax', 'hpRetention', 'guards', 'revengeCounters', 'superCounters', 'zCounters', 'tags'] },
+    { name: 'Survival & Health', columns: ['hpRemaining', 'hpMax', 'hpRetention', 'guards', 'revengeCounters', 'superCounters', 'zCounters', 'tags', 'transformations'] },
     { name: 'Special Abilities', columns: ['s1Blast', 's1HitBlast', 's1HitRate', 's2Blast', 's2HitBlast', 's2HitRate', 'ultBlast', 'uLTHitBlast', 'ultHitRate', 'skill1', 'skill2', 'ultimates', 'kiBlasts', 'charges', 'sparkings', 'dragonDashMileage'] },
     { name: 'Combat Mechanics', columns: ['maxComboHits', 'maxComboDamage', 'throws', 'lightningAttacks', 'vanishingAttacks', 'dragonHoming', 'speedImpacts', 'speedImpactWins', 'speedImpactWinRate', 'sparkingComboHits'] },
     { name: 'Build & Equipment', columns: ['buildComposition', 'capsule1', 'capsule2', 'capsule3', 'capsule4', 'capsule5', 'capsule6', 'capsule7', 'meleeCost', 'blastCost', 'kiBlastCost', 'defenseCost', 'skillCost', 'kiEfficiencyCost', 'utilityCost', 'aiStrategy'] },
@@ -1451,6 +1464,19 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
       exportFormat: { alignment: 'right', numFmt: '0' },
       render: (row, value) => (
         <span className="font-mono text-teal-600">{value}</span>
+      )
+    },
+    {
+      key: 'transformations',
+      header: 'Transformations',
+      accessor: (row) => row.formChangeCount,
+      sortType: 'number',
+      sortable: true,
+      filterable: false,
+      group: 'Survival & Health',
+      exportFormat: { alignment: 'right', numFmt: '0' },
+      render: (row, value) => (
+        <span className="font-mono text-violet-600">{value || 0}</span>
       )
     },
 

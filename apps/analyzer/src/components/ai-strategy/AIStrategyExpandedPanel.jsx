@@ -104,6 +104,7 @@ export default function AIStrategyExpandedPanel({
     avgEnergyBlasts,
     avgCharges,
     avgTags,
+    avgTransformations,
     avgBattleTime,
     damageEfficiency,
     avgDPS
@@ -588,6 +589,10 @@ export default function AIStrategyExpandedPanel({
             <div className="mt-3 pt-3 border-t space-y-2 text-sm" style={{
               borderColor: darkMode ? 'rgba(134, 239, 172, 0.3)' : 'rgba(134, 239, 172, 0.5)'
             }}>
+              <div className="flex justify-between">
+                <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Transformations:</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgTransformations || 0}</span>
+              </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Guards:</span>
                 <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgGuards || 0}</span>
