@@ -46,7 +46,8 @@ const getTransformationGroup = (charId, transformations) => {
 };
 
 // Given a team array and the transformations map, returns all fusions where the team
-// contains at least 2 of the fusion's constituent characters.
+// contains a complete valid constituent pair. fusionOf stores pairs consecutively:
+// [A1, B1, A2, B2, ...] — valid fusions are (A1+B1), (A2+B2), etc.
 // Returns: [{ fusionId, fusionName, constituentIdsOnTeam: [charId, ...] }]
 const getActiveFusions = (team, transformations) => {
   if (!team || !transformations) return [];
@@ -54,9 +55,18 @@ const getActiveFusions = (team, transformations) => {
   const result = [];
   for (const [id, entry] of Object.entries(transformations)) {
     if (!Array.isArray(entry.fusionOf) || entry.fusionOf.length < 2) continue;
-    const onTeam = entry.fusionOf.filter(cid => teamIds.has(cid));
-    if (onTeam.length >= 2) {
-      result.push({ fusionId: id, fusionName: entry.name, constituentIdsOnTeam: onTeam });
+    // Group fusionOf into consecutive pairs — each pair is one valid fusion combination
+    const activePairMembers = new Set();
+    for (let i = 0; i + 1 < entry.fusionOf.length; i += 2) {
+      const a = entry.fusionOf[i];
+      const b = entry.fusionOf[i + 1];
+      if (teamIds.has(a) && teamIds.has(b)) {
+        activePairMembers.add(a);
+        activePairMembers.add(b);
+      }
+    }
+    if (activePairMembers.size >= 2) {
+      result.push({ fusionId: id, fusionName: entry.name, constituentIdsOnTeam: [...activePairMembers] });
     }
   }
   return result;
