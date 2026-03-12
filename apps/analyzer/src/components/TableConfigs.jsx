@@ -262,9 +262,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Performance',
-      exportFormat: { alignment: 'right', numFmt: '0.0' },
+      exportFormat: { alignment: 'right', numFmt: '0.00' },
       render: (row, value) => (
-        <span className="font-mono text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-yellow-600">{value.toFixed(2)}</span>
       )
     },
 
@@ -357,9 +357,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-purple-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-purple-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -370,9 +370,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-indigo-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-indigo-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -383,9 +383,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-cyan-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-cyan-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -396,9 +396,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-teal-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-teal-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -409,9 +409,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-violet-600">{(value || 0).toFixed(1)}</span>
+        <span className="font-mono text-violet-600">{(value || 0).toFixed(2)}</span>
       )
     },
 
@@ -427,9 +427,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-orange-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-orange-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -440,9 +440,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-orange-700">{value.toFixed(1)}</span>
+        <span className="font-mono text-orange-700">{value.toFixed(2)}</span>
       )
     },
     {
@@ -477,9 +477,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-red-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-red-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -490,9 +490,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-red-700">{value.toFixed(1)}</span>
+        <span className="font-mono text-red-700">{value.toFixed(2)}</span>
       )
     },
     {
@@ -527,9 +527,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true, highlight: 'gold' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true, highlight: 'gold' },
       render: (row, value) => (
-        <span className="font-mono text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-yellow-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -540,9 +540,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true, highlight: 'gold' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true, highlight: 'gold' },
       render: (row, value) => (
-        <span className="font-mono font-bold text-yellow-700">{value.toFixed(1)}</span>
+        <span className="font-mono font-bold text-yellow-700">{value.toFixed(2)}</span>
       )
     },
     {
@@ -576,9 +576,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-purple-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-purple-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -589,9 +589,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-pink-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-pink-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -602,9 +602,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true, highlight: 'gold' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true, highlight: 'gold' },
       render: (row, value) => (
-        <span className="font-mono font-bold text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono font-bold text-yellow-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -644,11 +644,11 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', highlight: 'gold', icon: 'spark' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', highlight: 'gold', icon: 'spark' },
       render: (row, value) => (
         <div className="flex items-center gap-1">
           <Zap className="w-4 h-4 text-orange-500" />
-          <span className="font-mono font-bold text-orange-600">{value.toFixed(1)}</span>
+          <span className="font-mono font-bold text-orange-600">{value.toFixed(2)}</span>
         </div>
       )
     },
@@ -703,9 +703,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-gray-400">{value.toFixed(1)}</span>
+        <span className="font-mono text-gray-400">{value.toFixed(2)}</span>
       )
     },
     {
@@ -716,9 +716,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-yellow-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -729,9 +729,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-blue-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-blue-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -742,9 +742,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-indigo-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-indigo-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -755,9 +755,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0' },
+      exportFormat: { alignment: 'right', numFmt: '0.00' },
       render: (row, value) => (
-        <span className="font-mono text-red-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-red-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -1123,7 +1123,7 @@ export const prepareCharacterAveragesData = (aggregatedData) => {
 // Supports up to 7 capsules per match
 // ==============================================================================
 
-export const getMatchDetailsTableConfig = (darkMode = false) => ({
+export const getMatchDetailsTableConfig = (darkMode = false, onNavigateToMatch = null) => ({
   title: 'Individual Match Performance Details',
   description: 'Per-match statistics for detailed analysis and trend identification',
   
@@ -1243,7 +1243,27 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
       filterable: false,
       group: 'Match Identity',
       exportFormat: { alignment: 'left', fontSize: 8, color: '808080' },
-      render: (row, value) => (
+      render: (row, value) => onNavigateToMatch ? (
+        <button
+          onClick={() => onNavigateToMatch(value)}
+          className={`text-left transition-colors cursor-pointer ${
+            darkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-600'
+          }`}
+          style={{
+            fontSize: '10px',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            margin: 0,
+            font: 'inherit',
+            textDecoration: 'underline',
+            textDecorationStyle: 'dotted',
+          }}
+          title="Open in Single Match View"
+        >
+          {value}
+        </button>
+      ) : (
         <span className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} style={{ fontSize: '10px' }}>
           {value}
         </span>
@@ -2304,7 +2324,7 @@ export const getPositionTableConfig = (darkMode = false) => ({
       render: (row, value) => (
         <div className="flex items-center gap-1">
           <Trophy className="w-4 h-4 text-yellow-500" />
-          <span>{value.toFixed(1)}</span>
+          <span>{value.toFixed(2)}</span>
         </div>
       )
     },
@@ -2318,7 +2338,7 @@ export const getPositionTableConfig = (darkMode = false) => ({
       render: (row, value) => (
         <div className="flex items-center gap-1">
           <Zap className="w-4 h-4 text-orange-500" />
-          <span>{value.toFixed(1)}</span>
+          <span>{value.toFixed(2)}</span>
         </div>
       )
     }

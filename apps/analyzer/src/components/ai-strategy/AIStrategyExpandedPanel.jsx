@@ -499,27 +499,27 @@ export default function AIStrategyExpandedPanel({
             }}>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Throws:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgThrows || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgThrows || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Vanishing Attacks:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgVanishingAttacks || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgVanishingAttacks || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Dragon Homings:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgDragonHoming || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgDragonHoming || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Lightning Attacks:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgLightningAttacks || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgLightningAttacks || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Speed Impacts:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgSpeedImpacts || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgSpeedImpacts || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Speed Impact Wins:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgSpeedImpactWins || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgSpeedImpactWins || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Max Combo Hits:</span>
@@ -531,11 +531,11 @@ export default function AIStrategyExpandedPanel({
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Sparking Combo Hits:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgSparkingComboHits || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgSparkingComboHits || 0).toFixed(1)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Avg Kills:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgKills || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgKills || 0).toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -581,7 +581,7 @@ export default function AIStrategyExpandedPanel({
             </div>
             <div className="flex justify-between">
               <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Swaps (Tags):</span>
-              <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{avgTags || 0}</span>
+              <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{(avgTags || 0).toFixed(2)}</span>
             </div>
           </div>
           
@@ -591,7 +591,7 @@ export default function AIStrategyExpandedPanel({
             }}>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Transformations:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgTransformations || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgTransformations || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Guards:</span>
@@ -599,15 +599,15 @@ export default function AIStrategyExpandedPanel({
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Super Counters:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgSuperCounters || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgSuperCounters || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Revenge Counters:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgRevengeCounters || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgRevengeCounters || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Z-Counters:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgZCounters || 0}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgZCounters || 0).toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -642,19 +642,19 @@ export default function AIStrategyExpandedPanel({
             <div className="flex justify-between">
               <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Super 1 Blasts:</span>
               <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {avgS1HitBlast}/{avgS1Blast} ({avgS1HitRate}%)
+                {(avgS1HitBlast || 0).toFixed(2)}/{(avgS1Blast || 0).toFixed(2)} ({avgS1HitRate}%)
               </span>
             </div>
             <div className="flex justify-between">
               <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Super 2 Blasts:</span>
               <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {avgS2HitBlast}/{avgS2Blast} ({avgS2HitRate}%)
+                {(avgS2HitBlast || 0).toFixed(2)}/{(avgS2Blast || 0).toFixed(2)} ({avgS2HitRate}%)
               </span>
             </div>
             <div className="flex justify-between">
               <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Ultimate Blasts:</span>
               <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {avgUltHitBlast}/{avgUltBlast} ({avgUltHitRate}%)
+                {(avgUltHitBlast || 0).toFixed(2)}/{(avgUltBlast || 0).toFixed(2)} ({avgUltHitRate}%)
               </span>
             </div>
             <div className="flex justify-between">
@@ -669,11 +669,11 @@ export default function AIStrategyExpandedPanel({
             }}>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Skill 1 Usage:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgExa1Count}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgExa1Count || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Skill 2 Usage:</span>
-                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{avgExa2Count}</span>
+                <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(avgExa2Count || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Charges:</span>

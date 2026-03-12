@@ -2388,32 +2388,32 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         avgHPRemaining: Math.round((formStat.totalHPRemaining || 0) / matchCount),
         avgHPMax: Math.round((formStat.totalHPMax || 0) / matchCount),
         avgSpecialMoves: Math.round(((formStat.totalSpecialMoves || 0) / matchCount) * 10) / 10,
-        avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 10) / 10,
+        avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 100) / 100,
         avgSkills: Math.round(((formStat.totalSkills || 0) / matchCount) * 10) / 10,
-        avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 10) / 10,
-        avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 10) / 10,
-        avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 10) / 10,
-        avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 10) / 10,
-        avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 10) / 10,
-        avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 10) / 10,
-        avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 10) / 10,
+        avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 100) / 100,
+        avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 100) / 100,
+        avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 100) / 100,
+        avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 100) / 100,
+        avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 100) / 100,
+        avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 100) / 100,
+        avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 100) / 100,
         avgCharges: Math.round(((formStat.totalCharges || 0) / matchCount) * 10) / 10,
         avgGuards: Math.round(((formStat.totalGuards || 0) / matchCount) * 10) / 10,
         avgEnergyBlasts: Math.round(((formStat.totalEnergyBlasts || 0) / matchCount) * 10) / 10,
-        avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 10) / 10,
-        avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 10) / 10,
-        avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 10) / 10,
+        avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 100) / 100,
+        avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 100) / 100,
+        avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 100) / 100,
         avgMaxComboNum: Math.round(((formStat.totalMaxComboNum || 0) / matchCount) * 10) / 10,
         avgMaxComboDamage: Math.round((formStat.totalMaxComboDamage || 0) / matchCount),
-        avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 10) / 10,
-        avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 10) / 10,
-        avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 10) / 10,
-        avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 10) / 10,
-        avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 10) / 10,
-        avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 10) / 10,
+        avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 100) / 100,
+        avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 100) / 100,
+        avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 100) / 100,
+        avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 100) / 100,
+        avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 100) / 100,
+        avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 100) / 100,
         avgSparkingCombo: Math.round(((formStat.totalSparkingCombo || 0) / matchCount) * 10) / 10,
         avgDragonDashMileage: Math.round(((formStat.totalDragonDashMileage || 0) / matchCount) * 10) / 10,
-        avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 10) / 10,
+        avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 100) / 100,
         // Derived stats
         damagePerSecond,
         damageEfficiency,
@@ -2453,25 +2453,25 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       avgHPGaugeValueMax: Math.round(char.totalHPGaugeValueMax / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
   avgSpecial: Math.round((char.totalSpecial / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgSkills: Math.round((char.totalSkills / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgKills: Math.round((char.totalKills / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgKills: Math.round((char.totalKills / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       // Survival & Health averages
       survivalRate: Math.round((char.survivalCount / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 1000) / 10, // % of matches survived
-      avgSparking: Math.round((char.totalSparking / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgSparking: Math.round((char.totalSparking / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       avgCharges: Math.round((char.totalCharges / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgGuards: Math.round((char.totalGuards / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgEnergyBlasts: Math.round((char.totalEnergyBlasts / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgZCounters: Math.round((char.totalZCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgSuperCounters: Math.round((char.totalSuperCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgRevengeCounters: Math.round((char.totalRevengeCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgTags: Math.round((char.totalTags / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgTransformations: Math.round((char.totalTransformations / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgZCounters: Math.round((char.totalZCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgSuperCounters: Math.round((char.totalSuperCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgRevengeCounters: Math.round((char.totalRevengeCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgTags: Math.round((char.totalTags / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgTransformations: Math.round((char.totalTransformations / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       // Special Abilities - NEW blast tracking averages
-      avgS1Blast: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgS2Blast: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgUltBlast: Math.round((char.totalUltBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgS1Hit: Math.round((char.totalS1HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgS2Hit: Math.round((char.totalS2HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgUltHit: Math.round((char.totalULTHitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgS1Blast: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgS2Blast: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgUltBlast: Math.round((char.totalUltBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgS1Hit: Math.round((char.totalS1HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgS2Hit: Math.round((char.totalS2HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgUltHit: Math.round((char.totalULTHitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       // Hit rates (overall across all matches) - calculated from trackable throws only, null if no trackable data
       s1HitRateOverall: char.totalS1BlastTrackable > 0 ? Math.round((char.totalS1HitBlast / char.totalS1BlastTrackable) * 1000) / 10 : null,
       s2HitRateOverall: char.totalS2BlastTrackable > 0 ? Math.round((char.totalS2HitBlast / char.totalS2BlastTrackable) * 1000) / 10 : null,
@@ -2479,19 +2479,19 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       
       
       // Special Abilities - Legacy blast tracking (kept for backwards compatibility, now using new values)
-    avgSPM1: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgSPM2: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgEXA1: Math.round((char.totalEXA1 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgEXA2: Math.round((char.totalEXA2 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgUltimates: Math.round((char.totalUltimates / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+    avgSPM1: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgSPM2: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgEXA1: Math.round((char.totalEXA1 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgEXA2: Math.round((char.totalEXA2 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgUltimates: Math.round((char.totalUltimates / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
   avgDragonDashMileage: Math.round((char.totalDragonDashMileage / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
   avgMaxComboDamage: Math.round(char.maxComboDamageTotal / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
-  avgThrows: Math.round((char.totalThrows / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgLightningAttacks: Math.round((char.totalLightningAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgVanishingAttacks: Math.round((char.totalVanishingAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgDragonHoming: Math.round((char.totalDragonHoming / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgSpeedImpacts: Math.round((char.totalSpeedImpacts / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgSpeedImpactWins: Math.round((char.totalSpeedImpactWins / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+  avgThrows: Math.round((char.totalThrows / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgLightningAttacks: Math.round((char.totalLightningAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgVanishingAttacks: Math.round((char.totalVanishingAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgDragonHoming: Math.round((char.totalDragonHoming / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgSpeedImpacts: Math.round((char.totalSpeedImpacts / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgSpeedImpactWins: Math.round((char.totalSpeedImpactWins / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
   avgSparkingCombo: Math.round((char.totalSparkingCombo / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
   // Build & Equipment averages
   avgCapsuleCost: Math.round(char.totalCapsuleCost / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
@@ -2767,39 +2767,39 @@ function recomputeTeamCharStats(rawMatches, originalStats) {
     matchesPlayed: matchCount,
     activeMatchesPlayed: activeMatchCount,
     avgSpecialMoves: Math.round((totalSpecialMoves / denom) * 10) / 10,
-    avgUltimates: Math.round((totalUltimates / denom) * 10) / 10,
-    avgSPM1: Math.round((totalSPM1 / denom) * 10) / 10,
-    avgSPM2: Math.round((totalSPM2 / denom) * 10) / 10,
-    avgEXA1: Math.round((totalEXA1 / denom) * 10) / 10,
-    avgEXA2: Math.round((totalEXA2 / denom) * 10) / 10,
-    avgS1Blast: Math.round((totalS1Blast / denom) * 10) / 10,
-    avgS2Blast: Math.round((totalS2Blast / denom) * 10) / 10,
-    avgUltBlast: Math.round((totalUltBlast / denom) * 10) / 10,
-    avgS1Hit: Math.round((totalS1HitBlast / denom) * 10) / 10,
-    avgS2Hit: Math.round((totalS2HitBlast / denom) * 10) / 10,
-    avgUltHit: Math.round((totalULTHitBlast / denom) * 10) / 10,
+    avgUltimates: Math.round((totalUltimates / denom) * 100) / 100,
+    avgSPM1: Math.round((totalSPM1 / denom) * 100) / 100,
+    avgSPM2: Math.round((totalSPM2 / denom) * 100) / 100,
+    avgEXA1: Math.round((totalEXA1 / denom) * 100) / 100,
+    avgEXA2: Math.round((totalEXA2 / denom) * 100) / 100,
+    avgS1Blast: Math.round((totalS1Blast / denom) * 100) / 100,
+    avgS2Blast: Math.round((totalS2Blast / denom) * 100) / 100,
+    avgUltBlast: Math.round((totalUltBlast / denom) * 100) / 100,
+    avgS1Hit: Math.round((totalS1HitBlast / denom) * 100) / 100,
+    avgS2Hit: Math.round((totalS2HitBlast / denom) * 100) / 100,
+    avgUltHit: Math.round((totalULTHitBlast / denom) * 100) / 100,
     s1HitRateOverall: totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null,
     s2HitRateOverall: totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null,
     ultHitRateOverall: totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null,
-    avgTags: Math.round((totalTags / denom) * 10) / 10,
+    avgTags: Math.round((totalTags / denom) * 100) / 100,
     totalTags,
-    avgTransformations: Math.round((totalTransformations / denom) * 10) / 10,
-    avgSparking: Math.round((totalSparking / denom) * 10) / 10,
+    avgTransformations: Math.round((totalTransformations / denom) * 100) / 100,
+    avgSparking: Math.round((totalSparking / denom) * 100) / 100,
     avgCharges: Math.round((totalCharges / denom) * 10) / 10,
     avgGuards: Math.round((totalGuards / denom) * 10) / 10,
     avgEnergyBlasts: Math.round((totalEnergyBlasts / denom) * 10) / 10,
-    avgZCounters: Math.round((totalZCounters / denom) * 10) / 10,
-    avgSuperCounters: Math.round((totalSuperCounters / denom) * 10) / 10,
-    avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 10) / 10,
+    avgZCounters: Math.round((totalZCounters / denom) * 100) / 100,
+    avgSuperCounters: Math.round((totalSuperCounters / denom) * 100) / 100,
+    avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 100) / 100,
     avgMaxComboNum: Math.round((totalMaxComboNum / denom) * 10) / 10,
     avgMaxComboDamage: Math.round(totalMaxComboDamage / denom),
-    avgThrows: Math.round((totalThrows / denom) * 10) / 10,
-    avgDragonHoming: Math.round((totalDragonHoming / denom) * 10) / 10,
-    avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 10) / 10,
+    avgThrows: Math.round((totalThrows / denom) * 100) / 100,
+    avgDragonHoming: Math.round((totalDragonHoming / denom) * 100) / 100,
+    avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 100) / 100,
     speedImpactWinRate,
     avgSparkingCombo: Math.round((totalSparkingCombo / denom) * 10) / 10,
     avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
-    avgKills: Math.round((totalKills / denom) * 10) / 10,
+    avgKills: Math.round((totalKills / denom) * 100) / 100,
     // Keep topBuilds from the original so the full builds table is unchanged
     topBuilds: originalStats.topBuilds,
     rawMatches: originalStats.rawMatches,
@@ -3421,48 +3421,48 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           usageRate: Math.round((activeMatchCount / team.activeMatches) * 100 * 10) / 10,
           // Special Abilities averages
           avgSpecialMoves: Math.round((totalSpecialMoves / denom) * 10) / 10,
-          avgUltimates: Math.round((totalUltimates / denom) * 10) / 10,
+          avgUltimates: Math.round((totalUltimates / denom) * 100) / 100,
           avgSkills: Math.round((totalSkills / denom) * 10) / 10,
-          avgSPM1: Math.round((totalSPM1 / denom) * 10) / 10,
-          avgSPM2: Math.round((totalSPM2 / denom) * 10) / 10,
-          avgEXA1: Math.round((totalEXA1 / denom) * 10) / 10,
-          avgEXA2: Math.round((totalEXA2 / denom) * 10) / 10,
+          avgSPM1: Math.round((totalSPM1 / denom) * 100) / 100,
+          avgSPM2: Math.round((totalSPM2 / denom) * 100) / 100,
+          avgEXA1: Math.round((totalEXA1 / denom) * 100) / 100,
+          avgEXA2: Math.round((totalEXA2 / denom) * 100) / 100,
           // New blast tracking averages
-          avgS1Blast: Math.round((totalS1Blast / denom) * 10) / 10,
-          avgS2Blast: Math.round((totalS2Blast / denom) * 10) / 10,
-          avgUltBlast: Math.round((totalUltBlast / denom) * 10) / 10,
-          avgS1Hit: Math.round((totalS1HitBlast / denom) * 10) / 10,
-          avgS2Hit: Math.round((totalS2HitBlast / denom) * 10) / 10,
-          avgUltHit: Math.round((totalULTHitBlast / denom) * 10) / 10,
+          avgS1Blast: Math.round((totalS1Blast / denom) * 100) / 100,
+          avgS2Blast: Math.round((totalS2Blast / denom) * 100) / 100,
+          avgUltBlast: Math.round((totalUltBlast / denom) * 100) / 100,
+          avgS1Hit: Math.round((totalS1HitBlast / denom) * 100) / 100,
+          avgS2Hit: Math.round((totalS2HitBlast / denom) * 100) / 100,
+          avgUltHit: Math.round((totalULTHitBlast / denom) * 100) / 100,
           s1HitRateOverall: totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null,
           s2HitRateOverall: totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null,
           ultHitRateOverall: totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null,
           
-          avgTags: Math.round((totalTags / denom) * 10) / 10,
+          avgTags: Math.round((totalTags / denom) * 100) / 100,
           totalTags: totalTags,
-          avgTransformations: Math.round((totalTransformations / denom) * 10) / 10,
+          avgTransformations: Math.round((totalTransformations / denom) * 100) / 100,
           
           // Survival & Health averages
-          avgSparking: Math.round((totalSparking / denom) * 10) / 10,
+          avgSparking: Math.round((totalSparking / denom) * 100) / 100,
           avgCharges: Math.round((totalCharges / denom) * 10) / 10,
           avgGuards: Math.round((totalGuards / denom) * 10) / 10,
           avgEnergyBlasts: Math.round((totalEnergyBlasts / denom) * 10) / 10,
-          avgZCounters: Math.round((totalZCounters / denom) * 10) / 10,
-          avgSuperCounters: Math.round((totalSuperCounters / denom) * 10) / 10,
-          avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 10) / 10,
+          avgZCounters: Math.round((totalZCounters / denom) * 100) / 100,
+          avgSuperCounters: Math.round((totalSuperCounters / denom) * 100) / 100,
+          avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 100) / 100,
           // Combat Performance averages
           avgMaxComboNum: Math.round((totalMaxComboNum / denom) * 10) / 10,
           avgMaxComboDamage: Math.round(totalMaxComboDamage / denom),
-          avgThrows: Math.round((totalThrows / denom) * 10) / 10,
-          avgLightningAttacks: Math.round((totalLightningAttacks / denom) * 10) / 10,
-          avgVanishingAttacks: Math.round((totalVanishingAttacks / denom) * 10) / 10,
-          avgDragonHoming: Math.round((totalDragonHoming / denom) * 10) / 10,
-          avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 10) / 10,
-          avgSpeedImpactWins: Math.round((totalSpeedImpactWins / denom) * 10) / 10,
+          avgThrows: Math.round((totalThrows / denom) * 100) / 100,
+          avgLightningAttacks: Math.round((totalLightningAttacks / denom) * 100) / 100,
+          avgVanishingAttacks: Math.round((totalVanishingAttacks / denom) * 100) / 100,
+          avgDragonHoming: Math.round((totalDragonHoming / denom) * 100) / 100,
+          avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 100) / 100,
+          avgSpeedImpactWins: Math.round((totalSpeedImpactWins / denom) * 100) / 100,
           speedImpactWinRate: speedImpactWinRate,
           avgSparkingCombo: Math.round((totalSparkingCombo / denom) * 10) / 10,
           avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
-          avgKills: Math.round((totalKills / denom) * 10) / 10,
+          avgKills: Math.round((totalKills / denom) * 100) / 100,
           // Raw match data for build filter recomputation
           rawMatches: matches
         };
@@ -3743,6 +3743,8 @@ export default function App() {
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
   const [analysisFileContent, setAnalysisFileContent] = useState(null);
   const [viewType, setViewType] = useState('single');
+  const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
+  const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
   const [manualFiles, setManualFiles] = useState([]);
   const [expandedRows, setExpandedRows] = useState({}); // Expanded state for character rows
   const [expandedPositions, setExpandedPositions] = useState({}); // Expanded state for position accordions in matchups
@@ -4010,28 +4012,28 @@ export default function App() {
   const avgBattleTime = Math.round((totalBattleTime / Math.max(denom, 1)) * 10) / 10;
   const avgHPGaugeValueMax = Math.round(totalHPGaugeValueMax / Math.max(denom, 1));
   const avgSpecial = Math.round((totalSpecial / Math.max(denom, 1)) * 10) / 10;
-  const avgUltimates = Math.round((totalUltimates / Math.max(denom, 1)) * 10) / 10;
+  const avgUltimates = Math.round((totalUltimates / Math.max(denom, 1)) * 100) / 100;
   const avgSkills = Math.round((totalSkills / Math.max(denom, 1)) * 10) / 10;
-  const avgKills = Math.round((totalKills / Math.max(denom, 1)) * 10) / 10;
-  const avgSparking = Math.round((totalSparking / Math.max(denom, 1)) * 10) / 10;
+  const avgKills = Math.round((totalKills / Math.max(denom, 1)) * 100) / 100;
+  const avgSparking = Math.round((totalSparking / Math.max(denom, 1)) * 100) / 100;
   const avgCharges = Math.round((totalCharges / Math.max(denom, 1)) * 10) / 10;
   const avgGuards = Math.round((totalGuards / Math.max(denom, 1)) * 10) / 10;
   const avgEnergyBlasts = Math.round((totalEnergyBlasts / Math.max(denom, 1)) * 10) / 10;
-  const avgZCounters = Math.round((totalZCounters / Math.max(denom, 1)) * 10) / 10;
-  const avgSuperCounters = Math.round((totalSuperCounters / Math.max(denom, 1)) * 10) / 10;
-  const avgRevengeCounters = Math.round((totalRevengeCounters / Math.max(denom, 1)) * 10) / 10;
-  const avgTags = Math.round((totalTags / Math.max(denom, 1)) * 10) / 10;
-  const avgTransformations = Math.round((totalTransformations / Math.max(denom, 1)) * 10) / 10;
+  const avgZCounters = Math.round((totalZCounters / Math.max(denom, 1)) * 100) / 100;
+  const avgSuperCounters = Math.round((totalSuperCounters / Math.max(denom, 1)) * 100) / 100;
+  const avgRevengeCounters = Math.round((totalRevengeCounters / Math.max(denom, 1)) * 100) / 100;
+  const avgTags = Math.round((totalTags / Math.max(denom, 1)) * 100) / 100;
+  const avgTransformations = Math.round((totalTransformations / Math.max(denom, 1)) * 100) / 100;
   const avgMaxCombo = Math.round((maxComboNumTotal / Math.max(denom, 1)) * 10) / 10;
   const avgMaxComboDamage = Math.round(maxComboDamageTotal / Math.max(denom, 1));
   
   // Special Abilities - NEW blast tracking averages
-  const avgS1Blast = Math.round((totalS1Blast / Math.max(denom, 1)) * 10) / 10;
-  const avgS2Blast = Math.round((totalS2Blast / Math.max(denom, 1)) * 10) / 10;
-  const avgUltBlast = Math.round((totalUltBlast / Math.max(denom, 1)) * 10) / 10;
-  const avgS1Hit = Math.round((totalS1HitBlast / Math.max(denom, 1)) * 10) / 10;
-  const avgS2Hit = Math.round((totalS2HitBlast / Math.max(denom, 1)) * 10) / 10;
-  const avgUltHit = Math.round((totalULTHitBlast / Math.max(denom, 1)) * 10) / 10;
+  const avgS1Blast = Math.round((totalS1Blast / Math.max(denom, 1)) * 100) / 100;
+  const avgS2Blast = Math.round((totalS2Blast / Math.max(denom, 1)) * 100) / 100;
+  const avgUltBlast = Math.round((totalUltBlast / Math.max(denom, 1)) * 100) / 100;
+  const avgS1Hit = Math.round((totalS1HitBlast / Math.max(denom, 1)) * 100) / 100;
+  const avgS2Hit = Math.round((totalS2HitBlast / Math.max(denom, 1)) * 100) / 100;
+  const avgUltHit = Math.round((totalULTHitBlast / Math.max(denom, 1)) * 100) / 100;
   // Hit rates (overall across all filtered matches)
   const s1HitRateOverall = totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null;
   const s2HitRateOverall = totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null;
@@ -4040,17 +4042,17 @@ export default function App() {
   // Special Abilities - Legacy blast tracking (for backwards compatibility)
   const avgSPM1 = avgS1Blast; // Same as avgS1Blast
   const avgSPM2 = avgS2Blast; // Same as avgS2Blast
-  const avgEXA1 = Math.round((totalEXA1 / Math.max(denom, 1)) * 10) / 10;
-  const avgEXA2 = Math.round((totalEXA2 / Math.max(denom, 1)) * 10) / 10;
+  const avgEXA1 = Math.round((totalEXA1 / Math.max(denom, 1)) * 100) / 100;
+  const avgEXA2 = Math.round((totalEXA2 / Math.max(denom, 1)) * 100) / 100;
   const avgDragonDashMileage = Math.round((totalDragonDashMileage / Math.max(denom, 1)) * 10) / 10;
   
   // Combat Performance averages
-  const avgThrows = Math.round((totalThrows / Math.max(denom, 1)) * 10) / 10;
-  const avgLightningAttacks = Math.round((totalLightningAttacks / Math.max(denom, 1)) * 10) / 10;
-  const avgVanishingAttacks = Math.round((totalVanishingAttacks / Math.max(denom, 1)) * 10) / 10;
-  const avgDragonHoming = Math.round((totalDragonHoming / Math.max(denom, 1)) * 10) / 10;
-  const avgSpeedImpacts = Math.round((totalSpeedImpacts / Math.max(denom, 1)) * 10) / 10;
-  const avgSpeedImpactWins = Math.round((totalSpeedImpactWins / Math.max(denom, 1)) * 10) / 10;
+  const avgThrows = Math.round((totalThrows / Math.max(denom, 1)) * 100) / 100;
+  const avgLightningAttacks = Math.round((totalLightningAttacks / Math.max(denom, 1)) * 100) / 100;
+  const avgVanishingAttacks = Math.round((totalVanishingAttacks / Math.max(denom, 1)) * 100) / 100;
+  const avgDragonHoming = Math.round((totalDragonHoming / Math.max(denom, 1)) * 100) / 100;
+  const avgSpeedImpacts = Math.round((totalSpeedImpacts / Math.max(denom, 1)) * 100) / 100;
+  const avgSpeedImpactWins = Math.round((totalSpeedImpactWins / Math.max(denom, 1)) * 100) / 100;
   const avgSparkingCombo = Math.round((totalSparkingCombo / Math.max(denom, 1)) * 10) / 10;
   
   // Calculate win/loss stats
@@ -4330,32 +4332,32 @@ export default function App() {
           avgHPRemaining: Math.round((formStat.totalHPRemaining || 0) / matchCount),
           avgHPMax: Math.round((formStat.totalHPMax || 0) / matchCount),
           avgSpecialMoves: Math.round(((formStat.totalSpecialMoves || 0) / matchCount) * 10) / 10,
-          avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 10) / 10,
+          avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 100) / 100,
           avgSkills: Math.round(((formStat.totalSkills || 0) / matchCount) * 10) / 10,
-          avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 10) / 10,
-          avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 10) / 10,
-          avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 10) / 10,
-          avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 10) / 10,
-          avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 10) / 10,
-          avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 10) / 10,
-          avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 10) / 10,
+          avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 100) / 100,
+          avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 100) / 100,
+          avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 100) / 100,
+          avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 100) / 100,
+          avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 100) / 100,
+          avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 100) / 100,
+          avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 100) / 100,
           avgCharges: Math.round(((formStat.totalCharges || 0) / matchCount) * 10) / 10,
           avgGuards: Math.round(((formStat.totalGuards || 0) / matchCount) * 10) / 10,
           avgEnergyBlasts: Math.round(((formStat.totalEnergyBlasts || 0) / matchCount) * 10) / 10,
-          avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 10) / 10,
-          avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 10) / 10,
-          avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 10) / 10,
+          avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 100) / 100,
+          avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 100) / 100,
+          avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 100) / 100,
           avgMaxComboNum: Math.round(((formStat.totalMaxComboNum || 0) / matchCount) * 10) / 10,
           avgMaxComboDamage: Math.round((formStat.totalMaxComboDamage || 0) / matchCount),
-          avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 10) / 10,
-          avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 10) / 10,
-          avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 10) / 10,
-          avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 10) / 10,
-          avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 10) / 10,
-          avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 10) / 10,
+          avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 100) / 100,
+          avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 100) / 100,
+          avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 100) / 100,
+          avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 100) / 100,
+          avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 100) / 100,
+          avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 100) / 100,
           avgSparkingCombo: Math.round(((formStat.totalSparkingCombo || 0) / matchCount) * 10) / 10,
           avgDragonDashMileage: Math.round(((formStat.totalDragonDashMileage || 0) / matchCount) * 10) / 10,
-          avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 10) / 10,
+          avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 100) / 100,
           // Calculated stats
           damagePerSecond: Math.round(damagePerSecond * 10) / 10,
           damageEfficiency: Math.round(damageEfficiency * 100) / 100,
@@ -4670,12 +4672,51 @@ export default function App() {
     event.stopPropagation();
   };
 
+  const handleNavigateToMatch = async (fileName) => {
+    if (!fileName) return;
+    if (mode === 'manual') {
+      const file = manualFiles.find(f => f.name === fileName);
+      if (file && !file.error) {
+        setFileContent(file.content);
+        setSelectedFilePath([file.name]);
+        setAnalysisFileContent(file.content);
+        setAnalysisSelectedFilePath([file.name]);
+        setMatchFilterSource(fileName);
+        setViewType('single');
+        setExpandedRows({});
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+      }
+      return;
+    }
+    // Reference mode: fetch the file
+    const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
+    try {
+      const res = await fetch(`${base}BR_Data/${fileName}`);
+      if (res.ok) {
+        const content = await res.json();
+        setPreNavigationFileContent(fileContent); // save full array so Back to Tables can restore it
+        setFileContent(content);
+        setSelectedFilePath([fileName]);
+        setAnalysisFileContent(content);
+        setAnalysisSelectedFilePath([fileName]);
+        setMatchFilterSource(fileName);
+        setViewType('single');
+        setExpandedRows({});
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+      }
+    } catch (err) {
+      console.error('Failed to navigate to match file:', err);
+    }
+  };
+
   const handleModeChange = (newMode) => {
     setMode(newMode);
     setSelectedFile(null);
     setFileContent(null);
     setManualFiles([]);
     setViewType('single');
+    setMatchFilterSource(null);
+    setPreNavigationFileContent(null);
     setExpandedRows({});
   };
 
@@ -6114,27 +6155,27 @@ export default function App() {
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t border-gray-600">
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgThrows}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgThrows || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgVanishingAttacks}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgVanishingAttacks || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgDragonHoming}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgDragonHoming || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgLightningAttacks}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgLightningAttacks || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSpeedImpacts}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSpeedImpacts || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSpeedImpactWins}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSpeedImpactWins || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
@@ -6146,11 +6187,11 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo Hits:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSparkingCombo}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSparkingCombo || 0).toFixed(1)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgKills}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgKills || 0).toFixed(2)}</strong>
                                   </div>
                                 </div>
                               </div>
@@ -6176,11 +6217,11 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                    <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{char.avgTags || 0}</strong>
+                                    <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{(char.avgTags || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
-                                    <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{char.avgTransformations || 0}</strong>
+                                    <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{(char.avgTransformations || 0).toFixed(2)}</strong>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t border-gray-600">
@@ -6190,15 +6231,15 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSuperCounters}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSuperCounters || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgRevengeCounters}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgRevengeCounters || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgZCounters}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgZCounters || 0).toFixed(2)}</strong>
                                   </div>
                                 </div>
                               </div>
@@ -6230,7 +6271,7 @@ export default function App() {
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
                                       <div className="flex items-center gap-2">
                                         <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                          {(char.avgS1Hit || 0).toFixed(1)}/{(char.avgS1Blast || char.avgSPM1 || 0).toFixed(1)}
+                                          {(char.avgS1Hit || 0).toFixed(2)}/{(char.avgS1Blast || char.avgSPM1 || 0).toFixed(2)}
                                         </strong>
                                         {char.s1HitRateOverall !== null && char.s1HitRateOverall !== undefined && (
                                           <span className={`text-xs font-mono ${
@@ -6247,7 +6288,7 @@ export default function App() {
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
                                       <div className="flex items-center gap-2">
                                         <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                          {(char.avgS2Hit || 0).toFixed(1)}/{(char.avgS2Blast || char.avgSPM2 || 0).toFixed(1)}
+                                          {(char.avgS2Hit || 0).toFixed(2)}/{(char.avgS2Blast || char.avgSPM2 || 0).toFixed(2)}
                                         </strong>
                                         {char.s2HitRateOverall !== null && char.s2HitRateOverall !== undefined && (
                                           <span className={`text-xs font-mono ${
@@ -6264,7 +6305,7 @@ export default function App() {
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
                                       <div className="flex items-center gap-2">
                                         <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                          {(char.avgUltHit || 0).toFixed(1)}/{(char.avgUltBlast || char.avgUltimates || 0).toFixed(1)}
+                                          {(char.avgUltHit || 0).toFixed(2)}/{(char.avgUltBlast || char.avgUltimates || 0).toFixed(2)}
                                         </strong>
                                         {char.ultHitRateOverall !== null && char.ultHitRateOverall !== undefined && (
                                           <span className={`text-xs font-mono ${
@@ -6290,13 +6331,13 @@ export default function App() {
                                     <div className="flex justify-between">
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
                                       <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                        {char.avgSPM2}
+                                        {(char.avgSPM2 || 0).toFixed(2)}
                                       </strong>
                                     </div>
                                     <div className="flex justify-between">
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
                                       <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                        {char.avgUltimates}
+                                        {(char.avgUltimates || 0).toFixed(2)}
                                       </strong>
                                     </div>
                                   </div>
@@ -6316,7 +6357,7 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSparking}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSparking || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
@@ -6931,6 +6972,41 @@ export default function App() {
         {((mode === 'reference' && (analysisSelectedFilePath || selectedFilePath) && viewType === 'single') || 
           (mode === 'manual' && viewType === 'single' && (analysisFileContent || fileContent))) && (
           <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            {/* Match filter banner — shown when navigated from Data Tables */}
+            {matchFilterSource && (
+              <div className={`flex items-center justify-between gap-3 mb-4 px-4 py-3 rounded-xl border ${
+                darkMode
+                  ? 'bg-blue-900/30 border-blue-600 text-blue-200'
+                  : 'bg-blue-50 border-blue-300 text-blue-800'
+              }`}>
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText className="w-4 h-4 shrink-0" />
+                  <span className="text-sm font-medium shrink-0">Viewing match:</span>
+                  <span className={`text-sm font-mono truncate ${
+                    darkMode ? 'text-blue-300' : 'text-blue-700'
+                  }`}>{getFileNameFromPath(matchFilterSource)}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setMatchFilterSource(null);
+                    setViewType('tables');
+                    if (preNavigationFileContent !== null) {
+                      setFileContent(preNavigationFileContent);
+                      setPreNavigationFileContent(null);
+                    }
+                  }}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                    darkMode
+                      ? 'bg-blue-800 hover:bg-blue-700 text-blue-200 border border-blue-600'
+                      : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300'
+                  }`}
+                  title="Return to Data Tables"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Back to Tables
+                </button>
+              </div>
+            )}
             <div className="mb-2">  
               <div className={`flex items-center text-sm font-medium mb-2 gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 <Search className="w-4 h-4" /> Match Selection
@@ -7628,7 +7704,7 @@ export default function App() {
                   </div>
                   <DataTable
                     data={prepareMatchDetailsData(aggregatedData)}
-                    columns={getMatchDetailsTableConfig(darkMode).columns}
+                    columns={getMatchDetailsTableConfig(darkMode, handleNavigateToMatch).columns}
                     title="Individual Match Performance Details"
                     exportFileName={`match_details_${new Date().toISOString().split('T')[0]}`}
                     onExport={handleMatchDetailsExport}
@@ -7914,7 +7990,7 @@ export default function App() {
                                 Avg Tags
                               </div>
                               <div className={`text-base font-bold ${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>
-                                {(team.top5AvgTags || 0).toFixed(1)}
+                                {(team.top5AvgTags || 0).toFixed(2)}
                               </div>
                             </div>
                             
@@ -8036,7 +8112,7 @@ export default function App() {
                                               <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
                                                 <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Eliminations</div>
                                                 <div className={`text-sm font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                  {charStats.avgKills || 0}
+                                                  {(charStats.avgKills || 0).toFixed(2)}
                                                 </div>
                                               </div>
                                             </div>
@@ -8090,27 +8166,27 @@ export default function App() {
                                                   <div className={`grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgThrows || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgThrows || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgVanishingAttacks || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgVanishingAttacks || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonHoming || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgDragonHoming || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgLightningAttacks || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgLightningAttacks || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpacts || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSpeedImpacts || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpactWins || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSpeedImpactWins || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
@@ -8122,11 +8198,11 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparkingCombo || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSparkingCombo || 0).toFixed(1)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgKills || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgKills || 0).toFixed(2)}</strong>
                                                     </div>
                                                   </div>
                                                 </div>
@@ -8158,11 +8234,11 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                                      <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{charStats.avgTags || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{(charStats.avgTags || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
-                                                      <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{charStats.avgTransformations || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{(charStats.avgTransformations || 0).toFixed(2)}</strong>
                                                     </div>
                                                   </div>
                                                   <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
@@ -8172,15 +8248,15 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSuperCounters || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSuperCounters || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgRevengeCounters || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgRevengeCounters || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgZCounters || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgZCounters || 0).toFixed(2)}</strong>
                                                     </div>
                                                   </div>
                                                 </div>
@@ -8200,7 +8276,7 @@ export default function App() {
                                                         {charStats.s1HitRateOverall !== null && charStats.s1HitRateOverall !== undefined ? (
                                                           <>
                                                             <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                              {(charStats.avgS1Hit || 0).toFixed(1)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(1)}
+                                                              {(charStats.avgS1Hit || 0).toFixed(2)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(2)}
                                                             </strong>
                                                             <span className={`text-xs font-mono ${
                                                               charStats.s1HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
@@ -8212,7 +8288,7 @@ export default function App() {
                                                           </>
                                                         ) : (
                                                           <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgSPM1 || 0).toFixed(1)}
+                                                            {(charStats.avgSPM1 || 0).toFixed(2)}
                                                           </strong>
                                                         )}
                                                       </div>
@@ -8223,7 +8299,7 @@ export default function App() {
                                                         {charStats.s2HitRateOverall !== null && charStats.s2HitRateOverall !== undefined ? (
                                                           <>
                                                             <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                              {(charStats.avgS2Hit || 0).toFixed(1)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(1)}
+                                                              {(charStats.avgS2Hit || 0).toFixed(2)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(2)}
                                                             </strong>
                                                             <span className={`text-xs font-mono ${
                                                               charStats.s2HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
@@ -8235,7 +8311,7 @@ export default function App() {
                                                           </>
                                                         ) : (
                                                           <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgSPM2 || 0).toFixed(1)}
+                                                            {(charStats.avgSPM2 || 0).toFixed(2)}
                                                           </strong>
                                                         )}
                                                       </div>
@@ -8246,7 +8322,7 @@ export default function App() {
                                                         {charStats.ultHitRateOverall !== null && charStats.ultHitRateOverall !== undefined ? (
                                                           <>
                                                             <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                              {(charStats.avgUltHit || 0).toFixed(1)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(1)}
+                                                              {(charStats.avgUltHit || 0).toFixed(2)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(2)}
                                                             </strong>
                                                             <span className={`text-xs font-mono ${
                                                               charStats.ultHitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
@@ -8258,7 +8334,7 @@ export default function App() {
                                                           </>
                                                         ) : (
                                                           <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                            {(charStats.avgUltimates || 0).toFixed(1)}
+                                                            {(charStats.avgUltimates || 0).toFixed(2)}
                                                           </strong>
                                                         )}
                                                       </div>
@@ -8279,7 +8355,7 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparking || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSparking || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
