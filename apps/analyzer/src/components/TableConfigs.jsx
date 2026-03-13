@@ -37,7 +37,7 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
   description: 'Aggregated statistics showing overall performance across all matches',
   
   columnGroups: [
-    { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'primaryMap', 'matchCount', 'wins', 'losses'] },
+    { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'primaryMap', 'primaryPosition', 'matchCount', 'wins', 'losses'] },
     { name: 'Combat Performance', columns: ['avgDamage', 'avgTaken', 'efficiency', 'dps', 'combatScore', 'avgBattleTime', 'totalKills', 'avgKills'] },
     { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags', 'avgTransformations'] },
     { name: 'Special Abilities', columns: ['avgS1Blast', 'avgS1Hit', 's1HitRate', 'avgS2Blast', 'avgS2Hit', 's2HitRate', 'avgUltBlast', 'avgUltHit', 'ultHitRate', 'avgSkill1', 'avgSkill2', 'avgUltimates', 'avgEnergyBlasts', 'avgCharges', 'avgSparking', 'avgDragonDashMileage'] },
@@ -95,6 +95,29 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
           {value}
         </span>
       )
+    },
+    {
+      key: 'primaryPosition',
+      header: 'Position',
+      accessor: (row) => row.primaryPosition || '—',
+      sortable: true,
+      filterable: true,
+      group: 'Identity & Context',
+      exportFormat: { alignment: 'center' },
+      render: (row, value) => {
+        const colorMap = {
+          Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
+          Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
+          Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
+        };
+        return (
+          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+            colorMap[value] || (darkMode ? 'text-gray-400' : 'text-gray-500')
+          }`}>
+            {value}
+          </span>
+        );
+      }
     },
     {
       key: 'matchCount',
@@ -1035,6 +1058,7 @@ export const prepareCharacterAveragesData = (aggregatedData) => {
     primaryTeam: char.primaryTeam || 'Unknown',
     primaryAIStrategy: char.primaryAIStrategy || 'Unknown',
     primaryMap: char.primaryMap || 'Unknown',
+    primaryPosition: char.primaryPosition || null,
   matchCount: char.matchCount || 0,
   // Number of matches with non-zero battle time
   activeMatchCount: char.activeMatchCount || 0,
@@ -1128,7 +1152,7 @@ export const getMatchDetailsTableConfig = (darkMode = false, onNavigateToMatch =
   description: 'Per-match statistics for detailed analysis and trend identification',
   
   columnGroups: [
-    { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'map', 'matchResult', 'fileName'] },
+    { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'map', 'position', 'matchResult', 'fileName'] },
     { name: 'Combat Performance', columns: ['damageDone', 'damageTaken', 'efficiency', 'dps', 'battleDuration', 'kills'] },
     { name: 'Survival & Health', columns: ['hpRemaining', 'hpMax', 'hpRetention', 'guards', 'revengeCounters', 'superCounters', 'zCounters', 'tags', 'transformations'] },
     { name: 'Special Abilities', columns: ['s1Blast', 's1HitBlast', 's1HitRate', 's2Blast', 's2HitBlast', 's2HitRate', 'ultBlast', 'uLTHitBlast', 'ultHitRate', 'skill1', 'skill2', 'ultimates', 'kiBlasts', 'charges', 'sparkings', 'dragonDashMileage'] },
@@ -1213,6 +1237,29 @@ export const getMatchDetailsTableConfig = (darkMode = false, onNavigateToMatch =
           {value}
         </span>
       )
+    },
+    {
+      key: 'position',
+      header: 'Position',
+      accessor: (row) => row.position,
+      sortable: true,
+      filterable: true,
+      group: 'Match Identity',
+      exportFormat: { alignment: 'center' },
+      render: (row, value) => {
+        const colorMap = {
+          Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
+          Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
+          Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
+        };
+        return (
+          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+            colorMap[value] || (darkMode ? 'text-gray-400' : 'text-gray-500')
+          }`}>
+            {value}
+          </span>
+        );
+      }
     },
     {
       key: 'matchResult',
@@ -2142,6 +2189,7 @@ export const prepareMatchDetailsData = (aggregatedData) => {
         // Match Identity
         name: char.name || 'Unknown',
         matchNumber: index + 1,
+        position: match.position === 1 ? 'Starter' : match.position === 2 ? 'Middle' : match.position === 3 ? 'Anchor' : '—',
         team: match.team || char.primaryTeam || 'Unknown',
         opponentTeam: match.opponentTeam || 'Unknown',
         map: match.map || 'Unknown',

@@ -1822,9 +1822,30 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
   
   // Helper function to process a characterRecord (extracted to avoid duplication)
   function processCharacterRecord(characterRecord, characterIdRecord, teams = null, fileName = '', battleWinLose = null, mapId = null) {
+    // Pre-compute slot counts to determine Anchor position
+    const alliesSlotKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember'));
+    const enemySlotKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember'));
+    const totalAlliesSlots = alliesSlotKeys.length;
+    const totalEnemySlots = enemySlotKeys.length;
+
+    function getPositionFromKey(k) {
+      if (k.includes('１Ｐ')) return 1; // Starter
+      if (k.includes('２Ｐ')) return 1; // Starter (enemy)
+      if (k.includes('AlliesTeamMember') || k.includes('EnemyTeamMember')) {
+        const slotMatch = k.match(/Member(\d+)/);
+        const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
+        if (slotNumber) {
+          const totalSlots = k.includes('AlliesTeamMember') ? totalAlliesSlots : totalEnemySlots;
+          return slotNumber === totalSlots ? 3 : 2; // Last = Anchor, others = Middle
+        }
+      }
+      return null;
+    }
+
     Object.keys(characterRecord).forEach(key => {
       const char = characterRecord[key];
       const stats = extractStats(char, charMap, capsuleMap, null); // No position for aggregated data
+      const charPosition = getPositionFromKey(key);
       if (!stats.name || stats.name === '-') return;
       
       // Determine team association
@@ -2148,6 +2169,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         formChangeHistory: formChangeHistory,
         formChangeCount: formChangeCount,
         perFormStats: perFormStatsForMatch, // Store per-form stats with each match
+        position: charPosition,
         won: won,
         fileName: fileName
       });
@@ -2368,6 +2390,14 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       ? mapsArray.reduce((a, b) => char.mapsUsed[a] > char.mapsUsed[b] ? a : b)
       : null;
     
+    // Find most common position (1=Starter, 2=Middle, 3=Anchor)
+    const positionCounts = { 1: 0, 2: 0, 3: 0 };
+    char.matches.forEach(m => { if (m.position) positionCounts[m.position] = (positionCounts[m.position] || 0) + 1; });
+    const primaryPositionNum = [1, 2, 3].reduce((best, p) => positionCounts[p] > positionCounts[best] ? p : best, 1);
+    const primaryPosition = positionCounts[1] === 0 && positionCounts[2] === 0 && positionCounts[3] === 0
+      ? null
+      : primaryPositionNum === 1 ? 'Starter' : primaryPositionNum === 2 ? 'Middle' : 'Anchor';
+    
     // Calculate averages for per-form stats
     const formStatsArray = Object.values(char.formStats).map(formStat => {
       const matchCount = formStat.matchCount || 1;
@@ -2444,6 +2474,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       primaryTeam,
       primaryAIStrategy,
       primaryMap,
+      primaryPosition,
       // Use activeMatchCount (non-zero battleTime) for all averages when available
       _activeMatches: char.activeMatchCount || 0,
       avgDamage: Math.round(char.totalDamage / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
@@ -2988,6 +3019,20 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         // Extract original character ID for form tracking
         const originalForm = char.battlePlayCharacter?.originalCharacter?.key || char.originalCharacter?.key;
         
+        // Derive position from the character's key in the record
+        const p1SlotKeys = teams_data.p1.filter(c => c._key.includes('AlliesTeamMember')).length;
+        const charKey1 = char._key || '';
+        let charPosition1 = null;
+        if (charKey1.includes('\uff11\uff30')) {
+          charPosition1 = 1;
+        } else {
+          const slotMatch1 = charKey1.match(/Member(\d+)/);
+          if (slotMatch1) {
+            const slotNum1 = parseInt(slotMatch1[1]);
+            charPosition1 = slotNum1 === p1SlotKeys ? 3 : 2;
+          }
+        }
+
         // Store individual character match data with all detailed stats
         teamStats[team1Name].characterDetails[stats.name].push({
           damageDealt: stats.damageDone || 0,
@@ -2995,6 +3040,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           healthRemaining: stats.hPGaugeValue || 0,
           healthMax: stats.hPGaugeValueMax || 0,
           battleDuration: stats.battleTime || 0,
+          position: charPosition1,
           // Build and AI Strategy
           buildComposition: stats.buildComposition,
           aiStrategy: stats.aiStrategy,
@@ -3078,6 +3124,20 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         // Extract original character ID for form tracking
         const originalForm = char.battlePlayCharacter?.originalCharacter?.key || char.originalCharacter?.key;
         
+        // Derive position from the character's key in the record
+        const p2SlotKeys = teams_data.p2.filter(c => c._key.includes('EnemyTeamMember')).length;
+        const charKey2 = char._key || '';
+        let charPosition2 = null;
+        if (charKey2.includes('\uff12\uff30')) {
+          charPosition2 = 1;
+        } else {
+          const slotMatch2 = charKey2.match(/Member(\d+)/);
+          if (slotMatch2) {
+            const slotNum2 = parseInt(slotMatch2[1]);
+            charPosition2 = slotNum2 === p2SlotKeys ? 3 : 2;
+          }
+        }
+
         // Store individual character match data with all detailed stats
         teamStats[team2Name].characterDetails[stats.name].push({
           damageDealt: stats.damageDone || 0,
@@ -3085,6 +3145,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           healthRemaining: stats.hPGaugeValue || 0,
           healthMax: stats.hPGaugeValueMax || 0,
           battleDuration: stats.battleTime || 0,
+          position: charPosition2,
           // Build and AI Strategy
           buildComposition: stats.buildComposition,
           aiStrategy: stats.aiStrategy,
@@ -3464,7 +3525,16 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
           avgKills: Math.round((totalKills / denom) * 100) / 100,
           // Raw match data for build filter recomputation
-          rawMatches: matches
+          rawMatches: matches,
+          // Most common position
+          primaryPosition: (() => {
+            const pc = { 1: 0, 2: 0, 3: 0 };
+            matches.forEach(m => { if (m.position) pc[m.position] = (pc[m.position] || 0) + 1; });
+            const total = pc[1] + pc[2] + pc[3];
+            if (total === 0) return null;
+            const best = [1, 2, 3].reduce((a, b) => pc[b] > pc[a] ? b : a, 1);
+            return best === 1 ? 'Starter' : best === 2 ? 'Middle' : 'Anchor';
+          })()
         };
         
         // Track build usage for this character
@@ -8064,11 +8134,23 @@ export default function App() {
                                           onClick={() => setExpandedRows(prev => ({ ...prev, [charKey]: !prev[charKey] }))}
                                         >
                                           <div className="flex items-center justify-between gap-4">
-                                            {/* Character Name with Top 5 Badge */}
+                                            {/* Character Name with Position Badge */}
                                             <div className="flex items-center gap-2 min-w-[120px]">
                                               <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                                 {charName}
                                               </div>
+                                              {charStats.primaryPosition && (() => {
+                                                const posColorMap = {
+                                                  Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
+                                                  Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
+                                                  Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
+                                                };
+                                                return (
+                                                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${posColorMap[charStats.primaryPosition] || ''}`}>
+                                                    {charStats.primaryPosition}
+                                                  </span>
+                                                );
+                                              })()}
                                             </div>
                                             
                                             {/* Spacer to push stats to the right */}
