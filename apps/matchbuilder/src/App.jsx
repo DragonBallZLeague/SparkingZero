@@ -48,10 +48,14 @@ const getTransformationGroup = (charId, transformations) => {
 // Given a team array and the transformations map, returns all fusions where the team
 // contains a complete valid constituent pair. fusionOf stores pairs consecutively:
 // [A1, B1, A2, B2, ...] — valid fusions are (A1+B1), (A2+B2), etc.
+// Matching is done via transformation groups: a team member matches a fusionOf constituent
+// if that constituent appears anywhere in the member's transformation chain.
 // Returns: [{ fusionId, fusionName, constituentIdsOnTeam: [charId, ...] }]
 const getActiveFusions = (team, transformations) => {
   if (!team || !transformations) return [];
-  const teamIds = new Set(team.map(c => c.id).filter(Boolean));
+  const teamChars = team.map(c => c.id).filter(Boolean);
+  // Pre-compute transformation group for each team member
+  const teamGroups = teamChars.map(id => ({ id, group: getTransformationGroup(id, transformations) }));
   const result = [];
   for (const [id, entry] of Object.entries(transformations)) {
     if (!Array.isArray(entry.fusionOf) || entry.fusionOf.length < 2) continue;
@@ -60,9 +64,12 @@ const getActiveFusions = (team, transformations) => {
     for (let i = 0; i + 1 < entry.fusionOf.length; i += 2) {
       const a = entry.fusionOf[i];
       const b = entry.fusionOf[i + 1];
-      if (teamIds.has(a) && teamIds.has(b)) {
-        activePairMembers.add(a);
-        activePairMembers.add(b);
+      // Find team members whose transformation group covers each constituent
+      const aMatch = teamGroups.find(({ group }) => group.has(a));
+      const bMatch = teamGroups.find(({ id: tid, group }) => tid !== (aMatch && aMatch.id) && group.has(b));
+      if (aMatch && bMatch) {
+        activePairMembers.add(aMatch.id);
+        activePairMembers.add(bMatch.id);
       }
     }
     if (activePairMembers.size >= 2) {
