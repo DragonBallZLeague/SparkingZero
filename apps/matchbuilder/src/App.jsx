@@ -111,6 +111,50 @@ const MatchBuilder = () => {
     URL.revokeObjectURL(url);
   };
 
+  // Post-processes a yaml.dump() string to insert blank lines and comment labels before team sections,
+  // and blank lines between character entries — making the file more human-readable.
+  // YAML parsers ignore blank lines and comments so imports are unaffected.
+  const formatYamlReadable = (yamlStr) => {
+    const lines = yamlStr.split('\n');
+
+    // First pass: extract team/member name values for use in comment labels.
+    const teamNameMap = {};
+    for (const line of lines) {
+      let m;
+      if ((m = line.match(/^team1Name:\s*(.+)/))) teamNameMap['team1'] = m[1].trim();
+      if ((m = line.match(/^team2Name:\s*(.+)/))) teamNameMap['team2'] = m[1].trim();
+      if ((m = line.match(/^teamName:\s*(.+)/)))  teamNameMap['members'] = m[1].trim();
+    }
+
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // Top-level key: starts with a word character and contains a colon (not indented).
+      // Skip blank line before name header keys so matchName/teamName stay grouped together.
+      const isNameKey = /^(matchName|team1Name|team2Name|teamName):/.test(line);
+      if (i > 0 && !isNameKey && /^\w[\w ]*:/.test(line) && out[out.length - 1] !== '') {
+        out.push('');
+      }
+      // Inject a comment label before top-level team / members section keys.
+      const teamKey = !isNameKey && line.match(/^(team1|team2|members):/)?.[1];
+      if (teamKey) {
+        const label = teamNameMap[teamKey] || (teamKey === 'team1' ? 'Team 1' : teamKey === 'team2' ? 'Team 2' : 'Team');
+        const fill = '─'.repeat(Math.max(4, 36 - label.length));
+        out.push(`# ── ${label} ${fill}`);
+      }
+      // Insert blank line between character entries (but not before the very first entry in a list).
+      // The first entry follows the list key (e.g. "team1:" or "members:") so we skip it there.
+      if (/^  - character:/.test(line)) {
+        const lastNonEmpty = [...out].reverse().find(l => l.trim() !== '') ?? '';
+        if (out[out.length - 1] !== '' && !/:\s*$/.test(lastNonEmpty)) {
+          out.push('');
+        }
+      }
+      out.push(line);
+    }
+    return out.join('\n');
+  };
+
   // Helper to export a single team as YAML (uses display names)
   const exportSingleTeam = (team, teamName, matchName, matchId, teamKey) => {
     try {
@@ -120,11 +164,14 @@ const MatchBuilder = () => {
         members: team.map((char) => ({
           character: char.name || (characters.find(c => c.id === char.id)?.name || ""),
           costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : "",
-          // map capsule ids to names, but filter out engine-placeholder ids like '00_0_0061'
+          // map capsule ids to names with cost, but filter out engine-placeholder ids like '00_0_0061'
           capsules: (char.capsules || [])
             .map((cid) => {
               const found = capsules.find((c) => c.id === cid);
-              if (found) return found.name;
+              if (found) {
+                const cost = Number(found.cost || found.Cost || 0) || 0;
+                return `${found.name}${cost ? ` (${cost})` : ''}`;
+              }
               // treat unknown engine placeholder capsule ids (00_0_*) as empty
               if (cid && cid.toString().startsWith('00_0_')) return '';
               return cid;
@@ -148,7 +195,7 @@ const MatchBuilder = () => {
         });
         if (Object.keys(fusionSelsForTeam).length > 0) teamYaml.fusionSelections = fusionSelsForTeam;
       }
-      const yamlStr = yaml.dump(teamYaml, { noRefs: true, lineWidth: 120 });
+      const yamlStr = formatYamlReadable(yaml.dump(teamYaml, { noRefs: true, lineWidth: 120 }));
       downloadFile(`${teamName.replace(/\s+/g, "_")}.yaml`, yamlStr, "text/yaml");
       setSuccess(`Exported ${teamName} from ${matchName} as YAML.`);
     } catch (err) {
@@ -301,8 +348,11 @@ const MatchBuilder = () => {
         costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : "",
         capsules: (char.capsules || [])
           .map((cid) => {
-            const found = capsules.find((c) => c.id === cid);
-            if (found) return found.name;
+            const cap = capsules.find((c) => c.id === cid);
+            if (cap) {
+              const cost = Number(cap.cost || cap.Cost || 0) || 0;
+              return `${cap.name}${cost ? ` (${cost})` : ''}`;
+            }
             if (cid && cid.toString().startsWith('00_0_')) return '';
             return cid;
           })
@@ -332,7 +382,7 @@ const MatchBuilder = () => {
       })),
       ...(hasFusionSels ? { fusionSelections: fusionSelsYaml } : {}),
     };
-    const yamlStr = yaml.dump(matchYaml, { noRefs: true, lineWidth: 120 });
+    const yamlStr = formatYamlReadable(yaml.dump(matchYaml, { noRefs: true, lineWidth: 120 }));
     console.log("exportSingleMatch called", { matchYaml, yamlStr });
     downloadFile(`${match.name.replace(/\s+/g, "_")}.yaml`, yamlStr, "text/yaml");
     setSuccess(`Exported match ${match.name} as YAML.`);
