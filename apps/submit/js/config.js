@@ -19,19 +19,19 @@ const CONFIG = {
 
 // List of available teams for selection
 const TEAMS = [
-    '',
-    'Budokai',
-    'Cinema',
-    'Cold Kingdom',
-    'Creations',
-    'Demons',
-    'Malevolent Souls',
-    'Master and Student',
-    'Primal Instincts',
-    'Sentai',
-    'Time Patrol',
-    'Tiny Terrors',
-    'Z-Fighters'
+    { value: '', label: '' },
+    { value: 'Budokai', label: 'Budokai' },
+    { value: 'Cinema', label: 'Cinema' },
+    { value: 'Cold Kingdom', label: 'Cold Kingdom' },
+    { value: 'Creations', label: 'Creations' },
+    { value: 'Demons', label: 'Demons' },
+    { value: 'Malevolent Souls', label: 'Malevolent Souls' },
+    { value: 'Master and Student', label: 'Master & Student' },
+    { value: 'Primal Instincts', label: 'Primal Instincts' },
+    { value: 'Sentai', label: 'Sentai' },
+    { value: 'Time Patrol', label: 'Time Patrol' },
+    { value: 'Tiny Terrors', label: 'Tiny Terrors' },
+    { value: 'Z-Fighters', label: 'Z-Fighters' }
 ];
 
 // Stage constants for upload flow

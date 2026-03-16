@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #0f0f0f;
+  color: #e5e5e5;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f97316;
+}
+
+/* Stat row highlight */
+.stat-row-changed {
+  background-color: rgba(249, 115, 22, 0.08);
+}
+
+/* Capsule slot glow when selected */
+.capsule-slot-filled {
+  border-color: #f97316;
+  box-shadow: 0 0 6px rgba(249, 115, 22, 0.4);
+}
+
+/* Class badges */
+.badge-normal      { background: #3b82f6; }
+.badge-super_saiyan { background: #eab308; color: #000; }
+.badge-ki-blast    { background: #8b5cf6; }
+.badge-power       { background: #ef4444; }
+.badge-villain     { background: #1c1c2b; border: 1px solid #7c3aed; color: #a78bfa; }
+.badge-fusion      { background: #0ea5e9; }
+.badge-almighty    { background: #f97316; }
+.badge-rival       { background: #10b981; }
+.badge-secret      { background: #ec4899; }
+.badge-skill-user  { background: #6b7280; }

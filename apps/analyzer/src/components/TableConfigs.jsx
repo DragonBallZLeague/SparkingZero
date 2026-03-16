@@ -37,9 +37,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
   description: 'Aggregated statistics showing overall performance across all matches',
   
   columnGroups: [
-    { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'matchCount', 'wins', 'losses'] },
+    { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'primaryMap', 'primaryPosition', 'matchCount', 'wins', 'losses'] },
     { name: 'Combat Performance', columns: ['avgDamage', 'avgTaken', 'efficiency', 'dps', 'combatScore', 'avgBattleTime', 'totalKills', 'avgKills'] },
-    { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags'] },
+    { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags', 'avgTransformations'] },
     { name: 'Special Abilities', columns: ['avgS1Blast', 'avgS1Hit', 's1HitRate', 'avgS2Blast', 'avgS2Hit', 's2HitRate', 'avgUltBlast', 'avgUltHit', 'ultHitRate', 'avgSkill1', 'avgSkill2', 'avgUltimates', 'avgEnergyBlasts', 'avgCharges', 'avgSparking', 'avgDragonDashMileage'] },
     { name: 'Combat Mechanics', columns: ['avgMaxCombo', 'avgMaxComboDamage', 'avgThrows', 'avgLightningAttacks', 'avgVanishingAttacks', 'avgDragonHoming', 'avgSpeedImpacts', 'speedImpactWinRate', 'avgSparkingCombo'] },
     { name: 'Build & Equipment', columns: ['buildComposition', 'meleeCost', 'blastCost', 'kiBlastCost', 'defenseCost', 'skillCost', 'kiEfficiencyCost', 'utilityCost', 'topCapsules', 'primaryAIStrategy'] },
@@ -79,6 +79,45 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
           {value}
         </span>
       )
+    },
+    {
+      key: 'primaryMap',
+      header: 'Primary Map',
+      accessor: (row) => row.primaryMap || 'Unknown',
+      sortable: true,
+      filterable: true,
+      group: 'Identity & Context',
+      exportFormat: { alignment: 'left' },
+      render: (row, value) => (
+        <span className={`text-sm ${
+          darkMode ? 'text-gray-300' : 'text-gray-700'
+        }`}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'primaryPosition',
+      header: 'Position',
+      accessor: (row) => row.primaryPosition || '—',
+      sortable: true,
+      filterable: true,
+      group: 'Identity & Context',
+      exportFormat: { alignment: 'center' },
+      render: (row, value) => {
+        const colorMap = {
+          Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
+          Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
+          Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
+        };
+        return (
+          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+            colorMap[value] || (darkMode ? 'text-gray-400' : 'text-gray-500')
+          }`}>
+            {value}
+          </span>
+        );
+      }
     },
     {
       key: 'matchCount',
@@ -246,9 +285,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Performance',
-      exportFormat: { alignment: 'right', numFmt: '0.0' },
+      exportFormat: { alignment: 'right', numFmt: '0.00' },
       render: (row, value) => (
-        <span className="font-mono text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-yellow-600">{value.toFixed(2)}</span>
       )
     },
 
@@ -341,9 +380,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-purple-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-purple-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -354,9 +393,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-indigo-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-indigo-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -367,9 +406,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-cyan-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-cyan-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -380,9 +419,22 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Survival & Health',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-teal-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-teal-600">{value.toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'avgTransformations',
+      header: 'Avg Transformations',
+      accessor: (row) => row.avgTransformations,
+      sortType: 'number',
+      sortable: true,
+      filterable: false,
+      group: 'Survival & Health',
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
+      render: (row, value) => (
+        <span className="font-mono text-violet-600">{(value || 0).toFixed(2)}</span>
       )
     },
 
@@ -398,9 +450,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-orange-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-orange-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -411,9 +463,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-orange-700">{value.toFixed(1)}</span>
+        <span className="font-mono text-orange-700">{value.toFixed(2)}</span>
       )
     },
     {
@@ -448,9 +500,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-red-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-red-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -461,9 +513,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-red-700">{value.toFixed(1)}</span>
+        <span className="font-mono text-red-700">{value.toFixed(2)}</span>
       )
     },
     {
@@ -498,9 +550,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true, highlight: 'gold' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true, highlight: 'gold' },
       render: (row, value) => (
-        <span className="font-mono text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-yellow-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -511,9 +563,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true, highlight: 'gold' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true, highlight: 'gold' },
       render: (row, value) => (
-        <span className="font-mono font-bold text-yellow-700">{value.toFixed(1)}</span>
+        <span className="font-mono font-bold text-yellow-700">{value.toFixed(2)}</span>
       )
     },
     {
@@ -547,9 +599,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-purple-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-purple-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -560,9 +612,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-pink-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-pink-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -573,9 +625,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true, highlight: 'gold' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true, highlight: 'gold' },
       render: (row, value) => (
-        <span className="font-mono font-bold text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono font-bold text-yellow-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -615,11 +667,11 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Special Abilities',
-      exportFormat: { alignment: 'right', numFmt: '0.0', highlight: 'gold', icon: 'spark' },
+      exportFormat: { alignment: 'right', numFmt: '0.00', highlight: 'gold', icon: 'spark' },
       render: (row, value) => (
         <div className="flex items-center gap-1">
           <Zap className="w-4 h-4 text-orange-500" />
-          <span className="font-mono font-bold text-orange-600">{value.toFixed(1)}</span>
+          <span className="font-mono font-bold text-orange-600">{value.toFixed(2)}</span>
         </div>
       )
     },
@@ -674,9 +726,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-gray-400">{value.toFixed(1)}</span>
+        <span className="font-mono text-gray-400">{value.toFixed(2)}</span>
       )
     },
     {
@@ -687,9 +739,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-yellow-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-yellow-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -700,9 +752,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-blue-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-blue-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -713,9 +765,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0', heatmap: true },
+      exportFormat: { alignment: 'right', numFmt: '0.00', heatmap: true },
       render: (row, value) => (
-        <span className="font-mono text-indigo-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-indigo-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -726,9 +778,9 @@ export const getCharacterAveragesTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: false,
       group: 'Combat Mechanics',
-      exportFormat: { alignment: 'right', numFmt: '0.0' },
+      exportFormat: { alignment: 'right', numFmt: '0.00' },
       render: (row, value) => (
-        <span className="font-mono text-red-600">{value.toFixed(1)}</span>
+        <span className="font-mono text-red-600">{value.toFixed(2)}</span>
       )
     },
     {
@@ -1005,6 +1057,8 @@ export const prepareCharacterAveragesData = (aggregatedData) => {
     name: char.name || 'Unknown',
     primaryTeam: char.primaryTeam || 'Unknown',
     primaryAIStrategy: char.primaryAIStrategy || 'Unknown',
+    primaryMap: char.primaryMap || 'Unknown',
+    primaryPosition: char.primaryPosition || null,
   matchCount: char.matchCount || 0,
   // Number of matches with non-zero battle time
   activeMatchCount: char.activeMatchCount || 0,
@@ -1093,14 +1147,14 @@ export const prepareCharacterAveragesData = (aggregatedData) => {
 // Supports up to 7 capsules per match
 // ==============================================================================
 
-export const getMatchDetailsTableConfig = (darkMode = false) => ({
+export const getMatchDetailsTableConfig = (darkMode = false, onNavigateToMatch = null) => ({
   title: 'Individual Match Performance Details',
   description: 'Per-match statistics for detailed analysis and trend identification',
   
   columnGroups: [
-    { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'matchResult', 'fileName'] },
+    { name: 'Match Identity', columns: ['name', 'matchNumber', 'team', 'opponentTeam', 'map', 'position', 'matchResult', 'fileName'] },
     { name: 'Combat Performance', columns: ['damageDone', 'damageTaken', 'efficiency', 'dps', 'battleDuration', 'kills'] },
-    { name: 'Survival & Health', columns: ['hpRemaining', 'hpMax', 'hpRetention', 'guards', 'revengeCounters', 'superCounters', 'zCounters', 'tags'] },
+    { name: 'Survival & Health', columns: ['hpRemaining', 'hpMax', 'hpRetention', 'guards', 'revengeCounters', 'superCounters', 'zCounters', 'tags', 'transformations'] },
     { name: 'Special Abilities', columns: ['s1Blast', 's1HitBlast', 's1HitRate', 's2Blast', 's2HitBlast', 's2HitRate', 'ultBlast', 'uLTHitBlast', 'ultHitRate', 'skill1', 'skill2', 'ultimates', 'kiBlasts', 'charges', 'sparkings', 'dragonDashMileage'] },
     { name: 'Combat Mechanics', columns: ['maxComboHits', 'maxComboDamage', 'throws', 'lightningAttacks', 'vanishingAttacks', 'dragonHoming', 'speedImpacts', 'speedImpactWins', 'speedImpactWinRate', 'sparkingComboHits'] },
     { name: 'Build & Equipment', columns: ['buildComposition', 'capsule1', 'capsule2', 'capsule3', 'capsule4', 'capsule5', 'capsule6', 'capsule7', 'meleeCost', 'blastCost', 'kiBlastCost', 'defenseCost', 'skillCost', 'kiEfficiencyCost', 'utilityCost', 'aiStrategy'] },
@@ -1171,6 +1225,43 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
       )
     },
     {
+      key: 'map',
+      header: 'Map',
+      accessor: (row) => row.map || 'Unknown',
+      sortable: true,
+      filterable: true,
+      group: 'Match Identity',
+      exportFormat: { alignment: 'left' },
+      render: (row, value) => (
+        <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          {value}
+        </span>
+      )
+    },
+    {
+      key: 'position',
+      header: 'Position',
+      accessor: (row) => row.position,
+      sortable: true,
+      filterable: true,
+      group: 'Match Identity',
+      exportFormat: { alignment: 'center' },
+      render: (row, value) => {
+        const colorMap = {
+          Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
+          Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
+          Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
+        };
+        return (
+          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+            colorMap[value] || (darkMode ? 'text-gray-400' : 'text-gray-500')
+          }`}>
+            {value}
+          </span>
+        );
+      }
+    },
+    {
       key: 'matchResult',
       header: 'Result',
       accessor: (row) => row.matchResult,
@@ -1199,7 +1290,27 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
       filterable: false,
       group: 'Match Identity',
       exportFormat: { alignment: 'left', fontSize: 8, color: '808080' },
-      render: (row, value) => (
+      render: (row, value) => onNavigateToMatch ? (
+        <button
+          onClick={() => onNavigateToMatch(value)}
+          className={`text-left transition-colors cursor-pointer ${
+            darkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-600'
+          }`}
+          style={{
+            fontSize: '10px',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            margin: 0,
+            font: 'inherit',
+            textDecoration: 'underline',
+            textDecorationStyle: 'dotted',
+          }}
+          title="Open in Single Match View"
+        >
+          {value}
+        </button>
+      ) : (
         <span className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} style={{ fontSize: '10px' }}>
           {value}
         </span>
@@ -1420,6 +1531,19 @@ export const getMatchDetailsTableConfig = (darkMode = false) => ({
       exportFormat: { alignment: 'right', numFmt: '0' },
       render: (row, value) => (
         <span className="font-mono text-teal-600">{value}</span>
+      )
+    },
+    {
+      key: 'transformations',
+      header: 'Transformations',
+      accessor: (row) => row.formChangeCount,
+      sortType: 'number',
+      sortable: true,
+      filterable: false,
+      group: 'Survival & Health',
+      exportFormat: { alignment: 'right', numFmt: '0' },
+      render: (row, value) => (
+        <span className="font-mono text-violet-600">{value || 0}</span>
       )
     },
 
@@ -2065,8 +2189,10 @@ export const prepareMatchDetailsData = (aggregatedData) => {
         // Match Identity
         name: char.name || 'Unknown',
         matchNumber: index + 1,
+        position: match.position === 1 ? 'Starter' : match.position === 2 ? 'Middle' : match.position === 3 ? 'Anchor' : '—',
         team: match.team || char.primaryTeam || 'Unknown',
         opponentTeam: match.opponentTeam || 'Unknown',
+        map: match.map || 'Unknown',
         matchResult: match.won ? 'Win' : 'Loss',
         fileName: match.fileName || match.source || '',
         
@@ -2246,7 +2372,7 @@ export const getPositionTableConfig = (darkMode = false) => ({
       render: (row, value) => (
         <div className="flex items-center gap-1">
           <Trophy className="w-4 h-4 text-yellow-500" />
-          <span>{value.toFixed(1)}</span>
+          <span>{value.toFixed(2)}</span>
         </div>
       )
     },
@@ -2260,7 +2386,7 @@ export const getPositionTableConfig = (darkMode = false) => ({
       render: (row, value) => (
         <div className="flex items-center gap-1">
           <Zap className="w-4 h-4 text-orange-500" />
-          <span>{value.toFixed(1)}</span>
+          <span>{value.toFixed(2)}</span>
         </div>
       )
     }

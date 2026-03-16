@@ -39,10 +39,10 @@ export default function AIStrategyTable({
   };
   
   // Format blast stats (hit/used (hit%))
-  const formatBlastStats = (hit, used, hitRate) => {
+  const formatBlastStats = (hit, used, hitRate, decimals = 2) => {
     if (!used && !hit) return '0/0 (0%)';
-    const hitVal = formatNumber(hit, 1);
-    const usedVal = formatNumber(used, 1);
+    const hitVal = formatNumber(hit, decimals);
+    const usedVal = formatNumber(used, decimals);
     const rate = hitRate ? Math.round(hitRate) : 0;
     return `${hitVal}/${usedVal} (${rate}%)`;
   };
@@ -210,6 +210,10 @@ export default function AIStrategyTable({
       case 'tags':
         aVal = a.avgTags || 0;
         bVal = b.avgTags || 0;
+        break;
+      case 'transformations':
+        aVal = a.avgTransformations || 0;
+        bVal = b.avgTransformations || 0;
         break;
       case 'guards':
         aVal = a.avgGuards || 0;
@@ -428,7 +432,7 @@ export default function AIStrategyTable({
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors border-l-2 ${
                   darkMode 
-                    ? 'bg-red-900/40 text-red-200 border-red-600' 
+                    ? 'bg-red-900 text-red-200 border-red-600' 
                     : 'bg-red-100 text-red-800 border-red-300'
                 }`}
               >
@@ -443,7 +447,7 @@ export default function AIStrategyTable({
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode 
-                    ? 'bg-red-900/40 text-red-200' 
+                    ? 'bg-red-900 text-red-200' 
                     : 'bg-red-100 text-red-800'
                 }`}
               >
@@ -458,7 +462,7 @@ export default function AIStrategyTable({
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode 
-                    ? 'bg-red-900/40 text-red-200' 
+                    ? 'bg-red-900 text-red-200' 
                     : 'bg-red-100 text-red-800'
                 }`}
               >
@@ -473,7 +477,7 @@ export default function AIStrategyTable({
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
                   darkMode 
-                    ? 'bg-red-900/40 text-red-200' 
+                    ? 'bg-red-900 text-red-200' 
                     : 'bg-red-100 text-red-800'
                 }`}
               >
@@ -487,7 +491,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('throws')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '90px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -500,7 +504,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('vanishingAttacks')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -513,7 +517,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('dragonHoming')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -526,7 +530,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('lightningAttacks')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -539,7 +543,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('speedImpacts')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -552,7 +556,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('speedImpactWins')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -565,7 +569,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('maxCombo')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -578,7 +582,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('maxComboDamage')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '160px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -591,7 +595,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('sparkingComboHits')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '170px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -604,7 +608,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('kills')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '80px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100 text-red-800'
+                  darkMode ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -619,7 +623,7 @@ export default function AIStrategyTable({
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '110px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors border-l-2 ${
                   darkMode 
-                    ? 'bg-green-900/40 text-green-200 border-green-600' 
+                    ? 'bg-green-900 text-green-200 border-green-600' 
                     : 'bg-green-100 text-green-800 border-green-300'
                 }`}
               >
@@ -633,7 +637,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('healthRemaining')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -646,7 +650,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('survivalRate')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -659,7 +663,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('tags')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -669,10 +673,23 @@ export default function AIStrategyTable({
               </th>
               
               <th 
+                onClick={() => handleSort('transformations')}
+                style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '140px' }}
+                className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
+                }`}
+              >
+                <div className="flex items-center gap-1">
+                  Transformations
+                  <SortIcon columnKey="transformations" />
+                </div>
+              </th>
+              
+              <th 
                 onClick={() => handleSort('guards')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '90px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -685,7 +702,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('superCounters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -698,7 +715,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('revengeCounters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '150px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -711,7 +728,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('zCounters')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '110px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-green-900/40 text-green-200' : 'bg-green-100 text-green-800'
+                  darkMode ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -726,7 +743,7 @@ export default function AIStrategyTable({
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors border-l-2 ${
                   darkMode 
-                    ? 'bg-purple-900/40 text-purple-200 border-purple-600' 
+                    ? 'bg-purple-900 text-purple-200 border-purple-600' 
                     : 'bg-purple-100 text-purple-800 border-purple-300'
                 }`}
               >
@@ -740,7 +757,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('s2Blast')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -753,7 +770,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('ultBlast')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '130px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -766,7 +783,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('kiBlasts')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '100px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -779,7 +796,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('skill1')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -792,7 +809,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('skill2')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '120px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -805,7 +822,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('charges')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '100px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -818,7 +835,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('sparking')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '100px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -831,7 +848,7 @@ export default function AIStrategyTable({
                 onClick={() => handleSort('dragonDashDistance')}
                 style={{ position: 'sticky', top: 0, zIndex: 10, minWidth: '170px' }}
                 className={`px-4 py-3 text-left font-semibold cursor-pointer hover:bg-opacity-80 transition-colors ${
-                  darkMode ? 'bg-purple-900/40 text-purple-200' : 'bg-purple-100 text-purple-800'
+                  darkMode ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'
                 }`}
               >
                 <div className="flex items-center gap-1">
@@ -973,27 +990,27 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgThrows, 1)}
+                    {formatNumber(ai.avgThrows, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgVanishingAttacks, 1)}
+                    {formatNumber(ai.avgVanishingAttacks, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgDragonHoming, 1)}
+                    {formatNumber(ai.avgDragonHoming, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgLightningAttacks, 1)}
+                    {formatNumber(ai.avgLightningAttacks, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgSpeedImpacts, 1)}
+                    {formatNumber(ai.avgSpeedImpacts, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgSpeedImpactWins, 1)}
+                    {formatNumber(ai.avgSpeedImpactWins, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
@@ -1009,7 +1026,7 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                    {formatNumber(ai.avgKills, 1)}
+                    {formatNumber(ai.avgKills, 2)}
                   </td>
                   
                   {/* SURVIVAL & HEALTH SECTION */}
@@ -1030,7 +1047,11 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
-                    {formatNumber(ai.avgTags, 1)}
+                    {formatNumber(ai.avgTags, 2)}
+                  </td>
+                  
+                  <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
+                    {formatNumber(ai.avgTransformations, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
@@ -1038,15 +1059,15 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
-                    {formatNumber(ai.avgSuperCounters, 1)}
+                    {formatNumber(ai.avgSuperCounters, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
-                    {formatNumber(ai.avgRevengeCounters, 1)}
+                    {formatNumber(ai.avgRevengeCounters, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
-                    {formatNumber(ai.avgZCounters, 1)}
+                    {formatNumber(ai.avgZCounters, 2)}
                   </td>
                   
                   {/* SPECIAL ABILITIES SECTION */}
@@ -1071,11 +1092,11 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                    {formatNumber(ai.avgExa1Count, 1)}
+                    {formatNumber(ai.avgExa1Count, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                    {formatNumber(ai.avgExa2Count, 1)}
+                    {formatNumber(ai.avgExa2Count, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
@@ -1083,7 +1104,7 @@ export default function AIStrategyTable({
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                    {formatNumber(ai.avgSparkingCount, 1)}
+                    {formatNumber(ai.avgSparkingCount, 2)}
                   </td>
                   
                   <td className={`px-4 py-3 ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>

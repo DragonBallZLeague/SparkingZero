@@ -50,10 +50,10 @@ import {
   Brain,
   Minus
 } from 'lucide-react';
-import UploadWidgetLauncher from './UploadWidgetLauncher';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
 import capsulesCSV from '../../../referencedata/capsules.csv?raw';
+import mapsCSV from '../../../referencedata/maps.csv?raw';
 // Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
 // Each entry may be a module object; code uses module.default || module
 const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });
@@ -141,7 +141,7 @@ function parseCapsules(csvText) {
   return { capsules, aiStrategies };
 }
 
-function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = false, darkMode = false }) {
+function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = false, darkMode = false, size = 'medium' }) {
   // For inverse, flip the values for robust stats
   let values = allValues;
   let val = value;
@@ -168,11 +168,22 @@ function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = f
     default:
       colorClass = darkMode ? 'bg-gray-900/30 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-800 border-gray-200';
   }
+  
+  // Size configurations
+  const sizeClasses = {
+    'extra-small': { padding: 'px-1.5 py-0.5', text: 'text-xs', icon: 'w-3 h-3', gap: 'gap-1', border: 'border' },
+    'small': { padding: 'px-2 py-1', text: 'text-sm', icon: 'w-3 h-3', gap: 'gap-1.5', border: 'border' },
+    'medium': { padding: 'px-2 py-2', text: 'text-base', icon: 'w-4 h-4', gap: 'gap-2', border: 'border-2' },
+    'large': { padding: 'px-3 py-2', text: 'text-lg', icon: 'w-5 h-5', gap: 'gap-2', border: 'border-2' }
+  };
+  
+  const sizeConfig = sizeClasses[size] || sizeClasses['medium'];
+  
   return (
-    <span className={`inline-flex items-center gap-2 px-2 py-2 rounded-lg text-base font-bold border-2 ${colorClass}`}>
-      <Star className="w-4 h-4" />
+    <span className={`inline-flex items-center ${sizeConfig.gap} ${sizeConfig.padding} rounded-lg ${sizeConfig.text} font-bold ${sizeConfig.border} ${colorClass}`}>
+      <Star className={sizeConfig.icon} />
       <span>Score:</span>
-      <span className="text-base">{Math.round(value)}</span>
+      <span className={sizeConfig.text}>{Math.round(value)}</span>
     </span>
   );
 }
@@ -247,14 +258,17 @@ function PerformanceScoreBadge({ score, label = 'Score', size = 'medium', darkMo
   };
 
   const sizeClasses = {
+    'extra-small': 'text-xs px-1.5 py-0.5',
     small: 'text-sm px-2 py-0',
     medium: 'text-base px-3 py-1.5',
     large: 'text-lg px-4 py-2'
   };
 
+  const iconSize = size === 'extra-small' ? 'w-3 h-3' : size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-4 h-4' : 'w-5 h-5';
+  
   return (
-    <div className={`inline-flex items-center gap-2 rounded-lg border font-bold ${colorClasses[level]} ${sizeClasses[size]}`}>
-      <Star className={size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-4 h-4' : 'w-5 h-5'} />
+    <div className={`inline-flex items-center gap-1 rounded-lg border font-bold ${colorClasses[level]} ${sizeClasses[size]}`}>
+      <Star className={iconSize} />
       <span>{label}: {Math.round(score)}</span>
     </div>
   );
@@ -305,6 +319,7 @@ function MetricDisplay({ label, value, icon: Icon, color = 'gray', darkMode = fa
     purple: darkMode ? 'text-purple-400' : 'text-purple-600',
     orange: darkMode ? 'text-orange-400' : 'text-orange-600',
     teal: darkMode ? 'text-teal-400' : 'text-teal-600',
+    violet: darkMode ? 'text-violet-300' : 'text-violet-600',
     gray: darkMode ? 'text-gray-400' : 'text-gray-600'
   };
 
@@ -601,6 +616,7 @@ function extractStats(char, charMap, capsuleMap = {}, position = null, aiStrateg
     superCounterCount: numCount.superCounterCount || 0,
     revengeCounterCount: numCount.revengeCounter || 0,
     tags, // New: Character swap tracking
+    formChangeCount: Array.isArray(char.formChangeHistory) ? char.formChangeHistory.length : 0, // Number of transformations
     // Special Abilities - detailed blast tracking (NEW SYSTEM)
     hasAdditionalCounts, // Flag to determine if new format with additionalCounts
     s1Blast,        // Super 1 thrown
@@ -875,7 +891,7 @@ function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equipped
       {tooltipOpen && buildComposition && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
-          style={{ ...floatingStyles, width: '16rem' }}
+          style={{ ...floatingStyles, width: '16rem', zIndex: 10000 }}
           className={`p-3 rounded-lg shadow-xl border z-[10000] ${
             darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'
           }`}
@@ -904,21 +920,21 @@ function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equipped
       {/* Capsules List */}
       {equippedCapsules && equippedCapsules.length > 0 && (
         <>
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1 pt-1 px-5">
             {equippedCapsules.map((capsule, idx) => (
-              <div key={idx} className={`flex items-center justify-between text-xs p-1.5 rounded ${
-                darkMode ? 'bg-gray-600/50' : 'bg-gray-100'
+              <div key={idx} className={`flex items-center justify-between text-sm py-1.5 rounded border-b ${
+                darkMode
+                  ? 'text-gray-200 border-gray-500/25'
+                  : 'text-gray-700 border-gray-400/20'
               }`}>
-                <span className={`${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                  {capsule.name}
-                </span>
+                <span>{capsule.name}</span>
                 <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
                   {capsule.capsule.cost}
                 </span>
               </div>
             ))}
           </div>
-          <div className={`flex items-center justify-between text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <div className={`flex items-center justify-between text-sm font-semibold px-5 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             <span>Capsules ({equippedCapsules.length})</span>
             <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{totalCapsuleCost}</span></span>
           </div>
@@ -940,6 +956,318 @@ function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equipped
           {count} {count === 1 ? 'match' : 'matches'}
         </strong>
       </div>
+    </div>
+  );
+}
+
+// Sortable build table + detail card for a character's full build history
+function BuildTableView({
+  builds,          // full sorted builds array
+  buildKey,        // unique key per character (char.name or charKey)
+  selectedBuildIndex,
+  setSelectedBuildIndex,
+  selectedBuildSort,
+  setSelectedBuildSort,
+  allScores,       // for PerformanceScoreBadge colour context
+  primaryTeam,     // optional — shown in detail panel footer
+  activeBuildFilters,      // track active build filter per character
+  setActiveBuildFilters,   // setter for active build filter
+  darkMode,
+}) {
+  if (!builds || builds.length === 0) return null;
+
+  const [panelOpen, setPanelOpen] = useState(false);
+  const tableRef = useRef(null);
+
+  const { refs, floatingStyles } = useFloating({
+    placement: 'left',
+    middleware: [offset(8), flip()],
+    whileElementsMounted: autoUpdate,
+  });
+
+  // Sort state for this character's table: { col, dir }
+  const sortState = selectedBuildSort[buildKey] || { col: 'activeCount', dir: 'desc' };
+  const selectedIndex = selectedBuildIndex[buildKey] ?? 0;
+
+  // Build filter helpers
+  const getBuildFilterKey = (build) => {
+    const capsuleKey = (build.equippedCapsules || [])
+      .map(c => c.name || c.id || '').sort().join(',');
+    return `${capsuleKey}|${build.aiStrategy || 'Default'}`;
+  };
+  const characterActiveFilter = activeBuildFilters ? activeBuildFilters[buildKey] : null;
+
+  // Close on outside click or Escape
+  useEffect(() => {
+    if (!panelOpen) return;
+    const handleMouseDown = (e) => {
+      const inPanel = refs.floating.current?.contains(e.target);
+      const inTable = tableRef.current?.contains(e.target);
+      if (!inPanel && !inTable) setPanelOpen(false);
+    };
+    const handleKey = (e) => { if (e.key === 'Escape') setPanelOpen(false); };
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [panelOpen, refs]);
+
+  // Close panel when the buildKey changes (different character expanded)
+  useEffect(() => { setPanelOpen(false); }, [buildKey]);
+
+  const handleSort = (col) => {
+    const next = sortState.col === col
+      ? { col, dir: sortState.dir === 'desc' ? 'asc' : 'desc' }
+      : { col, dir: 'desc' };
+    setSelectedBuildSort(prev => ({ ...prev, [buildKey]: next }));
+  };
+
+  // Apply table sort (independent of the aggregation sort)
+  const sortedForTable = [...builds].sort((a, b) => {
+    let av, bv;
+    switch (sortState.col) {
+      case 'activeCount': av = a.activeCount; bv = b.activeCount; break;
+      case 'avgDamage':
+        av = a.activeCount > 0 ? a.totalDamageDealt / a.activeCount : 0;
+        bv = b.activeCount > 0 ? b.totalDamageDealt / b.activeCount : 0;
+        break;
+      case 'efficiency':
+        av = a.totalDamageTaken > 0 ? a.totalDamageDealt / a.totalDamageTaken : a.totalDamageDealt;
+        bv = b.totalDamageTaken > 0 ? b.totalDamageDealt / b.totalDamageTaken : b.totalDamageDealt;
+        break;
+      case 'score': av = a.avgPerformanceScore; bv = b.avgPerformanceScore; break;
+      default: av = a.activeCount; bv = b.activeCount;
+    }
+    return sortState.dir === 'desc' ? bv - av : av - bv;
+  });
+
+  const currentBuild = sortedForTable[selectedIndex] || sortedForTable[0];
+  const bestScoreIdx = sortedForTable.reduce((best, b, i) =>
+    b.avgPerformanceScore > sortedForTable[best].avgPerformanceScore ? i : best, 0);
+  // Find the build that is currently applied as a filter (for the clear pill)
+  const activeFilterBuild = characterActiveFilter
+    ? sortedForTable.find(b => getBuildFilterKey(b) === characterActiveFilter) || null
+    : null;
+
+  const handleRowClick = (e, i) => {
+    e.stopPropagation();
+    if (selectedIndex === i && panelOpen) {
+      setPanelOpen(false);
+    } else {
+      setSelectedBuildIndex(prev => ({ ...prev, [buildKey]: i }));
+      setPanelOpen(true);
+    }
+  };
+
+  const SortIcon = ({ col }) => {
+    if (sortState.col !== col) return <ArrowUpDown className="w-3 h-3 opacity-40 inline ml-0.5" />;
+    return sortState.dir === 'desc'
+      ? <ChevronDown className="w-3 h-3 inline ml-0.5" />
+      : <ChevronUp className="w-3 h-3 inline ml-0.5" />;
+  };
+
+  const thClass = `text-center text-xs font-semibold cursor-pointer select-none whitespace-nowrap px-1.5 py-1 uppercase tracking-wide transition-colors ${darkMode ? 'text-gray-400 hover:text-indigo-300' : 'text-gray-500 hover:text-indigo-600'}`;
+  const thLeftClass = `text-left text-xs font-semibold px-1.5 py-1 uppercase tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-500'}`;
+
+  // Each row is ~28px; show 8 rows + header before scrolling
+  const ROW_HEIGHT = 28;
+  const MAX_VISIBLE_ROWS = 8;
+  const tbodyMaxHeight = ROW_HEIGHT * MAX_VISIBLE_ROWS;
+
+  return (
+    <div ref={tableRef}>
+      {/* Active build filter clear pill — shown above the table when a filter is active */}
+      {characterActiveFilter && activeFilterBuild && (
+        <div className={`flex items-center justify-between gap-2 px-3 py-2.5 mb-2 rounded-lg text-xs font-medium border ${
+          darkMode ? 'bg-amber-950/40 border-amber-700 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-800'
+        }`}>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Filter className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">
+              <span className="font-semibold">{activeFilterBuild.buildComposition?.label || '—'}</span>
+              {activeFilterBuild.aiStrategy && (
+                <span className={darkMode ? 'text-amber-400' : 'text-amber-600'}> · {activeFilterBuild.aiStrategy}</span>
+              )}
+            </span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveBuildFilters(prev => {
+                const next = { ...prev };
+                delete next[buildKey];
+                return next;
+              });
+            }}
+            className={`flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded text-xs font-bold transition-colors bg-transparent ${
+              darkMode ? 'hover:bg-amber-800 text-amber-300 hover:text-white' : 'hover:bg-amber-200 text-amber-700 hover:text-amber-900'
+            }`}
+            title="Clear build filter"
+          >
+            <X className="w-3 h-3" />
+            Clear
+          </button>
+        </div>
+      )}
+      <div className={`rounded-lg overflow-hidden border ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
+        {/* Fixed header */}
+        <table className="w-full text-xs table-fixed">
+          <colgroup>
+            <col style={{ width: '2rem' }} />
+            <col style={{ width: '10rem' }} />
+            <col />
+            <col style={{ width: '3.5rem' }} />
+            <col style={{ width: '4rem' }} />
+          </colgroup>
+          <thead>
+            <tr className={`${darkMode ? 'bg-gray-900/80 border-b border-gray-700' : 'bg-gray-100 border-b border-gray-300'}`}>
+              <th className={thLeftClass} style={{ paddingLeft: '0.75rem' }}>#</th>
+              <th className={thLeftClass}>Build Type</th>
+              <th className={thLeftClass}>AI Strategy</th>
+              <th className={thClass} onClick={() => handleSort('activeCount')}>Uses <SortIcon col="activeCount" /></th>
+              <th className={thClass} style={{ paddingRight: '0.75rem' }} onClick={() => handleSort('score')}>Score <SortIcon col="score" /></th>
+            </tr>
+          </thead>
+        </table>
+        {/* Scrollable body */}
+        <div style={{ maxHeight: `${tbodyMaxHeight}px`, overflowY: 'auto' }} className={`${darkMode ? 'scrollbar-dark bg-gray-800' : 'bg-white'}`}>
+          <table className="w-full text-xs table-fixed">
+            <colgroup>
+              <col style={{ width: '2rem' }} />
+              <col style={{ width: '10rem' }} />
+              <col />
+              <col style={{ width: '3.5rem' }} />
+              <col style={{ width: '3.5rem' }} />
+            </colgroup>
+            <tbody className={`divide-y ${darkMode ? 'divide-gray-600' : 'divide-gray-200'}`}>
+              {sortedForTable.map((build, i) => {
+                const isSelected = i === selectedIndex && panelOpen;
+                const isBestScore = i === bestScoreIdx;
+                const isActiveFilter = getBuildFilterKey(build) === characterActiveFilter;
+                const rowBase = isSelected
+                  ? darkMode ? 'bg-indigo-950 border-l-2 border-indigo-400' : 'bg-indigo-100 border-l-2 border-indigo-500'
+                  : isActiveFilter
+                    ? darkMode ? 'bg-amber-950/40 border-l-2 border-amber-500' : 'bg-amber-50 border-l-2 border-amber-500'
+                    : darkMode ? 'hover:bg-gray-700/60 border-l-2 border-transparent' : 'hover:bg-gray-50 border-l-2 border-transparent';
+                return (
+                  <tr
+                    key={i}
+                    ref={i === selectedIndex ? refs.setReference : null}
+                    className={`cursor-pointer transition-colors ${rowBase}`}
+                    onClick={(e) => handleRowClick(e, i)}
+                  >
+                    <td className={`px-1.5 py-1 font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} style={{ paddingLeft: '0.75rem' }}>
+                      {isBestScore
+                        ? <Star className="w-3 h-3 inline text-yellow-400" title="Best performance score" />
+                        : i + 1}
+                    </td>
+                    <td className="px-1.5 py-1">
+                      <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-medium border whitespace-nowrap ${getBuildTypeColor(build.buildComposition, darkMode)}`}>
+                        {build.buildComposition?.label || '—'}
+                      </span>
+                    </td>
+                    <td className={`px-1.5 py-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {build.aiStrategy || 'Default'}
+                    </td>
+                    <td className={`px-1.5 py-1 text-left font-medium ${darkMode ? 'text-indigo-300' : 'text-indigo-700'}`}>
+                      {build.activeCount}
+                    </td>
+                    <td className={`px-1.5 py-1 text-left font-semibold ${darkMode ? 'text-yellow-300' : 'text-yellow-700'}`} style={{ paddingRight: '0.75rem' }}>
+                      {Math.round(build.avgPerformanceScore)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Floating detail panel — portal so it escapes card overflow clipping */}
+      {panelOpen && currentBuild && typeof document !== 'undefined' && createPortal(
+        <div
+          ref={refs.setFloating}
+          style={{ ...floatingStyles, zIndex: 9999, width: '26rem' }}
+          className={`rounded-lg shadow-2xl border ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'}`}
+        >
+          {/* Panel header */}
+          <div className={`flex items-center justify-between px-3 py-2 rounded-t-lg border-b ${darkMode ? 'bg-gray-900/60 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+            <span className={`text-xs font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Build {selectedIndex + 1} of {sortedForTable.length}
+            </span>
+            <div className="flex items-center gap-2">
+              <PerformanceScoreBadge
+                score={currentBuild.avgPerformanceScore || 0}
+                label="Score"
+                size="small"
+                darkMode={darkMode}
+                allScores={allScores}
+              />
+              <button
+                onClick={(e) => { e.stopPropagation(); setPanelOpen(false); }}
+                className={`w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold transition-colors ${darkMode ? 'bg-gray-700 hover:bg-red-700 text-gray-300 hover:text-white' : 'bg-gray-200 hover:bg-red-500 text-gray-600 hover:text-white'}`}
+                title="Close"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          <div className="p-3">
+            <BuildTypeTooltipWrapper
+              buildComposition={currentBuild.buildComposition}
+              aiStrategy={currentBuild.aiStrategy}
+              count={currentBuild.activeCount}
+              equippedCapsules={currentBuild.equippedCapsules}
+              totalCapsuleCost={currentBuild.totalCapsuleCost}
+              darkMode={darkMode}
+              tooltipKey={`${buildKey}-floating-panel-${selectedIndex}`}
+            />
+            {primaryTeam && (
+              <div className={`flex items-center justify-between font-semibold text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <span className={`font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Main Team:</span>
+                <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{primaryTeam}</span>
+              </div>
+            )}
+            {/* Apply / Remove build filter button */}
+            {setActiveBuildFilters && currentBuild && (() => {
+              const fKey = getBuildFilterKey(currentBuild);
+              const isCurrentFilter = characterActiveFilter === fKey;
+              return (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveBuildFilters(prev => {
+                      if (isCurrentFilter) {
+                        const next = { ...prev };
+                        delete next[buildKey];
+                        return next;
+                      }
+                      return { ...prev, [buildKey]: fKey };
+                    });
+                    setPanelOpen(false);
+                  }}
+                  className={`mt-2 w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                    isCurrentFilter
+                      ? darkMode
+                        ? 'bg-amber-800/60 hover:bg-red-800/60 text-amber-200 border border-amber-600'
+                        : 'bg-amber-100 hover:bg-red-100 text-amber-800 border border-amber-400'
+                      : darkMode
+                        ? 'bg-indigo-800/60 hover:bg-indigo-700/60 text-indigo-200 border border-indigo-600'
+                        : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300'
+                  }`}
+                >
+                  {isCurrentFilter
+                    ? <><X className="w-3 h-3" /> Remove Build Filter</>
+                    : <><Filter className="w-3 h-3" /> Apply as Filter</>}
+                </button>
+              );
+            })()}
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
@@ -1025,7 +1353,7 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
       {tooltipOpen && stats.buildComposition && hasEquipment && typeof document !== 'undefined' && createPortal(
         <div
           ref={refs.setFloating}
-          style={{ ...floatingStyles, width: '16rem' }}
+          style={{ ...floatingStyles, width: '16rem', zIndex: 10000 }}
           className={`p-3 rounded-lg shadow-xl border z-[10000] ${
             darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'
           }`}
@@ -1198,58 +1526,52 @@ function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, charMap
   );
 }
 
-function getPositionBasedData(files, charMap, capsuleMap = {}) {
+function getPositionBasedData(files, charMap, capsuleMap = {}, positionMatchTypeFilters = ['2v2', '3v3', '4v4', '5v5']) {
   const positionStats = {
-    1: { totalMatches: 0, characters: {} }, // Position 1 (Lead)
-    2: { totalMatches: 0, characters: {} }, // Position 2 (Middle)
-    3: { totalMatches: 0, characters: {} }  // Position 3 (Anchor)
+    1: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 1 (Lead)
+    2: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 2 (Middle)
+    3: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }  // Position 3 (Anchor)
   };
   
   // Helper function to process a characterRecord
-  function processCharacterRecord(characterRecord) {
+  function processCharacterRecord(characterRecord, fileIndex = 0, recordIndex = 0) {
     if (!characterRecord) return;
+    
+    // Create a unique match ID based on file and record indices
+    const matchId = `${fileIndex}-${recordIndex}`;
     
     // Process each team separately to determine team size
     const alliesKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember'));
     const enemyKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember'));
+    const allies1PKey = Object.keys(characterRecord).find(k => k.includes('１Ｐ'));
+    const enemy2PKey = Object.keys(characterRecord).find(k => k.includes('２Ｐ'));
     
-    // Process allies team
-    const alliesTeamSize = alliesKeys.length;
-    alliesKeys.forEach(key => {
-      const char = characterRecord[key];
-      if (!char) return;
-      
-      // Extract slot number from key (e.g., "AlliesTeamMember1" -> 1)
-      const slotMatch = key.match(/Member(\d+)/);
-      const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
-      if (!slotNumber) return;
-      
-      // Determine position: 1 = lead (first), 2 = middle (everyone else), 3 = anchor (last)
-      let position;
-      if (slotNumber === 1) {
-        position = 1; // Lead
-      } else if (slotNumber === alliesTeamSize) {
-        position = 3; // Anchor
-      } else {
-        position = 2; // Middle
-      }
-      
+    // True team size = lead (1P) + AlliesTeamMember slots
+    const alliesTeamSize = alliesKeys.length + (allies1PKey ? 1 : 0);
+    const matchType = `${alliesTeamSize}v${alliesTeamSize}`;
+    if (!positionMatchTypeFilters.includes(matchType)) {
+      return; // Skip this match if it doesn't match the selected filters
+    }
+    
+    // Helper to accumulate stats into a position
+    function accumulateCharStats(char, position) {
       const stats = extractStats(char, charMap, capsuleMap, position);
       if (!stats.name || stats.name === '-') return;
       
       const characterName = stats.name;
-      
       positionStats[position].totalMatches++;
+      positionStats[position].uniqueMatches.add(matchId);
       
       if (!positionStats[position].characters[characterName]) {
         positionStats[position].characters[characterName] = {
           name: characterName,
           matchCount: 0,
-          // activeMatchCount counts matches where battleTime > 0
           activeMatchCount: 0,
+          survivalCount: 0,
           totalDamage: 0,
           totalTaken: 0,
           totalHealth: 0,
+          totalHPGaugeValueMax: 0,
           totalBattleTime: 0,
           totalSpecialMoves: 0,
           totalUltimates: 0,
@@ -1264,16 +1586,16 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
       }
       
       const charData = positionStats[position].characters[characterName];
-      // Always increment visible match count
       charData.matchCount++;
-      // Only count as an "active" match if battleTime > 0
       if (stats.battleTime && stats.battleTime > 0) {
         charData.activeMatchCount += 1;
         charData.totalBattleTime += stats.battleTime;
       }
+      if (stats.hPGaugeValue > 0) charData.survivalCount++;
       charData.totalDamage += stats.damageDone;
       charData.totalTaken += stats.damageTaken;
       charData.totalHealth += stats.hPGaugeValue;
+      charData.totalHPGaugeValueMax += stats.hPGaugeValueMax;
       charData.totalSpecialMoves += stats.specialMovesUsed;
       charData.totalUltimates += stats.ultimatesUsed;
       charData.totalSkills += stats.skillsUsed;
@@ -1283,84 +1605,50 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
       charData.totalEnergyBlasts += stats.shotEnergyBulletCount;
       charData.totalComboNum += stats.maxComboNum;
       charData.totalComboDamage += stats.maxComboDamage;
-    });
+    }
     
-    // Process enemy team
-    const enemyTeamSize = enemyKeys.length;
-    enemyKeys.forEach(key => {
+    // Process allies lead (1P key) as Position 1 (Lead)
+    if (allies1PKey && characterRecord[allies1PKey]) {
+      accumulateCharStats(characterRecord[allies1PKey], 1);
+    }
+    
+    // Process allies team members: last AlliesTeamMember = Anchor (3), rest = Middle (2)
+    alliesKeys.forEach(key => {
       const char = characterRecord[key];
       if (!char) return;
-      
-      // Extract slot number from key (e.g., "EnemyTeamMember1" -> 1)
       const slotMatch = key.match(/Member(\d+)/);
       const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
       if (!slotNumber) return;
       
-      // Determine position: 1 = lead (first), 2 = middle (everyone else), 3 = anchor (last)
-      let position;
-      if (slotNumber === 1) {
-        position = 1; // Lead
-      } else if (slotNumber === enemyTeamSize) {
-        position = 3; // Anchor
-      } else {
-        position = 2; // Middle
-      }
+      // Last AlliesTeamMember slot is the Anchor; all others are Middle
+      const position = slotNumber === alliesKeys.length ? 3 : 2;
+      accumulateCharStats(char, position);
+    });
+    
+    // Process enemy lead (2P key) as Position 1 (Lead)
+    if (enemy2PKey && characterRecord[enemy2PKey]) {
+      accumulateCharStats(characterRecord[enemy2PKey], 1);
+    }
+    
+    // Process enemy team members: last EnemyTeamMember = Anchor (3), rest = Middle (2)
+    enemyKeys.forEach(key => {
+      const char = characterRecord[key];
+      if (!char) return;
+      const slotMatch = key.match(/Member(\d+)/);
+      const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
+      if (!slotNumber) return;
       
-      if (!positionStats[position]) return;
-      
-      const stats = extractStats(char, charMap, capsuleMap, position);
-      if (!stats.name || stats.name === '-') return;
-      
-      const characterName = stats.name;
-      
-      positionStats[position].totalMatches++;
-      
-      if (!positionStats[position].characters[characterName]) {
-        positionStats[position].characters[characterName] = {
-          name: characterName,
-          matchCount: 0,
-          totalDamage: 0,
-          totalTaken: 0,
-          totalHealth: 0,
-          totalBattleTime: 0,
-          totalSpecialMoves: 0,
-          totalUltimates: 0,
-          totalSkills: 0,
-          totalSparking: 0,
-          totalCharges: 0,
-          totalGuards: 0,
-          totalEnergyBlasts: 0,
-          totalComboNum: 0,
-          totalComboDamage: 0
-        };
-      }
-      
-      const charData = positionStats[position].characters[characterName];
-      charData.matchCount++;
-      charData.totalDamage += stats.damageDone;
-      charData.totalTaken += stats.damageTaken;
-      charData.totalHealth += stats.hPGaugeValue;
-      // Only include battleTime in totals if it's > 0. This keeps averages consistent when excluding zero-duration matches.
-      if (stats.battleTime && stats.battleTime > 0) {
-        charData.totalBattleTime += stats.battleTime;
-      }
-      charData.totalSpecialMoves += stats.specialMovesUsed;
-      charData.totalUltimates += stats.ultimatesUsed;
-      charData.totalSkills += stats.skillsUsed;
-      charData.totalSparking += stats.sparkingCount;
-      charData.totalCharges += stats.chargeCount;
-      charData.totalGuards += stats.guardCount;
-      charData.totalEnergyBlasts += stats.shotEnergyBulletCount;
-      charData.totalComboNum += stats.maxComboNum;
-      charData.totalComboDamage += stats.maxComboDamage;
+      const position = slotNumber === enemyKeys.length ? 3 : 2;
+      accumulateCharStats(char, position);
     });
   }
   
-  files.forEach(file => {
+  files.forEach((file, fileIndex) => {
     if (file.error) return;
     
     const fileContent = file.content;
     let characterRecord;
+    let recordIndex = 0;
     
     // Handle TeamBattleResults format (current BR_Data structure)
     if (fileContent.TeamBattleResults) {
@@ -1380,7 +1668,7 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
     // Handle new format with teams array at the top
     else if (fileContent.teams && Array.isArray(fileContent.teams)) {
       // Process all teams in the array
-      fileContent.teams.forEach(team => {
+      fileContent.teams.forEach((team, teamIndex) => {
         let teamCharRecord;
         
         if (team.BattleResults) {
@@ -1390,7 +1678,7 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
         }
         
         if (teamCharRecord) {
-          processCharacterRecord(teamCharRecord);
+          processCharacterRecord(teamCharRecord, fileIndex, teamIndex);
         }
       });
       return; // Already processed all teams
@@ -1404,22 +1692,58 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
       characterRecord = fileContent.characterRecord;
     }
     
-    processCharacterRecord(characterRecord);
+    processCharacterRecord(characterRecord, fileIndex, recordIndex);
   });
   
   // Calculate averages and format data
   Object.keys(positionStats).forEach(position => {
     const posData = positionStats[position];
+    
+    // Convert uniqueMatches Set to count and clean up
+    posData.uniqueMatchCount = posData.uniqueMatches.size;
+    delete posData.uniqueMatches; // Clean up Set object
+    
     posData.sortedCharacters = Object.values(posData.characters)
+      .filter(char => {
+        // Only include characters that actually participated in battles
+        // Filter out characters with 0 battle time and 0 active matches
+        return (char.activeMatchCount && char.activeMatchCount > 0) || char.totalBattleTime > 0;
+      })
       .map(char => {
         // Use activeMatchCount if available (exclude zero battleTime matches), fallback to matchCount
         const denom = (char.activeMatchCount && char.activeMatchCount > 0) ? char.activeMatchCount : char.matchCount || 1;
+        
+        // Calculate averages
+        const avgDamage = char.totalDamage / denom;
+        const avgTaken = char.totalTaken / denom;
+        const avgHealth = char.totalHealth / denom;
+        const avgBattleTime = char.totalBattleTime / denom;
+        const avgDPS = char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0;
+        const damageEfficiency = char.totalTaken > 0 ? (char.totalDamage / char.totalTaken) : char.totalDamage;
+        const avgHPGaugeValueMax = char.totalHPGaugeValueMax / denom;
+        
+        // Calculate performance score
+        const healthRetention = avgHPGaugeValueMax > 0 ? avgHealth / avgHPGaugeValueMax : 0;
+        const baseScore = (
+          (avgDamage / 100000) * 35 +
+          (damageEfficiency) * 25 +
+          (avgDPS / 1000) * 25 +
+          (healthRetention) * 15
+        );
+        const experienceMatches = char.activeMatchCount || char.matchCount || 1;
+        const experienceMultiplier = Math.min(1.25, 1.0 + (experienceMatches - 1) * (0.25 / 11));
+        const combatPerformanceScore = Math.round(baseScore * experienceMultiplier * 100) / 100;
+        
+        // Calculate survival rate (percentage of matches survived)
+        const survivalRate = char.matchCount > 0 ? (char.survivalCount / char.matchCount) : 0;
+        
         return ({
           ...char,
-          avgDamage: char.totalDamage / denom,
-          avgTaken: char.totalTaken / denom,
-          avgHealth: char.totalHealth / denom,
-          avgBattleTime: char.totalBattleTime / denom,
+          avgDamage,
+          avgTaken,
+          avgHealth,
+          avgBattleTime,
+          avgDPS,
           avgSpecialMoves: char.totalSpecialMoves / denom,
           avgUltimates: char.totalUltimates / denom,
           avgSkills: char.totalSkills / denom,
@@ -1429,23 +1753,99 @@ function getPositionBasedData(files, charMap, capsuleMap = {}) {
           avgEnergyBlasts: char.totalEnergyBlasts / denom,
           avgComboNum: char.totalComboNum / denom,
           avgComboDamage: char.totalComboDamage / denom,
-          damageEfficiency: char.totalTaken > 0 ? (char.totalDamage / char.totalTaken) : char.totalDamage
+          damageEfficiency,
+          healthRetention,
+          survivalRate,
+          combatPerformanceScore
         });
       })
-      .sort((a, b) => b.avgDamage - a.avgDamage);
+      .sort((a, b) => b.combatPerformanceScore - a.combatPerformanceScore);
   });
   
   return positionStats;
 }
 
-function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}) {
+// Helper functions for position analysis
+function calculatePositionAverage(posData, metric) {
+  if (!posData.sortedCharacters || posData.sortedCharacters.length === 0) return 0;
+  const sum = posData.sortedCharacters.reduce((acc, char) => acc + (char[metric] || 0), 0);
+  return sum / posData.sortedCharacters.length;
+}
+
+function calculatePositionSurvivalRate(posData) {
+  if (!posData.sortedCharacters || posData.sortedCharacters.length === 0) return 0;
+  // Sum up actual survival counts across all characters
+  const totalSurvivals = posData.sortedCharacters.reduce((acc, char) => 
+    acc + (char.survivalCount || 0), 0);
+  // Sum up total match counts
+  const totalMatches = posData.sortedCharacters.reduce((acc, char) => 
+    acc + char.matchCount, 0);
+  return totalMatches > 0 ? Math.round((totalSurvivals / totalMatches) * 100) : 0;
+}
+
+function getPositionInsight(posData, positionName) {
+  if (!posData || !posData.sortedCharacters || posData.sortedCharacters.length === 0) {
+    return 'No data available';
+  }
+  
+  const avgDamage = calculatePositionAverage(posData, 'avgDamage');
+  const avgEfficiency = calculatePositionAverage(posData, 'damageEfficiency');
+  const survivalRate = calculatePositionSurvivalRate(posData);
+  
+  const insights = [];
+  
+  if (avgDamage > 120000) {
+    insights.push('high damage output');
+  } else if (avgDamage < 80000) {
+    insights.push('lower damage output');
+  } else {
+    insights.push('moderate damage output');
+  }
+  
+  if (avgEfficiency > 1.5) {
+    insights.push('efficient trading');
+  } else if (avgEfficiency < 1.0) {
+    insights.push('taking more damage than dealing');
+  }
+  
+  if (survivalRate > 60) {
+    insights.push('good survivability');
+  } else if (survivalRate < 40) {
+    insights.push('low survival rate');
+  }
+  
+  return insights.join(', ') || 'balanced performance';
+}
+
+function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
   const characterStats = {};
   
   // Helper function to process a characterRecord (extracted to avoid duplication)
-  function processCharacterRecord(characterRecord, characterIdRecord, teams = null, fileName = '', battleWinLose = null) {
+  function processCharacterRecord(characterRecord, characterIdRecord, teams = null, fileName = '', battleWinLose = null, mapId = null) {
+    // Pre-compute slot counts to determine Anchor position
+    const alliesSlotKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember'));
+    const enemySlotKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember'));
+    const totalAlliesSlots = alliesSlotKeys.length;
+    const totalEnemySlots = enemySlotKeys.length;
+
+    function getPositionFromKey(k) {
+      if (k.includes('１Ｐ')) return 1; // Starter
+      if (k.includes('２Ｐ')) return 1; // Starter (enemy)
+      if (k.includes('AlliesTeamMember') || k.includes('EnemyTeamMember')) {
+        const slotMatch = k.match(/Member(\d+)/);
+        const slotNumber = slotMatch ? parseInt(slotMatch[1]) : null;
+        if (slotNumber) {
+          const totalSlots = k.includes('AlliesTeamMember') ? totalAlliesSlots : totalEnemySlots;
+          return slotNumber === totalSlots ? 3 : 2; // Last = Anchor, others = Middle
+        }
+      }
+      return null;
+    }
+
     Object.keys(characterRecord).forEach(key => {
       const char = characterRecord[key];
       const stats = extractStats(char, charMap, capsuleMap, null); // No position for aggregated data
+      const charPosition = getPositionFromKey(key);
       if (!stats.name || stats.name === '-') return;
       
       // Determine team association
@@ -1509,6 +1909,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           totalSuperCounters: 0,
           totalRevengeCounters: 0,
           totalTags: 0, // New: Character swaps
+          totalTransformations: 0, // New: Character transformations
           // Special Abilities - NEW blast tracking system
           totalS1Blast: 0,
           totalS2Blast: 0,
@@ -1555,7 +1956,8 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           formStats: {}, // Track per-form aggregated stats
           matches: [], // Track individual match data for meta analysis
           teamsUsed: {}, // Track which teams this character played on with counts
-          aiStrategiesUsed: {} // Track AI strategies used with counts
+          aiStrategiesUsed: {}, // Track AI strategies used with counts
+          mapsUsed: {} // Track which maps this character fought on with counts
         };
       }
       
@@ -1567,6 +1969,11 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       }
       if (aiStrategy) {
         charData.aiStrategiesUsed[aiStrategy] = (charData.aiStrategiesUsed[aiStrategy] || 0) + 1;
+      }
+      // Track which maps this character fought on
+      if (mapId) {
+        const mapName = mapsMap[mapId] || mapId; // Use friendly name or fall back to ID
+        charData.mapsUsed[mapName] = (charData.mapsUsed[mapName] || 0) + 1;
       }
       
       charData.matchCount += 1;
@@ -1598,6 +2005,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       charData.totalSuperCounters += stats.superCounterCount;
       charData.totalRevengeCounters += stats.revengeCounterCount;
       charData.totalTags += stats.tags;
+      charData.totalTransformations += stats.formChangeCount || 0;
       // Special Abilities - NEW blast tracking system
       charData.totalS1Blast += stats.s1Blast;
       charData.totalS2Blast += stats.s2Blast;
@@ -1719,6 +2127,8 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         team: teamName,
         opponentTeam: opponentTeam,
         aiStrategy: aiStrategy,
+        map: mapId ? (mapsMap[mapId] || mapId) : null, // Map friendly name
+        mapId: mapId, // Store raw map ID for reference
         kills: stats.kills,
         specialMovesUsed: stats.specialMovesUsed,
         ultimatesUsed: stats.ultimatesUsed,
@@ -1759,6 +2169,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         formChangeHistory: formChangeHistory,
         formChangeCount: formChangeCount,
         perFormStats: perFormStatsForMatch, // Store per-form stats with each match
+        position: charPosition,
         won: won,
         fileName: fileName
       });
@@ -1877,7 +2288,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     if (file.error) return;
     
     const fileName = file.name || file.fileName || '';
-    let characterRecord, characterIdRecord, teams, battleWinLose;
+    let characterRecord, characterIdRecord, teams, battleWinLose, mapId;
     
     // Handle TeamBattleResults format (current BR_Data structure)
     if (file.content.TeamBattleResults) {
@@ -1887,18 +2298,21 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         characterRecord = file.content.TeamBattleResults.battleResult.characterRecord;
         characterIdRecord = file.content.TeamBattleResults.battleResult.characterIdRecord;
         battleWinLose = file.content.TeamBattleResults.battleResult.battleWinLose;
+        mapId = file.content.TeamBattleResults.battleResult.originalMap?.key;
       }
       // Check for BattleResults (capital R) - Cinema files format
       else if (file.content.TeamBattleResults.BattleResults) {
         characterRecord = file.content.TeamBattleResults.BattleResults.characterRecord;
         characterIdRecord = file.content.TeamBattleResults.BattleResults.characterIdRecord;
         battleWinLose = file.content.TeamBattleResults.BattleResults.battleWinLose;
+        mapId = file.content.TeamBattleResults.BattleResults.originalMap?.key;
       }
       // Check if data is directly in TeamBattleResults (new wrapper format)
       else if (file.content.TeamBattleResults.characterRecord) {
         characterRecord = file.content.TeamBattleResults.characterRecord;
         characterIdRecord = file.content.TeamBattleResults.characterIdRecord;
         battleWinLose = file.content.TeamBattleResults.battleWinLose;
+        mapId = file.content.TeamBattleResults.originalMap?.key;
       }
     }
     // Handle new format with teams array at the top
@@ -1918,10 +2332,12 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         if (teamCharRecord) {
           // Extract battleWinLose for team format
           let teamBattleWinLose;
+          let teamMapId;
           if (team.BattleResults) {
             teamBattleWinLose = team.BattleResults.battleWinLose;
+            teamMapId = team.BattleResults.originalMap?.key;
           }
-          processCharacterRecord(teamCharRecord, teamCharIdRecord, file.content.teams, fileName, teamBattleWinLose);
+          processCharacterRecord(teamCharRecord, teamCharIdRecord, file.content.teams, fileName, teamBattleWinLose, teamMapId);
         }
       });
       return; // Already processed all teams
@@ -1931,6 +2347,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       characterRecord = file.content.BattleResults.characterRecord;
       characterIdRecord = file.content.BattleResults.characterIdRecord;
       battleWinLose = file.content.BattleResults.battleWinLose;
+      mapId = file.content.BattleResults.originalMap?.key;
       teams = file.content.teams;
     } 
     // Handle legacy format with direct properties
@@ -1938,12 +2355,13 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       characterRecord = file.content.characterRecord;
       characterIdRecord = file.content.characterIdRecord;
       battleWinLose = file.content.battleWinLose;
+      mapId = file.content.originalMap?.key;
       teams = file.content.teams;
     }
     
     if (!characterRecord) return;
     
-    processCharacterRecord(characterRecord, characterIdRecord, teams, fileName, battleWinLose);
+    processCharacterRecord(characterRecord, characterIdRecord, teams, fileName, battleWinLose, mapId);
   });
   
   // Calculate averages and format form history
@@ -1955,6 +2373,7 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Convert objects to arrays and find most common team and AI strategy
     const teamsArray = Object.keys(char.teamsUsed);
     const aiStrategiesArray = Object.keys(char.aiStrategiesUsed);
+    const mapsArray = Object.keys(char.mapsUsed);
     
     // Find most commonly used team (highest count)
     const primaryTeam = teamsArray.length > 0 
@@ -1965,6 +2384,19 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     const primaryAIStrategy = aiStrategiesArray.length > 0
       ? aiStrategiesArray.reduce((a, b) => char.aiStrategiesUsed[a] > char.aiStrategiesUsed[b] ? a : b)
       : null;
+    
+    // Find most commonly used map (highest count)
+    const primaryMap = mapsArray.length > 0
+      ? mapsArray.reduce((a, b) => char.mapsUsed[a] > char.mapsUsed[b] ? a : b)
+      : null;
+    
+    // Find most common position (1=Starter, 2=Middle, 3=Anchor)
+    const positionCounts = { 1: 0, 2: 0, 3: 0 };
+    char.matches.forEach(m => { if (m.position) positionCounts[m.position] = (positionCounts[m.position] || 0) + 1; });
+    const primaryPositionNum = [1, 2, 3].reduce((best, p) => positionCounts[p] > positionCounts[best] ? p : best, 1);
+    const primaryPosition = positionCounts[1] === 0 && positionCounts[2] === 0 && positionCounts[3] === 0
+      ? null
+      : primaryPositionNum === 1 ? 'Starter' : primaryPositionNum === 2 ? 'Middle' : 'Anchor';
     
     // Calculate averages for per-form stats
     const formStatsArray = Object.values(char.formStats).map(formStat => {
@@ -1986,32 +2418,32 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         avgHPRemaining: Math.round((formStat.totalHPRemaining || 0) / matchCount),
         avgHPMax: Math.round((formStat.totalHPMax || 0) / matchCount),
         avgSpecialMoves: Math.round(((formStat.totalSpecialMoves || 0) / matchCount) * 10) / 10,
-        avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 10) / 10,
+        avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 100) / 100,
         avgSkills: Math.round(((formStat.totalSkills || 0) / matchCount) * 10) / 10,
-        avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 10) / 10,
-        avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 10) / 10,
-        avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 10) / 10,
-        avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 10) / 10,
-        avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 10) / 10,
-        avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 10) / 10,
-        avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 10) / 10,
+        avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 100) / 100,
+        avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 100) / 100,
+        avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 100) / 100,
+        avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 100) / 100,
+        avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 100) / 100,
+        avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 100) / 100,
+        avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 100) / 100,
         avgCharges: Math.round(((formStat.totalCharges || 0) / matchCount) * 10) / 10,
         avgGuards: Math.round(((formStat.totalGuards || 0) / matchCount) * 10) / 10,
         avgEnergyBlasts: Math.round(((formStat.totalEnergyBlasts || 0) / matchCount) * 10) / 10,
-        avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 10) / 10,
-        avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 10) / 10,
-        avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 10) / 10,
+        avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 100) / 100,
+        avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 100) / 100,
+        avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 100) / 100,
         avgMaxComboNum: Math.round(((formStat.totalMaxComboNum || 0) / matchCount) * 10) / 10,
         avgMaxComboDamage: Math.round((formStat.totalMaxComboDamage || 0) / matchCount),
-        avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 10) / 10,
-        avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 10) / 10,
-        avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 10) / 10,
-        avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 10) / 10,
-        avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 10) / 10,
-        avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 10) / 10,
+        avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 100) / 100,
+        avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 100) / 100,
+        avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 100) / 100,
+        avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 100) / 100,
+        avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 100) / 100,
+        avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 100) / 100,
         avgSparkingCombo: Math.round(((formStat.totalSparkingCombo || 0) / matchCount) * 10) / 10,
         avgDragonDashMileage: Math.round(((formStat.totalDragonDashMileage || 0) / matchCount) * 10) / 10,
-        avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 10) / 10,
+        avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 100) / 100,
         // Derived stats
         damagePerSecond,
         damageEfficiency,
@@ -2038,8 +2470,11 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       hasMultipleForms: allForms.length > 1,
       teamsUsed: teamsArray,
       aiStrategiesUsed: aiStrategiesArray,
+      mapsUsed: mapsArray,
       primaryTeam,
       primaryAIStrategy,
+      primaryMap,
+      primaryPosition,
       // Use activeMatchCount (non-zero battleTime) for all averages when available
       _activeMatches: char.activeMatchCount || 0,
       avgDamage: Math.round(char.totalDamage / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
@@ -2049,24 +2484,25 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       avgHPGaugeValueMax: Math.round(char.totalHPGaugeValueMax / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
   avgSpecial: Math.round((char.totalSpecial / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgSkills: Math.round((char.totalSkills / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgKills: Math.round((char.totalKills / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgKills: Math.round((char.totalKills / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       // Survival & Health averages
       survivalRate: Math.round((char.survivalCount / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 1000) / 10, // % of matches survived
-      avgSparking: Math.round((char.totalSparking / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgSparking: Math.round((char.totalSparking / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       avgCharges: Math.round((char.totalCharges / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgGuards: Math.round((char.totalGuards / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
       avgEnergyBlasts: Math.round((char.totalEnergyBlasts / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgZCounters: Math.round((char.totalZCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgSuperCounters: Math.round((char.totalSuperCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgRevengeCounters: Math.round((char.totalRevengeCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgTags: Math.round((char.totalTags / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgZCounters: Math.round((char.totalZCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgSuperCounters: Math.round((char.totalSuperCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgRevengeCounters: Math.round((char.totalRevengeCounters / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgTags: Math.round((char.totalTags / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgTransformations: Math.round((char.totalTransformations / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       // Special Abilities - NEW blast tracking averages
-      avgS1Blast: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgS2Blast: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgUltBlast: Math.round((char.totalUltBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgS1Hit: Math.round((char.totalS1HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgS2Hit: Math.round((char.totalS2HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-      avgUltHit: Math.round((char.totalULTHitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+      avgS1Blast: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgS2Blast: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgUltBlast: Math.round((char.totalUltBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgS1Hit: Math.round((char.totalS1HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgS2Hit: Math.round((char.totalS2HitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+      avgUltHit: Math.round((char.totalULTHitBlast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
       // Hit rates (overall across all matches) - calculated from trackable throws only, null if no trackable data
       s1HitRateOverall: char.totalS1BlastTrackable > 0 ? Math.round((char.totalS1HitBlast / char.totalS1BlastTrackable) * 1000) / 10 : null,
       s2HitRateOverall: char.totalS2BlastTrackable > 0 ? Math.round((char.totalS2HitBlast / char.totalS2BlastTrackable) * 1000) / 10 : null,
@@ -2074,19 +2510,19 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       
       
       // Special Abilities - Legacy blast tracking (kept for backwards compatibility, now using new values)
-    avgSPM1: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgSPM2: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgEXA1: Math.round((char.totalEXA1 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgEXA2: Math.round((char.totalEXA2 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgUltimates: Math.round((char.totalUltimates / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+    avgSPM1: Math.round((char.totalS1Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgSPM2: Math.round((char.totalS2Blast / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgEXA1: Math.round((char.totalEXA1 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgEXA2: Math.round((char.totalEXA2 / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgUltimates: Math.round((char.totalUltimates / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
   avgDragonDashMileage: Math.round((char.totalDragonDashMileage / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
   avgMaxComboDamage: Math.round(char.maxComboDamageTotal / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
-  avgThrows: Math.round((char.totalThrows / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgLightningAttacks: Math.round((char.totalLightningAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgVanishingAttacks: Math.round((char.totalVanishingAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgDragonHoming: Math.round((char.totalDragonHoming / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgSpeedImpacts: Math.round((char.totalSpeedImpacts / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
-  avgSpeedImpactWins: Math.round((char.totalSpeedImpactWins / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
+  avgThrows: Math.round((char.totalThrows / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgLightningAttacks: Math.round((char.totalLightningAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgVanishingAttacks: Math.round((char.totalVanishingAttacks / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgDragonHoming: Math.round((char.totalDragonHoming / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgSpeedImpacts: Math.round((char.totalSpeedImpacts / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
+  avgSpeedImpactWins: Math.round((char.totalSpeedImpactWins / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 100) / 100,
   avgSparkingCombo: Math.round((char.totalSparkingCombo / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)) * 10) / 10,
   // Build & Equipment averages
   avgCapsuleCost: Math.round(char.totalCapsuleCost / (char.activeMatchCount > 0 ? char.activeMatchCount : char.matchCount)),
@@ -2113,10 +2549,14 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
     // Calculate top 3 most used builds (similar to Team Rankings implementation)
     const buildGroups = {};
     
-    // Group matches by build composition label + AI strategy
+    // Group matches by exact capsule loadout + AI strategy so different capsule sets are tracked separately
     char.matches.forEach(match => {
       if (match.buildComposition && match.buildComposition.label) {
-        const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+        const capsuleKey = (match.equippedCapsules || [])
+          .map(c => c.name || c.id || '')
+          .sort()
+          .join(',');
+        const buildLabel = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
         
         if (!buildGroups[buildLabel]) {
           buildGroups[buildLabel] = {
@@ -2188,14 +2628,14 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         };
       })
       .sort((a, b) => {
-        // Primary sort: by usage count (descending)
-        if (b.count !== a.count) return b.count - a.count;
+        // Primary sort: by active usage count (descending)
+        if (b.activeCount !== a.activeCount) return b.activeCount - a.activeCount;
         // Tie-breaker: by average performance score (descending)
         return b.avgPerformanceScore - a.avgPerformanceScore;
       });
     
-    // Get top 3 most used builds
-    const topBuilds = sortedBuilds.slice(0, 3);
+    // Pass all builds (no cap) — UI handles selection and display
+    const topBuilds = sortedBuilds;
     
     // Calculate combat performance score
     const avgDamage = char.avgDamage;
@@ -2274,6 +2714,127 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
   );
   
   return aggregated;
+}
+
+// Helper: recompute team character averages from a filtered subset of raw match data
+// Used by the build filter feature in the teams view to re-scope stats without full re-aggregation
+function recomputeTeamCharStats(rawMatches, originalStats) {
+  const activeMatches = rawMatches.filter(m => m.battleDuration && m.battleDuration > 0);
+  const matchesToAggregate = activeMatches.length > 0 ? activeMatches : rawMatches;
+  const matchCount = rawMatches.length;
+  const activeMatchCount = matchesToAggregate.length;
+  const denom = Math.max(activeMatchCount, 1);
+
+  const totalDamageDealt = matchesToAggregate.reduce((s, m) => s + (m.damageDealt || 0), 0);
+  const totalDamageTaken = matchesToAggregate.reduce((s, m) => s + (m.damageTaken || 0), 0);
+  const totalBattleDuration = matchesToAggregate.reduce((s, m) => s + (m.battleDuration || 0), 0);
+  const totalHealthRemaining = matchesToAggregate.reduce((s, m) => s + (m.healthRemaining || 0), 0);
+  const totalHealthMax = matchesToAggregate.reduce((s, m) => s + (m.healthMax || 0), 0);
+
+  const avgDamageDealt = Math.round(totalDamageDealt / denom);
+  const avgDamageTaken = Math.round(totalDamageTaken / denom);
+  const avgBattleDuration = totalBattleDuration / denom;
+  const avgHealthRemaining = totalHealthRemaining / denom;
+  const avgHealthMax = totalHealthMax / denom;
+
+  const damageEfficiency = totalDamageTaken > 0
+    ? Math.round((totalDamageDealt / totalDamageTaken) * 100) / 100
+    : (totalDamageDealt > 0 ? 999 : 0);
+  const damagePerSecond = totalBattleDuration > 0
+    ? Math.round((totalDamageDealt / totalBattleDuration) * 100) / 100 : 0;
+  const healthRetention = avgHealthMax > 0 ? avgHealthRemaining / avgHealthMax : 0;
+
+  const baseScore = ((avgDamageDealt / 100000) * 35) + (damageEfficiency * 25) + ((damagePerSecond / 1000) * 25) + (healthRetention * 15);
+  const experienceMultiplier = Math.min(1.25, 1.0 + (activeMatchCount - 1) * (0.25 / 11));
+  const performanceScore = Math.round((baseScore * experienceMultiplier) * 100) / 100;
+
+  const totalSpecialMoves = rawMatches.reduce((s, m) => s + (m.specialMovesUsed || 0), 0);
+  const totalUltimates = rawMatches.reduce((s, m) => s + (m.ultimatesUsed || 0), 0);
+  const totalSPM1 = rawMatches.reduce((s, m) => s + (m.spm1Count || 0), 0);
+  const totalSPM2 = rawMatches.reduce((s, m) => s + (m.spm2Count || 0), 0);
+  const totalEXA1 = rawMatches.reduce((s, m) => s + (m.exa1Count || 0), 0);
+  const totalEXA2 = rawMatches.reduce((s, m) => s + (m.exa2Count || 0), 0);
+  const totalS1Blast = rawMatches.reduce((s, m) => s + (m.s1Blast || m.spm1Count || 0), 0);
+  const totalS2Blast = rawMatches.reduce((s, m) => s + (m.s2Blast || m.spm2Count || 0), 0);
+  const totalUltBlast = rawMatches.reduce((s, m) => s + (m.ultBlast || 0), 0);
+  const totalS1HitBlast = rawMatches.reduce((s, m) => s + (m.s1HitBlast || 0), 0);
+  const totalS2HitBlast = rawMatches.reduce((s, m) => s + (m.s2HitBlast || 0), 0);
+  const totalULTHitBlast = rawMatches.reduce((s, m) => s + (m.uLTHitBlast || 0), 0);
+  const totalS1BlastTrackable = rawMatches.reduce((s, m) => s + ((m.s1HitBlast !== undefined && m.s1HitBlast !== null) ? (m.s1Blast || 0) : 0), 0);
+  const totalS2BlastTrackable = rawMatches.reduce((s, m) => s + ((m.s2HitBlast !== undefined && m.s2HitBlast !== null) ? (m.s2Blast || 0) : 0), 0);
+  const totalUltBlastTrackable = rawMatches.reduce((s, m) => s + ((m.uLTHitBlast !== undefined && m.uLTHitBlast !== null) ? (m.ultBlast || 0) : 0), 0);
+  const totalTags = rawMatches.reduce((s, m) => s + (m.tags || 0), 0);
+  const totalTransformations = rawMatches.reduce((s, m) => s + (m.formChangeCount || 0), 0);
+  const totalSparking = rawMatches.reduce((s, m) => s + (m.sparkingCount || 0), 0);
+  const totalCharges = rawMatches.reduce((s, m) => s + (m.chargeCount || 0), 0);
+  const totalGuards = rawMatches.reduce((s, m) => s + (m.guardCount || 0), 0);
+  const totalEnergyBlasts = rawMatches.reduce((s, m) => s + (m.shotEnergyBulletCount || 0), 0);
+  const totalZCounters = rawMatches.reduce((s, m) => s + (m.zCounterCount || 0), 0);
+  const totalSuperCounters = rawMatches.reduce((s, m) => s + (m.superCounterCount || 0), 0);
+  const totalRevengeCounters = rawMatches.reduce((s, m) => s + (m.revengeCounterCount || 0), 0);
+  const totalMaxComboNum = rawMatches.reduce((s, m) => s + (m.maxComboNum || 0), 0);
+  const totalMaxComboDamage = rawMatches.reduce((s, m) => s + (m.maxComboDamage || 0), 0);
+  const totalThrows = rawMatches.reduce((s, m) => s + (m.throwCount || 0), 0);
+  const totalDragonHoming = rawMatches.reduce((s, m) => s + (m.dragonHomingCount || 0), 0);
+  const totalSpeedImpacts = rawMatches.reduce((s, m) => s + (m.speedImpactCount || 0), 0);
+  const totalSpeedImpactWins = rawMatches.reduce((s, m) => s + (m.speedImpactWins || 0), 0);
+  const totalSparkingCombo = rawMatches.reduce((s, m) => s + (m.sparkingComboCount || 0), 0);
+  const totalDragonDashMileage = rawMatches.reduce((s, m) => s + (m.dragonDashMileage || 0), 0);
+  const totalKills = rawMatches.reduce((s, m) => s + (m.kills || 0), 0);
+  const speedImpactWinRate = totalSpeedImpacts > 0
+    ? Math.round((totalSpeedImpactWins / totalSpeedImpacts) * 1000) / 10 : 0;
+
+  return {
+    ...originalStats,
+    avgDamageDealt,
+    avgDamageTaken,
+    avgDamageEfficiency: damageEfficiency,
+    avgDamagePerSecond: damagePerSecond,
+    avgHealthRetention: healthRetention,
+    avgHealthMax: Math.round(avgHealthMax),
+    avgHealthRemaining: Math.round(avgHealthRemaining),
+    avgBattleDuration: Math.round(avgBattleDuration),
+    performanceScore,
+    matchesPlayed: matchCount,
+    activeMatchesPlayed: activeMatchCount,
+    avgSpecialMoves: Math.round((totalSpecialMoves / denom) * 10) / 10,
+    avgUltimates: Math.round((totalUltimates / denom) * 100) / 100,
+    avgSPM1: Math.round((totalSPM1 / denom) * 100) / 100,
+    avgSPM2: Math.round((totalSPM2 / denom) * 100) / 100,
+    avgEXA1: Math.round((totalEXA1 / denom) * 100) / 100,
+    avgEXA2: Math.round((totalEXA2 / denom) * 100) / 100,
+    avgS1Blast: Math.round((totalS1Blast / denom) * 100) / 100,
+    avgS2Blast: Math.round((totalS2Blast / denom) * 100) / 100,
+    avgUltBlast: Math.round((totalUltBlast / denom) * 100) / 100,
+    avgS1Hit: Math.round((totalS1HitBlast / denom) * 100) / 100,
+    avgS2Hit: Math.round((totalS2HitBlast / denom) * 100) / 100,
+    avgUltHit: Math.round((totalULTHitBlast / denom) * 100) / 100,
+    s1HitRateOverall: totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null,
+    s2HitRateOverall: totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null,
+    ultHitRateOverall: totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null,
+    avgTags: Math.round((totalTags / denom) * 100) / 100,
+    totalTags,
+    avgTransformations: Math.round((totalTransformations / denom) * 100) / 100,
+    avgSparking: Math.round((totalSparking / denom) * 100) / 100,
+    avgCharges: Math.round((totalCharges / denom) * 10) / 10,
+    avgGuards: Math.round((totalGuards / denom) * 10) / 10,
+    avgEnergyBlasts: Math.round((totalEnergyBlasts / denom) * 10) / 10,
+    avgZCounters: Math.round((totalZCounters / denom) * 100) / 100,
+    avgSuperCounters: Math.round((totalSuperCounters / denom) * 100) / 100,
+    avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 100) / 100,
+    avgMaxComboNum: Math.round((totalMaxComboNum / denom) * 10) / 10,
+    avgMaxComboDamage: Math.round(totalMaxComboDamage / denom),
+    avgThrows: Math.round((totalThrows / denom) * 100) / 100,
+    avgDragonHoming: Math.round((totalDragonHoming / denom) * 100) / 100,
+    avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 100) / 100,
+    speedImpactWinRate,
+    avgSparkingCombo: Math.round((totalSparkingCombo / denom) * 10) / 10,
+    avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
+    avgKills: Math.round((totalKills / denom) * 100) / 100,
+    // Keep topBuilds from the original so the full builds table is unchanged
+    topBuilds: originalStats.topBuilds,
+    rawMatches: originalStats.rawMatches,
+  };
 }
 
 function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}) {
@@ -2458,6 +3019,20 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         // Extract original character ID for form tracking
         const originalForm = char.battlePlayCharacter?.originalCharacter?.key || char.originalCharacter?.key;
         
+        // Derive position from the character's key in the record
+        const p1SlotKeys = teams_data.p1.filter(c => c._key.includes('AlliesTeamMember')).length;
+        const charKey1 = char._key || '';
+        let charPosition1 = null;
+        if (charKey1.includes('\uff11\uff30')) {
+          charPosition1 = 1;
+        } else {
+          const slotMatch1 = charKey1.match(/Member(\d+)/);
+          if (slotMatch1) {
+            const slotNum1 = parseInt(slotMatch1[1]);
+            charPosition1 = slotNum1 === p1SlotKeys ? 3 : 2;
+          }
+        }
+
         // Store individual character match data with all detailed stats
         teamStats[team1Name].characterDetails[stats.name].push({
           damageDealt: stats.damageDone || 0,
@@ -2465,6 +3040,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           healthRemaining: stats.hPGaugeValue || 0,
           healthMax: stats.hPGaugeValueMax || 0,
           battleDuration: stats.battleTime || 0,
+          position: charPosition1,
           // Build and AI Strategy
           buildComposition: stats.buildComposition,
           aiStrategy: stats.aiStrategy,
@@ -2498,6 +3074,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           superCounterCount: stats.superCounterCount || 0,
           revengeCounterCount: stats.revengeCounterCount || 0,
           tags: stats.tags || 0,
+          formChangeCount: stats.formChangeCount || 0,
           // Combat Performance
           maxComboNum: stats.maxComboNum || 0,
           maxComboDamage: stats.maxComboDamage || 0,
@@ -2524,7 +3101,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           if (!teamStats[team1Name].buildCompositions[compositionLabel]) {
             teamStats[team1Name].buildCompositions[compositionLabel] = 0;
           }
-          teamStats[team1Name].buildCompositions[compositionLabel]++;
+          teamStats[team1Name].buildCompositions[compositionLabel]++;;
         }
       }
     });
@@ -2547,6 +3124,20 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         // Extract original character ID for form tracking
         const originalForm = char.battlePlayCharacter?.originalCharacter?.key || char.originalCharacter?.key;
         
+        // Derive position from the character's key in the record
+        const p2SlotKeys = teams_data.p2.filter(c => c._key.includes('EnemyTeamMember')).length;
+        const charKey2 = char._key || '';
+        let charPosition2 = null;
+        if (charKey2.includes('\uff12\uff30')) {
+          charPosition2 = 1;
+        } else {
+          const slotMatch2 = charKey2.match(/Member(\d+)/);
+          if (slotMatch2) {
+            const slotNum2 = parseInt(slotMatch2[1]);
+            charPosition2 = slotNum2 === p2SlotKeys ? 3 : 2;
+          }
+        }
+
         // Store individual character match data with all detailed stats
         teamStats[team2Name].characterDetails[stats.name].push({
           damageDealt: stats.damageDone || 0,
@@ -2554,6 +3145,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           healthRemaining: stats.hPGaugeValue || 0,
           healthMax: stats.hPGaugeValueMax || 0,
           battleDuration: stats.battleTime || 0,
+          position: charPosition2,
           // Build and AI Strategy
           buildComposition: stats.buildComposition,
           aiStrategy: stats.aiStrategy,
@@ -2587,6 +3179,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           superCounterCount: stats.superCounterCount || 0,
           revengeCounterCount: stats.revengeCounterCount || 0,
           tags: stats.tags || 0,
+          formChangeCount: stats.formChangeCount || 0,
           // Combat Performance
           maxComboNum: stats.maxComboNum || 0,
           maxComboDamage: stats.maxComboDamage || 0,
@@ -2613,7 +3206,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           if (!teamStats[team2Name].buildCompositions[compositionLabel]) {
             teamStats[team2Name].buildCompositions[compositionLabel] = 0;
           }
-          teamStats[team2Name].buildCompositions[compositionLabel]++;
+          teamStats[team2Name].buildCompositions[compositionLabel]++;;
         }
       }
     });
@@ -2798,6 +3391,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
         const totalS2HitBlast = matches.reduce((sum, match) => sum + (match.s2HitBlast || 0), 0);
         const totalULTHitBlast = matches.reduce((sum, match) => sum + (match.uLTHitBlast || 0), 0);
         const totalTags = matches.reduce((sum, match) => sum + (match.tags || 0), 0);
+        const totalTransformations = matches.reduce((sum, match) => sum + (match.formChangeCount || 0), 0);
         
         // Track separately for hit rate calculation (only from matches with additionalCounts data)
         // Check each blast type individually - a match is trackable for a blast type only if that specific blast type has hit data
@@ -2888,54 +3482,71 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
           usageRate: Math.round((activeMatchCount / team.activeMatches) * 100 * 10) / 10,
           // Special Abilities averages
           avgSpecialMoves: Math.round((totalSpecialMoves / denom) * 10) / 10,
-          avgUltimates: Math.round((totalUltimates / denom) * 10) / 10,
+          avgUltimates: Math.round((totalUltimates / denom) * 100) / 100,
           avgSkills: Math.round((totalSkills / denom) * 10) / 10,
-          avgSPM1: Math.round((totalSPM1 / denom) * 10) / 10,
-          avgSPM2: Math.round((totalSPM2 / denom) * 10) / 10,
-          avgEXA1: Math.round((totalEXA1 / denom) * 10) / 10,
-          avgEXA2: Math.round((totalEXA2 / denom) * 10) / 10,
+          avgSPM1: Math.round((totalSPM1 / denom) * 100) / 100,
+          avgSPM2: Math.round((totalSPM2 / denom) * 100) / 100,
+          avgEXA1: Math.round((totalEXA1 / denom) * 100) / 100,
+          avgEXA2: Math.round((totalEXA2 / denom) * 100) / 100,
           // New blast tracking averages
-          avgS1Blast: Math.round((totalS1Blast / denom) * 10) / 10,
-          avgS2Blast: Math.round((totalS2Blast / denom) * 10) / 10,
-          avgUltBlast: Math.round((totalUltBlast / denom) * 10) / 10,
-          avgS1Hit: Math.round((totalS1HitBlast / denom) * 10) / 10,
-          avgS2Hit: Math.round((totalS2HitBlast / denom) * 10) / 10,
-          avgUltHit: Math.round((totalULTHitBlast / denom) * 10) / 10,
+          avgS1Blast: Math.round((totalS1Blast / denom) * 100) / 100,
+          avgS2Blast: Math.round((totalS2Blast / denom) * 100) / 100,
+          avgUltBlast: Math.round((totalUltBlast / denom) * 100) / 100,
+          avgS1Hit: Math.round((totalS1HitBlast / denom) * 100) / 100,
+          avgS2Hit: Math.round((totalS2HitBlast / denom) * 100) / 100,
+          avgUltHit: Math.round((totalULTHitBlast / denom) * 100) / 100,
           s1HitRateOverall: totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null,
           s2HitRateOverall: totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null,
           ultHitRateOverall: totalUltBlastTrackable > 0 ? Math.round((totalULTHitBlast / totalUltBlastTrackable) * 1000) / 10 : null,
           
-          avgTags: Math.round((totalTags / denom) * 10) / 10,
+          avgTags: Math.round((totalTags / denom) * 100) / 100,
           totalTags: totalTags,
+          avgTransformations: Math.round((totalTransformations / denom) * 100) / 100,
           
           // Survival & Health averages
-          avgSparking: Math.round((totalSparking / denom) * 10) / 10,
+          avgSparking: Math.round((totalSparking / denom) * 100) / 100,
           avgCharges: Math.round((totalCharges / denom) * 10) / 10,
           avgGuards: Math.round((totalGuards / denom) * 10) / 10,
           avgEnergyBlasts: Math.round((totalEnergyBlasts / denom) * 10) / 10,
-          avgZCounters: Math.round((totalZCounters / denom) * 10) / 10,
-          avgSuperCounters: Math.round((totalSuperCounters / denom) * 10) / 10,
-          avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 10) / 10,
+          avgZCounters: Math.round((totalZCounters / denom) * 100) / 100,
+          avgSuperCounters: Math.round((totalSuperCounters / denom) * 100) / 100,
+          avgRevengeCounters: Math.round((totalRevengeCounters / denom) * 100) / 100,
           // Combat Performance averages
           avgMaxComboNum: Math.round((totalMaxComboNum / denom) * 10) / 10,
           avgMaxComboDamage: Math.round(totalMaxComboDamage / denom),
-          avgThrows: Math.round((totalThrows / denom) * 10) / 10,
-          avgLightningAttacks: Math.round((totalLightningAttacks / denom) * 10) / 10,
-          avgVanishingAttacks: Math.round((totalVanishingAttacks / denom) * 10) / 10,
-          avgDragonHoming: Math.round((totalDragonHoming / denom) * 10) / 10,
-          avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 10) / 10,
-          avgSpeedImpactWins: Math.round((totalSpeedImpactWins / denom) * 10) / 10,
+          avgThrows: Math.round((totalThrows / denom) * 100) / 100,
+          avgLightningAttacks: Math.round((totalLightningAttacks / denom) * 100) / 100,
+          avgVanishingAttacks: Math.round((totalVanishingAttacks / denom) * 100) / 100,
+          avgDragonHoming: Math.round((totalDragonHoming / denom) * 100) / 100,
+          avgSpeedImpacts: Math.round((totalSpeedImpacts / denom) * 100) / 100,
+          avgSpeedImpactWins: Math.round((totalSpeedImpactWins / denom) * 100) / 100,
           speedImpactWinRate: speedImpactWinRate,
           avgSparkingCombo: Math.round((totalSparkingCombo / denom) * 10) / 10,
           avgDragonDashMileage: Math.round((totalDragonDashMileage / denom) * 10) / 10,
-          avgKills: Math.round((totalKills / denom) * 10) / 10
+          avgKills: Math.round((totalKills / denom) * 100) / 100,
+          // Raw match data for build filter recomputation
+          rawMatches: matches,
+          // Most common position
+          primaryPosition: (() => {
+            const pc = { 1: 0, 2: 0, 3: 0 };
+            matches.forEach(m => { if (m.position) pc[m.position] = (pc[m.position] || 0) + 1; });
+            const total = pc[1] + pc[2] + pc[3];
+            if (total === 0) return null;
+            const best = [1, 2, 3].reduce((a, b) => pc[b] > pc[a] ? b : a, 1);
+            return best === 1 ? 'Starter' : best === 2 ? 'Middle' : 'Anchor';
+          })()
         };
         
         // Track build usage for this character
+        // Key by exact capsule loadout + AI strategy so different capsule sets are tracked separately
         const buildUsageMap = {};
         matches.forEach(match => {
           if (match.buildComposition && match.buildComposition.label) {
-            const buildKey = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+            const capsuleKey = (match.equippedCapsules || [])
+              .map(c => c.name || c.id || '')
+              .sort()
+              .join(',');
+            const buildKey = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
             if (!buildUsageMap[buildKey]) {
               buildUsageMap[buildKey] = {
                 buildLabel: match.buildComposition.label,
@@ -3004,14 +3615,14 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
             };
           })
           .sort((a, b) => {
-            // Primary sort: by usage count (descending)
-            if (b.count !== a.count) return b.count - a.count;
+            // Primary sort: by active usage count (descending)
+            if (b.activeCount !== a.activeCount) return b.activeCount - a.activeCount;
             // Tie-breaker: by average performance score (descending)
             return b.avgPerformanceScore - a.avgPerformanceScore;
           });
         
-        // Get top 3 most used builds
-        team.characterAverages[charName].topBuilds = sortedBuilds.slice(0, 3);
+        // Pass all builds (no cap) — UI handles selection and display
+        team.characterAverages[charName].topBuilds = sortedBuilds;
         
         // Aggregate per-form stats for characters with transformations
         const formStatsMap = {};
@@ -3202,17 +3813,24 @@ export default function App() {
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
   const [analysisFileContent, setAnalysisFileContent] = useState(null);
   const [viewType, setViewType] = useState('single');
+  const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
+  const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
   const [manualFiles, setManualFiles] = useState([]);
   const [expandedRows, setExpandedRows] = useState({}); // Expanded state for character rows
   const [expandedPositions, setExpandedPositions] = useState({}); // Expanded state for position accordions in matchups
   const [expandedCharacters, setExpandedCharacters] = useState({}); // Expanded state for individual character cards in matchups
   const [selectedBuildIndex, setSelectedBuildIndex] = useState({}); // Track selected build index per character
+  const [selectedBuildSort, setSelectedBuildSort] = useState({}); // Track sort column+dir per character build table
+  const [activeBuildFilters, setActiveBuildFilters] = useState({}); // Track active build filter per character
   const [sectionCollapsed, setSectionCollapsed] = useState({
     aggregated: false,
     position: false
   }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
   const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
+  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Lead, 2=Middle, 3=Anchor)
+  const [positionCharacterFilters, setPositionCharacterFilters] = useState({ 1: [], 2: [], 3: [] }); // Character filters for each position
+  const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
   
   // Search and filter state for Aggregated Character Performance
@@ -3225,10 +3843,37 @@ export default function App() {
   const [sortDirection, setSortDirection] = useState('desc');
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [selectedAIStrategies, setSelectedAIStrategies] = useState([]);
+  const [selectedMaps, setSelectedMaps] = useState([]);
+
+  // Reset selected build tabs to "First" whenever any filter changes so stale indices don't produce blank cards
+  useEffect(() => {
+    setSelectedBuildIndex({});
+    setSelectedBuildSort({});
+    setActiveBuildFilters({});
+  }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
   const capsuleMap = capsuleInfo.capsuleMap;
+  
+  // Parse maps.csv to create map ID to name lookup
+  const mapsMap = useMemo(() => {
+    const map = {};
+    const lines = mapsCSV.trim().split('\n');
+    
+    for (let i = 1; i < lines.length; i++) { // Skip header
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const [mapName, mapId] = line.split(',').map(s => s.trim());
+      if (mapId && mapName) {
+        map[mapId] = mapName;
+      }
+    }
+    
+    return map;
+  }, []);
+  
   // Convert AI strategies array to map for efficient lookup by ID
   const aiStrategies = useMemo(() => {
     const map = {};
@@ -3250,9 +3895,9 @@ export default function App() {
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
-      return getAggregatedCharacterData(filesArr, charMap, capsuleMap, aiStrategies);
+      return getAggregatedCharacterData(filesArr, charMap, capsuleMap, aiStrategies, mapsMap);
     } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && manualFiles.length > 0) {
-      return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies);
+      return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies, mapsMap);
     }
     return [];
   }, [mode, viewType, charMap, capsuleMap, aiStrategies, manualFiles, fileContent, selectedFilePath]);
@@ -3263,12 +3908,12 @@ export default function App() {
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
-      return getPositionBasedData(filesArr, charMap, capsuleMap);
+      return getPositionBasedData(filesArr, charMap, capsuleMap, positionMatchTypeFilters);
     } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && manualFiles.length > 0) {
-      return getPositionBasedData(manualFiles, charMap, capsuleMap);
+      return getPositionBasedData(manualFiles, charMap, capsuleMap, positionMatchTypeFilters);
     }
     return {};
-  }, [mode, viewType, charMap, capsuleMap, manualFiles, fileContent, selectedFilePath]);
+  }, [mode, viewType, charMap, capsuleMap, manualFiles, fileContent, selectedFilePath, positionMatchTypeFilters]);
 
   // Team aggregated data for team rankings
   const teamAggregatedData = useMemo(() => {
@@ -3305,6 +3950,27 @@ export default function App() {
         );
       }
       
+      // Apply map filter to matches
+      if (selectedMaps.length > 0) {
+        filteredMatches = filteredMatches.filter(match => 
+          match.map && selectedMaps.includes(match.map)
+        );
+      }
+
+      // Snapshot matches after team/AI/map filters but before build filter.
+      // Used to compute a stable rank score so build filters don't reorder the list.
+      const preBuildMatches = filteredMatches;
+
+      // Apply active build filter
+      const activeBuildKey = activeBuildFilters[char.name];
+      if (activeBuildKey) {
+        filteredMatches = filteredMatches.filter(match => {
+          const capsuleKey = (match.equippedCapsules || [])
+            .map(c => c.name || c.id || '').sort().join(',');
+          return `${capsuleKey}|${match.aiStrategy || 'Default'}` === activeBuildKey;
+        });
+      }
+      
       // If no matches remain after filtering, return null to filter out later
       if (filteredMatches.length === 0) {
         return null;
@@ -3333,6 +3999,7 @@ export default function App() {
       const totalSuperCounters = filteredMatches.reduce((sum, m) => sum + (m.superCounterCount || 0), 0);
       const totalRevengeCounters = filteredMatches.reduce((sum, m) => sum + (m.revengeCounterCount || 0), 0);
       const totalTags = filteredMatches.reduce((sum, m) => sum + (m.tags || 0), 0);
+      const totalTransformations = filteredMatches.reduce((sum, m) => sum + (m.formChangeCount || 0), 0);
       const maxComboNumTotal = filteredMatches.reduce((sum, m) => sum + (m.maxComboNum || 0), 0);
       const maxComboDamageTotal = filteredMatches.reduce((sum, m) => sum + (m.maxComboDamage || 0), 0);
       
@@ -3378,6 +4045,8 @@ export default function App() {
       // Recalculate teams and AI strategies used from filtered matches
       const teamsUsed = {};
       const aiStrategiesUsed = {};
+      const mapsUsed = {};
+      
       filteredMatches.forEach(match => {
         if (match.team) {
           teamsUsed[match.team] = (teamsUsed[match.team] || 0) + 1;
@@ -3385,15 +4054,25 @@ export default function App() {
         if (match.aiStrategy) {
           aiStrategiesUsed[match.aiStrategy] = (aiStrategiesUsed[match.aiStrategy] || 0) + 1;
         }
+        if (match.map) {
+          mapsUsed[match.map] = (mapsUsed[match.map] || 0) + 1;
+        }
       });
       
       const teamsArray = Object.keys(teamsUsed);
       const aiStrategiesArray = Object.keys(aiStrategiesUsed);
+      const mapsArray = Object.keys(mapsUsed);
+      
       const primaryTeam = teamsArray.length > 0 
         ? teamsArray.reduce((a, b) => teamsUsed[a] > teamsUsed[b] ? a : b)
         : null;
+      
       const primaryAIStrategy = aiStrategiesArray.length > 0
         ? aiStrategiesArray.reduce((a, b) => aiStrategiesUsed[a] > aiStrategiesUsed[b] ? a : b)
+        : null;
+      
+      const primaryMap = mapsArray.length > 0
+        ? mapsArray.reduce((a, b) => mapsUsed[a] > mapsUsed[b] ? a : b)
         : null;
       
   // Calculate averages (use denom which prefers active matches if present)
@@ -3403,27 +4082,28 @@ export default function App() {
   const avgBattleTime = Math.round((totalBattleTime / Math.max(denom, 1)) * 10) / 10;
   const avgHPGaugeValueMax = Math.round(totalHPGaugeValueMax / Math.max(denom, 1));
   const avgSpecial = Math.round((totalSpecial / Math.max(denom, 1)) * 10) / 10;
-  const avgUltimates = Math.round((totalUltimates / Math.max(denom, 1)) * 10) / 10;
+  const avgUltimates = Math.round((totalUltimates / Math.max(denom, 1)) * 100) / 100;
   const avgSkills = Math.round((totalSkills / Math.max(denom, 1)) * 10) / 10;
-  const avgKills = Math.round((totalKills / Math.max(denom, 1)) * 10) / 10;
-  const avgSparking = Math.round((totalSparking / Math.max(denom, 1)) * 10) / 10;
+  const avgKills = Math.round((totalKills / Math.max(denom, 1)) * 100) / 100;
+  const avgSparking = Math.round((totalSparking / Math.max(denom, 1)) * 100) / 100;
   const avgCharges = Math.round((totalCharges / Math.max(denom, 1)) * 10) / 10;
   const avgGuards = Math.round((totalGuards / Math.max(denom, 1)) * 10) / 10;
   const avgEnergyBlasts = Math.round((totalEnergyBlasts / Math.max(denom, 1)) * 10) / 10;
-  const avgZCounters = Math.round((totalZCounters / Math.max(denom, 1)) * 10) / 10;
-  const avgSuperCounters = Math.round((totalSuperCounters / Math.max(denom, 1)) * 10) / 10;
-  const avgRevengeCounters = Math.round((totalRevengeCounters / Math.max(denom, 1)) * 10) / 10;
-  const avgTags = Math.round((totalTags / Math.max(denom, 1)) * 10) / 10;
+  const avgZCounters = Math.round((totalZCounters / Math.max(denom, 1)) * 100) / 100;
+  const avgSuperCounters = Math.round((totalSuperCounters / Math.max(denom, 1)) * 100) / 100;
+  const avgRevengeCounters = Math.round((totalRevengeCounters / Math.max(denom, 1)) * 100) / 100;
+  const avgTags = Math.round((totalTags / Math.max(denom, 1)) * 100) / 100;
+  const avgTransformations = Math.round((totalTransformations / Math.max(denom, 1)) * 100) / 100;
   const avgMaxCombo = Math.round((maxComboNumTotal / Math.max(denom, 1)) * 10) / 10;
   const avgMaxComboDamage = Math.round(maxComboDamageTotal / Math.max(denom, 1));
   
   // Special Abilities - NEW blast tracking averages
-  const avgS1Blast = Math.round((totalS1Blast / Math.max(denom, 1)) * 10) / 10;
-  const avgS2Blast = Math.round((totalS2Blast / Math.max(denom, 1)) * 10) / 10;
-  const avgUltBlast = Math.round((totalUltBlast / Math.max(denom, 1)) * 10) / 10;
-  const avgS1Hit = Math.round((totalS1HitBlast / Math.max(denom, 1)) * 10) / 10;
-  const avgS2Hit = Math.round((totalS2HitBlast / Math.max(denom, 1)) * 10) / 10;
-  const avgUltHit = Math.round((totalULTHitBlast / Math.max(denom, 1)) * 10) / 10;
+  const avgS1Blast = Math.round((totalS1Blast / Math.max(denom, 1)) * 100) / 100;
+  const avgS2Blast = Math.round((totalS2Blast / Math.max(denom, 1)) * 100) / 100;
+  const avgUltBlast = Math.round((totalUltBlast / Math.max(denom, 1)) * 100) / 100;
+  const avgS1Hit = Math.round((totalS1HitBlast / Math.max(denom, 1)) * 100) / 100;
+  const avgS2Hit = Math.round((totalS2HitBlast / Math.max(denom, 1)) * 100) / 100;
+  const avgUltHit = Math.round((totalULTHitBlast / Math.max(denom, 1)) * 100) / 100;
   // Hit rates (overall across all filtered matches)
   const s1HitRateOverall = totalS1BlastTrackable > 0 ? Math.round((totalS1HitBlast / totalS1BlastTrackable) * 1000) / 10 : null;
   const s2HitRateOverall = totalS2BlastTrackable > 0 ? Math.round((totalS2HitBlast / totalS2BlastTrackable) * 1000) / 10 : null;
@@ -3432,17 +4112,17 @@ export default function App() {
   // Special Abilities - Legacy blast tracking (for backwards compatibility)
   const avgSPM1 = avgS1Blast; // Same as avgS1Blast
   const avgSPM2 = avgS2Blast; // Same as avgS2Blast
-  const avgEXA1 = Math.round((totalEXA1 / Math.max(denom, 1)) * 10) / 10;
-  const avgEXA2 = Math.round((totalEXA2 / Math.max(denom, 1)) * 10) / 10;
+  const avgEXA1 = Math.round((totalEXA1 / Math.max(denom, 1)) * 100) / 100;
+  const avgEXA2 = Math.round((totalEXA2 / Math.max(denom, 1)) * 100) / 100;
   const avgDragonDashMileage = Math.round((totalDragonDashMileage / Math.max(denom, 1)) * 10) / 10;
   
   // Combat Performance averages
-  const avgThrows = Math.round((totalThrows / Math.max(denom, 1)) * 10) / 10;
-  const avgLightningAttacks = Math.round((totalLightningAttacks / Math.max(denom, 1)) * 10) / 10;
-  const avgVanishingAttacks = Math.round((totalVanishingAttacks / Math.max(denom, 1)) * 10) / 10;
-  const avgDragonHoming = Math.round((totalDragonHoming / Math.max(denom, 1)) * 10) / 10;
-  const avgSpeedImpacts = Math.round((totalSpeedImpacts / Math.max(denom, 1)) * 10) / 10;
-  const avgSpeedImpactWins = Math.round((totalSpeedImpactWins / Math.max(denom, 1)) * 10) / 10;
+  const avgThrows = Math.round((totalThrows / Math.max(denom, 1)) * 100) / 100;
+  const avgLightningAttacks = Math.round((totalLightningAttacks / Math.max(denom, 1)) * 100) / 100;
+  const avgVanishingAttacks = Math.round((totalVanishingAttacks / Math.max(denom, 1)) * 100) / 100;
+  const avgDragonHoming = Math.round((totalDragonHoming / Math.max(denom, 1)) * 100) / 100;
+  const avgSpeedImpacts = Math.round((totalSpeedImpacts / Math.max(denom, 1)) * 100) / 100;
+  const avgSpeedImpactWins = Math.round((totalSpeedImpactWins / Math.max(denom, 1)) * 100) / 100;
   const avgSparkingCombo = Math.round((totalSparkingCombo / Math.max(denom, 1)) * 10) / 10;
   
   // Calculate win/loss stats
@@ -3473,14 +4153,43 @@ export default function App() {
   // Experience multiplier based on matches played; prefer active matches for weighting
   const experienceMultiplier = Math.min(1.25, 1.0 + ((activeMatchCount > 0 ? activeMatchCount : matchCount) - 1) * (0.25 / 11));
       const combatPerformanceScore = Math.round((baseScore * experienceMultiplier) * 100) / 100;
+
+      // Compute baseRankScore from pre-build-filter matches so team/AI/map filters influence
+      // ranking order but a build filter does not shift a character's position in the list.
+      let baseRankScore;
+      const activeBuildKeyForRank = activeBuildFilters[char.name];
+      if (activeBuildKeyForRank && preBuildMatches.length > 0) {
+        const pbActive = preBuildMatches.filter(m => m.battleTime && m.battleTime > 0);
+        const pbDenom = pbActive.length > 0 ? pbActive.length : preBuildMatches.length;
+        const pbDmg   = pbActive.reduce((s, m) => s + m.damageDone, 0);
+        const pbTaken = pbActive.reduce((s, m) => s + m.damageTaken, 0);
+        const pbHP    = pbActive.reduce((s, m) => s + m.hPGaugeValue, 0);
+        const pbHPMax = pbActive.reduce((s, m) => s + m.hPGaugeValueMax, 0);
+        const pbTime  = pbActive.reduce((s, m) => s + m.battleTime, 0);
+        const pbAvgDmg = Math.round(pbDmg / Math.max(pbDenom, 1));
+        const pbAvgHP  = Math.round(pbHP  / Math.max(pbDenom, 1));
+        const pbAvgHPMax = Math.round(pbHPMax / Math.max(pbDenom, 1));
+        const pbEff  = pbTaken > 0 ? pbDmg / pbTaken : 0;
+        const pbDps  = pbTime  > 0 ? pbDmg / pbTime  : 0;
+        const pbHRet = pbAvgHPMax > 0 ? pbAvgHP / pbAvgHPMax : 0;
+        const pbBase = (pbAvgDmg / 100000) * 35 + pbEff * 25 + (pbDps / 1000) * 25 + pbHRet * 15;
+        const pbExp  = Math.min(1.25, 1.0 + ((pbActive.length > 0 ? pbActive.length : preBuildMatches.length) - 1) * (0.25 / 11));
+        baseRankScore = Math.round(pbBase * pbExp * 100) / 100;
+      } else {
+        baseRankScore = combatPerformanceScore;
+      }
       
       // Recalculate top 3 most used builds based on FILTERED matches
       const buildGroups = {};
       
-      // Group filtered matches by build composition label + AI strategy
+      // Group filtered matches by exact capsule loadout + AI strategy so different capsule sets are tracked separately
       filteredMatches.forEach(match => {
         if (match.buildComposition && match.buildComposition.label) {
-          const buildLabel = `${match.buildComposition.label}|${match.aiStrategy || 'Default'}`;
+          const capsuleKey = (match.equippedCapsules || [])
+            .map(c => c.name || c.id || '')
+            .sort()
+            .join(',');
+          const buildLabel = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
           
           if (!buildGroups[buildLabel]) {
             buildGroups[buildLabel] = {
@@ -3552,14 +4261,14 @@ export default function App() {
           };
         })
         .sort((a, b) => {
-          // Primary sort: by usage count (descending)
-          if (b.count !== a.count) return b.count - a.count;
+          // Primary sort: by active usage count (descending)
+          if (b.activeCount !== a.activeCount) return b.activeCount - a.activeCount;
           // Tie-breaker: by average performance score (descending)
           return b.avgPerformanceScore - a.avgPerformanceScore;
         });
       
-      // Get top 3 most used builds from filtered data
-      const topBuilds = sortedBuilds.slice(0, 3);
+      // Pass all builds (no cap) — UI handles selection and display
+      const topBuilds = sortedBuilds;
       
       // Recalculate form stats from FILTERED matches
       const formStatsMap = {};
@@ -3693,32 +4402,32 @@ export default function App() {
           avgHPRemaining: Math.round((formStat.totalHPRemaining || 0) / matchCount),
           avgHPMax: Math.round((formStat.totalHPMax || 0) / matchCount),
           avgSpecialMoves: Math.round(((formStat.totalSpecialMoves || 0) / matchCount) * 10) / 10,
-          avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 10) / 10,
+          avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 100) / 100,
           avgSkills: Math.round(((formStat.totalSkills || 0) / matchCount) * 10) / 10,
-          avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 10) / 10,
-          avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 10) / 10,
-          avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 10) / 10,
-          avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 10) / 10,
-          avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 10) / 10,
-          avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 10) / 10,
-          avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 10) / 10,
+          avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 100) / 100,
+          avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 100) / 100,
+          avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 100) / 100,
+          avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 100) / 100,
+          avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 100) / 100,
+          avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 100) / 100,
+          avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 100) / 100,
           avgCharges: Math.round(((formStat.totalCharges || 0) / matchCount) * 10) / 10,
           avgGuards: Math.round(((formStat.totalGuards || 0) / matchCount) * 10) / 10,
           avgEnergyBlasts: Math.round(((formStat.totalEnergyBlasts || 0) / matchCount) * 10) / 10,
-          avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 10) / 10,
-          avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 10) / 10,
-          avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 10) / 10,
+          avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 100) / 100,
+          avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 100) / 100,
+          avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 100) / 100,
           avgMaxComboNum: Math.round(((formStat.totalMaxComboNum || 0) / matchCount) * 10) / 10,
           avgMaxComboDamage: Math.round((formStat.totalMaxComboDamage || 0) / matchCount),
-          avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 10) / 10,
-          avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 10) / 10,
-          avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 10) / 10,
-          avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 10) / 10,
-          avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 10) / 10,
-          avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 10) / 10,
+          avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 100) / 100,
+          avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 100) / 100,
+          avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 100) / 100,
+          avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 100) / 100,
+          avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 100) / 100,
+          avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 100) / 100,
           avgSparkingCombo: Math.round(((formStat.totalSparkingCombo || 0) / matchCount) * 10) / 10,
           avgDragonDashMileage: Math.round(((formStat.totalDragonDashMileage || 0) / matchCount) * 10) / 10,
-          avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 10) / 10,
+          avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 100) / 100,
           // Calculated stats
           damagePerSecond: Math.round(damagePerSecond * 10) / 10,
           damageEfficiency: Math.round(damageEfficiency * 100) / 100,
@@ -3765,6 +4474,7 @@ export default function App() {
         totalZCounters,
         totalSuperCounters,
         totalRevengeCounters,
+        totalTransformations,
         totalTags,
         totalS1Blast,
         totalS2Blast,
@@ -3803,6 +4513,7 @@ export default function App() {
         avgZCounters,
         avgSuperCounters,
         avgRevengeCounters,
+        avgTransformations,
         avgTags,
         avgMaxCombo,
         avgMaxComboDamage,
@@ -3837,14 +4548,17 @@ export default function App() {
         speedImpactWinRate: speedImpactWinRate,
         teamsUsed: teamsArray,
         aiStrategiesUsed: aiStrategiesArray,
+        mapsUsed: mapsArray,
         primaryTeam,
         primaryAIStrategy,
+        primaryMap,
         topBuilds: topBuilds, // Recalculated based on filtered matches
         // Form stats - Recalculated based on filtered matches
         formStatsArray: formStatsArray,
         hasMultipleForms: hasMultipleForms,
         formHistory: formHistory,
-        matches: filteredMatches
+        matches: filteredMatches,
+        baseRankScore // Unfiltered score used to keep rank order stable across build filters
       };
     }).filter(char => char !== null); // Remove characters with no matching matches
     
@@ -3875,8 +4589,8 @@ export default function App() {
       let aVal, bVal;
       switch(sortBy) {
         case 'combatScore':
-          aVal = a.combatPerformanceScore;
-          bVal = b.combatPerformanceScore;
+          aVal = a.baseRankScore ?? a.combatPerformanceScore;
+          bVal = b.baseRankScore ?? b.combatPerformanceScore;
           break;
         case 'totalDamage':
           aVal = a.totalDamage;
@@ -3911,7 +4625,7 @@ export default function App() {
     });
     
     return filtered;
-  }, [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection, selectedTeams, selectedAIStrategies]);
+  }, [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters]);
 
   // Extract unique teams and AI strategies from aggregated data
   const availableCharacters = useMemo(() => {
@@ -3936,6 +4650,16 @@ export default function App() {
       }
     });
     return Array.from(strategies).sort();
+  }, [aggregatedData]);
+
+  const availableMaps = useMemo(() => {
+    const maps = new Set();
+    aggregatedData.forEach(char => {
+      if (char.mapsUsed && Array.isArray(char.mapsUsed)) {
+        char.mapsUsed.forEach(map => maps.add(map));
+      }
+    });
+    return Array.from(maps).sort();
   }, [aggregatedData]);
 
   // Helper to toggle expanded state
@@ -4018,12 +4742,51 @@ export default function App() {
     event.stopPropagation();
   };
 
+  const handleNavigateToMatch = async (fileName) => {
+    if (!fileName) return;
+    if (mode === 'manual') {
+      const file = manualFiles.find(f => f.name === fileName);
+      if (file && !file.error) {
+        setFileContent(file.content);
+        setSelectedFilePath([file.name]);
+        setAnalysisFileContent(file.content);
+        setAnalysisSelectedFilePath([file.name]);
+        setMatchFilterSource(fileName);
+        setViewType('single');
+        setExpandedRows({});
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+      }
+      return;
+    }
+    // Reference mode: fetch the file
+    const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
+    try {
+      const res = await fetch(`${base}BR_Data/${fileName}`);
+      if (res.ok) {
+        const content = await res.json();
+        setPreNavigationFileContent(fileContent); // save full array so Back to Tables can restore it
+        setFileContent(content);
+        setSelectedFilePath([fileName]);
+        setAnalysisFileContent(content);
+        setAnalysisSelectedFilePath([fileName]);
+        setMatchFilterSource(fileName);
+        setViewType('single');
+        setExpandedRows({});
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+      }
+    } catch (err) {
+      console.error('Failed to navigate to match file:', err);
+    }
+  };
+
   const handleModeChange = (newMode) => {
     setMode(newMode);
     setSelectedFile(null);
     setFileContent(null);
     setManualFiles([]);
     setViewType('single');
+    setMatchFilterSource(null);
+    setPreNavigationFileContent(null);
     setExpandedRows({});
   };
 
@@ -5203,6 +5966,61 @@ export default function App() {
                   </div>
                 )}
                 
+                {/* Map Filter */}
+                {availableMaps.length > 0 && (
+                  <div className="mb-4">
+                    {/* Selected Maps as Chips */}
+                    {selectedMaps.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {selectedMaps.map(map => (
+                          <button
+                            key={map}
+                            onClick={() => {
+                              setSelectedMaps(prev => prev.filter(m => m !== map));
+                            }}
+                            className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all flex items-center gap-1 ${
+                              darkMode 
+                                ? 'bg-green-900 border-green-600 text-green-300 hover:bg-green-800' 
+                                : 'bg-green-100 border-green-500 text-green-700 hover:bg-green-200'
+                            }`}
+                          >
+                            {map}
+                            <X className="w-3 h-3" />
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setSelectedMaps([])}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            darkMode 
+                              ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
+                              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          Clear all
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Search Input with Dropdown */}
+                    <div className="mb-2">
+                      <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
+                        <Target className="w-5 h-5" />
+                        Maps
+                      </div>
+                      <MultiSelectCombobox
+                        items={availableMaps.map(map => ({ id: map, name: map }))}
+                        selectedIds={selectedMaps}
+                        placeholder="Search and select maps..."
+                        onAdd={(id) => setSelectedMaps(prev => [...prev, id])}
+                        darkMode={darkMode}
+                        focusColor="green"
+                      />
+                    </div>
+                  </div>
+                )}
+                
                 {/* Sort Controls */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
@@ -5407,27 +6225,27 @@ export default function App() {
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t border-gray-600">
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgThrows}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgThrows || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgVanishingAttacks}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgVanishingAttacks || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgDragonHoming}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgDragonHoming || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgLightningAttacks}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgLightningAttacks || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSpeedImpacts}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSpeedImpacts || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSpeedImpactWins}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSpeedImpactWins || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
@@ -5439,11 +6257,11 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo Hits:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSparkingCombo}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSparkingCombo || 0).toFixed(1)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgKills}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgKills || 0).toFixed(2)}</strong>
                                   </div>
                                 </div>
                               </div>
@@ -5469,7 +6287,11 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                    <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{char.avgTags || 0}</strong>
+                                    <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{(char.avgTags || 0).toFixed(2)}</strong>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
+                                    <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{(char.avgTransformations || 0).toFixed(2)}</strong>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t border-gray-600">
@@ -5479,15 +6301,15 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSuperCounters}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSuperCounters || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgRevengeCounters}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgRevengeCounters || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgZCounters}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgZCounters || 0).toFixed(2)}</strong>
                                   </div>
                                 </div>
                               </div>
@@ -5519,7 +6341,7 @@ export default function App() {
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
                                       <div className="flex items-center gap-2">
                                         <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                          {(char.avgS1Hit || 0).toFixed(1)}/{(char.avgS1Blast || char.avgSPM1 || 0).toFixed(1)}
+                                          {(char.avgS1Hit || 0).toFixed(2)}/{(char.avgS1Blast || char.avgSPM1 || 0).toFixed(2)}
                                         </strong>
                                         {char.s1HitRateOverall !== null && char.s1HitRateOverall !== undefined && (
                                           <span className={`text-xs font-mono ${
@@ -5536,7 +6358,7 @@ export default function App() {
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
                                       <div className="flex items-center gap-2">
                                         <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                          {(char.avgS2Hit || 0).toFixed(1)}/{(char.avgS2Blast || char.avgSPM2 || 0).toFixed(1)}
+                                          {(char.avgS2Hit || 0).toFixed(2)}/{(char.avgS2Blast || char.avgSPM2 || 0).toFixed(2)}
                                         </strong>
                                         {char.s2HitRateOverall !== null && char.s2HitRateOverall !== undefined && (
                                           <span className={`text-xs font-mono ${
@@ -5553,7 +6375,7 @@ export default function App() {
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
                                       <div className="flex items-center gap-2">
                                         <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                          {(char.avgUltHit || 0).toFixed(1)}/{(char.avgUltBlast || char.avgUltimates || 0).toFixed(1)}
+                                          {(char.avgUltHit || 0).toFixed(2)}/{(char.avgUltBlast || char.avgUltimates || 0).toFixed(2)}
                                         </strong>
                                         {char.ultHitRateOverall !== null && char.ultHitRateOverall !== undefined && (
                                           <span className={`text-xs font-mono ${
@@ -5579,13 +6401,13 @@ export default function App() {
                                     <div className="flex justify-between">
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
                                       <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                        {char.avgSPM2}
+                                        {(char.avgSPM2 || 0).toFixed(2)}
                                       </strong>
                                     </div>
                                     <div className="flex justify-between">
                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
                                       <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                        {char.avgUltimates}
+                                        {(char.avgUltimates || 0).toFixed(2)}
                                       </strong>
                                     </div>
                                   </div>
@@ -5605,7 +6427,7 @@ export default function App() {
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgSparking}</strong>
+                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSparking || 0).toFixed(2)}</strong>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
@@ -5618,83 +6440,26 @@ export default function App() {
                                 </div>
                               </div>
 
-                              {/* Most Used Builds Section */}
+                              {/* Builds Section */}
                               {char.topBuilds && char.topBuilds.length > 0 && (
-                                <div className={`rounded-lg p-3 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center">
-                                      <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                                      <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Most Used Builds</h4>
-                                    </div>
-                                    {(() => {
-                                      const currentBuildIndex = selectedBuildIndex[char.name] || 0;
-                                      const currentBuild = char.topBuilds?.[currentBuildIndex];
-                                      return (
-                                        <PerformanceScoreBadge 
-                                          score={currentBuild?.avgPerformanceScore || 0} 
-                                          label="Score" 
-                                          size="small" 
-                                          darkMode={darkMode} 
-                                          allScores={combatPerformanceScores} 
-                                        />
-                                      );
-                                    })()}
+                                <div className={`rounded-lg p-1 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                                  <div className="flex items-center px-3 mb-2">
+                                    <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Builds ({char.topBuilds.length})</h4>
                                   </div>
-                                  {/* Tabs for build selection */}
-                                  {char.topBuilds.length > 1 && (
-                                    <div className="flex items-center gap-2 mb-3">
-                                      {char.topBuilds.map((build, index) => {
-                                        const isSelected = (selectedBuildIndex[char.name] || 0) === index;
-                                        const labels = ['First', 'Second', 'Third'];
-                                        return (
-                                          <button
-                                            key={index}
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setSelectedBuildIndex(prev => ({ ...prev, [char.name]: index }));
-                                            }}
-                                            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                                              isSelected
-                                                ? darkMode
-                                                  ? 'bg-indigo-600 text-white border-2 border-indigo-500'
-                                                  : 'bg-indigo-500 text-white border-2 border-indigo-600'
-                                                : darkMode
-                                                  ? 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:bg-gray-600'
-                                                  : 'bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-100'
-                                            }`}
-                                          >
-                                            {labels[index]}
-                                          </button>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
-
-                                  {(() => {
-                                    const currentBuildIndex = selectedBuildIndex[char.name] || 0;
-                                    const currentBuild = char.topBuilds?.[currentBuildIndex];
-                                    const tooltipKey = `${char.name}-build-${currentBuildIndex}`;
-                                    
-                                    if (!currentBuild) return null;
-                                    
-                                    return (
-                                      <BuildTypeTooltipWrapper
-                                        buildComposition={currentBuild.buildComposition}
-                                        aiStrategy={currentBuild.aiStrategy}
-                                        count={currentBuild.activeCount || currentBuild.count}
-                                        equippedCapsules={currentBuild.equippedCapsules}
-                                        totalCapsuleCost={currentBuild.totalCapsuleCost}
-                                        darkMode={darkMode}
-                                        tooltipKey={tooltipKey}
-                                      />
-                                    );
-                                  })()}
-                                  {char.primaryTeam && (
-                                    <div className={`flex items-center justify-between font-semibold text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                      <span className={`font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Main Team:</span> 
-                                      <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{char.primaryTeam}</span>
-                                    </div>
-                                  )}
+                                  <BuildTableView
+                                    builds={char.topBuilds}
+                                    buildKey={char.name}
+                                    selectedBuildIndex={selectedBuildIndex}
+                                    setSelectedBuildIndex={setSelectedBuildIndex}
+                                    selectedBuildSort={selectedBuildSort}
+                                    setSelectedBuildSort={setSelectedBuildSort}
+                                    allScores={combatPerformanceScores}
+                                    primaryTeam={char.primaryTeam}
+                                    activeBuildFilters={activeBuildFilters}
+                                    setActiveBuildFilters={setActiveBuildFilters}
+                                    darkMode={darkMode}
+                                  />
                                 </div>
                               )}
                             </div>
@@ -5750,6 +6515,56 @@ export default function App() {
             
             {!sectionCollapsed.position && (
             <div>
+              {/* Match Type Filter */}
+              <div className="mb-6">
+                <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
+                  darkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  <Filter className="w-4 h-4" />
+                  Match Type
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {/* All button */}
+                  <button
+                    onClick={() => {
+                      const allMatchTypes = ['2v2', '3v3', '4v4', '5v5'];
+                      const allSelected = allMatchTypes.every(type => positionMatchTypeFilters.includes(type));
+                      setPositionMatchTypeFilters(allSelected ? [] : allMatchTypes);
+                    }}
+                    className={`px-3 py-1.5 rounded border-2 text-sm font-medium transition-colors ${
+                      positionMatchTypeFilters.length === 4
+                        ? (darkMode ? 'bg-green-900 border-green-500 text-green-200' : 'bg-green-100 border-green-500 text-green-700')
+                        : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
+                    }`}
+                  >
+                    All
+                  </button>
+                  {['2v2', '3v3', '4v4', '5v5'].map(matchType => {
+                    const isActive = positionMatchTypeFilters.includes(matchType);
+                    
+                    return (
+                      <button
+                        key={matchType}
+                        onClick={() => {
+                          setPositionMatchTypeFilters(prev => 
+                            isActive 
+                              ? prev.filter(f => f !== matchType)
+                              : [...prev, matchType]
+                          );
+                        }}
+                        className={`px-3 py-1.5 rounded border-2 text-sm font-medium transition-colors ${
+                          isActive 
+                            ? (darkMode ? 'bg-blue-900 border-blue-500 text-blue-200' : 'bg-blue-100 border-blue-500 text-blue-700')
+                            : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
+                        }`}
+                      >
+                        {matchType}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map(position => {
                 const posData = positionData[position];
@@ -5761,43 +6576,277 @@ export default function App() {
                 ];
                 const colors = positionColors[position - 1];
                 
+                // Hide position if it has no matches
+                if (!posData || !posData.sortedCharacters || posData.sortedCharacters.length === 0) {
+                  return null;
+                }
+                
                 return (
                   <div key={position} className={`rounded-xl border p-4 ${
                     darkMode 
                       ? `${colors.darkBg} ${colors.darkBorder}` 
                       : `${colors.bg} ${colors.border}`
                   }`}>
-                    <div className="flex items-center gap-2 mb-4">
-                      <Target className={`w-5 h-5 ${darkMode ? colors.dark : colors.light}`} />
-                      <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                        Position {position}: {positionNames[position - 1]}
-                      </h3>
+                    <div 
+                      className="flex items-center justify-between mb-4 cursor-pointer"
+                      onClick={() => setCollapsedPositions(prev => ({
+                        ...prev,
+                        [position]: !prev[position]
+                      }))}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Target className={`w-5 h-5 ${darkMode ? colors.dark : colors.light}`} />
+                        <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                          Position {position}: {positionNames[position - 1]}
+                        </h3>
+                      </div>
+                      {collapsedPositions[position] ? 
+                        <ChevronDown className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} /> : 
+                        <ChevronUp className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                      }
                     </div>
                     
+                    {!collapsedPositions[position] && (
+                      <>
+                    {/* Character Filter - Above Character Appearances */}
+                    <div className="mb-3 flex justify-end">
+                      <div className="max-w-xs w-full">
+                        {/* Selected Characters Pills */}
+                        {positionCharacterFilters[position]?.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-2 justify-end">
+                            {positionCharacterFilters[position].map((character, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => setPositionCharacterFilters(prev => ({
+                                  ...prev,
+                                  [position]: prev[position].filter(c => c !== character)
+                                }))}
+                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                                  darkMode 
+                                    ? position === 1 
+                                      ? 'bg-red-900/30 text-red-300 hover:bg-red-900/50'
+                                      : position === 2
+                                      ? 'bg-blue-900/30 text-blue-300 hover:bg-blue-900/50'
+                                      : 'bg-purple-900/30 text-purple-300 hover:bg-purple-900/50'
+                                    : position === 1
+                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                    : position === 2
+                                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                                }`}
+                              >
+                                {character}
+                                <X className="w-3 h-3" />
+                              </button>
+                            ))}
+                            <button
+                              onClick={() => setPositionCharacterFilters(prev => ({
+                                ...prev,
+                                [position]: []
+                              }))}
+                              className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
+                                darkMode 
+                                  ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
+                                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              Clear all
+                            </button>
+                          </div>
+                        )}
+                        
+                        <div className={`text-xs font-medium mb-1 flex items-center gap-1 justify-end ${
+                          darkMode ? 'text-gray-300' : 'text-gray-700'
+                        }`}>
+                          <Search className="w-3 h-3" />
+                          Characters
+                        </div>
+                        <MultiSelectCombobox
+                          items={posData.sortedCharacters.map(char => ({ id: char.name, name: char.name }))}
+                          selectedIds={positionCharacterFilters[position] || []}
+                          placeholder="Search and select characters..."
+                          onAdd={(id) => setPositionCharacterFilters(prev => ({
+                            ...prev,
+                            [position]: [...(prev[position] || []), id]
+                          }))}
+                          darkMode={darkMode}
+                          focusColor={position === 1 ? 'red' : position === 2 ? 'blue' : 'purple'}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Character Appearances */}
                     <div className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Total Matches: {posData.totalMatches}
+                      <div className="flex items-center gap-2">
+                        <span>Character Appearances: {posData.totalMatches}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded cursor-help ${
+                          darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'
+                        }`} title="Total times any character appeared in this position across all matches (counts both teams)">
+                          ?
+                        </span>
+                      </div>
+                      <div className="text-xs mt-1 opacity-75">
+                        {posData.uniqueMatchCount || Math.round(posData.totalMatches / 2)} unique matches
+                      </div>
+                    </div>
+                    
+                    {/* Position Summary Stats */}
+                    <div className={`mb-4 p-3 rounded-lg border ${
+                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+                    }`}>
+                      <h4 className={`text-xl text-center font-bold mb-2 mt-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                        {positionNames[position - 1]} Average
+                      </h4>
+                      <div className="flex justify-center mb-3">
+                        <PerformanceIndicator 
+                          value={calculatePositionAverage(posData, 'combatPerformanceScore')} 
+                          allValues={Object.values(positionData).map(pd => calculatePositionAverage(pd, 'combatPerformanceScore'))}
+                          darkMode={darkMode}
+                          size="small"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 gap-3 text-sm">
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Avg Damage
+                          </div>
+                          <div className={`font-bold ${darkMode ? colors.dark : colors.light}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgDamage')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Avg Taken
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgTaken')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Battle Time
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                            {calculatePositionAverage(posData, 'avgBattleTime').toFixed(1)}s
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            DPS
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgDPS')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Efficiency
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                            {calculatePositionAverage(posData, 'damageEfficiency').toFixed(1)}x
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Survival
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
+                            {calculatePositionSurvivalRate(posData)}%
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Avg Health
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgHealth')))}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Characters
+                          </div>
+                          <div className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                            {posData.sortedCharacters.length}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     
                     {posData.sortedCharacters.length > 0 ? (
-                      <div className="space-y-3">
-                        {posData.sortedCharacters.slice(0, 5).map((char, idx) => (
+                      <>
+                      <div 
+                        className="overflow-y-auto pr-2"
+                        style={{ 
+                          maxHeight: posData.sortedCharacters.filter(char => 
+                            positionCharacterFilters[position]?.length === 0 || 
+                            positionCharacterFilters[position]?.includes(char.name)
+                          ).length > 5 ? '550px' : 'none' 
+                        }}
+                      >
+                        <div className="space-y-3">
+                        {posData.sortedCharacters
+                          .filter(char => 
+                            positionCharacterFilters[position]?.length === 0 || 
+                            positionCharacterFilters[position]?.includes(char.name)
+                          )
+                          .map((char, idx) => (
                           <div key={idx} className={`p-3 rounded-lg border ${
                             darkMode 
                               ? 'bg-gray-700 border-gray-600' 
                               : 'bg-white border-gray-200'
                           }`}>
                             <div className="flex items-center justify-between mb-2">
-                              <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                {char.name}
-                              </span>
-                              <span className={`text-xs px-2 py-1 rounded ${
-                                darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'
-                              }`}>
-                                {char.activeMatchCount || char.matchCount} active match{(char.activeMatchCount || char.matchCount) !== 1 ? 'es' : ''}
-                              </span>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                                  {char.name}
+                                </span>
+                                {/* Performance Badges */}
+                                {char.avgDamage > calculatePositionAverage(posData, 'avgDamage') * 1.5 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-100 text-amber-800'
+                                  }`} title="Significantly above position average damage">
+                                    🔥 High Output
+                                  </span>
+                                )}
+                                {char.damageEfficiency > 2.0 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-800'
+                                  }`} title="Exceptional damage efficiency (2.0x or higher)">
+                                    ⚡ Efficient
+                                  </span>
+                                )}
+                                {char.avgHealth > (char.totalHealth / (char.activeMatchCount || char.matchCount)) * 0.8 && char.avgHealth > 8000 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-800'
+                                  }`} title="Consistently survives with high health">
+                                    🛡️ Survivor
+                                  </span>
+                                )}
+                                {(char.activeMatchCount || char.matchCount) < 3 && (
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    darkMode ? 'bg-yellow-900/30 text-yellow-300' : 'bg-yellow-100 text-yellow-700'
+                                  }`} title="Small sample size - stats may not be representative">
+                                    ⚠️ Limited Data
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <PerformanceIndicator 
+                                  value={char.combatPerformanceScore} 
+                                  allValues={posData.sortedCharacters.map(c => c.combatPerformanceScore)}
+                                  darkMode={darkMode}
+                                  size="small"
+                                />
+                                <span className={`text-xs px-2 py-1 rounded cursor-help ${
+                                  darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'
+                                }`} title={`Used ${char.activeMatchCount || char.matchCount} time${(char.activeMatchCount || char.matchCount) !== 1 ? 's' : ''} in this position${char.matchCount > (char.activeMatchCount || 0) ? ` (${char.matchCount - (char.activeMatchCount || 0)} with 0 battle time)` : ''}`}>
+                                  {char.activeMatchCount || char.matchCount} Matches
+                                </span>
+                              </div>
                             </div>
                             
-                            <div className="grid grid-cols-3 gap-2 text-xs">
+                            <div className="grid grid-cols-4 gap-2 text-sm">
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Damage</div>
                                 <div className={`font-medium ${darkMode ? colors.dark : colors.light}`}>
@@ -5819,13 +6868,19 @@ export default function App() {
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>DPS</div>
                                 <div className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                  {formatNumber(Math.round(char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0))}
+                                  {formatNumber(Math.round(char.avgDPS))}
                                 </div>
                               </div>
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Efficiency</div>
                                 <div className={`font-medium ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
                                   {(char.damageEfficiency).toFixed(1)}x
+                                </div>
+                              </div>
+                              <div>
+                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival</div>
+                                <div className={`font-medium ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
+                                  {Math.round(char.survivalRate * 100)}%
                                 </div>
                               </div>
                               <div>
@@ -5837,17 +6892,37 @@ export default function App() {
                             </div>
                           </div>
                         ))}
-                        
-                        {posData.sortedCharacters.length > 5 && (
-                          <div className={`text-center text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            +{posData.sortedCharacters.length - 5} more characters...
-                          </div>
-                        )}
+                        </div>
                       </div>
+                      {(() => {
+                        const filteredCount = posData.sortedCharacters.filter(char => 
+                          positionCharacterFilters[position]?.length === 0 || 
+                          positionCharacterFilters[position]?.includes(char.name)
+                        ).length;
+                        return filteredCount > 5 && (
+                          <div className={`text-center text-xs mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                            Scroll to see all {filteredCount} characters
+                          </div>
+                        );
+                      })()}
+                      </>
                     ) : (
                       <div className={`text-center text-sm py-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                         No data available for this position
                       </div>
+                    )}
+                    
+                    {/* Show message when filters result in no characters */}
+                    {posData.sortedCharacters.length > 0 && 
+                     posData.sortedCharacters.filter(char => 
+                       positionCharacterFilters[position]?.length === 0 || 
+                       positionCharacterFilters[position]?.includes(char.name)
+                     ).length === 0 && (
+                      <div className={`text-center text-sm py-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        No characters match the selected filters
+                      </div>
+                    )}
+                    </>
                     )}
                   </div>
                 );
@@ -5940,125 +7015,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-            
-            {/* Position Meta Summary */}
-            <div className={`mt-6 p-4 rounded-xl border ${
-              darkMode 
-                ? 'bg-gray-700 border-gray-600' 
-                : 'bg-gray-50 border-gray-200'
-            }`}>
-              <h4 className={`text-lg font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                Position Meta Summary
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                {[1, 2, 3].map(position => {
-                  const posData = positionData[position];
-                  const positionNames = ['Lead', 'Middle', 'Anchor'];
-                  const topPerformer = posData.sortedCharacters[0];
-                  
-                  return (
-                    <div key={position} className={`p-3 rounded-lg ${
-                      darkMode ? 'bg-gray-600' : 'bg-white'
-                    }`}>
-                      <div className={`font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                        {positionNames[position - 1]} Position
-                      </div>
-                      {topPerformer ? (
-                        <>
-                          <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                            Top: {topPerformer.name}
-                          </div>
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {formatNumber(Math.round(topPerformer.avgDamage))} avg damage
-                          </div>
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {posData.sortedCharacters.length} unique characters
-                          </div>
-                        </>
-                      ) : (
-                        <div className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                          No data available
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            
-            {/* Strategic Position Insights */}
-            <div className={`mt-6 p-4 rounded-xl border ${
-              darkMode 
-                ? 'bg-indigo-900/20 border-indigo-600' 
-                : 'bg-indigo-50 border-indigo-200'
-            }`}>
-              <h4 className={`text-lg font-bold mb-3 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                <Target className={`w-5 h-5 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                Strategic Position Insights
-              </h4>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Lead Position Insights */}
-                <div className={`p-3 rounded-lg ${
-                  darkMode ? 'bg-red-900/20 border border-red-600' : 'bg-red-50 border border-red-200'
-                }`}>
-                  <div className={`font-semibold mb-2 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                    🥇 Lead Position (1)
-                  </div>
-                  <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <div>• First to engage opponents</div>
-                    <div>• Should have strong neutral game</div>
-                    <div>• Often needs good defensive options</div>
-                    <div>• Sets the pace for the team</div>
-                  </div>
-                  {positionData[1]?.sortedCharacters[0] && (
-                    <div className={`mt-2 text-xs ${darkMode ? 'text-red-300' : 'text-red-700'}`}>
-                      <strong>Top Pick:</strong> {positionData[1].sortedCharacters[0].name}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Middle Position Insights */}
-                <div className={`p-3 rounded-lg ${
-                  darkMode ? 'bg-blue-900/20 border border-blue-600' : 'bg-blue-50 border border-blue-200'
-                }`}>
-                  <div className={`font-semibold mb-2 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                    🛡️ Middle Position (2)
-                  </div>
-                  <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <div>• Balanced role and utility</div>
-                    <div>• Can support lead or clean up</div>
-                    <div>• Often versatile characters</div>
-                    <div>• Adapts to team needs</div>
-                  </div>
-                  {positionData[2]?.sortedCharacters[0] && (
-                    <div className={`mt-2 text-xs ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}>
-                      <strong>Top Pick:</strong> {positionData[2].sortedCharacters[0].name}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Anchor Position Insights */}
-                <div className={`p-3 rounded-lg ${
-                  darkMode ? 'bg-purple-900/20 border border-purple-600' : 'bg-purple-50 border border-purple-200'
-                }`}>
-                  <div className={`font-semibold mb-2 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                    ⚡ Anchor Position (3)
-                  </div>
-                  <div className={`text-sm space-y-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    <div>• Last character standing</div>
-                    <div>• High damage potential needed</div>
-                    <div>• Strong comeback mechanics</div>
-                    <div>• Often carries the team</div>
-                  </div>
-                  {positionData[3]?.sortedCharacters[0] && (
-                    <div className={`mt-2 text-xs ${darkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                      <strong>Top Pick:</strong> {positionData[3].sortedCharacters[0].name}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
             </div>
             )}
           </div>
@@ -6086,6 +7042,41 @@ export default function App() {
         {((mode === 'reference' && (analysisSelectedFilePath || selectedFilePath) && viewType === 'single') || 
           (mode === 'manual' && viewType === 'single' && (analysisFileContent || fileContent))) && (
           <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            {/* Match filter banner — shown when navigated from Data Tables */}
+            {matchFilterSource && (
+              <div className={`flex items-center justify-between gap-3 mb-4 px-4 py-3 rounded-xl border ${
+                darkMode
+                  ? 'bg-blue-900/30 border-blue-600 text-blue-200'
+                  : 'bg-blue-50 border-blue-300 text-blue-800'
+              }`}>
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText className="w-4 h-4 shrink-0" />
+                  <span className="text-sm font-medium shrink-0">Viewing match:</span>
+                  <span className={`text-sm font-mono truncate ${
+                    darkMode ? 'text-blue-300' : 'text-blue-700'
+                  }`}>{getFileNameFromPath(matchFilterSource)}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setMatchFilterSource(null);
+                    setViewType('tables');
+                    if (preNavigationFileContent !== null) {
+                      setFileContent(preNavigationFileContent);
+                      setPreNavigationFileContent(null);
+                    }
+                  }}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                    darkMode
+                      ? 'bg-blue-800 hover:bg-blue-700 text-blue-200 border border-blue-600'
+                      : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300'
+                  }`}
+                  title="Return to Data Tables"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Back to Tables
+                </button>
+              </div>
+            )}
             <div className="mb-2">  
               <div className={`flex items-center text-sm font-medium mb-2 gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 <Search className="w-4 h-4" /> Match Selection
@@ -6286,6 +7277,9 @@ export default function App() {
                             )}
                             {stats.tags > 0 && (
                               <MetricDisplay label="Tags" value={stats.tags} color="teal" darkMode={darkMode} size="small" />
+                            )}
+                            {stats.formChangeCount > 0 && (
+                              <MetricDisplay label="Transformations" value={stats.formChangeCount} color="violet" darkMode={darkMode} size="small" />
                             )}
                           </div>
                         </StatGroup>
@@ -6568,6 +7562,9 @@ export default function App() {
                             {stats.tags > 0 && (
                               <MetricDisplay label="Tags" value={stats.tags} color="teal" darkMode={darkMode} size="small" />
                             )}
+                            {stats.formChangeCount > 0 && (
+                              <MetricDisplay label="Transformations" value={stats.formChangeCount} color="violet" darkMode={darkMode} size="small" />
+                            )}
                           </div>
                         </StatGroup>
                         
@@ -6777,7 +7774,7 @@ export default function App() {
                   </div>
                   <DataTable
                     data={prepareMatchDetailsData(aggregatedData)}
-                    columns={getMatchDetailsTableConfig(darkMode).columns}
+                    columns={getMatchDetailsTableConfig(darkMode, handleNavigateToMatch).columns}
                     title="Individual Match Performance Details"
                     exportFileName={`match_details_${new Date().toISOString().split('T')[0]}`}
                     onExport={handleMatchDetailsExport}
@@ -7063,7 +8060,7 @@ export default function App() {
                                 Avg Tags
                               </div>
                               <div className={`text-base font-bold ${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>
-                                {(team.top5AvgTags || 0).toFixed(1)}
+                                {(team.top5AvgTags || 0).toFixed(2)}
                               </div>
                             </div>
                             
@@ -7106,10 +8103,22 @@ export default function App() {
                                   return Object.entries(team.characterAverages)
                                     .sort((a, b) => b[1].performanceScore - a[1].performanceScore)
                                     .slice(0, 8)
-                                    .map(([charName, charStats], charIndex) => {
+                                    .map(([charName, _charStats], charIndex) => {
+                                      const charKey = `team_${i}_char_${charName}`;
+                                      // Apply build filter if active for this character in the teams view
+                                      let charStats = _charStats;
+                                      const teamActiveBuildFilterKey = activeBuildFilters[charKey];
+                                      if (teamActiveBuildFilterKey && _charStats.rawMatches) {
+                                        const filteredRawMatches = _charStats.rawMatches.filter(m => {
+                                          const cKey = (m.equippedCapsules || []).map(c => c.name || c.id || '').sort().join(',');
+                                          return `${cKey}|${m.aiStrategy || 'Default'}` === teamActiveBuildFilterKey;
+                                        });
+                                        if (filteredRawMatches.length > 0) {
+                                          charStats = recomputeTeamCharStats(filteredRawMatches, _charStats);
+                                        }
+                                      }
                                       const avgDamageTaken = charStats.avgDamageTaken || 1;
                                       const dps = charStats.avgDamagePerSecond || 0;
-                                      const charKey = `team_${i}_char_${charName}`;
                                       const isCharExpanded = expandedRows[charKey];
                                       const isTop5 = team.top5CharacterNames && team.top5CharacterNames.includes(charName);
                                     
@@ -7125,11 +8134,23 @@ export default function App() {
                                           onClick={() => setExpandedRows(prev => ({ ...prev, [charKey]: !prev[charKey] }))}
                                         >
                                           <div className="flex items-center justify-between gap-4">
-                                            {/* Character Name with Top 5 Badge */}
+                                            {/* Character Name with Position Badge */}
                                             <div className="flex items-center gap-2 min-w-[120px]">
                                               <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                                 {charName}
                                               </div>
+                                              {charStats.primaryPosition && (() => {
+                                                const posColorMap = {
+                                                  Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
+                                                  Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
+                                                  Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
+                                                };
+                                                return (
+                                                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${posColorMap[charStats.primaryPosition] || ''}`}>
+                                                    {charStats.primaryPosition}
+                                                  </span>
+                                                );
+                                              })()}
                                             </div>
                                             
                                             {/* Spacer to push stats to the right */}
@@ -7173,7 +8194,7 @@ export default function App() {
                                               <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
                                                 <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Eliminations</div>
                                                 <div className={`text-sm font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                  {charStats.avgKills || 0}
+                                                  {(charStats.avgKills || 0).toFixed(2)}
                                                 </div>
                                               </div>
                                             </div>
@@ -7227,27 +8248,27 @@ export default function App() {
                                                   <div className={`grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgThrows || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgThrows || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgVanishingAttacks || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgVanishingAttacks || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonHoming || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgDragonHoming || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgLightningAttacks || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgLightningAttacks || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpacts || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSpeedImpacts || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSpeedImpactWins || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSpeedImpactWins || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
@@ -7259,11 +8280,11 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparkingCombo || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSparkingCombo || 0).toFixed(1)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgKills || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgKills || 0).toFixed(2)}</strong>
                                                     </div>
                                                   </div>
                                                 </div>
@@ -7295,7 +8316,11 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                                      <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{charStats.avgTags || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{(charStats.avgTags || 0).toFixed(2)}</strong>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
+                                                      <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{(charStats.avgTransformations || 0).toFixed(2)}</strong>
                                                     </div>
                                                   </div>
                                                   <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
@@ -7305,15 +8330,15 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSuperCounters || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSuperCounters || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgRevengeCounters || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgRevengeCounters || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgZCounters || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgZCounters || 0).toFixed(2)}</strong>
                                                     </div>
                                                   </div>
                                                 </div>
@@ -7333,7 +8358,7 @@ export default function App() {
                                                         {charStats.s1HitRateOverall !== null && charStats.s1HitRateOverall !== undefined ? (
                                                           <>
                                                             <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                              {(charStats.avgS1Hit || 0).toFixed(1)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(1)}
+                                                              {(charStats.avgS1Hit || 0).toFixed(2)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(2)}
                                                             </strong>
                                                             <span className={`text-xs font-mono ${
                                                               charStats.s1HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
@@ -7345,7 +8370,7 @@ export default function App() {
                                                           </>
                                                         ) : (
                                                           <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgSPM1 || 0).toFixed(1)}
+                                                            {(charStats.avgSPM1 || 0).toFixed(2)}
                                                           </strong>
                                                         )}
                                                       </div>
@@ -7356,7 +8381,7 @@ export default function App() {
                                                         {charStats.s2HitRateOverall !== null && charStats.s2HitRateOverall !== undefined ? (
                                                           <>
                                                             <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                              {(charStats.avgS2Hit || 0).toFixed(1)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(1)}
+                                                              {(charStats.avgS2Hit || 0).toFixed(2)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(2)}
                                                             </strong>
                                                             <span className={`text-xs font-mono ${
                                                               charStats.s2HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
@@ -7368,7 +8393,7 @@ export default function App() {
                                                           </>
                                                         ) : (
                                                           <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgSPM2 || 0).toFixed(1)}
+                                                            {(charStats.avgSPM2 || 0).toFixed(2)}
                                                           </strong>
                                                         )}
                                                       </div>
@@ -7379,7 +8404,7 @@ export default function App() {
                                                         {charStats.ultHitRateOverall !== null && charStats.ultHitRateOverall !== undefined ? (
                                                           <>
                                                             <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                              {(charStats.avgUltHit || 0).toFixed(1)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(1)}
+                                                              {(charStats.avgUltHit || 0).toFixed(2)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(2)}
                                                             </strong>
                                                             <span className={`text-xs font-mono ${
                                                               charStats.ultHitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
@@ -7391,7 +8416,7 @@ export default function App() {
                                                           </>
                                                         ) : (
                                                           <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                            {(charStats.avgUltimates || 0).toFixed(1)}
+                                                            {(charStats.avgUltimates || 0).toFixed(2)}
                                                           </strong>
                                                         )}
                                                       </div>
@@ -7412,7 +8437,7 @@ export default function App() {
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgSparking || 0}</strong>
+                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSparking || 0).toFixed(2)}</strong>
                                                     </div>
                                                     <div className="flex justify-between">
                                                       <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
@@ -7425,78 +8450,25 @@ export default function App() {
                                                   </div>
                                                 </div>
                                                 
-                                                {/* Most Used Builds Section */}
+                                                {/* Builds Section */}
                                                 {charStats.topBuilds && charStats.topBuilds.length > 0 && (
-                                                  <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                    <div className="flex items-center justify-between mb-3">
-                                                      <div className="flex items-center">
-                                                        <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                                                        <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Most Used Builds</h4>
-                                                      </div>
-                                                      {(() => {
-                                                        const currentBuildIndex = selectedBuildIndex[charKey] || 0;
-                                                        const currentBuild = charStats.topBuilds?.[currentBuildIndex];
-                                                        return (
-                                                          <PerformanceScoreBadge 
-                                                            score={currentBuild?.avgPerformanceScore || 0} 
-                                                            label="Score" 
-                                                            size="small" 
-                                                            darkMode={darkMode} 
-                                                            allScores={allCharScores} 
-                                                          />
-                                                        );
-                                                      })()}
+                                                  <div className={`rounded-lg p-1 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
+                                                    <div className="flex items-center px-3 mb-2">
+                                                      <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                                                      <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Builds ({charStats.topBuilds.length})</h4>
                                                     </div>
-                                                    
-                                                    {/* Tabs for build selection */}
-                                                    {charStats.topBuilds.length > 1 && (
-                                                      <div className="flex items-center gap-2 mb-3">
-                                                        {charStats.topBuilds.map((build, index) => {
-                                                          const isSelected = (selectedBuildIndex[charKey] || 0) === index;
-                                                          const labels = ['First', 'Second', 'Third'];
-                                                          return (
-                                                            <button
-                                                              key={index}
-                                                              onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setSelectedBuildIndex(prev => ({ ...prev, [charKey]: index }));
-                                                              }}
-                                                              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                                                                isSelected
-                                                                  ? darkMode
-                                                                    ? 'bg-indigo-600 text-white border-2 border-indigo-500'
-                                                                    : 'bg-indigo-500 text-white border-2 border-indigo-600'
-                                                                  : darkMode
-                                                                    ? 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:bg-gray-600'
-                                                                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-100'
-                                                              }`}
-                                                            >
-                                                              {labels[index]}
-                                                            </button>
-                                                          );
-                                                        })}
-                                                      </div>
-                                                    )}
-                                                    
-                                                    {(() => {
-                                                      const currentBuildIndex = selectedBuildIndex[charKey] || 0;
-                                                      const currentBuild = charStats.topBuilds?.[currentBuildIndex];
-                                                      const tooltipKey = `${charKey}-build-${currentBuildIndex}`;
-                                                      
-                                                      if (!currentBuild) return null;
-                                                      
-                                                      return (
-                                                        <BuildTypeTooltipWrapper
-                                                          buildComposition={currentBuild.buildComposition}
-                                                          aiStrategy={currentBuild.aiStrategy}
-                                                          count={currentBuild.activeCount}
-                                                          equippedCapsules={currentBuild.equippedCapsules}
-                                                          totalCapsuleCost={currentBuild.totalCapsuleCost}
-                                                          darkMode={darkMode}
-                                                          tooltipKey={tooltipKey}
-                                                        />
-                                                      );
-                                                    })()}
+                                                    <BuildTableView
+                                                      builds={_charStats.topBuilds}
+                                                      buildKey={charKey}
+                                                      selectedBuildIndex={selectedBuildIndex}
+                                                      setSelectedBuildIndex={setSelectedBuildIndex}
+                                                      selectedBuildSort={selectedBuildSort}
+                                                      setSelectedBuildSort={setSelectedBuildSort}
+                                                      allScores={allCharScores}
+                                                      activeBuildFilters={activeBuildFilters}
+                                                      setActiveBuildFilters={setActiveBuildFilters}
+                                                      darkMode={darkMode}
+                                                    />
                                                   </div>
                                                 )}
                                               </div>
@@ -8106,11 +9078,6 @@ export default function App() {
     // no-op, placeholder if we need to coordinate darkMode
   }, [darkMode]);
   return null;
-}
-
-// Mount helper: render the UploadWidgetLauncher near root of the app
-export function UploadWidgetMount({ darkMode = false }) {
-  return <UploadWidgetLauncher darkMode={darkMode} />;
 }
 
 // Determine performance level for a value given a distribution of values.

@@ -303,15 +303,15 @@ function renderAggregatedCellContent(columnId, formStat) {
     case 'spms':
       return formStat.avgSpecialMoves?.toFixed(1) || '0.0';
     case 'ults':
-      return formStat.avgUltimates?.toFixed(1) || '0.0';
+      return formStat.avgUltimates?.toFixed(2) || '0.00';
     case 's1':
-      return formStat.avgS1Blast > 0 ? `${formStat.avgS1HitBlast?.toFixed(1)}/${formStat.avgS1Blast?.toFixed(1)}` : '-';
+      return formStat.avgS1Blast > 0 ? `${formStat.avgS1HitBlast?.toFixed(2)}/${formStat.avgS1Blast?.toFixed(2)}` : '-';
     case 's2':
-      return formStat.avgS2Blast > 0 ? `${formStat.avgS2HitBlast?.toFixed(1)}/${formStat.avgS2Blast?.toFixed(1)}` : '-';
+      return formStat.avgS2Blast > 0 ? `${formStat.avgS2HitBlast?.toFixed(2)}/${formStat.avgS2Blast?.toFixed(2)}` : '-';
     case 'ub':
-      return formStat.avgUltBlast > 0 ? `${formStat.avgULTHitBlast?.toFixed(1)}/${formStat.avgUltBlast?.toFixed(1)}` : '-';
+      return formStat.avgUltBlast > 0 ? `${formStat.avgULTHitBlast?.toFixed(2)}/${formStat.avgUltBlast?.toFixed(2)}` : '-';
     case 'kos':
-      return formStat.avgKills?.toFixed(1) || '0.0';
+      return formStat.avgKills?.toFixed(2) || '0.00';
     default:
       return '';
   }

@@ -2,6 +2,16 @@
 // Handles initialization, event handlers, and orchestrates the upload flow
 
 /**
+ * Get the display label for a team/folder name from the TEAMS config
+ * @param {string} folderName - The folder name (value)
+ * @returns {string} The display label, or the original name if not found
+ */
+function getTeamLabel(folderName) {
+    const team = TEAMS.find(t => t.value === folderName);
+    return team ? team.label : folderName;
+}
+
+/**
  * Process path options from the API into parent and leaf options
  * @param {Array} options - Array of path options from API
  */
@@ -21,7 +31,9 @@ function processPathOptions(options) {
         }
         
         if (child) {
-            grouped[parent].push({ label: child, value: opt.value });
+            // Use the team label from TEAMS config for display
+            const displayLabel = getTeamLabel(child);
+            grouped[parent].push({ label: displayLabel, value: opt.value });
         }
     }
     

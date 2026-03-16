@@ -208,8 +208,8 @@
             if (team1Select) {
                 // Team 1: no empty option (must select)
                 team1Select.innerHTML = TEAMS
-                    .filter(t => t !== '')
-                    .map(t => `<option value="${t}">${t}</option>`)
+                    .filter(t => t.value !== '')
+                    .map(t => `<option value="${t.value}">${t.label}</option>`)
                     .join('');
                 team1Select.value = 'Budokai';
             }
@@ -217,7 +217,7 @@
             if (team2Select) {
                 // Team 2: includes empty option
                 team2Select.innerHTML = TEAMS
-                    .map(t => `<option value="${t}">${t || '(Not Set)'}</option>`)
+                    .map(t => `<option value="${t.value}">${t.label || '(Not Set)'}</option>`)
                     .join('');
                 team2Select.value = '';
             }

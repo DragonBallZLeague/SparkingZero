@@ -244,6 +244,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
           totalEnergyBlasts: 0,
           totalCharges: 0,
           totalTags: 0,
+          totalTransformations: 0,
           
           // Character tracking
           characterUsage: {},
@@ -317,6 +318,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       ai.totalEnergyBlasts += match.shotEnergyBulletCount || 0;
       ai.totalCharges += match.chargeCount || 0;
       ai.totalTags += match.tags || 0;
+      ai.totalTransformations += match.formChangeCount || 0;
       
       // Character tracking - accumulate ALL stats per character
       const charName = character.name;
@@ -359,6 +361,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
           totalEnergyBlasts: 0,
           totalCharges: 0,
           totalTags: 0,
+          totalTransformations: 0,
           buildTypeUsage: {},
           buildTypeActions: {}, // Track actions per build type for this character
           capsuleUsage: {}, // Track capsule usage for this character
@@ -405,6 +408,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       charData.totalEnergyBlasts += match.shotEnergyBulletCount || 0;
       charData.totalCharges += match.chargeCount || 0;
       charData.totalTags += match.tags || 0;
+      charData.totalTransformations += match.formChangeCount || 0;
       
       // Track build type for this character
       if (match.buildComposition && match.buildComposition.label) {
@@ -660,32 +664,33 @@ export function calculateAIStrategyMetrics(aggregatedData) {
       avgMaxCombo: Math.round((ai.totalMaxCombo / matches) * 10) / 10,
       avgMaxComboDamage: Math.round(ai.totalMaxComboDamage / matches),
       avgSparkingComboHits: Math.round((ai.totalSparkingComboHits / matches) * 10) / 10,
-      avgS1Blast: Math.round((ai.totalS1Blast / matches) * 10) / 10,
-      avgS2Blast: Math.round((ai.totalS2Blast / matches) * 10) / 10,
-      avgUltBlast: Math.round((ai.totalUltBlast / matches) * 10) / 10,
-      avgS1HitBlast: Math.round((ai.totalS1HitBlast / matches) * 10) / 10,
-      avgS2HitBlast: Math.round((ai.totalS2HitBlast / matches) * 10) / 10,
-      avgUltHitBlast: Math.round((ai.totalUltHitBlast / matches) * 10) / 10,
+      avgS1Blast: Math.round((ai.totalS1Blast / matches) * 100) / 100,
+      avgS2Blast: Math.round((ai.totalS2Blast / matches) * 100) / 100,
+      avgUltBlast: Math.round((ai.totalUltBlast / matches) * 100) / 100,
+      avgS1HitBlast: Math.round((ai.totalS1HitBlast / matches) * 100) / 100,
+      avgS2HitBlast: Math.round((ai.totalS2HitBlast / matches) * 100) / 100,
+      avgUltHitBlast: Math.round((ai.totalUltHitBlast / matches) * 100) / 100,
       avgS1HitRate: ai.totalS1Blast > 0 ? Math.round((ai.totalS1HitBlast / ai.totalS1Blast) * 100) : 0,
       avgS2HitRate: ai.totalS2Blast > 0 ? Math.round((ai.totalS2HitBlast / ai.totalS2Blast) * 100) : 0,
       avgUltHitRate: ai.totalUltBlast > 0 ? Math.round((ai.totalUltHitBlast / ai.totalUltBlast) * 100) : 0,
-      avgExa1Count: Math.round((ai.totalExa1Count / matches) * 10) / 10,
-      avgExa2Count: Math.round((ai.totalExa2Count / matches) * 10) / 10,
-      avgThrows: Math.round((ai.totalThrows / matches) * 10) / 10,
-      avgVanishingAttacks: Math.round((ai.totalVanishingAttacks / matches) * 10) / 10,
-      avgDragonHoming: Math.round((ai.totalDragonHoming / matches) * 10) / 10,
-      avgLightningAttacks: Math.round((ai.totalLightningAttacks / matches) * 10) / 10,
-      avgSpeedImpacts: Math.round((ai.totalSpeedImpacts / matches) * 10) / 10,
-      avgSpeedImpactWins: Math.round((ai.totalSpeedImpactWins / matches) * 10) / 10,
+      avgExa1Count: Math.round((ai.totalExa1Count / matches) * 100) / 100,
+      avgExa2Count: Math.round((ai.totalExa2Count / matches) * 100) / 100,
+      avgThrows: Math.round((ai.totalThrows / matches) * 100) / 100,
+      avgVanishingAttacks: Math.round((ai.totalVanishingAttacks / matches) * 100) / 100,
+      avgDragonHoming: Math.round((ai.totalDragonHoming / matches) * 100) / 100,
+      avgLightningAttacks: Math.round((ai.totalLightningAttacks / matches) * 100) / 100,
+      avgSpeedImpacts: Math.round((ai.totalSpeedImpacts / matches) * 100) / 100,
+      avgSpeedImpactWins: Math.round((ai.totalSpeedImpactWins / matches) * 100) / 100,
       avgGuards: Math.round((ai.totalGuards / matches) * 10) / 10,
-      avgZCounters: Math.round((ai.totalZCounters / matches) * 10) / 10,
-      avgSuperCounters: Math.round((ai.totalSuperCounters / matches) * 10) / 10,
-      avgRevengeCounters: Math.round((ai.totalRevengeCounters / matches) * 10) / 10,
-      avgSparkingCount: Math.round((ai.totalSparkingCount / matches) * 10) / 10,
+      avgZCounters: Math.round((ai.totalZCounters / matches) * 100) / 100,
+      avgSuperCounters: Math.round((ai.totalSuperCounters / matches) * 100) / 100,
+      avgRevengeCounters: Math.round((ai.totalRevengeCounters / matches) * 100) / 100,
+      avgSparkingCount: Math.round((ai.totalSparkingCount / matches) * 100) / 100,
       avgDragonDashDistance: Math.round(ai.totalDragonDashDistance / matches),
       avgEnergyBlasts: Math.round((ai.totalEnergyBlasts / matches) * 10) / 10,
       avgCharges: Math.round((ai.totalCharges / matches) * 10) / 10,
-      avgTags: Math.round((ai.totalTags / matches) * 10) / 10
+      avgTags: Math.round((ai.totalTags / matches) * 100) / 100,
+      avgTransformations: Math.round((ai.totalTransformations / matches) * 100) / 100
     };
     
     // Calculate win rate
@@ -695,7 +700,7 @@ export function calculateAIStrategyMetrics(aggregatedData) {
     const survivalRate = Math.round((ai.totalSurvived / matches) * 1000) / 10;
     
     // Calculate average kills
-    const avgKills = Math.round((ai.totalKills / matches) * 10) / 10;
+    const avgKills = Math.round((ai.totalKills / matches) * 100) / 100;
     
     // Calculate combat performance score (0-100)
     const damageRatio = avgDamageTaken > 0 ? avgDamageDealt / avgDamageTaken : 1;
@@ -1003,6 +1008,7 @@ export function calculateCharacterBaseline(aiMetrics, characterName) {
     totalEnergyBlasts: 0,
     totalCharges: 0,
     totalTags: 0,
+    totalTransformations: 0,
     totalSurvived: 0,
     totalKills: 0
   };
@@ -1045,6 +1051,7 @@ export function calculateCharacterBaseline(aiMetrics, characterName) {
     baseline.totalEnergyBlasts += rawCharData.totalEnergyBlasts || 0;
     baseline.totalCharges += rawCharData.totalCharges || 0;
     baseline.totalTags += rawCharData.totalTags || 0;
+    baseline.totalTransformations += rawCharData.totalTransformations || 0;
     baseline.totalSurvived += rawCharData.totalSurvived || 0;
     baseline.totalKills += rawCharData.totalKills || 0;
   });
@@ -1064,31 +1071,32 @@ export function calculateCharacterBaseline(aiMetrics, characterName) {
     avgMaxCombo: Math.round((baseline.totalMaxCombo / matches) * 10) / 10,
     avgMaxComboDamage: Math.round(baseline.totalMaxComboDamage / matches),
     avgSparkingComboHits: Math.round((baseline.totalSparkingComboHits / matches) * 10) / 10,
-    avgS1Blast: Math.round((baseline.totalS1Blast / matches) * 10) / 10,
-    avgS2Blast: Math.round((baseline.totalS2Blast / matches) * 10) / 10,
-    avgUltBlast: Math.round((baseline.totalUltBlast / matches) * 10) / 10,
-    avgS1HitBlast: Math.round((baseline.totalS1HitBlast / matches) * 10) / 10,
-    avgS2HitBlast: Math.round((baseline.totalS2HitBlast / matches) * 10) / 10,
-    avgUltHitBlast: Math.round((baseline.totalUltHitBlast / matches) * 10) / 10,
-    avgExa1Count: Math.round((baseline.totalExa1Count / matches) * 10) / 10,
-    avgExa2Count: Math.round((baseline.totalExa2Count / matches) * 10) / 10,
-    avgThrows: Math.round((baseline.totalThrows / matches) * 10) / 10,
-    avgVanishingAttacks: Math.round((baseline.totalVanishingAttacks / matches) * 10) / 10,
-    avgDragonHoming: Math.round((baseline.totalDragonHoming / matches) * 10) / 10,
-    avgLightningAttacks: Math.round((baseline.totalLightningAttacks / matches) * 10) / 10,
-    avgSpeedImpacts: Math.round((baseline.totalSpeedImpacts / matches) * 10) / 10,
-    avgSpeedImpactWins: Math.round((baseline.totalSpeedImpactWins / matches) * 10) / 10,
+    avgS1Blast: Math.round((baseline.totalS1Blast / matches) * 100) / 100,
+    avgS2Blast: Math.round((baseline.totalS2Blast / matches) * 100) / 100,
+    avgUltBlast: Math.round((baseline.totalUltBlast / matches) * 100) / 100,
+    avgS1HitBlast: Math.round((baseline.totalS1HitBlast / matches) * 100) / 100,
+    avgS2HitBlast: Math.round((baseline.totalS2HitBlast / matches) * 100) / 100,
+    avgUltHitBlast: Math.round((baseline.totalUltHitBlast / matches) * 100) / 100,
+    avgExa1Count: Math.round((baseline.totalExa1Count / matches) * 100) / 100,
+    avgExa2Count: Math.round((baseline.totalExa2Count / matches) * 100) / 100,
+    avgThrows: Math.round((baseline.totalThrows / matches) * 100) / 100,
+    avgVanishingAttacks: Math.round((baseline.totalVanishingAttacks / matches) * 100) / 100,
+    avgDragonHoming: Math.round((baseline.totalDragonHoming / matches) * 100) / 100,
+    avgLightningAttacks: Math.round((baseline.totalLightningAttacks / matches) * 100) / 100,
+    avgSpeedImpacts: Math.round((baseline.totalSpeedImpacts / matches) * 100) / 100,
+    avgSpeedImpactWins: Math.round((baseline.totalSpeedImpactWins / matches) * 100) / 100,
     avgGuards: Math.round((baseline.totalGuards / matches) * 10) / 10,
-    avgZCounters: Math.round((baseline.totalZCounters / matches) * 10) / 10,
-    avgSuperCounters: Math.round((baseline.totalSuperCounters / matches) * 10) / 10,
-    avgRevengeCounters: Math.round((baseline.totalRevengeCounters / matches) * 10) / 10,
-    avgSparkingCount: Math.round((baseline.totalSparkingCount / matches) * 10) / 10,
+    avgZCounters: Math.round((baseline.totalZCounters / matches) * 100) / 100,
+    avgSuperCounters: Math.round((baseline.totalSuperCounters / matches) * 100) / 100,
+    avgRevengeCounters: Math.round((baseline.totalRevengeCounters / matches) * 100) / 100,
+    avgSparkingCount: Math.round((baseline.totalSparkingCount / matches) * 100) / 100,
     avgDragonDashDistance: Math.round(baseline.totalDragonDashDistance / matches),
     avgEnergyBlasts: Math.round((baseline.totalEnergyBlasts / matches) * 10) / 10,
     avgCharges: Math.round((baseline.totalCharges / matches) * 10) / 10,
-    avgTags: Math.round((baseline.totalTags / matches) * 10) / 10,
+    avgTags: Math.round((baseline.totalTags / matches) * 100) / 100,
+    avgTransformations: Math.round((baseline.totalTransformations / matches) * 100) / 100,
     avgSurvivalRate: Math.round((baseline.totalSurvived / matches) * 1000) / 10,
-    avgKills: Math.round((baseline.totalKills / matches) * 10) / 10,
+    avgKills: Math.round((baseline.totalKills / matches) * 100) / 100,
     avgDPS: (baseline.totalBattleTime > 0) ? Math.round(baseline.totalDamage / baseline.totalBattleTime) : 0,
     avgDamageTakenPerSecond: (baseline.totalBattleTime > 0) ? Math.round(baseline.totalDamageTaken / baseline.totalBattleTime) : 0,
     damageEfficiency: baseline.totalDamageTaken > 0 ? baseline.totalDamage / baseline.totalDamageTaken : 1
@@ -1128,7 +1136,7 @@ export function filterAIMetricsByCharacter(aiMetrics, characterName, charMap = {
     const avgDamageDealt = matches > 0 ? Math.round(rawCharData.totalDamage / matches) : 0;
     const avgDamageTaken = matches > 0 ? Math.round(rawCharData.totalDamageTaken / matches) : 0;
     const avgBattleTime = matches > 0 ? rawCharData.totalBattleTime / matches : 0;
-    const avgKills = matches > 0 ? Math.round((rawCharData.totalKills / matches) * 10) / 10 : 0;
+    const avgKills = matches > 0 ? Math.round((rawCharData.totalKills / matches) * 100) / 100 : 0;
     const survivalRate = matches > 0 ? Math.round((rawCharData.totalSurvived / matches) * 1000) / 10 : 0;
     
     // Damage efficiency and DPS
@@ -1150,32 +1158,33 @@ export function filterAIMetricsByCharacter(aiMetrics, characterName, charMap = {
       avgMaxCombo: matches > 0 ? Math.round((rawCharData.totalMaxCombo / matches) * 10) / 10 : 0,
       avgMaxComboDamage: matches > 0 ? Math.round(rawCharData.totalMaxComboDamage / matches) : 0,
       avgSparkingComboHits: matches > 0 ? Math.round((rawCharData.totalSparkingComboHits / matches) * 10) / 10 : 0,
-      avgS1Blast: matches > 0 ? Math.round((rawCharData.totalS1Blast / matches) * 10) / 10 : 0,
-      avgS2Blast: matches > 0 ? Math.round((rawCharData.totalS2Blast / matches) * 10) / 10 : 0,
-      avgUltBlast: matches > 0 ? Math.round((rawCharData.totalUltBlast / matches) * 10) / 10 : 0,
-      avgS1HitBlast: matches > 0 ? Math.round((rawCharData.totalS1HitBlast / matches) * 10) / 10 : 0,
-      avgS2HitBlast: matches > 0 ? Math.round((rawCharData.totalS2HitBlast / matches) * 10) / 10 : 0,
-      avgUltHitBlast: matches > 0 ? Math.round((rawCharData.totalUltHitBlast / matches) * 10) / 10 : 0,
+      avgS1Blast: matches > 0 ? Math.round((rawCharData.totalS1Blast / matches) * 100) / 100 : 0,
+      avgS2Blast: matches > 0 ? Math.round((rawCharData.totalS2Blast / matches) * 100) / 100 : 0,
+      avgUltBlast: matches > 0 ? Math.round((rawCharData.totalUltBlast / matches) * 100) / 100 : 0,
+      avgS1HitBlast: matches > 0 ? Math.round((rawCharData.totalS1HitBlast / matches) * 100) / 100 : 0,
+      avgS2HitBlast: matches > 0 ? Math.round((rawCharData.totalS2HitBlast / matches) * 100) / 100 : 0,
+      avgUltHitBlast: matches > 0 ? Math.round((rawCharData.totalUltHitBlast / matches) * 100) / 100 : 0,
       avgS1HitRate: rawCharData.totalS1Blast > 0 ? Math.round((rawCharData.totalS1HitBlast / rawCharData.totalS1Blast) * 1000) / 10 : 0,
       avgS2HitRate: rawCharData.totalS2Blast > 0 ? Math.round((rawCharData.totalS2HitBlast / rawCharData.totalS2Blast) * 1000) / 10 : 0,
       avgUltHitRate: rawCharData.totalUltBlast > 0 ? Math.round((rawCharData.totalUltHitBlast / rawCharData.totalUltBlast) * 1000) / 10 : 0,
-      avgExa1Count: matches > 0 ? Math.round((rawCharData.totalExa1Count / matches) * 10) / 10 : 0,
-      avgExa2Count: matches > 0 ? Math.round((rawCharData.totalExa2Count / matches) * 10) / 10 : 0,
-      avgThrows: matches > 0 ? Math.round((rawCharData.totalThrows / matches) * 10) / 10 : 0,
-      avgVanishingAttacks: matches > 0 ? Math.round((rawCharData.totalVanishingAttacks / matches) * 10) / 10 : 0,
-      avgDragonHoming: matches > 0 ? Math.round((rawCharData.totalDragonHoming / matches) * 10) / 10 : 0,
-      avgLightningAttacks: matches > 0 ? Math.round((rawCharData.totalLightningAttacks / matches) * 10) / 10 : 0,
-      avgSpeedImpacts: matches > 0 ? Math.round((rawCharData.totalSpeedImpacts / matches) * 10) / 10 : 0,
-      avgSpeedImpactWins: matches > 0 ? Math.round((rawCharData.totalSpeedImpactWins / matches) * 10) / 10 : 0,
+      avgExa1Count: matches > 0 ? Math.round((rawCharData.totalExa1Count / matches) * 100) / 100 : 0,
+      avgExa2Count: matches > 0 ? Math.round((rawCharData.totalExa2Count / matches) * 100) / 100 : 0,
+      avgThrows: matches > 0 ? Math.round((rawCharData.totalThrows / matches) * 100) / 100 : 0,
+      avgVanishingAttacks: matches > 0 ? Math.round((rawCharData.totalVanishingAttacks / matches) * 100) / 100 : 0,
+      avgDragonHoming: matches > 0 ? Math.round((rawCharData.totalDragonHoming / matches) * 100) / 100 : 0,
+      avgLightningAttacks: matches > 0 ? Math.round((rawCharData.totalLightningAttacks / matches) * 100) / 100 : 0,
+      avgSpeedImpacts: matches > 0 ? Math.round((rawCharData.totalSpeedImpacts / matches) * 100) / 100 : 0,
+      avgSpeedImpactWins: matches > 0 ? Math.round((rawCharData.totalSpeedImpactWins / matches) * 100) / 100 : 0,
       avgGuards: matches > 0 ? Math.round((rawCharData.totalGuards / matches) * 10) / 10 : 0,
-      avgZCounters: matches > 0 ? Math.round((rawCharData.totalZCounters / matches) * 10) / 10 : 0,
-      avgSuperCounters: matches > 0 ? Math.round((rawCharData.totalSuperCounters / matches) * 10) / 10 : 0,
-      avgRevengeCounters: matches > 0 ? Math.round((rawCharData.totalRevengeCounters / matches) * 10) / 10 : 0,
-      avgSparkingCount: matches > 0 ? Math.round((rawCharData.totalSparkingCount / matches) * 10) / 10 : 0,
+      avgZCounters: matches > 0 ? Math.round((rawCharData.totalZCounters / matches) * 100) / 100 : 0,
+      avgSuperCounters: matches > 0 ? Math.round((rawCharData.totalSuperCounters / matches) * 100) / 100 : 0,
+      avgRevengeCounters: matches > 0 ? Math.round((rawCharData.totalRevengeCounters / matches) * 100) / 100 : 0,
+      avgSparkingCount: matches > 0 ? Math.round((rawCharData.totalSparkingCount / matches) * 100) / 100 : 0,
       avgDragonDashDistance: matches > 0 ? Math.round(rawCharData.totalDragonDashDistance / matches) : 0,
       avgEnergyBlasts: matches > 0 ? Math.round((rawCharData.totalEnergyBlasts / matches) * 10) / 10 : 0,
       avgCharges: matches > 0 ? Math.round((rawCharData.totalCharges / matches) * 10) / 10 : 0,
-      avgTags: matches > 0 ? Math.round((rawCharData.totalTags / matches) * 10) / 10 : 0
+      avgTags: matches > 0 ? Math.round((rawCharData.totalTags / matches) * 100) / 100 : 0,
+      avgTransformations: matches > 0 ? Math.round((rawCharData.totalTransformations / matches) * 100) / 100 : 0
     };
     
     // Build type distribution for this character with action averages
