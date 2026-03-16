@@ -1,0 +1,990 @@
+[
+  {
+    "name": "Master Roshi Training",
+    "cost": 1,
+    "description": "Increases maximum health by 2,500 HP (1/4 of a bar).",
+    "effects": [
+      {
+        "key": "Health_Up",
+        "value": 2500
+      }
+    ]
+  },
+  {
+    "name": "Rush Attack Boost 1",
+    "cost": 1,
+    "description": "Increases Rush Attack damage by 2.5%.",
+    "effects": [
+      {
+        "key": "Rush_Attack_Up",
+        "value": 2.5
+      }
+    ]
+  },
+  {
+    "name": "Smash Attack Boost 1",
+    "cost": 1,
+    "description": "Increases Smash Attack damage by 2.5%.  Increases Rush Chain damage by 2.5%.",
+    "effects": [
+      {
+        "key": "Smash_Attack_Up",
+        "value": 2.5
+      },
+      {
+        "key": "Rush_Chain_Up",
+        "value": 2.5
+      }
+    ]
+  },
+  {
+    "name": "Ki Blast Attack Boost 1",
+    "cost": 1,
+    "description": "Increases Rush Ki Blast damage by 2.5%.  Increases Smash Ki Blast damage by 2.5%.",
+    "effects": [
+      {
+        "key": "Rush_Ki_Blast_Up",
+        "value": 2.5
+      },
+      {
+        "key": "Smash_Ki_Blast_Up",
+        "value": 2.5
+      }
+    ]
+  },
+  {
+    "name": "Blast Attack Boost 1",
+    "cost": 1,
+    "description": "Increases Blast damage by 2.5%.  Increases Blast Combo damage by 2.5%.  Increases Ultimate Blast damage by 2.5%.",
+    "effects": [
+      {
+        "key": "Blast_Damage_Up",
+        "value": 2.5
+      },
+      {
+        "key": "Blast_Combo_Up",
+        "value": 2.5
+      },
+      {
+        "key": "Ultimate_Blast_Damage_Up",
+        "value": 2.5
+      }
+    ]
+  },
+  {
+    "name": "Active Heart",
+    "cost": 1,
+    "description": "Increases ki gained from landing attacks by 10%.",
+    "effects": [
+      {
+        "key": "Ki_Gained_From_Attacks",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "name": "Super Transformation",
+    "cost": 1,
+    "description": "Reduces Skill Count needed for Transformations and Fusions by 1 (minimum 1).",
+    "effects": [
+      {
+        "key": "Transformations_Cost_Down",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "Crisis Avoided",
+    "cost": 1,
+    "description": "Reduces ki cost for Short Dashes by 10%.",
+    "effects": [
+      {
+        "key": "Short_Dashes_Ki_Cost_Down",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "name": "Latent Power Unleashed 1",
+    "cost": 1,
+    "description": "Ki gauge starts with 1 bar extra.",
+    "effects": [
+      {
+        "key": "Ki_Gauge_Starts",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "Waters Blessing",
+    "cost": 1,
+    "description": "Regenerates 100 HP per second and 100 ki per second while in water (1 bar of health and ki every 100 seconds).",
+    "effects": []
+  },
+  {
+    "name": "Melee Charge 1",
+    "cost": 1,
+    "description": "Reduces charging time for Smash Attacks by 2%.  Reduces charging time for Rush Chains by 2%.",
+    "effects": [
+      {
+        "key": "Charging_Smash_Attacks _Down",
+        "value": 2
+      },
+      {
+        "key": "Charging_Rush_Chains_Down",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "name": "Energy Saver 1",
+    "cost": 1,
+    "description": "Reduces ki cost for Rush Ki Blasts by 2%.  Reduces ki cost for Smash Ki Blasts by 2%.",
+    "effects": [
+      {
+        "key": "Reduce_Rush_Ki_Blasts",
+        "value": 2
+      },
+      {
+        "key": "Reduces_Smash_Ki_Blasts",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "name": "Ki Blast Charge 1",
+    "cost": 1,
+    "description": "Reduces charging time for Smash Ki Blasts by 2%.",
+    "effects": [
+      {
+        "key": "Charge_TIme_Smash_Ki_Down",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "name": "Exquisite Skill",
+    "cost": 1,
+    "description": "Reduces self recovery time when stunned/restrained by 20%.  Increases enemy recovery time when stunned/restrained by 20%.",
+    "effects": [
+      {
+        "key": "Recovery_Time_Down",
+        "value": 20
+      },
+      {
+        "key": "Enemy_Recovery_Time_Up",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "name": "Combo Master",
+    "cost": 1,
+    "description": "Reduces combo damage scaling by 2.5%.",
+    "effects": [
+      {
+        "key": "Combo_Damage_Scaling_Down",
+        "value": 2.5
+      }
+    ]
+  },
+  {
+    "name": "Sparking! Plus",
+    "cost": 1,
+    "description": "Reduces Sparking Mode gauge decrease speed by 15%.  Reduces melee defense by 20%.  Reduces blast defense by 10%.",
+    "effects": [
+      {
+        "key": "Sparking_Down",
+        "value": 25
+      },
+      {
+        "key": "Melee_Defense_Down",
+        "value": 20
+      },
+      {
+        "key": "Blast_Defense_Down",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "name": "Style of the Strong",
+    "cost": 2,
+    "description": "Reduces Sparking Mode gauge decrease speed by 15%.",
+    "effects": [
+      {
+        "key": "Sparking_Mode_Gauge_Down",
+        "value": 15
+      }
+    ]
+  },
+  {
+    "name": "Rush Ki Blast 1",
+    "cost": 1,
+    "description": "Increases Rush Ki Blast speed by 5%.",
+    "effects": [
+      {
+        "key": "Rush_Ki_Blast_Speed_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "High-Speed Movement Master",
+    "cost": 1,
+    "description": "Reduces Sparking gauge cost for High-Speed Movements by 25%.  Reduces all defense by 20%.",
+    "effects": [
+      {
+        "key": "Sparking_High_Speed_Cost_Down",
+        "value": 25
+      },
+      {
+        "key": "Melee_Defense_Down",
+        "value": 20
+      },
+      {
+        "key": "Blast_Defense_Down",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "name": "Super Movement Master",
+    "cost": 1,
+    "description": "Reduces Sparking gauge cost for Super Movements by 25%.  Reduces all defense by 20%.",
+    "effects": [
+      {
+        "key": "Sparking_Super_Movements_Cost_Down",
+        "value": 25
+      },
+      {
+        "key": "Melee_Defense_Down",
+        "value": 20
+      },
+      {
+        "key": "Blast_Defense_Down",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "name": "Performer",
+    "cost": 1,
+    "description": "Increases Blast by 5% for 30 seconds after using an emote for 1.5+ seconds.",
+    "effects": []
+  },
+  {
+    "name": "Brolys Ring",
+    "cost": 1,
+    "description": "Prevents Transformations and Fusions during battle",
+    "effects": []
+  },
+  {
+    "name": "Rush Attack Boost 2",
+    "cost": 3,
+    "description": "Increases Rush Attack damage by 5%.",
+    "effects": [
+      {
+        "key": "Rush_Attack_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Smash Attack Boost 2",
+    "cost": 3,
+    "description": "Increases Smash Attack damage by 5%.  Increases Rush Chain damage by 5%.",
+    "effects": [
+      {
+        "key": "Smash_Attack_Up",
+        "value": 5
+      },
+      {
+        "key": "Rush_Chain_Damage",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Ki Blast Attack Boost 2",
+    "cost": 3,
+    "description": "Increases Rush Ki Blast damage by 5%.  Increases Smash Ki Blast damage by 5%.",
+    "effects": [
+      {
+        "key": "Rush_Ki_Blast_Up",
+        "value": 5
+      },
+      {
+        "key": "Smash_Ki_Blast_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Power Unleashed",
+    "cost": 2,
+    "description": "Increases Burst Rush damage by 5%.",
+    "effects": [
+      {
+        "key": "Burst_Rush_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Finishing Blow",
+    "cost": 1,
+    "description": "Increases Burst Meteor damage by 5%.",
+    "effects": [
+      {
+        "key": "Burst_Meteor_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Blast Burst",
+    "cost": 1,
+    "description": "Increases ki cost for Blasts by 1 bar.  Increases Blast damage by 5%.  Increases Blast Combo damage by 5%.",
+    "effects": [
+      {
+        "key": "Ki_Bar_Blasts_Up",
+        "value": 1
+      },
+      {
+        "key": "Blast_Damage_Up",
+        "value": 5
+      },
+      {
+        "key": "Blast_Combo_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Ultimate Burst",
+    "cost": 2,
+    "description": "Increases ki cost for Ultimate Blasts by 1 bar.  Causes stun when Sparking Mode ends after using Ultimate Blast.  Increases Ultimate Blast damage by 5%.",
+    "effects": [
+      {
+        "key": "Ultimate_Blasts_Cost_Up",
+        "value": 1
+      },
+      {
+        "key": "Sparking_Mode_Stun_Up",
+        "value": null
+      },
+      {
+        "key": "Ultimate_Blast_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Blast Attack Boost 2",
+    "cost": 3,
+    "description": "Increases Blast damage by 5%.  Increases Blast Combo damage by 5%.  Increases Ultimate Blast damage by 5%.",
+    "effects": [
+      {
+        "key": "Blast_Damage_Up",
+        "value": 5
+      },
+      {
+        "key": "Blast_Combo_Up",
+        "value": 5
+      },
+      {
+        "key": "Ultimate_Blast_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Super Warrior",
+    "cost": 2,
+    "description": "Increases Rush Attack damage by 5% during Sparking Mode.",
+    "effects": []
+  },
+  {
+    "name": "Dragon Rush",
+    "cost": 3,
+    "description": "Increases armor break level by 3 against Rush Attack category actions. Beats Power Body.",
+    "effects": []
+  },
+  {
+    "name": "Fury!",
+    "cost": 4,
+    "description": "Increases Blast damage by 5% at 75% HP.  Increases Blast damage by additional 5% (10% total) at 50% HP.  Increases Blast damage by additional 5% (15% total) at 25% HP.  Increases Blast Combo damage by same amounts.",
+    "effects": []
+  },
+  {
+    "name": "Indomitable Fighting Spirit",
+    "cost": 3,
+    "description": "Increases ki gained from landing attacks by 20%.",
+    "effects": [
+      {
+        "key": "Ki_Gained_From_Attacks",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "name": "Warming Up",
+    "cost": 2,
+    "description": "Increases health recovery while on standby in Team Battles by 50%.",
+    "effects": []
+  },
+  {
+    "name": "Ready for Anything",
+    "cost": 1,
+    "description": "Increases ki recovery per second while on standby in Team Battles by 50%.",
+    "effects": []
+  },
+  {
+    "name": "Z-Burst Dash Master",
+    "cost": 3,
+    "description": "Reduces ki cost for Z-Burst Dashes by 50%.",
+    "effects": [
+      {
+        "key": "Z-Burst_Dashes_Cost_Down",
+        "value": 50
+      }
+    ]
+  },
+  {
+    "name": "Dragon Spirit",
+    "cost": 3,
+    "description": "Increases skill gauge recovery speed by 25%.",
+    "effects": [
+      {
+        "key": "Skill_Gauge_Recovery",
+        "value": 25
+      }
+    ]
+  },
+  {
+    "name": "Divine Blow",
+    "cost": 3,
+    "description": "Increases Ultimate Blast damage by 5%.",
+    "effects": [
+      {
+        "key": "Ultimate_Blast_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Battle Control",
+    "cost": 2,
+    "description": "Increases Switch gauge recovery by 50% in Team Battles.",
+    "effects": [
+      {
+        "key": "Switch_Gauge_Recovery",
+        "value": 50
+      }
+    ]
+  },
+  {
+    "name": "Latent Power Unleashed 2",
+    "cost": 2,
+    "description": "Ki gauge starts with 2 bars extra.",
+    "effects": [
+      {
+        "key": "Ki_Gauge_Starts",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "name": "Mind Breaker",
+    "cost": 1,
+    "description": "Increases ki damage dealt after successful Guard Clash by 50%.",
+    "effects": []
+  },
+  {
+    "name": "Miracle Master",
+    "cost": 1,
+    "description": "Automatically dodges melee attacks when downed (excludes Ki Blasts).",
+    "effects": []
+  },
+  {
+    "name": "Rising Tension",
+    "cost": 3,
+    "description": "Recovers 1 bar of ki every 60 seconds",
+    "effects": [
+      {
+        "key": "Recovers_Ki_Bar",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "Melee Charge 2",
+    "cost": 2,
+    "description": "Reduces charging time for Smash Attacks by 3%.  Reduces charging time for Rush Chains by 3%.",
+    "effects": [
+      {
+        "key": "Charging_Smash_Attacks _Down",
+        "value": 3
+      },
+      {
+        "key": "Reduce_Rush_Chains",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "name": "Energy Saver 2",
+    "cost": 2,
+    "description": "Reduces ki cost for Rush Ki Blasts by 3%.  Reduces ki cost for Smash Ki Blasts by 3%.",
+    "effects": [
+      {
+        "key": "Reduce_Rush_Ki_Blasts",
+        "value": 3
+      },
+      {
+        "key": "Reduces_Smash_Ki_Blasts",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "name": "Ki Blast Charge 2",
+    "cost": 2,
+    "description": "Reduces charging time for Smash Ki Blasts by 3%.",
+    "effects": [
+      {
+        "key": "Reduces_Smash_Ki_Blasts",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "name": "Dragon Assault",
+    "cost": 3,
+    "description": "Reduces ki cost for Vanishing Assaults by 15%.",
+    "effects": [
+      {
+        "key": "Vanishing_Assaults_Cost_Down",
+        "value": 15
+      }
+    ]
+  },
+  {
+    "name": "Speed Up",
+    "cost": 3,
+    "description": "Reduces ki cost for Short Dashes by 20%.",
+    "effects": [
+      {
+        "key": "Vanishing_Assaults_Ki_Down",
+        "value": 20
+      }
+    ]
+  },
+  {
+    "name": "Ki Control",
+    "cost": 3,
+    "description": "Reduces ki cost for Dragon Dashes by 25%.  Reduces automatic ki recovery by 5%.",
+    "effects": [
+      {
+        "key": "Dragon_Dashes_Ki_Down",
+        "value": 25
+      },
+      {
+        "key": "Ki_Recovery_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Combo King",
+    "cost": 2,
+    "description": "Reduces combo damage scaling by 5%.",
+    "effects": []
+  },
+  {
+    "name": "Dragon Break",
+    "cost": 2,
+    "description": "Increases Dragon Homing use limit by 1.",
+    "effects": [
+      {
+        "key": "Dragon_Homing_Limit_Up",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "Vanishing Break",
+    "cost": 2,
+    "description": "Increases Vanishing Attack use limit by 1.",
+    "effects": [
+      {
+        "key": "Vanishing_Attack_Limit_Up",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "Rush Ki Blast Count Boost",
+    "cost": 1,
+    "description": "Increases Rush Ki Blast maximum count by 2.",
+    "effects": [
+      {
+        "key": "Rush_Ki_Blast_Count",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "name": "Master Strike",
+    "cost": 3,
+    "description": "Increases Rush Attack damage by 5%.  Increases Smash Attack damage by 5%.  Increases Rush Chain damage by 5%.  Reduces maximum health by 5,000 HP (half a bar).",
+    "effects": [
+      {
+        "key": "Rush_Attack_Up",
+        "value": 5
+      },
+      {
+        "key": "Smash_Attack_Up",
+        "value": 5
+      },
+      {
+        "key": "Rush_Chain_Damage",
+        "value": 5
+      },
+      {
+        "key": "Health_Down",
+        "value": 5000
+      }
+    ]
+  },
+  {
+    "name": "Master Ki Blast",
+    "cost": 2,
+    "description": "Increases Rush Ki Blast speed by 5%.  Reduces ki cost for Rush Ki Blasts by 5%.  Reduces ki cost for Smash Ki Blasts by 5%.  Reduces maximum health by 5,000 HP (half a bar).",
+    "effects": [
+      {
+        "key": "Rush_Ki_Blast_Speed",
+        "value": 5
+      },
+      {
+        "key": "Reduce_Rush_Ki_Blasts",
+        "value": 5
+      },
+      {
+        "key": "Reduces_Smash_Ki_Blasts",
+        "value": 5
+      },
+      {
+        "key": "Health_Down",
+        "value": 5000
+      }
+    ]
+  },
+  {
+    "name": "Master Throw",
+    "cost": 1,
+    "description": "Increases Throw damage by 5%.",
+    "effects": [
+      {
+        "key": "Throw_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "King Kai Training",
+    "cost": 3,
+    "description": "Increases maximum health by 5,000 HP (half a bar).",
+    "effects": [
+      {
+        "key": "Health_Up",
+        "value": 5000
+      }
+    ]
+  },
+  {
+    "name": "Rush Attack Boost 3",
+    "cost": 5,
+    "description": "Increases Rush Attack damage by 7.5%.",
+    "effects": [
+      {
+        "key": "Rush_Attack_Up",
+        "value": 7.5
+      }
+    ]
+  },
+  {
+    "name": "Smash Attack Boost 3",
+    "cost": 5,
+    "description": "Increases Smash Attack damage by 7.5%.  Increases Rush Chain damage by 7.5%.",
+    "effects": [
+      {
+        "key": "Smash_Attack_Up",
+        "value": 7.5
+      },
+      {
+        "key": "Rush_Chain_Damage",
+        "value": 7.5
+      }
+    ]
+  },
+  {
+    "name": "Ki Blast Attack Boost 3",
+    "cost": 5,
+    "description": "Increases Rush Ki Blast damage by 7.5%.  Increases Smash Ki Blast damage by 7.5%.",
+    "effects": [
+      {
+        "key": "Rush_Ki_Blast_Up",
+        "value": 7.5
+      },
+      {
+        "key": "Smash_Ki_Blast_Up",
+        "value": 7.5
+      }
+    ]
+  },
+  {
+    "name": "Blast Attack Boost 3",
+    "cost": 5,
+    "description": "Increases Blast damage by 7.5%.  Increases Blast Combo damage by 7.5%.  Increases Ultimate Blast damage by 7.5%.",
+    "effects": [
+      {
+        "key": "Blast_Damage_Up",
+        "value": 7.5
+      },
+      {
+        "key": "Blast_Combo_Up",
+        "value": 7.5
+      },
+      {
+        "key": "Ultimate_Blast_Damage_Up",
+        "value": 7.5
+      }
+    ]
+  },
+  {
+    "name": "Draconic Aura",
+    "cost": 4,
+    "description": "Increases armor break level by 3. Beats Power body and Light body.",
+    "effects": []
+  },
+  {
+    "name": "Light Body",
+    "cost": 4,
+    "description": "Increases bullet armor level by 3. Cannot be flinched by Ki Blasts (Giants and Sparking ignore this capsule).",
+    "effects": []
+  },
+  {
+    "name": "The Secret to Counters",
+    "cost": 5,
+    "description": "Reduces Skill Count needed for Super Z-Counters by 1 (minimum 1).",
+    "effects": [
+      {
+        "key": "Super_Z_Counter_Down",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "The Secret to Z-Burst Dashes",
+    "cost": 5,
+    "description": "Reduces ki cost for Z-Burst Dashes by 100% (free).",
+    "effects": [
+      {
+        "key": "Z-Burst_Dashes_Cost_Down",
+        "value": 100
+      }
+    ]
+  },
+  {
+    "name": "Proof of Friendship",
+    "cost": 2,
+    "description": "Switch gauge starts at maximum.",
+    "effects": [
+      {
+        "key": "Switch_Gauge_Start_Max",
+        "value": null
+      }
+    ]
+  },
+  {
+    "name": "Fighting Spirit",
+    "cost": 5,
+    "description": "Increases Ultimate Blast damage by 5% at 75% HP.  Increases Ultimate Blast damage by additional 5% (10% total) at 50% HP.  Increases Ultimate Blast damage by additional 5% (15% total) at 25% HP.",
+    "effects": []
+  },
+  {
+    "name": "Rising Fighting Spirit",
+    "cost": 3,
+    "description": "Ki gauge starts at maximum.",
+    "effects": [
+      {
+        "key": "Ki_Gauge_Starts",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Power of Namek",
+    "cost": 5,
+    "description": "Increases all attack damage by 2.5% on Namek map. Increases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
+    "effects": []
+  },
+  {
+    "name": "Power of Earth",
+    "cost": 5,
+    "description": "Increases all attack damage by 2.5% on Earth maps (excluding City Ruins and Hyperbolic Time Chamber). Increases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
+    "effects": []
+  },
+  {
+    "name": "Power of the Universe",
+    "cost": 5,
+    "description": "Increases all attack damage by 2.5% on Tournament of Power map. Increases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
+    "effects": []
+  },
+  {
+    "name": "Perfect Guard",
+    "cost": 5,
+    "description": "Take no damage while guarding.",
+    "effects": []
+  },
+  {
+    "name": "Big Impact",
+    "cost": 1,
+    "description": "Increases all Impact Action damage by 20% per DP advantage enemy has over you (stacks up to 5 times for 100% total).  Only active when enemy has 1-5 more DP than you.",
+    "effects": []
+  },
+  {
+    "name": "Latent Power!",
+    "cost": 5,
+    "description": "Increases damage resistance by 2.5% at 75% HP.  Increases damage resistance by additional 5% (7.5% total) at 50% HP.  Increases damage resistance by additional 7.5% (15% total) at 25% HP.",
+    "effects": []
+  },
+  {
+    "name": "Guard Master",
+    "cost": 1,
+    "description": "Grants immunity to Guard Clashes.",
+    "effects": []
+  },
+  {
+    "name": "Mirage",
+    "cost": 1,
+    "description": "Automatically dodges subsequent barrage Blasts after dodging one with High-Speed Movement or High-Speed Evasion.",
+    "effects": []
+  },
+  {
+    "name": "Melee Charge 3",
+    "cost": 3,
+    "description": "Reduces charging time for Smash Attacks by 5%.  Reduces charging time for Rush Chains by 5%.",
+    "effects": [
+      {
+        "key": "Charging_Smash_Attacks _Down",
+        "value": 5
+      },
+      {
+        "key": "Reduce_Rush_Chains",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Energy Saver 3",
+    "cost": 3,
+    "description": "Reduces ki cost for Rush Ki Blasts by 5%.  Reduces ki cost for Smash Ki Blasts by 5%.",
+    "effects": [
+      {
+        "key": "Reduce_Rush_Ki_Blasts",
+        "value": 5
+      },
+      {
+        "key": "Reduces_Smash_Ki_Blasts",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Ki Blast Charge 3",
+    "cost": 3,
+    "description": "Reduces charging time for Smash Ki Blasts by 5%.",
+    "effects": [
+      {
+        "key": "Reduces_Smash_Ki_Blasts",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "The Secret to Dragon Dashes",
+    "cost": 5,
+    "description": "Reduces ki cost for Dragon Dashes by 25%.",
+    "effects": [
+      {
+        "key": "Dragon_Dashes_Ki_Down",
+        "value": 25
+      }
+    ]
+  },
+  {
+    "name": "Savior",
+    "cost": 5,
+    "description": "Activates Sparking Mode on first switch-in.  Only activates once per team in Team Battles.",
+    "effects": []
+  },
+  {
+    "name": "Dragon Crash",
+    "cost": 2,
+    "description": "Increases Dragon Smash damage by 5%.",
+    "effects": [
+      {
+        "key": "Dragon_Smash_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Vanishing Crash",
+    "cost": 2,
+    "description": "Increases Vanishing Attack damage by 5%.",
+    "effects": [
+      {
+        "key": "Vanishing_Attack_Damage_Up",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "name": "Secret Measures",
+    "cost": 2,
+    "description": "Grants 1 additional Skill Count.",
+    "effects": [
+      {
+        "key": "Skill_Start_Count_Up",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "The Secret to High-Speed Movements",
+    "cost": 1,
+    "description": "Reduces Sparking gauge cost for High-Speed Movements by 25%.",
+    "effects": []
+  },
+  {
+    "name": "The Secret to Super Movements",
+    "cost": 1,
+    "description": "Reduces Sparking gauge cost for Super Movements by 25%.",
+    "effects": []
+  },
+  {
+    "name": "Dragon Heart",
+    "cost": 3,
+    "description": "Recovers 25% of Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement.",
+    "effects": []
+  },
+  {
+    "name": "Super Sparking!",
+    "cost": 4,
+    "description": "Increases Rush Attack damage by 5% during Sparking Mode.  Reduces Sparking Mode gauge decrease speed by 5%.",
+    "effects": []
+  }
+]

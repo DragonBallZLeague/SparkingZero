@@ -5,14 +5,17 @@
   "homepage": "https://DragonBallZLeague.github.io/SparkingZero",
   "workspaces": [
     "apps/matchbuilder",
-    "apps/analyzer"
+    "apps/analyzer",
+    "apps/calculator"
   ],
   "scripts": {
     "build": "npm run build --workspace=apps/matchbuilder",
     "build:analyzer": "npm run build --workspace=apps/analyzer",
-    "build:all": "npm run build:analyzer && npm run build",
+    "build:calculator": "npm run build --workspace=apps/calculator",
+    "build:all": "npm run build:analyzer && npm run build && npm run build:calculator",
     "dev": "npm run dev --workspace=apps/matchbuilder",
     "dev:analyzer": "npm run dev --workspace=apps/analyzer",
+    "dev:calculator": "npm run dev --workspace=apps/calculator",
     "predeploy": "npm run build:all",
     "deploy": "gh-pages -d dist"
   },
