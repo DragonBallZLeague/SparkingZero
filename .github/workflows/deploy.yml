@@ -59,6 +59,14 @@ jobs:
           VITE_ADMIN_CLIENT_ID: ${{ secrets.VITE_ADMIN_CLIENT_ID }}
         run: npm run build -- --outDir=../../dist/admin
 
+      - name: Install dependencies (calculator)
+        working-directory: apps/calculator
+        run: npm ci
+
+      - name: Build calculator app
+        working-directory: apps/calculator
+        run: npm run build -- --outDir=../../dist/calculator
+
       - name: Copy submit app (static site)
         shell: bash
         run: |
