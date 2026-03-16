@@ -178,7 +178,7 @@ function deltaLabel(key, valA, valB, fmt) {
   } else if (fmt === 'bars_s') {
     str = abs.toFixed(2);
   } else if (typeof valB === 'number' && !Number.isInteger(valB)) {
-    str = abs.toFixed(4);
+    str = Math.round(abs).toLocaleString();
   } else {
     str = Math.round(abs).toLocaleString();
   }
