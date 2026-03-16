@@ -35,7 +35,7 @@ function ClassBadge({ cls }) {
   );
 }
 
-export default function CharacterSelector({ characters, teams, characterImages, selectedCharacter, onSelect }) {
+export default function CharacterSelector({ characters, teams, characterImages, selectedCharacter, onSelect, onCollapse }) {
   const [search, setSearch] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -72,7 +72,13 @@ export default function CharacterSelector({ characters, teams, characterImages, 
   return (
     <div className="flex flex-col h-full">
       <div className="px-3 py-3 border-b border-sz-border space-y-2">
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Character</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Character</h2>
+          <button onClick={onCollapse} className="flex items-center gap-1 px-2 py-0.5 rounded bg-sz-border hover:bg-gray-600 text-gray-400 hover:text-white transition-colors text-xs font-medium" title="Collapse">
+            <ChevronDown size={13} className="rotate-90" />
+            <span>Hide</span>
+          </button>
+        </div>
 
         {/* Team selector */}
         <div className="relative">

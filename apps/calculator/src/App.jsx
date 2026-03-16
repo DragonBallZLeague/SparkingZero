@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import CharacterSelector from './components/CharacterSelector.jsx';
 import StatsPanel from './components/StatsPanel.jsx';
 import CapsuleBuilder from './components/CapsuleBuilder.jsx';
@@ -16,6 +17,8 @@ function App() {
   const [characterImages, setCharacterImages] = useState({});
 
   const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [selectorCollapsed, setSelectorCollapsed] = useState(false);
+  const [capsuleCollapsed, setCapsuleCollapsed] = useState(false);
   // Array of capsule objects or null (for empty slots)
   const [equippedCapsules, setEquippedCapsules] = useState(Array(NUM_CAPSULE_SLOTS).fill(null));
   const [activeSlot, setActiveSlot] = useState(null); // which slot is being edited
@@ -136,19 +139,31 @@ function App() {
       {/* Main 3-column layout — fills remaining height */}
       <div className="flex flex-1 overflow-hidden">
         {/* Col 1: Character picker — narrow, scrollable */}
-        <aside className="w-[25rem] border-r border-sz-border bg-sz-panel flex-shrink-0 flex flex-col overflow-hidden">
-          <CharacterSelector
-            characters={characters}
-            teams={teams}
-            characterImages={characterImages}
-            selectedCharacter={selectedCharacter}
-            onSelect={(char) => {
-              setSelectedCharacter(char);
-              setEquippedCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
-              setActiveSlot(null);
-              setActiveSkills([]);
-            }}
-          />
+        <aside className={`${selectorCollapsed ? 'w-8' : 'w-[25rem]'} border-r border-sz-border bg-sz-panel flex-shrink-0 flex flex-col overflow-hidden transition-[width] duration-200`}>
+          {selectorCollapsed ? (
+            <button
+              onClick={() => setSelectorCollapsed(false)}
+              className="w-full flex flex-col items-center justify-center gap-1.5 py-4 text-gray-500 hover:text-sz-orange hover:bg-gray-800/60 transition-colors h-full"
+              title="Expand Character Select"
+            >
+              <ChevronRight size={16} />
+              <span className="text-[10px] font-semibold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180 leading-none text-gray-600 hover:text-sz-orange">Chars</span>
+            </button>
+          ) : (
+            <CharacterSelector
+              characters={characters}
+              teams={teams}
+              characterImages={characterImages}
+              selectedCharacter={selectedCharacter}
+              onCollapse={() => setSelectorCollapsed(true)}
+              onSelect={(char) => {
+                setSelectedCharacter(char);
+                setEquippedCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
+                setActiveSlot(null);
+                setActiveSkills([]);
+              }}
+            />
+          )}
         </aside>
 
         {/* Col 2: Stats — compact fixed-width, scrollable */}
@@ -180,17 +195,29 @@ function App() {
           </div>
 
           {/* Capsule Builder */}
-          <div className="w-[26rem] flex-shrink-0 overflow-hidden flex flex-col">
-            <CapsuleBuilder
-              capsules={capsules}
-              equippedCapsules={equippedCapsules}
-              activeSlot={activeSlot}
-              onSlotClick={setActiveSlot}
-              onEquip={handleEquipCapsule}
-              onRemove={handleRemoveCapsule}
-              onClear={handleClearBuild}
-              budget={CAPSULE_BUDGET}
-            />
+          <div className={`${capsuleCollapsed ? 'w-8' : 'w-[26rem]'} flex-shrink-0 overflow-hidden flex flex-col transition-[width] duration-200`}>
+            {capsuleCollapsed ? (
+              <button
+                onClick={() => setCapsuleCollapsed(false)}
+                className="w-full flex flex-col items-center justify-center gap-1.5 py-4 text-gray-500 hover:text-sz-orange hover:bg-gray-800/60 transition-colors h-full"
+                title="Expand Capsule Builder"
+              >
+                <ChevronLeft size={16} />
+                <span className="text-[10px] font-semibold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180 leading-none text-gray-600">Caps</span>
+              </button>
+            ) : (
+              <CapsuleBuilder
+                capsules={capsules}
+                equippedCapsules={equippedCapsules}
+                activeSlot={activeSlot}
+                onSlotClick={setActiveSlot}
+                onEquip={handleEquipCapsule}
+                onRemove={handleRemoveCapsule}
+                onClear={handleClearBuild}
+                onCollapse={() => setCapsuleCollapsed(true)}
+                budget={CAPSULE_BUDGET}
+              />
+            )}
           </div>
         </div>
       </div>

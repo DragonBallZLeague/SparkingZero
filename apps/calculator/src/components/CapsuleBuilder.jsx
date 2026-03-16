@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, Search } from 'lucide-react';
+import { X, Search, ChevronRight } from 'lucide-react';
 import { totalCapsuleCost, CAPSULE_BUDGET } from '../utils/calculator.js';
 
 const COST_COLORS = ['', 'text-gray-400', 'text-blue-400', 'text-yellow-400', 'text-orange-400', 'text-red-500'];
@@ -16,6 +16,7 @@ export default function CapsuleBuilder({
   onEquip,
   onRemove,
   onClear,
+  onCollapse,
   budget,
 }) {
   const [search, setSearch] = useState('');
@@ -55,6 +56,10 @@ export default function CapsuleBuilder({
           {equippedCapsules.some(Boolean) && (
             <button onClick={onClear} className="text-sm text-gray-600 hover:text-red-400 transition-colors">Clear</button>
           )}
+          <button onClick={onCollapse} className="flex items-center gap-1 px-2 py-0.5 rounded bg-sz-border hover:bg-gray-600 text-gray-400 hover:text-white transition-colors text-xs font-medium" title="Collapse">
+            <span>Hide</span>
+            <ChevronRight size={13} />
+          </button>
         </div>
       </div>
 
