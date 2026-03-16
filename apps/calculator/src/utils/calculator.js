@@ -29,13 +29,27 @@ export function parseEffectKey(key) {
     ki_bar_blasts_up:            { field: 'blastKiCost',   op: 'add' },
     ultimate_blasts_cost_up:     { field: 'ultimateKiCost',op: 'add' },
     throw_damage_up:             { field: 'throw',         op: 'percent' },
-    burst_rush_damage_up:        { field: 'rush',          op: 'percent' },
-    burst_meteor_damage_up:      { field: 'smash',         op: 'percent' },
+    // burst_rush_damage_up and burst_meteor_damage_up intentionally omitted —
+    // Burst Rush/Meteor are not displayed stats in the calculator.
     dragon_homing_limit_up:      { field: 'dragonHoming',  op: 'add' },
     vanishing_attack_limit_up:   { field: 'vanishingLimit',op: 'add' },
     rush_ki_blast_count:         { field: 'kiBlastLimit',  op: 'add' },
     super_z_counter_down:        { field: 'sCounter',      op: 'sub_flat' },
     switch_gauge_recovery:       { field: 'switch',        op: 'percent_inv' },
+    // Defense reductions (raise multiplier = more damage taken)
+    melee_defense_down:          { field: 'meleeDefenseStat', op: 'percent' },
+    blast_defense_down:          { field: 'blastDefense',     op: 'percent' },
+    // Ki cost reductions
+    short_dashes_ki_cost_down:   { field: 'shortDashCost',    op: 'percent_inv' },
+    reduce_rush_ki_blasts:       { field: 'kiBlastCost',      op: 'percent_inv' },
+    reduces_smash_ki_blasts:     { field: 'kiBlastCost',      op: 'percent_inv' },
+    // Ki regen (key name misleading — description says reduces by X%)
+    ki_recovery_up:              { field: 'kiRegen',           op: 'percent_inv' },
+    // Skill gauge start count
+    skill_start_count_up:        { field: 'skillStart',        op: 'add' },
+    // Sparking duration (base=0, stores fraction; +25 value → +0.25 → shows +25%)
+    sparking_down:               { field: 'sparkDuration',     op: 'add_pct' },
+    sparking_mode_gauge_down:    { field: 'sparkDuration',     op: 'add_pct' },
   };
 
   return map[k] || null;
@@ -70,6 +84,8 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
         modifiers[mapping.field].add -= effect.value;
       } else if (mapping.op === 'sub_flat') {
         modifiers[mapping.field].add -= effect.value;
+      } else if (mapping.op === 'add_pct') {
+        modifiers[mapping.field].add += effect.value / 100;
       }
     });
   });
@@ -82,9 +98,12 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
     if (typeof base !== 'number') return;
     // percentInv: +50% recovery means the time value goes DOWN by 50%
     const result = (base + add) * (1 + percent / 100) * (1 - (percentInv || 0) / 100);
-    // Only round to integer for fields that are naturally integers;
-    // preserve decimals for small fractional stats (e.g. attackKiGain = 0.03)
-    if (Number.isInteger(base)) {
+    // Only round to integer for fields that are naturally integers AND whose
+    // result is also effectively an integer (within float-noise tolerance).
+    // Fields like meleeDefenseStat/blastDefense (base=1) or sparkDuration (base=0)
+    // store fractional multipliers — rounding them would discard capsule modifiers.
+    const isIntegerResult = Number.isInteger(base) && Math.abs(result - Math.round(result)) < 1e-6;
+    if (isIntegerResult) {
       modified[field] = Math.round(result);
     } else {
       const decimals = (String(base).split('.')[1] || '').length;

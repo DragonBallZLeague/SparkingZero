@@ -575,7 +575,7 @@
     "description": "Reduces ki cost for Short Dashes by 20%.",
     "effects": [
       {
-        "key": "Vanishing_Assaults_Ki_Down",
+        "key": "Short_Dashes_Ki_Cost_Down",
         "value": 20
       }
     ]
@@ -985,6 +985,11 @@
     "name": "Super Sparking!",
     "cost": 4,
     "description": "Increases Rush Attack damage by 5% during Sparking Mode.  Reduces Sparking Mode gauge decrease speed by 5%.",
-    "effects": []
+    "effects": [
+      {
+        "key": "Sparking_Mode_Gauge_Down",
+        "value": 5
+      }
+    ]
   }
 ]
