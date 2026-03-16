@@ -47,6 +47,12 @@ function catClass(cat) {
   return CAT_COLORS[cat] || 'bg-gray-700/70 text-gray-300';
 }
 
+function fmtKiBars(val) {
+  const bars = val / 10000;
+  const display = Number.isInteger(bars) ? String(bars) : bars.toFixed(1);
+  return `${display} bar${bars === 1 ? '' : 's'}`;
+}
+
 const SKILL_TYPE_COLORS = {
   'Sparking':      'bg-yellow-700/70 text-yellow-200',
   'Teleport':      'bg-cyan-700/70 text-cyan-200',
@@ -256,9 +262,15 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
       const modBase = baseRaw !== null && totalPct !== 0 ? Math.round(baseRaw * (1 + totalPct / 100)) : baseRaw;
       const modBoosted = boostedRaw !== null && totalPct !== 0 ? Math.round(boostedRaw * (1 + totalPct / 100)) : boostedRaw;
       const changed = totalPct !== 0;
+      const traitTags = [
+        ...(blast.traits || []),
+        ...(blast.dashClashCapable ? ['Can Speed Clash'] : []),
+        ...(blast.beamClashCapable ? ['Can Beam Clash'] : []),
+        ...(blast.targetGiant ? ['Can Target Giants'] : []),
+      ];
       return (
         <React.Fragment key={i}>
-          <tr className={`border-b border-sz-border/30 hover:bg-gray-800/30 ${changed ? 'bg-blue-950/20' : ''}`}>
+          <tr className={`${traitTags.length ? '' : 'border-b border-sz-border/30'} hover:bg-gray-800/30 ${changed ? 'bg-blue-950/20' : ''}`}>
             <td className="py-1.5 px-2 text-sm text-gray-200 leading-tight">{blast.name || '—'}</td>
             <td className="py-1.5 px-1.5 text-sm text-gray-500 leading-tight whitespace-nowrap">{SLOT_LABELS[blast.slot] || blast.slot}</td>
             <td className="py-1.5 px-1.5">
@@ -268,6 +280,15 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                 </span>
               )}
             </td>
+            <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
+              {blast.impactPower != null ? blast.impactPower : <span className="text-gray-600">—</span>}
+            </td>
+            <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
+              {blast.lungeSpeed != null ? Number(blast.lungeSpeed).toLocaleString() : <span className="text-gray-600">—</span>}
+            </td>
+            <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
+              {blast.maxExpendEnergy != null ? fmtKiBars(blast.maxExpendEnergy) : <span className="text-gray-600">—</span>}
+            </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-gray-200 font-bold' : 'text-gray-300'}`}>
               {modBase !== null ? modBase.toLocaleString() : '—'}
             </td>
@@ -275,11 +296,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
               {modBoosted !== null ? modBoosted.toLocaleString() : '—'}
             </td>
           </tr>
-          {blast.traits?.length > 0 && (
-            <tr className="border-b border-sz-border/20 bg-gray-900/30">
-              <td colSpan={5} className="py-0.5 px-2">
+          {traitTags.length > 0 && (
+            <tr className="border-b border-sz-border/30 bg-gray-900/30">
+              <td colSpan={8} className="py-0.5 px-2">
                 <div className="flex flex-wrap gap-1">
-                  {blast.traits.map((t, ti) => (
+                  {traitTags.map((t, ti) => (
                     <span key={ti} className="text-xs px-1.5 py-0.5 rounded bg-gray-700/60 text-gray-400">{t}</span>
                   ))}
                 </div>
@@ -315,8 +336,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
         <table className="w-full">
           <colgroup>
             <col />
-            <col className="w-28" />
-            <col className="w-40" />
+            <col className="w-20" />
+            <col className="w-36" />
+            <col className="w-24" />
+            <col className="w-20" />
+            <col className="w-24" />
             <col className="w-20" />
             <col className="w-20" />
           </colgroup>
@@ -327,8 +351,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                   <th className="py-2 px-2 text-sm font-bold uppercase tracking-wider text-gray-300 text-left">Blasts</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Slot</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Category</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-gray-500'}`}>Base</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boost</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Impact<br/>Power</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Speed</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Ki Cost</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-gray-500'}`}>Damage</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boosted<br/>Damage</th>
                 </tr>
                 {renderBlastRows(blastRows, false)}
               </>
@@ -339,8 +366,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                   <th className="py-2 px-2 text-sm font-bold uppercase tracking-wider text-gray-300 text-left">Ultimates</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Slot</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Category</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-gray-500'}`}>Base</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boost</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Impact<br/>Power</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Speed</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Ki Cost</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-gray-500'}`}>Damage</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boosted<br/>Damage</th>
                 </tr>
                 {renderBlastRows(ultimateRows, true)}
               </>

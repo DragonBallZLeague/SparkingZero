@@ -32,7 +32,10 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -46,7 +49,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -61,7 +71,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Z - Mid)": [
@@ -75,7 +90,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -89,7 +108,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -104,7 +130,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Z - Mid) Super Saiyan": [
@@ -120,7 +151,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -134,7 +169,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -148,7 +190,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Z - End)": [
@@ -164,7 +210,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -178,7 +228,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -193,7 +250,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Z - End) Super Saiyan": [
@@ -209,7 +271,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -221,7 +287,9 @@
       "boostedDamage": 8250,
       "boostedDamagePatch": 10800,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -236,7 +304,13 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Z - End) Super Saiyan 2": [
@@ -252,7 +326,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "lockOnNeeded": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -266,7 +344,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -280,7 +365,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Z - End) Super Saiyan 3": [
@@ -296,7 +386,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -310,7 +404,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -324,7 +425,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (Super)": [
@@ -340,7 +448,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -354,7 +466,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -369,7 +488,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "Replacement Slot2",
@@ -383,7 +507,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (Super) Super Saiyan": [
@@ -399,7 +530,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -413,7 +548,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -427,7 +569,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (Super) Super Saiyan God": [
@@ -443,7 +592,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -457,7 +610,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -471,7 +631,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Super) Super Saiyan God Super Saiyan": [
@@ -487,7 +652,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -501,7 +670,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -515,7 +691,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (Super) Ultra Instinct -Sign-": [
@@ -529,7 +710,11 @@
       "boostedDamage": 10580,
       "boostedDamagePatch": 11544,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -543,7 +728,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -557,7 +749,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (Super) Ultra Instinct": [
@@ -573,7 +772,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -587,7 +790,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.3,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -601,7 +811,16 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (GT)": [
@@ -617,7 +836,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -631,7 +854,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -646,7 +876,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku (GT) Super Saiyan": [
@@ -662,7 +897,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -674,7 +913,9 @@
       "boostedDamage": 8248,
       "boostedDamagePatch": 10809.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -688,7 +929,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Goku (GT) Super Saiyan 3": [
@@ -704,7 +948,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -716,7 +964,9 @@
       "boostedDamage": 8592,
       "boostedDamagePatch": 11251.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -730,7 +980,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (GT) Super Saiyan 4": [
@@ -744,7 +1001,12 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -758,7 +1020,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -772,7 +1041,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (Teen)": [
@@ -788,7 +1064,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -802,7 +1082,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -816,7 +1103,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Vegeta (Z - Scouter)": [
@@ -830,7 +1124,11 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -844,7 +1142,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -858,7 +1163,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Great Ape Vegeta": [
@@ -872,7 +1184,10 @@
       "boostedDamage": 9800,
       "boostedDamagePatch": 10698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -884,7 +1199,9 @@
       "boostedDamage": 10596,
       "boostedDamagePatch": 11563.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -898,7 +1215,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Vegeta (Z - Early)": [
@@ -912,7 +1234,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -924,7 +1250,9 @@
       "boostedDamage": 7210,
       "boostedDamagePatch": 7872,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -938,7 +1266,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Vegeta (Z - Early) Super Saiyan": [
@@ -952,7 +1283,11 @@
       "boostedDamage": 9400,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -966,7 +1301,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -980,7 +1322,11 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Vegeta": [
@@ -994,7 +1340,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1008,7 +1358,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1022,7 +1379,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Vegeta (Z - End)": [
@@ -1038,7 +1400,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1050,7 +1420,9 @@
       "boostedDamage": 7210,
       "boostedDamagePatch": 7872,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -1064,7 +1436,11 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Vegeta (Z - End) Super Saiyan": [
@@ -1078,7 +1454,12 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1090,7 +1471,9 @@
       "boostedDamage": 8250,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -1104,7 +1487,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000
     }
   ],
   "Vegeta (Z - End) Super Saiyan 2": [
@@ -1118,7 +1503,10 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1130,7 +1518,9 @@
       "boostedDamage": 8250,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -1144,7 +1534,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Majin Vegeta": [
@@ -1158,7 +1556,11 @@
       "boostedDamage": 8935,
       "boostedDamagePatch": 9750,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1170,7 +1572,10 @@
       "boostedDamage": 9796,
       "boostedDamagePatch": 10688.4,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1186,7 +1591,11 @@
         "Self-damage",
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true
     }
   ],
   "Vegeta (Super)": [
@@ -1200,7 +1609,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1214,7 +1627,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1226,8 +1646,12 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20455.5,
       "impactPower": 9,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Vegeta (Super) Super Saiyan": [
@@ -1243,7 +1667,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -1257,7 +1683,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1271,7 +1704,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Vegeta (Super) Super Saiyan God": [
@@ -1287,7 +1727,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -1301,7 +1744,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1315,7 +1765,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Vegeta (Super) Super Saiyan God Super Saiyan": [
@@ -1329,7 +1784,12 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1341,7 +1801,10 @@
       "boostedDamage": 10274,
       "boostedDamagePatch": 11373.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -1357,7 +1820,11 @@
         "Self-damage",
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true
     }
   ],
   "Vegeta (GT) Super Saiyan 4": [
@@ -1371,7 +1838,12 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1385,7 +1857,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1399,7 +1878,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Kid)": [
@@ -1415,7 +1898,10 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1427,7 +1913,9 @@
       "boostedDamage": 6530,
       "boostedDamagePatch": 8556,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -1441,7 +1929,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Gohan (Teen)": [
@@ -1457,7 +1952,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1469,7 +1968,9 @@
       "boostedDamage": 6870,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -1481,8 +1982,11 @@
       "boostedDamage": 18000,
       "boostedDamagePatch": 19500,
       "impactPower": 9,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Teen) Super Saiyan": [
@@ -1498,7 +2002,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1512,7 +2020,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1526,7 +2042,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Gohan (Teen) Super Saiyan 2": [
@@ -1540,7 +2059,11 @@
       "boostedDamage": 9795,
       "boostedDamagePatch": 10698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1554,7 +2077,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1569,7 +2099,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Adult)": [
@@ -1583,7 +2118,10 @@
       "boostedDamage": 8248,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -1597,7 +2135,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1611,7 +2156,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Adult) Super Saiyan": [
@@ -1625,7 +2174,9 @@
       "boostedDamage": 9900,
       "boostedDamagePatch": 10804.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -1637,7 +2188,9 @@
       "boostedDamage": 8248,
       "boostedDamagePatch": 10809.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -1652,7 +2205,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Adult) Super Saiyan 2": [
@@ -1666,7 +2224,9 @@
       "boostedDamage": 10312,
       "boostedDamagePatch": 11251.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -1680,7 +2240,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1694,7 +2261,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Great Saiyaman": [
@@ -1708,7 +2280,10 @@
       "boostedDamage": 9627,
       "boostedDamagePatch": 10504.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -1722,7 +2297,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1736,7 +2318,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Ultimate Gohan": [
@@ -1752,7 +2341,12 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1766,7 +2360,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1780,7 +2381,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Gohan (Future)": [
@@ -1796,7 +2404,10 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1808,7 +2419,10 @@
       "boostedDamage": 10105,
       "boostedDamagePatch": 11028,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -1822,7 +2436,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Future) Super Saiyan": [
@@ -1836,7 +2454,10 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1850,7 +2471,10 @@
       "impactPower": null,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -1864,7 +2488,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Piccolo": [
@@ -1878,7 +2510,10 @@
       "boostedDamage": 8248,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -1892,7 +2527,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1904,8 +2547,9 @@
       "boostedDamage": 18000,
       "boostedDamagePatch": 19500,
       "impactPower": null,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000
     }
   ],
   "Piccolo (Fused with Kami)": [
@@ -1921,7 +2565,9 @@
       "impactPower": null,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -1933,7 +2579,10 @@
       "boostedDamage": 8229,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -1947,7 +2596,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000
     }
   ],
   "Nail": [
@@ -1961,7 +2612,10 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -1973,7 +2627,10 @@
       "boostedDamage": 9625,
       "boostedDamagePatch": 10500,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -1987,7 +2644,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Krillin": [
@@ -2003,7 +2667,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2015,7 +2683,9 @@
       "boostedDamage": 14886,
       "boostedDamagePatch": 8125.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -2030,7 +2700,11 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true
     }
   ],
   "Yamcha": [
@@ -2046,7 +2720,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2060,7 +2738,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2074,7 +2759,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000
     }
   ],
   "Tien": [
@@ -2088,7 +2775,10 @@
       "boostedDamage": 7865,
       "boostedDamagePatch": 8580,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -2100,7 +2790,9 @@
       "boostedDamage": 8621,
       "boostedDamagePatch": 9405.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -2115,7 +2807,9 @@
       "traits": [
         "Self-damage",
         "Repeated usage possible"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000
     }
   ],
   "Trunks (Sword)": [
@@ -2129,7 +2823,11 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2141,7 +2839,9 @@
       "boostedDamage": 6875,
       "boostedDamagePatch": 7500,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -2156,7 +2856,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Trunks (Sword) Super Saiyan": [
@@ -2170,7 +2873,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10261.2,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2182,7 +2889,9 @@
       "boostedDamage": 8250,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -2196,7 +2905,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Trunks (Melee)": [
@@ -2210,7 +2926,11 @@
       "boostedDamage": 8229,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2224,7 +2944,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2236,8 +2963,11 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Trunks (Melee) Super Saiyan": [
@@ -2251,7 +2981,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10261.2,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2265,7 +2999,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2279,7 +3020,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Super Trunks": [
@@ -2293,7 +3041,11 @@
       "boostedDamage": 8229,
       "boostedDamagePatch": 11222.4,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2305,7 +3057,11 @@
       "boostedDamage": 8229,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2319,7 +3075,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Future Trunks": [
@@ -2335,7 +3094,10 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2350,7 +3112,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2364,7 +3129,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Future Trunks Super Saiyan": [
@@ -2378,7 +3150,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2390,7 +3166,12 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 15390,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2404,7 +3185,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Trunks (Kid)": [
@@ -2418,7 +3206,11 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2432,7 +3224,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2444,8 +3243,11 @@
       "boostedDamage": 18000,
       "boostedDamagePatch": 19500,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Trunks (Kid) Super Saiyan": [
@@ -2459,7 +3261,11 @@
       "boostedDamage": 9010,
       "boostedDamagePatch": 9834,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2473,7 +3279,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2487,7 +3300,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goten": [
@@ -2501,7 +3318,9 @@
       "boostedDamage": 6870,
       "boostedDamagePatch": 7500,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -2515,7 +3334,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 10000,
+      "lungeSpeed": 6500,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2529,7 +3355,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goten Super Saiyan": [
@@ -2545,7 +3375,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2559,7 +3393,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2573,7 +3414,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Vegito": [
@@ -2587,7 +3432,10 @@
       "boostedDamage": 9796,
       "boostedDamagePatch": 10688.4,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2601,7 +3449,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2615,7 +3470,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Vegito": [
@@ -2629,7 +3488,11 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2641,7 +3504,12 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 15990,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2655,7 +3523,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Vegito Super Saiyan God Super Saiyan": [
@@ -2671,7 +3546,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2685,7 +3564,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2699,7 +3585,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Gogeta (Z)": [
@@ -2715,7 +3606,12 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2729,7 +3625,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.3,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2743,7 +3646,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Gogeta (Super)": [
@@ -2759,7 +3669,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2771,7 +3685,10 @@
       "boostedDamage": 12030,
       "boostedDamagePatch": 13128,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -2785,7 +3702,11 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gogeta (Super) Super Saiyan": [
@@ -2801,7 +3722,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2815,7 +3740,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2829,7 +3761,12 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Gogeta (Super) Super Saiyan God Super Saiyan": [
@@ -2843,7 +3780,10 @@
       "boostedDamage": 10725,
       "boostedDamagePatch": 11970,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -2857,7 +3797,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2871,7 +3818,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gogeta (GT) Super Saiyan 4": [
@@ -2887,7 +3839,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2901,7 +3857,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2915,7 +3878,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gotenks": [
@@ -2929,7 +3897,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2943,7 +3915,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -2957,7 +3936,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gotenks Super Saiyan": [
@@ -2971,7 +3954,11 @@
       "boostedDamage": 9795,
       "boostedDamagePatch": 10698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -2986,7 +3973,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3000,7 +3990,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Gotenks Super Saiyan 3": [
@@ -3014,7 +4007,11 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3026,7 +4023,10 @@
       "boostedDamage": 8930,
       "boostedDamagePatch": 11712,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -3040,7 +4040,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Videl": [
@@ -3056,7 +4063,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 10000,
+      "lungeSpeed": 9750,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3070,7 +4084,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3084,7 +4105,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Master Roshi": [
@@ -3098,11 +4126,15 @@
       "boostedDamage": 6110,
       "boostedDamagePatch": 6672,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
-      "name": "Thunder Shocl Surprise",
+      "name": "Thunder Shock Surprise",
       "category": "Beam",
       "type": null,
       "baseDamage": 6533,
@@ -3113,7 +4145,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3130,7 +4165,10 @@
         "Unguardable",
         "Cinematic",
         "Damage dealt and taken changes based on your opponent's DP."
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Master Roshi Full Power": [
@@ -3144,7 +4182,11 @@
       "boostedDamage": 6660,
       "boostedDamagePatch": 7272,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3158,7 +4200,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3172,7 +4221,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Frieza (Z) 1st Form": [
@@ -3186,7 +4239,9 @@
       "boostedDamage": 7507,
       "boostedDamagePatch": 8191.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -3200,7 +4255,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3212,8 +4274,12 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": 12,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Frieza (Z) 2nd Form": [
@@ -3227,7 +4293,10 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8544,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3239,7 +4308,11 @@
       "boostedDamage": 9624,
       "boostedDamagePatch": 10497.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true,
+      "lockOnNeeded": true
     },
     {
       "slot": "BlastUltimate",
@@ -3253,7 +4326,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Frieza (Z) 3rd Form": [
@@ -3267,7 +4347,9 @@
       "boostedDamage": 8420,
       "boostedDamagePatch": 9180,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -3281,7 +4363,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3295,7 +4384,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Frieza (Z) 4th Form": [
@@ -3309,7 +4405,9 @@
       "boostedDamage": 8760,
       "boostedDamagePatch": 9564,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -3323,7 +4421,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3335,8 +4440,12 @@
       "boostedDamage": 21992,
       "boostedDamagePatch": 23826.4,
       "impactPower": 12,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Frieza (Z) Full Power": [
@@ -3352,7 +4461,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3366,7 +4478,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3380,7 +4500,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Mecha Frieza": [
@@ -3394,7 +4518,9 @@
       "boostedDamage": 7865,
       "boostedDamagePatch": 8580,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -3408,7 +4534,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3422,7 +4551,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Frieza (Super)": [
@@ -3436,7 +4570,9 @@
       "boostedDamage": 7865,
       "boostedDamagePatch": 8580,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -3451,7 +4587,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3465,7 +4609,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Golden Frieza": [
@@ -3479,7 +4628,9 @@
       "boostedDamage": 10180,
       "boostedDamagePatch": 11118,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -3493,7 +4644,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3507,7 +4665,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "destroyMap": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Cell 2nd Form": [
@@ -3521,7 +4687,11 @@
       "boostedDamage": 8229,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3535,7 +4705,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3551,7 +4728,15 @@
         "Self-damage",
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "unblockable": true,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "lockOnNeeded": true
     }
   ],
   "Cell Jr.": [
@@ -3567,7 +4752,9 @@
       "impactPower": null,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -3581,7 +4768,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3593,8 +4787,11 @@
       "boostedDamage": 17100,
       "boostedDamagePatch": 22180.6,
       "impactPower": 9,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Cell Perfect Form": [
@@ -3610,7 +4807,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3622,7 +4823,9 @@
       "boostedDamage": 8760,
       "boostedDamagePatch": 9564,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -3634,8 +4837,10 @@
       "boostedDamage": 23450,
       "boostedDamagePatch": 26169,
       "impactPower": null,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Perfect Cell": [
@@ -3649,7 +4854,9 @@
       "boostedDamage": 8935,
       "boostedDamagePatch": 9750,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -3663,7 +4870,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3677,7 +4891,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Cell 1st Form": [
@@ -3693,7 +4912,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3707,7 +4930,10 @@
       "impactPower": null,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -3721,7 +4947,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Majin Buu": [
@@ -3737,7 +4970,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -3751,7 +4986,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3766,7 +5005,11 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true
     }
   ],
   "Majin Buu (Evil)": [
@@ -3782,7 +5025,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3796,7 +5043,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3810,7 +5060,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Super Buu": [
@@ -3824,7 +5081,9 @@
       "boostedDamage": 13140,
       "boostedDamagePatch": 14346,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -3839,7 +5098,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3855,7 +5117,11 @@
         "Self-damage",
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true
     }
   ],
   "Super Buu (Gotenks Absorbed)": [
@@ -3871,7 +5137,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3885,7 +5154,9 @@
       "impactPower": null,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -3899,7 +5170,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Buu (Gohan Absorbed)": [
@@ -3915,7 +5190,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3930,7 +5209,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3945,7 +5227,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Kid Buu": [
@@ -3961,7 +5246,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -3975,7 +5264,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -3989,7 +5285,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Mr. Satan": [
@@ -4005,7 +5306,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4020,7 +5328,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4034,7 +5350,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Chiaotzu": [
@@ -4048,7 +5371,9 @@
       "boostedDamage": 6435,
       "boostedDamagePatch": 7020,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -4060,7 +5385,9 @@
       "boostedDamage": 7053,
       "boostedDamagePatch": 7695.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -4075,7 +5402,15 @@
       "traits": [
         "Cinematic",
         "Self-damage"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Yajirobe": [
@@ -4091,7 +5426,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4105,7 +5448,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4119,7 +5469,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Pan (GT)": [
@@ -4135,7 +5492,10 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4149,7 +5509,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4163,7 +5530,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Uub (GT)": [
@@ -4179,7 +5553,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4193,7 +5571,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4205,8 +5590,10 @@
       "boostedDamage": 20800,
       "boostedDamagePatch": 22100,
       "impactPower": null,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Majuub (GT)": [
@@ -4220,7 +5607,9 @@
       "boostedDamage": 7560,
       "boostedDamagePatch": 9900,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -4235,7 +5624,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4249,7 +5641,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Bardock": [
@@ -4263,7 +5663,11 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4277,7 +5681,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4291,7 +5702,11 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Raditz": [
@@ -4305,7 +5720,10 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8122.8,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4319,7 +5737,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4333,7 +5758,11 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Saibaman": [
@@ -4347,7 +5776,11 @@
       "boostedDamage": 7050,
       "boostedDamagePatch": 7698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4361,7 +5794,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4376,7 +5816,14 @@
       "traits": [
         "Cinematic",
         "Self-damage"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Nappa": [
@@ -4390,7 +5837,10 @@
       "boostedDamage": 8660,
       "boostedDamagePatch": 9451.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lockOnNeeded": true
     },
     {
       "slot": "BlastSkill2",
@@ -4402,7 +5852,10 @@
       "boostedDamage": 6432,
       "boostedDamagePatch": 7022.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "lockOnNeeded": true
     },
     {
       "slot": "BlastUltimate",
@@ -4416,7 +5869,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Zarbon": [
@@ -4430,7 +5887,9 @@
       "boostedDamage": 6530,
       "boostedDamagePatch": 5702.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -4444,7 +5903,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4458,7 +5924,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Zarbon": [
@@ -4472,7 +5942,11 @@
       "boostedDamage": 7050,
       "boostedDamagePatch": 7698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4486,7 +5960,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4501,7 +5982,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.5,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Dodoria": [
@@ -4515,7 +6004,11 @@
       "boostedDamage": 7050,
       "boostedDamagePatch": 7698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4529,7 +6022,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4543,7 +6044,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Cui": [
@@ -4557,7 +6061,11 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8124,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4569,7 +6077,9 @@
       "boostedDamage": 6530,
       "boostedDamagePatch": 8556,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -4583,7 +6093,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Captain Ginyu": [
@@ -4597,7 +6114,11 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4609,7 +6130,11 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4626,7 +6151,10 @@
         "Unguardable",
         "Cinematic",
         "When you and your opponent switch bodies, you cannot use\nTransformation, Switch, skills, Blasts, or Ultimate Blasts."
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lockOnNeeded": true
     }
   ],
   "Recoome": [
@@ -4640,7 +6168,10 @@
       "boostedDamage": 7050,
       "boostedDamagePatch": 7698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4652,7 +6183,9 @@
       "boostedDamage": 6192,
       "boostedDamagePatch": 6768,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -4666,7 +6199,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Burter": [
@@ -4680,7 +6216,11 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8122.8,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4694,7 +6234,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4708,7 +6255,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Jeice": [
@@ -4722,7 +6276,11 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8124,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4734,7 +6292,10 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8122.8,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4748,7 +6309,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Guldo": [
@@ -4762,7 +6330,9 @@
       "boostedDamage": 7053,
       "boostedDamagePatch": 7695.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -4774,7 +6344,9 @@
       "boostedDamage": 6185,
       "boostedDamagePatch": 6750,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -4789,7 +6361,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "King Cold": [
@@ -4803,7 +6378,9 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8122.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -4815,7 +6392,10 @@
       "boostedDamage": 9140,
       "boostedDamagePatch": 9978,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -4829,7 +6409,16 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Android 16": [
@@ -4843,7 +6432,9 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -4858,7 +6449,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.12,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4874,7 +6473,17 @@
         "Self-damage",
         "Cinematic",
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "unblockable": true,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Android 17 (Z)": [
@@ -4888,7 +6497,9 @@
       "boostedDamage": 7506,
       "boostedDamagePatch": 8191.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -4900,7 +6511,11 @@
       "boostedDamage": 8226,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4914,7 +6529,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Android 17 (Super)": [
@@ -4928,7 +6550,11 @@
       "boostedDamage": 8620,
       "boostedDamagePatch": 9408,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -4940,7 +6566,9 @@
       "boostedDamage": 8621,
       "boostedDamagePatch": 9405.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -4955,7 +6583,14 @@
       "traits": [
         "Cinematic",
         "Self-damage"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Android 18": [
@@ -4969,7 +6604,9 @@
       "boostedDamage": 7210,
       "boostedDamagePatch": 9456,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -4981,7 +6618,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 9453.6,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -4995,7 +6636,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "Replacement Slot2",
@@ -5009,7 +6657,11 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true,
+      "audienceFlees": true
     }
   ],
   "Android 19": [
@@ -5023,7 +6675,11 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8124,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5037,7 +6693,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5051,7 +6714,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Dr. Gero": [
@@ -5065,7 +6735,11 @@
       "boostedDamage": 7835,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5077,7 +6751,9 @@
       "boostedDamage": 7148,
       "boostedDamagePatch": 7800,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -5091,7 +6767,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Babidi": [
@@ -5107,7 +6790,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5119,7 +6809,10 @@
       "boostedDamage": 9140,
       "boostedDamagePatch": 9979.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lockOnNeeded": true
     },
     {
       "slot": "BlastUltimate",
@@ -5134,7 +6827,10 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Dabura": [
@@ -5148,7 +6844,10 @@
       "boostedDamage": 9992,
       "boostedDamagePatch": 10902,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5162,7 +6861,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5176,7 +6878,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Frieza Force Soldier": [
@@ -5190,7 +6899,10 @@
       "boostedDamage": 6185,
       "boostedDamagePatch": 6750,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5202,7 +6914,11 @@
       "boostedDamage": 7050,
       "boostedDamagePatch": 7698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5216,7 +6932,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Broly (Z)": [
@@ -5230,7 +6954,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5244,7 +6972,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5258,7 +6993,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Broly (Z) Super Saiyan": [
@@ -5274,7 +7012,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5286,7 +7031,9 @@
       "boostedDamage": 7866,
       "boostedDamagePatch": 8589.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -5300,7 +7047,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Broly (Z) Legendary Super Saiyan": [
@@ -5314,7 +7064,11 @@
       "boostedDamage": 10188,
       "boostedDamagePatch": 11115.6,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5329,7 +7083,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.25,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5344,7 +7106,13 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Broly (Super)": [
@@ -5358,7 +7126,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5373,7 +7145,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.5,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5387,7 +7167,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Broly (Super) Super Saiyan": [
@@ -5401,7 +7188,11 @@
       "boostedDamage": 8620,
       "boostedDamagePatch": 9408,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5415,7 +7206,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5429,7 +7227,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Broly (Super) Super Saiyan (Full Power)": [
@@ -5443,7 +7246,11 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5455,7 +7262,9 @@
       "boostedDamage": 13016,
       "boostedDamagePatch": 14254.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000
     },
     {
       "slot": "BlastUltimate",
@@ -5469,7 +7278,11 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Garlic Jr.": [
@@ -5483,7 +7296,11 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8124,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5498,7 +7315,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.12,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5513,7 +7338,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Dr. Wheelo": [
@@ -5527,7 +7360,10 @@
       "boostedDamage": 8619,
       "boostedDamagePatch": 9406.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -5541,7 +7377,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5553,8 +7397,11 @@
       "boostedDamage": 19800,
       "boostedDamagePatch": 21450,
       "impactPower": 9,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Turles": [
@@ -5568,7 +7415,10 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5580,7 +7430,9 @@
       "boostedDamage": 6870,
       "boostedDamagePatch": 9000,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -5594,7 +7446,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Lord Slug": [
@@ -5608,7 +7467,9 @@
       "boostedDamage": 7445,
       "boostedDamagePatch": 8122.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -5620,7 +7481,9 @@
       "boostedDamage": 6792,
       "boostedDamagePatch": 7411.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -5634,7 +7497,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Lord Slug Giant Form": [
@@ -5648,7 +7518,10 @@
       "boostedDamage": 8580,
       "boostedDamagePatch": 9364.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -5660,7 +7533,10 @@
       "boostedDamage": 12053,
       "boostedDamagePatch": 13203.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -5674,7 +7550,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Cooler": [
@@ -5688,7 +7568,11 @@
       "boostedDamage": 8620,
       "boostedDamagePatch": 9408,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5700,7 +7584,9 @@
       "boostedDamage": 7864,
       "boostedDamagePatch": 8582.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -5712,8 +7598,12 @@
       "boostedDamage": 19800,
       "boostedDamagePatch": 21450,
       "impactPower": 12,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Cooler Final Form": [
@@ -5727,7 +7617,9 @@
       "boostedDamage": 7865,
       "boostedDamagePatch": 8580,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -5741,7 +7633,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5755,7 +7654,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Metal Cooler": [
@@ -5771,7 +7675,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "unblockable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5783,7 +7690,9 @@
       "boostedDamage": 9100,
       "boostedDamagePatch": 8964,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -5797,7 +7706,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Android 13": [
@@ -5811,7 +7725,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5825,7 +7743,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5837,8 +7762,11 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Fusion Android 13": [
@@ -5852,7 +7780,11 @@
       "boostedDamage": 8621,
       "boostedDamagePatch": 9405.6,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5864,7 +7796,10 @@
       "boostedDamage": 10585,
       "boostedDamagePatch": 11550,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -5879,7 +7814,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.12,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Bojack": [
@@ -5893,7 +7836,11 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5905,7 +7852,9 @@
       "boostedDamage": 7152,
       "boostedDamagePatch": 7804.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -5917,8 +7866,11 @@
       "boostedDamage": 19495,
       "boostedDamagePatch": 21118.5,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Full-Power Bojack": [
@@ -5932,7 +7884,11 @@
       "boostedDamage": 8621,
       "boostedDamagePatch": 9405.6,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5946,7 +7902,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -5960,7 +7923,11 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Janemba": [
@@ -5974,7 +7941,11 @@
       "boostedDamage": 9800,
       "boostedDamagePatch": 10698,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -5986,7 +7957,10 @@
       "boostedDamage": 10600,
       "boostedDamagePatch": 11568,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6001,7 +7975,13 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true
     }
   ],
   "Super Janemba": [
@@ -6015,7 +7995,11 @@
       "boostedDamage": 9795,
       "boostedDamagePatch": 10692,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6027,7 +8011,9 @@
       "boostedDamage": 8935,
       "boostedDamagePatch": 9750,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -6041,7 +8027,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Tapion": [
@@ -6055,7 +8048,11 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6069,7 +8066,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6083,7 +8083,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Hirudegarn": [
@@ -6097,7 +8104,10 @@
       "boostedDamage": 11052,
       "boostedDamagePatch": 12062.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -6109,7 +8119,10 @@
       "boostedDamage": 12050,
       "boostedDamagePatch": 13206,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6123,7 +8136,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Baby Vegeta (GT)": [
@@ -6137,7 +8155,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6149,7 +8171,10 @@
       "boostedDamage": 7200,
       "boostedDamagePatch": 7896,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6163,7 +8188,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Baby 1 (GT)": [
@@ -6177,7 +8207,11 @@
       "boostedDamage": 8620,
       "boostedDamagePatch": 9408,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6191,7 +8225,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6205,7 +8246,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Super Baby 2 (GT)": [
@@ -6219,7 +8265,11 @@
       "boostedDamage": 8935,
       "boostedDamagePatch": 9750,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6233,7 +8283,10 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6247,7 +8300,12 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Great Ape Baby (GT)": [
@@ -6261,7 +8319,11 @@
       "boostedDamage": 10655,
       "boostedDamagePatch": 11628,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6275,7 +8337,11 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "unblockable": true,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6289,7 +8355,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Syn Shenron (GT)": [
@@ -6303,7 +8374,9 @@
       "boostedDamage": 7866,
       "boostedDamagePatch": 8589.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -6315,7 +8388,9 @@
       "boostedDamage": 7864,
       "boostedDamagePatch": 8582.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -6329,7 +8404,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000
     }
   ],
   "Omega Shenron (GT)": [
@@ -6345,7 +8422,9 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000
     },
     {
       "slot": "BlastSkill2",
@@ -6359,7 +8438,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6373,7 +8459,12 @@
       "impactPower": 12,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Spopovich": [
@@ -6389,7 +8480,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6403,7 +8502,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6417,7 +8523,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Beerus": [
@@ -6431,7 +8544,11 @@
       "boostedDamage": 10972,
       "boostedDamagePatch": 11970,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6445,7 +8562,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6460,7 +8584,13 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Whis": [
@@ -6474,7 +8604,9 @@
       "boostedDamage": 10010,
       "boostedDamagePatch": 10920,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -6486,7 +8618,9 @@
       "boostedDamage": 11544,
       "boostedDamagePatch": 12601.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -6500,7 +8634,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku Black": [
@@ -6514,7 +8656,10 @@
       "boostedDamage": 8229,
       "boostedDamagePatch": 8978.4,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6529,7 +8674,15 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6541,8 +8694,11 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20455.5,
       "impactPower": 9,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Goku Black Super Saiyan Rosé": [
@@ -6558,7 +8714,11 @@
       "impactPower": 5,
       "traits": [
         "Chargeable"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6572,7 +8732,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6586,7 +8753,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Zamasu": [
@@ -6600,7 +8774,9 @@
       "boostedDamage": 9600,
       "boostedDamagePatch": 10474.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -6614,7 +8790,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6628,7 +8811,11 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Fused Zamasu": [
@@ -6642,7 +8829,12 @@
       "boostedDamage": 10776,
       "boostedDamagePatch": 11756.4,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6654,7 +8846,10 @@
       "boostedDamage": 9450,
       "boostedDamagePatch": 10320,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6668,7 +8863,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Fused Zamasu Half-Corrupted": [
@@ -6682,7 +8885,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10261.2,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6696,7 +8903,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6710,7 +8924,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Hit": [
@@ -6724,7 +8945,9 @@
       "boostedDamage": 10185,
       "boostedDamagePatch": 11118,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -6738,7 +8961,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6752,7 +8982,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Frost": [
@@ -6766,7 +9003,10 @@
       "boostedDamage": 7865,
       "boostedDamagePatch": 8580,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -6780,7 +9020,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6794,7 +9041,12 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Cabba": [
@@ -6808,7 +9060,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6822,7 +9078,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6836,7 +9099,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Cabba Super Saiyan": [
@@ -6850,7 +9120,9 @@
       "boostedDamage": 8250,
       "boostedDamagePatch": 10800,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -6864,7 +9136,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -6878,7 +9157,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Cabba Super Saiyan 2": [
@@ -6892,7 +9175,11 @@
       "boostedDamage": 9795,
       "boostedDamagePatch": 10692,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6904,7 +9191,10 @@
       "boostedDamage": 8590,
       "boostedDamagePatch": 11256,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6918,7 +9208,12 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Caulifla": [
@@ -6932,7 +9227,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6944,7 +9243,10 @@
       "boostedDamage": 10105,
       "boostedDamagePatch": 11028,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -6956,8 +9258,10 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": null,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Caulifla Super Saiyan 2": [
@@ -6971,7 +9275,11 @@
       "boostedDamage": 9795,
       "boostedDamagePatch": 10692,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -6985,7 +9293,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7000,7 +9315,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Kale": [
@@ -7014,7 +9334,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7026,7 +9350,9 @@
       "boostedDamage": 7210,
       "boostedDamagePatch": 9456,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -7038,8 +9364,11 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Kale Super Saiyan (Berserk)": [
@@ -7053,7 +9382,11 @@
       "boostedDamage": 9400,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7067,7 +9400,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7081,7 +9421,11 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true
     }
   ],
   "Kale Super Saiyan": [
@@ -7095,7 +9439,11 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10260,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7107,7 +9455,10 @@
       "boostedDamage": 11550,
       "boostedDamagePatch": 12606,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -7122,7 +9473,12 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Kefla": [
@@ -7136,7 +9492,10 @@
       "boostedDamage": 9405,
       "boostedDamagePatch": 10261.2,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7150,7 +9509,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 0.5,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7164,7 +9530,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Kefla Super Saiyan": [
@@ -7178,7 +9547,11 @@
       "boostedDamage": 9796,
       "boostedDamagePatch": 10688.4,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7192,7 +9565,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7206,7 +9586,10 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true
     }
   ],
   "Kefla Super Saiyan 2": [
@@ -7220,7 +9603,10 @@
       "boostedDamage": 9294,
       "boostedDamagePatch": 10144.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastSkill2",
@@ -7234,7 +9620,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7248,7 +9641,11 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true
     }
   ],
   "Jiren": [
@@ -7262,7 +9659,11 @@
       "boostedDamage": 10188,
       "boostedDamagePatch": 11115.6,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7276,7 +9677,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7290,7 +9698,15 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Jiren Full Power": [
@@ -7304,7 +9720,11 @@
       "boostedDamage": 10580,
       "boostedDamagePatch": 11544,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7316,7 +9736,10 @@
       "boostedDamage": 12996,
       "boostedDamagePatch": 14180.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -7331,7 +9754,13 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Toppo": [
@@ -7345,7 +9774,9 @@
       "boostedDamage": 7900,
       "boostedDamagePatch": 8640,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -7359,7 +9790,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7373,7 +9811,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Toppo God of Destruction": [
@@ -7387,7 +9829,9 @@
       "boostedDamage": 8920,
       "boostedDamagePatch": 9768,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -7399,7 +9843,11 @@
       "boostedDamage": 10188,
       "boostedDamagePatch": 11115.6,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7414,7 +9862,13 @@
       "traits": [
         "Unguardable",
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "unblockable": true,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Dyspo": [
@@ -7428,7 +9882,11 @@
       "boostedDamage": 8620,
       "boostedDamagePatch": 9408,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7442,7 +9900,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7456,7 +9921,11 @@
       "impactPower": 9,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Bergamo": [
@@ -7470,7 +9939,11 @@
       "boostedDamage": 8225,
       "boostedDamagePatch": 8982,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7484,7 +9957,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7498,7 +9978,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Ribrianne": [
@@ -7512,7 +9999,10 @@
       "boostedDamage": 7837,
       "boostedDamagePatch": 8550,
       "impactPower": 5,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "beamClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7526,7 +10016,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 10000,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7540,7 +10038,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Kakunsa": [
@@ -7556,7 +10061,15 @@
       "impactPower": null,
       "traits": [
         "Unguardable"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 40000,
+      "lungeSpeed": 11700,
+      "moveLimitTime": 1.5,
+      "targetGiant": false,
+      "unblockable": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -7570,7 +10083,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "lungeSpeed": 8750,
+      "moveLimitTime": 2,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -7582,8 +10102,10 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "beamClashCapable": true
     }
   ],
   "Roasie": [
@@ -7597,7 +10119,9 @@
       "boostedDamage": 7210,
       "boostedDamagePatch": 9456,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7609,7 +10133,9 @@
       "boostedDamage": 7210,
       "boostedDamagePatch": 9456,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -7621,8 +10147,10 @@
       "boostedDamage": 18900,
       "boostedDamagePatch": 20475,
       "impactPower": 8,
-      "traits": [
-      ]
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "beamClashCapable": true
     }
   ],
   "Anilaza": [
@@ -7638,7 +10166,12 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "lungeSpeed": 8750,
+      "targetGiant": false,
+      "lockOnNeeded": true
     },
     {
       "slot": "BlastSkill2",
@@ -7650,7 +10183,10 @@
       "boostedDamage": 8930,
       "boostedDamagePatch": 9744,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 30000,
+      "audienceFlees": true
     },
     {
       "slot": "BlastUltimate",
@@ -7664,7 +10200,12 @@
       "impactPower": 8,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "beamClashCapable": true
     }
   ],
   "Gohan (Super Hero)": [
@@ -7678,7 +10219,8 @@
       "boostedDamage": 8550,
       "boostedDamagePatch": 8550,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7690,7 +10232,9 @@
       "boostedDamage": 10051,
       "boostedDamagePatch": 10050,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -7702,7 +10246,8 @@
       "boostedDamage": 19500,
       "boostedDamagePatch": 19500,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     }
   ],
   "Gohan (Super Hero) Super Saiyan": [
@@ -7716,7 +10261,8 @@
       "boostedDamage": 10260,
       "boostedDamagePatch": 10260,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     },
     {
       "slot": "BlastSkill2",
@@ -7728,7 +10274,9 @@
       "boostedDamage": 12060,
       "boostedDamagePatch": 12061.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -7740,7 +10288,8 @@
       "boostedDamage": 23400,
       "boostedDamagePatch": 23401.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Gohan (Super Hero) Ultimate Gohan": [
@@ -7754,7 +10303,8 @@
       "boostedDamage": 9755,
       "boostedDamagePatch": 9756,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7766,7 +10316,9 @@
       "boostedDamage": 13066,
       "boostedDamagePatch": 13065.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -7778,7 +10330,8 @@
       "boostedDamage": 25350,
       "boostedDamagePatch": 25351.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Gohan Beast": [
@@ -7792,7 +10345,8 @@
       "boostedDamage": 11970,
       "boostedDamagePatch": 11970,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7804,7 +10358,9 @@
       "boostedDamage": 14070,
       "boostedDamagePatch": 14070,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -7816,7 +10372,8 @@
       "boostedDamage": 27300,
       "boostedDamagePatch": 27300,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Piccolo (Super Hero)": [
@@ -7830,7 +10387,8 @@
       "boostedDamage": 7092,
       "boostedDamagePatch": 6307.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7842,7 +10400,9 @@
       "boostedDamage": 10553,
       "boostedDamagePatch": 10552.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -7854,7 +10414,8 @@
       "boostedDamage": 20475,
       "boostedDamagePatch": 20475,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Piccolo (Super Hero) Power Awakening": [
@@ -7868,7 +10429,8 @@
       "boostedDamage": 10260,
       "boostedDamagePatch": 10261.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7880,7 +10442,9 @@
       "boostedDamage": 12060,
       "boostedDamagePatch": 12061.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -7892,7 +10456,8 @@
       "boostedDamage": 21450,
       "boostedDamagePatch": 21450,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Orange Piccolo": [
@@ -7906,7 +10471,8 @@
       "boostedDamage": 11120,
       "boostedDamagePatch": 11118,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7918,7 +10484,9 @@
       "boostedDamage": 13066,
       "boostedDamagePatch": 13065.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -7930,7 +10498,8 @@
       "boostedDamage": 25350,
       "boostedDamagePatch": 25351.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Orange Piccolo  Giant Form": [
@@ -7944,7 +10513,8 @@
       "boostedDamage": 12095,
       "boostedDamagePatch": 12096,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7956,7 +10526,9 @@
       "boostedDamage": 11701,
       "boostedDamagePatch": 11701.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -7968,7 +10540,8 @@
       "boostedDamage": 25350,
       "boostedDamagePatch": 25351.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Gamma 1": [
@@ -7982,7 +10555,8 @@
       "boostedDamage": 9833,
       "boostedDamagePatch": 9832.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -7994,7 +10568,9 @@
       "boostedDamage": 11558,
       "boostedDamagePatch": 11568,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8006,7 +10582,8 @@
       "boostedDamage": 22425,
       "boostedDamagePatch": 22425,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Gamma 2": [
@@ -8020,7 +10597,8 @@
       "boostedDamage": 9833,
       "boostedDamagePatch": 9832.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8032,7 +10610,9 @@
       "boostedDamage": 11558,
       "boostedDamagePatch": 11568,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8044,7 +10624,8 @@
       "boostedDamage": 29900,
       "boostedDamagePatch": 29900,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Cell Max": [
@@ -8058,7 +10639,8 @@
       "boostedDamage": 12560,
       "boostedDamagePatch": 12558,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8070,7 +10652,9 @@
       "boostedDamage": 12151,
       "boostedDamagePatch": 12150,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -8082,7 +10666,8 @@
       "boostedDamage": 26325,
       "boostedDamagePatch": 26325,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Goku (Mini)": [
@@ -8098,7 +10683,12 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastSkill2",
@@ -8112,7 +10702,12 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000,
+      "targetGiant": false,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     },
     {
       "slot": "BlastUltimate",
@@ -8126,7 +10721,14 @@
       "impactPower": null,
       "traits": [
         "Cinematic"
-      ]
+      ],
+      "maxExpendEnergy": 50000,
+      "triggerExpendEnergy": 50000,
+      "targetGiant": false,
+      "destroyMap": true,
+      "audienceFlees": true,
+      "lockOnNeeded": true,
+      "dashClashCapable": true
     }
   ],
   "Goku (Mini) Super Saiyan": [
@@ -8140,7 +10742,9 @@
       "boostedDamage": 10695,
       "boostedDamagePatch": 10695.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastSkill2",
@@ -8152,7 +10756,9 @@
       "boostedDamage": 11558,
       "boostedDamagePatch": 11568,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8164,7 +10770,8 @@
       "boostedDamage": 22425,
       "boostedDamagePatch": 22425,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Goku (Mini) Super Saiyan 4": [
@@ -8216,7 +10823,8 @@
       "boostedDamage": 8550,
       "boostedDamagePatch": 8550,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8228,7 +10836,9 @@
       "boostedDamage": 10051,
       "boostedDamagePatch": 10051.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8240,7 +10850,8 @@
       "boostedDamage": 19500,
       "boostedDamagePatch": 19500,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Vegeta (Mini) Super Saiyan": [
@@ -8254,7 +10865,8 @@
       "boostedDamage": 10352,
       "boostedDamagePatch": 10358.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8266,7 +10878,9 @@
       "boostedDamage": 11558,
       "boostedDamagePatch": 11568,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8278,7 +10892,8 @@
       "boostedDamage": 22425,
       "boostedDamagePatch": 22425,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Vegeta (Mini) Super Saiyan 2": [
@@ -8292,7 +10907,8 @@
       "boostedDamage": 10260,
       "boostedDamagePatch": 10260,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8304,7 +10920,8 @@
       "boostedDamage": 12060,
       "boostedDamagePatch": 12061.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastUltimate",
@@ -8316,7 +10933,8 @@
       "boostedDamage": 23400,
       "boostedDamagePatch": 23401.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Vegeta (Mini) Super Saiyan 3": [
@@ -8330,7 +10948,8 @@
       "boostedDamage": 10688,
       "boostedDamagePatch": 10688.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8342,7 +10961,9 @@
       "boostedDamage": 12563,
       "boostedDamagePatch": 12562.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8354,7 +10975,8 @@
       "boostedDamage": 24375,
       "boostedDamagePatch": 24375,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Glorio": [
@@ -8368,7 +10990,8 @@
       "boostedDamage": 7801,
       "boostedDamagePatch": 7800,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -8380,7 +11003,9 @@
       "boostedDamage": 10051,
       "boostedDamagePatch": 10050,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8392,7 +11017,9 @@
       "boostedDamage": 19500,
       "boostedDamagePatch": 19500,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Panzy": [
@@ -8406,7 +11033,8 @@
       "boostedDamage": 6669,
       "boostedDamagePatch": 6669.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000
     },
     {
       "slot": "BlastSkill2",
@@ -8418,7 +11046,10 @@
       "boostedDamage": 5265,
       "boostedDamagePatch": 5265.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -8430,7 +11061,8 @@
       "boostedDamage": 15600,
       "boostedDamagePatch": 15600,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Majin Kuu": [
@@ -8444,7 +11076,8 @@
       "boostedDamage": 8978,
       "boostedDamagePatch": 8982,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8456,7 +11089,10 @@
       "boostedDamage": 9450,
       "boostedDamagePatch": 9450,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -8468,7 +11104,8 @@
       "boostedDamage": 20475,
       "boostedDamagePatch": 20475,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Goku DIAMA Super Saiyan 4": [
@@ -8482,7 +11119,8 @@
       "boostedDamage": 11701,
       "boostedDamagePatch": 11701.2,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8494,7 +11132,9 @@
       "boostedDamage": 13066,
       "boostedDamagePatch": 13065.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8506,7 +11146,8 @@
       "boostedDamage": 25350,
       "boostedDamagePatch": 25351.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Vegeta DIAMA Super Saiyan 3": [
@@ -8520,7 +11161,8 @@
       "boostedDamage": 11701.2,
       "boostedDamagePatch": 11256,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8532,7 +11174,9 @@
       "boostedDamage": 13065.6,
       "boostedDamagePatch": 12562.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "triggerExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -8544,7 +11188,8 @@
       "boostedDamage": 25351.3,
       "boostedDamagePatch": 24375,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Majin Duu": [
@@ -8558,7 +11203,8 @@
       "boostedDamage": 11256,
       "boostedDamagePatch": 9405.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8570,7 +11216,9 @@
       "boostedDamage": 12562.8,
       "boostedDamagePatch": 9900,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000,
+      "unblockable": true
     },
     {
       "slot": "BlastUltimate",
@@ -8582,7 +11230,8 @@
       "boostedDamage": 24375,
       "boostedDamagePatch": 21450,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ],
   "Third Eye Gomah": [
@@ -8596,7 +11245,8 @@
       "boostedDamage": 9405.6,
       "boostedDamagePatch": 9408,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8608,7 +11258,8 @@
       "boostedDamage": 9900,
       "boostedDamagePatch": 8582.4,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 20000
     },
     {
       "slot": "BlastUltimate",
@@ -8620,7 +11271,9 @@
       "boostedDamage": 21450,
       "boostedDamagePatch": 21450,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Giant Gomah": [
@@ -8634,7 +11287,8 @@
       "boostedDamage": 9408,
       "boostedDamagePatch": 11115.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8646,7 +11300,8 @@
       "boostedDamage": 8582.4,
       "boostedDamagePatch": 13065.6,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 40000
     },
     {
       "slot": "BlastUltimate",
@@ -8658,7 +11313,9 @@
       "boostedDamage": 21450,
       "boostedDamagePatch": 25351.3,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000,
+      "unblockable": true
     }
   ],
   "Shallot": [
@@ -8672,7 +11329,8 @@
       "boostedDamage": 11115.6,
       "boostedDamagePatch": 8982,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000
     },
     {
       "slot": "BlastSkill2",
@@ -8684,7 +11342,9 @@
       "boostedDamage": 13065.6,
       "boostedDamagePatch": 10552.8,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 30000,
+      "triggerExpendEnergy": 15000
     },
     {
       "slot": "BlastUltimate",
@@ -8696,7 +11356,8 @@
       "boostedDamage": 25351.3,
       "boostedDamagePatch": 20475,
       "impactPower": null,
-      "traits": []
+      "traits": [],
+      "maxExpendEnergy": 50000
     }
   ]
 }

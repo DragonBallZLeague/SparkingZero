@@ -219,6 +219,12 @@ function isReplacementSlot(slot) {
   return slot.replace(/[\s_]/g, '').toLowerCase() === 'replacementslot2';
 }
 
+function fmtKiBars(val) {
+  const bars = val / 10000;
+  const display = Number.isInteger(bars) ? String(bars) : bars.toFixed(1);
+  return `${display} bar${bars === 1 ? '' : 's'}`;
+}
+
 function getCapsuleBlastMod(equippedCapsules, fields) {
   if (!equippedCapsules) return 0;
   let percent = 0;
@@ -632,13 +638,22 @@ function BlastSide({ blast, modDmg, changed, side, hasReplacement, replActive, o
           {modDmg.toLocaleString()}
         </span>
       )}
-      {blast.traits?.filter(Boolean).length > 0 && (
-        <div className={`flex gap-0.5 mt-0.5 flex-wrap ${isRight ? 'justify-end' : ''}`}>
-          {blast.traits.filter(Boolean).map((t, i) => (
-            <span key={i} className="text-[10px] px-1 py-px rounded bg-gray-700/60 text-gray-400">{t}</span>
-          ))}
-        </div>
-      )}
+      {(() => {
+        const traitTags = [
+          ...(blast.traits || []).filter(Boolean),
+          ...(blast.dashClashCapable ? ['Can Speed Clash'] : []),
+          ...(blast.beamClashCapable ? ['Can Beam Clash'] : []),
+          ...(blast.targetGiant ? ['Can Target Giants'] : []),
+        ];
+        if (!traitTags.length) return null;
+        return (
+          <div className={`flex gap-0.5 mt-0.5 flex-wrap ${isRight ? 'justify-end' : ''}`}>
+            {traitTags.map((t, i) => (
+              <span key={i} className="text-[10px] px-1 py-px rounded bg-gray-700/60 text-gray-400">{t}</span>
+            ))}
+          </div>
+        );
+      })()}
     </div>
   );
 
@@ -738,6 +753,40 @@ export default function CompareStatsPanel({
         {bWins ? '+' : '−'}{Math.abs(Math.round(d)).toLocaleString()}
       </span>
     );
+  }
+
+  function blastFieldRows(aBlast, bBlast) {
+    const fields = [
+      { label: 'Ki Cost',         aVal: aBlast?.maxExpendEnergy,     bVal: bBlast?.maxExpendEnergy,     lowerBetter: true, fmt: fmtKiBars },
+      { label: 'Speed',           aVal: aBlast?.lungeSpeed,          bVal: bBlast?.lungeSpeed,          lowerBetter: false },
+      { label: 'Impact Power',    aVal: aBlast?.impactPower,         bVal: bBlast?.impactPower,         lowerBetter: false },
+    ].filter(f => f.aVal != null || f.bVal != null);
+    if (!fields.length) return null;
+    return fields.map(({ label, aVal, bVal, lowerBetter, fmt }) => {
+      const fmtVal = fmt ?? (v => Number(v).toLocaleString());
+      const d = (aVal != null && bVal != null) ? bVal - aVal : null;
+      const bWins = d !== null && d !== 0 && (lowerBetter ? d < 0 : d > 0);
+      const aWins = d !== null && d !== 0 && !bWins;
+      const delta = d !== null && d !== 0 ? (
+        <span className={`text-xs font-mono ${bWins ? 'text-green-400' : 'text-red-400'}`}>
+          {d > 0 ? '+' : '−'}{Math.abs(Math.round(d)).toLocaleString()}
+        </span>
+      ) : <span className="text-gray-700 text-xs font-mono">—</span>;
+      return (
+        <div key={label} className="flex border-b border-sz-border/10 bg-gray-900/10">
+          <div className={`flex-1 py-1 px-2 text-right text-xs font-mono text-gray-300 ${aWins ? 'bg-green-950/30' : bWins ? 'bg-red-950/20' : ''}`}>
+            {aVal != null ? fmtVal(aVal) : <span className="text-gray-600">—</span>}
+          </div>
+          <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
+            <span className="text-[10px] text-gray-500 text-center leading-tight">{label}</span>
+          </div>
+          <div className={`flex-1 py-1 px-2 text-left text-xs font-mono text-gray-300 ${bWins ? 'bg-green-950/30' : aWins ? 'bg-red-950/20' : ''}`}>
+            {bVal != null ? fmtVal(bVal) : <span className="text-gray-600">—</span>}
+          </div>
+          <div className="w-16 flex-shrink-0 flex items-center justify-center">{delta}</div>
+        </div>
+      );
+    });
   }
 
   const hasAnyBlast = !!(aBlastInfo.blast1 || bBlastInfo.blast1 || aBlastInfo.blast2 || bBlastInfo.blast2 || aBlastInfo.replacement || bBlastInfo.replacement);
@@ -879,52 +928,58 @@ export default function CompareStatsPanel({
                 Blasts
               </div>
               {(aBlastInfo.blast1 || bBlastInfo.blast1) && (
-                <div className="flex border-b border-sz-border/20">
-                  <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
-                    <BlastSide blast={aBlastInfo.blast1} modDmg={aBlast1Dmg} changed={aBlastChanged} side="a" />
+                <>
+                  <div className="flex border-b border-sz-border/20">
+                    <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
+                      <BlastSide blast={aBlastInfo.blast1} modDmg={aBlast1Dmg} changed={aBlastChanged} side="a" />
+                    </div>
+                    <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 1</span>
+                    </div>
+                    <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
+                      <BlastSide blast={bBlastInfo.blast1} modDmg={bBlast1Dmg} changed={bBlastChanged} side="b" />
+                    </div>
+                    <div className="w-16 flex-shrink-0 flex items-center justify-center">
+                      {dmgDelta(aBlast1Dmg, bBlast1Dmg)}
+                    </div>
                   </div>
-                  <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 1</span>
-                  </div>
-                  <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
-                    <BlastSide blast={bBlastInfo.blast1} modDmg={bBlast1Dmg} changed={bBlastChanged} side="b" />
-                  </div>
-                  <div className="w-16 flex-shrink-0 flex items-center justify-center">
-                    {dmgDelta(aBlast1Dmg, bBlast1Dmg)}
-                  </div>
-                </div>
+                  {blastFieldRows(aBlastInfo.blast1, bBlastInfo.blast1)}
+                </>
               )}
               {(aBlastInfo.blast2 || aBlastInfo.replacement || bBlastInfo.blast2 || bBlastInfo.replacement) && (
-                <div className="flex border-b border-sz-border/20">
-                  <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
-                    <BlastSide
-                      blast={aSlot2}
-                      modDmg={aSlot2Dmg}
-                      changed={aBlastChanged}
-                      side="a"
-                      hasReplacement={!!aBlastInfo.replacement}
-                      replActive={replActiveA}
-                      onToggleRepl={() => setReplActiveA(v => !v)}
-                    />
+                <>
+                  <div className="flex border-b border-sz-border/20">
+                    <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
+                      <BlastSide
+                        blast={aSlot2}
+                        modDmg={aSlot2Dmg}
+                        changed={aBlastChanged}
+                        side="a"
+                        hasReplacement={!!aBlastInfo.replacement}
+                        replActive={replActiveA}
+                        onToggleRepl={() => setReplActiveA(v => !v)}
+                      />
+                    </div>
+                    <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 2</span>
+                    </div>
+                    <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
+                      <BlastSide
+                        blast={bSlot2}
+                        modDmg={bSlot2Dmg}
+                        changed={bBlastChanged}
+                        side="b"
+                        hasReplacement={!!bBlastInfo.replacement}
+                        replActive={replActiveB}
+                        onToggleRepl={() => setReplActiveB(v => !v)}
+                      />
+                    </div>
+                    <div className="w-16 flex-shrink-0 flex items-center justify-center">
+                      {dmgDelta(aSlot2Dmg, bSlot2Dmg)}
+                    </div>
                   </div>
-                  <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 2</span>
-                  </div>
-                  <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
-                    <BlastSide
-                      blast={bSlot2}
-                      modDmg={bSlot2Dmg}
-                      changed={bBlastChanged}
-                      side="b"
-                      hasReplacement={!!bBlastInfo.replacement}
-                      replActive={replActiveB}
-                      onToggleRepl={() => setReplActiveB(v => !v)}
-                    />
-                  </div>
-                  <div className="w-16 flex-shrink-0 flex items-center justify-center">
-                    {dmgDelta(aSlot2Dmg, bSlot2Dmg)}
-                  </div>
-                </div>
+                  {blastFieldRows(aSlot2, bSlot2)}
+                </>
               )}
             </>
           )}
@@ -949,6 +1004,7 @@ export default function CompareStatsPanel({
                   {dmgDelta(aUltDmg, bUltDmg)}
                 </div>
               </div>
+              {blastFieldRows(aBlastInfo.ultimate, bBlastInfo.ultimate)}
             </>
           )}
 
