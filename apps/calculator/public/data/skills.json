@@ -1234,9 +1234,9 @@
     "cost": 2,
     "meleeBuff": 0,
     "defenseBuff": 0,
-    "kiBlastBuff": 0,
+    "kiBlastBuff": 2,
     "kiChargingBuff": 2,
-    "blastBuff": 2,
+    "blastBuff": 0,
     "ultimateBuff": 0,
     "armor": false,
     "cutscene": true
@@ -1740,9 +1740,9 @@
     "cost": 4,
     "meleeBuff": 0,
     "defenseBuff": -4,
-    "kiBlastBuff": 1,
+    "kiBlastBuff": 0,
     "kiChargingBuff": 1,
-    "blastBuff": 0,
+    "blastBuff": 1,
     "ultimateBuff": 0,
     "armor": false,
     "cutscene": false
@@ -2302,7 +2302,7 @@
   {
     "id": 101,
     "name": "Super Maximum Light Speed Mode",
-    "type": "Speed Buff?",
+    "type": "Speed Buff",
     "instantSparking": false,
     "instantKi": false,
     "unblockable": false,
