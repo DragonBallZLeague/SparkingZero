@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getImageUrl } from '../utils/calculator.js';
 
 // fmt types:
@@ -23,7 +23,7 @@ const STAT_SECTIONS = [
       { key: 'meleeDefenseStat',    label: 'Melee Defense',     fmt: 'pct_mult_inv' },
       { key: 'blastDefense',        label: 'Blast Defense',     fmt: 'pct_mult_inv' },
       { key: 'kiBlastDefenseArmor', label: 'Ki Blast Defense + Armor',    fmt: 'pct_mult_inv' },
-      { key: 'melee',      label: '5-Hit Combo Damage' },
+      { key: 'melee',      label: '5-Hit Damage Taken', fmt: 'int' },
     ],
   },
 {
@@ -202,6 +202,21 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
   }
 
   const imgFilename = characterImages?.[baseStats.name];
+  const [imgCentered, setImgCentered] = useState(false);
+  const imgContainerRef = useRef(null);
+
+  // Observe the portrait container: when it is wider than it is tall (landscape)
+  // center the image; otherwise anchor to the top so the face stays visible.
+  useEffect(() => {
+    const el = imgContainerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => {
+      const { width, height } = entries[0].contentRect;
+      setImgCentered(width >= height);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const mod = modifiedStats ?? baseStats;
 
   function kiVolley(stats) {
@@ -218,12 +233,12 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
   return (
     <div className="flex flex-col">
       {/* Portrait image — no overlap */}
-      <div className="relative w-full h-72 overflow-hidden flex-shrink-0">
+      <div ref={imgContainerRef} className="relative w-full h-72 overflow-hidden flex-shrink-0 bg-[#242424]">
         {imgFilename ? (
           <img
             src={getImageUrl(imgFilename)}
             alt={baseStats.name}
-            className="absolute inset-0 w-full h-full object-cover object-top"
+            className={`absolute inset-0 w-full h-full object-cover ${imgCentered ? 'object-center' : 'object-top'}`}
             onError={e => { e.target.style.display = 'none'; }}
           />
         ) : (

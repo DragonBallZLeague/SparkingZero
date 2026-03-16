@@ -252,7 +252,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
       }, 0);
       const totalPct = capsulePct + skillPct;
       const baseRaw = blast.baseDamagePatch != null && blast.baseDamagePatch !== '' ? Number(blast.baseDamagePatch) : null;
-      const boostedRaw = blast.boostedDamagePatch != null && blast.boostedDamagePatch !== '' ? Number(blast.boostedDamagePatch) : null;
+      const boostedRaw = blast.boostedDamagePatch != null && blast.boostedDamagePatch !== '' ? Math.round(Number(blast.boostedDamagePatch)) : null;
       const modBase = baseRaw !== null && totalPct !== 0 ? Math.round(baseRaw * (1 + totalPct / 100)) : baseRaw;
       const modBoosted = boostedRaw !== null && totalPct !== 0 ? Math.round(boostedRaw * (1 + totalPct / 100)) : boostedRaw;
       const changed = totalPct !== 0;
@@ -311,6 +311,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
 
       {/* Blasts + Ultimates */}
       {sorted.length > 0 && (
+        <div className="overflow-x-auto">
         <table className="w-full">
           <colgroup>
             <col />
@@ -346,6 +347,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
             )}
           </tbody>
         </table>
+        </div>
       )}
 
       {/* Unique Character Traits */}
