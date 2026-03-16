@@ -212,7 +212,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
     if (!el) return;
     const ro = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect;
-      setImgCentered(width >= height);
+      setImgCentered(width >= height * 1.25);
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -232,8 +232,8 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
 
   return (
     <div className="flex flex-col">
-      {/* Portrait image — no overlap */}
-      <div ref={imgContainerRef} className="relative w-full h-72 overflow-hidden flex-shrink-0 bg-[#242424]">
+      {/* Portrait image with identity strip overlaid at bottom */}
+      <div ref={imgContainerRef} className="relative w-full h-80 overflow-hidden flex-shrink-0 bg-[#242424]">
         {imgFilename ? (
           <img
             src={getImageUrl(imgFilename)}
@@ -247,16 +247,16 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
           </div>
         )}
         <div className={`absolute inset-0 bg-gradient-to-b ${gradientFrom} via-transparent to-transparent opacity-40`} />
-      </div>
 
-      {/* Identity strip below image */}
-      <div className={`px-3 py-2.5 border-b-2 border-sz-border flex-shrink-0 bg-gradient-to-r ${gradientFrom} via-sz-panel/80 to-sz-panel/80`}>
-        <p className="text-base font-extrabold text-white leading-tight truncate">{baseStats.name}</p>
-        <div className="flex items-center gap-2 mt-1.5">
-          <span className={`text-xs px-2 py-1 rounded font-bold leading-none ${badgeColor}`}>
-            {baseStats.class}
-          </span>
-          <span className="text-sm text-sz-orange font-mono font-bold">DP {baseStats.dp}</span>
+        {/* Identity strip — overlaid on bottom of portrait */}
+        <div className={`absolute bottom-0 left-0 right-0 px-3 py-2.5 border-b-2 border-sz-border bg-gradient-to-t ${gradientFrom} via-black/60 to-transparent`}>
+          <p className="text-base font-extrabold text-white leading-tight truncate drop-shadow">{baseStats.name}</p>
+          <div className="flex items-center gap-2 mt-1.5">
+            <span className={`text-xs px-2 py-1 rounded font-bold leading-none ${badgeColor}`}>
+              {baseStats.class}
+            </span>
+            <span className="text-sm text-sz-orange font-mono font-bold drop-shadow">DP {baseStats.dp}</span>
+          </div>
         </div>
       </div>
 

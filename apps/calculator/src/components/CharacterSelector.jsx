@@ -157,7 +157,7 @@ export default function CharacterSelector({ characters, teams, characterImages, 
                   <img
                     src={getImageUrl(imgId)}
                     alt={char.name}
-                    className="w-full h-full object-cover scale-125"
+                    className="w-full h-full object-cover object-top scale-125"
                     loading="lazy"
                     onError={e => { e.target.style.display = 'none'; }}
                   />
