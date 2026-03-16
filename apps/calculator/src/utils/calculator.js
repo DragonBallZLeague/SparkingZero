@@ -45,7 +45,8 @@ export function parseEffectKey(key) {
     reduces_smash_ki_blasts:     { field: 'kiBlastCost',      op: 'percent_inv' },
     // Ki regen (key name misleading — description says reduces by X%)
     ki_recovery_up:              { field: 'kiRegen',           op: 'percent_inv' },
-    // Skill gauge start count
+    // Skill gauge
+    skill_gauge_recovery:        { field: 'skillRegen',        op: 'percent' },
     skill_start_count_up:        { field: 'skillStart',        op: 'add' },
     // Sparking duration (base=0, stores fraction; +25 value → +0.25 → shows +25%)
     sparking_down:               { field: 'sparkDuration',     op: 'add_pct' },
@@ -94,7 +95,17 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
 
   // Apply flat + percent to numeric fields
   Object.entries(modifiers).forEach(([field, { add, percent, percentInv }]) => {
-    const base = baseStats[field];
+    let base = baseStats[field];
+    // Some fields (e.g. skillRegen) are stored as formatted strings like "3.65 Points/m".
+    // Extract the leading number so capsule modifiers can still be applied.
+    let suffix = '';
+    if (typeof base === 'string') {
+      const m = base.match(/^([\d.]+)(.*)$/);
+      if (!m) return;
+      base = parseFloat(m[1]);
+      suffix = m[2];
+      if (isNaN(base)) return;
+    }
     if (typeof base !== 'number') return;
     // percentInv: +50% recovery means the time value goes DOWN by 50%
     const result = (base + add) * (1 + percent / 100) * (1 - (percentInv || 0) / 100);
@@ -104,10 +115,11 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
     // store fractional multipliers — rounding them would discard capsule modifiers.
     const isIntegerResult = Number.isInteger(base) && Math.abs(result - Math.round(result)) < 1e-6;
     if (isIntegerResult) {
-      modified[field] = Math.round(result);
+      modified[field] = suffix ? `${Math.round(result)}${suffix}` : Math.round(result);
     } else {
       const decimals = (String(base).split('.')[1] || '').length;
-      modified[field] = parseFloat(result.toFixed(Math.max(decimals, 4)));
+      const rounded = parseFloat(result.toFixed(Math.max(decimals, 4)));
+      modified[field] = suffix ? `${rounded}${suffix}` : rounded;
     }
   });
 
