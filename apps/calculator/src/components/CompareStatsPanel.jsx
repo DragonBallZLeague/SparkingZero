@@ -731,6 +731,16 @@ export default function CompareStatsPanel({
   const aUltDmg    = getModifiedDmg(aBlastInfo.ultimate?.baseDamagePatch, aUltCapPct, aUltSkillPct);
   const bUltDmg    = getModifiedDmg(bBlastInfo.ultimate?.baseDamagePatch, bUltCapPct, bUltSkillPct);
 
+  function blastWinner(aVal, bVal) {
+    if (aVal === null || bVal === null) return null;
+    if (aVal > bVal) return 'a';
+    if (bVal > aVal) return 'b';
+    return null;
+  }
+  const blast1Winner = blastWinner(aBlast1Dmg, bBlast1Dmg);
+  const slot2Winner  = blastWinner(aSlot2Dmg, bSlot2Dmg);
+  const ultWinner    = blastWinner(aUltDmg, bUltDmg);
+
   const aBlastChanged = aBlastCapPct + aBlastSkillPct !== 0;
   const bBlastChanged = bBlastCapPct + bBlastSkillPct !== 0;
   const aUltChanged   = aUltCapPct + aUltSkillPct !== 0;
@@ -930,13 +940,13 @@ export default function CompareStatsPanel({
               {(aBlastInfo.blast1 || bBlastInfo.blast1) && (
                 <>
                   <div className="flex border-b border-sz-border/20">
-                    <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
+                    <div className={`flex-1 p-2 flex flex-col justify-center items-end min-w-0 ${blast1Winner === 'a' ? 'bg-green-950/30' : blast1Winner === 'b' ? 'bg-red-950/20' : ''}`}>
                       <BlastSide blast={aBlastInfo.blast1} modDmg={aBlast1Dmg} changed={aBlastChanged} side="a" />
                     </div>
                     <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
                       <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 1</span>
                     </div>
-                    <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
+                    <div className={`flex-1 p-2 flex flex-col justify-center items-start min-w-0 ${blast1Winner === 'b' ? 'bg-green-950/30' : blast1Winner === 'a' ? 'bg-red-950/20' : ''}`}>
                       <BlastSide blast={bBlastInfo.blast1} modDmg={bBlast1Dmg} changed={bBlastChanged} side="b" />
                     </div>
                     <div className="w-16 flex-shrink-0 flex items-center justify-center">
@@ -949,7 +959,7 @@ export default function CompareStatsPanel({
               {(aBlastInfo.blast2 || aBlastInfo.replacement || bBlastInfo.blast2 || bBlastInfo.replacement) && (
                 <>
                   <div className="flex border-b border-sz-border/20">
-                    <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
+                    <div className={`flex-1 p-2 flex flex-col justify-center items-end min-w-0 ${slot2Winner === 'a' ? 'bg-green-950/30' : slot2Winner === 'b' ? 'bg-red-950/20' : ''}`}>
                       <BlastSide
                         blast={aSlot2}
                         modDmg={aSlot2Dmg}
@@ -963,7 +973,7 @@ export default function CompareStatsPanel({
                     <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
                       <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 2</span>
                     </div>
-                    <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
+                    <div className={`flex-1 p-2 flex flex-col justify-center items-start min-w-0 ${slot2Winner === 'b' ? 'bg-green-950/30' : slot2Winner === 'a' ? 'bg-red-950/20' : ''}`}>
                       <BlastSide
                         blast={bSlot2}
                         modDmg={bSlot2Dmg}
@@ -991,13 +1001,13 @@ export default function CompareStatsPanel({
                 Ultimate
               </div>
               <div className="flex border-b border-sz-border/20">
-                <div className="flex-1 p-2 flex flex-col justify-center items-end min-w-0">
+                <div className={`flex-1 p-2 flex flex-col justify-center items-end min-w-0 ${ultWinner === 'a' ? 'bg-green-950/30' : ultWinner === 'b' ? 'bg-red-950/20' : ''}`}>
                   <BlastSide blast={aBlastInfo.ultimate} modDmg={aUltDmg} changed={aUltChanged} side="a" />
                 </div>
                 <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
                   <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Ult</span>
                 </div>
-                <div className="flex-1 p-2 flex flex-col justify-center items-start min-w-0">
+                <div className={`flex-1 p-2 flex flex-col justify-center items-start min-w-0 ${ultWinner === 'b' ? 'bg-green-950/30' : ultWinner === 'a' ? 'bg-red-950/20' : ''}`}>
                   <BlastSide blast={bBlastInfo.ultimate} modDmg={bUltDmg} changed={bUltChanged} side="b" />
                 </div>
                 <div className="w-16 flex-shrink-0 flex items-center justify-center">
