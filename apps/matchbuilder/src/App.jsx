@@ -2861,7 +2861,9 @@ const CharacterSlot = ({
             {(() => {
               if (!character.id || !transformations) return null;
               const group = getTransformationGroup(character.id, transformations);
-              if (group.size <= 1) return null;
+              const activeFusions = getActiveFusions(team, transformations);
+              const isActiveFusionConstituent = activeFusions.some(f => f.constituentIdsOnTeam.includes(character.id));
+              if (group.size <= 1 && !isActiveFusionConstituent) return null;
               return (
                 <div className="mt-2">
                   <label className="block text-xs font-semibold text-purple-300 mb-1 uppercase tracking-wide" title="The selected AI will be applied to all transformations of this character">
