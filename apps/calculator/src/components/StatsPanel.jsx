@@ -19,7 +19,7 @@ const STAT_SECTIONS = [
     label: 'Defense',
     hdrClass: 'bg-teal-900/70',
     stats: [
-      { key: 'armor',               label: 'Armor',             fmt: 'pct' },
+      { key: 'armor',               label: 'Armor',             fmt: 'pct', tooltip: 'Applies defense buff to all hits that are armored' },
       { key: 'meleeDefenseStat',    label: 'Melee Defense',     fmt: 'pct_mult_inv' },
       { key: 'blastDefense',        label: 'Blast Defense',     fmt: 'pct_mult_inv' },
       { key: 'kiBlastDefenseArmor', label: 'Ki Blast Defense + Armor',    fmt: 'pct_mult_inv' },
@@ -178,11 +178,21 @@ function fmt(value, type) {
   return String(value);
 }
 
-function StatRow({ label, base, modified, fmtType }) {
+function StatRow({ label, base, modified, fmtType, tooltip }) {
   const changed = modified !== null && modified !== undefined && base !== modified;
   return (
     <tr className={`border-b border-sz-border/20 ${changed ? 'bg-orange-950/25' : ''}`}>
-      <td className="py-1.5 px-2 text-sm text-gray-400 leading-tight">{label}</td>
+      <td className="py-1.5 px-2 text-sm text-gray-400 leading-tight">
+        {tooltip ? (
+          <span className="group relative cursor-help inline-flex items-center gap-1">
+            {label}
+            <span className="text-xs text-gray-600">ⓘ</span>
+            <span className="absolute left-0 bottom-full mb-1 z-10 hidden group-hover:block w-52 bg-gray-900 text-gray-200 text-xs rounded px-2 py-1.5 shadow-lg border border-gray-700 pointer-events-none leading-snug">
+              {tooltip}
+            </span>
+          </span>
+        ) : label}
+      </td>
       <td className="py-1.5 px-2 text-sm text-gray-300 text-right font-mono leading-tight w-20">{fmt(base, fmtType)}</td>
       <td className={`py-1.5 px-2 text-sm text-right font-mono leading-tight w-20 ${changed ? 'text-sz-orange font-bold' : 'text-gray-500'}`}>
         {modified !== null && modified !== undefined ? fmt(modified, fmtType) : '—'}
@@ -277,13 +287,14 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
                   {section.label}
                 </td>
               </tr>
-              {section.stats.map(({ key, label, fmt: fmtType }) => (
+              {section.stats.map(({ key, label, fmt: fmtType, tooltip }) => (
                 <StatRow
                   key={`${section.label}-${key}`}
                   label={label}
                   base={baseAug[key]}
                   modified={modAug[key]}
                   fmtType={fmtType}
+                  tooltip={tooltip}
                 />
               ))}
             </React.Fragment>

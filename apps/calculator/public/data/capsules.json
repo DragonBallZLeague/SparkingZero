@@ -772,7 +772,12 @@
     "name": "Light Body",
     "cost": 4,
     "description": "Increases bullet armor level by 3. Cannot be flinched by Ki Blasts (Giants and Sparking ignore this capsule).",
-    "effects": []
+    "effects": [
+      {
+        "key": "Ki_Blast_Armor_Up",
+        "value": 10
+      }
+    ]
   },
   {
     "name": "The Secret to Counters",

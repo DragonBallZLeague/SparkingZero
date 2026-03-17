@@ -51,6 +51,9 @@ export function parseEffectKey(key) {
     // Sparking duration (base=0, stores fraction; +25 value → +0.25 → shows +25%)
     sparking_down:               { field: 'sparkDuration',     op: 'add_pct' },
     sparking_mode_gauge_down:    { field: 'sparkDuration',     op: 'add_pct' },
+    // Ki Blast armor (Light Body: inherent 10% reduction on armored ki blasts)
+    // sub_pct subtracts value/100 from the multiplier for a flat percentage-point improvement
+    ki_blast_armor_up:           { field: 'kiBlastDefenseArmor', op: 'sub_pct' },
   };
 
   return map[k] || null;
@@ -87,6 +90,8 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
         modifiers[mapping.field].add -= effect.value;
       } else if (mapping.op === 'add_pct') {
         modifiers[mapping.field].add += effect.value / 100;
+      } else if (mapping.op === 'sub_pct') {
+        modifiers[mapping.field].add -= effect.value / 100;
       }
     });
   });
@@ -157,7 +162,10 @@ export function applySkillBuffs(stats, activeSkills) {
     });
   });
 
-  if (Object.keys(pctMap).length === 0) return stats;
+  // Check for sparking armor buff (boolean flag → +25% to armor stat)
+  const hasArmorBuff = activeSkills.some(skill => skill.armor === true);
+
+  if (Object.keys(pctMap).length === 0 && !hasArmorBuff) return stats;
 
   const result = { ...stats };
   Object.entries(pctMap).forEach(([field, pct]) => {
@@ -177,6 +185,12 @@ export function applySkillBuffs(stats, activeSkills) {
       }
     }
   });
+
+  // Sparking armor buff adds a flat +25% to the armor stat
+  if (hasArmorBuff && typeof result.armor === 'number') {
+    result.armor = parseFloat((result.armor + 0.25).toFixed(4));
+  }
+
   return result;
 }
 
