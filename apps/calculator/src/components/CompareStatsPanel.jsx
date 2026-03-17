@@ -415,7 +415,7 @@ function SkillAttrRow({ label, aContent, bContent, delta }) {
 
 function hasBuff(detail) {
   if (!detail) return false;
-  return SKILL_BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0);
+  return SKILL_BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
 }
 
 function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeSkillsB, onToggleSkillA, onToggleSkillB }) {
@@ -1087,6 +1087,14 @@ export default function CompareStatsPanel({
                         />
                       );
                     })}
+                    {(aSparkObj?.armor || bSparkObj?.armor) && (
+                      <SkillAttrRow
+                        label="Armor"
+                        aContent={aSparkObj?.armor ? <span className="font-semibold text-green-400">✓</span> : SKILL_DASH}
+                        bContent={bSparkObj?.armor ? <span className="font-semibold text-green-400">✓</span> : SKILL_DASH}
+                        delta={null}
+                      />
+                    )}
                   </tbody>
                 </table>
               )}

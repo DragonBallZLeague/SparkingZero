@@ -71,8 +71,11 @@ function skillTypeClass(type) {
 }
 
 function BuffCell({ value }) {
-  if (value === null || value === undefined || value === 0) {
+  if (value === null || value === undefined || value === 0 || value === false) {
     return <span className="text-gray-600">—</span>;
+  }
+  if (value === true) {
+    return <span className="font-semibold text-green-400">✓</span>;
   }
   const isPos = value > 0;
   return (
@@ -93,7 +96,7 @@ const BUFF_COLS = [
 
 function hasBuff(detail) {
   if (!detail) return false;
-  return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0);
+  return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
 }
 
 function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
@@ -396,7 +399,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="bg-yellow-900/30 border-b border-sz-border">
-                    <th colSpan={6} className="py-1.5 px-2 text-xs font-bold uppercase tracking-wider text-yellow-400 text-center">
+                    <th colSpan={7} className="py-1.5 px-2 text-xs font-bold uppercase tracking-wider text-yellow-400 text-center">
                       Sparking Buffs
                     </th>
                   </tr>
@@ -406,6 +409,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                         {col.label}
                       </th>
                     ))}
+                    <th className="py-1 px-3 text-gray-500 font-medium text-center">Armor</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -427,6 +431,9 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                             <BuffCell value={sb[col.key] ?? 0} />
                           </td>
                         ))}
+                        <td className="py-2 px-3 text-center font-mono">
+                          <BuffCell value={sb.armor ?? false} />
+                        </td>
                       </tr>
                     );
                   })()}
