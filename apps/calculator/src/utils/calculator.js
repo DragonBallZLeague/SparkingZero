@@ -162,10 +162,11 @@ export function applySkillBuffs(stats, activeSkills) {
     });
   });
 
-  // Check for sparking armor buff (boolean flag → +25% to armor stat)
-  const hasArmorBuff = activeSkills.some(skill => skill.armor === true);
+  // Check for armor buffs: sparking skills give +25%, non-sparking skills give +9%
+  const hasSparkingArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === true);
+  const hasSkillArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === false);
 
-  if (Object.keys(pctMap).length === 0 && !hasArmorBuff) return stats;
+  if (Object.keys(pctMap).length === 0 && !hasSparkingArmorBuff && !hasSkillArmorBuff) return stats;
 
   const result = { ...stats };
   Object.entries(pctMap).forEach(([field, pct]) => {
@@ -186,12 +187,43 @@ export function applySkillBuffs(stats, activeSkills) {
     }
   });
 
-  // Sparking armor buff adds a flat +25% to the armor stat
-  if (hasArmorBuff && typeof result.armor === 'number') {
-    result.armor = parseFloat((result.armor + 0.25).toFixed(4));
+  // Sparking skills with armor give +25%; non-sparking skills with armor give +9%
+  // Both also reduce the kiBlastDefenseArmor multiplier by the same amount
+  let armorBonus = 0;
+  if (hasSparkingArmorBuff) armorBonus = 0.25;
+  else if (hasSkillArmorBuff) armorBonus = 0.10;
+
+  if (armorBonus > 0) {
+    if (typeof result.armor === 'number') {
+      result.armor = parseFloat((result.armor + armorBonus).toFixed(4));
+    }
+    if (typeof result.kiBlastDefenseArmor === 'number') {
+      result.kiBlastDefenseArmor = parseFloat((result.kiBlastDefenseArmor - armorBonus).toFixed(4));
+    }
   }
 
   return result;
+}
+
+// Base Mid Goku's 5-hit rush combo damages (hit 1–5), used for "damage taken" stats
+const GOKU_MID_HITS = [410, 410, 410, 567, 788];
+
+/**
+ * Calculates "5-Hit Damage Taken (w/ Armor)" for a character.
+ * Armor applies to hits 1 through (breakOnHit - 1); hit breakOnHit breaks the armor.
+ * breakOnHit=2 → only hit 1 is armored; breakOnHit=5 → hits 1-4 armored.
+ */
+export function calcFiveHitArmorDamage(stats, breakOnHit = 5) {
+  if (!stats) return null;
+  const def = typeof stats.meleeDefenseStat === 'number' ? stats.meleeDefenseStat : 1;
+  const armor = typeof stats.armor === 'number' ? stats.armor : 0;
+  let total = 0;
+  GOKU_MID_HITS.forEach((hit, i) => {
+    const hitNum = i + 1;
+    const isArmored = hitNum < breakOnHit;
+    total += hit * def * (isArmored ? (1 - armor) : 1);
+  });
+  return Math.round(total);
 }
 
 /**

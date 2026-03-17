@@ -107,9 +107,11 @@ export default async function handler(req, res) {
     
     const allPRs = await prResp.json();
     
-    // Filter for data-submission labeled PRs and fetch detailed data
+    // Filter for data-submission or valid labeled PRs and fetch detailed data
+    // 'valid' label is added by GitHub Actions validation workflow when PR passes checks
+    // 'data-submission' label is added by the submit API, but may silently fail
     const submissionPromises = allPRs
-      .filter(pr => pr.labels.some(label => label.name === 'data-submission'))
+      .filter(pr => pr.labels.some(label => label.name === 'data-submission' || label.name === 'valid'))
       .map(async (pr) => {
         const metadata = parseSubmissionBody(pr.body || '');
         

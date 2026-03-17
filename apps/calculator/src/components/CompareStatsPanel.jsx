@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { getImageUrl, parseEffectKey } from '../utils/calculator.js';
+import { getImageUrl, parseEffectKey, calcFiveHitArmorDamage } from '../utils/calculator.js';
 
 // Reuse the same stat sections definition from StatsPanel
 const STAT_SECTIONS = [
@@ -88,7 +88,7 @@ const STAT_SECTIONS = [
 
 // fields where lower is better (winning = lower value)
 // lower raw value = better outcome for these fields
-const LOWER_IS_BETTER = new Set(['switch', 'kiBlastCost', 'shortDashCost', 'melee', 'armorBreak', 'sparkCharge']);
+const LOWER_IS_BETTER = new Set(['switch', 'kiBlastCost', 'shortDashCost', 'melee', 'fiveHitWithArmor', 'armorBreak', 'sparkCharge']);
 // Defense multiplier fields: lower multiplier = better defense (displayed as higher %)
 const DEFENSE_MULT_FIELDS = new Set(['meleeDefenseStat', 'blastDefense', 'kiBlastDefenseArmor']);
 
@@ -693,6 +693,7 @@ export default function CompareStatsPanel({
   const [compareView, setCompareView] = useState('stats');
   const [replActiveA, setReplActiveA] = useState(false);
   const [replActiveB, setReplActiveB] = useState(false);
+  const [armorBreakHit, setArmorBreakHit] = useState(5);
 
   const augA = charA ? { ...charA, kiBlastVolley: kiVolley(charA) } : null;
   const augB = charB ? { ...charB, kiBlastVolley: kiVolley(charB) } : null;
@@ -803,8 +804,8 @@ export default function CompareStatsPanel({
   const hasAnyUlt   = !!(aBlastInfo.ultimate || bBlastInfo.ultimate);
   const hasAnySkill = !!(charA?.skill1Name || charA?.skill2Name || charB?.skill1Name || charB?.skill2Name);
 
-  const aSparkObj = useMemo(() => charA?.sparkStatBuffs ? { id: `spark_${charA.name}`, ...charA.sparkStatBuffs } : null, [charA]);
-  const bSparkObj = useMemo(() => charB?.sparkStatBuffs ? { id: `spark_${charB.name}`, ...charB.sparkStatBuffs } : null, [charB]);
+  const aSparkObj = useMemo(() => charA?.sparkStatBuffs ? { id: `spark_${charA.name}`, instantSparking: true, ...charA.sparkStatBuffs } : null, [charA]);
+  const bSparkObj = useMemo(() => charB?.sparkStatBuffs ? { id: `spark_${charB.name}`, instantSparking: true, ...charB.sparkStatBuffs } : null, [charB]);
   const aSparkBuffable = hasBuff(aSparkObj);
   const bSparkBuffable = hasBuff(bSparkObj);
   const aSparkActive = aSparkBuffable && activeSkillsA.some(s => s.id === aSparkObj?.id);
@@ -892,6 +893,42 @@ export default function CompareStatsPanel({
                       fmtType={fmtType}
                     />
                   ))}
+                  {section.label === 'Defense' && (
+                    <>
+                      <CompareRow
+                        label="5-Hit Dmg Taken (w/ Armor)"
+                        keyName="fiveHitWithArmor"
+                        valA={augA ? calcFiveHitArmorDamage(augA, armorBreakHit) : null}
+                        valB={augB ? calcFiveHitArmorDamage(augB, armorBreakHit) : null}
+                        modifiedA={modAugA ? calcFiveHitArmorDamage(modAugA, armorBreakHit) : null}
+                        modifiedB={modAugB ? calcFiveHitArmorDamage(modAugB, armorBreakHit) : null}
+                        fmtType="int"
+                      />
+                      <tr className="border-b border-sz-border/20">
+                        <td colSpan={3} className="pb-1 text-center">
+                          <div className="inline-flex flex-col items-center gap-1">
+                            <span className="text-[10px] text-gray-600 uppercase tracking-wider">Break on Hit:</span>
+                            <div className="flex gap-1.5">
+                            {[2, 3, 4, 5].map(n => (
+                              <button
+                                key={n}
+                                onClick={() => setArmorBreakHit(n)}
+                                className={`text-xs px-4 py-1 rounded font-mono transition-colors ${
+                                  armorBreakHit === n
+                                    ? 'bg-teal-700 text-white'
+                                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200'
+                                }`}
+                              >
+                                {n}
+                              </button>
+                            ))}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="w-16" />
+                      </tr>
+                    </>
+                  )}
                 </React.Fragment>
               ))}
             </tbody>

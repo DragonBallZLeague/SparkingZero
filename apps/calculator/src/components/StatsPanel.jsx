@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getImageUrl } from '../utils/calculator.js';
+import { getImageUrl, calcFiveHitArmorDamage } from '../utils/calculator.js';
 
 // fmt types:
 //   'raw'          — toLocaleString (default)
@@ -227,6 +227,8 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+  const [armorBreakHit, setArmorBreakHit] = useState(5);
+
   const mod = modifiedStats ?? baseStats;
 
   function kiVolley(stats) {
@@ -297,6 +299,46 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
                   tooltip={tooltip}
                 />
               ))}
+              {section.label === 'Defense' && (() => {
+                const baseVal = calcFiveHitArmorDamage(baseAug, armorBreakHit);
+                const modVal  = calcFiveHitArmorDamage(modAug,  armorBreakHit);
+                const changed = modVal !== null && baseVal !== modVal;
+                return (
+                  <>
+                    <tr className={changed ? 'bg-orange-950/25' : ''}>
+                      <td className="py-1.5 px-2 text-sm text-gray-400 leading-tight">
+                        5-Hit Damage Taken (w/ Armor)
+                      </td>
+                      <td className="py-1.5 px-2 text-sm text-gray-300 text-right font-mono leading-tight w-20">
+                        {baseVal !== null ? Math.round(baseVal).toLocaleString() : '—'}
+                      </td>
+                      <td className={`py-1.5 px-2 text-sm text-right font-mono leading-tight w-20 ${changed ? 'text-sz-orange font-bold' : 'text-gray-500'}`}>
+                        {modVal !== null ? Math.round(modVal).toLocaleString() : '—'}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-sz-border/20">
+                      <td colSpan={3} className="py-1 px-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-gray-600 uppercase tracking-wider">Break on Hit:</span>
+                          {[2, 3, 4, 5].map(n => (
+                            <button
+                              key={n}
+                              onClick={() => setArmorBreakHit(n)}
+                              className={`text-xs px-4 py-1 rounded font-mono transition-colors ${
+                                armorBreakHit === n
+                                  ? 'bg-teal-700 text-white'
+                                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200'
+                              }`}
+                            >
+                              {n}
+                            </button>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                );
+              })()}
             </React.Fragment>
           ))}
         </tbody>

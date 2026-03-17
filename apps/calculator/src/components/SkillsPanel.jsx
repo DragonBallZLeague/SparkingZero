@@ -415,7 +415,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                 <tbody>
                   {(() => {
                     const sb = character.sparkStatBuffs;
-                    const sparkSkill = { id: `spark_${character.name}`, ...sb };
+                    const sparkSkill = { id: `spark_${character.name}`, instantSparking: true, ...sb };
                     const sparkBuffable = hasBuff(sparkSkill);
                     const sparkActive = sparkBuffable && activeSkills?.some(s => s.id === sparkSkill.id);
                     return (
