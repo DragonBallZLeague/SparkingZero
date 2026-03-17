@@ -127,6 +127,8 @@ function App() {
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
   const touchSuppressed = useRef(false);
+  const touchScrollableEl = useRef(null);
+  const touchScrollStartLeft = useRef(null);
   const mobileTrackRef = useRef(null);
 
   // Tablet
@@ -134,6 +136,8 @@ function App() {
   const tabletTouchStartX = useRef(null);
   const tabletTouchStartY = useRef(null);
   const tabletTouchSuppressed = useRef(false);
+  const tabletScrollableEl = useRef(null);
+  const tabletScrollStartLeft = useRef(null);
   const tabletTrackRef = useRef(null);
 
   // Compare mode
@@ -337,6 +341,8 @@ function App() {
     touchStartY.current = e.touches[0].clientY;
     // Suppress section swipe if touch begins inside a horizontally scrollable element
     touchSuppressed.current = false;
+    touchScrollableEl.current = null;
+    touchScrollStartLeft.current = null;
     const trackEl = mobileTrackRef.current;
     let el = e.target;
     while (el && el !== trackEl) {
@@ -344,6 +350,8 @@ function App() {
       const ox = style.overflowX;
       if ((ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth) {
         touchSuppressed.current = true;
+        touchScrollableEl.current = el;
+        touchScrollStartLeft.current = el.scrollLeft;
         break;
       }
       el = el.parentElement;
@@ -351,16 +359,35 @@ function App() {
   }, []);
 
   const handleTouchEnd = useCallback((e) => {
-    if (touchStartX.current === null || touchSuppressed.current) {
+    if (touchStartX.current === null) {
       touchStartX.current = null;
       touchStartY.current = null;
       touchSuppressed.current = false;
+      touchScrollableEl.current = null;
       return;
     }
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (touchSuppressed.current) {
+      const scrollEl = touchScrollableEl.current;
+      const startLeft = touchScrollStartLeft.current;
+      const alreadyAtEnd = deltaX < 0
+        ? scrollEl && startLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 1
+        : scrollEl && startLeft <= 0;
+      if (!alreadyAtEnd) {
+        touchStartX.current = null;
+        touchStartY.current = null;
+        touchSuppressed.current = false;
+        touchScrollableEl.current = null;
+        touchScrollStartLeft.current = null;
+        return;
+      }
+    }
     const deltaY = e.changedTouches[0].clientY - touchStartY.current;
     touchStartX.current = null;
     touchStartY.current = null;
+    touchSuppressed.current = false;
+    touchScrollableEl.current = null;
+    touchScrollStartLeft.current = null;
     if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) return;
     setCurrentSection(s => deltaX < 0
       ? Math.min(MOBILE_SECTIONS.length - 1, s + 1)
@@ -386,6 +413,8 @@ function App() {
     tabletTouchStartX.current = e.touches[0].clientX;
     tabletTouchStartY.current = e.touches[0].clientY;
     tabletTouchSuppressed.current = false;
+    tabletScrollableEl.current = null;
+    tabletScrollStartLeft.current = null;
     const trackEl = tabletTrackRef.current;
     let el = e.target;
     while (el && el !== trackEl) {
@@ -393,6 +422,8 @@ function App() {
       const ox = style.overflowX;
       if ((ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth) {
         tabletTouchSuppressed.current = true;
+        tabletScrollableEl.current = el;
+        tabletScrollStartLeft.current = el.scrollLeft;
         break;
       }
       el = el.parentElement;
@@ -400,17 +431,36 @@ function App() {
   }, []);
 
   const handleTabletTouchEnd = useCallback((e) => {
-    if (tabletTouchStartX.current === null || tabletTouchSuppressed.current) {
+    if (tabletTouchStartX.current === null) {
       tabletTouchStartX.current = null;
       tabletTouchStartY.current = null;
       tabletTouchSuppressed.current = false;
+      tabletScrollableEl.current = null;
       return;
     }
     const deltaX = e.changedTouches[0].clientX - tabletTouchStartX.current;
+    if (tabletTouchSuppressed.current) {
+      const scrollEl = tabletScrollableEl.current;
+      const startLeft = tabletScrollStartLeft.current;
+      const alreadyAtEnd = deltaX < 0
+        ? scrollEl && startLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 1
+        : scrollEl && startLeft <= 0;
+      if (!alreadyAtEnd) {
+        tabletTouchStartX.current = null;
+        tabletTouchStartY.current = null;
+        tabletTouchSuppressed.current = false;
+        tabletScrollableEl.current = null;
+        tabletScrollStartLeft.current = null;
+        return;
+      }
+    }
     const deltaY = e.changedTouches[0].clientY - tabletTouchStartY.current;
     const startX = tabletTouchStartX.current;
     tabletTouchStartX.current = null;
     tabletTouchStartY.current = null;
+    tabletTouchSuppressed.current = false;
+    tabletScrollableEl.current = null;
+    tabletScrollStartLeft.current = null;
     if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) return;
     const swipedLeft = deltaX < 0;
     const touchedLeftHalf = startX < window.innerWidth / 2;
@@ -438,12 +488,12 @@ function App() {
       <header className="bg-sz-panel border-b border-sz-border px-4 py-2.5 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           {/* Layered title icons: bg + color overlay */}
-          <div className="flex items-center -space-x-1">
-            <div className="relative w-24 h-10">
+          <div className="flex flex-col items-center sm:flex-row sm:items-center sm:-space-x-1">
+            <div className="relative w-24 h-7 sm:h-10">
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body02_bg.png`}    alt="" className="absolute inset-0 w-full h-full object-contain" />
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body02_Color.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
             </div>
-            <div className="relative w-16 h-10">
+            <div className="relative w-16 h-7 sm:h-10 -translate-x-2 sm:translate-x-0">
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body03_bg.png`}    alt="" className="absolute inset-0 w-full h-full object-contain" />
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body03_Color.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
             </div>
