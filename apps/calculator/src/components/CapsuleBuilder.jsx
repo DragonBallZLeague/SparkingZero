@@ -184,7 +184,7 @@ export default function CapsuleBuilder({
                   <td className="py-1.5 px-2">
                     <div className="text-sm text-gray-200 leading-tight">{cap.name}</div>
                     {cap.description && (
-                      <div className="text-sm text-gray-500 leading-tight mt-0.5 line-clamp-2">{cap.description}</div>
+                      <div className="text-sm text-gray-500 leading-tight mt-0.5">{cap.description}</div>
                     )}
                   </td>
                   <td className="py-1.5 px-1.5 text-right align-top pt-1.5">
