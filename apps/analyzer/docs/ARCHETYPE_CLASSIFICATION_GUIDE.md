@@ -114,7 +114,7 @@ Some capsules have effects that span multiple archetypes. These are assigned to 
 
 | Capsule | Effects | Primary | Reasoning |
 |---------|---------|---------|-----------|
-| **The Secret to Counters** | Reduces Skill Count for Super Z-Counters | **Defensive** | Primary benefit is more counters (defensive mechanic), skill efficiency is secondary |
+| **The Secret to Counters** | Reduces Skill Count for Super Perceptions | **Defensive** | Primary benefit is more counters (defensive mechanic), skill efficiency is secondary |
 | **Master Strike** | +5% melee damage, -5,000 max HP | **Aggressive** | Primary effect is damage increase, HP reduction is a penalty/trade-off |
 | **Power Body** | +3 armor, -20% melee defense, -10% blast defense | **Defensive** | Net defensive gain (armor level 3 beats the defense reduction in most cases) |
 | **Sparking! Plus** | +15% sparking duration, -20% melee defense, -10% blast defense | **Technical** | Primary benefit is sparking mode utility, defense reduction is trade-off |
@@ -216,7 +216,7 @@ const capsule = {
   id: "00_0_0037",
   name: "The Secret to Counters",
   cost: 5,
-  effect: "Reduces Skill Count needed for Super Z-Counters by 1 (minimum 1)",
+  effect: "Reduces Skill Count needed for Super Perceptions by 1 (minimum 1)",
   primaryArchetype: "defensive",  // Assigned based on this guide
   allTags: ["defensive", "technical"],  // All applicable archetypes
   archetypeWeight: {
