@@ -35,12 +35,15 @@ function getCapsuleBlastModifier(equippedCapsules, fields) {
 }
 
 const CAT_COLORS = {
-  Beam:                       'bg-blue-700/70 text-blue-200',
-  Rush:                       'bg-orange-700/70 text-orange-200',
-  'Continuous Fire':          'bg-purple-700/70 text-purple-200',
-  Fire:                       'bg-red-700/70 text-red-200',
-  'Short-Range Energy Attack':'bg-teal-700/70 text-teal-200',
-  'Explosive Wave':           'bg-amber-700/70 text-amber-200',
+  Beam:                        'bg-blue-700/70 text-blue-200',
+  Rush:                        'bg-orange-700/70 text-orange-200',
+  'Continuous Fire':           'bg-purple-700/70 text-purple-200',
+  Fire:                        'bg-red-700/70 text-red-200',
+  'Short-Range Energy Attack': 'bg-teal-700/70 text-teal-200',
+  'Explosive Wave':            'bg-amber-700/70 text-amber-200',
+  'Lock-On Explosion':         'bg-lime-700/70 text-lime-200',
+  'Simultaneous Fire':         'bg-rose-700/70 text-rose-200',
+  Sweep:                       'bg-cyan-700/70 text-cyan-200',
 };
 
 function catClass(cat) {
@@ -54,16 +57,27 @@ function fmtKiBars(val) {
 }
 
 const SKILL_TYPE_COLORS = {
-  'Sparking':      'bg-yellow-700/70 text-yellow-200',
-  'Teleport':      'bg-cyan-700/70 text-cyan-200',
-  'Evade':         'bg-teal-700/70 text-teal-200',
-  'Evade x2':      'bg-teal-700/70 text-teal-200',
-  'Barrier':       'bg-blue-700/70 text-blue-200',
-  'Bind':          'bg-purple-700/70 text-purple-200',
-  'Buff/Debuff':   'bg-orange-700/70 text-orange-200',
-  'Buff/Ki':       'bg-green-700/70 text-green-200',
-  'Heal':          'bg-pink-700/70 text-pink-200',
-  'Damage':        'bg-red-700/70 text-red-200',
+  'Sparking':             'bg-yellow-700/70 text-yellow-200',
+  'Buff/Sparking':        'bg-yellow-800/70 text-yellow-300',
+  'Buff/DeBuff/Sparking': 'bg-amber-700/70 text-amber-200',
+  'Teleport':             'bg-cyan-700/70 text-cyan-200',
+  'Evade':                'bg-teal-700/70 text-teal-200',
+  'Evade x2':             'bg-teal-700/70 text-teal-200',
+  'Barrier':              'bg-blue-700/70 text-blue-200',
+  'Bind':                 'bg-purple-700/70 text-purple-200',
+  'Buff/Debuff':          'bg-orange-700/70 text-orange-200',
+  'Buff':                 'bg-orange-800/70 text-orange-300',
+  'Buff/Ki':              'bg-green-700/70 text-green-200',
+  'Buff/HealthDown':      'bg-rose-800/70 text-rose-200',
+  'Heal':                 'bg-pink-700/70 text-pink-200',
+  'Health':               'bg-pink-700/70 text-pink-200',
+  'Damage':               'bg-red-700/70 text-red-200',
+  'Explosion':            'bg-red-800/70 text-red-300',
+  'Explosion/Sparking':   'bg-orange-900/70 text-orange-200',
+  'Blind':                'bg-slate-700/70 text-slate-200',
+  'Ki':                   'bg-indigo-700/70 text-indigo-200',
+  'Push':                 'bg-sky-700/70 text-sky-200',
+  'Speed Buff':           'bg-lime-700/70 text-lime-200',
 };
 
 function skillTypeClass(type) {
