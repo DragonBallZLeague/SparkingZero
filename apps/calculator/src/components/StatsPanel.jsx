@@ -201,7 +201,7 @@ function StatRow({ label, base, modified, fmtType, tooltip }) {
   );
 }
 
-export default function StatsPanel({ baseStats, modifiedStats, characterImages }) {
+export default function StatsPanel({ baseStats, modifiedStats, characterImages, onSelectCharacter }) {
   if (!baseStats) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-700 p-6">
@@ -246,6 +246,15 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
     <div className="flex flex-col">
       {/* Portrait image with identity strip overlaid at bottom */}
       <div ref={imgContainerRef} className="relative w-full h-80 overflow-hidden flex-shrink-0 bg-[#242424]">
+        {onSelectCharacter && (
+          <button
+            onClick={onSelectCharacter}
+            className="absolute top-2 left-2 z-10 min-[793px]:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-black/60 hover:bg-black/80 text-gray-200 hover:text-white text-xs font-semibold transition-colors border border-white/10"
+            title="Change character"
+          >
+            ← Change
+          </button>
+        )}
         {imgFilename ? (
           <img
             src={getImageUrl(imgFilename)}
@@ -261,7 +270,11 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages }
         <div className={`absolute inset-0 bg-gradient-to-b ${gradientFrom} via-transparent to-transparent opacity-40`} />
 
         {/* Identity strip — overlaid on bottom of portrait */}
-        <div className={`absolute bottom-0 left-0 right-0 px-3 py-2.5 border-b-2 border-sz-border bg-gradient-to-t ${gradientFrom} via-black/60 to-transparent`}>
+        <div
+          className={`absolute bottom-0 left-0 right-0 px-3 py-2.5 border-b-2 border-sz-border bg-gradient-to-t ${gradientFrom} via-black/60 to-transparent${onSelectCharacter ? ' min-[793px]:hidden cursor-pointer hover:brightness-110 transition-[filter]' : ''}`}
+          onClick={onSelectCharacter || undefined}
+          title={onSelectCharacter ? 'Select character' : undefined}
+        >
           <p className="text-base font-extrabold text-white leading-tight truncate drop-shadow">{baseStats.name}</p>
           <div className="flex items-center gap-2 mt-1.5">
             <span className={`text-xs px-2 py-1 rounded font-bold leading-none ${badgeColor}`}>

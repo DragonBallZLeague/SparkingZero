@@ -306,13 +306,17 @@ const SKILL_BUFF_COLS = [
   { key: 'ultimateBuff',   label: 'Ultimate',  cls: 'bg-amber-800/60 text-amber-300'   },
 ];
 
-function CharCard({ char, modStats, characterImages, label }) {
+function CharCard({ char, modStats, characterImages, label, onSelect }) {
   const imgId = char ? characterImages?.[char.name] : null;
   const badgeColor = char ? (CLASS_BADGE_COLOR[char.class] || 'bg-gray-600 text-white') : '';
 
   if (!char) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center h-32 bg-sz-border/30 rounded-lg border border-sz-border/50 mx-2">
+      <div
+        className={`flex-1 flex flex-col items-center justify-center h-32 bg-sz-border/30 rounded-lg border border-sz-border/50 mx-2${onSelect ? ' cursor-pointer hover:bg-sz-border/50 transition-colors' : ''}`}
+        onClick={onSelect || undefined}
+        title={onSelect ? `Select ${label}` : undefined}
+      >
         <div className="text-3xl text-gray-700 mb-1">?</div>
         <p className="text-xs text-gray-600 text-center">Select {label}</p>
       </div>
@@ -320,7 +324,11 @@ function CharCard({ char, modStats, characterImages, label }) {
   }
 
   return (
-    <div className="flex-1 flex items-center gap-2 px-2 py-1.5 min-w-0">
+    <div
+      className={`flex-1 flex items-center gap-2 px-2 py-1.5 min-w-0${onSelect ? ' cursor-pointer hover:bg-gray-800/60 transition-colors rounded' : ''}`}
+      onClick={onSelect || undefined}
+      title={onSelect ? `Select ${label}` : undefined}
+    >
       {/* Portrait thumbnail */}
       <div className="w-14 h-14 flex-shrink-0 rounded overflow-hidden bg-sz-border">
         {imgId ? (
@@ -697,6 +705,7 @@ function kiVolley(stats) {
 
 export default function CompareStatsPanel({
   charA, charB, modStatsA, modStatsB, characterImages,
+  onSelectA, onSelectB,
   blasts = {}, skills = [],
   equippedCapsulesA = [], equippedCapsulesB = [],
   activeSkillsA = [], activeSkillsB = [],
@@ -828,9 +837,9 @@ export default function CompareStatsPanel({
     <div className="flex flex-col h-full">
       {/* Character header strip */}
       <div className="flex-shrink-0 border-b-2 border-sz-border bg-sz-panel/80 flex items-stretch">
-        <CharCard char={charA} modStats={modStatsA} characterImages={characterImages} label="Character A" />
+        <CharCard char={charA} modStats={modStatsA} characterImages={characterImages} label="Character A" onSelect={onSelectA} />
         <div className="w-px bg-sz-border flex-shrink-0" />
-        <CharCard char={charB} modStats={modStatsB} characterImages={characterImages} label="Character B" />
+        <CharCard char={charB} modStats={modStatsB} characterImages={characterImages} label="Character B" onSelect={onSelectB} />
       </div>
 
       {/* View toggle */}

@@ -786,6 +786,8 @@ function App() {
                   equippedCapsulesB={equippedCapsulesB}
                   activeSkillsA={activeSkillsA}
                   activeSkillsB={activeSkillsB}
+                  onSelectA={() => setCompareTabletState('cmp_charA')}
+                  onSelectB={() => setCompareTabletState('cmp_charB')}
                   onToggleSkillA={(skill) => setActiveSkillsA(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
                   onToggleSkillB={(skill) => setActiveSkillsB(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
                 />
@@ -839,6 +841,7 @@ function App() {
               baseStats={selectedCharacter}
               modifiedStats={modifiedStats}
               characterImages={characterImages}
+              onSelectCharacter={() => setTabletState('chars_stats')}
             />
           </div>
 
@@ -1006,6 +1009,8 @@ function App() {
                   equippedCapsulesB={equippedCapsulesB}
                   activeSkillsA={activeSkillsA}
                   activeSkillsB={activeSkillsB}
+                  onSelectA={() => setCurrentSection(0)}
+                  onSelectB={() => setCurrentSection(1)}
                   onToggleSkillA={(skill) => setActiveSkillsA(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
                   onToggleSkillB={(skill) => setActiveSkillsB(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
                 />
@@ -1059,6 +1064,7 @@ function App() {
               baseStats={selectedCharacter}
               modifiedStats={modifiedStats}
               characterImages={characterImages}
+              onSelectCharacter={() => setCurrentSection(0)}
             />
           </div>
 
