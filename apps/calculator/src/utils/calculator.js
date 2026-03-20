@@ -1,4 +1,20 @@
 /**
+ * Applies Light Body ki blast defense armor buff to the energy stat.
+ * This is a special 10% reduction (multiplier -0.10) that acts as a 'ki blast defense armor'.
+ * If the character has Draconic Aura (future functionality), this buff should be ignored.
+ * @param {object} stats - The stats object to modify.
+ * @param {boolean} hasLightBody - True if the character has Light Body.
+ * @param {boolean} hasDraconicAura - True if the character has Draconic Aura (future use).
+ * @returns {object} - The stats object with the Light Body buff applied if appropriate.
+ */
+export function applyLightBodyKiBlastArmor(stats, hasLightBody, hasDraconicAura = false) {
+  if (!stats || typeof stats.energy !== 'number') return stats;
+  if (hasLightBody && !hasDraconicAura) {
+    return { ...stats, energy: parseFloat((stats.energy - 0.10).toFixed(4)) };
+  }
+  return stats;
+}
+/**
  * Parses capsule effect codes and applies them to a character's stats.
  * Effect key → stat field mapping.
  */
@@ -14,7 +30,7 @@ export function parseEffectKey(key) {
   const map = {
     health_up:                   { field: 'health',        op: 'add' },
     health_down:                 { field: 'health',        op: 'sub' },
-    rush_attack_up:              { field: 'rush',          op: 'percent' },
+    rush_attack_up:              { fields: ['rush', 'hit2', 'hit3', 'hit4', 'hit5', 'rush5Hit', 'fiveHitAfterArmor'], op: 'percent' },
     smash_attack_up:             { field: 'smash',         op: 'percent' },
     rush_chain_up:               { field: 'chain',         op: 'percent' },
     rush_chain_damage:           { field: 'chain',         op: 'percent' },
@@ -52,8 +68,7 @@ export function parseEffectKey(key) {
     sparking_down:               { field: 'sparkDuration',     op: 'add_pct' },
     sparking_mode_gauge_down:    { field: 'sparkDuration',     op: 'add_pct' },
     // Ki Blast armor (Light Body: inherent 10% reduction on armored ki blasts)
-    // sub_pct subtracts value/100 from the multiplier for a flat percentage-point improvement
-    ki_blast_armor_up:           { field: 'kiBlastDefenseArmor', op: 'sub_pct' },
+    // sub_pct previously affected kiBlastDefenseArmor, now deprecated.
   };
 
   return map[k] || null;
@@ -76,23 +91,26 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
       const mapping = parseEffectKey(effect.key);
       if (!mapping || effect.value === null) return;
 
-      if (!modifiers[mapping.field]) modifiers[mapping.field] = { add: 0, percent: 0, percentInv: 0 };
+      const fieldList = mapping.fields ?? [mapping.field];
+      fieldList.forEach(field => {
+        if (!modifiers[field]) modifiers[field] = { add: 0, percent: 0, percentInv: 0 };
 
-      if (mapping.op === 'percent') {
-        modifiers[mapping.field].percent += effect.value;
-      } else if (mapping.op === 'percent_inv') {
-        modifiers[mapping.field].percentInv += effect.value;
-      } else if (mapping.op === 'add') {
-        modifiers[mapping.field].add += effect.value;
-      } else if (mapping.op === 'sub') {
-        modifiers[mapping.field].add -= effect.value;
-      } else if (mapping.op === 'sub_flat') {
-        modifiers[mapping.field].add -= effect.value;
-      } else if (mapping.op === 'add_pct') {
-        modifiers[mapping.field].add += effect.value / 100;
-      } else if (mapping.op === 'sub_pct') {
-        modifiers[mapping.field].add -= effect.value / 100;
-      }
+        if (mapping.op === 'percent') {
+          modifiers[field].percent += effect.value;
+        } else if (mapping.op === 'percent_inv') {
+          modifiers[field].percentInv += effect.value;
+        } else if (mapping.op === 'add') {
+          modifiers[field].add += effect.value;
+        } else if (mapping.op === 'sub') {
+          modifiers[field].add -= effect.value;
+        } else if (mapping.op === 'sub_flat') {
+          modifiers[field].add -= effect.value;
+        } else if (mapping.op === 'add_pct') {
+          modifiers[field].add += effect.value / 100;
+        } else if (mapping.op === 'sub_pct') {
+          modifiers[field].add -= effect.value / 100;
+        }
+      });
     });
   });
 
@@ -134,7 +152,7 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
 // Skill buff key → affected base stat fields. Each +1 level = +5% to each field.
 export const SKILL_BUFF_FIELDS = {
   meleeBuff:      ['smash', 'throw', 'pursuit', 'rush', 'hit2', 'hit3', 'hit4', 'hit5', 'rush5Hit', 'fiveHitAfterArmor'],
-  defenseBuff:    ['meleeDefenseStat', 'kiBlastDefenseArmor', 'blastDefense', 'melee'],
+  defenseBuff:    ['meleeDefenseStat', 'blastDefense', 'melee'],
   kiBlastBuff:    ['kiBlast', 'kiBlastDmg'],
   kiChargingBuff: ['kiCharge'],
   blastBuff:      ['blastDamage', 'blastCombo', 'ultimate'],
@@ -162,18 +180,12 @@ export function applySkillBuffs(stats, activeSkills) {
     });
   });
 
-  // Check for armor buffs: sparking skills give +25%, non-sparking skills give +9%
-  const hasSparkingArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === true);
-  const hasSkillArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === false);
-
-  if (Object.keys(pctMap).length === 0 && !hasSparkingArmorBuff && !hasSkillArmorBuff) return stats;
-
   const result = { ...stats };
   Object.entries(pctMap).forEach(([field, pct]) => {
     const base = stats[field];
     if (typeof base !== 'number') return;
     // Defense fields are damage multipliers (lower = better defense), so buff inverts
-    const defenseFields = ['meleeDefenseStat', 'kiBlastDefenseArmor', 'blastDefense', 'melee'];
+    const defenseFields = ['meleeDefenseStat', 'blastDefense', 'melee'];
     if (defenseFields.includes(field)) {
       // e.g. base=1.0, +5% defense → multiplier -= 0.05 → 0.95 (takes less damage)
       result[field] = parseFloat((base * (1 - pct / 100)).toFixed(4));
@@ -187,43 +199,129 @@ export function applySkillBuffs(stats, activeSkills) {
     }
   });
 
-  // Sparking skills with armor give +25%; non-sparking skills with armor give +9%
-  // Both also reduce the kiBlastDefenseArmor multiplier by the same amount
+  // Apply sparking/skill armor buffs to armor stat only
+  const hasSparkingArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === true);
+  const hasSkillArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === false);
   let armorBonus = 0;
   if (hasSparkingArmorBuff) armorBonus = 0.25;
   else if (hasSkillArmorBuff) armorBonus = 0.10;
-
-  if (armorBonus > 0) {
-    if (typeof result.armor === 'number') {
-      result.armor = parseFloat((result.armor + armorBonus).toFixed(4));
-    }
-    if (typeof result.kiBlastDefenseArmor === 'number') {
-      result.kiBlastDefenseArmor = parseFloat((result.kiBlastDefenseArmor - armorBonus).toFixed(4));
-    }
+  if (armorBonus > 0 && typeof result.armor === 'number') {
+    result.armor = parseFloat((result.armor + armorBonus).toFixed(4));
   }
 
   return result;
 }
 
-// Base Mid Goku's 5-hit rush combo damages (hit 1–5), used for "damage taken" stats
+// Base Mid Goku's 5-hit rush combo damages (hit 1–5), used for "damage taken" stats (no opponent)
 const GOKU_MID_HITS = [410, 410, 410, 567, 788];
+
+/**
+ * Calculates "5-Hit Damage Taken" for a character.
+ * If opponentStats is provided, uses the opponent's hit values; otherwise uses Goku baseline.
+ * Returns { total, hits } where hits is an array of { damage, armored } per hit.
+ */
+export function calcFiveHitDamageTaken(defenderStats, opponentStats = null, breakOnHit = 5) {
+  if (!defenderStats) return null;
+  const def = typeof defenderStats.meleeDefenseStat === 'number' ? defenderStats.meleeDefenseStat : 1;
+  const opHits = opponentStats
+    ? [
+        typeof opponentStats.rush === 'number' ? opponentStats.rush : 0,
+        typeof opponentStats.hit2 === 'number' ? opponentStats.hit2 : 0,
+        typeof opponentStats.hit3 === 'number' ? opponentStats.hit3 : 0,
+        typeof opponentStats.hit4 === 'number' ? opponentStats.hit4 : 0,
+        typeof opponentStats.hit5 === 'number' ? opponentStats.hit5 : 0,
+      ]
+    : GOKU_MID_HITS;
+  let total = 0;
+  const hits = opHits.map((hit, i) => {
+    const damage = Math.round(hit * def);
+    total += damage;
+    return { damage };
+  });
+  return { total, hits };
+}
 
 /**
  * Calculates "5-Hit Damage Taken (w/ Armor)" for a character.
  * Armor applies to hits 1 through (breakOnHit - 1); hit breakOnHit breaks the armor.
  * breakOnHit=2 → only hit 1 is armored; breakOnHit=5 → hits 1-4 armored.
+ * If opponentStats is provided, uses the opponent's hit values; otherwise uses Goku baseline.
  */
-export function calcFiveHitArmorDamage(stats, breakOnHit = 5) {
+export function calcFiveHitArmorDamage(stats, breakOnHit = 5, opponentStats = null) {
   if (!stats) return null;
   const def = typeof stats.meleeDefenseStat === 'number' ? stats.meleeDefenseStat : 1;
   const armor = typeof stats.armor === 'number' ? stats.armor : 0;
+  const opHits = opponentStats
+    ? [
+        typeof opponentStats.rush === 'number' ? opponentStats.rush : 0,
+        typeof opponentStats.hit2 === 'number' ? opponentStats.hit2 : 0,
+        typeof opponentStats.hit3 === 'number' ? opponentStats.hit3 : 0,
+        typeof opponentStats.hit4 === 'number' ? opponentStats.hit4 : 0,
+        typeof opponentStats.hit5 === 'number' ? opponentStats.hit5 : 0,
+      ]
+    : GOKU_MID_HITS;
   let total = 0;
-  GOKU_MID_HITS.forEach((hit, i) => {
+  opHits.forEach((hit, i) => {
     const hitNum = i + 1;
     const isArmored = hitNum < breakOnHit;
     total += hit * def * (isArmored ? (1 - armor) : 1);
   });
   return Math.round(total);
+}
+
+/**
+ * Given your modified stats and the opponent's modified stats, compute outgoing
+ * combo hit values after opponent's defenses. Returns per-hit info including
+ * whether the hit is reduced by the opponent's armor.
+ *
+ * opponentStats: the opponent's computed (capsule+skill modified) stats
+ * Returns: { rush, hit2, hit3, hit4, hit5, rush5Hit, perHit }
+ *   perHit: array of { damage, armorReduced } for hits 1–5
+ */
+export function calcOutgoingCombo(yourStats, opponentStats) {
+  if (!yourStats || !opponentStats) return null;
+  const meleeDef = typeof opponentStats.meleeDefenseStat === 'number' ? opponentStats.meleeDefenseStat : 1;
+  const oppArmor = typeof opponentStats.armor === 'number' ? opponentStats.armor : 0;
+  // armorBreak: how many hits until armor breaks (from YOUR stats hitting the opponent)
+  // armorBreak=3 means hits 1 and 2 are armored on the opponent
+  const oppArmorBreak = typeof yourStats.armorBreak === 'number' ? yourStats.armorBreak : 999;
+
+  const rawHits = [
+    typeof yourStats.rush === 'number' ? yourStats.rush : 0,
+    typeof yourStats.hit2 === 'number' ? yourStats.hit2 : 0,
+    typeof yourStats.hit3 === 'number' ? yourStats.hit3 : 0,
+    typeof yourStats.hit4 === 'number' ? yourStats.hit4 : 0,
+    typeof yourStats.hit5 === 'number' ? yourStats.hit5 : 0,
+  ];
+
+  const perHit = rawHits.map((raw, i) => {
+    const hitNum = i + 1;
+    const armorReduced = oppArmor > 0 && hitNum < oppArmorBreak;
+    const damage = Math.round(raw * meleeDef * (armorReduced ? (1 - oppArmor) : 1));
+    return { damage, armorReduced };
+  });
+
+  const rush5Hit = perHit.reduce((s, h) => s + h.damage, 0);
+  return {
+    rush:     perHit[0].damage,
+    hit2:     perHit[1].damage,
+    hit3:     perHit[2].damage,
+    hit4:     perHit[3].damage,
+    hit5:     perHit[4].damage,
+    rush5Hit,
+    perHit,
+  };
+}
+
+/**
+ * Apply opponent defense to a single outgoing value.
+ * defenseField: 'meleeDefenseStat' | 'blastDefense' | 'kiBlastDefenseArmor'
+ */
+export function applyOpponentDefense(value, opponentStats, defenseField) {
+  if (value === null || value === undefined || !opponentStats) return value;
+  if (typeof value !== 'number') return value;
+  const def = typeof opponentStats[defenseField] === 'number' ? opponentStats[defenseField] : 1;
+  return Math.round(value * def);
 }
 
 /**
@@ -242,8 +340,7 @@ export function formatStat(field, value) {
   if (typeof value === 'string') return value;
 
   // Fields stored as 0-1 multipliers — display as % modifier
-  const percentFields = ['meleeDefenseStat', 'kiBlastDefenseArmor', 'blastDefense',
-    'energy', 'energyDecimal', 'sparkCharge'];
+  const percentFields = ['meleeDefenseStat', 'blastDefense', 'energy', 'energyDecimal', 'sparkCharge'];
 
   if (percentFields.includes(field)) {
     const pct = Math.round((value - 1) * 100);
@@ -258,17 +355,36 @@ export function formatStat(field, value) {
   return typeof value === 'number' ? value.toLocaleString() : String(value);
 }
 
-/** Encode build state into URL hash */
-export function encodeBuild(characterName, capsuleNames) {
+
+/**
+ * Encode build state into URL hash, including opponent and their capsules.
+ * @param {string} characterName
+ * @param {string[]} capsuleNames
+ * @param {string|null} opponentName
+ * @param {string[]|null} opponentCapsuleNames
+ * @returns {string}
+ */
+export function encodeBuild(characterName, capsuleNames, opponentName = null, opponentCapsuleNames = null) {
   const data = { c: characterName, p: capsuleNames };
+  if (opponentName) data.o = opponentName;
+  if (opponentCapsuleNames) data.op = opponentCapsuleNames;
   return btoa(encodeURIComponent(JSON.stringify(data)));
 }
 
-/** Decode build state from URL hash */
+/**
+ * Decode build state from URL hash, including opponent and their capsules.
+ * @param {string} hash
+ * @returns {{ characterName: string, capsuleNames: string[], opponentName?: string, opponentCapsuleNames?: string[] } | null}
+ */
 export function decodeBuild(hash) {
   try {
     const data = JSON.parse(decodeURIComponent(atob(hash)));
-    return { characterName: data.c, capsuleNames: data.p };
+    return {
+      characterName: data.c,
+      capsuleNames: data.p,
+      opponentName: data.o,
+      opponentCapsuleNames: data.op
+    };
   } catch {
     return null;
   }

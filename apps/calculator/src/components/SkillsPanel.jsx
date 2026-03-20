@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Target } from 'lucide-react';
 import { parseEffectKey } from '../utils/calculator.js';
 
 const SLOT_ORDER = ['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'Replacement_Slot2', 'ReplacementSlot2'];
@@ -113,7 +114,7 @@ function hasBuff(detail) {
   return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
 }
 
-function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
+function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats }) {
   if (!skillDetails.length) return null;
   return (
     <div className="overflow-x-auto">
@@ -193,9 +194,13 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
                   {detail?.activationTime != null ? detail.activationTime.toFixed(2) : '—'}
                 </td>
                 <td className="py-1.5 px-1.5 text-center font-mono text-sz-orange">
-                  {detail?.baseDamage > 0 ? Number(detail.baseDamage).toLocaleString()
-                    : damage > 0 ? Number(damage).toLocaleString()
-                    : '—'}
+                  {(() => {
+                    const raw = detail?.baseDamage > 0 ? Number(detail.baseDamage) : damage > 0 ? Number(damage) : null;
+                    if (raw === null) return '—';
+                    const meleeDef = opponentStats?.meleeDefenseStat ?? 1;
+                    const val = opponentStats ? Math.round(raw * meleeDef) : raw;
+                    return val.toLocaleString();
+                  })()}
                 </td>
                 <td className="py-1.5 px-1.5 text-center text-gray-300 font-mono">
                   {detail?.duration > 0 ? `${detail.duration}s` : '—'}
@@ -224,7 +229,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
   );
 }
 
-export default function SkillsPanel({ character, blasts, skills = [], equippedCapsules = [], activeSkills = [], onToggleSkill }) {
+export default function SkillsPanel({ character, blasts, skills = [], equippedCapsules = [], activeSkills = [], onToggleSkill, opponentStats, opponentPanel }) {
   if (!character) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-700 p-4">
@@ -278,7 +283,15 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
       const boostedRaw = blast.boostedDamagePatch != null && blast.boostedDamagePatch !== '' ? Math.round(Number(blast.boostedDamagePatch)) : null;
       const modBase = baseRaw !== null && totalPct !== 0 ? Math.round(baseRaw * (1 + totalPct / 100)) : baseRaw;
       const modBoosted = boostedRaw !== null && totalPct !== 0 ? Math.round(boostedRaw * (1 + totalPct / 100)) : boostedRaw;
-      const changed = totalPct !== 0;
+
+      // Apply opponent blast defense
+      const oppDef = opponentStats?.blastDefense ?? 1;
+      const displayBase    = modBase    !== null && opponentStats ? Math.round(modBase    * oppDef) : modBase;
+      const displayBoosted = modBoosted !== null && opponentStats ? Math.round(modBoosted * oppDef) : modBoosted;
+      const baseDisplay    = baseRaw    !== null && opponentStats ? Math.round(baseRaw    * oppDef) : baseRaw;
+      const boostedDisplay = boostedRaw !== null && opponentStats ? Math.round(boostedRaw * oppDef) : boostedRaw;
+
+      const changed = totalPct !== 0 || (opponentStats !== null && opponentStats !== undefined);
       const traitTags = [
         ...(blast.traits || []),
         ...(blast.dashClashCapable ? ['Can Speed Clash'] : []),
@@ -307,10 +320,10 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
               {blast.maxExpendEnergy != null ? fmtKiBars(blast.maxExpendEnergy) : <span className="text-gray-600">—</span>}
             </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-gray-200 font-bold' : 'text-gray-300'}`}>
-              {modBase !== null ? modBase.toLocaleString() : '—'}
+              {displayBase !== null ? displayBase.toLocaleString() : '—'}
             </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-blue-300 font-bold' : 'text-blue-400/70'}`}>
-              {modBoosted !== null ? modBoosted.toLocaleString() : '—'}
+              {displayBoosted !== null ? displayBoosted.toLocaleString() : '—'}
             </td>
           </tr>
           {traitTags.length > 0 && (
@@ -329,13 +342,13 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
     });
   }
 
-  const anyBlastModified = blastRows.some(blast => {
+  const anyBlastModified = !!opponentStats || blastRows.some(blast => {
     const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
     const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
     const skillPct = activeSkills.reduce((sum, s) => sum + (s.blastBuff || 0) * 5, 0);
     return capsulePct + skillPct !== 0;
   });
-  const anyUltModified = ultimateRows.some(blast => {
+  const anyUltModified = !!opponentStats || ultimateRows.some(blast => {
     const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
     const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
     const skillPct = activeSkills.reduce((sum, s) => sum + (s.blastBuff || 0) * 5 + (s.ultimateBuff || 0) * 5, 0);
@@ -345,7 +358,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
   return (
     <div className="flex flex-col">
       {/* Skills section — columnar buff table */}
-      {charSkillDetails.length > 0 && <SkillsTable skillDetails={charSkillDetails} activeSkills={activeSkills} onToggleSkill={onToggleSkill} />}
+      {charSkillDetails.length > 0 && <SkillsTable skillDetails={charSkillDetails} activeSkills={activeSkills} onToggleSkill={onToggleSkill} opponentStats={opponentStats} />}
 
       {/* Blasts + Ultimates */}
       {sorted.length > 0 && (
@@ -456,6 +469,31 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
             </div>
           )}
         </>
+      )}
+
+      {/* Opponent section — tablet/desktop inlined below Traits, collapsible */}
+      {opponentPanel && (
+        <OpponentSection opponentPanel={opponentPanel} />
+      )}
+    </div>
+  );
+}
+
+function OpponentSection({ opponentPanel }) {
+  const [expanded, setExpanded] = useState(true);
+  return (
+    <div className="border-t-2 border-red-900/60">
+      <button
+        onClick={() => setExpanded(e => !e)}
+        className="w-full flex items-center justify-between px-3 py-2 bg-red-950/30 hover:bg-red-950/50 transition-colors"
+      >
+        <span className="text-sm font-bold uppercase tracking-widest text-red-400 flex items-center gap-1.5"><Target size={14} /> Opponent</span>
+        <span className="text-xs text-gray-500">{expanded ? '▲ Hide' : '▼ Show'}</span>
+      </button>
+      {expanded && (
+        <div className="border-t border-sz-border bg-sz-panel flex flex-col" style={{ minHeight: '1100px' }}>
+          {opponentPanel}
+        </div>
       )}
     </div>
   );

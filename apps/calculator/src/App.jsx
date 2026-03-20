@@ -6,10 +6,13 @@ import CapsuleBuilder from './components/CapsuleBuilder.jsx';
 import SkillsPanel from './components/SkillsPanel.jsx';
 import CompareStatsPanel from './components/CompareStatsPanel.jsx';
 import CompareCapsuleBuilder from './components/CompareCapsuleBuilder.jsx';
+import OpponentPanel from './components/OpponentPanel.jsx';
 import { computeModifiedStats, applySkillBuffs, encodeBuild, decodeBuild, CAPSULE_BUDGET } from './utils/calculator.js';
+import { applyLightBodyKiBlastArmor } from './utils/calculator.js';
 
 const NUM_CAPSULE_SLOTS = 7;
-const MOBILE_SECTIONS = ['Characters', 'Stats', 'Skills', 'Capsules'];
+// Mobile sections: 0=Characters, 1=Stats/Skills, 2=Opponent, 3=Capsules
+const MOBILE_SECTIONS = ['Characters', 'Stats', 'Opponent', 'Capsules'];
 const COMPARE_MOBILE_SECTIONS = ['Char A', 'Char B', 'Compare', 'Capsules'];
 
 // ---------------------------------------------------------------------------
@@ -56,7 +59,7 @@ const TABLET_WIDTHS = {
 };
 
 // which nav tab is highlighted per tablet state (right / primary panel)
-const TABLET_NAV_ACTIVE = { chars_stats: 0, stats_skills: 2, skills_only: 2, skills_caps: 3 };
+const TABLET_NAV_ACTIVE = { chars_stats: 0, stats_skills: 1, skills_only: 2, skills_caps: 3 };
 
 // ---------------------------------------------------------------------------
 // Compare tablet layout
@@ -156,6 +159,13 @@ function App() {
   const [compareCapsuleACollapsed, setCompareCapsuleACollapsed] = useState(false);
   const [compareCapsuleBCollapsed, setCompareCapsuleBCollapsed] = useState(false);
 
+  // Opponent mode state
+  const [selectedOpponent, setSelectedOpponent] = useState(null);
+  const [equippedOpponentCapsules, setEquippedOpponentCapsules] = useState(Array(NUM_CAPSULE_SLOTS).fill(null));
+  const [activeOpponentSlot, setActiveOpponentSlot] = useState(null);
+  const [activeOpponentSkills, setActiveOpponentSkills] = useState([]);
+
+
   // Load all data
   useEffect(() => {
     const base = import.meta.env.BASE_URL;
@@ -179,6 +189,7 @@ function App() {
       if (hash) {
         const decoded = decodeBuild(hash);
         if (decoded) {
+          // Main character
           const char = chars.find(c => c.name === decoded.characterName);
           if (char) {
             setSelectedCharacter(char);
@@ -191,45 +202,71 @@ function App() {
             );
             setEquippedCapsules(restored);
           }
+          // Opponent
+          if (decoded.opponentName) {
+            const oppChar = chars.find(c => c.name === decoded.opponentName);
+            if (oppChar) {
+              setSelectedOpponent(oppChar);
+            }
+          }
+          if (decoded.opponentCapsuleNames) {
+            const oppRestored = decoded.opponentCapsuleNames.map(name =>
+              name ? caps.find(c => c.name === name) || null : null
+            );
+            setEquippedOpponentCapsules(oppRestored);
+          }
         }
       }
     }).catch(console.error);
   }, []);
 
-  // Update URL hash when build changes
+  // Update URL hash when build changes (now includes opponent info)
   useEffect(() => {
     if (!selectedCharacter) return;
     const hash = encodeBuild(
       selectedCharacter.name,
-      equippedCapsules.map(c => c?.name ?? null)
+      equippedCapsules.map(c => c?.name ?? null),
+      selectedOpponent?.name ?? null,
+      equippedOpponentCapsules.map(c => c?.name ?? null)
     );
     window.history.replaceState(null, '', `#${hash}`);
-  }, [selectedCharacter, equippedCapsules]);
+  }, [selectedCharacter, equippedCapsules, selectedOpponent, equippedOpponentCapsules]);
 
-  const modifiedStats = useMemo(
-    () => applySkillBuffs(
-      computeModifiedStats(selectedCharacter, equippedCapsules.filter(Boolean)),
-      activeSkills
-    ),
-    [selectedCharacter, equippedCapsules, activeSkills]
-  );
+
+  const modifiedStats = useMemo(() => {
+    const base = computeModifiedStats(selectedCharacter, equippedCapsules.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeSkills);
+    const hasLightBody = equippedCapsules.some(c => c && c.name === 'Light Body');
+    // TODO: Add hasDraconicAura logic when implemented
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
+  }, [selectedCharacter, equippedCapsules, activeSkills]);
 
   // Compare mode computed stats
-  const compareModStatsA = useMemo(
-    () => applySkillBuffs(
-      computeModifiedStats(selectedCharacter, equippedCapsulesA.filter(Boolean)),
-      activeSkillsA
-    ),
-    [selectedCharacter, equippedCapsulesA, activeSkillsA]
-  );
 
-  const compareModStatsB = useMemo(
-    () => applySkillBuffs(
-      computeModifiedStats(selectedCharacterB, equippedCapsulesB.filter(Boolean)),
-      activeSkillsB
-    ),
-    [selectedCharacterB, equippedCapsulesB, activeSkillsB]
-  );
+  const compareModStatsA = useMemo(() => {
+    const base = computeModifiedStats(selectedCharacter, equippedCapsulesA.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeSkillsA);
+    const hasLightBody = equippedCapsulesA.some(c => c && c.name === 'Light Body');
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
+  }, [selectedCharacter, equippedCapsulesA, activeSkillsA]);
+
+  const compareModStatsB = useMemo(() => {
+    const base = computeModifiedStats(selectedCharacterB, equippedCapsulesB.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeSkillsB);
+    const hasLightBody = equippedCapsulesB.some(c => c && c.name === 'Light Body');
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
+  }, [selectedCharacterB, equippedCapsulesB, activeSkillsB]);
+
+  // Opponent computed stats
+
+  const opponentModStats = useMemo(() => {
+    const base = computeModifiedStats(selectedOpponent, equippedOpponentCapsules.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeOpponentSkills);
+    const hasLightBody = equippedOpponentCapsules.some(c => c && c.name === 'Light Body');
+    // Draconic Aura is checked on the attacker (main character's capsules)
+    const hasDraconicAura = equippedCapsules.some(c => c && c.name === 'Draconic Aura');
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, hasDraconicAura);
+  }, [selectedOpponent, equippedOpponentCapsules, activeOpponentSkills, equippedCapsules]);
 
   const handleEquipCapsule = useCallback((capsule) => {
     setEquippedCapsules(prev => {
@@ -254,6 +291,49 @@ function App() {
     setEquippedCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
     setActiveSlot(null);
   }, []);
+
+  // Opponent capsule handlers
+  const handleEquipOpponentCapsule = useCallback((capsule) => {
+    setEquippedOpponentCapsules(prev => {
+      const targetSlot = activeOpponentSlot !== null ? activeOpponentSlot : prev.findIndex(c => c === null);
+      if (targetSlot === -1) return prev;
+      const next = [...prev];
+      next[targetSlot] = capsule;
+      return next;
+    });
+    setActiveOpponentSlot(null);
+  }, [activeOpponentSlot]);
+
+  const handleRemoveOpponentCapsule = useCallback((slotIndex) => {
+    setEquippedOpponentCapsules(prev => {
+      const next = [...prev];
+      next[slotIndex] = null;
+      return next;
+    });
+  }, []);
+
+  const handleClearOpponentCapsules = useCallback(() => {
+    setEquippedOpponentCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveOpponentSlot(null);
+  }, []);
+
+  const handleClearOpponent = useCallback(() => {
+    setSelectedOpponent(null);
+    setEquippedOpponentCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveOpponentSlot(null);
+    setActiveOpponentSkills([]);
+  }, []);
+
+  const handleSwap = useCallback(() => {
+    setSelectedCharacter(selectedOpponent);
+    setEquippedCapsules(equippedOpponentCapsules);
+    setActiveSkills(activeOpponentSkills);
+    setSelectedOpponent(selectedCharacter);
+    setEquippedOpponentCapsules(equippedCapsules);
+    setActiveOpponentSkills(activeSkills);
+    setActiveSlot(null);
+    setActiveOpponentSlot(null);
+  }, [selectedCharacter, selectedOpponent, equippedCapsules, equippedOpponentCapsules, activeSkills, activeOpponentSkills]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
@@ -482,6 +562,31 @@ function App() {
     };
   }, [handleTabletTouchStart, handleTabletTouchEnd]);
 
+  // Shared OpponentPanel node — used in desktop standalone panel AND passed to SkillsPanel for tablet
+  const opponentPanelNode = (
+    <OpponentPanel
+      characters={characters}
+      teams={teams}
+      characterImages={characterImages}
+      capsules={capsules}
+      skills={skills}
+      selectedOpponent={selectedOpponent}
+      equippedCapsules={equippedOpponentCapsules}
+      activeSlot={activeOpponentSlot}
+      activeSkills={activeOpponentSkills}
+      onSelectOpponent={setSelectedOpponent}
+      onClearOpponent={handleClearOpponent}
+      onSwap={selectedCharacter ? handleSwap : undefined}
+      onSlotClick={setActiveOpponentSlot}
+      onEquipCapsule={handleEquipOpponentCapsule}
+      onRemoveCapsule={handleRemoveOpponentCapsule}
+      onClearCapsules={handleClearOpponentCapsules}
+      onToggleSkill={(skill) => setActiveOpponentSkills(prev =>
+        prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id)
+      )}
+    />
+  );
+
   return (
     <div className="h-screen bg-sz-dark text-gray-100 flex flex-col overflow-hidden">
       {/* Header */}
@@ -504,7 +609,7 @@ function App() {
           {selectedCharacter && !compareMode && (
             <button
               onClick={handleCopyLink}
-              className="text-sm px-3 py-1.5 rounded bg-sz-border hover:bg-gray-600 text-gray-300 transition-colors"
+              className="text-sm px-3 py-1.5 rounded bg-sz-border hover:bg-gray-600 text-gray-300 transition-colors active:bg-amber-600 active:text-black"
             >
               Copy Link
             </button>
@@ -682,6 +787,9 @@ function App() {
             baseStats={selectedCharacter}
             modifiedStats={modifiedStats}
             characterImages={characterImages}
+            opponentStats={opponentModStats}
+            equippedCapsules={equippedCapsules}
+            opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
           />
         </div>
 
@@ -695,6 +803,8 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              opponentStats={opponentModStats}
+              opponentPanel={opponentPanelNode}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {
                   const idx = prev.findIndex(s => s.id === skill.id);
@@ -841,6 +951,9 @@ function App() {
               baseStats={selectedCharacter}
               modifiedStats={modifiedStats}
               characterImages={characterImages}
+              opponentStats={opponentModStats}
+              equippedCapsules={equippedCapsules}
+              opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
               onSelectCharacter={() => setTabletState('chars_stats')}
             />
           </div>
@@ -856,6 +969,8 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              opponentStats={opponentModStats}
+              opponentPanel={opponentPanelNode}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {
                   const idx = prev.findIndex(s => s.id === skill.id);
@@ -1055,7 +1170,7 @@ function App() {
             />
           </div>
 
-          {/* Section 1: Stats */}
+          {/* Section 1: Stats + Skills combined */}
           <div
             className="absolute inset-0 overflow-y-auto overflow-x-hidden"
             style={{ transform: `translateX(${(1 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
@@ -1064,21 +1179,18 @@ function App() {
               baseStats={selectedCharacter}
               modifiedStats={modifiedStats}
               characterImages={characterImages}
+              opponentStats={opponentModStats}
+              equippedCapsules={equippedCapsules}
+              opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
               onSelectCharacter={() => setCurrentSection(0)}
             />
-          </div>
-
-          {/* Section 2: Skills & Blasts */}
-          <div
-            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
-            style={{ transform: `translateX(${(2 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
-          >
             <SkillsPanel
               character={selectedCharacter}
               blasts={blasts}
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              opponentStats={opponentModStats}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {
                   const idx = prev.findIndex(s => s.id === skill.id);
@@ -1086,6 +1198,14 @@ function App() {
                 });
               }}
             />
+          </div>
+
+          {/* Section 2: Opponent */}
+          <div
+            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
+            style={{ transform: `translateX(${(2 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
+          >
+            {opponentPanelNode}
           </div>
 
           {/* Section 3: Capsule Builder */}

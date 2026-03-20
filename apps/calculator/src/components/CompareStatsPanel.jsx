@@ -18,7 +18,7 @@ const STAT_SECTIONS = [
       { key: 'armor',               label: 'Armor',                  fmt: 'pct' },
       { key: 'meleeDefenseStat',    label: 'Melee Defense',           fmt: 'pct_mult_inv' },
       { key: 'blastDefense',        label: 'Blast Defense',           fmt: 'pct_mult_inv' },
-      { key: 'kiBlastDefenseArmor', label: 'Ki Blast Defense + Armor',fmt: 'pct_mult_inv' },
+      { key: 'energy',              label: 'Ki Blast Defense',        fmt: 'pct_mult_inv' },
       { key: 'melee',               label: '5-Hit Damage Taken',      fmt: 'int' },
     ],
   },
@@ -90,7 +90,7 @@ const STAT_SECTIONS = [
 // lower raw value = better outcome for these fields
 const LOWER_IS_BETTER = new Set(['switch', 'kiBlastCost', 'shortDashCost', 'melee', 'fiveHitWithArmor', 'armorBreak', 'sparkCharge']);
 // Defense multiplier fields: lower multiplier = better defense (displayed as higher %)
-const DEFENSE_MULT_FIELDS = new Set(['meleeDefenseStat', 'blastDefense', 'kiBlastDefenseArmor']);
+const DEFENSE_MULT_FIELDS = new Set(['meleeDefenseStat', 'blastDefense', 'energy']);
 
 function fmtPct(raw) {
   // Show one decimal only when the fractional part is non-zero
