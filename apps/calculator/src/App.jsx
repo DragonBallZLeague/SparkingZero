@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, GitCompareArrows } from 'lucide-react';
 import CharacterSelector from './components/CharacterSelector.jsx';
 import StatsPanel from './components/StatsPanel.jsx';
 import CapsuleBuilder from './components/CapsuleBuilder.jsx';
 import SkillsPanel from './components/SkillsPanel.jsx';
+import CompareStatsPanel from './components/CompareStatsPanel.jsx';
+import CompareCapsuleBuilder from './components/CompareCapsuleBuilder.jsx';
+import OpponentPanel from './components/OpponentPanel.jsx';
 import { computeModifiedStats, applySkillBuffs, encodeBuild, decodeBuild, CAPSULE_BUDGET } from './utils/calculator.js';
+import { applyLightBodyKiBlastArmor } from './utils/calculator.js';
 
 const NUM_CAPSULE_SLOTS = 7;
-const MOBILE_SECTIONS = ['Characters', 'Stats', 'Skills', 'Capsules'];
+// Mobile sections: 0=Characters, 1=Stats/Skills, 2=Opponent, 3=Capsules
+const MOBILE_SECTIONS = ['Characters', 'Stats', 'Opponent', 'Capsules'];
+const COMPARE_MOBILE_SECTIONS = ['Char A', 'Char B', 'Compare', 'Capsules'];
 
 // ---------------------------------------------------------------------------
 // Tablet layout — 2-panel sliding state machine
@@ -53,7 +59,57 @@ const TABLET_WIDTHS = {
 };
 
 // which nav tab is highlighted per tablet state (right / primary panel)
-const TABLET_NAV_ACTIVE = { chars_stats: 0, stats_skills: 2, skills_only: 2, skills_caps: 3 };
+const TABLET_NAV_ACTIVE = { chars_stats: 0, stats_skills: 1, skills_only: 2, skills_caps: 3 };
+
+// ---------------------------------------------------------------------------
+// Compare tablet layout
+// States: 'cmp_charA' | 'cmp_charB' | 'cmp_stats' | 'cmp_capsules'
+//   cmp_charA    — CharA + CharB side by side
+//   cmp_charB    — CharB + Compare side by side
+//   cmp_stats    — Compare panel full-width (mirrors skills_only)
+//   cmp_capsules — Compare + Capsules side by side (mirrors skills_caps)
+// ---------------------------------------------------------------------------
+function compareTabletTransition(state, swipedLeft, touchedLeftHalf) {
+  switch (state) {
+    case 'cmp_charA':
+      if (swipedLeft) return 'cmp_charB';  // swipe left from either half → advance to CharB+Compare
+      return state;
+    case 'cmp_charB':
+      if (touchedLeftHalf  && swipedLeft)  return 'cmp_stats';    // swipe left on CharB  → close CharB
+      if (touchedLeftHalf  && !swipedLeft) return 'cmp_charA';    // swipe right on CharB → back
+      if (!touchedLeftHalf && swipedLeft)  return 'cmp_capsules'; // swipe left on Compare → open Caps
+      return state;
+    case 'cmp_stats':
+      return swipedLeft ? 'cmp_capsules' : 'cmp_charB';
+    case 'cmp_capsules':
+      if (!touchedLeftHalf && !swipedLeft) return 'cmp_stats';    // swipe right on Caps → close Caps
+      if (touchedLeftHalf  && !swipedLeft) return 'cmp_charB';    // swipe right on Compare → back
+      return state;
+    default:
+      return state;
+  }
+}
+
+const COMPARE_TABLET_STATES = ['cmp_charA', 'cmp_charB', 'cmp_stats', 'cmp_capsules'];
+const COMPARE_TABLET_NAV_LABELS = ['Char A', 'Char B', 'Compare', 'Capsules'];
+
+// Each panel sits at multiples of 50% (two panels visible at a time)
+// cmp_stats:    Compare fills full width, caps hidden off right
+// cmp_capsules: Compare (0%) + Caps (50%) side by side
+const COMPARE_TABLET_POSITIONS = {
+  cmp_charA:    { charA: '0%',   charB: '50%',  stats: '100%', caps: '150%' },
+  cmp_charB:    { charA: '-50%', charB: '0%',   stats: '50%',  caps: '100%' },
+  cmp_stats:    { charA: '-50%', charB: '-50%', stats: '0%',   caps: '100%' },
+  cmp_capsules: { charA: '-50%', charB: '-50%', stats: '0%',   caps: '50%'  },
+};
+
+// Compare stats panel width — expands to 100% when alone
+const COMPARE_TABLET_WIDTHS = {
+  cmp_charA:    '50%',
+  cmp_charB:    '50%',
+  cmp_stats:    '100%',
+  cmp_capsules: '50%',
+};
 
 function App() {
   const [characters, setCharacters] = useState([]);
@@ -74,6 +130,8 @@ function App() {
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
   const touchSuppressed = useRef(false);
+  const touchScrollableEl = useRef(null);
+  const touchScrollStartLeft = useRef(null);
   const mobileTrackRef = useRef(null);
 
   // Tablet
@@ -81,7 +139,32 @@ function App() {
   const tabletTouchStartX = useRef(null);
   const tabletTouchStartY = useRef(null);
   const tabletTouchSuppressed = useRef(false);
+  const tabletScrollableEl = useRef(null);
+  const tabletScrollStartLeft = useRef(null);
   const tabletTrackRef = useRef(null);
+
+  // Compare mode
+  const [compareMode, setCompareMode] = useState(false);
+  const [selectedCharacterB, setSelectedCharacterB] = useState(null);
+  const [selectorBCollapsed, setSelectorBCollapsed] = useState(false);
+  const [equippedCapsulesA, setEquippedCapsulesA] = useState(Array(NUM_CAPSULE_SLOTS).fill(null));
+  const [equippedCapsulesB, setEquippedCapsulesB] = useState(Array(NUM_CAPSULE_SLOTS).fill(null));
+  const [activeSlotA, setActiveSlotA] = useState(null);
+  const [activeSlotB, setActiveSlotB] = useState(null);
+  const [activeSkillsA, setActiveSkillsA] = useState([]);
+  const [activeSkillsB, setActiveSkillsB] = useState([]);
+  const [compareTabletState, setCompareTabletState] = useState('cmp_charA');
+  const [compareSelectorACollapsed, setCompareSelectorACollapsed] = useState(false);
+  const [compareSelectorBCollapsed, setCompareSelectorBCollapsed] = useState(false);
+  const [compareCapsuleACollapsed, setCompareCapsuleACollapsed] = useState(false);
+  const [compareCapsuleBCollapsed, setCompareCapsuleBCollapsed] = useState(false);
+
+  // Opponent mode state
+  const [selectedOpponent, setSelectedOpponent] = useState(null);
+  const [equippedOpponentCapsules, setEquippedOpponentCapsules] = useState(Array(NUM_CAPSULE_SLOTS).fill(null));
+  const [activeOpponentSlot, setActiveOpponentSlot] = useState(null);
+  const [activeOpponentSkills, setActiveOpponentSkills] = useState([]);
+
 
   // Load all data
   useEffect(() => {
@@ -106,6 +189,7 @@ function App() {
       if (hash) {
         const decoded = decodeBuild(hash);
         if (decoded) {
+          // Main character
           const char = chars.find(c => c.name === decoded.characterName);
           if (char) {
             setSelectedCharacter(char);
@@ -118,28 +202,73 @@ function App() {
             );
             setEquippedCapsules(restored);
           }
+          // Opponent
+          if (decoded.opponentName) {
+            const oppChar = chars.find(c => c.name === decoded.opponentName);
+            if (oppChar) {
+              setSelectedOpponent(oppChar);
+            }
+          }
+          if (decoded.opponentCapsuleNames) {
+            const oppRestored = decoded.opponentCapsuleNames.map(name =>
+              name ? caps.find(c => c.name === name) || null : null
+            );
+            setEquippedOpponentCapsules(oppRestored);
+          }
         }
       }
     }).catch(console.error);
   }, []);
 
-  // Update URL hash when build changes
+  // Update URL hash when build changes (now includes opponent info)
   useEffect(() => {
     if (!selectedCharacter) return;
     const hash = encodeBuild(
       selectedCharacter.name,
-      equippedCapsules.map(c => c?.name ?? null)
+      equippedCapsules.map(c => c?.name ?? null),
+      selectedOpponent?.name ?? null,
+      equippedOpponentCapsules.map(c => c?.name ?? null)
     );
     window.history.replaceState(null, '', `#${hash}`);
-  }, [selectedCharacter, equippedCapsules]);
+  }, [selectedCharacter, equippedCapsules, selectedOpponent, equippedOpponentCapsules]);
 
-  const modifiedStats = useMemo(
-    () => applySkillBuffs(
-      computeModifiedStats(selectedCharacter, equippedCapsules.filter(Boolean)),
-      activeSkills
-    ),
-    [selectedCharacter, equippedCapsules, activeSkills]
-  );
+
+  const modifiedStats = useMemo(() => {
+    const base = computeModifiedStats(selectedCharacter, equippedCapsules.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeSkills);
+    const hasLightBody = equippedCapsules.some(c => c && c.name === 'Light Body');
+    // TODO: Add hasDraconicAura logic when implemented
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
+  }, [selectedCharacter, equippedCapsules, activeSkills]);
+
+  // Compare mode computed stats
+
+  const compareModStatsA = useMemo(() => {
+    const base = computeModifiedStats(selectedCharacter, equippedCapsulesA.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeSkillsA);
+    const hasLightBody = equippedCapsulesA.some(c => c && c.name === 'Light Body');
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
+  }, [selectedCharacter, equippedCapsulesA, activeSkillsA]);
+
+  const compareModStatsB = useMemo(() => {
+    const base = computeModifiedStats(selectedCharacterB, equippedCapsulesB.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeSkillsB);
+    const hasLightBody = equippedCapsulesB.some(c => c && c.name === 'Light Body');
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
+  }, [selectedCharacterB, equippedCapsulesB, activeSkillsB]);
+
+  // Opponent computed stats
+
+  const opponentModStats = useMemo(() => {
+    // Ensure opponent always has armor property
+    const baseOpponent = selectedOpponent ? { ...selectedOpponent, armor: typeof selectedOpponent.armor === 'number' ? selectedOpponent.armor : 0 } : null;
+    const base = computeModifiedStats(baseOpponent, equippedOpponentCapsules.filter(Boolean));
+    const withSkills = applySkillBuffs(base, activeOpponentSkills);
+    const hasLightBody = equippedOpponentCapsules.some(c => c && c.name === 'Light Body');
+    // Draconic Aura is checked on the attacker (main character's capsules)
+    const hasDraconicAura = equippedCapsules.some(c => c && c.name === 'Draconic Aura');
+    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, hasDraconicAura);
+  }, [selectedOpponent, equippedOpponentCapsules, activeOpponentSkills, equippedCapsules]);
 
   const handleEquipCapsule = useCallback((capsule) => {
     setEquippedCapsules(prev => {
@@ -165,8 +294,100 @@ function App() {
     setActiveSlot(null);
   }, []);
 
+  // Opponent capsule handlers
+  const handleEquipOpponentCapsule = useCallback((capsule) => {
+    setEquippedOpponentCapsules(prev => {
+      const targetSlot = activeOpponentSlot !== null ? activeOpponentSlot : prev.findIndex(c => c === null);
+      if (targetSlot === -1) return prev;
+      const next = [...prev];
+      next[targetSlot] = capsule;
+      return next;
+    });
+    setActiveOpponentSlot(null);
+  }, [activeOpponentSlot]);
+
+  const handleRemoveOpponentCapsule = useCallback((slotIndex) => {
+    setEquippedOpponentCapsules(prev => {
+      const next = [...prev];
+      next[slotIndex] = null;
+      return next;
+    });
+  }, []);
+
+  const handleClearOpponentCapsules = useCallback(() => {
+    setEquippedOpponentCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveOpponentSlot(null);
+  }, []);
+
+  const handleClearOpponent = useCallback(() => {
+    setSelectedOpponent(null);
+    setEquippedOpponentCapsules(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveOpponentSlot(null);
+    setActiveOpponentSkills([]);
+  }, []);
+
+  const handleSwap = useCallback(() => {
+    setSelectedCharacter(selectedOpponent);
+    setEquippedCapsules(equippedOpponentCapsules);
+    setActiveSkills(activeOpponentSkills);
+    setSelectedOpponent(selectedCharacter);
+    setEquippedOpponentCapsules(equippedCapsules);
+    setActiveOpponentSkills(activeSkills);
+    setActiveSlot(null);
+    setActiveOpponentSlot(null);
+  }, [selectedCharacter, selectedOpponent, equippedCapsules, equippedOpponentCapsules, activeSkills, activeOpponentSkills]);
+
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
+  }, []);
+
+  // Compare mode capsule handlers
+  const handleEquipCapsuleA = useCallback((capsule) => {
+    setEquippedCapsulesA(prev => {
+      const targetSlot = activeSlotA !== null ? activeSlotA : prev.findIndex(c => c === null);
+      if (targetSlot === -1) return prev;
+      const next = [...prev];
+      next[targetSlot] = capsule;
+      return next;
+    });
+    setActiveSlotA(null);
+  }, [activeSlotA]);
+
+  const handleRemoveCapsuleA = useCallback((slotIndex) => {
+    setEquippedCapsulesA(prev => {
+      const next = [...prev];
+      next[slotIndex] = null;
+      return next;
+    });
+  }, []);
+
+  const handleClearBuildA = useCallback(() => {
+    setEquippedCapsulesA(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveSlotA(null);
+  }, []);
+
+  const handleEquipCapsuleB = useCallback((capsule) => {
+    setEquippedCapsulesB(prev => {
+      const targetSlot = activeSlotB !== null ? activeSlotB : prev.findIndex(c => c === null);
+      if (targetSlot === -1) return prev;
+      const next = [...prev];
+      next[targetSlot] = capsule;
+      return next;
+    });
+    setActiveSlotB(null);
+  }, [activeSlotB]);
+
+  const handleRemoveCapsuleB = useCallback((slotIndex) => {
+    setEquippedCapsulesB(prev => {
+      const next = [...prev];
+      next[slotIndex] = null;
+      return next;
+    });
+  }, []);
+
+  const handleClearBuildB = useCallback(() => {
+    setEquippedCapsulesB(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveSlotB(null);
   }, []);
 
   // Shared select handler used by all three layouts
@@ -179,11 +400,31 @@ function App() {
     setTabletState('stats_skills');
   }, []);
 
+  const handleCharacterSelectA = useCallback((char) => {
+    setSelectedCharacter(char);
+    setEquippedCapsulesA(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveSlotA(null);
+    setActiveSkillsA([]);
+    setCompareTabletState('cmp_charB'); // advance to Char B on tablet
+    setCurrentSection(1); // advance to Char B section on mobile
+  }, []);
+
+  const handleCharacterSelectB = useCallback((char) => {
+    setSelectedCharacterB(char);
+    setEquippedCapsulesB(Array(NUM_CAPSULE_SLOTS).fill(null));
+    setActiveSlotB(null);
+    setActiveSkillsB([]);
+    setCompareTabletState('cmp_stats');
+    setCurrentSection(2);
+  }, []);
+
   const handleTouchStart = useCallback((e) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
     // Suppress section swipe if touch begins inside a horizontally scrollable element
     touchSuppressed.current = false;
+    touchScrollableEl.current = null;
+    touchScrollStartLeft.current = null;
     const trackEl = mobileTrackRef.current;
     let el = e.target;
     while (el && el !== trackEl) {
@@ -191,6 +432,8 @@ function App() {
       const ox = style.overflowX;
       if ((ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth) {
         touchSuppressed.current = true;
+        touchScrollableEl.current = el;
+        touchScrollStartLeft.current = el.scrollLeft;
         break;
       }
       el = el.parentElement;
@@ -198,16 +441,35 @@ function App() {
   }, []);
 
   const handleTouchEnd = useCallback((e) => {
-    if (touchStartX.current === null || touchSuppressed.current) {
+    if (touchStartX.current === null) {
       touchStartX.current = null;
       touchStartY.current = null;
       touchSuppressed.current = false;
+      touchScrollableEl.current = null;
       return;
     }
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (touchSuppressed.current) {
+      const scrollEl = touchScrollableEl.current;
+      const startLeft = touchScrollStartLeft.current;
+      const alreadyAtEnd = deltaX < 0
+        ? scrollEl && startLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 1
+        : scrollEl && startLeft <= 0;
+      if (!alreadyAtEnd) {
+        touchStartX.current = null;
+        touchStartY.current = null;
+        touchSuppressed.current = false;
+        touchScrollableEl.current = null;
+        touchScrollStartLeft.current = null;
+        return;
+      }
+    }
     const deltaY = e.changedTouches[0].clientY - touchStartY.current;
     touchStartX.current = null;
     touchStartY.current = null;
+    touchSuppressed.current = false;
+    touchScrollableEl.current = null;
+    touchScrollStartLeft.current = null;
     if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) return;
     setCurrentSection(s => deltaX < 0
       ? Math.min(MOBILE_SECTIONS.length - 1, s + 1)
@@ -233,6 +495,8 @@ function App() {
     tabletTouchStartX.current = e.touches[0].clientX;
     tabletTouchStartY.current = e.touches[0].clientY;
     tabletTouchSuppressed.current = false;
+    tabletScrollableEl.current = null;
+    tabletScrollStartLeft.current = null;
     const trackEl = tabletTrackRef.current;
     let el = e.target;
     while (el && el !== trackEl) {
@@ -240,6 +504,8 @@ function App() {
       const ox = style.overflowX;
       if ((ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth) {
         tabletTouchSuppressed.current = true;
+        tabletScrollableEl.current = el;
+        tabletScrollStartLeft.current = el.scrollLeft;
         break;
       }
       el = el.parentElement;
@@ -247,22 +513,45 @@ function App() {
   }, []);
 
   const handleTabletTouchEnd = useCallback((e) => {
-    if (tabletTouchStartX.current === null || tabletTouchSuppressed.current) {
+    if (tabletTouchStartX.current === null) {
       tabletTouchStartX.current = null;
       tabletTouchStartY.current = null;
       tabletTouchSuppressed.current = false;
+      tabletScrollableEl.current = null;
       return;
     }
     const deltaX = e.changedTouches[0].clientX - tabletTouchStartX.current;
+    if (tabletTouchSuppressed.current) {
+      const scrollEl = tabletScrollableEl.current;
+      const startLeft = tabletScrollStartLeft.current;
+      const alreadyAtEnd = deltaX < 0
+        ? scrollEl && startLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 1
+        : scrollEl && startLeft <= 0;
+      if (!alreadyAtEnd) {
+        tabletTouchStartX.current = null;
+        tabletTouchStartY.current = null;
+        tabletTouchSuppressed.current = false;
+        tabletScrollableEl.current = null;
+        tabletScrollStartLeft.current = null;
+        return;
+      }
+    }
     const deltaY = e.changedTouches[0].clientY - tabletTouchStartY.current;
     const startX = tabletTouchStartX.current;
     tabletTouchStartX.current = null;
     tabletTouchStartY.current = null;
+    tabletTouchSuppressed.current = false;
+    tabletScrollableEl.current = null;
+    tabletScrollStartLeft.current = null;
     if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) return;
     const swipedLeft = deltaX < 0;
     const touchedLeftHalf = startX < window.innerWidth / 2;
-    setTabletState(s => tabletTransition(s, swipedLeft, touchedLeftHalf));
-  }, []);
+    if (compareMode) {
+      setCompareTabletState(s => compareTabletTransition(s, swipedLeft, touchedLeftHalf));
+    } else {
+      setTabletState(s => tabletTransition(s, swipedLeft, touchedLeftHalf));
+    }
+  }, [compareMode]);
 
   useEffect(() => {
     const el = tabletTrackRef.current;
@@ -275,18 +564,43 @@ function App() {
     };
   }, [handleTabletTouchStart, handleTabletTouchEnd]);
 
+  // Shared OpponentPanel node — used in desktop standalone panel AND passed to SkillsPanel for tablet
+  const opponentPanelNode = (
+    <OpponentPanel
+      characters={characters}
+      teams={teams}
+      characterImages={characterImages}
+      capsules={capsules}
+      skills={skills}
+      selectedOpponent={selectedOpponent}
+      equippedCapsules={equippedOpponentCapsules}
+      activeSlot={activeOpponentSlot}
+      activeSkills={activeOpponentSkills}
+      onSelectOpponent={setSelectedOpponent}
+      onClearOpponent={handleClearOpponent}
+      onSwap={selectedCharacter ? handleSwap : undefined}
+      onSlotClick={setActiveOpponentSlot}
+      onEquipCapsule={handleEquipOpponentCapsule}
+      onRemoveCapsule={handleRemoveOpponentCapsule}
+      onClearCapsules={handleClearOpponentCapsules}
+      onToggleSkill={(skill) => setActiveOpponentSkills(prev =>
+        prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id)
+      )}
+    />
+  );
+
   return (
     <div className="h-screen bg-sz-dark text-gray-100 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-sz-panel border-b border-sz-border px-4 py-2.5 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           {/* Layered title icons: bg + color overlay */}
-          <div className="flex items-center -space-x-1">
-            <div className="relative w-24 h-10">
+          <div className="flex flex-col items-center sm:flex-row sm:items-center sm:-space-x-1">
+            <div className="relative w-24 h-7 sm:h-10">
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body02_bg.png`}    alt="" className="absolute inset-0 w-full h-full object-contain" />
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body02_Color.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
             </div>
-            <div className="relative w-16 h-10">
+            <div className="relative w-16 h-7 sm:h-10 -translate-x-2 sm:translate-x-0">
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body03_bg.png`}    alt="" className="absolute inset-0 w-full h-full object-contain" />
               <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body03_Color.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
             </div>
@@ -294,19 +608,158 @@ function App() {
           <h1 className="text-lg font-bold text-white tracking-wide">Character Calculator</h1>
         </div>
         <div className="flex gap-2">
-          {selectedCharacter && (
+          {selectedCharacter && !compareMode && (
             <button
               onClick={handleCopyLink}
-              className="text-sm px-3 py-1.5 rounded bg-sz-border hover:bg-gray-600 text-gray-300 transition-colors"
+              className="text-sm px-3 py-1.5 rounded bg-sz-border hover:bg-gray-600 text-gray-300 transition-colors active:bg-amber-600 active:text-black"
             >
               Copy Link
             </button>
           )}
+          <button
+            onClick={() => setCompareMode(m => !m)}
+            className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded transition-colors ${
+              compareMode
+                ? 'bg-sz-orange text-black font-semibold'
+                : 'bg-sz-border hover:bg-gray-600 text-gray-300'
+            }`}
+            title={compareMode ? 'Exit Compare Mode' : 'Compare Characters'}
+          >
+            <GitCompareArrows size={15} />
+            <span className="hidden sm:inline">{compareMode ? 'Exit Compare' : 'Compare'}</span>
+          </button>
         </div>
       </header>
 
       {/* Desktop: Main 3-column layout — fills remaining height */}
       <div className="hidden min-[1217px]:flex flex-1 overflow-hidden">
+        {compareMode ? (
+          /* ---- Compare Mode Desktop: [CapsA] [CharA] [CompareStats] [CharB] [CapsB] ---- */
+          <>
+            {/* Capsule A — far left outer column */}
+            <div className={`${compareCapsuleACollapsed ? 'w-8' : 'w-[22rem]'} border-r border-sz-border flex-shrink-0 overflow-hidden flex flex-col transition-[width] duration-200`}>
+              {compareCapsuleACollapsed ? (
+                <button
+                  onClick={() => setCompareCapsuleACollapsed(false)}
+                  className="w-full flex flex-col items-center justify-center gap-1.5 py-4 text-gray-500 hover:text-sz-orange hover:bg-gray-800/60 transition-colors h-full"
+                  title="Expand Capsule A"
+                >
+                  <ChevronRight size={16} />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180 leading-none text-gray-600">Caps A</span>
+                </button>
+              ) : (
+                <CapsuleBuilder
+                  capsules={capsules}
+                  equippedCapsules={equippedCapsulesA}
+                  activeSlot={activeSlotA}
+                  onSlotClick={setActiveSlotA}
+                  onEquip={handleEquipCapsuleA}
+                  onRemove={handleRemoveCapsuleA}
+                  onClear={handleClearBuildA}
+                  onCollapse={() => setCompareCapsuleACollapsed(true)}
+                  collapseDirection="left"
+                  budget={CAPSULE_BUDGET}
+                />
+              )}
+            </div>
+
+            {/* Char A selector */}
+            <aside className={`${compareSelectorACollapsed ? 'w-8' : 'w-[22rem]'} border-r border-sz-border bg-sz-panel flex-shrink-0 flex flex-col overflow-hidden transition-[width] duration-200`}>
+              {compareSelectorACollapsed ? (
+                <button
+                  onClick={() => setCompareSelectorACollapsed(false)}
+                  className="w-full flex flex-col items-center justify-center gap-1.5 py-4 text-gray-500 hover:text-sz-orange hover:bg-gray-800/60 transition-colors h-full"
+                  title="Expand Character A"
+                >
+                  <ChevronRight size={16} />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180 leading-none text-gray-600">Char A</span>
+                </button>
+              ) : (
+                <CharacterSelector
+                  characters={characters}
+                  teams={teams}
+                  characterImages={characterImages}
+                  selectedCharacter={selectedCharacter}
+                  onCollapse={() => setCompareSelectorACollapsed(true)}
+                  collapseDirection="left"
+                  onSelect={handleCharacterSelectA}
+                />
+              )}
+            </aside>
+
+            {/* Center: Compare Stats Panel */}
+            <div className="flex-1 overflow-hidden flex flex-col min-w-0">
+              <CompareStatsPanel
+                charA={selectedCharacter}
+                charB={selectedCharacterB}
+                modStatsA={compareModStatsA}
+                modStatsB={compareModStatsB}
+                characterImages={characterImages}
+                blasts={blasts}
+                skills={skills}
+                equippedCapsulesA={equippedCapsulesA}
+                equippedCapsulesB={equippedCapsulesB}
+                activeSkillsA={activeSkillsA}
+                activeSkillsB={activeSkillsB}
+                onToggleSkillA={(skill) => setActiveSkillsA(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
+                onToggleSkillB={(skill) => setActiveSkillsB(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
+              />
+            </div>
+
+            {/* Char B selector */}
+            <aside className={`${compareSelectorBCollapsed ? 'w-8' : 'w-[22rem]'} border-l border-sz-border bg-sz-panel flex-shrink-0 flex flex-col overflow-hidden transition-[width] duration-200`}>
+              {compareSelectorBCollapsed ? (
+                <button
+                  onClick={() => setCompareSelectorBCollapsed(false)}
+                  className="w-full flex flex-col items-center justify-center gap-1.5 py-4 text-gray-500 hover:text-sz-orange hover:bg-gray-800/60 transition-colors h-full"
+                  title="Expand Character B"
+                >
+                  <ChevronLeft size={16} />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180 leading-none text-gray-600">Char B</span>
+                </button>
+              ) : (
+                <CharacterSelector
+                  characters={characters}
+                  teams={teams}
+                  characterImages={characterImages}
+                  selectedCharacter={selectedCharacterB}
+                  onCollapse={() => setCompareSelectorBCollapsed(true)}
+                  collapseDirection="right"
+                  onSelect={handleCharacterSelectB}
+                />
+              )}
+            </aside>
+
+            {/* Capsule B — far right outer column */}
+            <div className={`${compareCapsuleBCollapsed ? 'w-8' : 'w-[22rem]'} border-l border-sz-border flex-shrink-0 overflow-hidden flex flex-col transition-[width] duration-200`}>
+              {compareCapsuleBCollapsed ? (
+                <button
+                  onClick={() => setCompareCapsuleBCollapsed(false)}
+                  className="w-full flex flex-col items-center justify-center gap-1.5 py-4 text-gray-500 hover:text-sz-orange hover:bg-gray-800/60 transition-colors h-full"
+                  title="Expand Capsule B"
+                >
+                  <ChevronLeft size={16} />
+                  <span className="text-[10px] font-semibold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180 leading-none text-gray-600">Caps B</span>
+                </button>
+              ) : (
+                <CapsuleBuilder
+                  capsules={capsules}
+                  equippedCapsules={equippedCapsulesB}
+                  activeSlot={activeSlotB}
+                  onSlotClick={setActiveSlotB}
+                  onEquip={handleEquipCapsuleB}
+                  onRemove={handleRemoveCapsuleB}
+                  onClear={handleClearBuildB}
+                  onCollapse={() => setCompareCapsuleBCollapsed(true)}
+                  collapseDirection="right"
+                  budget={CAPSULE_BUDGET}
+                />
+              )}
+            </div>
+          </>
+        ) : (
+          /* ---- Normal Mode Desktop ---- */
+          <>
         {/* Col 1: Character picker — narrow, scrollable */}
         <aside className={`${selectorCollapsed ? 'w-8' : 'w-[25rem]'} border-r border-sz-border bg-sz-panel flex-shrink-0 flex flex-col overflow-hidden transition-[width] duration-200`}>
           {selectorCollapsed ? (
@@ -336,6 +789,9 @@ function App() {
             baseStats={selectedCharacter}
             modifiedStats={modifiedStats}
             characterImages={characterImages}
+            opponentStats={opponentModStats}
+            equippedCapsules={equippedCapsules}
+            opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
           />
         </div>
 
@@ -349,6 +805,8 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              opponentStats={opponentModStats}
+              opponentPanel={opponentPanelNode}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {
                   const idx = prev.findIndex(s => s.id === skill.id);
@@ -384,12 +842,93 @@ function App() {
             )}
           </div>
         </div>
+          </>
+        )}
       </div>
 
       {/* Tablet: 2-panel sliding layout (793px – 1216px) */}
       <div className="hidden min-[793px]:flex min-[1217px]:hidden flex-1 flex-col overflow-hidden">
         <div ref={tabletTrackRef} className="flex-1 relative overflow-hidden min-h-0">
+          {compareMode ? (
+            <>
+              {/* Compare Char A panel */}
+              <div
+                className="absolute top-0 bottom-0 overflow-y-auto overflow-x-hidden flex flex-col bg-sz-panel border-r border-sz-border"
+                style={{ left: COMPARE_TABLET_POSITIONS[compareTabletState].charA, width: '50%', transition: 'left 0.3s ease' }}
+              >
+                <CharacterSelector
+                  characters={characters}
+                  teams={teams}
+                  characterImages={characterImages}
+                  selectedCharacter={selectedCharacter}
+                  onCollapse={() => {}}
+                  onSelect={handleCharacterSelectA}
+                />
+              </div>
 
+              {/* Compare Char B panel */}
+              <div
+                className="absolute top-0 bottom-0 overflow-y-auto overflow-x-hidden flex flex-col bg-sz-panel border-r border-sz-border"
+                style={{ left: COMPARE_TABLET_POSITIONS[compareTabletState].charB, width: '50%', transition: 'left 0.3s ease' }}
+              >
+                <CharacterSelector
+                  characters={characters}
+                  teams={teams}
+                  characterImages={characterImages}
+                  selectedCharacter={selectedCharacterB}
+                  onCollapse={() => {}}
+                  onSelect={handleCharacterSelectB}
+                />
+              </div>
+
+              {/* Compare stats panel */}
+              <div
+                className={`absolute top-0 bottom-0 overflow-y-auto overflow-x-hidden${compareTabletState === 'cmp_capsules' ? ' border-r border-sz-border' : ''}`}
+                style={{ left: COMPARE_TABLET_POSITIONS[compareTabletState].stats, width: COMPARE_TABLET_WIDTHS[compareTabletState], transition: 'left 0.3s ease, width 0.3s ease' }}
+              >
+                <CompareStatsPanel
+                  charA={selectedCharacter}
+                  charB={selectedCharacterB}
+                  modStatsA={compareModStatsA}
+                  modStatsB={compareModStatsB}
+                  characterImages={characterImages}
+                  blasts={blasts}
+                  skills={skills}
+                  equippedCapsulesA={equippedCapsulesA}
+                  equippedCapsulesB={equippedCapsulesB}
+                  activeSkillsA={activeSkillsA}
+                  activeSkillsB={activeSkillsB}
+                  onSelectA={() => setCompareTabletState('cmp_charA')}
+                  onSelectB={() => setCompareTabletState('cmp_charB')}
+                  onToggleSkillA={(skill) => setActiveSkillsA(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
+                  onToggleSkillB={(skill) => setActiveSkillsB(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
+                />
+              </div>
+
+              {/* Compare capsules panel */}
+              <div
+                className="absolute top-0 bottom-0 overflow-hidden flex flex-col"
+                style={{ left: COMPARE_TABLET_POSITIONS[compareTabletState].caps, width: '50%', transition: 'left 0.3s ease' }}
+              >
+                <CompareCapsuleBuilder
+                  capsules={capsules}
+                  equippedCapsulesA={equippedCapsulesA}
+                  equippedCapsulesB={equippedCapsulesB}
+                  activeSlotA={activeSlotA}
+                  activeSlotB={activeSlotB}
+                  onSlotClickA={setActiveSlotA}
+                  onSlotClickB={setActiveSlotB}
+                  onEquipA={handleEquipCapsuleA}
+                  onEquipB={handleEquipCapsuleB}
+                  onRemoveA={handleRemoveCapsuleA}
+                  onRemoveB={handleRemoveCapsuleB}
+                  onClearA={handleClearBuildA}
+                  onClearB={handleClearBuildB}
+                />
+              </div>
+            </>
+          ) : (
+            <>
           {/* Chars panel */}
           <div
             className="absolute top-0 bottom-0 overflow-y-auto overflow-x-hidden flex flex-col bg-sz-panel border-r border-sz-border"
@@ -414,6 +953,10 @@ function App() {
               baseStats={selectedCharacter}
               modifiedStats={modifiedStats}
               characterImages={characterImages}
+              opponentStats={opponentModStats}
+              equippedCapsules={equippedCapsules}
+              opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
+              onSelectCharacter={() => setTabletState('chars_stats')}
             />
           </div>
 
@@ -428,6 +971,8 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              opponentStats={opponentModStats}
+              opponentPanel={opponentPanelNode}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {
                   const idx = prev.findIndex(s => s.id === skill.id);
@@ -454,10 +999,46 @@ function App() {
               budget={CAPSULE_BUDGET}
             />
           </div>
+            </>
+          )}
         </div>
 
         {/* Tablet bottom navigation */}
         <div className="flex-shrink-0 border-t border-sz-border bg-sz-panel flex items-center px-3 py-2 gap-2">
+          {compareMode ? (
+            <>
+              <button
+                onClick={() => setCompareTabletState(s => { const i = COMPARE_TABLET_STATES.indexOf(s); return i > 0 ? COMPARE_TABLET_STATES[i - 1] : s; })}
+                disabled={COMPARE_TABLET_STATES.indexOf(compareTabletState) === 0}
+                className="p-1.5 rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <div className="flex flex-1 gap-1">
+                {COMPARE_TABLET_STATES.map((state, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCompareTabletState(state)}
+                    className={`flex-1 text-xs py-1.5 rounded font-semibold transition-colors ${
+                      compareTabletState === state
+                        ? 'bg-sz-orange text-black'
+                        : 'text-gray-500 hover:text-gray-300'
+                    }`}
+                  >
+                    {COMPARE_TABLET_NAV_LABELS[i]}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setCompareTabletState(s => { const i = COMPARE_TABLET_STATES.indexOf(s); return i < COMPARE_TABLET_STATES.length - 1 ? COMPARE_TABLET_STATES[i + 1] : s; })}
+                disabled={COMPARE_TABLET_STATES.indexOf(compareTabletState) === COMPARE_TABLET_STATES.length - 1}
+                className="p-1.5 rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </>
+          ) : (
+            <>
           <button
             onClick={() => setTabletState(s => { const i = TABLET_STATES.indexOf(s); return i > 0 ? TABLET_STATES[i - 1] : s; })}
             disabled={TABLET_STATES.indexOf(tabletState) === 0}
@@ -487,6 +1068,8 @@ function App() {
           >
             <ChevronRight size={20} />
           </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -494,7 +1077,86 @@ function App() {
       <div className="flex min-[793px]:hidden flex-1 flex-col overflow-hidden">
         {/* Frame — positioning context and touch-listener target */}
         <div ref={mobileTrackRef} className="flex-1 relative overflow-hidden min-h-0">
+          {compareMode ? (
+            <>
+              {/* Compare Section 0: Char A */}
+              <div
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col bg-sz-panel"
+                style={{ transform: `translateX(${(0 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
+              >
+                <CharacterSelector
+                  characters={characters}
+                  teams={teams}
+                  characterImages={characterImages}
+                  selectedCharacter={selectedCharacter}
+                  onCollapse={() => {}}
+                  onSelect={handleCharacterSelectA}
+                />
+              </div>
 
+              {/* Compare Section 1: Char B */}
+              <div
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col bg-sz-panel"
+                style={{ transform: `translateX(${(1 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
+              >
+                <CharacterSelector
+                  characters={characters}
+                  teams={teams}
+                  characterImages={characterImages}
+                  selectedCharacter={selectedCharacterB}
+                  onCollapse={() => {}}
+                  onSelect={handleCharacterSelectB}
+                />
+              </div>
+
+              {/* Compare Section 2: Compare Stats */}
+              <div
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden"
+                style={{ transform: `translateX(${(2 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
+              >
+                <CompareStatsPanel
+                  charA={selectedCharacter}
+                  charB={selectedCharacterB}
+                  modStatsA={compareModStatsA}
+                  modStatsB={compareModStatsB}
+                  characterImages={characterImages}
+                  blasts={blasts}
+                  skills={skills}
+                  equippedCapsulesA={equippedCapsulesA}
+                  equippedCapsulesB={equippedCapsulesB}
+                  activeSkillsA={activeSkillsA}
+                  activeSkillsB={activeSkillsB}
+                  onSelectA={() => setCurrentSection(0)}
+                  onSelectB={() => setCurrentSection(1)}
+                  onToggleSkillA={(skill) => setActiveSkillsA(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
+                  onToggleSkillB={(skill) => setActiveSkillsB(prev => prev.findIndex(s => s.id === skill.id) === -1 ? [...prev, skill] : prev.filter(s => s.id !== skill.id))}
+                />
+              </div>
+
+              {/* Compare Section 3: Capsules A/B */}
+              <div
+                className="absolute inset-0 overflow-hidden flex flex-col"
+                style={{ transform: `translateX(${(3 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
+              >
+                <CompareCapsuleBuilder
+                  capsules={capsules}
+                  equippedCapsulesA={equippedCapsulesA}
+                  equippedCapsulesB={equippedCapsulesB}
+                  activeSlotA={activeSlotA}
+                  activeSlotB={activeSlotB}
+                  onSlotClickA={setActiveSlotA}
+                  onSlotClickB={setActiveSlotB}
+                  onEquipA={handleEquipCapsuleA}
+                  onEquipB={handleEquipCapsuleB}
+                  onRemoveA={handleRemoveCapsuleA}
+                  onRemoveB={handleRemoveCapsuleB}
+                  onClearA={handleClearBuildA}
+                  onClearB={handleClearBuildB}
+                />
+              </div>
+            </>
+          ) : (
+            <>
           {/* Section 0: Character Selector */}
           <div
             className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col bg-sz-panel"
@@ -510,7 +1172,7 @@ function App() {
             />
           </div>
 
-          {/* Section 1: Stats */}
+          {/* Section 1: Stats + Skills combined */}
           <div
             className="absolute inset-0 overflow-y-auto overflow-x-hidden"
             style={{ transform: `translateX(${(1 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
@@ -519,20 +1181,18 @@ function App() {
               baseStats={selectedCharacter}
               modifiedStats={modifiedStats}
               characterImages={characterImages}
+              opponentStats={opponentModStats}
+              equippedCapsules={equippedCapsules}
+              opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
+              onSelectCharacter={() => setCurrentSection(0)}
             />
-          </div>
-
-          {/* Section 2: Skills & Blasts */}
-          <div
-            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
-            style={{ transform: `translateX(${(2 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
-          >
             <SkillsPanel
               character={selectedCharacter}
               blasts={blasts}
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              opponentStats={opponentModStats}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {
                   const idx = prev.findIndex(s => s.id === skill.id);
@@ -540,6 +1200,14 @@ function App() {
                 });
               }}
             />
+          </div>
+
+          {/* Section 2: Opponent */}
+          <div
+            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
+            style={{ transform: `translateX(${(2 - currentSection) * 100}%)`, transition: 'transform 0.3s ease' }}
+          >
+            {opponentPanelNode}
           </div>
 
           {/* Section 3: Capsule Builder */}
@@ -559,6 +1227,8 @@ function App() {
               budget={CAPSULE_BUDGET}
             />
           </div>
+            </>
+          )}
         </div>
 
         {/* Mobile bottom navigation */}
@@ -571,7 +1241,7 @@ function App() {
             <ChevronLeft size={20} />
           </button>
           <div className="flex flex-1 gap-1">
-            {MOBILE_SECTIONS.map((label, i) => (
+            {(compareMode ? COMPARE_MOBILE_SECTIONS : MOBILE_SECTIONS).map((label, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentSection(i)}
@@ -586,8 +1256,8 @@ function App() {
             ))}
           </div>
           <button
-            onClick={() => setCurrentSection(s => Math.min(MOBILE_SECTIONS.length - 1, s + 1))}
-            disabled={currentSection === MOBILE_SECTIONS.length - 1}
+            onClick={() => setCurrentSection(s => Math.min((compareMode ? COMPARE_MOBILE_SECTIONS : MOBILE_SECTIONS).length - 1, s + 1))}
+            disabled={currentSection === (compareMode ? COMPARE_MOBILE_SECTIONS : MOBILE_SECTIONS).length - 1}
             className="p-1.5 rounded text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronRight size={20} />

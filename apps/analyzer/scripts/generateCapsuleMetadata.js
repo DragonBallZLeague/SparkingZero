@@ -37,7 +37,7 @@ const BUILD_TYPE_PATTERNS = {
     weight: 0
   },
   skill: {
-    keywords: ['skill', 'transformation', 'fusion', 'sparking mode', 'sparking gauge', 'super z-counter'],
+    keywords: ['skill', 'transformation', 'fusion', 'sparking mode', 'sparking gauge', 'super perception'],
     weight: 0
   },
   'ki-efficiency': {

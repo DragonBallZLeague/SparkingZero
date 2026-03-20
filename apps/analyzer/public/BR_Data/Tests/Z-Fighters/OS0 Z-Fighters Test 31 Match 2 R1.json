@@ -1,0 +1,437 @@
+{
+  "TeamBattleResults": {
+    "teams": [
+      "Z-Fighters",
+      "Z-Fighters"
+    ],
+    "battleResult": {
+      "battleWinLose": "Lose",
+      "battleSettlementIndex": 0,
+      "toBadEnd": false,
+      "playerRecord": {
+        "matchDisconnectionCount": -1,
+        "rank": 1,
+        "rankPoint": 0,
+        "rankMatchSingleRank": 1,
+        "rankMatchSingleRankPoint": 0,
+        "rankMatchTeamRank": 1,
+        "rankMatchTeamRankPoint": 1,
+        "money": 0,
+        "eventPoint": 0,
+        "playerRatePoint": 0,
+        "rewardPoint": 0,
+        "battlePassPoint": 0,
+        "playTime": 0,
+        "modeScore": 0,
+        "modeRank": 0
+      },
+      "characterRecord": {
+        "(Key=\"１ＶＳ１の１Ｐの開始地点\")": {
+          "battlePlayCharacter": {
+            "character": {
+              "key": "0020_50"
+            },
+            "costume": {
+              "key": "0020_50_00"
+            },
+            "sparkingBGM": {
+              "key": "BGM_M0200"
+            },
+            "bReplaceCharacterCamera": false,
+            "cameraBlueprint": "None",
+            "sequenceRebindRegexPattern": "None",
+            "equipItem": [
+              {
+                "key": "00_1_0000_0020_50"
+              },
+              {
+                "key": "00_6_0000"
+              },
+              {
+                "key": "00_7_0003"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_0_0007"
+              },
+              {
+                "key": "00_0_0028"
+              },
+              {
+                "key": "00_0_0015"
+              },
+              {
+                "key": "00_0_0102"
+              },
+              {
+                "key": "00_0_0040"
+              },
+              {
+                "key": "00_0_0072"
+              }
+            ],
+            "itemSaveState": {},
+            "battleControlMode": "Com",
+            "bKnockDown": true,
+            "bBlowIsFront": false,
+            "bRingOut": false,
+            "bFusionPotara": false,
+            "hPGaugeValue": 0,
+            "hPGaugeValueMax": 40000,
+            "sPGaugeValue": 20000,
+            "blastStockCount": 1,
+            "blastGaugeValue": 0.4920119047164917,
+            "nextSkillGaugeGainHP": -10000,
+            "bDoneLastOneHPSkillGaugeGain": false,
+            "addMaxHP": 0,
+            "cpuLevel": 11,
+            "cpuThinkingType": {
+              "key": "タイプ４"
+            },
+            "battlePlayLevel": [],
+            "battlePlayEasy": {
+              "equipItem": [],
+              "cpuLevel": -1
+            },
+            "battlePlayOrb": {
+              "equipItem": [],
+              "cpuLevel": -1
+            },
+            "battlePlayOrbEasy": {
+              "equipItem": [],
+              "cpuLevel": -1
+            },
+            "costumeDamageLv": 0,
+            "costumeScratchLv": 0,
+            "originalCharacter": {
+              "key": "0020_50"
+            },
+            "changedStates": [
+              "NoHit_RushCombatives",
+              "NoHit_SpeedImpactTrigger",
+              "Damage",
+              "NoHit_Combatives",
+              "NoHit_RushEnergyBullet",
+              "NoHit_CrashImpactTrigger",
+              "KnockDown"
+            ],
+            "preChangedStates": []
+          },
+          "battleCount": {
+            "maxComboNum": 8,
+            "maxComboDamage": 4838,
+            "killCount": 0,
+            "givenDamage": 30205,
+            "takenDamage": 40219,
+            "battleTime": "+00000000.00:01:58.100236200",
+            "battleNumCount": {
+              "superCounterCount": 2,
+              "speedImpactCount": 1,
+              "eXACount": 4,
+              "chargeCount": 10,
+              "vanishingAttack": 1,
+              "shotEnergyBulletCount": 22,
+              "guardCount": 1
+            },
+            "useBlastGroupCount": {},
+            "attackHitCount": {
+              "(Key=\"actBLWF\")": 4,
+              "(Key=\"actDDS\")": 4,
+              "(Key=\"actDRSB\")": 9,
+              "(Key=\"actZCBGL\")": 2,
+              "(Key=\"actZCBAU\")": 1,
+              "(Key=\"actEXA1\")": 4,
+              "(Key=\"actDSMM\")": 1,
+              "(Key=\"actVAAM\")": 1,
+              "(Key=\"actRSHA1\")": 8,
+              "(Key=\"actRSHA2\")": 4,
+              "(Key=\"actRSHA3\")": 4,
+              "(Key=\"actRSHA4\")": 3,
+              "(Key=\"actRSHA5\")": 3,
+              "(Key=\"actHFN\")": 1,
+              "(Key=\"actSCP\")": 1,
+              "(Key=\"actRWN\")": 15,
+              "(Key=\"actMSAN\")": 1,
+              "(Key=\"actLFP\")": 1,
+              "(Key=\"actRIAF\")": 2,
+              "(Key=\"actRSB\")": 3,
+              "(Key=\"actSMBN\")": 1,
+              "(Key=\"actZCBAD\")": 1
+            },
+            "runBlastCount": {
+              "(Key=\"EXA1\")": 4
+            },
+            "blastHitDemoInfo": {},
+            "throwFinishInfo": {},
+            "runEmoteCount": {},
+            "dragonDashMileage": 11836.8291015625
+          },
+          "additionalCounts": {
+            "s1Blast": 0,
+            "s2Blast": 0,
+            "ultBlast": 0,
+            "s1HitBlast": 0,
+            "s2HitBlast": 0,
+            "uLTHitBlast": 0,
+            "tags": 0,
+            "savior?": false
+          },
+          "formChangeHistory": []
+        },
+        "(Key=\"１ＶＳ１の２Ｐの開始地点\")": {
+          "battlePlayCharacter": {
+            "character": {
+              "key": "0020_50"
+            },
+            "costume": {
+              "key": "0020_50_00"
+            },
+            "sparkingBGM": {
+              "key": "BGM_M0200"
+            },
+            "bReplaceCharacterCamera": false,
+            "cameraBlueprint": "None",
+            "sequenceRebindRegexPattern": "None",
+            "equipItem": [
+              {
+                "key": "00_1_0000_0020_50"
+              },
+              {
+                "key": "00_6_0000"
+              },
+              {
+                "key": "00_7_0011"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_0017_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_4_1000_0020_50"
+              },
+              {
+                "key": "00_0_0007"
+              },
+              {
+                "key": "00_0_0028"
+              },
+              {
+                "key": "00_0_0015"
+              },
+              {
+                "key": "00_0_0102"
+              },
+              {
+                "key": "00_0_0040"
+              },
+              {
+                "key": "00_0_0072"
+              }
+            ],
+            "itemSaveState": {},
+            "battleControlMode": "Com",
+            "bKnockDown": false,
+            "bBlowIsFront": false,
+            "bRingOut": false,
+            "bFusionPotara": false,
+            "hPGaugeValue": 9795,
+            "hPGaugeValueMax": 40000,
+            "sPGaugeValue": 11618.171875,
+            "blastStockCount": 1,
+            "blastGaugeValue": 0.3651808202266693,
+            "nextSkillGaugeGainHP": 0,
+            "bDoneLastOneHPSkillGaugeGain": false,
+            "addMaxHP": 0,
+            "cpuLevel": 11,
+            "cpuThinkingType": {
+              "key": "タイプ１２"
+            },
+            "battlePlayLevel": [],
+            "battlePlayEasy": {
+              "equipItem": [],
+              "cpuLevel": -1
+            },
+            "battlePlayOrb": {
+              "equipItem": [],
+              "cpuLevel": -1
+            },
+            "battlePlayOrbEasy": {
+              "equipItem": [],
+              "cpuLevel": -1
+            },
+            "costumeDamageLv": 0,
+            "costumeScratchLv": 1,
+            "originalCharacter": {
+              "key": "0020_50"
+            },
+            "changedStates": [
+              "NoHit_Combatives",
+              "NoHit_SpeedImpactTrigger",
+              "NoHit_EnergyBullet",
+              "NoHit_RushCombatives",
+              "NoHit_CrashImpactTrigger",
+              "Damage",
+              "GuardedDamage",
+              "NoHit_SmashCombatives",
+              "NoHit_RushEnergyBullet"
+            ],
+            "preChangedStates": []
+          },
+          "battleCount": {
+            "maxComboNum": 12,
+            "maxComboDamage": 4027,
+            "killCount": 1,
+            "givenDamage": 40219,
+            "takenDamage": 30205,
+            "battleTime": "+00000000.00:01:58.100236200",
+            "battleNumCount": {
+              "shotEnergyBulletCount": 40,
+              "chargeCount": 9,
+              "speedImpactCount": 1,
+              "speedImpactWinCount": 1,
+              "dragonHoming": 1,
+              "eXACount": 3,
+              "guardCount": 5,
+              "reflectEnergyBulletCount": 5,
+              "revengeCounter": 1
+            },
+            "useBlastGroupCount": {},
+            "attackHitCount": {
+              "(Key=\"actVASN\")": 4,
+              "(Key=\"actDRSB\")": 27,
+              "(Key=\"actSTDSMBN\")": 1,
+              "(Key=\"actRSB\")": 3,
+              "(Key=\"actRSHA1\")": 14,
+              "(Key=\"actRSHA2\")": 7,
+              "(Key=\"actSMMN\")": 2,
+              "(Key=\"actBLWF\")": 3,
+              "(Key=\"actSPF1W\")": 1,
+              "(Key=\"actDSMD\")": 1,
+              "(Key=\"actSMBN\")": 1,
+              "(Key=\"actBLWB\")": 2,
+              "(Key=\"actRSHA3\")": 2,
+              "(Key=\"actEXA1\")": 2,
+              "(Key=\"actGSN\")": 1,
+              "(Key=\"actRWF\")": 5,
+              "(Key=\"actDDS\")": 1,
+              "(Key=\"actRVCA\")": 1,
+              "(Key=\"actRWN\")": 10,
+              "(Key=\"actDDALN\")": 1,
+              "(Key=\"actSMDN\")": 1
+            },
+            "runBlastCount": {
+              "(Key=\"EXA2\")": 1,
+              "(Key=\"EXA1\")": 2
+            },
+            "blastHitDemoInfo": {},
+            "throwFinishInfo": {},
+            "runEmoteCount": {},
+            "dragonDashMileage": 10544.2373046875
+          },
+          "additionalCounts": {
+            "s1Blast": 0,
+            "s2Blast": 0,
+            "ultBlast": 0,
+            "s1HitBlast": 0,
+            "s2HitBlast": 0,
+            "uLTHitBlast": 0,
+            "tags": 0,
+            "savior?": false
+          },
+          "formChangeHistory": []
+        }
+      },
+      "originalCharacterIdRecord": {},
+      "characterIdRecord": {},
+      "mapRecord": {
+        "(Key=\"Map009\")": {
+          "battleCount": {
+            "changeEscapeCount": 0,
+            "changeDestructCount": 0
+          }
+        }
+      },
+      "originalMap": {
+        "key": "Map009"
+      },
+      "isSPConclusion": false,
+      "conclusionEventData": {
+        "eventSceneData": "None",
+        "displayText": {
+          "originalText": {
+            "key": "None"
+          },
+          "replaceWord": {
+            "key": "None"
+          },
+          "replaceWord2": {
+            "key": "None"
+          }
+        },
+        "titleImageData": {
+          "key": "None"
+        },
+        "bGMData": {
+          "key": "None"
+        },
+        "editSceneId": "None"
+      },
+      "battleSettleTransitionType": "KnockOut",
+      "specialFatePreBattleProduction": false,
+      "specialFatePreBattleProductionCharacters": [],
+      "dramaticFinish": false,
+      "battleClearCount": 0,
+      "battleAnotherClearCount": 0,
+      "battleAnotherClear": false,
+      "battleReward": [],
+      "unacquiredMythicalOrb": [],
+      "resultStart": true,
+      "battleFinishCharacterId": {
+        "key": "0020_50"
+      },
+      "battleFinishBlast": {
+        "key": "None"
+      }
+    }
+  }
+}

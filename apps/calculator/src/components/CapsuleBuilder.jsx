@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, Search, ChevronRight } from 'lucide-react';
+import { X, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { totalCapsuleCost, CAPSULE_BUDGET } from '../utils/calculator.js';
 
 const COST_COLORS = ['', 'text-gray-400', 'text-blue-400', 'text-yellow-400', 'text-orange-400', 'text-red-500'];
@@ -18,6 +18,7 @@ export default function CapsuleBuilder({
   onClear,
   onCollapse,
   budget,
+  collapseDirection = 'right',
 }) {
   const [search, setSearch] = useState('');
   const [costFilter, setCostFilter] = useState('');
@@ -57,8 +58,11 @@ export default function CapsuleBuilder({
             <button onClick={onClear} className="text-sm text-gray-600 hover:text-red-400 transition-colors">Clear</button>
           )}
           <button onClick={onCollapse} className="flex items-center gap-1 px-2 py-0.5 rounded bg-sz-border hover:bg-gray-600 text-gray-400 hover:text-white transition-colors text-xs font-medium" title="Collapse">
-            <span>Hide</span>
-            <ChevronRight size={13} />
+            {collapseDirection === 'right' ? (
+              <><span>Hide</span><ChevronRight size={13} /></>
+            ) : (
+              <><ChevronLeft size={13} /><span>Hide</span></>
+            )}
           </button>
         </div>
       </div>
@@ -180,7 +184,7 @@ export default function CapsuleBuilder({
                   <td className="py-1.5 px-2">
                     <div className="text-sm text-gray-200 leading-tight">{cap.name}</div>
                     {cap.description && (
-                      <div className="text-sm text-gray-500 leading-tight mt-0.5 line-clamp-2">{cap.description}</div>
+                      <div className="text-sm text-gray-500 leading-tight mt-0.5">{cap.description}</div>
                     )}
                   </td>
                   <td className="py-1.5 px-1.5 text-right align-top pt-1.5">

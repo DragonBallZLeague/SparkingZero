@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Target } from 'lucide-react';
 import { parseEffectKey } from '../utils/calculator.js';
 
 const SLOT_ORDER = ['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'Replacement_Slot2', 'ReplacementSlot2'];
@@ -35,29 +36,49 @@ function getCapsuleBlastModifier(equippedCapsules, fields) {
 }
 
 const CAT_COLORS = {
-  Beam:                       'bg-blue-700/70 text-blue-200',
-  Rush:                       'bg-orange-700/70 text-orange-200',
-  'Continuous Fire':          'bg-purple-700/70 text-purple-200',
-  Fire:                       'bg-red-700/70 text-red-200',
-  'Short-Range Energy Attack':'bg-teal-700/70 text-teal-200',
-  'Explosive Wave':           'bg-amber-700/70 text-amber-200',
+  Beam:                        'bg-blue-700/70 text-blue-200',
+  Rush:                        'bg-orange-700/70 text-orange-200',
+  'Continuous Fire':           'bg-purple-700/70 text-purple-200',
+  Fire:                        'bg-red-700/70 text-red-200',
+  'Short-Range Energy Attack': 'bg-teal-700/70 text-teal-200',
+  'Explosive Wave':            'bg-amber-700/70 text-amber-200',
+  'Lock-On Explosion':         'bg-lime-700/70 text-lime-200',
+  'Simultaneous Fire':         'bg-rose-700/70 text-rose-200',
+  Sweep:                       'bg-cyan-700/70 text-cyan-200',
 };
 
 function catClass(cat) {
   return CAT_COLORS[cat] || 'bg-gray-700/70 text-gray-300';
 }
 
+function fmtKiBars(val) {
+  const bars = val / 10000;
+  const display = Number.isInteger(bars) ? String(bars) : bars.toFixed(1);
+  return `${display} bar${bars === 1 ? '' : 's'}`;
+}
+
 const SKILL_TYPE_COLORS = {
-  'Sparking':      'bg-yellow-700/70 text-yellow-200',
-  'Teleport':      'bg-cyan-700/70 text-cyan-200',
-  'Evade':         'bg-teal-700/70 text-teal-200',
-  'Evade x2':      'bg-teal-700/70 text-teal-200',
-  'Barrier':       'bg-blue-700/70 text-blue-200',
-  'Bind':          'bg-purple-700/70 text-purple-200',
-  'Buff/Debuff':   'bg-orange-700/70 text-orange-200',
-  'Buff/Ki':       'bg-green-700/70 text-green-200',
-  'Heal':          'bg-pink-700/70 text-pink-200',
-  'Damage':        'bg-red-700/70 text-red-200',
+  'Sparking':             'bg-yellow-700/70 text-yellow-200',
+  'Buff/Sparking':        'bg-yellow-800/70 text-yellow-300',
+  'Buff/DeBuff/Sparking': 'bg-amber-700/70 text-amber-200',
+  'Teleport':             'bg-cyan-700/70 text-cyan-200',
+  'Evade':                'bg-teal-700/70 text-teal-200',
+  'Evade x2':             'bg-teal-700/70 text-teal-200',
+  'Barrier':              'bg-blue-700/70 text-blue-200',
+  'Bind':                 'bg-purple-700/70 text-purple-200',
+  'Buff/Debuff':          'bg-orange-700/70 text-orange-200',
+  'Buff':                 'bg-orange-800/70 text-orange-300',
+  'Buff/Ki':              'bg-green-700/70 text-green-200',
+  'Buff/HealthDown':      'bg-rose-800/70 text-rose-200',
+  'Heal':                 'bg-pink-700/70 text-pink-200',
+  'Health':               'bg-pink-700/70 text-pink-200',
+  'Damage':               'bg-red-700/70 text-red-200',
+  'Explosion':            'bg-red-800/70 text-red-300',
+  'Explosion/Sparking':   'bg-orange-900/70 text-orange-200',
+  'Blind':                'bg-slate-700/70 text-slate-200',
+  'Ki':                   'bg-indigo-700/70 text-indigo-200',
+  'Push':                 'bg-sky-700/70 text-sky-200',
+  'Speed Buff':           'bg-lime-700/70 text-lime-200',
 };
 
 function skillTypeClass(type) {
@@ -65,8 +86,11 @@ function skillTypeClass(type) {
 }
 
 function BuffCell({ value }) {
-  if (value === null || value === undefined || value === 0) {
+  if (value === null || value === undefined || value === 0 || value === false) {
     return <span className="text-gray-600">—</span>;
+  }
+  if (value === true) {
+    return <span className="font-semibold text-green-400">✓</span>;
   }
   const isPos = value > 0;
   return (
@@ -87,10 +111,10 @@ const BUFF_COLS = [
 
 function hasBuff(detail) {
   if (!detail) return false;
-  return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0);
+  return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
 }
 
-function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
+function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats }) {
   if (!skillDetails.length) return null;
   return (
     <div className="overflow-x-auto">
@@ -170,9 +194,13 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
                   {detail?.activationTime != null ? detail.activationTime.toFixed(2) : '—'}
                 </td>
                 <td className="py-1.5 px-1.5 text-center font-mono text-sz-orange">
-                  {detail?.baseDamage > 0 ? Number(detail.baseDamage).toLocaleString()
-                    : damage > 0 ? Number(damage).toLocaleString()
-                    : '—'}
+                  {(() => {
+                    const raw = detail?.baseDamage > 0 ? Number(detail.baseDamage) : damage > 0 ? Number(damage) : null;
+                    if (raw === null) return '—';
+                    const meleeDef = opponentStats?.meleeDefenseStat ?? 1;
+                    const val = opponentStats ? Math.round(raw * meleeDef) : raw;
+                    return val.toLocaleString();
+                  })()}
                 </td>
                 <td className="py-1.5 px-1.5 text-center text-gray-300 font-mono">
                   {detail?.duration > 0 ? `${detail.duration}s` : '—'}
@@ -201,7 +229,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill }) {
   );
 }
 
-export default function SkillsPanel({ character, blasts, skills = [], equippedCapsules = [], activeSkills = [], onToggleSkill }) {
+export default function SkillsPanel({ character, blasts, skills = [], equippedCapsules = [], activeSkills = [], onToggleSkill, opponentStats, opponentPanel }) {
   if (!character) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-700 p-4">
@@ -255,10 +283,24 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
       const boostedRaw = blast.boostedDamagePatch != null && blast.boostedDamagePatch !== '' ? Math.round(Number(blast.boostedDamagePatch)) : null;
       const modBase = baseRaw !== null && totalPct !== 0 ? Math.round(baseRaw * (1 + totalPct / 100)) : baseRaw;
       const modBoosted = boostedRaw !== null && totalPct !== 0 ? Math.round(boostedRaw * (1 + totalPct / 100)) : boostedRaw;
-      const changed = totalPct !== 0;
+
+      // Apply opponent blast defense
+      const oppDef = opponentStats?.blastDefense ?? 1;
+      const displayBase    = modBase    !== null && opponentStats ? Math.round(modBase    * oppDef) : modBase;
+      const displayBoosted = modBoosted !== null && opponentStats ? Math.round(modBoosted * oppDef) : modBoosted;
+      const baseDisplay    = baseRaw    !== null && opponentStats ? Math.round(baseRaw    * oppDef) : baseRaw;
+      const boostedDisplay = boostedRaw !== null && opponentStats ? Math.round(boostedRaw * oppDef) : boostedRaw;
+
+      const changed = totalPct !== 0 || (opponentStats !== null && opponentStats !== undefined);
+      const traitTags = [
+        ...(blast.traits || []),
+        ...(blast.dashClashCapable ? ['Can Speed Clash'] : []),
+        ...(blast.beamClashCapable ? ['Can Beam Clash'] : []),
+        ...(blast.targetGiant ? ['Can Target Giants'] : []),
+      ];
       return (
         <React.Fragment key={i}>
-          <tr className={`border-b border-sz-border/30 hover:bg-gray-800/30 ${changed ? 'bg-blue-950/20' : ''}`}>
+          <tr className={`${traitTags.length ? '' : 'border-b border-sz-border/30'} hover:bg-gray-800/30 ${changed ? 'bg-blue-950/20' : ''}`}>
             <td className="py-1.5 px-2 text-sm text-gray-200 leading-tight">{blast.name || '—'}</td>
             <td className="py-1.5 px-1.5 text-sm text-gray-500 leading-tight whitespace-nowrap">{SLOT_LABELS[blast.slot] || blast.slot}</td>
             <td className="py-1.5 px-1.5">
@@ -268,18 +310,27 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                 </span>
               )}
             </td>
+            <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
+              {blast.impactPower != null ? blast.impactPower : <span className="text-gray-600">—</span>}
+            </td>
+            <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
+              {blast.lungeSpeed != null ? Number(blast.lungeSpeed).toLocaleString() : <span className="text-gray-600">—</span>}
+            </td>
+            <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
+              {blast.maxExpendEnergy != null ? fmtKiBars(blast.maxExpendEnergy) : <span className="text-gray-600">—</span>}
+            </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-gray-200 font-bold' : 'text-gray-300'}`}>
-              {modBase !== null ? modBase.toLocaleString() : '—'}
+              {displayBase !== null ? displayBase.toLocaleString() : '—'}
             </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-blue-300 font-bold' : 'text-blue-400/70'}`}>
-              {modBoosted !== null ? modBoosted.toLocaleString() : '—'}
+              {displayBoosted !== null ? displayBoosted.toLocaleString() : '—'}
             </td>
           </tr>
-          {blast.traits?.length > 0 && (
-            <tr className="border-b border-sz-border/20 bg-gray-900/30">
-              <td colSpan={5} className="py-0.5 px-2">
+          {traitTags.length > 0 && (
+            <tr className="border-b border-sz-border/30 bg-gray-900/30">
+              <td colSpan={8} className="py-0.5 px-2">
                 <div className="flex flex-wrap gap-1">
-                  {blast.traits.map((t, ti) => (
+                  {traitTags.map((t, ti) => (
                     <span key={ti} className="text-xs px-1.5 py-0.5 rounded bg-gray-700/60 text-gray-400">{t}</span>
                   ))}
                 </div>
@@ -291,13 +342,13 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
     });
   }
 
-  const anyBlastModified = blastRows.some(blast => {
+  const anyBlastModified = !!opponentStats || blastRows.some(blast => {
     const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
     const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
     const skillPct = activeSkills.reduce((sum, s) => sum + (s.blastBuff || 0) * 5, 0);
     return capsulePct + skillPct !== 0;
   });
-  const anyUltModified = ultimateRows.some(blast => {
+  const anyUltModified = !!opponentStats || ultimateRows.some(blast => {
     const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
     const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
     const skillPct = activeSkills.reduce((sum, s) => sum + (s.blastBuff || 0) * 5 + (s.ultimateBuff || 0) * 5, 0);
@@ -307,7 +358,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
   return (
     <div className="flex flex-col">
       {/* Skills section — columnar buff table */}
-      {charSkillDetails.length > 0 && <SkillsTable skillDetails={charSkillDetails} activeSkills={activeSkills} onToggleSkill={onToggleSkill} />}
+      {charSkillDetails.length > 0 && <SkillsTable skillDetails={charSkillDetails} activeSkills={activeSkills} onToggleSkill={onToggleSkill} opponentStats={opponentStats} />}
 
       {/* Blasts + Ultimates */}
       {sorted.length > 0 && (
@@ -315,8 +366,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
         <table className="w-full">
           <colgroup>
             <col />
-            <col className="w-28" />
-            <col className="w-40" />
+            <col className="w-20" />
+            <col className="w-36" />
+            <col className="w-24" />
+            <col className="w-20" />
+            <col className="w-24" />
             <col className="w-20" />
             <col className="w-20" />
           </colgroup>
@@ -327,8 +381,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                   <th className="py-2 px-2 text-sm font-bold uppercase tracking-wider text-gray-300 text-left">Blasts</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Slot</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Category</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-gray-500'}`}>Base</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boost</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Impact<br/>Power</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Speed</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Ki Cost</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-gray-500'}`}>Damage</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyBlastModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boosted<br/>Damage</th>
                 </tr>
                 {renderBlastRows(blastRows, false)}
               </>
@@ -339,8 +396,11 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                   <th className="py-2 px-2 text-sm font-bold uppercase tracking-wider text-gray-300 text-left">Ultimates</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Slot</th>
                   <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-left">Category</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-gray-500'}`}>Base</th>
-                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boost</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Impact<br/>Power</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Speed</th>
+                  <th className="py-2 px-1.5 text-sm text-gray-500 font-medium text-center">Ki Cost</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-gray-500'}`}>Damage</th>
+                  <th className={`py-2 px-1.5 text-sm font-medium text-right ${anyUltModified ? 'text-sz-orange' : 'text-blue-400'}`}>Boosted<br/>Damage</th>
                 </tr>
                 {renderBlastRows(ultimateRows, true)}
               </>
@@ -366,7 +426,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="bg-yellow-900/30 border-b border-sz-border">
-                    <th colSpan={6} className="py-1.5 px-2 text-xs font-bold uppercase tracking-wider text-yellow-400 text-center">
+                    <th colSpan={7} className="py-1.5 px-2 text-xs font-bold uppercase tracking-wider text-yellow-400 text-center">
                       Sparking Buffs
                     </th>
                   </tr>
@@ -376,12 +436,13 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                         {col.label}
                       </th>
                     ))}
+                    <th className="py-1 px-3 text-gray-500 font-medium text-center">Armor</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(() => {
                     const sb = character.sparkStatBuffs;
-                    const sparkSkill = { id: `spark_${character.name}`, ...sb };
+                    const sparkSkill = { id: `spark_${character.name}`, instantSparking: true, ...sb };
                     const sparkBuffable = hasBuff(sparkSkill);
                     const sparkActive = sparkBuffable && activeSkills?.some(s => s.id === sparkSkill.id);
                     return (
@@ -397,6 +458,9 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                             <BuffCell value={sb[col.key] ?? 0} />
                           </td>
                         ))}
+                        <td className="py-2 px-3 text-center font-mono">
+                          <BuffCell value={sb.armor ?? false} />
+                        </td>
                       </tr>
                     );
                   })()}
@@ -405,6 +469,31 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
             </div>
           )}
         </>
+      )}
+
+      {/* Opponent section — tablet/desktop inlined below Traits, collapsible */}
+      {opponentPanel && (
+        <OpponentSection opponentPanel={opponentPanel} />
+      )}
+    </div>
+  );
+}
+
+function OpponentSection({ opponentPanel }) {
+  const [expanded, setExpanded] = useState(true);
+  return (
+    <div className="border-t-2 border-red-900/60">
+      <button
+        onClick={() => setExpanded(e => !e)}
+        className="w-full flex items-center justify-between px-3 py-2 bg-red-950/30 hover:bg-red-950/50 transition-colors"
+      >
+        <span className="text-sm font-bold uppercase tracking-widest text-red-400 flex items-center gap-1.5"><Target size={14} /> Opponent</span>
+        <span className="text-xs text-gray-500">{expanded ? '▲ Hide' : '▼ Show'}</span>
+      </button>
+      {expanded && (
+        <div className="border-t border-sz-border bg-sz-panel flex flex-col" style={{ minHeight: '1100px' }}>
+          {opponentPanel}
+        </div>
       )}
     </div>
   );

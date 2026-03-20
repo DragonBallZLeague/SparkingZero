@@ -303,7 +303,7 @@ function determineTieBreakerArchetype(effect, capsuleName, tags) {
 | Capsule | Effect | Tags Matched | Primary Archetype | Reasoning |
 |---------|--------|--------------|-------------------|-----------|
 | Rush Attack Boost 3 | "Increases Rush Attack damage by 7.5%" | aggressive | **Aggressive** | Pure damage boost |
-| The Secret to Counters | "Reduces Skill Count needed for Super Z-Counters by 1" | defensive, technical | **Defensive** | Primary benefit is counters (defensive mechanic) |
+| The Secret to Counters | "Reduces Skill Count needed for Super Perceptions by 1" | defensive, technical | **Defensive** | Primary benefit is counters (defensive mechanic) |
 | God Ki | "Reduces ki cost for Blasts by 50%. Recovers 1 bar of ki after unsuccessful Blast." | technical | **Technical** | Ki management |
 | Power Body | "Increases combatives armor level by 3. Reduces melee defense by 20%. Reduces blast defense by 10%." | defensive | **Defensive** | Net defensive (armor > defense reduction) |
 | Warming Up | "Increases health recovery while on standby in Team Battles by 50%" | defensive | **Defensive** | Health recovery + tagging synergy |

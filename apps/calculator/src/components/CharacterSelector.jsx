@@ -35,7 +35,7 @@ function ClassBadge({ cls }) {
   );
 }
 
-export default function CharacterSelector({ characters, teams, characterImages, selectedCharacter, onSelect, onCollapse }) {
+export default function CharacterSelector({ characters, teams, characterImages, selectedCharacter, onSelect, onCollapse, collapseDirection = 'left' }) {
   const [search, setSearch] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -75,8 +75,11 @@ export default function CharacterSelector({ characters, teams, characterImages, 
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Character</h2>
           <button onClick={onCollapse} className="hidden min-[1217px]:flex items-center gap-1 px-2 py-0.5 rounded bg-sz-border hover:bg-gray-600 text-gray-400 hover:text-white transition-colors text-xs font-medium" title="Collapse">
-            <ChevronDown size={13} className="rotate-90" />
-            <span>Hide</span>
+            {collapseDirection === 'left' ? (
+              <><ChevronDown size={13} className="rotate-90" /><span>Hide</span></>
+            ) : (
+              <><span>Hide</span><ChevronDown size={13} className="-rotate-90" /></>
+            )}
           </button>
         </div>
 
@@ -154,7 +157,7 @@ export default function CharacterSelector({ characters, teams, characterImages, 
                   <img
                     src={getImageUrl(imgId)}
                     alt={char.name}
-                    className="w-full h-full object-cover scale-125"
+                    className="w-full h-full object-cover object-top scale-125"
                     loading="lazy"
                     onError={e => { e.target.style.display = 'none'; }}
                   />

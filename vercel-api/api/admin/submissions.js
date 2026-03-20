@@ -107,10 +107,8 @@ export default async function handler(req, res) {
     
     const allPRs = await prResp.json();
     
-    // Filter for data-submission labeled PRs and fetch detailed data
-    const submissionPromises = allPRs
-      .filter(pr => pr.labels.some(label => label.name === 'data-submission'))
-      .map(async (pr) => {
+    // Fetch detailed data for all open PRs (no label filter)
+    const submissionPromises = allPRs.map(async (pr) => {
         const metadata = parseSubmissionBody(pr.body || '');
         
         // Fetch PR files to extract team data
