@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense } from '../utils/calculator.js';
-import Iconoir from 'iconoir/icons/iconoir.svg';
 
 // fmt types:
 //   'raw'          — toLocaleString (default)
