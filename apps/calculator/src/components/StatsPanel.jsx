@@ -207,6 +207,9 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
     const hasArmorBreakCapsule = Array.isArray(equippedCapsules)
       ? equippedCapsules.some(c => c && (c.name === 'Draconic Aura' || c.name === 'Dragon Rush'))
       : false;
+    const hasDraconicAura = Array.isArray(equippedCapsules)
+      ? equippedCapsules.some(c => c && c.name === 'Draconic Aura')
+      : false;
   if (!baseStats) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-700 p-6">
@@ -237,23 +240,29 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
   const mod = modifiedStats ?? baseStats;
 
   function kiVolley(stats, opponentStats, equippedCapsules, opponentHasLightBody) {
-    const dmg = stats?.kiBlastDmg ?? 0;
+    const oppArmor = opponentStats?.armor ?? 0;
+    const oppisArmored = oppArmor > 0;
+    const defense = opponentStats?.energy ?? 1;
+    const basedmg = stats?.kiBlastDmg ?? 0;
+    const dmg = basedmg * defense;
     let count = stats?.kiBlastLimit ?? 0;
     if (count >= 999) count = 20;
-
-    // Exception: if opponent has lightbody and character does NOT have draconic aura, apply defense and rounding per hit
     const hasDraconicAura = Array.isArray(equippedCapsules)
       ? equippedCapsules.some(c => c && c.name === 'Draconic Aura')
       : false;
-    if (opponentHasLightBody && !hasDraconicAura) {
+
+    // If opponent has Light Body or is armored (and attacker does NOT have Draconic Aura), apply defense and armor per hit
+    if ((opponentHasLightBody && !hasDraconicAura) || (oppisArmored && !hasDraconicAura)) {
       let total = 0;
-      const defense = opponentStats?.energy ?? 1;
+      const armorMult = oppisArmored ? (1 - oppArmor) : 1;
       for (let i = 0; i < count; i++) {
-        total += Math.round(dmg * defense);
+        // Apply both ki blast defense and armor reduction
+        total += Math.round(dmg * armorMult);
       }
       return total;
     }
 
+    // Otherwise, just sum the volley (no armor)
     let total = 0;
     for (let i = 0; i < count; i++) {
       // For hit i (0-based): dmg - i * (dmg * 0.05)
@@ -366,23 +375,26 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                     // Calculate base value as if armor is present (for comparison)
                     const raw = typeof baseAug[key] === 'number' ? baseAug[key] : 0;
                     const meleeDef = opponentStats?.meleeDefenseStat ?? 1;
+                    // Always calculate what the value would be with armor applied, even if Draconic Aura or Dragon Rush is equipped
                     const baseValWithArmor = Math.round(raw * meleeDef * (wasArmored ? (1 - oppArmor) : 1));
 
                     // Calculate value with armor break capsule (ignoring armor)
                     const baseVal = outgoingCombo
                       ? (() => {
                           const ignoreArmor = hasArmorBreakCapsule && wasArmored;
-                          return Math.round(raw * meleeDef * (ignoreArmor ? 1 : (wasArmored ? (1 - oppArmor) : 1)));
+                          const ignoreDraconic = hasDraconicAura && wasArmored;
+                          // If either capsule is breaking armor, ignore it
+                          return Math.round(raw * meleeDef * ((ignoreArmor || ignoreDraconic) ? 1 : (wasArmored ? (1 - oppArmor) : 1)));
                         })()
                       : baseAug[key];
                     const modVal = outgoingCombo
                       ? outgoingCombo.perHit[hitIdx].damage
                       : modAug[key];
 
-                    // Only highlight if value changed due to ignoring armor
-                    const highlight = hasArmorBreakCapsule && wasArmored && baseVal !== baseValWithArmor;
+                    // Highlight if value changed due to ignoring armor (armor break capsule or Draconic Aura)
+                    const highlight = ((hasArmorBreakCapsule && wasArmored && baseVal !== baseValWithArmor) || (hasDraconicAura && wasArmored && baseVal !== baseValWithArmor));
 
-                    // Show ARM badge: blue if normal, orange if broken, but only once
+                    // Show ARM badge: blue if normal, orange if broken (armor ignored), but only once
                     let badge = null;
                     if (wasArmored) {
                       badge = (
@@ -391,7 +403,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                             ? 'ml-1.5 text-[10px] font-semibold align-middle text-orange-400'
                             : 'ml-1.5 text-[10px] font-semibold align-middle text-blue-400'
                         }>
-                          <i class="iconoir-hand-brake"></i>🛡 ARM
+                          <i className="iconoir-hand-brake"></i>🛡 ARM
                         </span>
                       );
                     }
@@ -556,8 +568,10 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                     if (key === 'kiBlastDmg') {
                       baseVal = typeof baseVal === 'number' ? Math.round(baseVal * (opponentStats.energy ?? 1)) : baseVal;
                       modVal  = typeof modVal === 'number'  ? Math.round(modVal  * (opponentStats.energy ?? 1))  : modVal;
-                      baseVal = typeof baseVal === 'number' ? Math.round(baseVal * (1 - (opponentStats.armor ?? 0))) : baseVal;
-                      modVal  = typeof modVal === 'number'  ? Math.round(modVal  * (1 - (opponentStats.armor ?? 0)))  : modVal;
+                      // Ignore opponent armor if Draconic Aura is equipped
+                      const armorToApply = hasDraconicAura ? 0 : (opponentStats.armor ?? 0);
+                      baseVal = typeof baseVal === 'number' ? Math.round(baseVal * (1 - armorToApply)) : baseVal;
+                      modVal  = typeof modVal === 'number'  ? Math.round(modVal  * (1 - armorToApply))  : modVal;
                     }
                   }
                   return (

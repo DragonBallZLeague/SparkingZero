@@ -152,7 +152,7 @@ export function computeModifiedStats(baseStats, equippedCapsules) {
 // Skill buff key → affected base stat fields. Each +1 level = +5% to each field.
 export const SKILL_BUFF_FIELDS = {
   meleeBuff:      ['smash', 'throw', 'pursuit', 'rush', 'hit2', 'hit3', 'hit4', 'hit5', 'rush5Hit', 'fiveHitAfterArmor'],
-  defenseBuff:    ['meleeDefenseStat', 'blastDefense', 'melee'],
+  defenseBuff:    ['meleeDefenseStat', 'blastDefense', 'energy', 'melee'],
   kiBlastBuff:    ['kiBlast', 'kiBlastDmg'],
   kiChargingBuff: ['kiCharge'],
   blastBuff:      ['blastDamage', 'blastCombo', 'ultimate'],
@@ -185,7 +185,7 @@ export function applySkillBuffs(stats, activeSkills) {
     const base = stats[field];
     if (typeof base !== 'number') return;
     // Defense fields are damage multipliers (lower = better defense), so buff inverts
-    const defenseFields = ['meleeDefenseStat', 'blastDefense', 'melee'];
+    const defenseFields = ['meleeDefenseStat', 'blastDefense', 'energy', 'melee'];
     if (defenseFields.includes(field)) {
       // e.g. base=1.0, +5% defense → multiplier -= 0.05 → 0.95 (takes less damage)
       result[field] = parseFloat((base * (1 - pct / 100)).toFixed(4));

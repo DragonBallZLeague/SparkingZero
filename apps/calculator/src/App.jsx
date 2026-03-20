@@ -260,7 +260,9 @@ function App() {
   // Opponent computed stats
 
   const opponentModStats = useMemo(() => {
-    const base = computeModifiedStats(selectedOpponent, equippedOpponentCapsules.filter(Boolean));
+    // Ensure opponent always has armor property
+    const baseOpponent = selectedOpponent ? { ...selectedOpponent, armor: typeof selectedOpponent.armor === 'number' ? selectedOpponent.armor : 0 } : null;
+    const base = computeModifiedStats(baseOpponent, equippedOpponentCapsules.filter(Boolean));
     const withSkills = applySkillBuffs(base, activeOpponentSkills);
     const hasLightBody = equippedOpponentCapsules.some(c => c && c.name === 'Light Body');
     // Draconic Aura is checked on the attacker (main character's capsules)
