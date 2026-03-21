@@ -183,13 +183,13 @@ export default function OpponentPanel({
         <div className="px-3 py-2.5 border-b border-sz-border bg-red-950/30 flex-shrink-0">
           <div className="flex items-center gap-2.5">
             {onSwap && (
-                  <button
-                    onClick={onSwap}
-                    className="flex-shrink-0 p-1.5 rounded-full border border-emerald-600/50 bg-emerald-950/70 hover:bg-emerald-700/50 hover:border-emerald-400 text-emerald-400 hover:text-emerald-200 transition-all shadow-sm hover:shadow-emerald-900/60"
-                    title="Swap main character and opponent"
-                  >
-                    <ArrowLeftRight size={16} />
-                  </button>
+              <button
+                onClick={onSwap}
+                className="flex-shrink-0 p-1.5 rounded-full border border-emerald-600/50 bg-emerald-950/70 hover:bg-emerald-700/50 hover:border-emerald-400 text-emerald-400 hover:text-emerald-200 transition-all shadow-sm hover:shadow-emerald-900/60"
+                title="Swap main character and opponent"
+              >
+                <ArrowLeftRight size={16} />
+              </button>
             )}
             <div className="w-10 h-10 rounded bg-sz-border flex-shrink-0 overflow-hidden">
               {characterImages?.[selectedOpponent.name] ? (

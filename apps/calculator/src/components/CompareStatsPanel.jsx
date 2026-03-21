@@ -349,7 +349,7 @@ function CharCard({ char, modStats, characterImages, label, onSelect }) {
         <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">{label}</div>
         <div className="text-sm font-bold text-white truncate leading-tight">{char.name}</div>
         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-          <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold leading-none ${badgeColor}`}>
+          <span className={`text-xs px-1.5 py-0.5 rounded font-bold leading-none ${badgeColor}`}>
             {char.class}
           </span>
           <span className="text-xs text-sz-orange font-mono font-bold">DP {char.dp}</span>
@@ -418,7 +418,7 @@ function SkillAttrRow({ label, aContent, bContent, delta }) {
       <td className={`py-1.5 px-2 text-sm text-right leading-tight ${aWins ? 'bg-green-950/30' : bWins ? 'bg-red-950/20' : ''}`}>
         {aContent}
       </td>
-      <td className="py-1.5 px-2 text-xs text-gray-500 text-center leading-tight whitespace-nowrap">
+      <td className="py-1.5 text-xs text-gray-500 text-center leading-tight">
         {label}
       </td>
       <td className={`py-1.5 px-2 text-sm text-left leading-tight ${bWins ? 'bg-green-950/30' : aWins ? 'bg-red-950/20' : ''}`}>
@@ -519,7 +519,7 @@ function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeS
               </div>
               {aFlags.length > 0 && (
                 <div className="flex gap-0.5 flex-wrap justify-end">
-                  {aFlags.map(f => <span key={f} className="text-[10px] px-1 py-px rounded bg-indigo-800/50 text-indigo-300">{f}</span>)}
+                  {aFlags.map(f => <span key={f} className="text-xs px-1 py-px rounded bg-indigo-800/50 text-indigo-300">{f}</span>)}
                 </div>
               )}
             </div>
@@ -543,7 +543,7 @@ function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeS
               </div>
               {bFlags.length > 0 && (
                 <div className="flex gap-0.5 flex-wrap">
-                  {bFlags.map(f => <span key={f} className="text-[10px] px-1 py-px rounded bg-indigo-800/50 text-indigo-300">{f}</span>)}
+                  {bFlags.map(f => <span key={f} className="text-xs px-1 py-px rounded bg-indigo-800/50 text-indigo-300">{f}</span>)}
                 </div>
               )}
             </div>
@@ -556,8 +556,8 @@ function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeS
       {(ad?.type || bd?.type) && (
         <SkillAttrRow
           label="Type"
-          aContent={ad?.type ? <span className={`text-[10px] px-1.5 py-px rounded font-medium ${skillTypeClass(ad.type)}`}>{ad.type}</span> : SKILL_DASH}
-          bContent={bd?.type ? <span className={`text-[10px] px-1.5 py-px rounded font-medium ${skillTypeClass(bd.type)}`}>{bd.type}</span> : SKILL_DASH}
+          aContent={ad?.type ? <span className={`text-xs px-1.5 py-px rounded font-medium ${skillTypeClass(ad.type)}`}>{ad.type}</span> : SKILL_DASH}
+          bContent={bd?.type ? <span className={`text-xs px-1.5 py-px rounded font-medium ${skillTypeClass(bd.type)}`}>{bd.type}</span> : SKILL_DASH}
           delta={null}
         />
       )}
@@ -649,7 +649,7 @@ function BlastSide({ blast, modDmg, changed, side, hasReplacement, replActive, o
     <div className={`flex flex-col ${isRight ? 'items-end' : 'items-start'} min-w-0 flex-1 overflow-hidden`}>
       <span className={`text-sm text-gray-200 font-medium leading-tight w-full ${isRight ? 'text-right' : ''}`}>{blast.name || '—'}</span>
       {blast.category && (
-        <span className={`text-[10px] px-1.5 py-px rounded font-medium whitespace-nowrap ${catClass(blast.category)}`}>
+        <span className={`text-xs px-1.5 py-px rounded font-medium whitespace-nowrap ${catClass(blast.category)}`}>
           {blast.category}
         </span>
       )}
@@ -669,7 +669,7 @@ function BlastSide({ blast, modDmg, changed, side, hasReplacement, replActive, o
         return (
           <div className={`flex gap-0.5 mt-0.5 flex-wrap ${isRight ? 'justify-end' : ''}`}>
             {traitTags.map((t, i) => (
-              <span key={i} className="text-[10px] px-1 py-px rounded bg-gray-700/60 text-gray-400">{t}</span>
+              <span key={i} className="text-xs px-1 py-px rounded bg-gray-700/60 text-gray-400">{t}</span>
             ))}
           </div>
         );
@@ -680,7 +680,7 @@ function BlastSide({ blast, modDmg, changed, side, hasReplacement, replActive, o
   const toggleBtn = hasReplacement ? (
     <button
       onClick={onToggleRepl}
-      className="flex-shrink-0 self-center text-[10px] px-2 py-1 rounded border font-semibold transition-colors whitespace-nowrap
+      className="flex-shrink-0 self-center text-xs px-2 py-1 rounded border font-semibold transition-colors whitespace-nowrap
         bg-amber-950/60 border-amber-700/60 text-amber-400
         hover:bg-amber-900/70 hover:border-amber-500 hover:text-amber-200"
     >
@@ -810,7 +810,7 @@ export default function CompareStatsPanel({
             {aVal != null ? fmtVal(aVal) : <span className="text-gray-600">—</span>}
           </div>
           <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-            <span className="text-[10px] text-gray-500 text-center leading-tight">{label}</span>
+            <span className="text-xs text-gray-500 text-center leading-tight">{label}</span>
           </div>
           <div className={`flex-1 py-1 px-2 text-left text-xs font-mono text-gray-300 ${bWins ? 'bg-green-950/30' : aWins ? 'bg-red-950/20' : ''}`}>
             {bVal != null ? fmtVal(bVal) : <span className="text-gray-600">—</span>}
@@ -928,7 +928,7 @@ export default function CompareStatsPanel({
                       <tr className="border-b border-sz-border/20">
                         <td colSpan={3} className="pb-1 text-center">
                           <div className="inline-flex flex-col items-center gap-1">
-                            <span className="text-[10px] text-gray-600 uppercase tracking-wider">Break on Hit:</span>
+                            <span className="text-xs text-gray-600 uppercase tracking-wider">Break on Hit:</span>
                             <div className="flex gap-1.5">
                             {[2, 3, 4, 5].map(n => (
                               <button
@@ -1002,7 +1002,7 @@ export default function CompareStatsPanel({
                       <BlastSide blast={aBlastInfo.blast1} modDmg={aBlast1Dmg} changed={aBlastChanged} side="a" />
                     </div>
                     <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 1</span>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 1</span>
                     </div>
                     <div className={`flex-1 p-2 flex flex-col justify-center items-start min-w-0 ${blast1Winner === 'b' ? 'bg-green-950/30' : blast1Winner === 'a' ? 'bg-red-950/20' : ''}`}>
                       <BlastSide blast={bBlastInfo.blast1} modDmg={bBlast1Dmg} changed={bBlastChanged} side="b" />
@@ -1029,7 +1029,7 @@ export default function CompareStatsPanel({
                       />
                     </div>
                     <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 2</span>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Blast 2</span>
                     </div>
                     <div className={`flex-1 p-2 flex flex-col justify-center items-start min-w-0 ${slot2Winner === 'b' ? 'bg-green-950/30' : slot2Winner === 'a' ? 'bg-red-950/20' : ''}`}>
                       <BlastSide
@@ -1063,7 +1063,7 @@ export default function CompareStatsPanel({
                   <BlastSide blast={aBlastInfo.ultimate} modDmg={aUltDmg} changed={aUltChanged} side="a" />
                 </div>
                 <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Ult</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-wider font-medium text-center leading-tight">Ult</span>
                 </div>
                 <div className={`flex-1 p-2 flex flex-col justify-center items-start min-w-0 ${ultWinner === 'b' ? 'bg-green-950/30' : ultWinner === 'a' ? 'bg-red-950/20' : ''}`}>
                   <BlastSide blast={bBlastInfo.ultimate} modDmg={bUltDmg} changed={bUltChanged} side="b" />
@@ -1088,7 +1088,7 @@ export default function CompareStatsPanel({
                     {charA?.miscellaneous || <span className="text-gray-600">—</span>}
                   </div>
                   <div className="w-14 flex-shrink-0 flex items-center justify-center border-x border-sz-border/20">
-                    <span className="text-[10px] text-gray-500 text-center leading-tight">Trait</span>
+                    <span className="text-xs text-gray-500 text-center leading-tight">Trait</span>
                   </div>
                   <div className="flex-1 p-2 text-left text-xs text-gray-300 leading-relaxed min-w-0">
                     {charB?.miscellaneous || <span className="text-gray-600">—</span>}
@@ -1121,7 +1121,7 @@ export default function CompareStatsPanel({
                           <span className="text-yellow-200">Sparking Buffs</span>
                         </div>
                       </td>
-                      <td className="py-1.5 px-2 text-[10px] text-yellow-400 font-bold uppercase tracking-wider text-center leading-tight whitespace-nowrap">Spark</td>
+                      <td className="py-1.5 px-2 text-xs text-yellow-400 font-bold uppercase tracking-wider text-center leading-tight whitespace-nowrap">Spark</td>
                       <td
                         className={`py-1.5 px-3 text-xs font-bold text-left ${
                           bSparkBuffable ? 'cursor-pointer select-none hover:bg-yellow-800/20' : ''
