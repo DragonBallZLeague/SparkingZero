@@ -7,7 +7,7 @@ This repository contains three applications:
 
 - **Match Builder** (`apps/matchbuilder/`) - Main SZ Match Builder application
 - **Analyzer** (`apps/analyzer/`) - Battle Result Analyzer application
-- **Admin Dashboard** (`apps/admin/`) - Administrator dashboard for managing data submissions
+- **Character Calculator** (`apps/calculator/`) - Character Calculator for viewing character data
 
 ## Development
 
