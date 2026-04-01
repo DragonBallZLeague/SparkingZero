@@ -17,6 +17,18 @@ const CONFIG = {
     MAX_FILENAME_LENGTH: 255
 };
 
+// ============================================================
+// CURRENT LEAGUE SEASON — Change this when a new season starts
+// ============================================================
+const CURRENT_SEASON = 'OS0';
+
+// Category folder → matchType mapping
+const CATEGORY_MATCH_TYPE = {
+    'Tests':   'Test',
+    'Seasons': 'Season',
+    'Events':  'Event',
+};
+
 // List of available teams for selection
 const TEAMS = [
     { value: '', label: '' },

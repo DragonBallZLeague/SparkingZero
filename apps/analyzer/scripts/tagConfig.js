@@ -1,18 +1,39 @@
 // Central config for BR_Data tagging fields and allowed values
 // Update this file to add or change tag types and allowed values
 
+// ============================================================
+// CURRENT LEAGUE SEASON — Change this when a new season starts
+// ============================================================
+const CURRENT_SEASON = 'OS0';
+
 const tagConfig = {
+  // The current season applied to newly tagged files
+  currentSeason: CURRENT_SEASON,
+
   team: {
     label: 'Team',
-    type: 'string', // Freeform, but can be restricted if needed
-    allowed: null // null = any value, or provide an array for strict
+    type: 'array', // Each file stores both teams as an array
+    allowed: [
+      'Budokai',
+      'Cinema',
+      'Cold Kingdom',
+      'Creations',
+      'Demons',
+      'Malevolent Souls',
+      'Master and Student',
+      'Primal Instincts',
+      'Sentai',
+      'Time Patrol',
+      'Tiny Terrors',
+      'Z-Fighters'
+    ]
   },
   season: {
     label: 'League Season',
     type: 'string',
     allowed: [
       'OS0', // Off-Season 0
-      // Add more as needed
+      // Add new seasons here as they begin
     ]
   },
   matchType: {

@@ -5,6 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import MUITextField from '@mui/material/TextField';
 import './App.css';
 import BRDataSelector from './components/BRDataSelector.jsx';
+import TagFilterSelector from './components/TagFilterSelector.jsx';
 import { Combobox } from './components/Combobox.jsx';
 import { MultiSelectCombobox } from './components/MultiSelectCombobox.jsx';
 import { formatNumber } from './utils/formatters.js';
@@ -57,6 +58,16 @@ import mapsCSV from '../../../referencedata/maps.csv?raw';
 // Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
 // Each entry may be a module object; code uses module.default || module
 const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });
+// Utility to extract tags from a match file object (returns null if not present)
+function extractTagsFromMatchFile(content) {
+  if (!content || typeof content !== 'object') return null;
+  // Accept either a top-level 'tags' object or legacy fields
+  if (content.tags && typeof content.tags === 'object') {
+    return content.tags;
+  }
+  // Optionally, fallback: try to infer from legacy fields (future-proofing)
+  return null;
+}
 
 /**
  * Natural sort comparator for files and folders
@@ -3809,6 +3820,8 @@ export default function App() {
   const [selectedFilePath, setSelectedFilePath] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
+  const [fileTags, setFileTags] = useState(null); // Tags for the currently displayed match file
+  const [tagFilterPaths, setTagFilterPaths] = useState(null); // Paths from TagFilterSelector (null = no filter)
   // Separate state for the header match-analysis selector so we don't override global fileContent
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
   const [analysisFileContent, setAnalysisFileContent] = useState(null);
@@ -4675,8 +4688,10 @@ export default function App() {
       const moduleContent = dataFiles[fullPath];
       const actualContent = moduleContent.default || moduleContent;
       setFileContent(actualContent);
+      setFileTags(extractTagsFromMatchFile(actualContent));
     } else {
       setFileContent({ error: 'File not found.' });
+      setFileTags(null);
     }
     setExpandedRows({}); // Reset expanded state on file change
   };
@@ -4690,7 +4705,7 @@ export default function App() {
         reader.onload = (e) => {
           try {
             const content = JSON.parse(e.target.result);
-            resolve({ name: file.name, content });
+            resolve({ name: file.name, content, tags: extractTagsFromMatchFile(content) });
           } catch (error) {
             resolve({ name: file.name, error: 'Invalid JSON file' });
           }
@@ -4703,6 +4718,7 @@ export default function App() {
       const validFiles = results.filter(f => !f.error);
       if (validFiles.length === 1) {
         setFileContent(validFiles[0].content);
+        setFileTags(validFiles[0].tags ?? null);
         setAnalysisFileContent(validFiles[0].content);
         setAnalysisSelectedFilePath([validFiles[0].name]);
         setSelectedFilePath([validFiles[0].name]);
@@ -4766,6 +4782,7 @@ export default function App() {
         const content = await res.json();
         setPreNavigationFileContent(fileContent); // save full array so Back to Tables can restore it
         setFileContent(content);
+        setFileTags(extractTagsFromMatchFile(content));
         setSelectedFilePath([fileName]);
         setAnalysisFileContent(content);
         setAnalysisSelectedFilePath([fileName]);
@@ -4783,6 +4800,7 @@ export default function App() {
     setMode(newMode);
     setSelectedFile(null);
     setFileContent(null);
+    setFileTags(null);
     setManualFiles([]);
     setViewType('single');
     setMatchFilterSource(null);
@@ -5305,12 +5323,24 @@ export default function App() {
               </label>
             </div>
 
+            {/* Tag-Filter Panel — filters the BRDataSelector tree below */}
+            <div className="mb-4">
+              <TagFilterSelector
+                darkMode={darkMode}
+                onSelect={(fileIds) => {
+                  // null = no active filters (show everything), array = filtered paths
+                  setTagFilterPaths(fileIds);
+                }}
+              />
+            </div>
+
             <div className={`rounded-xl p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 {viewType === 'single' ? 'Search categories or matches to analyze:' : 'Search categories or matches to analyze:'}
               </label>
               <BRDataSelector
                 allowFolderSelect={viewType !== 'single'}
+                tagFilterPaths={tagFilterPaths}
                 onSelect={async (selectedIds) => {
                   if (!Array.isArray(selectedIds) || selectedIds.length === 0) return;
                   setSelectedFilePath(selectedIds);
@@ -5326,7 +5356,10 @@ export default function App() {
                       const staticUrl = `${base}BR_Data/${id}`;
                       try {
                         const res = await fetch(staticUrl);
-                        if (res.ok) return { name: id, content: await res.json() };
+                        if (res.ok) {
+                          const content = await res.json();
+                          return { name: id, content, tags: extractTagsFromMatchFile(content) };
+                        }
                       } catch (err) {
                         // ignore individual file errors and continue
                       }
@@ -7097,7 +7130,7 @@ export default function App() {
                 showTooltip={false}
               />
             </div>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <FileText className={`w-8 h-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                 <div>
@@ -7106,6 +7139,30 @@ export default function App() {
                 </div>
               </div>
             </div>
+            {/* Match Tag Badges */}
+            {analysisContent && analysisContent.tags && (() => {
+              const t = analysisContent.tags;
+              const tagDefs = [
+                { key: 'season',    label: t.season,    color: darkMode ? 'bg-violet-900/40 text-violet-300 border-violet-600' : 'bg-violet-100 text-violet-700 border-violet-300' },
+                // Team tag is an array — render one badge per team
+                ...(Array.isArray(t.team) ? t.team : (t.team ? [t.team] : [])).map(name => (
+                  { key: `team-${name}`, label: name, color: darkMode ? 'bg-blue-900/40 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-700 border-blue-300' }
+                )),
+                { key: 'matchType', label: t.matchType, color: darkMode ? 'bg-orange-900/40 text-orange-300 border-orange-600' : 'bg-orange-100 text-orange-700 border-orange-300' },
+                { key: 'difficulty',label: t.difficulty,color: darkMode ? 'bg-red-900/40 text-red-300 border-red-600'         : 'bg-red-100 text-red-700 border-red-300' },
+                { key: 'matchSize', label: t.matchSize, color: darkMode ? 'bg-green-900/40 text-green-300 border-green-600'   : 'bg-green-100 text-green-700 border-green-300' },
+              ].filter(d => d.label);
+              if (tagDefs.length === 0) return null;
+              return (
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {tagDefs.map(d => (
+                    <span key={d.key} className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${d.color}`}>
+                      {d.label}
+                    </span>
+                  ))}
+                </div>
+              );
+            })()}
             
             {/* Match Outcome Summary */}
 

@@ -30,7 +30,7 @@ async function fileToText(file) {
 }
 
 /**
- * Modify a file's content to include team data
+ * Modify a file's content to include team data and tags
  * @param {File} file - The file to modify
  * @param {string} team1 - First team name
  * @param {string} team2 - Second team name (can be empty)
@@ -40,10 +40,24 @@ async function modifyFileWithTeamData(file, team1, team2) {
     const text = await fileToText(file);
     const json = JSON.parse(text);
     
+    // Build the teams array (filter out empty strings)
+    const teams = [team1, team2].filter(t => t && t.trim() !== '');
+    
     // Set team data if the structure exists
     if (json.TeamBattleResults) {
-        json.TeamBattleResults.teams = [team1, team2 || ''];
+        json.TeamBattleResults.teams = teams;
     }
+    
+    // Determine matchType from the selected category folder
+    const categoryFolder = AppState.selectedParent || '';
+    const matchType = CATEGORY_MATCH_TYPE[categoryFolder] || null;
+
+    // Build/update the tags object
+    json.tags = Object.assign(json.tags || {}, {
+        team: teams,
+        season: CURRENT_SEASON,
+        matchType: matchType,
+    });
     
     // Convert back to base64
     const modifiedJson = JSON.stringify(json, null, 2);

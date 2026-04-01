@@ -116,7 +116,7 @@ function isNodePartiallySelected(node, path, selected) {
   return childIds.some(id => selected.includes(id)) && !childIds.every(id => selected.includes(id));
 }
 
-export default function BRDataSelector({ onSelect }) {
+export default function BRDataSelector({ onSelect, tagFilterPaths }) {
   // Arrow icons for expand/collapse
   // Track expanded folders by their IDs
   const [expandedFolders, setExpandedFolders] = useState([]);
@@ -223,16 +223,46 @@ export default function BRDataSelector({ onSelect }) {
     return flattenStructure(structure);
   }, [structure]);
 
-  // Filter items based on search query
+  // Build a Set from tagFilterPaths for O(1) lookups (null = no filter active)
+  const tagFilterSet = useMemo(() => {
+    if (!tagFilterPaths) return null;
+    return new Set(tagFilterPaths);
+  }, [tagFilterPaths]);
+
+  // Filter items based on search query AND tag filters
   const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return flatItems;
-    const query = searchQuery.toLowerCase();
-    return flatItems.filter(item => 
-      item.name.toLowerCase().includes(query) ||
-      item.category.toLowerCase().includes(query) ||
-      item.subcategory.toLowerCase().includes(query)
-    );
-  }, [flatItems, searchQuery]);
+    let items = flatItems;
+
+    // Apply tag filter: keep files that pass, and folders that still have visible children
+    if (tagFilterSet) {
+      const visibleFileIds = new Set();
+      const visibleFolderPrefixes = new Set();
+      items.forEach(item => {
+        if (item.type === 'file' && tagFilterSet.has(item.id)) {
+          visibleFileIds.add(item.id);
+          // Mark all ancestor folder paths as visible
+          for (let i = 1; i < item.path.length; i++) {
+            visibleFolderPrefixes.add(item.path.slice(0, i).join('/'));
+          }
+        }
+      });
+      items = items.filter(item =>
+        item.type === 'file' ? visibleFileIds.has(item.id) : visibleFolderPrefixes.has(item.id)
+      );
+    }
+
+    // Apply text search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      items = items.filter(item =>
+        item.name.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query) ||
+        item.subcategory.toLowerCase().includes(query)
+      );
+    }
+
+    return items;
+  }, [flatItems, searchQuery, tagFilterSet]);
 
   // Group filtered items by category for better display
   const groupedSearchResults = useMemo(() => {
@@ -248,13 +278,13 @@ export default function BRDataSelector({ onSelect }) {
     return groups;
   }, [filteredItems, searchQuery]);
 
-  // Helper: get visible IDs for a category (respect search). Returns file/folder ids.
+  // Helper: get visible IDs for a category (respect search + tag filter). Returns file/folder ids.
   const getVisibleIdsForCategory = (category) => {
     if (!structure) return [];
-    if (searchQuery && searchQuery.trim()) {
+    if ((searchQuery && searchQuery.trim()) || tagFilterSet) {
       return filteredItems.filter(fi => fi.category === category).map(fi => fi.id);
     }
-    // No search: return all child ids for the full category
+    // No search or tag filter: return all child ids for the full category
     return getAllChildIds(structure[category], [category]);
   };
 
@@ -346,6 +376,12 @@ export default function BRDataSelector({ onSelect }) {
 
   const handleSelectAll = () => {
     if (!structure) return;
+    // When tag filter is active, only select visible items
+    if (tagFilterSet) {
+      const visibleIds = filteredItems.map(it => it.id);
+      setSelected(visibleIds);
+      return;
+    }
     const allIds = [];
     function collectIds(node, path = []) {
       Object.entries(node).forEach(([key, value]) => {
@@ -364,7 +400,13 @@ export default function BRDataSelector({ onSelect }) {
   const handleUnselectAll = () => setSelected([]);
 
   const handleApplySelection = () => {
-    if (onSelect) onSelect(selected);
+    if (onSelect) {
+      // When tag filter is active, only send files that pass the filter
+      const effectiveSelection = tagFilterSet
+        ? selected.filter(id => !id.includes('.json') || tagFilterSet.has(id))
+        : selected;
+      onSelect(effectiveSelection);
+    }
   };
 
   const handleClearSearch = () => {
@@ -416,8 +458,8 @@ export default function BRDataSelector({ onSelect }) {
     return chips;
   };
 
-  const selectedFileCount = selected.filter(id => id.includes('.json')).length;
-  const selectedFolderCount = selected.length - selectedFileCount;
+  const selectedFileCount = selected.filter(id => id.includes('.json') && (!tagFilterSet || tagFilterSet.has(id))).length;
+  const selectedFolderCount = selected.filter(id => !id.includes('.json')).length;
 
   // Compact collapsed bar
   if (collapsed) {
@@ -445,6 +487,16 @@ export default function BRDataSelector({ onSelect }) {
             <Chip style={{ backgroundColor: '#2563eb', color: 'rgba(255, 255, 255, 0.7)' }} label={`${selectedFileCount} Matches`} size="small" />
           </Box>
         </Paper>
+        <Button
+          onClick={(e) => { e.stopPropagation(); handleApplySelection(); }}
+          variant="contained"
+          color="success"
+          size="small"
+          disabled={selectedFileCount === 0}
+          sx={{ whiteSpace: 'nowrap' }}
+        >
+          Load {selectedFileCount} File{selectedFileCount !== 1 ? 's' : ''}
+        </Button>
         <IconButton size="small" onClick={(e) => { e.stopPropagation(); setCollapsed(false); }}>
           <ArrowRightIcon />
         </IconButton>
@@ -969,12 +1021,17 @@ export default function BRDataSelector({ onSelect }) {
               const CategoryIcon = getCategoryIcon(category);
               const catNode = structure[category];
               const allChildIds = getAllChildIds(catNode, [category]);
+              // Use filteredItems when tag filter is active, flatItems otherwise
+              const visibleItems = tagFilterSet ? filteredItems : flatItems;
+              const visibleFileCount = visibleItems.filter(it => it.type === 'file' && it.category === category).length;
+              // If tag filter is active and no files visible for this category, hide it
+              if (tagFilterSet && visibleFileCount === 0) return null;
               const isFully = isCategoryFullySelected(category);
               const isPartial = !isFully && allChildIds.some(id => selected.includes(id));
               // immediate child folders under this category
-              const immediateFolders = flatItems.filter(it => it.type === 'folder' && it.path.length === 2 && it.category === category).sort(naturalSort);
+              const immediateFolders = visibleItems.filter(it => it.type === 'folder' && it.path.length === 2 && it.category === category).sort(naturalSort);
               // files directly under category (path length === 1)
-              const directFiles = flatItems.filter(it => it.type === 'file' && it.path.length === 1 && it.category === category).sort(naturalSort);
+              const directFiles = visibleItems.filter(it => it.type === 'file' && it.path.length === 1 && it.category === category).sort(naturalSort);
               const isExpanded = expandedFolders.includes(category);
               return (
                 <Box key={category} sx={{ marginBottom: 2 }}>
@@ -1008,7 +1065,7 @@ export default function BRDataSelector({ onSelect }) {
                     <Box sx={{ flex: 1 }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Box sx={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', minWidth: 48, textAlign: 'right' }}>
-                        {allChildIds.filter(id => id.includes('.json')).length} file{allChildIds.filter(id => id.includes('.json')).length !== 1 ? 's' : ''}
+                        {visibleFileCount} file{visibleFileCount !== 1 ? 's' : ''}
                       </Box>
                       <IconButton
                         size="small"
@@ -1025,7 +1082,9 @@ export default function BRDataSelector({ onSelect }) {
                       {immediateFolders.map(folder => {
                         const isSel = selected.includes(folder.id);
                         const isFldExp = expandedFolders.includes(folder.id);
-                        const childFiles = flatItems.filter(it => it.type === 'file' && it.path.slice(0, folder.path.length).join('/') === folder.id).sort(naturalSort);
+                        const childFiles = visibleItems.filter(it => it.type === 'file' && it.path.slice(0, folder.path.length).join('/') === folder.id).sort(naturalSort);
+                        // If tag filter is active and no files match in this folder, hide it
+                        if (tagFilterSet && childFiles.length === 0) return null;
                         return (
                           <Box key={folder.id}>
                             <Box sx={{ display: 'flex', alignItems: 'center', padding: '6px 10px', borderRadius: '4px', backgroundColor: isSel ? 'rgba(33, 150, 243, 0.2)' : 'rgba(255, 255, 255, 0.05)', border: '1px solid', borderColor: isSel ? 'rgba(33, 150, 243, 0.5)' : 'rgba(255, 255, 255, 0.1)', cursor: 'pointer' }} onClick={() => handleSearchItemToggle(folder)}>

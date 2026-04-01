@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from 'react-dom';
 import { useFloating, offset, flip, shift, size, autoUpdate } from '@floating-ui/react-dom';
-import { Plus, Trash2, Copy, Download, Upload, X, Sparkles, Minus } from "lucide-react";
+import { Plus, Trash2, Copy, Download, Upload, X, Sparkles, Minus, ClipboardPaste } from "lucide-react";
 import yaml from "js-yaml";
+import { YamlPanel } from "./YamlPanel";
 
 // Helper: find AI id from either display name or id (case-insensitive, trimmed)
 const findAiIdFromValue = (val, aiItems) => {
@@ -529,6 +530,187 @@ const MatchBuilder = () => {
       }
     }
   };
+  // Generate YAML text for a single character slot (used by character-level panel)
+  const generateCharacterYaml = (character, matchName, teamName) => {
+    const build = {
+      character: character.name || (characters.find(c => c.id === character.id)?.name || ''),
+      costume: character.costume ? (costumes.find(c => c.id === character.costume)?.name || '') : '',
+      capsules: (character.capsules || []).map(cid => {
+        const found = capsules.find(c => c.id === cid);
+        if (found) {
+          const cost = Number(found.cost || found.Cost || 0) || 0;
+          return `${found.name}${cost ? ` (${cost})` : ''}`;
+        }
+        if (cid && cid.toString().startsWith('00_0_')) return '';
+        return cid || '';
+      }).filter(Boolean),
+      ai: character.ai ? (aiItems.find(a => a.id === character.ai)?.name || '') : '',
+      transformAi: character.transformAi ? (aiItems.find(a => a.id === character.transformAi)?.name || '') : '',
+      sparking: character.sparking ? (sparkingMusic.find(s => s.id === character.sparking)?.name || character.sparking) : '',
+    };
+    return formatYamlReadable(yaml.dump(build, { noRefs: true, lineWidth: 120 }));
+  };
+
+  // Apply YAML text to a single character slot
+  const applyCharacterYaml = (yamlText, matchId, teamKey, slotIndex) => {
+    try {
+      const data = yaml.load(yamlText);
+      if (!data) throw new Error('Invalid YAML');
+      const normalizeCapsuleName = (s) => {
+        if (!s && s !== 0) return '';
+        return String(s).trim().replace(/\s*\(\d+\)\s*$/, '').trim();
+      };
+      const slot = {
+        name: '',
+        id: '',
+        costume: '',
+        capsules: Array(7).fill(''),
+        ai: '',
+        transformAi: '',
+        sparking: '',
+      };
+      if (data.character) {
+        const charObj = characters.find(c => (c.name || '').trim().toLowerCase() === data.character.toString().trim().toLowerCase());
+        slot.name = data.character.toString();
+        slot.id = charObj ? charObj.id : '';
+      }
+      if (data.costume) {
+        const costumeObj = costumes.find(c => c.exclusiveFor === slot.name && (c.name || '').trim().toLowerCase() === (data.costume || '').toString().trim().toLowerCase());
+        slot.costume = costumeObj ? costumeObj.id : '';
+      }
+      if (data.ai) slot.ai = findAiIdFromValue(data.ai, aiItems);
+      if (data.transformAi) slot.transformAi = findAiIdFromValue(data.transformAi, aiItems);
+      if (data.sparking) {
+        const spObj = sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (data.sparking || '').toString().trim().toLowerCase());
+        slot.sparking = spObj ? spObj.id : '';
+      }
+      if (Array.isArray(data.capsules)) {
+        slot.capsules = Array(7).fill('').map((_, i) => {
+          if (!data.capsules[i]) return '';
+          const capName = normalizeCapsuleName(data.capsules[i].toString()).toLowerCase();
+          const found = capsules.find(cap => (cap.name || '').trim().toLowerCase() === capName);
+          return found ? found.id : '';
+        });
+      }
+      replaceCharacter(matchId, teamKey, slotIndex, slot);
+      setSuccess('Applied character YAML.');
+      setError('');
+    } catch (e) {
+      console.error('applyCharacterYaml error', e);
+      setError('Failed to apply character YAML: ' + e.message);
+    }
+  };
+
+  // Generate YAML text for all matches
+  const generateAllMatchesYaml = () => {
+    const allMatchesYaml = matches.map((match) => {
+      const matchFusionSels = fusionAISelections[match.id] || {};
+      const fusionSelsYaml = { team1: {}, team2: {} };
+      Object.entries(matchFusionSels).forEach(([selKey, constituentCharId]) => {
+        const colonIdx = selKey.indexOf(':');
+        if (colonIdx === -1) return;
+        const tn = selKey.slice(0, colonIdx);
+        const fusionId = selKey.slice(colonIdx + 1);
+        if (!fusionSelsYaml[tn]) return;
+        const fusionName = characters.find(c => c.id === fusionId)?.name;
+        const constituentName = characters.find(c => c.id === constituentCharId)?.name;
+        if (fusionName && constituentName) fusionSelsYaml[tn][fusionName] = constituentName;
+      });
+      const hasFusionSels = Object.keys(fusionSelsYaml.team1).length > 0 || Object.keys(fusionSelsYaml.team2).length > 0;
+      const mapTeam = (team) => (team || []).map((char) => ({
+        character: char.name || (characters.find(c => c.id === char.id)?.name || ''),
+        costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : '',
+        capsules: (char.capsules || []).map((cid) => {
+          const cap = capsules.find((c) => c.id === cid);
+          if (cap) {
+            const cost = Number(cap.cost || cap.Cost || 0) || 0;
+            return `${cap.name}${cost ? ` (${cost})` : ''}`;
+          }
+          if (cid && cid.toString().startsWith('00_0_')) return '';
+          return cid;
+        }).filter(Boolean),
+        ai: char.ai ? (aiItems.find(ai => ai.id === char.ai)?.name || char.ai) : '',
+        transformAi: char.transformAi ? (aiItems.find(ai => ai.id === char.transformAi)?.name || char.transformAi) : '',
+        sparking: char.sparking ? (sparkingMusic.find(s => s.id === char.sparking)?.name || char.sparking) : '',
+      }));
+      return {
+        matchName: match.name,
+        team1Name: match.team1Name,
+        team2Name: match.team2Name,
+        team1: mapTeam(match.team1),
+        team2: mapTeam(match.team2),
+        ...(hasFusionSels ? { fusionSelections: fusionSelsYaml } : {}),
+      };
+    });
+    return formatYamlReadable(yaml.dump({ matches: allMatchesYaml }, { noRefs: true, lineWidth: 120 }));
+  };
+
+  // Apply all-matches YAML text to the builder state
+  const applyAllMatchesYaml = (yamlText) => {
+    try {
+      const parsed = yaml.load(yamlText);
+      if (!parsed || !Array.isArray(parsed.matches)) throw new Error('Expected a "matches" array at the top level');
+      const normalizeCapsuleName = (s) => {
+        if (!s && s !== 0) return '';
+        return String(s).trim().replace(/\s*\(\d+\)\s*$/, '').trim();
+      };
+      const mapMember = (m) => {
+        const nameVal = (m.character || '').toString().trim();
+        const charObj = characters.find(c => (c.name || '').trim().toLowerCase() === nameVal.toLowerCase()) || { name: nameVal, id: '' };
+        return {
+          name: charObj.name,
+          id: charObj.id || '',
+          costume: m.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || '').trim().toLowerCase() === (m.costume || '').toString().trim().toLowerCase())?.id || '') : '',
+          capsules: Array(7).fill('').map((_, i) => {
+            if (m.capsules && m.capsules[i]) {
+              const capName = normalizeCapsuleName(m.capsules[i].toString()).toLowerCase();
+              return capsules.find(c => (c.name || '').trim().toLowerCase() === capName)?.id || '';
+            }
+            return '';
+          }),
+          ai: m.ai ? findAiIdFromValue(m.ai, aiItems) : '',
+          transformAi: m.transformAi ? findAiIdFromValue(m.transformAi, aiItems) : '',
+          sparking: m.sparking ? (sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (m.sparking || '').toString().trim().toLowerCase())?.id || '') : '',
+        };
+      };
+      let counter = matchCounter;
+      const newMatches = parsed.matches.map((mData) => {
+        const id = counter++;
+        return {
+          id,
+          name: mData.matchName || `Match ${id}`,
+          team1Name: mData.team1Name || 'Team 1',
+          team2Name: mData.team2Name || 'Team 2',
+          team1: (mData.team1 || []).map(mapMember),
+          team2: (mData.team2 || []).map(mapMember),
+        };
+      });
+      // Reconstruct fusion selections
+      const newFusionSels = {};
+      parsed.matches.forEach((mData, idx) => {
+        const matchId = newMatches[idx]?.id;
+        if (!matchId || !mData.fusionSelections) return;
+        newFusionSels[matchId] = {};
+        for (const [tn, sels] of Object.entries(mData.fusionSelections)) {
+          if (!sels || typeof sels !== 'object') continue;
+          Object.entries(sels).forEach(([fusionName, constituentName]) => {
+            const fusionChar = characters.find(c => (c.name || '').trim().toLowerCase() === fusionName.trim().toLowerCase());
+            const constitChar = characters.find(c => (c.name || '').trim().toLowerCase() === constituentName.trim().toLowerCase());
+            if (fusionChar && constitChar) newFusionSels[matchId][`${tn}:${fusionChar.id}`] = constitChar.id;
+          });
+        }
+      });
+      setMatches(newMatches);
+      setMatchCounter(counter);
+      setFusionAISelections(newFusionSels);
+      setSuccess('Applied all-matches YAML.');
+      setError('');
+    } catch (e) {
+      console.error('applyAllMatchesYaml error', e);
+      setError('Failed to apply all-matches YAML: ' + e.message);
+    }
+  };
+
   const [characters, setCharacters] = useState([]);
   const [capsules, setCapsules] = useState([]);
   const [costumes, setCostumes] = useState([]);
@@ -556,6 +738,15 @@ const MatchBuilder = () => {
   const [success, setSuccess] = useState("");
   const [pendingMatchSetup, setPendingMatchSetup] = useState(null);
   const [pendingItemSetup, setPendingItemSetup] = useState(null);
+
+  // YAML panel state — shared across all levels via callbacks
+  // { title, yamlText, onApply } or null when closed
+  const [yamlPanelState, setYamlPanelState] = useState(null);
+
+  const openYamlPanel = (title, yamlText, onApply) => {
+    setYamlPanelState({ title, yamlText, onApply });
+  };
+  const closeYamlPanel = () => setYamlPanelState(null);
 
   // Show error for a duration, then fade it out before clearing
   const [errorFading, setErrorFading] = useState(false);
@@ -1712,9 +1903,176 @@ const MatchBuilder = () => {
               onRenameMatch={(newName) => updateMatchName(match.id, newName)}
               onRenameTeam1={(newName) => updateTeamDisplayName(match.id, 'team1', newName)}
               onRenameTeam2={(newName) => updateTeamDisplayName(match.id, 'team2', newName)}
+              openYamlPanel={openYamlPanel}
+              generateMatchYaml={() => {
+                // Reuse exportSingleMatch logic but return string instead of downloading
+                const matchFusionSels = fusionAISelections[match.id] || {};
+                const fusionSelsYaml = { team1: {}, team2: {} };
+                Object.entries(matchFusionSels).forEach(([selKey, constituentCharId]) => {
+                  const colonIdx = selKey.indexOf(':');
+                  if (colonIdx === -1) return;
+                  const tn = selKey.slice(0, colonIdx);
+                  const fusionId = selKey.slice(colonIdx + 1);
+                  if (!fusionSelsYaml[tn]) return;
+                  const fusionName = characters.find(c => c.id === fusionId)?.name;
+                  const constituentName = characters.find(c => c.id === constituentCharId)?.name;
+                  if (fusionName && constituentName) fusionSelsYaml[tn][fusionName] = constituentName;
+                });
+                const hasFusionSels = Object.keys(fusionSelsYaml.team1).length > 0 || Object.keys(fusionSelsYaml.team2).length > 0;
+                const mapTeam = (team) => (team || []).map((char) => ({
+                  character: char.name || (characters.find(c => c.id === char.id)?.name || ''),
+                  costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : '',
+                  capsules: (char.capsules || []).map((cid) => {
+                    const cap = capsules.find((c) => c.id === cid);
+                    if (cap) { const cost = Number(cap.cost || cap.Cost || 0) || 0; return `${cap.name}${cost ? ` (${cost})` : ''}`; }
+                    if (cid && cid.toString().startsWith('00_0_')) return '';
+                    return cid;
+                  }).filter(Boolean),
+                  ai: char.ai ? (aiItems.find(ai => ai.id === char.ai)?.name || char.ai) : '',
+                  transformAi: char.transformAi ? (aiItems.find(ai => ai.id === char.transformAi)?.name || char.transformAi) : '',
+                  sparking: char.sparking ? (sparkingMusic.find(s => s.id === char.sparking)?.name || char.sparking) : '',
+                }));
+                const matchYaml = {
+                  matchName: match.name,
+                  team1Name: match.team1Name,
+                  team2Name: match.team2Name,
+                  team1: mapTeam(match.team1),
+                  team2: mapTeam(match.team2),
+                  ...(hasFusionSels ? { fusionSelections: fusionSelsYaml } : {}),
+                };
+                return formatYamlReadable(yaml.dump(matchYaml, { noRefs: true, lineWidth: 120 }));
+              }}
+              applyMatchYaml={(text) => {
+                // Reuse importSingleMatch logic but from text string
+                try {
+                  const matchYaml = yaml.load(text);
+                  if (!matchYaml || !matchYaml.matchName) throw new Error("Invalid YAML");
+                  const normalizeCapsuleName = (s) => { if (!s && s !== 0) return ''; return String(s).trim().replace(/\s*\(\d+\)\s*$/, '').trim(); };
+                  const mapMember = (char) => {
+                    const nameVal = (char.character || '').toString().trim();
+                    const charObj = characters.find(c => (c.name || '').trim().toLowerCase() === nameVal.toLowerCase()) || { name: nameVal, id: '' };
+                    return {
+                      name: charObj.name, id: charObj.id || '',
+                      costume: char.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || '').trim().toLowerCase() === (char.costume || '').toString().trim().toLowerCase())?.id || '') : '',
+                      capsules: Array(7).fill('').map((_, i) => { if (char.capsules && char.capsules[i]) { const capName = normalizeCapsuleName(char.capsules[i].toString()).toLowerCase(); return capsules.find(c => (c.name || '').trim().toLowerCase() === capName)?.id || ''; } return ''; }),
+                      ai: char.ai ? findAiIdFromValue(char.ai, aiItems) : '',
+                      transformAi: char.transformAi ? findAiIdFromValue(char.transformAi, aiItems) : '',
+                      sparking: char.sparking ? (sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (char.sparking || '').toString().trim().toLowerCase())?.id || '') : '',
+                    };
+                  };
+                  setMatches(prev => prev.map(m => {
+                    if (m.id !== match.id) return m;
+                    return {
+                      ...m,
+                      name: matchYaml.matchName || m.name,
+                      team1Name: matchYaml.team1Name || m.team1Name,
+                      team2Name: matchYaml.team2Name || m.team2Name,
+                      team1: (matchYaml.team1 || []).map(mapMember),
+                      team2: (matchYaml.team2 || []).map(mapMember),
+                    };
+                  }));
+                  if (matchYaml.fusionSelections && typeof matchYaml.fusionSelections === 'object') {
+                    const fusionSels = {};
+                    for (const [tn, sels] of Object.entries(matchYaml.fusionSelections)) {
+                      if (!sels || typeof sels !== 'object') continue;
+                      Object.entries(sels).forEach(([fusionName, constituentName]) => {
+                        const fusionChar = characters.find(c => (c.name || '').trim().toLowerCase() === fusionName.trim().toLowerCase());
+                        const constitChar = characters.find(c => (c.name || '').trim().toLowerCase() === constituentName.trim().toLowerCase());
+                        if (fusionChar && constitChar) fusionSels[`${tn}:${fusionChar.id}`] = constitChar.id;
+                      });
+                    }
+                    if (Object.keys(fusionSels).length > 0) setFusionAISelections(prev => ({ ...prev, [match.id]: { ...(prev[match.id] || {}), ...fusionSels } }));
+                  }
+                  setSuccess(`Applied YAML to ${match.name}.`);
+                  setError('');
+                } catch (e) {
+                  console.error('applyMatchYaml error', e);
+                  setError('Failed to apply match YAML: ' + e.message);
+                }
+              }}
+              generateTeamYaml={(team, teamDisplayName, teamKey) => {
+                const teamYaml = {
+                  matchName: match.name,
+                  teamName: teamDisplayName,
+                  members: team.map((char) => ({
+                    character: char.name || (characters.find(c => c.id === char.id)?.name || ''),
+                    costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : '',
+                    capsules: (char.capsules || []).map((cid) => {
+                      const found = capsules.find((c) => c.id === cid);
+                      if (found) { const cost = Number(found.cost || found.Cost || 0) || 0; return `${found.name}${cost ? ` (${cost})` : ''}`; }
+                      if (cid && cid.toString().startsWith('00_0_')) return '';
+                      return cid;
+                    }).filter(Boolean),
+                    ai: char.ai ? (aiItems.find(ai => ai.id === char.ai)?.name || char.ai) : '',
+                    transformAi: char.transformAi ? (aiItems.find(ai => ai.id === char.transformAi)?.name || char.transformAi) : '',
+                    sparking: char.sparking ? (sparkingMusic.find(s => s.id === char.sparking)?.name || char.sparking) : '',
+                  })),
+                };
+                const matchFusionSels = fusionAISelections[match.id] || {};
+                const fusionSelsForTeam = {};
+                Object.entries(matchFusionSels).forEach(([selKey, constituentCharId]) => {
+                  if (!selKey.startsWith(`${teamKey}:`)) return;
+                  const fusionId = selKey.slice(`${teamKey}:`.length);
+                  const fusionName = characters.find(c => c.id === fusionId)?.name;
+                  const constituentName = characters.find(c => c.id === constituentCharId)?.name;
+                  if (fusionName && constituentName) fusionSelsForTeam[fusionName] = constituentName;
+                });
+                if (Object.keys(fusionSelsForTeam).length > 0) teamYaml.fusionSelections = fusionSelsForTeam;
+                return formatYamlReadable(yaml.dump(teamYaml, { noRefs: true, lineWidth: 120 }));
+              }}
+              applyTeamYaml={(text, teamKey) => {
+                try {
+                  const teamYaml = yaml.load(text);
+                  if (!teamYaml || !teamYaml.members) throw new Error("Invalid team YAML");
+                  const normalizeCapsuleName = (s) => { if (!s && s !== 0) return ''; return String(s).trim().replace(/\s*\(\d+\)\s*$/, '').trim(); };
+                  const newTeam = (teamYaml.members || []).map((m) => {
+                    const nameVal = (m.character || '').toString().trim();
+                    const charObj = characters.find(c => (c.name || '').trim().toLowerCase() === nameVal.toLowerCase()) || { id: '', name: nameVal };
+                    return {
+                      name: charObj.name, id: charObj.id || '',
+                      costume: m.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || '').trim().toLowerCase() === (m.costume || '').toString().trim().toLowerCase())?.id || '') : '',
+                      capsules: Array(7).fill('').map((_, i) => { if (m.capsules && m.capsules[i]) { const capName = normalizeCapsuleName(m.capsules[i].toString()).toLowerCase(); return capsules.find(c => (c.name || '').trim().toLowerCase() === capName)?.id || ''; } return ''; }),
+                      ai: m.ai ? findAiIdFromValue(m.ai, aiItems) : '',
+                      transformAi: m.transformAi ? findAiIdFromValue(m.transformAi, aiItems) : '',
+                      sparking: m.sparking ? (sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (m.sparking || '').toString().trim().toLowerCase())?.id || '') : '',
+                    };
+                  });
+                  setMatches(prev => prev.map(m => {
+                    if (m.id !== match.id) return m;
+                    const updated = { ...m, [teamKey]: newTeam };
+                    if (teamYaml.matchName) updated.name = teamYaml.matchName;
+                    if (teamYaml.teamName) updated[teamKey === 'team1' ? 'team1Name' : 'team2Name'] = teamYaml.teamName;
+                    return updated;
+                  }));
+                  if (teamYaml.fusionSelections && typeof teamYaml.fusionSelections === 'object') {
+                    const fusionSels = {};
+                    Object.entries(teamYaml.fusionSelections).forEach(([fusionName, constituentName]) => {
+                      const fusionChar = characters.find(c => (c.name || '').trim().toLowerCase() === fusionName.trim().toLowerCase());
+                      const constitChar = characters.find(c => (c.name || '').trim().toLowerCase() === constituentName.trim().toLowerCase());
+                      if (fusionChar && constitChar) fusionSels[`${teamKey}:${fusionChar.id}`] = constitChar.id;
+                    });
+                    if (Object.keys(fusionSels).length > 0) setFusionAISelections(prev => ({ ...prev, [match.id]: { ...(prev[match.id] || {}), ...fusionSels } }));
+                  }
+                  setSuccess(`Applied YAML to team.`);
+                  setError('');
+                } catch (e) {
+                  console.error('applyTeamYaml error', e);
+                  setError('Failed to apply team YAML: ' + e.message);
+                }
+              }}
+              generateCharacterYaml={(character, teamKey) => generateCharacterYaml(character, match.name, teamKey)}
+              applyCharacterYaml={(text, teamKey, slotIndex) => applyCharacterYaml(text, match.id, teamKey, slotIndex)}
             />
           ))}
         </div>
+        {yamlPanelState && (
+          <YamlPanel
+            title={yamlPanelState.title}
+            initialYaml={yamlPanelState.yamlText}
+            onApply={yamlPanelState.onApply}
+            onClose={closeYamlPanel}
+          />
+        )}
       </div>
     </div>
   );
@@ -2089,6 +2447,13 @@ const MatchCard = ({
   onRenameMatch,
   onRenameTeam1,
   onRenameTeam2,
+  openYamlPanel,
+  generateMatchYaml,
+  applyMatchYaml,
+  generateTeamYaml,
+  applyTeamYaml,
+  generateCharacterYaml,
+  applyCharacterYaml,
 }) => {
   return (
     <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl p-6 shadow-xl border-2 border-orange-400/50 relative overflow-hidden">
@@ -2112,6 +2477,18 @@ const MatchCard = ({
           />
         </div>
   <div className="flex flex-wrap gap-2 mt-3 md:mt-0">
+          <button
+            onClick={() => typeof openYamlPanel === 'function' && openYamlPanel(
+              `Match — ${match.name}`,
+              typeof generateMatchYaml === 'function' ? generateMatchYaml() : '',
+              (text) => typeof applyMatchYaml === 'function' && applyMatchYaml(text)
+            )}
+            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-3 py-2 rounded-lg shadow-md hover:scale-105 transition-all border border-teal-500 flex items-center justify-center"
+            aria-label="YAML for this Match"
+          >
+            <ClipboardPaste size={18} />
+            <span className="sr-only">YAML</span>
+          </button>
           <button
             onClick={() => exportSingleMatch(match)}
             className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-2 rounded-lg shadow-md hover:scale-105 transition-all border border-purple-500 flex items-center justify-center"
@@ -2182,6 +2559,11 @@ const MatchCard = ({
             importSingleTeam={importSingleTeam}
             onRenameTeam={onRenameTeam1}
             onReplaceCharacter={(index, slotObj) => onReplaceCharacter('team1', index, slotObj)}
+            openYamlPanel={openYamlPanel}
+            generateTeamYaml={(team, displayName) => typeof generateTeamYaml === 'function' ? generateTeamYaml(team, displayName, 'team1') : ''}
+            applyTeamYaml={(text) => typeof applyTeamYaml === 'function' && applyTeamYaml(text, 'team1')}
+            generateCharacterYaml={(character) => typeof generateCharacterYaml === 'function' ? generateCharacterYaml(character, 'team1') : ''}
+            applyCharacterYaml={(text, slotIndex) => typeof applyCharacterYaml === 'function' && applyCharacterYaml(text, 'team1', slotIndex)}
           />
           <TeamPanel
             teamName="team2"
@@ -2212,6 +2594,11 @@ const MatchCard = ({
             importSingleTeam={importSingleTeam}
             onRenameTeam={onRenameTeam2}
             onReplaceCharacter={(index, slotObj) => onReplaceCharacter('team2', index, slotObj)}
+            openYamlPanel={openYamlPanel}
+            generateTeamYaml={(team, displayName) => typeof generateTeamYaml === 'function' ? generateTeamYaml(team, displayName, 'team2') : ''}
+            applyTeamYaml={(text) => typeof applyTeamYaml === 'function' && applyTeamYaml(text, 'team2')}
+            generateCharacterYaml={(character) => typeof generateCharacterYaml === 'function' ? generateCharacterYaml(character, 'team2') : ''}
+            applyCharacterYaml={(text, slotIndex) => typeof applyCharacterYaml === 'function' && applyCharacterYaml(text, 'team2', slotIndex)}
           />
         </div>
       )}
@@ -2244,6 +2631,11 @@ const TeamPanel = ({
   onRenameTeam,
   teamName,
   onReplaceCharacter,
+  openYamlPanel,
+  generateTeamYaml,
+  applyTeamYaml,
+  generateCharacterYaml,
+  applyCharacterYaml,
 }) => {
   if (typeof exportSingleTeam !== "function") {
     console.warn("TeamPanel: exportSingleTeam prop is not a function!", exportSingleTeam);
@@ -2280,6 +2672,19 @@ const TeamPanel = ({
           />
         </div>
         <div className="flex gap-2 items-center">
+          <button
+            onClick={() => typeof openYamlPanel === 'function' && openYamlPanel(
+              `Team — ${displayName}`,
+              typeof generateTeamYaml === 'function' ? generateTeamYaml(team, displayName) : '',
+              (text) => typeof applyTeamYaml === 'function' && applyTeamYaml(text)
+            )}
+            className="p-1 rounded bg-teal-700 text-white border border-teal-400 hover:bg-teal-400 hover:text-slate-800 transition-all flex items-center justify-center z-20"
+            aria-label={`YAML for ${displayName}`}
+            style={{ width: 28, height: 28 }}
+          >
+            <ClipboardPaste size={16} />
+            <span className="sr-only">YAML {displayName}</span>
+          </button>
           <button
             onClick={() => exportSingleTeam(team, displayName, matchName, matchId, teamName)}
             className="p-1 rounded bg-purple-700 text-white border border-purple-400 hover:bg-purple-400 hover:text-slate-800 transition-all flex items-center justify-center z-20"
@@ -2347,6 +2752,9 @@ const TeamPanel = ({
                     onUpdateCapsule(index, capsuleIndex, value)
                   }
                   onReplaceCharacter={(slotObj) => onReplaceCharacter(index, slotObj)}
+                  openYamlPanel={openYamlPanel}
+                  generateCharacterYaml={generateCharacterYaml}
+                  applyCharacterYaml={(text) => typeof applyCharacterYaml === 'function' && applyCharacterYaml(text, index)}
                 />
               );
             })}
@@ -2441,6 +2849,9 @@ const CharacterSlot = ({
   onUpdate,
   onUpdateCapsule,
   onReplaceCharacter,
+  openYamlPanel,
+  generateCharacterYaml,
+  applyCharacterYaml,
 }) => {
   const [collapsed, setCollapsed] = React.useState(false);
   const charCostumes = (() => {
@@ -2906,6 +3317,18 @@ const CharacterSlot = ({
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
+                <button
+                  onClick={() => typeof openYamlPanel === 'function' && openYamlPanel(
+                    `Character — ${character.name || 'Slot ' + (index + 1)}`,
+                    typeof generateCharacterYaml === 'function' ? generateCharacterYaml(character) : '',
+                    (text) => typeof applyCharacterYaml === 'function' && applyCharacterYaml(text)
+                  )}
+                  className="mt-4 px-3 py-2 rounded-lg bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold text-sm shadow hover:scale-105 transition-all border border-teal-500 inline-flex items-center"
+                  aria-label="YAML for this character"
+                >
+                  <ClipboardPaste size={14} />
+                  <span className="hidden sm:inline ml-2">YAML</span>
+                </button>
                 <button
                   onClick={() => {
                     // Export current character build as YAML
