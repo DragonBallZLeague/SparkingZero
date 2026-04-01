@@ -642,7 +642,74 @@ const MatchBuilder = () => {
         ...(hasFusionSels ? { fusionSelections: fusionSelsYaml } : {}),
       };
     });
-    return formatYamlReadable(yaml.dump({ matches: allMatchesYaml }, { noRefs: true, lineWidth: 120 }));
+    const raw = yaml.dump({ matches: allMatchesYaml }, { noRefs: true, lineWidth: 120 });
+    // Post-process for human readability: add blank lines and comment banners.
+    // The all-matches YAML has a different indentation structure than single-match YAML,
+    // so we use a dedicated pass that understands the nested layout.
+    const lines = raw.split('\n');
+    const out = [];
+    // Pre-scan: build a lookup of team display names keyed by match index.
+    // We track them as we encounter them during the main pass instead of pre-scanning,
+    // since each match block is self-contained.
+    const team1Names = {};
+    const team2Names = {};
+    let scanMatchIdx = -1;
+    for (const line of lines) {
+      if (/^  - matchName:/.test(line)) scanMatchIdx++;
+      let m;
+      if ((m = line.match(/^    team1Name:\s*(.+)/))) team1Names[scanMatchIdx] = m[1].trim().replace(/^['"]|['"]$/g, '');
+      if ((m = line.match(/^    team2Name:\s*(.+)/))) team2Names[scanMatchIdx] = m[1].trim().replace(/^['"]|['"]$/g, '');
+    }
+    let matchIdx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // New match entry — add a blank line separator before each match block (except the first)
+      if (/^  - matchName:/.test(line)) {
+        matchIdx++;
+        if (matchIdx > 0 && out[out.length - 1] !== '') out.push('');
+        // Inject a match banner comment
+        const mName = (line.match(/^  - matchName:\s*(.+)/) || [])[1]?.trim().replace(/^['"]|['"]$/g, '') || `Match ${matchIdx + 1}`;
+        const fill = '═'.repeat(Math.max(4, 44 - mName.length));
+        out.push(`# ══ ${mName} ${fill}`);
+        out.push(line);
+        continue;
+      }
+      // team1 key at 4-space indent — add comment banner
+      if (/^    team1:/.test(line)) {
+        if (out[out.length - 1] !== '') out.push('');
+        const label = team1Names[matchIdx] || 'Team 1';
+        const fill = '─'.repeat(Math.max(4, 36 - label.length));
+        out.push(`    # ── ${label} ${fill}`);
+        out.push(line);
+        continue;
+      }
+      // team2 key at 4-space indent — add comment banner
+      if (/^    team2:/.test(line)) {
+        if (out[out.length - 1] !== '') out.push('');
+        const label = team2Names[matchIdx] || 'Team 2';
+        const fill = '─'.repeat(Math.max(4, 36 - label.length));
+        out.push(`    # ── ${label} ${fill}`);
+        out.push(line);
+        continue;
+      }
+      // fusionSelections — add a blank line before it
+      if (/^    fusionSelections:/.test(line)) {
+        if (out[out.length - 1] !== '') out.push('');
+        out.push(line);
+        continue;
+      }
+      // Blank line between character entries within a team (6-space indent list items)
+      if (/^      - character:/.test(line)) {
+        const lastNonEmpty = [...out].reverse().find(l => l.trim() !== '') ?? '';
+        if (out[out.length - 1] !== '' && !/:\s*$/.test(lastNonEmpty)) {
+          out.push('');
+        }
+        out.push(line);
+        continue;
+      }
+      out.push(line);
+    }
+    return out.join('\n');
   };
 
   // Apply all-matches YAML text to the builder state
@@ -1695,6 +1762,22 @@ const MatchBuilder = () => {
             <span className="flex items-center">
               <Download className="mr-2" size={18} />
               <span className="hidden sm:inline">EXPORT ALL</span>
+            </span>
+          </button>
+          <button
+            onClick={() => {
+              if (matches.length === 0) { alert("No matches to export"); return; }
+              openYamlPanel(
+                "All Matches — YAML",
+                generateAllMatchesYaml(),
+                (text) => applyAllMatchesYaml(text)
+              );
+            }}
+            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all border border-teal-500"
+          >
+            <span className="flex items-center">
+              <ClipboardPaste className="mr-2" size={18} />
+              <span className="hidden sm:inline">YAML</span>
             </span>
           </button>
           <button
