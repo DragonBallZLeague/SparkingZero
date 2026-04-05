@@ -195,20 +195,23 @@ function processMatchFile(filePath, folderTeam, matchType) {
   console.log(`Tagged: ${filePath}`);
 }
 
+function walkAndProcess(dir, matchType) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walkAndProcess(full, matchType);
+    } else if (entry.isFile() && entry.name.endsWith('.json')) {
+      processMatchFile(full, null, matchType);
+    }
+  }
+}
+
 function processAllMatches() {
-  const teams = getTeamFolders();
   for (const [category, matchType] of Object.entries(CATEGORY_FOLDERS)) {
     const categoryDir = path.join(BR_DATA_ROOT, category);
     if (!fs.existsSync(categoryDir)) continue;
-    for (const team of teams) {
-      const teamDir = path.join(categoryDir, team);
-      if (!fs.existsSync(teamDir)) continue;
-      const files = fs.readdirSync(teamDir).filter(f => f.endsWith('.json'));
-      for (const file of files) {
-        const filePath = path.join(teamDir, file);
-        processMatchFile(filePath, team, matchType);
-      }
-    }
+    walkAndProcess(categoryDir, matchType);
   }
 }
 
