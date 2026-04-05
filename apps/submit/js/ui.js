@@ -238,6 +238,8 @@ function syncFormInputs() {
         team2Select.value = AppState.team2;
     }
     
+
+    
     console.log('[UI] Form inputs synced with state');
 }
 

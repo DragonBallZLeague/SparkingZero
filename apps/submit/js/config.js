@@ -29,6 +29,13 @@ const CATEGORY_MATCH_TYPE = {
     'Events':  'Event',
 };
 
+// CPU level → difficulty name mapping
+const CPU_LEVEL_DIFFICULTY = {
+    11: 'Strong',
+    15: 'Super',
+    20: 'Ultra',
+};
+
 // List of available teams for selection
 const TEAMS = [
     { value: '', label: '' },

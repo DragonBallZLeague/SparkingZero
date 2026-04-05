@@ -342,6 +342,8 @@ function setupEventListeners() {
         });
     }
     
+
+    
     // File input
     const fileInput = document.getElementById('fileInput');
     if (fileInput) {

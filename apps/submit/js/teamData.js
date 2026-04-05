@@ -52,12 +52,30 @@ async function modifyFileWithTeamData(file, team1, team2) {
     const categoryFolder = AppState.selectedParent || '';
     const matchType = CATEGORY_MATCH_TYPE[categoryFolder] || null;
 
+    // Auto-derive matchSize from character record
+    const charRecord = json.TeamBattleResults?.battleResult?.characterRecord || {};
+    const charKeys = Object.keys(charRecord);
+    const alliesCount = 1 + charKeys.filter(k => k.includes('AlliesTeamMember')).length;
+    const enemiesCount = 1 + charKeys.filter(k => k.includes('EnemyTeamMember')).length;
+    const teamSize = Math.max(alliesCount, enemiesCount);
+    const matchSize = `${teamSize}v${teamSize}`;
+
+    // Auto-derive difficulty from cpuLevel of first character
+    const firstChar = Object.values(charRecord)[0];
+    const cpuLevel = firstChar?.battlePlayCharacter?.cpuLevel;
+    const difficulty = CPU_LEVEL_DIFFICULTY[cpuLevel] || null;
+
     // Build/update the tags object
-    json.tags = Object.assign(json.tags || {}, {
+    const tagsUpdate = {
         team: teams,
         season: CURRENT_SEASON,
         matchType: matchType,
-    });
+        matchSize: matchSize,
+    };
+    if (difficulty) {
+        tagsUpdate.difficulty = difficulty;
+    }
+    json.tags = Object.assign(json.tags || {}, tagsUpdate);
     
     // Convert back to base64
     const modifiedJson = JSON.stringify(json, null, 2);
