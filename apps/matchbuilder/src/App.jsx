@@ -1396,7 +1396,7 @@ const MatchBuilder = () => {
               .map((_, i) => ({
                 key: match.team1[i]?.id || "None",
               })),
-            comLevel: "High",
+            comLevel: "Extreme",
           },
           com2: {
             teamMembers: Array(5)
@@ -1404,7 +1404,7 @@ const MatchBuilder = () => {
               .map((_, i) => ({
                 key: match.team2[i]?.id || "None",
               })),
-            comLevel: "High",
+            comLevel: "Extreme",
           },
           player: {
             teamMembers: Array(5)
