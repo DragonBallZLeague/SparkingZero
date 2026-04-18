@@ -1,192 +1,493 @@
 teams:
-  - color: "#F97316"
-    roster:
-      - Goku (Z - Early)
-      - Android 18
-      - Vegeta (Z - End)
-    name: Budokai
+  - name: Budokai
     slug: budokai
-    banner: /images/budokai-banner.png
-    manager: TBD
+    color: "#F97316"
     icon: /images/budokai-icon.png
+    banner: /images/budokai-banner.png
+    description: Characters who participated in a tournament.
+    manager: TBD
+    roster:
+      - Android 18
+      - Frost
+      - Goku (Z - Early)
+      - Kale
+      - Vegeta (Z - End) Super Saiyan
     master_list:
-      - Mr. Satan
-      - Tien
-      - Yamcha
-      - Krillin
+      - Goku (Z - Early)
+      - Goku (Z - End)
+      - Goku (Super)
+      - Goku (Teen)
+      - Vegeta (Z - End)
+      - Vegeta (Super)
+      - Gohan (Teen)
+      - Gohan (Adult)
+      - Ultimate Gohan
       - Piccolo
-    description: Characters who have participated in a tournament.
+      - Krillin
+      - Yamcha
+      - Tien
+      - Trunks (Sword)
+      - Trunks (Kid)
+      - Goten
+      - Videl
+      - Master Roshi
+      - Frieza (Super)
+      - Majin Buu
+      - Mr. Satan
+      - Chiaotzu
+      - Yajirobe
+      - Android 17 (Super)
+      - Hit
+      - Frost
+      - Cabba
+      - Caulifla
+      - Kale
+      - Jiren
+      - Toppo
+      - Dyspo
+      - Bergamo
+      - Ribrianne
+      - Kakunsa
+      - Roasie
+      - Anilaza
+      - Shallot
+      - Android 18
+      - Spopovich
+    restrictions: |
+      - Kale Super Saiyan (Berserk) is a banned starting form
+      - Toppo cannot start in God of Destruction form
+      - Jiren cannot start Full Power form
+      - No forms beyond Super Saiyan are allowed
   - name: Cinema
     slug: cinema
     color: "#8B5CF6"
-    description: Stars of the silver screen. Movie villains and heroes collide.
+    description: Characters who first appeared in alternate media, namely movies and specials.
     manager: TBD
     roster:
-      - Goku (Super)
-      - Goku (Super) Super Saiyan
-      - Vegeta (Super)
-      - Vegeta (Super) Super Saiyan
+      - Android 13
+      - Bojack
       - Broly (Super)
-      - Broly (Super) Super Saiyan
+      - Gohan (Super Hero)
+      - Turles
+    master_list:
+      - Goku (Super)
+      - Vegeta (Super)
+      - Frieza (Super)
+      - Goku (GT)
+      - Vegeta (GT) Super Saiyan 4
+      - Pan (GT)
+      - Uub (GT)
       - Broly (Z)
-      - Gogeta (Super) Super Saiyan God Super Saiyan
+      - Broly (Super)
+      - Super Garlic Jr.
+      - Dr. Wheelo
+      - Turles
+      - Lord Slug
       - Cooler
-      - Cooler Final Form
+      - Metal Cooler
+      - Android 13
+      - Bojack
       - Janemba
       - Tapion
-      - Bojack
-  - name: Creations
-    slug: creations
-    color: "#10B981"
-    description: Artificial warriors and bio-engineered fighters.
+      - Hirudegarn
+      - Baby Vegeta (GT)
+      - Syn Shenron (GT)
+      - Piccolo (Super Hero)
+      - Cell Max
+      - Gohan (Super Hero)
+      - Gamma 1
+      - Gamma 2
+      - Shallot
+    restrictions: ""
+  - name: Cold Kingdom
+    slug: cold-kingdom
+    color: "#06B6D4"
+    description: Characters who have either been a member of the Cold family or served under them.
     manager: TBD
     roster:
-      - Cell 1st Form
-      - Cell Semi-Perfect Form
-      - Cell Perfect Form
-      - Cell Jr.
-      - Android 16
-      - Android 17
-      - Android 18
-      - Android 19
-      - Android 20 (Dr. Gero)
-  - name: Demons
-    slug: demons
-    color: "#DC2626"
-    description: The forces of darkness. Demon realm warriors and dark magic users.
-    manager: TBD
-    roster:
-      - Dabura
-      - Demon King Piccolo
-      - Demon King Piccolo (Elder)
-      - Janemba
-      - Super Janemba
-      - Kid Buu
-      - Majin Buu (Gotenks)
-      - Majin Buu (Gohan)
-  - name: Malevolent Souls
-    slug: malevolent-souls
-    color: "#6366F1"
-    description: The cruelest and most ruthless villains in the universe.
-    manager: TBD
-    roster:
-      - Frieza 1st Form
-      - Frieza 2nd Form
-      - Frieza 3rd Form
-      - Frieza Final Form
-      - Frieza Final Form Full Power
+      - Cooler
+      - Frieza (Super)
+      - Metal Cooler
+      - King Cold
+      - Zarbon
+    master_list:
       - Vegeta (Z - Scouter)
-      - Nappa
+      - Frieza (Z) 1st Form
+      - Mecha Frieza
+      - Frieza (Super)
+      - Bardock
       - Raditz
+      - Saibaman
+      - Nappa
       - Zarbon
       - Dodoria
-      - Ginyu
+      - Cui
+      - Captain Ginyu
       - Recoome
       - Burter
       - Jeice
       - Guldo
-  - name: Master & Student
-    slug: master-&-student
-    color: "#0EA5E9"
-    description: The bond between teacher and pupil. Their shared strength is unbreakable.
+      - King Cold
+      - Frieza Force Soldier
+      - Turles
+      - Cooler
+      - Metal Cooler
+      - Frost
+    restrictions: ""
+  - name: Creations
+    slug: creations
+    color: "#10B981"
+    description: Characters created through artificial means, either through magic or engineering.
     manager: TBD
     roster:
-      - Goku (Z - Mid)
-      - Goku (Z - Mid) Super Saiyan
-      - Gohan (Kid)
-      - Gohan (Teen)
-      - Gohan (Teen) Super Saiyan
-      - Gohan (Teen) Super Saiyan 2
+      - Android 17 (Z)
+      - Android 19
+      - Baby Vegeta
+      - Cell 1st Form
+      - Mecha Frieza
+    master_list:
       - Piccolo
-      - Master Roshi
-      - Master Roshi Full Power
-  - name: Primal Instincts
-    slug: primal-instincts
-    color: "#84CC16"
-    description: Savage fighters who rely on raw power and primal abilities.
+      - Piccolo (Fused with Kami)
+      - Gotenks
+      - Mecha Frieza
+      - Cell 1st Form
+      - Perfect Cell
+      - Cell Jr.
+      - Majin Buu (Evil)
+      - Saibaman
+      - Android 16
+      - Android 17 (Z)
+      - Android 17 (Super)
+      - Android 18
+      - Android 19
+      - Dr. Gero
+      - Dr. Wheelo
+      - Metal Cooler
+      - Android 13
+      - Janemba
+      - Baby Vegeta (GT)
+      - Syn Shenron (GT)
+      - Anilaza
+      - Piccolo (Super Hero)
+      - Cell Max
+      - Gamma 1
+      - Gamma 2
+      - Majin Duu
+      - Majin Kuu
+    restrictions: ""
+  - name: Demons
+    slug: demons
+    color: "#DC2626"
+    description: Characters of a canon demonic nature or heritage.
+    manager: TBD
+    roster:
+      - Dabura
+      - Third Eye Gomah
+      - Majin Buu
+      - Majin Duu
+      - Piccolo (Super Hero)
+    master_list:
+      - Piccolo
+      - Piccolo (Fused with Kami)
+      - Nail
+      - Cell 1st Form
+      - Perfect Cell
+      - Cell Jr.
+      - Majin Buu
+      - Majin Buu (Evil)
+      - Super Buu
+      - Kid Buu
+      - Majuub (GT)
+      - Babidi
+      - Dabura
+      - Super Garlic Jr.
+      - Lord Slug
+      - Janemba
+      - Syn Shenron (GT)
+      - Panzy
+      - Majin Kuu
+      - Glorio
+      - Piccolo (Super Hero)
+      - Cell Max
+      - Majin Duu
+      - Third Eye Gomah
+    restrictions: ""
+  - name: Malevolent Souls
+    slug: malevolent-souls
+    color: "#6366F1"
+    description: Characters who performed indisputably evil acts.
     manager: TBD
     roster:
       - Broly (Z)
-      - Broly (Z) Legendary Super Saiyan
-      - Great Ape Vegeta
-      - Great Ape Gohan (Kid)
-      - Kale
-      - Kale Super Saiyan (Berserk)
-      - Goku (GT) Super Saiyan 4
-      - Vegeta (GT) Super Saiyan 4
-  - name: Sentai Squad
-    slug: sentai-squad
-    color: "#EC4899"
-    description: The heroes of justice. A colorful squad fighting for the greater good.
-    manager: TBD
-    roster:
-      - Gohan (Adult)
-      - Gohan (Adult) Super Saiyan
-      - Gohan (Adult) Super Saiyan 2
-      - Ultimate Gohan
-      - Great Saiyaman
-      - Videl
-      - Krillin
-      - Android 18
-      - Trunks (Kid)
-      - Goten
-  - name: Cold Kingdom
-    slug: cold-kingdom
-    color: "#06B6D4"
-    description: The frost demons and their loyal forces. Cold, calculating, and powerful.
-    manager: TBD
-    roster:
+      - Frieza (Z) 1st Form
+      - Garlic Jr.
+      - Super Buu
+      - Syn Shenron
+    master_list:
+      - Vegeta (Z - Scouter)
+      - Majin Vegeta
+      - Frieza (Z) 1st Form
+      - Mecha Frieza
       - Frieza (Super)
-      - Golden Frieza
+      - Cell 1st Form
+      - Perfect Cell
+      - Cell Jr.
+      - Majin Buu
+      - Majin Buu (Evil)
+      - Super Buu
+      - Kid Buu
+      - Bardock
+      - Raditz
+      - Saibaman
+      - Nappa
+      - Zarbon
+      - Dodoria
+      - Cui
+      - Captain Ginyu
+      - Recoome
+      - Burter
+      - Jeice
+      - Guldo
       - King Cold
-      - Frost
+      - Android 17 (Z)
+      - Android 18
+      - Android 19
+      - Dr. Gero
+      - Babidi
+      - Dabura
+      - Frieza Force Soldier
+      - Broly (Z)
+      - Super Garlic Jr.
+      - Dr. Wheelo
+      - Turles
+      - Lord Slug
       - Cooler
-      - Cooler Final Form
-  - name: Z-Fighters
-    slug: z-fighters
-    color: "#F59E0B"
-    description: Earth's mightiest defenders. Always ready to protect the planet.
+      - Metal Cooler
+      - Android 13
+      - Bojack
+      - Janemba
+      - Hirudegarn
+      - Baby Vegeta (GT)
+      - Syn Shenron (GT)
+      - Spopovich
+      - Goku Black
+      - Zamasu
+      - Frost
+      - Cell Max
+      - Third Eye Gomah
+    restrictions: ""
+  - name: Master & Student
+    slug: master-&-student
+    color: "#0EA5E9"
+    description: Characters who acted either as a mentor or who were shown training under one.
     manager: TBD
     roster:
+      - Cabba
       - Goku (Z - End)
-      - Goku (Z - End) Super Saiyan
+      - Shallot
+      - Vegeta (Z - Scouter)
+      - Vegeta (Super)
+    master_list:
+      - Goku (Z - Early)
+      - Goku (Z - Mid)
+      - Goku (Z - End)
+      - Goku (Super)
+      - Goku (Teen)
+      - Vegeta (Z - Scouter)
+      - Vegeta (Z - End)
+      - Vegeta (Super)
+      - Super Vegeta
+      - Gohan (Kid)
+      - Gohan (Teen)
       - Gohan (Adult)
-      - Gohan (Adult) Super Saiyan
+      - Gohan (Future)
       - Piccolo
+      - Piccolo (Fused with Kami)
       - Krillin
       - Yamcha
       - Tien
-      - Chiaotzu
       - Trunks (Sword)
-      - Trunks (Sword) Super Saiyan
+      - Future Trunks
+      - Trunks (Kid)
+      - Goten
+      - Gotenks
+      - Videl
+      - Master Roshi
+      - Mr. Satan
+      - Chiaotzu
+      - Pan (GT)
+      - Majuub (GT)
+      - Nappa
+      - Shallot
+      - Cabba
+    restrictions: ""
+  - name: Primal Instincts
+    slug: primal-instincts
+    color: "#84CC16"
+    description: Characters with mammalian animalistic features.
+    manager: TBD
+    roster:
+      - Bardock
+      - Bergamo
+      - Caulifla
+      - Goku (Mini)
+      - Kakunsa
+    master_list:
+      - Goku (GT)
+      - Vegeta (Z - Scouter)
+      - Vegeta (GT) Super Saiyan 4
+      - Bardock
+      - Raditz
+      - Nappa
+      - Broly (Z)
+      - Broly (Super)
+      - Turles
+      - Cabba
+      - Caulifla
+      - Kale
+      - Dyspo
+      - Bergamo
+      - Kakunsa
+      - Goku (Mini)
+      - Shallot
+      - Kid Goku
+      - Baby Vegeta
+    restrictions: ""
+  - name: Sentai Squad
+    slug: sentai-squad
+    color: "#EC4899"
+    description: Characters inspired by Sentai style series.
+    manager: TBD
+    roster:
+      - Burter
+      - Gamma 1
+      - Jeice
+      - Jiren
+      - Toppo
+    master_list:
+      - Gohan (Adult)
+      - Videl
+      - Captain Ginyu
+      - Recoome
+      - Burter
+      - Jeice
+      - Guldo
+      - Jiren
+      - Toppo
+      - Dyspo
+      - Ribrianne
+      - Kakunsa
+      - Roasie
+      - Gamma 1
+      - Gamma 2
+      - Shallot
+    restrictions: ""
   - name: Time Patrol
     slug: time-patrol
     color: "#A855F7"
-    description: Guardians of the timeline. Fighters from across different eras.
+    description: Characters who have performed time travel/time magic, or played a very significant role in an alternate timeline.
     manager: TBD
     roster:
-      - Trunks (Sword)
-      - Trunks (Sword) Super Saiyan
       - Gohan (Future)
-      - Gohan (Future) Super Saiyan
-      - Goku (GT)
-      - Goku (GT) Super Saiyan
-      - Goku (GT) Super Saiyan 3
-      - Goku (GT) Super Saiyan 4
+      - Goku Black
+      - Guldo
+      - Trunks (Future)
+      - Zamasu
+    master_list:
+      - Goku (Super)
+      - Vegeta (Super)
+      - Gohan (Future)
+      - Trunks (Sword)
+      - Trunks (Melee)
+      - Future Trunks
+      - Cell (Perfect)
+      - Tapion
+      - Guldo
+      - Goku Black
+      - Zamasu
+      - Shallot
+      - Hit
+      - Bardock
+      - Android 18
+      - Android 17 (Z)
+    restrictions: ""
   - name: Tiny Terrors
     slug: tiny-terrors
     color: "#FACC15"
-    description: Small but mighty. Never underestimate their fighting spirit.
+    description: Characters of a very small stature.
     manager: TBD
     roster:
-      - Goten
-      - Goten Super Saiyan
-      - Trunks (Kid)
-      - Trunks (Kid) Super Saiyan
+      - Vegeta (Mini)
       - Gotenks
-      - Gotenks Super Saiyan
-      - Gotenks Super Saiyan 3
-      - Gohan (Kid)
-      - Krillin
-      - Chiaotzu
+      - Kid Buu
+      - Panzy
+      - Trunks (Kid)
+    master_list:
+      - Goku (GT)
       - Goku (Teen)
+      - Gohan (Kid)
+      - Gohan (Teen)
+      - Trunks (Kid)
+      - Goten
+      - Gotenks
+      - Cell Jr.
+      - Kid Buu
+      - Chiaotzu
+      - Pan (GT)
+      - Saibaman
+      - Goku (Mini)
+      - Panzy
+      - Majin Kuu
+      - Vegeta (Mini)
+      - Guldo
+    restrictions: ""
+  - name: Z-Fighters
+    slug: z-fighters
+    color: "#F59E0B"
+    description: Characters who acted as protagonists.
+    manager: TBD
+    roster:
+      - Gohan (Teen)
+      - Goku (Z - Mid)
+      - Piccolo (Fused with Kami)
+      - Tien
+      - Trunks (Sword)
+    master_list:
+      - Goku (Z - Early)
+      - Goku (Z - Mid)
+      - Goku (Z - End)
+      - Goku (Super)
+      - Goku (GT)
+      - Vegeta (Z - Early)
+      - Vegeta (Z - End)
+      - Vegeta (GT) Super Saiyan 4
+      - Vegeta (Super)
+      - Gohan (Kid)
+      - Gohan (Teen)
+      - Gohan (Adult)
+      - Ultimate Gohan
+      - Gohan (Future)
+      - Piccolo
+      - Piccolo (Fused with Kami)
+      - Krillin
+      - Yamcha
+      - Tien
+      - Trunks (Sword)
+      - Trunks (Melee)
+      - Trunks (Kid)
+      - Goten
+      - Gotenks
+      - Master Roshi
+      - Majin Buu
+      - Chiaotzu
+      - Yajirobe
+      - Pan (GT)
+      - Uub (GT)
+      - Android 16
+      - Android 17 (Super)
+      - Android 18
+      - Goku (Mini)
+      - Vegeta (Mini)
+      - Piccolo (Super Hero)
+      - SH Gohan
+    restrictions: ""
