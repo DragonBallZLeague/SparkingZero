@@ -65,11 +65,9 @@ export default async function handler(req, res) {
 
   // --- AUTH: redirect to GitHub authorize ---
   const scope = req.query.scope || 'repo';
-  const callbackUrl = `https://${req.headers.host}/api/oauth`;
 
   const params = new URLSearchParams({
     client_id: clientId,
-    redirect_uri: callbackUrl,
     scope: scope,
   });
 
