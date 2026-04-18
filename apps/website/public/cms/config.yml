@@ -2,15 +2,15 @@
 # DECAP CMS CONFIGURATION
 # This powers the visual admin panel for content editing.
 # Non-technical users can edit teams, schedules, and more
-# through a friendly web UI at /admin/
+# through a friendly web UI at /cms/
 # ============================================================
 
 backend:
   name: github
   repo: DragonBallZLeague/SparkingZero
   branch: main
-  auth_type: implicit
-  app_id: GITHUB_OAUTH_APP_ID  # Replace with your GitHub OAuth App Client ID
+  auth_type: pkce
+  app_id: GITHUB_OAUTH_APP_ID  # Injected at build time from VITE_ADMIN_CLIENT_ID secret
 
 # Where uploaded media goes
 media_folder: "apps/website/public/images"

@@ -84,7 +84,7 @@ jobs:
       - name: Inject OAuth App ID into CMS config
         shell: bash
         run: |
-          sed -i "s/GITHUB_OAUTH_APP_ID/${{ secrets.VITE_ADMIN_CLIENT_ID }}/g" dist/admin/config.yml
+          sed -i "s/GITHUB_OAUTH_APP_ID/${{ secrets.VITE_CMS_CLIENT_ID }}/g" dist/cms/config.yml
 
       - name: Create 404.html for SPA client-side routing
         shell: bash

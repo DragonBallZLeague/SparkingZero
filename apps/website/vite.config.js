@@ -8,7 +8,7 @@ import path from 'path';
 // /schedule-import/ → public/schedule-import/index.html
 function serveStaticToolsPlugin() {
   const tools = [
-    { pattern: ['/admin', '/admin/', '/admin/index.html'], file: 'public/admin/index.html' },
+    { pattern: ['/cms', '/cms/', '/cms/index.html'], file: 'public/cms/index.html' },
     { pattern: ['/schedule-import', '/schedule-import/', '/schedule-import/index.html'], file: 'public/schedule-import/index.html' },
   ];
   return {
