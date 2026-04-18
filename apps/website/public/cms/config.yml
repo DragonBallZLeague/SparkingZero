@@ -1,0 +1,419 @@
+﻿# ============================================================
+# DECAP CMS CONFIGURATION
+# This powers the visual admin panel for content editing.
+# Non-technical users can edit teams, schedules, and more
+# through a friendly web UI at /cms/
+# ============================================================
+
+backend:
+  name: github
+  repo: DragonBallZLeague/SparkingZero
+  branch: main
+  base_url: https://sparking-zero-iota.vercel.app
+  auth_endpoint: api/oauth
+
+# Where uploaded media goes
+media_folder: "apps/website/public/images"
+public_folder: "/images"
+
+# Content collections — each maps to a YAML file
+collections:
+  # --- SITE SETTINGS ---
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "site"
+        label: "General Settings"
+        file: "apps/website/public/content/site.yaml"
+        fields:
+          - { name: "site_name", label: "Site Name", widget: "string" }
+          - { name: "short_name", label: "Short Name", widget: "string" }
+          - { name: "tagline", label: "Tagline", widget: "string" }
+          - { name: "description", label: "Description", widget: "text" }
+          - { name: "current_season", label: "Current Season", widget: "string" }
+          - { name: "current_season_status", label: "Season Status", widget: "select", options: ["Active", "Offseason", "Playoffs"] }
+          - { name: "current_season_file", label: "Current Season Filename", widget: "string", hint: "e.g. season-1.yaml — must match the filename in content/seasons/" }
+          - name: "all_seasons"
+            label: "All Seasons (newest first)"
+            widget: "list"
+            hint: "Add an entry for each season file. The season dropdown on the site uses this list."
+            fields:
+              - { name: "file", label: "Filename", widget: "string", hint: "e.g. season-1.yaml" }
+              - { name: "label", label: "Display Label", widget: "string", hint: "e.g. Season 1" }
+          - name: "links"
+            label: "Social Links"
+            widget: "object"
+            fields:
+              - { name: "discord", label: "Discord URL", widget: "string" }
+              - { name: "youtube", label: "YouTube URL", widget: "string" }
+              - { name: "github", label: "GitHub URL", widget: "string" }
+              - { name: "old_site", label: "Legacy Site URL", widget: "string" }
+          - name: "nav"
+            label: "Navigation Items"
+            widget: "list"
+            fields:
+              - { name: "label", label: "Label", widget: "string" }
+              - { name: "path", label: "Path", widget: "string" }
+
+  # --- TEAMS ---
+  - name: "teams"
+    label: "Teams"
+    files:
+      - name: "teams"
+        label: "All Teams"
+        file: "apps/website/public/content/teams.yaml"
+        fields:
+          - name: "teams"
+            label: "Teams"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Team Name", widget: "string" }
+              - { name: "slug", label: "URL Slug", widget: "string" }
+              - { name: "color", label: "Team Color (hex)", widget: "color" }
+              - { name: "icon", label: "Team Icon", widget: "image", required: false, hint: "Square icon image for the team" }
+              - { name: "banner", label: "Team Banner", widget: "image", required: false, hint: "Wide banner image for the team" }
+              - { name: "description", label: "Description", widget: "text" }
+              - { name: "manager", label: "Manager", widget: "string", required: false }
+              - name: "roster"
+                label: "Roster"
+                widget: "list"
+                hint: "Active roster (up to 5 characters)"
+                field: { name: "character", label: "Character", widget: "string" }
+              - name: "master_list"
+                label: "Master List"
+                widget: "list"
+                required: false
+                hint: "Full list of all characters that fit the team theme"
+                field: { name: "character", label: "Character", widget: "string" }
+
+  # --- SEASONS (one file per season) ---
+  - name: "seasons"
+    label: "Seasons"
+    folder: "apps/website/public/content/seasons"
+    create: true
+    extension: "yaml"
+    format: "yaml"
+    identifier_field: "season"
+    slug: "{{season}}"
+    summary: "{{season}} — {{status}}"
+    fields:
+      - { name: "season", label: "Season Name", widget: "string" }
+      - { name: "game", label: "Game", widget: "string", default: "Dragon Ball: Sparking! Zero" }
+      - { name: "status", label: "Status", widget: "select", options: ["Active", "Completed", "Upcoming"] }
+      - name: "kais"
+        label: "Kais (Divisions)"
+        widget: "list"
+        fields:
+          - { name: "name", label: "Kai Name", widget: "string" }
+          - name: "teams"
+            label: "Teams"
+            widget: "list"
+            fields:
+              - { name: "team", label: "Team", widget: "string" }
+              - { name: "wins", label: "Wins", widget: "number", value_type: "int" }
+              - { name: "losses", label: "Losses", widget: "number", value_type: "int" }
+      - name: "schedule"
+        label: "Weekly Schedule"
+        widget: "list"
+        fields:
+          - { name: "week", label: "Week Number", widget: "number", value_type: "int" }
+          - name: "matches"
+            label: "Matches"
+            widget: "list"
+            fields:
+              - { name: "home", label: "Home Team", widget: "string" }
+              - { name: "away", label: "Away Team", widget: "string" }
+              - { name: "winner", label: "Winner", widget: "string", required: false, hint: "Enter the winning team's name" }
+              - { name: "status", label: "Status", widget: "select", options: ["upcoming", "completed", "live"] }
+              - { name: "divisional", label: "Divisional Match", widget: "boolean", default: false, required: false, hint: "Check if both teams are in the same Kai (division)" }
+              - { name: "video_url", label: "Video URL", widget: "string", required: false }
+      - name: "playoffs"
+        label: "Playoffs"
+        widget: "object"
+        required: false
+        fields:
+          - { name: "status", label: "Status", widget: "select", options: ["Not Started", "In Progress", "Completed"], default: "Not Started" }
+          - { name: "format", label: "Format", widget: "string", default: "Single Elimination Bo5" }
+          - name: "bracket"
+            label: "Bracket Matches"
+            widget: "list"
+            required: false
+            fields:
+              - { name: "round", label: "Round", widget: "string" }
+              - { name: "match", label: "Match #", widget: "number", value_type: "int" }
+              - { name: "team_a", label: "Team A", widget: "string" }
+              - { name: "team_b", label: "Team B", widget: "string" }
+              - { name: "score_a", label: "Score A", widget: "number", value_type: "int", required: false }
+              - { name: "score_b", label: "Score B", widget: "number", value_type: "int", required: false }
+              - { name: "winner", label: "Winner", widget: "string", required: false }
+
+  # --- COMMUNITY ---
+  - name: "community"
+    label: "Community"
+    files:
+      - name: "community"
+        label: "Community Page"
+        file: "apps/website/public/content/community.yaml"
+        fields:
+          - { name: "title", label: "Page Title", widget: "string" }
+          - { name: "intro", label: "Introduction", widget: "text" }
+          - name: "roles"
+            label: "Volunteer Roles"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Role Name", widget: "string" }
+              - { name: "icon", label: "Icon", widget: "select", options: ["Shield", "BarChart3", "Palette", "FlaskConical", "Wrench", "Heart"] }
+              - { name: "description", label: "Description", widget: "text" }
+              - name: "members"
+                label: "Members"
+                widget: "list"
+                required: false
+                fields:
+                  - { name: "name", label: "Display Name", widget: "string" }
+                  - name: "links"
+                    label: "Links"
+                    widget: "list"
+                    required: false
+                    fields:
+                      - { name: "label", label: "Label (e.g. YouTube, Twitter)", widget: "string" }
+                      - { name: "url", label: "URL", widget: "string" }
+          - name: "resources"
+            label: "Resources"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Name", widget: "string" }
+              - { name: "url", label: "URL", widget: "string" }
+              - { name: "description", label: "Description", widget: "text" }
+
+  # --- RULES & INFORMATION ---
+  - name: "rules"
+    label: "Rules & Information"
+    files:
+      - name: "how_to_participate"
+        label: "How to Participate"
+        file: "apps/website/public/content/rules/how-to-participate.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "intro", label: "Intro Text", widget: "text" }
+          - { name: "discord_url", label: "Discord URL", widget: "string" }
+          - { name: "overview", label: "Overview Text", widget: "text" }
+          - name: "viewer_steps"
+            label: "Viewer Steps"
+            widget: "list"
+            fields:
+              - { name: "title", label: "Step Title", widget: "string" }
+              - { name: "description", label: "Description", widget: "text" }
+          - name: "participant_steps"
+            label: "Participant Steps"
+            widget: "list"
+            fields:
+              - { name: "title", label: "Step Title", widget: "string" }
+              - { name: "description", label: "Description", widget: "text" }
+
+      - name: "league_wide_rules"
+        label: "League Wide Rules"
+        file: "apps/website/public/content/rules/league-wide-rules.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "content", label: "Content", widget: "markdown" }
+
+      - name: "legal_potaras"
+        label: "Legal Capsules"
+        file: "apps/website/public/content/rules/legal-potaras.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "intro", label: "Intro", widget: "text" }
+          - { name: "rules_content", label: "Capsule Rules", widget: "markdown" }
+          - { name: "capsule_notes", label: "Capsule Notes", widget: "markdown" }
+          - name: "capsules"
+            label: "Capsule List"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Name", widget: "string" }
+              - { name: "cost", label: "Cost", widget: "number", value_type: "int" }
+              - { name: "effect", label: "Effect", widget: "text" }
+              - { name: "banned", label: "Banned", widget: "boolean", default: false, required: false }
+
+      - name: "build_rules"
+        label: "Build Rules"
+        file: "apps/website/public/content/rules/build-rules.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "point_budget", label: "Point Budget", widget: "number", value_type: "int" }
+          - { name: "max_per_capsule", label: "Max Per Capsule", widget: "number", value_type: "int" }
+          - { name: "max_per_capsule_note", label: "Max Per Capsule Note", widget: "string" }
+          - name: "banned_capsules"
+            label: "Banned Capsules"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Capsule Name", widget: "string" }
+              - { name: "reason", label: "Reason (optional)", widget: "string", required: false }
+          - name: "health_capsule_limit"
+            label: "Health Capsule Limit"
+            widget: "object"
+            fields:
+              - { name: "description", label: "Description", widget: "string" }
+              - name: "option_a"
+                label: "Option A"
+                widget: "object"
+                fields:
+                  - { name: "name", label: "Capsule Name", widget: "string" }
+                  - { name: "stars", label: "Stars", widget: "number", value_type: "int" }
+                  - { name: "count", label: "Count Allowed", widget: "number", value_type: "int" }
+                  - { name: "label", label: "Display Label", widget: "string" }
+              - name: "option_b"
+                label: "Option B"
+                widget: "object"
+                fields:
+                  - { name: "name", label: "Capsule Name", widget: "string" }
+                  - { name: "stars", label: "Stars", widget: "number", value_type: "int" }
+                  - { name: "count", label: "Count Allowed", widget: "number", value_type: "int" }
+                  - { name: "label", label: "Display Label", widget: "string" }
+          - name: "boost_cap"
+            label: "Boost Cap"
+            widget: "object"
+            fields:
+              - { name: "max_stars", label: "Maximum Stars", widget: "number", value_type: "int" }
+              - { name: "description", label: "Description", widget: "text" }
+              - name: "categories"
+                label: "Affected Categories"
+                widget: "list"
+                field: { name: "category", label: "Category", widget: "string" }
+          - { name: "form_restriction", label: "Form Restriction Note", widget: "string" }
+          - { name: "additional_notes", label: "Additional Notes", widget: "markdown", required: false }
+
+      - name: "ai_descriptions"
+        label: "AI Descriptions"
+        file: "apps/website/public/content/rules/ai-descriptions.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "intro", label: "Intro", widget: "text" }
+          - name: "categories"
+            label: "AI Categories"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Category Name", widget: "string" }
+              - { name: "color", label: "Color", widget: "select", options: ["blue", "red", "green"] }
+              - { name: "description", label: "Category Description", widget: "text" }
+              - name: "ais"
+                label: "AI Types"
+                widget: "list"
+                fields:
+                  - { name: "name", label: "AI Name", widget: "string" }
+                  - { name: "description", label: "Description", widget: "text" }
+
+      - name: "bench_rules"
+        label: "Bench Rules"
+        file: "apps/website/public/content/rules/bench-rules.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "content", label: "Content", widget: "markdown" }
+
+      - name: "coaching_rules"
+        label: "Coaching Rules"
+        file: "apps/website/public/content/rules/coaching-rules.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "content", label: "Content", widget: "markdown" }
+
+      - name: "testing_rules"
+        label: "Testing Rules"
+        file: "apps/website/public/content/rules/testing-rules.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - name: "rules"
+            label: "General Rules"
+            widget: "list"
+            field: { name: "rule", label: "Rule", widget: "text" }
+          - name: "formats"
+            label: "Test Formats"
+            widget: "list"
+            fields:
+              - { name: "type", label: "Format Type", widget: "string" }
+              - { name: "deadline", label: "Deadline", widget: "string", required: false }
+              - { name: "frequency", label: "Frequency", widget: "string", required: false }
+              - name: "options"
+                label: "Options"
+                widget: "list"
+                fields:
+                  - { name: "label", label: "Label", widget: "string" }
+                  - { name: "description", label: "Description", widget: "string" }
+          - { name: "template", label: "Submission Template", widget: "text" }
+          - { name: "template_example", label: "Template Example", widget: "text" }
+
+      - name: "off_season_schedule"
+        label: "Off-Season Schedule"
+        file: "apps/website/public/content/rules/off-season-schedule.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "intro", label: "Intro", widget: "text" }
+          - name: "phases"
+            label: "Off-Season Phases"
+            widget: "list"
+            fields:
+              - { name: "name", label: "Phase Name", widget: "string" }
+              - { name: "icon", label: "Icon (Lucide name)", widget: "select", options: ["FlaskConical", "Users", "ArrowLeftRight", "RotateCcw", "Banknote"] }
+              - { name: "description", label: "Description", widget: "text" }
+
+      - name: "post_season_seeding"
+        label: "Post Season Seeding"
+        file: "apps/website/public/content/rules/post-season-seeding.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "content", label: "Content", widget: "markdown" }
+
+      - name: "staff_on_team_rules"
+        label: "Staff on Team Rules"
+        file: "apps/website/public/content/rules/staff-on-team-rules.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "content", label: "Content", widget: "markdown" }
+
+      - name: "mods"
+        label: "Mods"
+        file: "apps/website/public/content/rules/mods.yaml"
+        fields:
+          - { name: "title", label: "Title", widget: "string" }
+          - { name: "last_updated", label: "Last Updated", widget: "string", required: false }
+          - { name: "content", label: "Content", widget: "markdown" }
+
+  # --- ARCHIVES ---
+  - name: "archives"
+    label: "Archives"
+    files:
+      - name: "archives"
+        label: "League Archives"
+        file: "apps/website/public/content/archives.yaml"
+        fields:
+          - name: "archives"
+            label: "Archive Entries"
+            widget: "list"
+            fields:
+              - { name: "season", label: "Era/Season Name", widget: "string" }
+              - { name: "game", label: "Game", widget: "string" }
+              - { name: "description", label: "Description", widget: "text" }
+              - { name: "champion", label: "Champion", widget: "string", required: false }
+              - { name: "old_site_url", label: "Legacy Site URL", widget: "string", required: false }
+              - { name: "youtube_url", label: "YouTube URL", widget: "string", required: false }
+              - name: "notable_events"
+                label: "Notable Events"
+                widget: "list"
+                field: { name: "event", label: "Event", widget: "string" }
+              - name: "seasons"
+                label: "Past Seasons"
+                widget: "list"
+                required: false
+                fields:
+                  - { name: "year", label: "Year", widget: "string" }
+                  - { name: "url", label: "URL", widget: "string" }
+

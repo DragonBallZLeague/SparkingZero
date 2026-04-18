@@ -1835,3 +1835,66 @@ table {
 
 /* Indigo-100 hover (light-mode Apply button hover) */
 .hover\:bg-indigo-100:hover { background-color: #e0e7ff; }
+
+/* ================================================
+   TAG FILTER SELECTOR — missing utilities
+   ================================================ */
+
+/* Layout / spacing */
+.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+.gap-0\.5 { gap: 0.125rem; }
+.w-2\.5 { width: 0.625rem; }
+.h-2\.5 { height: 0.625rem; }
+.w-3\.5 { width: 0.875rem; }
+.h-3\.5 { height: 0.875rem; }
+.shrink-0 { flex-shrink: 0; }
+.ml-0\.5 { margin-left: 0.125rem; }
+
+/* Typography */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+.tracking-wider { letter-spacing: 0.05em; }
+.text-\[10px\] { font-size: 10px; line-height: 1.4; }
+.text-\[11px\] { font-size: 11px; line-height: 1.4; }
+
+/* Misc utilities */
+.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.rounded { border-radius: 0.25rem; }
+
+/* Gray opacity variants (dark panel bg / border) */
+.bg-gray-800\/60 { background-color: rgba(31, 41, 55, 0.6); }
+.hover\:bg-gray-700\/40:hover { background-color: rgba(55, 65, 81, 0.4); }
+.border-gray-700\/60 { border-color: rgba(55, 65, 81, 0.6); }
+.border-gray-100 { border-color: #f3f4f6; }
+
+/* Hover text */
+.hover\:text-gray-600:hover { color: #4b5563; }
+.hover\:opacity-100:hover { opacity: 1; }
+
+/* Violet opacity variants (Season tag) */
+.bg-violet-900\/50 { background-color: rgba(88, 28, 135, 0.5); }
+
+/* Blue opacity variants (Team tag) */
+.bg-blue-900\/50 { background-color: rgba(30, 58, 138, 0.5); }
+
+/* Amber light-mode bg (Type tag) */
+.bg-amber-50 { background-color: #fffbeb; }
+
+/* Red opacity variants (Difficulty tag) */
+.bg-red-900\/50 { background-color: rgba(127, 29, 29, 0.5); }
+
+/* Emerald extras (Size tag) */
+.bg-emerald-50 { background-color: #ecfdf5; }
+.bg-emerald-900\/50 { background-color: rgba(6, 78, 59, 0.5); }
+.border-emerald-200 { border-color: #a7f3d0; }
+.border-emerald-400 { border-color: #34d399; }
+.border-emerald-500 { border-color: #10b981; }
+.border-emerald-700 { border-color: #047857; }
+
+/* Tag badge opacity variants (App.jsx Match Analysis header) */
+.px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+.bg-violet-900\/40 { background-color: rgba(88, 28, 135, 0.4); }
+.bg-blue-900\/40 { background-color: rgba(30, 58, 138, 0.4); }
+.bg-orange-900\/40 { background-color: rgba(124, 45, 18, 0.4); }
+.bg-orange-100 { background-color: #ffedd5; }
+.bg-red-900\/40 { background-color: rgba(127, 29, 29, 0.4); }
+.bg-green-900\/40 { background-color: rgba(20, 83, 45, 0.4); }

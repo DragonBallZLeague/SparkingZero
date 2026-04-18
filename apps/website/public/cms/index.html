@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DBSZL Content Manager</title>
+  <style>
+    /* Custom styles for the CMS admin panel */
+    [data-slate-editor] { min-height: 80px; }
+  </style>
+</head>
+<body>
+  <!-- Decap CMS (formerly Netlify CMS) — free, open-source, Git-based -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+  <script>
+    // ================================================================
+    // CUSTOM PREVIEW TEMPLATES
+    // These make the CMS preview pane much more readable.
+    // ================================================================
+
+    // --- Teams Preview ---
+    const TeamsPreview = CMS.createClass({
+      render: function () {
+        const entry = this.props.entry;
+        const teams = entry.getIn(['data', 'teams']);
+        if (!teams) return CMS.h('div', {}, 'No teams data');
+
+        return CMS.h('div', { style: { fontFamily: 'sans-serif', padding: '20px', maxWidth: '800px' } },
+          CMS.h('h1', { style: { borderBottom: '3px solid #F97316', paddingBottom: '10px' } }, '🏆 Teams'),
+          teams.map(function (team, i) {
+            const name = team.get('name') || 'Unnamed';
+            const color = team.get('color') || '#666';
+            const desc = team.get('description') || '';
+            const manager = team.get('manager') || '';
+            const roster = team.get('roster');
+
+            return CMS.h('div', {
+              key: i,
+              style: {
+                marginBottom: '24px',
+                padding: '16px',
+                borderLeft: '4px solid ' + color,
+                backgroundColor: '#f8f9fa',
+                borderRadius: '0 8px 8px 0'
+              }
+            },
+              CMS.h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' } },
+                CMS.h('div', {
+                  style: {
+                    width: '40px', height: '40px', borderRadius: '8px',
+                    backgroundColor: color, color: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 'bold', fontSize: '18px'
+                  }
+                }, name.charAt(0)),
+                CMS.h('div', {},
+                  CMS.h('h2', { style: { margin: 0, fontSize: '18px' } }, name),
+                  manager ? CMS.h('div', { style: { fontSize: '13px', color: '#666' } }, 'Manager: ' + manager) : null
+                )
+              ),
+              desc ? CMS.h('p', { style: { fontSize: '14px', color: '#555', margin: '8px 0' } }, desc) : null,
+              roster ? CMS.h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' } },
+                roster.map(function (char, j) {
+                  return CMS.h('span', {
+                    key: j,
+                    style: {
+                      padding: '4px 10px', borderRadius: '6px',
+                      backgroundColor: '#e2e8f0', fontSize: '13px'
+                    }
+                  }, char);
+                })
+              ) : null
+            );
+          })
+        );
+      }
+    });
+
+    // --- Season Preview ---
+    const SeasonPreview = CMS.createClass({
+      render: function () {
+        const entry = this.props.entry;
+        const season = entry.getIn(['data', 'season']) || '';
+        const status = entry.getIn(['data', 'status']) || '';
+        const standings = entry.getIn(['data', 'standings']);
+        const schedule = entry.getIn(['data', 'schedule']);
+
+        return CMS.h('div', { style: { fontFamily: 'sans-serif', padding: '20px', maxWidth: '800px' } },
+          CMS.h('h1', { style: { borderBottom: '3px solid #22c55e', paddingBottom: '10px' } },
+            '📅 ' + season
+          ),
+          CMS.h('span', {
+            style: {
+              display: 'inline-block', padding: '4px 12px', borderRadius: '20px',
+              backgroundColor: status === 'Active' ? '#22c55e' : status === 'Completed' ? '#6366f1' : '#eab308',
+              color: 'white', fontSize: '13px', fontWeight: 'bold', marginBottom: '16px'
+            }
+          }, status),
+
+          // Standings table
+          standings ? CMS.h('div', { style: { marginTop: '16px' } },
+            CMS.h('h2', { style: { fontSize: '16px', marginBottom: '8px' } }, 'Standings'),
+            CMS.h('table', {
+              style: { width: '100%', borderCollapse: 'collapse', fontSize: '14px' }
+            },
+              CMS.h('thead', {},
+                CMS.h('tr', { style: { backgroundColor: '#f1f5f9', textAlign: 'left' } },
+                  CMS.h('th', { style: { padding: '8px' } }, '#'),
+                  CMS.h('th', { style: { padding: '8px' } }, 'Team'),
+                  CMS.h('th', { style: { padding: '8px', textAlign: 'center' } }, 'W'),
+                  CMS.h('th', { style: { padding: '8px', textAlign: 'center' } }, 'L'),
+                  CMS.h('th', { style: { padding: '8px', textAlign: 'center' } }, 'T'),
+                  CMS.h('th', { style: { padding: '8px', textAlign: 'center' } }, 'Win%')
+                )
+              ),
+              CMS.h('tbody', {},
+                standings
+                  .sortBy(function (s) { return -(s.get('wins') || 0); })
+                  .map(function (s, i) {
+                    var w = s.get('wins') || 0, l = s.get('losses') || 0, t = s.get('ties') || 0;
+                    var total = w + l + t;
+                    var wr = total > 0 ? Math.round((w / total) * 100) : 0;
+                    return CMS.h('tr', {
+                      key: i,
+                      style: { borderBottom: '1px solid #e2e8f0' }
+                    },
+                      CMS.h('td', { style: { padding: '8px', color: '#999' } }, i + 1),
+                      CMS.h('td', { style: { padding: '8px', fontWeight: '600' } }, s.get('team')),
+                      CMS.h('td', { style: { padding: '8px', textAlign: 'center', color: '#22c55e' } }, w),
+                      CMS.h('td', { style: { padding: '8px', textAlign: 'center', color: '#ef4444' } }, l),
+                      CMS.h('td', { style: { padding: '8px', textAlign: 'center', color: '#999' } }, t),
+                      CMS.h('td', { style: { padding: '8px', textAlign: 'center', fontWeight: '600' } }, wr + '%')
+                    );
+                  })
+              )
+            )
+          ) : null,
+
+          // Schedule
+          schedule ? CMS.h('div', { style: { marginTop: '24px' } },
+            CMS.h('h2', { style: { fontSize: '16px', marginBottom: '8px' } }, 'Schedule'),
+            schedule.map(function (week, wi) {
+              var matches = week.get('matches');
+              return CMS.h('div', { key: wi, style: { marginBottom: '16px' } },
+                CMS.h('h3', { style: { fontSize: '14px', color: '#666', marginBottom: '6px' } },
+                  'Week ' + week.get('week')
+                ),
+                matches ? matches.map(function (m, mi) {
+                  var s = m.get('status');
+                  var done = s === 'completed';
+                  var hs = m.get('home_score'), as = m.get('away_score');
+                  return CMS.h('div', {
+                    key: mi,
+                    style: {
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '8px 12px', marginBottom: '4px',
+                      backgroundColor: '#f8f9fa', borderRadius: '6px', fontSize: '14px'
+                    }
+                  },
+                    CMS.h('span', { style: { flex: 1, fontWeight: done && hs > as ? 'bold' : 'normal' } }, m.get('home')),
+                    done
+                      ? CMS.h('span', { style: { fontWeight: 'bold', margin: '0 12px' } }, hs + ' - ' + as)
+                      : CMS.h('span', { style: { margin: '0 12px', color: '#999', fontSize: '12px' } }, 'Upcoming'),
+                    CMS.h('span', {
+                      style: { flex: 1, textAlign: 'right', fontWeight: done && as > hs ? 'bold' : 'normal' }
+                    }, m.get('away'))
+                  );
+                }) : null
+              );
+            })
+          ) : null
+        );
+      }
+    });
+
+    // --- Site Settings Preview ---
+    const SitePreview = CMS.createClass({
+      render: function () {
+        const entry = this.props.entry;
+        return CMS.h('div', { style: { fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' } },
+          CMS.h('h1', { style: { borderBottom: '3px solid #3b82f6', paddingBottom: '10px' } },
+            '⚙️ ' + (entry.getIn(['data', 'site_name']) || 'Site Settings')
+          ),
+          CMS.h('div', { style: { padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px', marginTop: '12px' } },
+            CMS.h('div', { style: { marginBottom: '8px' } },
+              CMS.h('strong', {}, 'Short Name: '), entry.getIn(['data', 'short_name']) || ''
+            ),
+            CMS.h('div', { style: { marginBottom: '8px' } },
+              CMS.h('strong', {}, 'Tagline: '), entry.getIn(['data', 'tagline']) || ''
+            ),
+            CMS.h('div', { style: { marginBottom: '8px' } },
+              CMS.h('strong', {}, 'Season: '), entry.getIn(['data', 'current_season']) || ''
+            ),
+            CMS.h('div', { style: { marginBottom: '8px' } },
+              CMS.h('strong', {}, 'Status: '), entry.getIn(['data', 'current_season_status']) || ''
+            ),
+            CMS.h('p', { style: { marginTop: '12px', color: '#555', fontSize: '14px' } },
+              entry.getIn(['data', 'description']) || ''
+            )
+          )
+        );
+      }
+    });
+
+    // --- Community Preview ---
+    const CommunityPreview = CMS.createClass({
+      render: function () {
+        const entry = this.props.entry;
+        const roles = entry.getIn(['data', 'roles']);
+        const resources = entry.getIn(['data', 'resources']);
+
+        return CMS.h('div', { style: { fontFamily: 'sans-serif', padding: '20px', maxWidth: '800px' } },
+          CMS.h('h1', { style: { borderBottom: '3px solid #ec4899', paddingBottom: '10px' } },
+            '💜 ' + (entry.getIn(['data', 'title']) || 'Community')
+          ),
+          CMS.h('p', { style: { color: '#555', marginBottom: '16px' } }, entry.getIn(['data', 'intro']) || ''),
+
+          roles ? CMS.h('div', {},
+            CMS.h('h2', { style: { fontSize: '16px', marginBottom: '8px' } }, 'Volunteer Roles'),
+            roles.map(function (role, i) {
+              return CMS.h('div', {
+                key: i,
+                style: {
+                  padding: '12px', marginBottom: '8px',
+                  backgroundColor: '#f8f9fa', borderRadius: '8px',
+                  borderLeft: '3px solid #ec4899'
+                }
+              },
+                CMS.h('strong', {}, role.get('name')),
+                CMS.h('p', { style: { fontSize: '13px', color: '#555', margin: '4px 0 0' } }, role.get('description'))
+              );
+            })
+          ) : null,
+
+          resources ? CMS.h('div', { style: { marginTop: '16px' } },
+            CMS.h('h2', { style: { fontSize: '16px', marginBottom: '8px' } }, 'Resources'),
+            resources.map(function (res, i) {
+              return CMS.h('div', {
+                key: i,
+                style: {
+                  padding: '12px', marginBottom: '8px',
+                  backgroundColor: '#f0f9ff', borderRadius: '8px',
+                  borderLeft: '3px solid #3b82f6'
+                }
+              },
+                CMS.h('strong', {}, res.get('name')),
+                CMS.h('p', { style: { fontSize: '13px', color: '#555', margin: '4px 0 0' } }, res.get('description'))
+              );
+            })
+          ) : null
+        );
+      }
+    });
+
+    // Register all preview templates
+    CMS.registerPreviewTemplate('site', SitePreview);
+    CMS.registerPreviewTemplate('teams', TeamsPreview);
+    CMS.registerPreviewTemplate('season', SeasonPreview);
+    CMS.registerPreviewTemplate('community', CommunityPreview);
+  </script>
+</body>
+</html>

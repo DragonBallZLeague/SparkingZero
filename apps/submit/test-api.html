@@ -56,9 +56,9 @@
         async function runTests() {
             document.getElementById('results').innerHTML = '<p>Running tests...</p>';
             
-            await testEndpoint('Paths API', `${API_BASE}/api/paths.js`);
+            await testEndpoint('Paths API', `${API_BASE}/api/info`);
             await testEndpoint('List Files API (Tests/Sentai)', `${API_BASE}/api/list-files.js?path=Tests/Sentai`);
-            await testEndpoint('Status API', `${API_BASE}/api/status.js`);
+            await testEndpoint('Status API', `${API_BASE}/api/info?action=status&id=test`);
         }
         
         // Auto-run on load

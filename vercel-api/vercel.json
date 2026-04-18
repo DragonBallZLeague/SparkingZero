@@ -5,11 +5,11 @@
     { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/paths", "dest": "/api/paths.js" },
+    { "src": "/api/oauth", "dest": "/api/oauth.js" },
+    { "src": "/api/info", "dest": "/api/info.js" },
     { "src": "/api/list-files", "dest": "/api/list-files.js" },
     { "src": "/api/validate", "dest": "/api/validate.js" },
     { "src": "/api/submit", "dest": "/api/submit.js" },
-    { "src": "/api/status", "dest": "/api/status.js" },
     { "src": "/api/github-device-start", "dest": "/api/github-device-start.js" },
     { "src": "/api/github-device-token", "dest": "/api/github-device-token.js" },
     { "src": "/api/admin/auth", "dest": "/api/admin/auth.js" },
