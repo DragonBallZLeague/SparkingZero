@@ -5,12 +5,12 @@
 # through a friendly web UI at /admin/
 # ============================================================
 
-local_backend: true  # Remove or set to false before deploying
-
 backend:
   name: github
   repo: DragonBallZLeague/SparkingZero
   branch: main
+  auth_type: implicit
+  app_id: GITHUB_OAUTH_APP_ID  # Replace with your GitHub OAuth App Client ID
 
 # Where uploaded media goes
 media_folder: "apps/website/public/images"

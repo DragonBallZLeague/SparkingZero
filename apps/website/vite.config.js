@@ -31,7 +31,6 @@ function serveStaticToolsPlugin() {
 
 export default defineConfig({
   plugins: [serveStaticToolsPlugin(), react()],
-  // For GitHub Pages deployment, set base to your repo path:
-  // base: '/SparkingZero/website/',
+  base: '/SparkingZero/',
   assetsInclude: ['**/*.yaml', '**/*.yml'],
 });

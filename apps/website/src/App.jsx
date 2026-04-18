@@ -33,7 +33,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/SparkingZero">
       <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-950 text-white' : 'bg-stone-100 text-stone-800'}`}>
         <Navbar site={siteData} darkMode={darkMode} setDarkMode={setDarkMode} />
         <main className="flex-1">
