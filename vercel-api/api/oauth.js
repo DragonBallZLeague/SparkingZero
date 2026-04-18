@@ -47,13 +47,21 @@ export default async function handler(req, res) {
 
       const token = data.access_token;
 
+      // Send token back to CMS parent window via postMessage
+      // Retry mechanism handles browsers with tracking prevention delays
       res.status(200).send(`
         <html><body><script>
-          window.opener.postMessage(
-            'authorization:github:success:{"token":"${token}","provider":"github"}',
-            '*'
-          );
-          window.close();
+          (function() {
+            var msg = 'authorization:github:success:{"token":"${token}","provider":"github"}';
+            var target = window.opener;
+            if (target) {
+              target.postMessage(msg, '*');
+              setTimeout(function() { target.postMessage(msg, '*'); }, 500);
+              setTimeout(function() { window.close(); }, 1000);
+            } else {
+              document.body.innerHTML = '<p>Authentication successful! You can close this window and refresh the CMS page.</p>';
+            }
+          })();
         </script></body></html>
       `);
     } catch (err) {
