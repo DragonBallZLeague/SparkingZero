@@ -1,0 +1,55 @@
+title: AI Descriptions
+last_updated: 2026-04-17
+intro: >
+  AI Strategies are the brain of your character — they determine how the CPU
+  fighter behaves in battle. Each AI type has a different focus, from aggressive
+  melee rushing to defensive counter play. Keep in mind that AI behavior varies
+  by character; the only real way to see how an AI affects your specific
+  character is to test it.
+categories:
+  - name: Balanced
+    color: blue
+    description: Balanced AIs have flexible playstyles that can adapt to multiple
+      situations and are generally consistent performers.
+    ais:
+      - name: Balanced - Melee
+        description: The CPU focuses on closing distance and using melee combat.
+      - name: Balanced - Ki Blasts
+        description: The CPU focuses on maintaining its distance using Ki blasts.
+      - name: Balanced - Sparking
+        description: The CPU becomes aggressive in Sparking Mode.
+      - name: Balanced - Restrain
+        description: The CPU uses Blasts and Ki blasts from a distance to suppress the
+          enemy.
+      - name: Balanced - Blasts
+        description: The CPU focuses on using Blast attacks (B2s).
+      - name: Balanced - Movement
+        description: The CPU dashes around, attacking and retreating from the enemy.
+  - name: Attack
+    color: red
+    description: Attack AIs are aggressive and offensive-minded, prioritizing high
+      damage output and constant pressure on the opponent.
+    ais:
+      - name: Attack - Vanishing
+        description: The CPU focuses on using Vanishing Assaults and closing in for melee.
+      - name: Attack - Evasion
+        description: The CPU focuses on barrage attacks and combos to counter the enemy.
+      - name: Attack - Barrage
+        description: The CPU focuses on follow up attacks to defeat the enemy.
+      - name: Attack - Ultimate Blast
+        description: The CPU focuses on using rushes and Ultimate Blasts to win.
+      - name: Attack - Combos
+        description: The CPU focuses on rush attacks to fight.
+  - name: Defense
+    color: green
+    description: Defense AIs prioritize sustainability, gauge management, and
+      exploiting openings in the opponent's offense.
+    ais:
+      - name: Defense - Counters
+        description: The CPU focuses on guarding and exploiting opponents' openings.
+      - name: Defense - Blasts
+        description: The CPU maintains its distance and fires Blasts at the enemy.
+      - name: Defense - Gauge Recovery
+        description: The CPU focuses on Evasion and keeping Ki and Skill Gauges full.
+      - name: Defense - Skills
+        description: The CPU focuses on using B1 skills to boost performance and strength.

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule Importer — DBZL</title>
+  <style>
+    .url-banner {
+      background: #0d1117; border: 1px solid #374151; border-radius: 8px;
+      padding: .6rem 1rem; margin-bottom: 1.5rem;
+      font-size: .8rem; color: #9ca3af;
+      display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    }
+    .url-banner strong { color: #e5e7eb; }
+    .url-banner code {
+      background: #1f2937; padding: 2px 8px; border-radius: 4px;
+      color: #f97316; font-size: .8rem; letter-spacing: .01em;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: .25rem; }
+    h1 span { color: #f97316; }
+    .subtitle { color: #9ca3af; margin-bottom: 2rem; font-size: .9rem; }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #f97316; }
+    label { display: block; font-size: .85rem; color: #9ca3af; margin-bottom: .35rem; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: #0a0a0f;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      color: #e5e7eb;
+      font-size: .875rem;
+      padding: .6rem .85rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus { border-color: #f97316; }
+    textarea { font-family: monospace; resize: vertical; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .65rem 1.4rem;
+      border-radius: 8px; border: none; cursor: pointer;
+      font-size: .875rem; font-weight: 600; transition: .15s;
+    }
+    .btn-primary { background: #f97316; color: #fff; }
+    .btn-primary:hover { background: #ea6c0a; }
+    .btn-ghost {
+      background: #1f2937; color: #d1d5db; border: 1px solid #374151;
+    }
+    .btn-ghost:hover { background: #374151; }
+    .btn-group { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+    #output-area { display: none; }
+    #yaml-out {
+      background: #0a0a0f; border: 1px solid #374151; border-radius: 8px;
+      padding: 1rem; font-family: monospace; font-size: .8rem;
+      line-height: 1.6; white-space: pre; overflow-x: auto;
+      max-height: 500px; overflow-y: auto;
+    }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: .75rem; font-weight: 600;
+    }
+    .badge-div { background: #1d4ed8; color: #bfdbfe; }
+    .badge-ok { background: #065f46; color: #a7f3d0; }
+    .badge-warn { background: #92400e; color: #fde68a; }
+    #parse-log {
+      margin-top: 1rem; font-size: .8rem; line-height: 1.8;
+      color: #9ca3af;
+    }
+    #parse-log .err { color: #f87171; }
+    #parse-log .ok { color: #34d399; }
+    #parse-log .info { color: #60a5fa; }
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: #065f46; color: #a7f3d0;
+      padding: .7rem 1.2rem; border-radius: 8px; font-size: .875rem;
+      font-weight: 600; opacity: 0; pointer-events: none;
+      transform: translateY(.5rem); transition: .2s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    details summary { cursor: pointer; color: #9ca3af; font-size: .8rem; margin-top: .5rem; }
+    details pre {
+      margin-top: .5rem; background: #050508; border: 1px solid #1f2937;
+      border-radius: 6px; padding: .75rem; font-size: .75rem;
+      white-space: pre-wrap; color: #6b7280; max-height: 200px; overflow-y: auto;
+    }
+    /* Kais editor */
+    #kais-editor { display: flex; flex-direction: column; gap: 1rem; }
+    .kai-block { background: #0d1117; border: 1px solid #374151; border-radius: 10px; padding: 1rem; }
+    .kai-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; }
+    .kai-header input { flex: 1; }
+    .kai-header button { flex-shrink: 0; background: transparent; border: none; color: #6b7280; cursor: pointer; font-size: 1.1rem; padding: 4px; line-height: 1; }
+    .kai-header button:hover { color: #f87171; }
+    .team-pills { display: flex; flex-wrap: wrap; gap: .5rem; min-height: 2.25rem; padding: .5rem; background: #111827; border-radius: 6px; border: 1px dashed #374151; }
+    .team-pill { display: inline-flex; align-items: center; gap: .4rem; background: #1f2937; border: 1px solid #374151; border-radius: 6px; padding: 3px 8px; font-size: .8rem; cursor: default; }
+    .team-pill .remove { color: #6b7280; font-size: .7rem; cursor: pointer; margin-left: 2px; }
+    .team-pill .remove:hover { color: #f87171; }
+    .pool-section { margin-top: 1rem; }
+    .pool-label { font-size: .8rem; color: #6b7280; margin-bottom: .4rem; }
+    .unassigned-pool { display: flex; flex-wrap: wrap; gap: .5rem; padding: .6rem; background: #0d1117; border-radius: 8px; border: 1px solid #1f2937; min-height: 2.25rem; }
+    .pool-pill { display: inline-flex; align-items: center; background: #1f2937; border: 1px solid #374151; border-radius: 6px; padding: 3px 10px; font-size: .8rem; cursor: pointer; transition: .1s; }
+    .pool-pill:hover { border-color: #f97316; color: #f97316; }
+    .kai-add-row { display: flex; gap: .5rem; margin-top: .6rem; }
+    .kai-add-row input { flex: 1; }
+    .step-divider { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: #4b5563; text-transform: uppercase; margin-bottom: -.25rem; }
+  </style>
+</head>
+<body>
+
+<div style="max-width:900px;margin:0 auto;">
+  <h1>DBZL Schedule <span>Importer</span></h1>
+  <div class="url-banner">
+    <strong>URL:</strong>
+    <code id="page-url"></code>
+    <span style="color:#4b5563;">— bookmark this page for future use</span>
+  </div>
+  <p class="subtitle">
+    Paste a "by-week" schedule markdown below to generate a <strong>complete season YAML file</strong>
+    including kais, standings, schedule, and playoffs.
+    Matches labelled <code>(div)</code> are automatically flagged as divisional.
+  </p>
+
+  <!-- STEP 1: Season Info -->
+  <div class="card">
+    <h2>① Season Info</h2>
+    <div class="row">
+      <div>
+        <label for="season-name">Season name</label>
+        <input id="season-name" type="text" placeholder="e.g. Season 1" value="Season 1" />
+      </div>
+      <div>
+        <label for="season-status">Status</label>
+        <select id="season-status">
+          <option value="Upcoming">Upcoming</option>
+          <option value="Active">Active</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:1rem;">
+      <label for="season-game">Game</label>
+      <input id="season-game" type="text" value="Dragon Ball: Sparking! Zero" />
+    </div>
+  </div>
+
+  <!-- STEP 2: Schedule markdown -->
+  <div class="card">
+    <h2>② Paste "By Week" schedule markdown</h2>
+    <label for="md-input">
+      Expected format: <code>### Week N</code> sections with a 4-column table
+      (Match#, Home Team, Away Team, Winner). Match numbers ending in <code>(div)</code>
+      are treated as divisional.
+    </label>
+    <textarea id="md-input" rows="16" placeholder="### Week 1
+|Match          |  Home Team            | Away Team        | Winner           |
+| :-------------| :---------------------| :----------------| :----------------|
+|1| Cinema | Sentai Squad | |
+|2| Time Patrol | Z-fighters | |
+
+### Week 2
+|Match          |  Home Team            | Away Team        | Winner           |
+| :-------------| :---------------------| :----------------| :----------------|
+|1 (div)| Cinema | Time Patrol | |
+|2| Z-fighters | Cold Kingdom | |
+..."></textarea>
+
+    <details>
+      <summary>Show format reference</summary>
+      <pre>### Week 1
+|Match          |  Home Team            | Away Team        | Winner           |
+| :-------------| :---------------------| :----------------| :----------------|
+|1| Cinema | Sentai Squad | |
+|2| Time Patrol | Z-fighters | |
+
+### Week 2
+|Match          |  Home Team            | Away Team        | Winner           |
+| :-------------| :---------------------| :----------------| :----------------|
+|1 (div)| Cinema | Time Patrol | |
+|2| Z-fighters | Cold Kingdom | |</pre>
+    </details>
+
+    <div class="btn-group">
+      <button class="btn btn-ghost" onclick="extractTeams()">&#8635; Extract Teams from Schedule</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Kais + Teams -->
+  <div class="card">
+    <h2>③ Kais &amp; Teams</h2>
+    <p style="font-size:.85rem;color:#9ca3af;margin-bottom:1rem;">
+      After extracting, assign each team to a Kai. Add or rename Kais as needed.
+      Teams with no Kai assigned will still appear in the schedule but won't be in standings.
+    </p>
+    <div id="kais-editor">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="btn-group" style="margin-top:1rem;">
+      <button class="btn btn-ghost" onclick="addKai()">+ Add Kai</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Playoffs -->
+  <div class="card">
+    <h2>④ Playoffs</h2>
+    <div class="row">
+      <div>
+        <label for="playoffs-status">Status</label>
+        <select id="playoffs-status">
+          <option value="Not Started">Not Started</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+      <div>
+        <label for="playoffs-format">Format</label>
+        <input id="playoffs-format" type="text" value="Single Elimination Bo3" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <div style="text-align:center;margin-bottom:2rem;">
+    <button class="btn btn-primary" style="font-size:1rem;padding:.85rem 2rem;" onclick="generateYaml()">&#9654; Generate Full Season YAML</button>
+    <button class="btn btn-ghost" style="font-size:1rem;padding:.85rem 2rem;" onclick="clearAll()">&#10005; Clear All</button>
+  </div>
+
+  <!-- Output -->
+  <div id="output-area" class="card">
+    <h2>Generated Season YAML</h2>
+    <div id="parse-log"></div>
+    <div id="yaml-out"></div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="copyYaml()">&#128203; Copy YAML</button>
+      <button class="btn btn-ghost" onclick="downloadYaml()">&#8595; Download .yaml</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+  /* ================================================================== */
+  /*  State                                                               */
+  /* ================================================================== */
+  let lastYaml = '';
+
+  // kais: [{ name: string, teams: string[] }]
+  let kais = [
+    { name: 'North Kai', teams: [] },
+    { name: 'East Kai',  teams: [] },
+    { name: 'West Kai',  teams: [] },
+    { name: 'South Kai', teams: [] },
+  ];
+  // all team names extracted from schedule (or manually added)
+  let allTeams = [];
+
+  /* ================================================================== */
+  /*  Schedule parser (shared)                                           */
+  /* ================================================================== */
+  function parseScheduleRaw(raw) {
+    const log = [];
+    const schedule = [];
+
+    const weekSections = raw.split(/^###\s+Week\s+(\d+)/m);
+    for (let i = 1; i < weekSections.length; i += 2) {
+      const weekNum = parseInt(weekSections[i], 10);
+      const body = weekSections[i + 1] || '';
+      const matches = [];
+
+      for (const line of body.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('|')) continue;
+        if (/^\|\s*[:-]/.test(trimmed)) continue;
+        if (/match\s*\|/i.test(trimmed)) continue;
+
+        const cells = trimmed.split('|').map(c => c.trim()).filter((_, idx, arr) =>
+          idx > 0 && idx < arr.length - 1
+        );
+        if (cells.length < 3) continue;
+
+        const matchCell = cells[0];
+        const home = cells[1];
+        const away = cells[2];
+        const winner = (cells[3] || '').trim();
+
+        if (!home || !away) {
+          log.push({ type: 'err', msg: `Week ${weekNum}: skipped row with missing teams: "${trimmed}"` });
+          continue;
+        }
+
+        const divisional = /\(div\)/i.test(matchCell);
+        const status = winner ? 'completed' : 'upcoming';
+        const match = { home, away, status, divisional, video_url: '' };
+        if (winner) match.winner = winner;
+        matches.push(match);
+      }
+
+      if (matches.length === 0) {
+        log.push({ type: 'warn', msg: `Week ${weekNum}: no matches parsed – check table format.` });
+      } else {
+        log.push({ type: 'ok', msg: `Week ${weekNum}: ${matches.length} match${matches.length !== 1 ? 'es' : ''} (${matches.filter(m => m.divisional).length} divisional).` });
+      }
+      schedule.push({ week: weekNum, matches });
+    }
+    return { schedule, log };
+  }
+
+  /* ================================================================== */
+  /*  Step: Extract teams from schedule markdown                         */
+  /* ================================================================== */
+  function extractTeams() {
+    const raw = document.getElementById('md-input').value.trim();
+    if (!raw) { alert('Paste schedule markdown first.'); return; }
+
+    const { schedule, log } = parseScheduleRaw(raw);
+    if (schedule.length === 0) { alert('No weeks found. Check the format.'); return; }
+
+    const seen = new Set();
+    for (const week of schedule) {
+      for (const m of week.matches) {
+        seen.add(m.home);
+        seen.add(m.away);
+      }
+    }
+
+    // Merge: keep manually-added teams already in kais, add new ones to unassigned
+    const assignedTeams = new Set(kais.flatMap(k => k.teams));
+    const newTeams = [...seen].filter(t => !assignedTeams.has(t));
+
+    // allTeams = assigned + unassigned
+    allTeams = [...new Set([...allTeams, ...seen])];
+
+    renderKaisEditor();
+    showToast(`Extracted ${seen.size} teams from ${schedule.length} weeks`);
+  }
+
+  /* ================================================================== */
+  /*  Kais editor rendering                                              */
+  /* ================================================================== */
+  function getUnassigned() {
+    const assigned = new Set(kais.flatMap(k => k.teams));
+    return allTeams.filter(t => !assigned.has(t));
+  }
+
+  function renderKaisEditor() {
+    const container = document.getElementById('kais-editor');
+    const unassigned = getUnassigned();
+
+    let html = '';
+
+    kais.forEach((kai, ki) => {
+      html += `
+        <div class="kai-block" id="kai-${ki}">
+          <div class="kai-header">
+            <input type="text" value="${escAttr(kai.name)}" oninput="renameKai(${ki}, this.value)" placeholder="Kai name" />
+            <button onclick="removeKai(${ki})" title="Remove Kai">&times;</button>
+          </div>
+          <div class="team-pills" id="kai-pills-${ki}">
+            ${kai.teams.map(t => `
+              <span class="team-pill">
+                ${escHtml(t)}
+                <span class="remove" onclick="unassignTeam(${ki},'${escAttr(t)}')" title="Remove from kai">&times;</span>
+              </span>`).join('')}
+            ${kai.teams.length === 0 ? `<span style="font-size:.75rem;color:#4b5563;">No teams assigned yet</span>` : ''}
+          </div>
+          <div class="kai-add-row">
+            <input type="text" id="kai-custom-${ki}" placeholder="Type a team name to add…" onkeydown="if(event.key==='Enter')addCustomTeamToKai(${ki})" />
+            <button class="btn btn-ghost" style="padding:.45rem .9rem;font-size:.8rem;" onclick="addCustomTeamToKai(${ki})">Add</button>
+          </div>
+        </div>`;
+    });
+
+    // Unassigned pool
+    if (allTeams.length > 0) {
+      html += `
+        <div class="pool-section">
+          <div class="pool-label">Unassigned teams — click a team then click the Kai to assign it, or use the Add button on each Kai</div>
+          <div class="unassigned-pool">
+            ${unassigned.length === 0
+              ? `<span style="font-size:.75rem;color:#4b5563;">All teams assigned ✓</span>`
+              : unassigned.map(t => `
+                  <span class="pool-pill" onclick="promptAssign('${escAttr(t)}')" title="Assign to a Kai">${escHtml(t)}</span>
+                `).join('')
+            }
+          </div>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+  }
+
+  function renameKai(ki, val) {
+    kais[ki].name = val;
+  }
+
+  function addKai() {
+    kais.push({ name: `Kai ${kais.length + 1}`, teams: [] });
+    renderKaisEditor();
+  }
+
+  function removeKai(ki) {
+    // Put its teams back in the pool
+    kais[ki].teams.forEach(t => {
+      if (!allTeams.includes(t)) allTeams.push(t);
+    });
+    kais.splice(ki, 1);
+    renderKaisEditor();
+  }
+
+  function unassignTeam(ki, team) {
+    kais[ki].teams = kais[ki].teams.filter(t => t !== team);
+    renderKaisEditor();
+  }
+
+  function addCustomTeamToKai(ki) {
+    const input = document.getElementById(`kai-custom-${ki}`);
+    const name = input.value.trim();
+    if (!name) return;
+    if (!kais[ki].teams.includes(name)) {
+      kais[ki].teams.push(name);
+      if (!allTeams.includes(name)) allTeams.push(name);
+    }
+    input.value = '';
+    renderKaisEditor();
+  }
+
+  function promptAssign(team) {
+    if (kais.length === 0) { alert('Add a Kai first.'); return; }
+    const opts = kais.map((k, i) => `${i + 1}. ${k.name}`).join('\n');
+    const ans = prompt(`Assign "${team}" to which Kai?\n\n${opts}\n\nEnter number:`);
+    if (!ans) return;
+    const ki = parseInt(ans, 10) - 1;
+    if (isNaN(ki) || ki < 0 || ki >= kais.length) { alert('Invalid choice.'); return; }
+    if (!kais[ki].teams.includes(team)) kais[ki].teams.push(team);
+    renderKaisEditor();
+  }
+
+  /* ================================================================== */
+  /*  Generate full season YAML                                          */
+  /* ================================================================== */
+  function generateYaml() {
+    const raw = document.getElementById('md-input').value.trim();
+    if (!raw) { alert('Paste schedule markdown first.'); return; }
+
+    const { schedule, log } = parseScheduleRaw(raw);
+    if (schedule.length === 0) {
+      log.unshift({ type: 'err', msg: 'No weeks found. Make sure headings are exactly "### Week N".' });
+      renderLog(log);
+      document.getElementById('output-area').style.display = 'block';
+      return;
+    }
+
+    const seasonName  = document.getElementById('season-name').value.trim() || 'Season 1';
+    const seasonGame  = document.getElementById('season-game').value.trim() || 'Dragon Ball: Sparking! Zero';
+    const seasonStatus = document.getElementById('season-status').value;
+    const playoffsStatus = document.getElementById('playoffs-status').value;
+    const playoffsFormat = document.getElementById('playoffs-format').value.trim() || 'Single Elimination Bo3';
+
+    // Build kais section — current kai names from inputs (they may have changed via typing)
+    // Re-read names from DOM inputs to capture any unsaved typing
+    kais.forEach((kai, ki) => {
+      const inp = document.getElementById(`kai-${ki}`)?.querySelector('input[type="text"]');
+      if (inp) kai.name = inp.value.trim() || kai.name;
+    });
+
+    const kaisSection = kais
+      .filter(k => k.teams.length > 0)
+      .map(k => ({
+        name: k.name,
+        teams: k.teams.map(t => ({ team: t, wins: 0, losses: 0, ties: 0 })),
+      }));
+
+    if (kaisSection.length === 0) {
+      log.push({ type: 'warn', msg: 'No Kais with teams defined — kais section will be empty. Use "Extract Teams" then assign teams to Kais.' });
+    }
+
+    const seasonObj = {
+      season: seasonName,
+      game: seasonGame,
+      status: seasonStatus,
+      kais: kaisSection,
+      schedule,
+      playoffs: {
+        status: playoffsStatus,
+        format: playoffsFormat,
+        bracket: [],
+      },
+    };
+
+    const yamlString = jsyaml.dump(seasonObj, { indent: 2, lineWidth: 120, noRefs: true });
+
+    lastYaml = yamlString;
+    document.getElementById('yaml-out').textContent = yamlString;
+    document.getElementById('output-area').style.display = 'block';
+    renderLog(log);
+    document.getElementById('output-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ================================================================== */
+  /*  Utilities                                                          */
+  /* ================================================================== */
+  function renderLog(log) {
+    document.getElementById('parse-log').innerHTML = log.map(({ type, msg }) =>
+      `<div class="${type}">${type === 'ok' ? '✓' : type === 'err' ? '✗' : '⚠'} ${escHtml(msg)}</div>`
+    ).join('');
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function escAttr(s) {
+    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  function copyYaml() {
+    if (!lastYaml) return;
+    navigator.clipboard.writeText(lastYaml).then(() => showToast('Copied to clipboard!'));
+  }
+
+  function downloadYaml() {
+    if (!lastYaml) return;
+    const season = document.getElementById('season-name').value.trim() || 'season';
+    const slug = season.toLowerCase().replace(/\s+/g, '-');
+    const blob = new Blob([lastYaml], { type: 'text/yaml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${slug}.yaml`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function clearAll() {
+    document.getElementById('md-input').value = '';
+    document.getElementById('yaml-out').textContent = '';
+    document.getElementById('parse-log').innerHTML = '';
+    document.getElementById('output-area').style.display = 'none';
+    lastYaml = '';
+    allTeams = [];
+    kais = [
+      { name: 'North Kai', teams: [] },
+      { name: 'East Kai',  teams: [] },
+      { name: 'West Kai',  teams: [] },
+      { name: 'South Kai', teams: [] },
+    ];
+    renderKaisEditor();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // Init
+  document.getElementById('page-url').textContent = window.location.origin + '/schedule-import/';
+  renderKaisEditor();
+</script>
+</body>
+</html>

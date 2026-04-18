@@ -1,0 +1,195 @@
+# ============================================================
+# SEASON SCHEDULE & RESULTS
+# Edit this file to update the current season's schedule,
+# standings, and match results.
+# ============================================================
+
+season: "Season 1"
+game: "Dragon Ball: Sparking! Zero"
+status: "Active" # Active, Completed, Upcoming
+
+# -- STANDINGS --
+# Update W/L/T after each week's matches are complete.
+standings:
+  - team: "Budokai"
+    wins: 5
+    losses: 2
+    ties: 0
+  - team: "Cinema"
+    wins: 4
+    losses: 3
+    ties: 0
+  - team: "Creations"
+    wins: 3
+    losses: 3
+    ties: 1
+  - team: "Demons"
+    wins: 4
+    losses: 2
+    ties: 1
+  - team: "Malevolent Souls"
+    wins: 2
+    losses: 5
+    ties: 0
+  - team: "Master and Student"
+    wins: 3
+    losses: 4
+    ties: 0
+  - team: "Primal Instincts"
+    wins: 5
+    losses: 1
+    ties: 1
+  - team: "Sentai"
+    wins: 3
+    losses: 4
+    ties: 0
+  - team: "The Cold Kingdom"
+    wins: 4
+    losses: 3
+    ties: 0
+  - team: "The Z-Fighters"
+    wins: 2
+    losses: 4
+    ties: 1
+  - team: "Time Patrol"
+    wins: 3
+    losses: 3
+    ties: 1
+  - team: "Tiny Terrors"
+    wins: 1
+    losses: 5
+    ties: 1
+
+# -- WEEKLY SCHEDULE --
+# Add new weeks as the season progresses.
+schedule:
+  - week: 1
+    matches:
+      - home: "Budokai"
+        away: "Cinema"
+        home_score: 3
+        away_score: 2
+        status: "completed"
+        video_url: ""
+      - home: "Demons"
+        away: "Creations"
+        home_score: 4
+        away_score: 1
+        status: "completed"
+        video_url: ""
+      - home: "Primal Instincts"
+        away: "Malevolent Souls"
+        home_score: 3
+        away_score: 2
+        status: "completed"
+        video_url: ""
+      - home: "Sentai"
+        away: "The Cold Kingdom"
+        home_score: 1
+        away_score: 4
+        status: "completed"
+        video_url: ""
+      - home: "The Z-Fighters"
+        away: "Time Patrol"
+        home_score: 2
+        away_score: 3
+        status: "completed"
+        video_url: ""
+      - home: "Master and Student"
+        away: "Tiny Terrors"
+        home_score: 4
+        away_score: 1
+        status: "completed"
+        video_url: ""
+
+  - week: 2
+    matches:
+      - home: "Cinema"
+        away: "Demons"
+        home_score: 2
+        away_score: 3
+        status: "completed"
+        video_url: ""
+      - home: "Creations"
+        away: "Primal Instincts"
+        home_score: 1
+        away_score: 4
+        status: "completed"
+        video_url: ""
+      - home: "Malevolent Souls"
+        away: "Sentai"
+        home_score: 3
+        away_score: 2
+        status: "completed"
+        video_url: ""
+      - home: "The Cold Kingdom"
+        away: "The Z-Fighters"
+        home_score: 3
+        away_score: 2
+        status: "completed"
+        video_url: ""
+      - home: "Time Patrol"
+        away: "Master and Student"
+        home_score: 2
+        away_score: 3
+        status: "completed"
+        video_url: ""
+      - home: "Tiny Terrors"
+        away: "Budokai"
+        home_score: 1
+        away_score: 4
+        status: "completed"
+        video_url: ""
+
+  - week: 3
+    matches:
+      - home: "Budokai"
+        away: "Primal Instincts"
+        home_score: null
+        away_score: null
+        status: "upcoming"
+        video_url: ""
+      - home: "Cinema"
+        away: "The Cold Kingdom"
+        home_score: null
+        away_score: null
+        status: "upcoming"
+        video_url: ""
+      - home: "Demons"
+        away: "Sentai"
+        home_score: null
+        away_score: null
+        status: "upcoming"
+        video_url: ""
+      - home: "Creations"
+        away: "Malevolent Souls"
+        home_score: null
+        away_score: null
+        status: "upcoming"
+        video_url: ""
+      - home: "The Z-Fighters"
+        away: "Tiny Terrors"
+        home_score: null
+        away_score: null
+        status: "upcoming"
+        video_url: ""
+      - home: "Time Patrol"
+        away: "Master and Student"
+        home_score: null
+        away_score: null
+        status: "upcoming"
+        video_url: ""
+
+# -- PLAYOFFS --
+playoffs:
+  status: "Not Started" # Not Started, In Progress, Completed
+  format: "Single Elimination Bo5"
+  bracket: []
+  # Example bracket entry:
+  # - round: "Quarterfinals"
+  #   match: 1
+  #   team_a: "Budokai"
+  #   team_b: "Cinema"
+  #   score_a: 3
+  #   score_b: 1
+  #   winner: "Budokai"

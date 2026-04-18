@@ -1,0 +1,35 @@
+site_name: Dragon Ball Sparking Zero League
+short_name: DBSZL
+tagline: COM vs COM — Who is the Strongest?
+description: >
+  The Dragon Ball Sparking Zero League is an COM vs COM competitive league built
+  around Dragon Ball: Sparking! Zero. Teams draft characters and customize their
+  fighters with capsules and AI strategies, then let the AI battle it out to see
+  who is the strongest!
+current_season: Season 0
+current_season_status: Offseason
+current_season_file: season-0.yaml
+all_seasons:
+  - file: season-0.yaml
+    label: Season 0
+links:
+  discord: https://discord.gg/gRQv8KC
+  youtube: https://www.youtube.com/channel/UCYrEHQEtGnLXy_ly1GIN46g
+  github: https://github.com/DragonBallZLeague/SparkingZero
+  old_site: https://dbzl-project11.github.io/
+nav:
+  - label: Home
+    path: /
+  - label: Teams
+    path: /teams
+  - label: Season
+    path: /season
+  - label: Rules
+    path: /rules
+  - label: Community
+    path: /community
+  - label: Archives
+    path: /archives
+footer_text: >
+  This is a non-profit fan-based endeavour. We do not own the copyright to any
+  Dragon Ball IP. Copyright is owned by the respective IP holders.
