@@ -37,6 +37,7 @@ collections:
             label: "All Seasons (newest first)"
             widget: "list"
             hint: "Add an entry for each season file. The season dropdown on the site uses this list."
+            summary: "{{label}}"
             fields:
               - { name: "file", label: "Filename", widget: "string", hint: "e.g. season-1.yaml" }
               - { name: "label", label: "Display Label", widget: "string", hint: "e.g. Season 1" }
@@ -51,6 +52,7 @@ collections:
           - name: "nav"
             label: "Navigation Items"
             widget: "list"
+            summary: "{{label}}"
             fields:
               - { name: "label", label: "Label", widget: "string" }
               - { name: "path", label: "Path", widget: "string" }
@@ -66,6 +68,7 @@ collections:
           - name: "teams"
             label: "Teams"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Team Name", widget: "string" }
               - { name: "slug", label: "URL Slug", widget: "string" }
@@ -78,12 +81,14 @@ collections:
                 label: "Roster"
                 widget: "list"
                 hint: "Active roster (up to 5 characters)"
+                summary: "{{character}}"
                 field: { name: "character", label: "Character", widget: "string" }
               - name: "master_list"
                 label: "Master List"
                 widget: "list"
                 required: false
                 hint: "Full list of all characters that fit the team theme"
+                summary: "{{character}}"
                 field: { name: "character", label: "Character", widget: "string" }
 
   # --- SEASONS (one file per season) ---
@@ -103,11 +108,13 @@ collections:
       - name: "kais"
         label: "Kais (Divisions)"
         widget: "list"
+        summary: "{{name}}"
         fields:
           - { name: "name", label: "Kai Name", widget: "string" }
           - name: "teams"
             label: "Teams"
             widget: "list"
+            summary: "{{team}}"
             fields:
               - { name: "team", label: "Team", widget: "string" }
               - { name: "wins", label: "Wins", widget: "number", value_type: "int" }
@@ -115,11 +122,13 @@ collections:
       - name: "schedule"
         label: "Weekly Schedule"
         widget: "list"
+        summary: "Week {{week}}"
         fields:
           - { name: "week", label: "Week Number", widget: "number", value_type: "int" }
           - name: "matches"
             label: "Matches"
             widget: "list"
+            summary: "{{home}} vs {{away}}"
             fields:
               - { name: "home", label: "Home Team", widget: "string" }
               - { name: "away", label: "Away Team", widget: "string" }
@@ -138,6 +147,7 @@ collections:
             label: "Bracket Matches"
             widget: "list"
             required: false
+            summary: "{{round}} — {{team_a}} vs {{team_b}}"
             fields:
               - { name: "round", label: "Round", widget: "string" }
               - { name: "match", label: "Match #", widget: "number", value_type: "int" }
@@ -160,6 +170,7 @@ collections:
           - name: "roles"
             label: "Volunteer Roles"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Role Name", widget: "string" }
               - { name: "icon", label: "Icon", widget: "select", options: ["Shield", "BarChart3", "Palette", "FlaskConical", "Wrench", "Heart"] }
@@ -168,18 +179,21 @@ collections:
                 label: "Members"
                 widget: "list"
                 required: false
+                summary: "{{name}}"
                 fields:
                   - { name: "name", label: "Display Name", widget: "string" }
                   - name: "links"
                     label: "Links"
                     widget: "list"
                     required: false
+                    summary: "{{label}}"
                     fields:
                       - { name: "label", label: "Label (e.g. YouTube, Twitter)", widget: "string" }
                       - { name: "url", label: "URL", widget: "string" }
           - name: "resources"
             label: "Resources"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Name", widget: "string" }
               - { name: "url", label: "URL", widget: "string" }
@@ -200,12 +214,14 @@ collections:
           - name: "viewer_steps"
             label: "Viewer Steps"
             widget: "list"
+            summary: "{{title}}"
             fields:
               - { name: "title", label: "Step Title", widget: "string" }
               - { name: "description", label: "Description", widget: "text" }
           - name: "participant_steps"
             label: "Participant Steps"
             widget: "list"
+            summary: "{{title}}"
             fields:
               - { name: "title", label: "Step Title", widget: "string" }
               - { name: "description", label: "Description", widget: "text" }
@@ -230,6 +246,7 @@ collections:
           - name: "capsules"
             label: "Capsule List"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Name", widget: "string" }
               - { name: "cost", label: "Cost", widget: "number", value_type: "int" }
@@ -248,6 +265,7 @@ collections:
           - name: "banned_capsules"
             label: "Banned Capsules"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Capsule Name", widget: "string" }
               - { name: "reason", label: "Reason (optional)", widget: "string", required: false }
@@ -281,6 +299,7 @@ collections:
               - name: "categories"
                 label: "Affected Categories"
                 widget: "list"
+                summary: "{{category}}"
                 field: { name: "category", label: "Category", widget: "string" }
           - { name: "form_restriction", label: "Form Restriction Note", widget: "string" }
           - { name: "additional_notes", label: "Additional Notes", widget: "markdown", required: false }
@@ -295,6 +314,7 @@ collections:
           - name: "categories"
             label: "AI Categories"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Category Name", widget: "string" }
               - { name: "color", label: "Color", widget: "select", options: ["blue", "red", "green"] }
@@ -302,6 +322,7 @@ collections:
               - name: "ais"
                 label: "AI Types"
                 widget: "list"
+                summary: "{{name}}"
                 fields:
                   - { name: "name", label: "AI Name", widget: "string" }
                   - { name: "description", label: "Description", widget: "text" }
@@ -331,10 +352,12 @@ collections:
           - name: "rules"
             label: "General Rules"
             widget: "list"
+            summary: "{{rule}}"
             field: { name: "rule", label: "Rule", widget: "text" }
           - name: "formats"
             label: "Test Formats"
             widget: "list"
+            summary: "{{type}}"
             fields:
               - { name: "type", label: "Format Type", widget: "string" }
               - { name: "deadline", label: "Deadline", widget: "string", required: false }
@@ -342,6 +365,7 @@ collections:
               - name: "options"
                 label: "Options"
                 widget: "list"
+                summary: "{{label}}"
                 fields:
                   - { name: "label", label: "Label", widget: "string" }
                   - { name: "description", label: "Description", widget: "string" }
@@ -358,6 +382,7 @@ collections:
           - name: "phases"
             label: "Off-Season Phases"
             widget: "list"
+            summary: "{{name}}"
             fields:
               - { name: "name", label: "Phase Name", widget: "string" }
               - { name: "icon", label: "Icon (Lucide name)", widget: "select", options: ["FlaskConical", "Users", "ArrowLeftRight", "RotateCcw", "Banknote"] }
@@ -398,6 +423,7 @@ collections:
           - name: "archives"
             label: "Archive Entries"
             widget: "list"
+            summary: "{{season}}"
             fields:
               - { name: "season", label: "Era/Season Name", widget: "string" }
               - { name: "game", label: "Game", widget: "string" }
@@ -408,11 +434,13 @@ collections:
               - name: "notable_events"
                 label: "Notable Events"
                 widget: "list"
+                summary: "{{event}}"
                 field: { name: "event", label: "Event", widget: "string" }
               - name: "seasons"
                 label: "Past Seasons"
                 widget: "list"
                 required: false
+                summary: "{{year}}"
                 fields:
                   - { name: "year", label: "Year", widget: "string" }
                   - { name: "url", label: "URL", widget: "string" }
