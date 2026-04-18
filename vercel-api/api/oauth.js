@@ -34,35 +34,55 @@ export default async function handler(req, res) {
 
       if (data.error) {
         res.status(200).send(`
-          <html><body><script>
-            window.opener.postMessage(
-              'authorization:github:error:${JSON.stringify(data)}',
-              '*'
-            );
-            window.close();
-          </script></body></html>
+          <html><body>
+            <h3>Authentication Error</h3>
+            <p>${data.error}: ${data.error_description || 'Unknown error'}</p>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage(
+                  'authorization:github:error:${JSON.stringify(data)}',
+                  '*'
+                );
+              }
+            </script>
+          </body></html>
         `);
         return;
       }
 
       const token = data.access_token;
 
-      // Send token back to CMS parent window via postMessage
-      // Retry mechanism handles browsers with tracking prevention delays
+      // Send token back to CMS via postMessage with retry
       res.status(200).send(`
-        <html><body><script>
-          (function() {
-            var msg = 'authorization:github:success:{"token":"${token}","provider":"github"}';
-            var target = window.opener;
-            if (target) {
-              target.postMessage(msg, '*');
-              setTimeout(function() { target.postMessage(msg, '*'); }, 500);
-              setTimeout(function() { window.close(); }, 1000);
-            } else {
-              document.body.innerHTML = '<p>Authentication successful! You can close this window and refresh the CMS page.</p>';
-            }
-          })();
-        </script></body></html>
+        <html><body>
+          <p id="status">Completing authentication...</p>
+          <script>
+            (function() {
+              var msg = 'authorization:github:success:{"token":"${token}","provider":"github"}';
+              var sent = false;
+
+              function trySend() {
+                if (window.opener) {
+                  window.opener.postMessage(msg, '*');
+                  document.getElementById('status').innerText = 'Token sent! This window should close automatically...';
+                  sent = true;
+                } else {
+                  document.getElementById('status').innerText = 'Login successful but popup lost connection to CMS. Close this window and refresh the CMS page.';
+                }
+              }
+
+              // Try immediately
+              trySend();
+              // Retry after delays
+              setTimeout(trySend, 500);
+              setTimeout(trySend, 1500);
+              // Auto-close after 3 seconds if we managed to send
+              setTimeout(function() {
+                if (sent) window.close();
+              }, 3000);
+            })();
+          </script>
+        </body></html>
       `);
     } catch (err) {
       console.error('OAuth callback error:', err);
