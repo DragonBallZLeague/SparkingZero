@@ -5,6 +5,8 @@
     { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
   "routes": [
+    { "src": "/api/auth", "dest": "/api/auth.js" },
+    { "src": "/api/callback", "dest": "/api/callback.js" },
     { "src": "/api/paths", "dest": "/api/paths.js" },
     { "src": "/api/list-files", "dest": "/api/list-files.js" },
     { "src": "/api/validate", "dest": "/api/validate.js" },

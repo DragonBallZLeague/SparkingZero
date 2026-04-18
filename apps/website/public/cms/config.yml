@@ -9,8 +9,8 @@ backend:
   name: github
   repo: DragonBallZLeague/SparkingZero
   branch: main
-  auth_type: pkce
-  app_id: Ov23li5Yjy15Mc3AlUn8
+  base_url: https://sparking-zero-iota.vercel.app
+  auth_endpoint: api/auth
 
 # Where uploaded media goes
 media_folder: "apps/website/public/images"
