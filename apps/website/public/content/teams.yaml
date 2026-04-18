@@ -11,7 +11,7 @@ teams:
       - Frost
       - Goku (Z - Early)
       - Kale
-      - Vegeta (Z - End)
+      - Vegeta (Z - End) Super Saiyan
     master_list:
       - Goku (Z - Early)
       - Goku (Z - End)
@@ -53,6 +53,11 @@ teams:
       - Shallot
       - Android 18
       - Spopovich
+    restrictions: |
+      - Kale Super Saiyan (Berserk) is a banned starting form
+      - Toppo cannot start in God of Destruction form
+      - Jiren cannot start Full Power form
+      - No forms beyond Super Saiyan are allowed
   - name: Cinema
     slug: cinema
     color: "#8B5CF6"
@@ -87,12 +92,13 @@ teams:
       - Hirudegarn
       - Baby Vegeta (GT)
       - Syn Shenron (GT)
-      - SH Piccolo
+      - Piccolo (Super Hero)
       - Cell Max
-      - SH Gohan
+      - Gohan (Super Hero)
       - Gamma 1
       - Gamma 2
       - Shallot
+    restrictions: ""
   - name: Cold Kingdom
     slug: cold-kingdom
     color: "#06B6D4"
@@ -101,12 +107,12 @@ teams:
     roster:
       - Cooler
       - Frieza (Super)
-      - Meta Cooler
+      - Metal Cooler
       - King Cold
       - Zarbon
     master_list:
       - Vegeta (Z - Scouter)
-      - Frieza (Z)
+      - Frieza (Z) 1st Form
       - Mecha Frieza
       - Frieza (Super)
       - Bardock
@@ -127,6 +133,7 @@ teams:
       - Cooler
       - Metal Cooler
       - Frost
+    restrictions: ""
   - name: Creations
     slug: creations
     color: "#10B981"
@@ -136,14 +143,14 @@ teams:
       - Android 17 (Z)
       - Android 19
       - Baby Vegeta
-      - Cell
+      - Cell 1st Form
       - Mecha Frieza
     master_list:
       - Piccolo
       - Piccolo (Fused with Kami)
       - Gotenks
       - Mecha Frieza
-      - Cell
+      - Cell 1st Form
       - Perfect Cell
       - Cell Jr.
       - Majin Buu (Evil)
@@ -161,12 +168,13 @@ teams:
       - Baby Vegeta (GT)
       - Syn Shenron (GT)
       - Anilaza
-      - SH Piccolo
+      - Piccolo (Super Hero)
       - Cell Max
       - Gamma 1
       - Gamma 2
       - Majin Duu
       - Majin Kuu
+    restrictions: ""
   - name: Demons
     slug: demons
     color: "#DC2626"
@@ -174,7 +182,7 @@ teams:
     manager: TBD
     roster:
       - Dabura
-      - King Gomah
+      - Third Eye Gomah
       - Majin Buu
       - Majin Duu
       - Piccolo (Super Hero)
@@ -182,7 +190,7 @@ teams:
       - Piccolo
       - Piccolo (Fused with Kami)
       - Nail
-      - Cell
+      - Cell 1st Form
       - Perfect Cell
       - Cell Jr.
       - Majin Buu
@@ -199,10 +207,11 @@ teams:
       - Panzy
       - Majin Kuu
       - Glorio
-      - SH Piccolo
+      - Piccolo (Super Hero)
       - Cell Max
       - Majin Duu
-      - Demon King Gomah
+      - Third Eye Gomah
+    restrictions: ""
   - name: Malevolent Souls
     slug: malevolent-souls
     color: "#6366F1"
@@ -210,17 +219,17 @@ teams:
     manager: TBD
     roster:
       - Broly (Z)
-      - Frieza (Z)
+      - Frieza (Z) 1st Form
       - Garlic Jr.
       - Super Buu
       - Syn Shenron
     master_list:
       - Vegeta (Z - Scouter)
       - Majin Vegeta
-      - Frieza (Z)
+      - Frieza (Z) 1st Form
       - Mecha Frieza
       - Frieza (Super)
-      - Cell
+      - Cell 1st Form
       - Perfect Cell
       - Cell Jr.
       - Majin Buu
@@ -265,7 +274,8 @@ teams:
       - Zamasu
       - Frost
       - Cell Max
-      - Demon King Gomah
+      - Third Eye Gomah
+    restrictions: ""
   - name: Master & Student
     slug: master-&-student
     color: "#0EA5E9"
@@ -310,6 +320,7 @@ teams:
       - Nappa
       - Shallot
       - Cabba
+    restrictions: ""
   - name: Primal Instincts
     slug: primal-instincts
     color: "#84CC16"
@@ -319,7 +330,7 @@ teams:
       - Bardock
       - Bergamo
       - Caulifla
-      - Goku (Daima)
+      - Goku (Mini)
       - Kakunsa
     master_list:
       - Goku (GT)
@@ -337,10 +348,11 @@ teams:
       - Dyspo
       - Bergamo
       - Kakunsa
-      - Daima Goku
+      - Goku (Mini)
       - Shallot
       - Kid Goku
       - Baby Vegeta
+    restrictions: ""
   - name: Sentai Squad
     slug: sentai-squad
     color: "#EC4899"
@@ -369,6 +381,7 @@ teams:
       - Gamma 1
       - Gamma 2
       - Shallot
+    restrictions: ""
   - name: Time Patrol
     slug: time-patrol
     color: "#A855F7"
@@ -397,13 +410,14 @@ teams:
       - Bardock
       - Android 18
       - Android 17 (Z)
+    restrictions: ""
   - name: Tiny Terrors
     slug: tiny-terrors
     color: "#FACC15"
     description: Characters of a very small stature.
     manager: TBD
     roster:
-      - Daima Vegeta
+      - Vegeta (Mini)
       - Gotenks
       - Kid Buu
       - Panzy
@@ -421,11 +435,12 @@ teams:
       - Chiaotzu
       - Pan (GT)
       - Saibaman
-      - Daima Goku
+      - Goku (Mini)
       - Panzy
       - Majin Kuu
-      - Daima Vegeta
+      - Vegeta (Mini)
       - Guldo
+    restrictions: ""
   - name: Z-Fighters
     slug: z-fighters
     color: "#F59E0B"
@@ -471,7 +486,8 @@ teams:
       - Android 16
       - Android 17 (Super)
       - Android 18
-      - Daima Goku
-      - Daima Vegeta
-      - SH Piccolo
+      - Goku (Mini)
+      - Vegeta (Mini)
+      - Piccolo (Super Hero)
       - SH Gohan
+    restrictions: ""
