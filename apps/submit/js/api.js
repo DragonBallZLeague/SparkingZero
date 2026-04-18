@@ -7,7 +7,7 @@
  */
 async function fetchPaths() {
     console.log('[API] Fetching paths...');
-    const res = await fetch(`${CONFIG.API_BASE_URL}/api/paths.js`);
+    const res = await fetch(`${CONFIG.API_BASE_URL}/api/info`);
     if (!res.ok) {
         throw new Error(`Failed to load folders: ${res.status}`);
     }

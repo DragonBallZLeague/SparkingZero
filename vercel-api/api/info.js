@@ -1,5 +1,5 @@
-// List BR_Data folder structure (2 levels) via GitHub Contents API
-// Expects env: GITHUB_TOKEN, OWNER (default DragonBallZLeague), REPO (default SparkingZero)
+// Vercel serverless function: /api/info
+// Combined endpoint: ?action=paths (list BR_Data folders) or ?action=status (submission status)
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,6 +13,18 @@ export default async function handler(req, res) {
     res.status(200).end();
     return;
   }
+
+  const action = req.query.action;
+
+  // --- STATUS ---
+  if (action === 'status') {
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: 'id required' });
+    res.status(200).json({ id, status: 'pending' });
+    return;
+  }
+
+  // --- PATHS (default) ---
   if (req.method !== 'GET') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
@@ -46,10 +58,8 @@ export default async function handler(req, res) {
     for (const item of level1) {
       if (item.type !== 'dir') continue;
       
-      // Always add the parent folder as an option
       options.push({ label: item.name, value: item.name });
       
-      // Also add subdirectories if they exist
       try {
         const childrenResp = await listDir(item.path);
         const children = childrenResp
@@ -59,7 +69,6 @@ export default async function handler(req, res) {
           options.push(...children);
         }
       } catch (err) {
-        // If we can't list children, that's OK - we already added the parent
         console.warn(`Could not list children of ${item.path}:`, err.message);
       }
     }
