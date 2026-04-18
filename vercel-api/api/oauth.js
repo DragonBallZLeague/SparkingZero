@@ -52,33 +52,50 @@ export default async function handler(req, res) {
 
       const token = data.access_token;
 
-      // Send token back to CMS via postMessage with retry
+      // Decap CMS requires a two-step handshake:
+      // 1. Popup sends 'authorizing:github' to parent
+      // 2. Parent acknowledges and sets up token listener
+      // 3. Popup sends 'authorization:github:success:...' with the token
       res.status(200).send(`
         <html><body>
           <p id="status">Completing authentication...</p>
           <script>
             (function() {
-              var msg = 'authorization:github:success:{"token":"${token}","provider":"github"}';
-              var sent = false;
+              var token = '${token}';
+              var opener = window.opener;
 
-              function trySend() {
-                if (window.opener) {
-                  window.opener.postMessage(msg, '*');
-                  document.getElementById('status').innerText = 'Token sent! This window should close automatically...';
-                  sent = true;
-                } else {
-                  document.getElementById('status').innerText = 'Login successful but popup lost connection to CMS. Close this window and refresh the CMS page.';
-                }
+              if (!opener) {
+                document.getElementById('status').innerText = 'Login successful but popup lost connection to CMS. Close this window and refresh the CMS page.';
+                return;
               }
 
-              // Try immediately
-              trySend();
-              // Retry after delays
-              setTimeout(trySend, 500);
-              setTimeout(trySend, 1500);
-              // Auto-close after 3 seconds if we managed to send
+              // Step 1: Send handshake to CMS parent
+              opener.postMessage('authorizing:github', '*');
+              document.getElementById('status').innerText = 'Handshake sent, waiting for CMS...';
+
+              // Step 2: Listen for CMS to acknowledge the handshake
+              window.addEventListener('message', function(e) {
+                if (e.data === 'authorizing:github') {
+                  // Step 3: CMS is ready — send the token
+                  opener.postMessage(
+                    'authorization:github:success:' + JSON.stringify({token: token, provider: 'github'}),
+                    e.origin
+                  );
+                  document.getElementById('status').innerText = 'Token sent! Closing...';
+                  setTimeout(function() { window.close(); }, 1000);
+                }
+              });
+
+              // Timeout fallback: if handshake never comes back, try sending token directly
               setTimeout(function() {
-                if (sent) window.close();
+                if (document.getElementById('status').innerText.indexOf('Token sent') === -1) {
+                  opener.postMessage(
+                    'authorization:github:success:' + JSON.stringify({token: token, provider: 'github'}),
+                    '*'
+                  );
+                  document.getElementById('status').innerText = 'Fallback: token sent directly. Closing...';
+                  setTimeout(function() { window.close(); }, 1000);
+                }
               }, 3000);
             })();
           </script>
