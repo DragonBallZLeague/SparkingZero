@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: '/SparkingZero/admin-dash/',
+  base: '/SparkingZero/admin/',
   server: {
     port: 5174,
     strictPort: true,
@@ -14,7 +14,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: '../../dist/admin-dash',
+    outDir: '../../dist/admin',
     emptyOutDir: true
   },
   plugins: [react()]
