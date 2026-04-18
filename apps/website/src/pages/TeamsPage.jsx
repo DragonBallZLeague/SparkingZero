@@ -120,11 +120,11 @@ export default function TeamsPage({ darkMode }) {
                     Roster
                   </h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {(team.roster || []).slice(0, 5).map((char) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                    {(team.roster || []).map((char) => (
                       <div
                         key={char}
-                        className={`px-3 py-2 rounded-lg text-sm ${
+                        className={`px-3 py-2 rounded-lg text-sm text-center ${
                           darkMode ? 'bg-gray-800/50 text-gray-200' : 'bg-stone-100 text-stone-700'
                         }`}
                       >
@@ -140,16 +140,16 @@ export default function TeamsPage({ darkMode }) {
                       }`}>
                         Master List
                       </h3>
-                      <div className="flex flex-wrap gap-1.5">
-                        {team.master_list.map((char) => (
-                          <span
+                      <div className="columns-2 sm:columns-5 gap-1">
+                        {[...team.master_list].sort((a, b) => a.localeCompare(b)).map((char) => (
+                          <div
                             key={char}
-                            className={`px-2 py-1 rounded text-xs ${
+                            className={`break-inside-avoid px-2.5 py-1.5 mb-1 rounded text-xs text-center ${
                               darkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-stone-100 text-stone-500'
                             }`}
                           >
                             {char}
-                          </span>
+                          </div>
                         ))}
                       </div>
                     </>
