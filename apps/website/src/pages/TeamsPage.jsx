@@ -268,8 +268,7 @@ export default function TeamsPage({ darkMode }) {
                   <div>
                     <h2 className="text-lg font-semibold">{team.name}</h2>
                     <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-                      {team.roster?.length || 0} fighters
-                      {team.manager && team.manager !== 'TBD' ? ` · Manager: ${team.manager}` : ''}
+                      {team.description}
                     </p>
                   </div>
                 </div>

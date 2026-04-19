@@ -74,6 +74,9 @@ export default function SeasonPage({ darkMode }) {
   const getTeamColor = (name) =>
     teams?.teams?.find((t) => t.name === name)?.color || '#6B7280';
 
+  const getTeamIcon = (name) =>
+    teams?.teams?.find((t) => t.name === name)?.icon || null;
+
   const getTeamSlug = (name) =>
     teams?.teams?.find((t) => t.name === name)?.slug || null;
 
@@ -203,10 +206,18 @@ export default function SeasonPage({ darkMode }) {
                               <td className="py-3 px-4 font-medium text-gray-400">{i + 1}</td>
                               <td className="py-3 px-4">
                                 <div className="flex items-center gap-3">
-                                  <div
-                                    className="w-3 h-3 rounded-full flex-shrink-0"
-                                    style={{ backgroundColor: getTeamColor(s.team) }}
-                                  />
+                                  {getTeamIcon(s.team) ? (
+                                    <img
+                                      src={getTeamIcon(s.team)}
+                                      alt={s.team}
+                                      className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                                    />
+                                  ) : (
+                                    <div
+                                      className="w-7 h-7 rounded-md flex-shrink-0"
+                                      style={{ backgroundColor: getTeamColor(s.team) }}
+                                    />
+                                  )}
                                   <span className={`font-medium transition-colors ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}>{s.team}</span>
                                 </div>
                               </td>
@@ -254,10 +265,18 @@ export default function SeasonPage({ darkMode }) {
                       <div className={`flex items-center gap-3 flex-1 ${
                         homeWin ? 'font-bold text-green-400' : awayWin ? 'text-red-400' : ''
                       }`}>
-                        <div
-                          className="w-3 h-3 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: getTeamColor(m.home) }}
-                        />
+                        {getTeamIcon(m.home) ? (
+                          <img
+                            src={getTeamIcon(m.home)}
+                            alt={m.home}
+                            className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div
+                            className="w-7 h-7 rounded-md flex-shrink-0"
+                            style={{ backgroundColor: getTeamColor(m.home) }}
+                          />
+                        )}
                         <span className="truncate">{m.home}</span>
                       </div>
 
@@ -306,10 +325,18 @@ export default function SeasonPage({ darkMode }) {
                         awayWin ? 'font-bold text-green-400' : homeWin ? 'text-red-400' : ''
                       }`}>
                         <span className="truncate">{m.away}</span>
-                        <div
-                          className="w-3 h-3 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: getTeamColor(m.away) }}
-                        />
+                        {getTeamIcon(m.away) ? (
+                          <img
+                            src={getTeamIcon(m.away)}
+                            alt={m.away}
+                            className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div
+                            className="w-7 h-7 rounded-md flex-shrink-0"
+                            style={{ backgroundColor: getTeamColor(m.away) }}
+                          />
+                        )}
                       </div>
                     </div>
                   );

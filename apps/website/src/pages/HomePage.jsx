@@ -22,9 +22,24 @@ export default function HomePage({ site, darkMode }) {
     });
   }, []);
 
-  const topTeams = season?.kais
-    ? season.kais.flatMap((k) => k.teams || []).sort((a, b) => b.wins - a.wins).slice(0, 4)
-    : [];
+  const topTeams = (() => {
+    if (!season?.kais) return [];
+    const sorted = season.kais
+      .flatMap((k) => k.teams || [])
+      .sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    // Assign dense ranks (ties get same rank)
+    let rank = 1;
+    const ranked = sorted.map((t, i) => {
+      if (i > 0) {
+        const prev = sorted[i - 1];
+        if (t.wins !== prev.wins || t.losses !== prev.losses) rank = i + 1;
+      }
+      return { ...t, rank };
+    });
+    // Take top 4 entries, but keep ties at the cutoff
+    const cutoffRank = ranked[3]?.rank ?? 4;
+    return ranked.filter((t) => t.rank <= cutoffRank).slice(0, 4);
+  })();
 
   return (
     <div>
@@ -178,7 +193,7 @@ export default function HomePage({ site, darkMode }) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {topTeams.map((s, i) => {
+            {topTeams.map((s) => {
               const teamData = teams?.teams?.find((t) => t.name === s.team);
               const color = teamData?.color || '#F97316';
               const slug = teamData?.slug;
@@ -191,14 +206,35 @@ export default function HomePage({ site, darkMode }) {
                       ? 'bg-gray-900 border-gray-800'
                       : 'bg-stone-50 border-stone-200 shadow-sm'
                   }`}
+                  style={{
+                    boxShadow: `0 0 18px 2px ${color}33`,
+                    borderColor: `${color}55`,
+                  }}
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg"
-                      style={{ backgroundColor: color }}
+                    <span
+                      className="text-3xl font-black w-8 text-center flex-shrink-0 leading-none"
+                      style={{
+                        background: `linear-gradient(135deg, #FFD700, #FFA500, #FF6B00)`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        filter: 'drop-shadow(0 0 3px rgba(255,180,0,0.35))',
+                      }}
                     >
-                      {i + 1}
-                    </div>
+                      {s.rank}
+                    </span>
+                    {teamData?.icon ? (
+                      <img
+                        src={teamData.icon}
+                        alt={s.team}
+                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-10 h-10 rounded-lg flex-shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                    )}
                     <div>
                       <div className="font-semibold">{s.team}</div>
                       <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
@@ -252,16 +288,21 @@ export default function HomePage({ site, darkMode }) {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: team.color }}
-                    />
+                    {team.icon ? (
+                      <img
+                        src={team.icon}
+                        alt={team.name}
+                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-10 h-10 rounded-lg flex-shrink-0"
+                        style={{ backgroundColor: team.color }}
+                      />
+                    )}
                     <span className={`font-medium text-sm transition-colors truncate ${darkMode ? 'group-hover:text-orange-400' : 'group-hover:text-blue-600'}`}>
                       {team.name}
                     </span>
-                  </div>
-                  <div className={`text-xs mt-1 ml-6 ${darkMode ? 'text-gray-500' : 'text-stone-500'}`}>
-                    {team.roster?.length || 0} fighters
                   </div>
                 </Link>
               ))}
