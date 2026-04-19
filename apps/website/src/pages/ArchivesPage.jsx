@@ -4,7 +4,7 @@ import { loadContent } from '../utils/contentLoader';
 
 export default function ArchivesPage({ darkMode }) {
   const [data, setData] = useState(null);
-  const [expandedIndex, setExpandedIndex] = useState(null);
+  const [expandedIndex, setExpandedIndex] = useState(0);
 
   useEffect(() => {
     loadContent('archives.yaml').then(setData);
@@ -28,7 +28,8 @@ export default function ArchivesPage({ darkMode }) {
 
       <div className="space-y-4">
         {(data.archives || []).map((era, i) => {
-          const isExpanded = expandedIndex === i;
+          const alwaysOpen = i === 0;
+          const isExpanded = alwaysOpen || expandedIndex === i;
           return (
             <div
               key={i}
@@ -36,20 +37,31 @@ export default function ArchivesPage({ darkMode }) {
                 darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
               }`}
             >
-              <button
-                onClick={() => setExpandedIndex(isExpanded ? null : i)}
-                className={`w-full flex items-center justify-between p-5 text-left transition-colors ${
-                  darkMode ? 'hover:bg-gray-800/50' : 'hover:bg-stone-100'
-                }`}
-              >
-                <div>
-                  <h2 className="text-lg font-semibold">{era.season}</h2>
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-                    {era.game}
-                  </p>
+              {alwaysOpen ? (
+                <div className="w-full flex items-center justify-between p-5 text-left">
+                  <div>
+                    <h2 className="text-lg font-semibold">{era.season}</h2>
+                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+                      {era.game}
+                    </p>
+                  </div>
                 </div>
-                {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-              </button>
+              ) : (
+                <button
+                  onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                  className={`w-full flex items-center justify-between p-5 text-left transition-colors ${
+                    darkMode ? 'hover:bg-gray-800/50' : 'hover:bg-stone-100'
+                  }`}
+                >
+                  <div>
+                    <h2 className="text-lg font-semibold">{era.season}</h2>
+                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+                      {era.game}
+                    </p>
+                  </div>
+                  {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                </button>
+              )}
 
               {isExpanded && (
                 <div className={`px-5 pb-5 border-t ${darkMode ? 'border-gray-800' : 'border-stone-200'}`}>
@@ -133,17 +145,7 @@ export default function ArchivesPage({ darkMode }) {
         })}
       </div>
 
-      {/* Acknowledgements */}
-      <div className={`mt-12 rounded-xl border p-6 text-center ${
-        darkMode ? 'bg-gray-900/50 border-gray-800' : 'bg-stone-100 border-stone-200'
-      }`}>
-        <h3 className="text-lg font-semibold mb-2">League History</h3>
-        <p className={`text-sm max-w-lg mx-auto ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-          The Dragon Ball Z League was originally founded by <strong>Squee</strong> and
-          later continued by <strong>Mal</strong>. The Sparking Zero era represents a
-          new chapter built on this incredible legacy.
-        </p>
-      </div>
+
     </div>
   );
 }
