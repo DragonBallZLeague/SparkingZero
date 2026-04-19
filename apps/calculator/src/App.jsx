@@ -1264,6 +1264,25 @@ function App() {
           </button>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-sz-panel border-t border-sz-border px-4 py-2 flex items-center justify-center gap-2 flex-shrink-0 text-sm text-gray-400">
+        <a
+          href="https://discord.gg/RgpaPb6jbz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 hover:opacity-80 transition-opacity hover:text-orange-500"
+          title="Kame House Discord"
+        >
+          <span className="text-sz font-semibold hover:text-orange-500">Character data provided by </span>
+          <span className="text-sz text-blue-500 font-semibold mr-1">Kame House </span>
+          <img
+            src={`${import.meta.env.BASE_URL}general_imgs/KameHouseIcon.png`}
+            alt="Kame House"
+            className="h-9 w-9 rounded-full object-cover"
+          />
+        </a>
+      </footer>
     </div>
   );
 }
