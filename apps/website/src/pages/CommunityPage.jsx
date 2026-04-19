@@ -107,31 +107,37 @@ export default function CommunityPage({ darkMode }) {
 
       {/* Resources / Links */}
       <h2 className="text-xl font-bold mb-4">Resources & Tools</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(data.resources || []).map((res) => (
-          <a
-            key={res.name}
-            href={res.url}
-            target={res.url.startsWith('http') ? '_blank' : undefined}
-            rel={res.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className={`group rounded-xl border p-5 transition-all hover:scale-[1.02] ${
-              darkMode
-                ? 'bg-gray-900 border-gray-800 hover:border-gray-600'
-                : 'bg-stone-50 border-stone-200 hover:border-stone-400 shadow-sm'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className={`font-semibold transition-colors ${darkMode ? 'group-hover:text-orange-400' : 'group-hover:text-blue-600'}`}>
-                {res.name}
-              </h3>
-              <ExternalLink className={`w-4 h-4 text-gray-400 transition-colors ${darkMode ? 'group-hover:text-orange-400' : 'group-hover:text-blue-600'}`} />
-            </div>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              {res.description}
-            </p>
-          </a>
-        ))}
-      </div>
+      {[['social', 'grid-cols-1 sm:grid-cols-2'], ['tools', 'grid-cols-1 sm:grid-cols-3']].map(([group, cols]) => {
+        const items = (data.resources || []).filter(r => r.group === group);
+        if (!items.length) return null;
+        return (
+          <div key={group} className={`grid ${cols} gap-4 mb-4`}>
+            {items.map((res) => (
+              <a
+                key={res.name}
+                href={res.url}
+                target={res.url.startsWith('http') ? '_blank' : undefined}
+                rel={res.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className={`group rounded-xl border p-5 transition-all hover:scale-[1.02] ${
+                  darkMode
+                    ? 'bg-gray-900 border-gray-800 hover:border-gray-600'
+                    : 'bg-stone-50 border-stone-200 hover:border-stone-400 shadow-sm'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className={`font-semibold transition-colors ${darkMode ? 'group-hover:text-orange-400' : 'group-hover:text-blue-600'}`}>
+                    {res.name}
+                  </h3>
+                  <ExternalLink className={`w-4 h-4 text-gray-400 transition-colors ${darkMode ? 'group-hover:text-orange-400' : 'group-hover:text-blue-600'}`} />
+                </div>
+                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {res.description}
+                </p>
+              </a>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

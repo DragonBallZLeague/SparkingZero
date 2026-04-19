@@ -57,15 +57,20 @@ resources:
   - name: Join the Discord
     url: https://discord.gg/gRQv8KC
     description: The main hub for all league activity, discussion, and sign-ups.
+    group: social
   - name: Watch on YouTube
     url: https://www.youtube.com/channel/UCYrEHQEtGnLXy_ly1GIN46g
     description: Catch all the recorded matches and highlights.
-  - name: Analyzer
+    group: social
+  - name: Match Analyzer
     url: https://dragonballzleague.github.io/SparkingZero/analyzer/
     description: Deep dive into match stats, character performance, and more.
+    group: tools
   - name: Match Builder
     url: https://dragonballzleague.github.io/SparkingZero/matchbuilder/
     description: Build and customize your team's fighter loadouts.
-  - name: Calculator
+    group: tools
+  - name: Character Calculator
     url: https://dragonballzleague.github.io/SparkingZero/calculator/
     description: Stat calculator for character builds and capsule effects.
+    group: tools
