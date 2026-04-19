@@ -13,9 +13,9 @@ teams:
       - Vegeta (Z - End) Super Saiyan
     name: Budokai
     slug: budokai
-    banner: /images/budokai-banner.png
+    banner: ""
     manager: TBD
-    icon: /images/budokai-icon.png
+    icon: /images/budokailogo.png
     master_list:
       - Goku (Z - Early)
       - Goku (Z - End)
@@ -58,18 +58,18 @@ teams:
       - Android 18
       - Spopovich
     description: Characters who participated in a tournament.
-  - name: Cinema
-    slug: cinema
-    color: "#8B5CF6"
-    description: Characters who first appeared in alternate media, namely movies and
-      specials.
-    manager: TBD
+  - color: "#8B5CF6"
+    restrictions: ""
     roster:
       - Android 13
       - Bojack
       - Broly (Super)
       - Gohan (Super Hero) Super Saiyan
       - Turles
+    name: Cinema
+    slug: cinema
+    manager: TBD
+    icon: /images/cinemalogo.png
     master_list:
       - Goku (Super)
       - Vegeta (Super)
@@ -99,19 +99,20 @@ teams:
       - Gamma 1
       - Gamma 2
       - Shallot
+    description: Characters who first appeared in alternate media, namely movies and
+      specials.
+  - color: "#06B6D4"
     restrictions: ""
-  - name: Cold Kingdom
-    slug: cold-kingdom
-    color: "#06B6D4"
-    description: Characters who have either been a member of the Cold family or
-      served under them.
-    manager: TBD
     roster:
       - Cooler
       - Frieza (Super)
       - Metal Cooler
       - King Cold
       - Zarbon
+    name: Cold Kingdom
+    slug: cold-kingdom
+    manager: TBD
+    icon: /images/coldlogo.png
     master_list:
       - Vegeta (Z - Scouter)
       - Frieza (Z) 1st Form
@@ -135,7 +136,8 @@ teams:
       - Cooler
       - Metal Cooler
       - Frost
-    restrictions: ""
+    description: Characters who have either been a member of the Cold family or
+      served under them.
   - name: Creations
     slug: creations
     color: "#10B981"
@@ -325,17 +327,18 @@ teams:
       - Shallot
       - Cabba
     restrictions: ""
-  - name: Primal Instincts
-    slug: primal-instincts
-    color: "#84CC16"
-    description: Characters with mammalian animalistic features.
-    manager: TBD
+  - color: "#84CC16"
+    restrictions: ""
     roster:
       - Bardock
       - Bergamo
       - Caulifla
       - Goku (Mini)
       - Kakunsa
+    name: Primal Instincts
+    slug: primal-instincts
+    manager: TBD
+    icon: /images/kaijulogo.png
     master_list:
       - Goku (GT)
       - Vegeta (Z - Scouter)
@@ -356,18 +359,19 @@ teams:
       - Shallot
       - Kid Goku
       - Baby Vegeta
+    description: Characters with mammalian animalistic features.
+  - color: "#EC4899"
     restrictions: ""
-  - name: Sentai Squad
-    slug: sentai-squad
-    color: "#EC4899"
-    description: Characters inspired by Sentai style series.
-    manager: TBD
     roster:
       - Burter
       - Gamma 1
       - Jeice
       - Jiren
       - Toppo
+    name: Sentai Squad
+    slug: sentai-squad
+    manager: TBD
+    icon: /images/sentailogo.png
     master_list:
       - Gohan (Adult)
       - Videl
@@ -385,7 +389,7 @@ teams:
       - Gamma 1
       - Gamma 2
       - Shallot
-    restrictions: ""
+    description: Characters inspired by Sentai style series.
   - name: Time Patrol
     slug: time-patrol
     color: "#A855F7"
@@ -416,17 +420,18 @@ teams:
       - Android 18
       - Android 17 (Z)
     restrictions: ""
-  - name: Tiny Terrors
-    slug: tiny-terrors
-    color: "#FACC15"
-    description: Characters of a very small stature.
-    manager: TBD
+  - color: "#FACC15"
+    restrictions: ""
     roster:
       - Vegeta (Mini)
       - Gotenks
       - Kid Buu
       - Panzy
       - Trunks (Kid)
+    name: Tiny Terrors
+    slug: tiny-terrors
+    manager: TBD
+    icon: /images/tinyterrorslogo.png
     master_list:
       - Goku (GT)
       - Goku (Teen)
@@ -445,18 +450,19 @@ teams:
       - Majin Kuu
       - Vegeta (Mini)
       - Guldo
+    description: Characters of a very small stature.
+  - color: "#F59E0B"
     restrictions: ""
-  - name: Z-Fighters
-    slug: z-fighters
-    color: "#F59E0B"
-    description: Characters who acted as protagonists.
-    manager: TBD
     roster:
       - Gohan (Teen)
       - Goku (Z - Mid)
       - Piccolo (Fused with Kami)
       - Tien
       - Trunks (Sword)
+    name: Z-Fighters
+    slug: z-fighters
+    manager: TBD
+    icon: /images/zfighterslogo.png
     master_list:
       - Goku (Z - Early)
       - Goku (Z - Mid)
@@ -495,4 +501,4 @@ teams:
       - Vegeta (Mini)
       - Piccolo (Super Hero)
       - SH Gohan
-    restrictions: ""
+    description: Characters who acted as protagonists.
