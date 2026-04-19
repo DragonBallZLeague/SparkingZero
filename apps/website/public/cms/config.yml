@@ -83,6 +83,11 @@ collections:
                 hint: "Active roster (up to 5 characters)"
                 summary: "{{character}}"
                 field: { name: "character", label: "Character", widget: "string" }
+              - name: "restrictions"
+                label: "Restrictions"
+                widget: "markdown"
+                required: false
+                hint: "Special rules or banned forms for this team (supports bullet lists)"
               - name: "master_list"
                 label: "Master List"
                 widget: "list"

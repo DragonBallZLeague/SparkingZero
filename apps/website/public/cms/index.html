@@ -60,6 +60,10 @@
                 )
               ),
               desc ? CMS.h('p', { style: { fontSize: '14px', color: '#555', margin: '8px 0' } }, desc) : null,
+              team.get('restrictions') ? CMS.h('div', { style: { marginTop: '8px', padding: '8px 12px', backgroundColor: '#fff3cd', borderLeft: '3px solid #f59e0b', borderRadius: '0 4px 4px 0', fontSize: '13px', color: '#555' } },
+                CMS.h('strong', { style: { fontSize: '12px', textTransform: 'uppercase', color: '#d97706', letterSpacing: '0.05em' } }, 'Restrictions'),
+                CMS.h('div', { style: { marginTop: '4px', whiteSpace: 'pre-wrap' } }, team.get('restrictions'))
+              ) : null,
               roster ? CMS.h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' } },
                 roster.map(function (char, j) {
                   return CMS.h('span', {
