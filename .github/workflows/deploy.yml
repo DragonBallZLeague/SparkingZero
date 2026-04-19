@@ -73,6 +73,12 @@ jobs:
           mkdir -p dist/submit
           cp -r apps/submit/* dist/submit/
 
+      - name: Sync referencedata to apps
+        shell: bash
+        run: |
+          cp referencedata/transformations.json apps/website/public/content/transformations.json
+          cp referencedata/transformations.json apps/matchbuilder/public/transformations.json
+
       - name: Install dependencies (website)
         working-directory: apps/website
         run: npm ci
