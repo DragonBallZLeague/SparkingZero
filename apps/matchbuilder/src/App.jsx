@@ -2317,7 +2317,7 @@ const Combobox = ({
   const { x, y, strategy, refs, update, floatingStyles } = useFloating({
     placement: 'bottom-start',
     middleware: [
-      offset(6),
+      offset(-4),
       flip(),
       shift(),
       size({
