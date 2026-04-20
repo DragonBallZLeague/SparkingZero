@@ -41,7 +41,44 @@ export default function TeamSchedulePage({ darkMode }) {
     );
   }, [seasonData, team]);
 
-  // Build this team's match list across all weeks
+  // Build this team's pre-season match list
+  const preseasonMatches = useMemo(() => {
+    if (!seasonData || !team) return [];
+    const result = [];
+    for (const week of seasonData.preseason_schedule || []) {
+      for (const match of week.matches || []) {
+        const isHome = match.home === team.name;
+        const isAway = match.away === team.name;
+        if (!isHome && !isAway) continue;
+        const opponent = isHome ? match.away : match.home;
+        let result_label = null;
+        if (match.status === 'completed' && match.winner) {
+          const w = match.winner.toLowerCase();
+          if (w === 'draw' || w === 'tie') {
+            result_label = 'T';
+          } else {
+            result_label = match.winner === team.name ? 'W' : 'L';
+          }
+        } else if (match.status === 'live') {
+          result_label = 'LIVE';
+        }
+        result.push({
+          week: week.week,
+          isHome,
+          opponent,
+          status: match.status,
+          divisional: !!match.divisional,
+          result: result_label,
+          winner: match.winner || null,
+          video_url: match.video_url || '',
+          phase: 'preseason',
+        });
+      }
+    }
+    return result;
+  }, [seasonData, team]);
+
+  // Build this team's main season match list across all weeks
   const teamMatches = useMemo(() => {
     if (!seasonData || !team) return [];
     const result = [];
@@ -71,13 +108,19 @@ export default function TeamSchedulePage({ darkMode }) {
           result: result_label,
           winner: match.winner || null,
           video_url: match.video_url || '',
+          phase: 'main_season',
         });
       }
     }
     return result;
   }, [seasonData, team]);
 
-  // Aggregate stats
+  // Combined matches for display (pre-season first, then main season)
+  const allMatches = useMemo(() => {
+    return [...preseasonMatches, ...teamMatches];
+  }, [preseasonMatches, teamMatches]);
+
+  // Aggregate stats (main season only)
   const stats = useMemo(() => {
     const completed = teamMatches.filter((m) => m.status === 'completed');
     const wins = completed.filter((m) => m.result === 'W').length;
@@ -96,8 +139,8 @@ export default function TeamSchedulePage({ darkMode }) {
       totalGames: teamMatches.length, played: completed.length };
   }, [teamMatches]);
 
-  const upcoming = teamMatches.filter((m) => m.status === 'upcoming');
-  const completed = teamMatches.filter((m) => m.status === 'completed');
+  const upcoming = allMatches.filter((m) => m.status === 'upcoming');
+  const completed = allMatches.filter((m) => m.status === 'completed');
 
   if (!teamsData || !seasonData || !siteData) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading…</div>;
@@ -210,7 +253,7 @@ export default function TeamSchedulePage({ darkMode }) {
           <div className={`px-5 py-4 border-b flex items-center gap-2 ${darkMode ? 'border-gray-800' : 'border-stone-200'}`}>
             <Calendar className={`w-4 h-4 ${darkMode ? 'text-orange-400' : 'text-blue-500'}`} />
             <h2 className="font-semibold">Full Schedule</h2>
-            <span className={`ml-auto text-xs ${muted}`}>{teamMatches.length} matches · {stats.played} played · {upcoming.length} remaining</span>
+            <span className={`ml-auto text-xs ${muted}`}>{allMatches.length} matches · {stats.played} played · {upcoming.length} remaining</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -225,6 +268,68 @@ export default function TeamSchedulePage({ darkMode }) {
                 </tr>
               </thead>
               <tbody>
+                {preseasonMatches.length > 0 && (
+                  <tr>
+                    <td colSpan={6} className={`py-2 px-4 text-xs font-bold uppercase tracking-wider ${
+                      darkMode ? 'bg-gray-800/60 text-green-400' : 'bg-stone-100 text-green-700'
+                    }`}>
+                      Pre-Season
+                    </td>
+                  </tr>
+                )}
+                {preseasonMatches.map((m, i) => (
+                  <tr
+                    key={`ps-${i}`}
+                    className={`border-b last:border-0 transition-colors ${rowHover}`}
+                  >
+                    <td className={`py-3 px-4 font-medium tabular-nums ${muted}`}>{m.week}</td>
+                    <td className="py-3 px-4 font-medium">{m.opponent}</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                        m.isHome
+                          ? darkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'
+                          : darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
+                      }`}>
+                        {m.isHome ? <><Home className="w-3 h-3" /> H</> : <><Plane className="w-3 h-3" /> A</>}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {m.divisional && (
+                        <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          darkMode ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-100 text-purple-600'
+                        }`}>
+                          <Shield className="w-3 h-3" /> DIV
+                        </span>
+                      )}
+                    </td>
+                    <td className={`py-3 px-4 text-center ${resultColor(m.result)}`}>
+                      {m.result ?? <span className={`text-xs ${muted}`}>—</span>}
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {m.video_url ? (
+                        <a
+                          href={m.video_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-1 text-xs ${darkMode ? 'text-orange-400 hover:text-orange-300' : 'text-blue-600 hover:text-blue-500'}`}
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" /> Watch
+                        </a>
+                      ) : (
+                        <span className={`text-xs ${muted}`}>—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {teamMatches.length > 0 && (
+                  <tr>
+                    <td colSpan={6} className={`py-2 px-4 text-xs font-bold uppercase tracking-wider ${
+                      darkMode ? 'bg-gray-800/60 text-orange-400' : 'bg-stone-100 text-blue-700'
+                    }`}>
+                      Main Season
+                    </td>
+                  </tr>
+                )}
                 {teamMatches.map((m, i) => (
                   <tr
                     key={i}

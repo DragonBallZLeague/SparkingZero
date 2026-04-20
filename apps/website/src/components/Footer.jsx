@@ -28,12 +28,6 @@ export default function Footer({ site, darkMode }) {
                 YouTube
               </a>
             )}
-            {links.github && (
-              <a href={links.github} target="_blank" rel="noopener noreferrer"
-                 className={`transition-colors ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}>
-                GitHub
-              </a>
-            )}
             {links.old_site && (
               <a href={links.old_site} target="_blank" rel="noopener noreferrer"
                  className={`transition-colors ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}>

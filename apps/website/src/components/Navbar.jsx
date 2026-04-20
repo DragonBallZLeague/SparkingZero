@@ -3,9 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Zap, ChevronDown, ExternalLink } from 'lucide-react';
 
 const toolLinks = [
-  { label: 'Analyzer', href: 'https://dragonballzleague.github.io/SparkingZero/analyzer/' },
+  { label: 'Match Analyzer', href: 'https://dragonballzleague.github.io/SparkingZero/analyzer/' },
   { label: 'Match Builder', href: 'https://dragonballzleague.github.io/SparkingZero/matchbuilder/' },
-  { label: 'Calculator', href: 'https://dragonballzleague.github.io/SparkingZero/calculator/' },
+  { label: 'Character Calculator', href: 'https://dragonballzleague.github.io/SparkingZero/calculator/' },
 ];
 
 export default function Navbar({ site, darkMode, setDarkMode }) {
@@ -76,7 +76,7 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                 Tools <ChevronDown className={`w-3.5 h-3.5 transition-transform ${toolsOpen ? 'rotate-180' : ''}`} />
               </button>
               {toolsOpen && (
-                <div className={`absolute right-0 mt-1 w-44 rounded-lg border shadow-lg py-1 ${
+                <div className={`absolute right-0 mt-1 w-56 rounded-lg border shadow-lg py-1 ${
                   darkMode ? 'bg-gray-900 border-gray-700' : 'bg-stone-50 border-stone-300'
                 }`}>
                   {toolLinks.map((tool) => (

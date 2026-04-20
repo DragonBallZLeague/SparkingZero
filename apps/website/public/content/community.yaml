@@ -53,19 +53,37 @@ roles:
         links:
           - url: https://gamebanana.com/members/4005192
             label: Gamebanana
+  - name: Partnerships
+    icon: Heart
+    description: Communities we collaborate with and mutually support in our joint
+      appreciation Dragon Ball and its communities!
+    members:
+      - name: Tenkaichi Modding Community (BT3 Modding)
+        links:
+          - label: Discord
+            url: https://discord.gg/tKQe4r4cRJ
+      - name: Kame House (SZ Data Gathering)
+        links:
+          - label: Discord
+            url: https://discord.gg/yTPnnnCgDQ
 resources:
   - name: Join the Discord
     url: https://discord.gg/gRQv8KC
     description: The main hub for all league activity, discussion, and sign-ups.
+    group: social
   - name: Watch on YouTube
     url: https://www.youtube.com/channel/UCYrEHQEtGnLXy_ly1GIN46g
     description: Catch all the recorded matches and highlights.
-  - name: Analyzer
+    group: social
+  - name: Match Analyzer
     url: https://dragonballzleague.github.io/SparkingZero/analyzer/
     description: Deep dive into match stats, character performance, and more.
+    group: tools
   - name: Match Builder
     url: https://dragonballzleague.github.io/SparkingZero/matchbuilder/
     description: Build and customize your team's fighter loadouts.
-  - name: Calculator
+    group: tools
+  - name: Character Calculator
     url: https://dragonballzleague.github.io/SparkingZero/calculator/
     description: Stat calculator for character builds and capsule effects.
+    group: tools
