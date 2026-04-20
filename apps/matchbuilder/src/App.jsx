@@ -60,17 +60,30 @@ const getActiveFusions = (team, transformations) => {
   const result = [];
   for (const [id, entry] of Object.entries(transformations)) {
     if (!Array.isArray(entry.fusionOf) || entry.fusionOf.length < 2) continue;
-    // Group fusionOf into consecutive pairs — each pair is one valid fusion combination
+    // Group fusionOf into consecutive pairs — each pair is one valid fusion combination.
+    // At least one of the pair must be an exact team member ID (the initiator); the other
+    // may be any form in that constituent's transformation chain.
     const activePairMembers = new Set();
     for (let i = 0; i + 1 < entry.fusionOf.length; i += 2) {
       const a = entry.fusionOf[i];
       const b = entry.fusionOf[i + 1];
-      // Find team members whose transformation group covers each constituent
-      const aMatch = teamGroups.find(({ group }) => group.has(a));
-      const bMatch = teamGroups.find(({ id: tid, group }) => tid !== (aMatch && aMatch.id) && group.has(b));
-      if (aMatch && bMatch) {
-        activePairMembers.add(aMatch.id);
-        activePairMembers.add(bMatch.id);
+      // Case 1: a is an exact match on the team; b's partner can be any form in b's group
+      const aExact = teamGroups.find(({ id: tid }) => tid === a);
+      if (aExact) {
+        const bPartner = teamGroups.find(({ id: tid, group }) => tid !== aExact.id && group.has(b));
+        if (bPartner) {
+          activePairMembers.add(aExact.id);
+          activePairMembers.add(bPartner.id);
+        }
+      }
+      // Case 2: b is an exact match on the team; a's partner can be any form in a's group
+      const bExact = teamGroups.find(({ id: tid }) => tid === b);
+      if (bExact) {
+        const aPartner = teamGroups.find(({ id: tid, group }) => tid !== bExact.id && group.has(a));
+        if (aPartner) {
+          activePairMembers.add(aPartner.id);
+          activePairMembers.add(bExact.id);
+        }
       }
     }
     if (activePairMembers.size >= 2) {
@@ -2864,11 +2877,26 @@ const TeamPanel = ({
     
 const FusionPanel = ({ team, transformations, fusionAISelections, teamName, onUpdateFusionAI }) => {
   const activeFusions = getActiveFusions(team, transformations);
-  if (activeFusions.length === 0) return null;
+
+  // Show only the base (root) form of each fusion transformation group.
+  // Within a connected group of fusion forms, the base is the one with the smallest ID.
+  const seenGroupBases = new Set();
+  const baseFusions = activeFusions.filter(({ fusionId }) => {
+    const group = getTransformationGroup(fusionId, transformations);
+    const fusionIdsInGroup = [...group].filter(gid =>
+      transformations[gid] && Array.isArray(transformations[gid].fusionOf)
+    );
+    const baseId = fusionIdsInGroup.sort()[0] ?? fusionId;
+    if (seenGroupBases.has(baseId)) return false;
+    seenGroupBases.add(baseId);
+    return fusionId === baseId;
+  });
+
+  if (baseFusions.length === 0) return null;
 
   return (
     <div className="mt-3 space-y-2">
-      {activeFusions.map(({ fusionId, fusionName, constituentIdsOnTeam }) => {
+      {baseFusions.map(({ fusionId, fusionName, constituentIdsOnTeam }) => {
         const selectionKey = `${teamName}:${fusionId}`;
         const selectedConstituent = fusionAISelections[selectionKey] || null;
         return (

@@ -73,21 +73,33 @@
     "fusionOf": ["0000_20", "0020_30", "0000_40", "0020_60"],
     "transformsTo": ["0100_01", "0100_02"]
   },
-  "0100_01": { "name": "Super Vegito", "transformsTo": ["0100_02", "0100_00"] },
-  "0100_02": { "name": "Vegito Super Saiyan God Super Saiyan", "transformsTo": ["0100_00"] },
+  "0100_01": { "name": "Super Vegito",
+    "fusionOf": ["0000_20", "0020_30"], 
+    "transformsTo": ["0100_02", "0100_00"] 
+  },
+  "0100_02": { "name": "Vegito Super Saiyan God Super Saiyan",
+    "fusionOf": ["0000_40", "0020_60"], 
+    "transformsTo": ["0100_00"] 
+  },
 
   "0110_00": {
     "name": "Gogeta (Super)",
     "fusionOf": ["0000_40", "0020_60"],
     "transformsTo": ["0110_01", "0110_03"]
   },
-  "0110_01": { "name": "Gogeta (Super) Super Saiyan", "transformsTo": ["0110_03", "0110_00"] },
+  "0110_01": { "name": "Gogeta (Super) Super Saiyan",
+    "fusionOf": ["0000_40", "0020_60"],
+    "transformsTo": ["0110_03", "0110_00"] 
+  },
   "0110_02": {
     "name": "Gogeta (GT) Super Saiyan 4",
     "fusionOf": ["0000_33", "0020_50"],
     "transformsTo": []
   },
-  "0110_03": { "name": "Gogeta (Super) Super Saiyan God Super Saiyan", "transformsTo": ["0110_00"] },
+  "0110_03": { "name": "Gogeta (Super) Super Saiyan God Super Saiyan",
+    "fusionOf": ["0000_40", "0020_60"],
+    "transformsTo": ["0110_00"] 
+  },
   "0110_04": {
     "name": "Super Gogeta (Z)",
     "fusionOf": ["0000_20", "0020_30"],
@@ -96,11 +108,17 @@
 
   "0120_00": {
     "name": "Gotenks",
-    "fusionOf": ["0090_00", "0082_00"],
+    "fusionOf": ["0090_00", "0082_00", "0090_01", "0082_01"],
     "transformsTo": ["0120_01", "0120_02"]
   },
-  "0120_01": { "name": "Gotenks Super Saiyan", "transformsTo": ["0120_02", "0120_00"] },
-  "0120_02": { "name": "Gotenks Super Saiyan 3", "transformsTo": ["0120_00"] },
+  "0120_01": { "name": "Gotenks Super Saiyan",
+    "fusionOf": ["0090_00", "0082_00", "0090_01", "0082_01"],
+    "transformsTo": ["0120_02", "0120_00"] 
+  },
+  "0120_02": { "name": "Gotenks Super Saiyan 3",
+    "fusionOf": ["0090_00", "0082_00", "0090_01", "0082_01"],
+    "transformsTo": ["0120_00"] 
+  },
 
   "0130_00": { "name": "Videl", "transformsTo": [] },
   "0140_00": { "name": "Master Roshi", "transformsTo": ["0141_00"] },
@@ -221,8 +239,14 @@
     "fusionOf": ["0900_00", "0910_00"],
     "transformsTo": ["0920_01", "0920_02"]
   },
-  "0920_01": { "name": "Kefla Super Saiyan", "transformsTo": ["0920_02", "0920_00"] },
-  "0920_02": { "name": "Kefla Super Saiyan 2", "transformsTo": ["0920_00"] },
+  "0920_01": { "name": "Kefla Super Saiyan",
+    "fusionOf": ["0900_00", "0910_00"],
+    "transformsTo": ["0920_02", "0920_00"]
+  },
+  "0920_02": { "name": "Kefla Super Saiyan 2",
+    "fusionOf": ["0900_00", "0910_00"],
+    "transformsTo": ["0920_00"]
+  },
 
   "0930_00": { "name": "Jiren", "transformsTo": ["0931_00"] },
   "0931_00": { "name": "Jiren Full Power", "transformsTo": [] },

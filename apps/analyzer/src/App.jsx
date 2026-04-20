@@ -14,6 +14,7 @@ import { prepareCharacterAveragesData, prepareMatchDetailsData, getCharacterAver
 import { exportToExcel } from './utils/excelExport.js';
 import { PerFormStatsDisplay, PerFormStatsDisplayAggregated } from './components/PerFormStatsDisplay.jsx';
 import { calculatePerFormStats } from './utils/formStatsCalculator.js';
+import transformationsData from '../../../referencedata/transformations.json';
 import CapsuleSynergyAnalysis from './components/CapsuleSynergyAnalysis.jsx';
 import AIStrategyAnalysis from './components/ai-strategy/AIStrategyAnalysis.jsx';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
@@ -1828,6 +1829,137 @@ function getPositionInsight(posData, positionName) {
   return insights.join(', ') || 'balanced performance';
 }
 
+// Returns all character form IDs connected to startId via the transformsTo graph.
+// fusionOf pairs are (index 0, index 1), (index 2, index 3). The canonical partner is
+// at initiatorIdx ^ 1. This BFS finds all forms of that partner character so we can
+// match any form they happen to be in on the team.
+function getFusionPartnerFamilyForms(startId, data) {
+  const visited = new Set();
+  const queue = [startId];
+  while (queue.length > 0) {
+    const id = queue.shift();
+    if (visited.has(id)) continue;
+    visited.add(id);
+    const entry = data[id];
+    if (entry?.transformsTo) {
+      for (const nextId of entry.transformsTo) {
+        if (!visited.has(nextId)) queue.push(nextId);
+      }
+    }
+  }
+  return visited;
+}
+
+// Computes per-character stat deltas for a single match due to fusion splits.
+// Returns Map<originalFormId, statDelta> where trigger character gets negative deltas
+// (fusion contribution subtracted × 0.5) and partner gets positive deltas (× 0.5).
+function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
+  const deltas = new Map();
+  if (!characterRecord || !characterIdRecord) return deltas;
+
+  const parseDur = str => {
+    if (!str) return 0;
+    const m = str.match(/\+\d+\.(\d+):(\d+):(\d+)\./);
+    return m ? parseInt(m[1]) * 3600 + parseInt(m[2]) * 60 + parseInt(m[3]) : 0;
+  };
+
+  // Phase 1: Build per-team sets of originalFormIds
+  const allyOriginalIds = new Set();
+  const enemyOriginalIds = new Set();
+  Object.keys(characterRecord).forEach(k => {
+    const c = characterRecord[k];
+    const origId = c.battlePlayCharacter?.originalCharacter?.key;
+    if (!origId) return;
+    if (k.includes('AlliesTeamMember') || k.includes('１Ｐ')) allyOriginalIds.add(origId);
+    else if (k.includes('EnemyTeamMember') || k.includes('２Ｐ')) enemyOriginalIds.add(origId);
+  });
+
+  // Phase 2: Detect fusions via full transformation chain and compute contribution
+  Object.keys(characterRecord).forEach(key => {
+    const char = characterRecord[key];
+    const originalForm = char.battlePlayCharacter?.originalCharacter?.key;
+    if (!originalForm || !Array.isArray(char.formChangeHistory) || char.formChangeHistory.length === 0) return;
+    const isTeam1 = key.includes('AlliesTeamMember') || key.includes('１Ｐ');
+    const isTeam2 = key.includes('EnemyTeamMember') || key.includes('２Ｐ');
+    if (!isTeam1 && !isTeam2) return;
+    const sameTeamSet = isTeam1 ? allyOriginalIds : enemyOriginalIds;
+
+    const formChain = [originalForm, ...char.formChangeHistory.map(f => f.key)];
+    for (let i = 1; i < formChain.length; i++) {
+      const fusionFormId = formChain[i];
+      const fusionOfList = transformationsData[fusionFormId]?.fusionOf;
+      if (!fusionOfList) continue;
+      const precedingForm = formChain[i - 1];
+      const initiatorIdx = fusionOfList.indexOf(precedingForm);
+      if (initiatorIdx === -1) continue;
+
+      // Pairs are (index 0,1), (index 2,3) — canonical partner is at initiatorIdx ^ 1.
+      // BFS the transformsTo graph from that canonical partner to find all forms of that
+      // character so we can match whichever form they happen to be in on the team.
+      const canonicalPartnerId = fusionOfList[initiatorIdx ^ 1];
+      const partnerFamilyForms = getFusionPartnerFamilyForms(canonicalPartnerId, transformationsData);
+      const partnerOriginalId = [...partnerFamilyForms].find(id => sameTeamSet.has(id));
+      if (!partnerOriginalId) break;
+
+      const snapKey = characterIdRecord[precedingForm] ? precedingForm : `(Key="${precedingForm}")`;
+      const preSnap = characterIdRecord[snapKey] || null;
+      if (!preSnap) break;
+
+      const totBattle = char.battleCount || {};
+      const snapBattle = preSnap.battleCount || {};
+      const totNum = totBattle.battleNumCount || {};
+      const snapNum = snapBattle.battleNumCount || {};
+      const totAdd = char.additionalCounts || {};
+      const snapAdd = preSnap.additionalCounts || {};
+
+      const fc = {
+        damageDone: (totBattle.givenDamage || 0) - (snapBattle.givenDamage || 0),
+        damageTaken: (totBattle.takenDamage || 0) - (snapBattle.takenDamage || 0),
+        battleTime: parseDur(totBattle.battleTime) - parseDur(snapBattle.battleTime),
+        kills: (totBattle.killCount || 0) - (snapBattle.killCount || 0),
+        specialMovesUsed: (totNum.sPMCount || 0) - (snapNum.sPMCount || 0),
+        ultimatesUsed: (totNum.uLTCount || 0) - (snapNum.uLTCount || 0),
+        skillsUsed: (totNum.eXACount || 0) - (snapNum.eXACount || 0),
+        sparkingCount: (totNum.sparkingCount || 0) - (snapNum.sparkingCount || 0),
+        chargeCount: (totNum.chargeCount || 0) - (snapNum.chargeCount || 0),
+        guardCount: (totNum.guardCount || 0) - (snapNum.guardCount || 0),
+        shotEnergyBulletCount: (totNum.shotEnergyBulletCount || 0) - (snapNum.shotEnergyBulletCount || 0),
+        zCounterCount: (totNum.zCounter || 0) - (snapNum.zCounter || 0),
+        superCounterCount: (totNum.superCounterCount || 0) - (snapNum.superCounterCount || 0),
+        revengeCounterCount: (totNum.revengeCounter || 0) - (snapNum.revengeCounter || 0),
+        s1Blast: (totAdd.s1Blast || 0) - (snapAdd.s1Blast || 0),
+        s2Blast: (totAdd.s2Blast || 0) - (snapAdd.s2Blast || 0),
+        ultBlast: (totAdd.ultBlast || 0) - (snapAdd.ultBlast || 0),
+        s1HitBlast: (totAdd.s1HitBlast || 0) - (snapAdd.s1HitBlast || 0),
+        s2HitBlast: (totAdd.s2HitBlast || 0) - (snapAdd.s2HitBlast || 0),
+        uLTHitBlast: (totAdd.uLTHitBlast || 0) - (snapAdd.uLTHitBlast || 0),
+        tags: (totAdd.tags || 0) - (snapAdd.tags || 0),
+        dragonDashMileage: (totBattle.dragonDashMileage || 0) - (snapBattle.dragonDashMileage || 0),
+        throwCount: (totNum.throwCount || 0) - (snapNum.throwCount || 0),
+        lightningAttackCount: (totNum.lightningAttack || 0) - (snapNum.lightningAttack || 0),
+        vanishingAttackCount: (totNum.vanishingAttack || 0) - (snapNum.vanishingAttack || 0),
+        dragonHomingCount: (totNum.dragonHoming || 0) - (snapNum.dragonHoming || 0),
+        speedImpactCount: (totNum.speedImpactCount || 0) - (snapNum.speedImpactCount || 0),
+        speedImpactWins: (totNum.speedImpactWinCount || 0) - (snapNum.speedImpactWinCount || 0),
+        sparkingComboCount: (totNum.sparkingComboCount || 0) - (snapNum.sparkingComboCount || 0),
+      };
+
+      // Accumulate scaled contribution: trigger loses half, partner gains half
+      const accumulate = (existing, mult) => {
+        const result = {};
+        for (const k of Object.keys(fc)) {
+          result[k] = (existing ? (existing[k] || 0) : 0) + fc[k] * mult;
+        }
+        return result;
+      };
+      deltas.set(originalForm, accumulate(deltas.get(originalForm), -0.5));
+      deltas.set(partnerOriginalId, accumulate(deltas.get(partnerOriginalId), 0.5));
+      break;
+    }
+  });
+  return deltas;
+}
+
 function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
   const characterStats = {};
   
@@ -1852,6 +1984,99 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       }
       return null;
     }
+
+    // Fusion split helpers — apply a fractional fusion contribution to charData aggregates
+    function applyFusionToCharData(charData, fc, mult, includeTrackable) {
+      charData.totalDamage += (fc.damageDone || 0) * mult;
+      charData.totalTaken += (fc.damageTaken || 0) * mult;
+      charData.totalBattleTime += (fc.battleTime || 0) * mult;
+      charData.totalKills += (fc.kills || 0) * mult;
+      charData.totalSpecial += (fc.specialMovesUsed || 0) * mult;
+      charData.totalUltimates += (fc.ultimatesUsed || 0) * mult;
+      charData.totalSkills += (fc.skillsUsed || 0) * mult;
+      charData.totalSparking += (fc.sparkingCount || 0) * mult;
+      charData.totalCharges += (fc.chargeCount || 0) * mult;
+      charData.totalGuards += (fc.guardCount || 0) * mult;
+      charData.totalEnergyBlasts += (fc.shotEnergyBulletCount || 0) * mult;
+      charData.totalZCounters += (fc.zCounterCount || 0) * mult;
+      charData.totalSuperCounters += (fc.superCounterCount || 0) * mult;
+      charData.totalRevengeCounters += (fc.revengeCounterCount || 0) * mult;
+      charData.totalTags += (fc.tags || 0) * mult;
+      charData.totalS1Blast += (fc.s1Blast || 0) * mult;
+      charData.totalS2Blast += (fc.s2Blast || 0) * mult;
+      charData.totalUltBlast += (fc.ultBlast || 0) * mult;
+      charData.totalS1HitBlast += (fc.s1HitBlast || 0) * mult;
+      charData.totalS2HitBlast += (fc.s2HitBlast || 0) * mult;
+      charData.totalULTHitBlast += (fc.uLTHitBlast || 0) * mult;
+      charData.totalSPM1 += (fc.s1Blast || 0) * mult;
+      charData.totalSPM2 += (fc.s2Blast || 0) * mult;
+      charData.totalDragonDashMileage += (fc.dragonDashMileage || 0) * mult;
+      charData.totalThrows += (fc.throwCount || 0) * mult;
+      charData.totalLightningAttacks += (fc.lightningAttackCount || 0) * mult;
+      charData.totalVanishingAttacks += (fc.vanishingAttackCount || 0) * mult;
+      charData.totalDragonHoming += (fc.dragonHomingCount || 0) * mult;
+      charData.totalSpeedImpacts += (fc.speedImpactCount || 0) * mult;
+      charData.totalSpeedImpactWins += (fc.speedImpactWins || 0) * mult;
+      charData.totalSparkingCombo += (fc.sparkingComboCount || 0) * mult;
+      if (includeTrackable) {
+        charData.totalS1BlastTrackable += (fc.s1Blast || 0) * mult;
+        charData.totalS2BlastTrackable += (fc.s2Blast || 0) * mult;
+        charData.totalUltBlastTrackable += (fc.ultBlast || 0) * mult;
+      }
+    }
+
+    // Fusion split helpers — apply a fractional fusion contribution to a single match entry
+    function applyFusionToMatchEntry(matchEntry, fc, mult) {
+      matchEntry.damageDone = (matchEntry.damageDone || 0) + (fc.damageDone || 0) * mult;
+      matchEntry.damageTaken = (matchEntry.damageTaken || 0) + (fc.damageTaken || 0) * mult;
+      matchEntry.battleTime = (matchEntry.battleTime || 0) + (fc.battleTime || 0) * mult;
+      matchEntry.kills = (matchEntry.kills || 0) + (fc.kills || 0) * mult;
+      matchEntry.specialMovesUsed = (matchEntry.specialMovesUsed || 0) + (fc.specialMovesUsed || 0) * mult;
+      matchEntry.ultimatesUsed = (matchEntry.ultimatesUsed || 0) + (fc.ultimatesUsed || 0) * mult;
+      matchEntry.skillsUsed = (matchEntry.skillsUsed || 0) + (fc.skillsUsed || 0) * mult;
+      matchEntry.sparkingCount = (matchEntry.sparkingCount || 0) + (fc.sparkingCount || 0) * mult;
+      matchEntry.chargeCount = (matchEntry.chargeCount || 0) + (fc.chargeCount || 0) * mult;
+      matchEntry.guardCount = (matchEntry.guardCount || 0) + (fc.guardCount || 0) * mult;
+      matchEntry.shotEnergyBulletCount = (matchEntry.shotEnergyBulletCount || 0) + (fc.shotEnergyBulletCount || 0) * mult;
+      matchEntry.zCounterCount = (matchEntry.zCounterCount || 0) + (fc.zCounterCount || 0) * mult;
+      matchEntry.superCounterCount = (matchEntry.superCounterCount || 0) + (fc.superCounterCount || 0) * mult;
+      matchEntry.revengeCounterCount = (matchEntry.revengeCounterCount || 0) + (fc.revengeCounterCount || 0) * mult;
+      matchEntry.tags = (matchEntry.tags || 0) + (fc.tags || 0) * mult;
+      matchEntry.s1Blast = (matchEntry.s1Blast || 0) + (fc.s1Blast || 0) * mult;
+      matchEntry.s2Blast = (matchEntry.s2Blast || 0) + (fc.s2Blast || 0) * mult;
+      matchEntry.ultBlast = (matchEntry.ultBlast || 0) + (fc.ultBlast || 0) * mult;
+      matchEntry.s1HitBlast = (matchEntry.s1HitBlast || 0) + (fc.s1HitBlast || 0) * mult;
+      matchEntry.s2HitBlast = (matchEntry.s2HitBlast || 0) + (fc.s2HitBlast || 0) * mult;
+      matchEntry.uLTHitBlast = (matchEntry.uLTHitBlast || 0) + (fc.uLTHitBlast || 0) * mult;
+      matchEntry.spm1Count = (matchEntry.spm1Count || 0) + (fc.s1Blast || 0) * mult;
+      matchEntry.spm2Count = (matchEntry.spm2Count || 0) + (fc.s2Blast || 0) * mult;
+      matchEntry.dragonDashMileage = (matchEntry.dragonDashMileage || 0) + (fc.dragonDashMileage || 0) * mult;
+      matchEntry.throwCount = (matchEntry.throwCount || 0) + (fc.throwCount || 0) * mult;
+      matchEntry.lightningAttackCount = (matchEntry.lightningAttackCount || 0) + (fc.lightningAttackCount || 0) * mult;
+      matchEntry.vanishingAttackCount = (matchEntry.vanishingAttackCount || 0) + (fc.vanishingAttackCount || 0) * mult;
+      matchEntry.dragonHomingCount = (matchEntry.dragonHomingCount || 0) + (fc.dragonHomingCount || 0) * mult;
+      matchEntry.speedImpactCount = (matchEntry.speedImpactCount || 0) + (fc.speedImpactCount || 0) * mult;
+      matchEntry.speedImpactWins = (matchEntry.speedImpactWins || 0) + (fc.speedImpactWins || 0) * mult;
+      matchEntry.sparkingComboCount = (matchEntry.sparkingComboCount || 0) + (fc.sparkingComboCount || 0) * mult;
+    }
+
+    // Phase 1: Build per-team maps of originalCharId → aggregationKey for fusion partner lookup
+    const allyOriginalIds = new Map();
+    const enemyOriginalIds = new Map();
+    Object.keys(characterRecord).forEach(k => {
+      const c = characterRecord[k];
+      const origId = c.battlePlayCharacter?.originalCharacter?.key;
+      if (!origId) return;
+      const aggKey = charMap[origId] || origId;
+      if (k.includes('AlliesTeamMember') || k.includes('１Ｐ')) {
+        allyOriginalIds.set(origId, aggKey);
+      } else if (k.includes('EnemyTeamMember') || k.includes('２Ｐ')) {
+        enemyOriginalIds.set(origId, aggKey);
+      }
+    });
+
+    // Fusion adjustments collected during main loop and applied in Phase 3
+    const pendingFusionAdjustments = [];
 
     Object.keys(characterRecord).forEach(key => {
       const char = characterRecord[key];
@@ -1968,7 +2193,9 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           matches: [], // Track individual match data for meta analysis
           teamsUsed: {}, // Track which teams this character played on with counts
           aiStrategiesUsed: {}, // Track AI strategies used with counts
-          mapsUsed: {} // Track which maps this character fought on with counts
+          mapsUsed: {}, // Track which maps this character fought on with counts
+          hasFusionStats: false, // Set true if this character has received or contributed fusion stats
+          fusionFormsInvolved: new Set() // Fusion form IDs this character was part of
         };
       }
       
@@ -2122,7 +2349,103 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
           originalForm
         );
       }
-      
+
+      // Phase 2: Detect fusions by walking the full transformation chain
+      // Handles three cases:
+      //   Case 1: OriginalForm → FusionForm (e.g. GBR → Fused Zamasu)
+      //   Case 2: OriginalForm → FusionForm → PostFusionForm (e.g. GBR → Fused Zamasu → Half-Corrupted)
+      //   Case 3: OriginalForm → PreFusionTransform → FusionForm (e.g. Goku Black → GBR → Fused Zamasu)
+      if (originalForm && characterIdRecord && Array.isArray(char.formChangeHistory) && char.formChangeHistory.length > 0) {
+        const sameTeamMap = isTeam1 ? allyOriginalIds : enemyOriginalIds;
+
+        // Build the full form chain: [originalForm, ...formChangeHistory]
+        const formChain = [originalForm, ...char.formChangeHistory.map(f => f.key)];
+
+        for (let i = 1; i < formChain.length; i++) {
+          const fusionFormId = formChain[i];
+          const fusionOfList = transformationsData[fusionFormId]?.fusionOf;
+
+          // Only a form that IS a fusion and whose preceding form is one of the fusion components
+          if (!fusionOfList) continue;
+          const precedingForm = formChain[i - 1];
+          const initiatorIdx = fusionOfList.indexOf(precedingForm);
+          if (initiatorIdx === -1) continue;
+
+          // Pairs are (index 0,1), (index 2,3) — canonical partner is at initiatorIdx ^ 1.
+          // BFS the transformsTo graph from that canonical partner to find all forms of that
+          // character so we can match whichever form they happen to be in on the team.
+          const canonicalPartnerId = fusionOfList[initiatorIdx ^ 1];
+          const partnerFamilyForms = getFusionPartnerFamilyForms(canonicalPartnerId, transformationsData);
+          const partnerOriginalId = [...partnerFamilyForms].find(id => sameTeamMap.has(id));
+          if (!partnerOriginalId) break;
+
+          // Pre-fusion snapshot is keyed by the form immediately before the fusion (precedingForm)
+          const snapKey = characterIdRecord[precedingForm]
+            ? precedingForm
+            : `(Key="${precedingForm}")`;
+          const preSnap = characterIdRecord[snapKey] || null;
+
+          if (!preSnap) { console.warn('[Fusion] No pre-fusion snapshot for', precedingForm, 'in match', fileName); break; }
+
+          // Fusion contribution = all stats accumulated FROM the moment of fusion onwards
+          // = total cumulative stats − pre-fusion snapshot stats
+          const totBattle = char.battleCount || {};
+          const snapBattle = preSnap.battleCount || {};
+          const totNum = totBattle.battleNumCount || {};
+          const snapNum = snapBattle.battleNumCount || {};
+          const totAdd = char.additionalCounts || {};
+          const snapAdd = preSnap.additionalCounts || {};
+          const parseDurLocal = str => {
+            if (!str) return 0;
+            const m = str.match(/\+\d+\.(\d+):(\d+):(\d+)\./);
+            return m ? parseInt(m[1]) * 3600 + parseInt(m[2]) * 60 + parseInt(m[3]) : 0;
+          };
+
+          const fusionContribution = {
+            damageDone: (totBattle.givenDamage || 0) - (snapBattle.givenDamage || 0),
+            damageTaken: (totBattle.takenDamage || 0) - (snapBattle.takenDamage || 0),
+            battleTime: parseDurLocal(totBattle.battleTime) - parseDurLocal(snapBattle.battleTime),
+            kills: (totBattle.killCount || 0) - (snapBattle.killCount || 0),
+            specialMovesUsed: (totNum.sPMCount || 0) - (snapNum.sPMCount || 0),
+            ultimatesUsed: (totNum.uLTCount || 0) - (snapNum.uLTCount || 0),
+            skillsUsed: (totNum.eXACount || 0) - (snapNum.eXACount || 0),
+            sparkingCount: (totNum.sparkingCount || 0) - (snapNum.sparkingCount || 0),
+            chargeCount: (totNum.chargeCount || 0) - (snapNum.chargeCount || 0),
+            guardCount: (totNum.guardCount || 0) - (snapNum.guardCount || 0),
+            shotEnergyBulletCount: (totNum.shotEnergyBulletCount || 0) - (snapNum.shotEnergyBulletCount || 0),
+            zCounterCount: (totNum.zCounter || 0) - (snapNum.zCounter || 0),
+            superCounterCount: (totNum.superCounterCount || 0) - (snapNum.superCounterCount || 0),
+            revengeCounterCount: (totNum.revengeCounter || 0) - (snapNum.revengeCounter || 0),
+            tags: (totAdd.tags || 0) - (snapAdd.tags || 0),
+            s1Blast: (totAdd.s1Blast || 0) - (snapAdd.s1Blast || 0),
+            s2Blast: (totAdd.s2Blast || 0) - (snapAdd.s2Blast || 0),
+            ultBlast: (totAdd.ultBlast || 0) - (snapAdd.ultBlast || 0),
+            s1HitBlast: (totAdd.s1HitBlast || 0) - (snapAdd.s1HitBlast || 0),
+            s2HitBlast: (totAdd.s2HitBlast || 0) - (snapAdd.s2HitBlast || 0),
+            uLTHitBlast: (totAdd.uLTHitBlast || 0) - (snapAdd.uLTHitBlast || 0),
+            dragonDashMileage: (totBattle.dragonDashMileage || 0) - (snapBattle.dragonDashMileage || 0),
+            throwCount: (totNum.throwCount || 0) - (snapNum.throwCount || 0),
+            lightningAttackCount: (totNum.lightningAttack || 0) - (snapNum.lightningAttack || 0),
+            vanishingAttackCount: (totNum.vanishingAttack || 0) - (snapNum.vanishingAttack || 0),
+            dragonHomingCount: (totNum.dragonHoming || 0) - (snapNum.dragonHoming || 0),
+            speedImpactCount: (totNum.speedImpactCount || 0) - (snapNum.speedImpactCount || 0),
+            speedImpactWins: (totNum.speedImpactWinCount || 0) - (snapNum.speedImpactWinCount || 0),
+            sparkingComboCount: (totNum.sparkingComboCount || 0) - (snapNum.sparkingComboCount || 0),
+          };
+
+          console.log('[Fusion detected]', aggregationKey, '→', fusionFormId, '| partner:', sameTeamMap.get(partnerOriginalId), '| dmg contribution:', fusionContribution.damageDone);
+
+          pendingFusionAdjustments.push({
+            triggerAggKey: aggregationKey,
+            partnerAggKey: sameTeamMap.get(partnerOriginalId),
+            fusionFormId,
+            fusionContribution,
+            hasAdditionalCounts: char.additionalCounts !== undefined,
+          });
+          break; // Only the first fusion in the chain matters
+        }
+      }
+
       // Add individual match data for meta analysis
       charData.matches.push({
         damageDone: stats.damageDone,
@@ -2293,8 +2616,37 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
         });
       }
     });
+
+    // Phase 3: Apply fusion stat splits — reduce trigger char by half, credit half to partner
+    for (const adj of pendingFusionAdjustments) {
+      const { triggerAggKey, partnerAggKey, fusionFormId, fusionContribution: fc, hasAdditionalCounts } = adj;
+      const half = 0.5;
+
+      const triggerData = characterStats[triggerAggKey];
+      if (triggerData) {
+        applyFusionToCharData(triggerData, fc, -half, hasAdditionalCounts);
+        const tm = triggerData.matches[triggerData.matches.length - 1];
+        if (tm) applyFusionToMatchEntry(tm, fc, -half);
+        triggerData.hasFusionStats = true;
+        triggerData.fusionFormsInvolved.add(fusionFormId);
+      }
+
+      const partnerData = characterStats[partnerAggKey];
+      if (partnerData) {
+        const partnerLastMatch = partnerData.matches[partnerData.matches.length - 1];
+        const partnerWasInactive = !partnerLastMatch || (partnerLastMatch.battleTime || 0) === 0;
+        applyFusionToCharData(partnerData, fc, half, hasAdditionalCounts);
+        if ((fc.battleTime || 0) > 0 && partnerWasInactive) {
+          partnerData.activeMatchCount += 1;
+        }
+        if (partnerLastMatch) applyFusionToMatchEntry(partnerLastMatch, fc, half);
+        partnerData.allFormsUsed.add(fusionFormId);
+        partnerData.hasFusionStats = true;
+        partnerData.fusionFormsInvolved.add(fusionFormId);
+      }
+    }
   }
-  
+
   files.forEach(file => {
     if (file.error) return;
     
@@ -2479,6 +2831,8 @@ function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategie
       formHistory,
       formStatsArray,
       hasMultipleForms: allForms.length > 1,
+      hasFusionStats: char.hasFusionStats || false,
+      fusionFormsInvolved: Array.from(char.fusionFormsInvolved || []),
       teamsUsed: teamsArray,
       aiStrategiesUsed: aiStrategiesArray,
       mapsUsed: mapsArray,
@@ -5093,6 +5447,47 @@ export default function App() {
   const p1Summary = getTeamStats(p1Team, charMap, capsuleMap);
   const p2Summary = getTeamStats(p2Team, charMap, capsuleMap);
 
+  // Fusion split for Match Analysis view: compute per-character stat deltas
+  const fusionDeltas = computeMatchFusionDeltas(characterRecord, characterIdRecord);
+  const applyFusionDelta = (stats, char) => {
+    const origForm = char.battlePlayCharacter?.originalCharacter?.key;
+    const delta = origForm ? fusionDeltas.get(origForm) : null;
+    if (!delta) return stats;
+    return {
+      ...stats,
+      damageDone: Math.max(0, (stats.damageDone || 0) + (delta.damageDone || 0)),
+      damageTaken: Math.max(0, (stats.damageTaken || 0) + (delta.damageTaken || 0)),
+      battleTime: Math.max(0, (stats.battleTime || 0) + (delta.battleTime || 0)),
+      kills: Math.max(0, (stats.kills || 0) + (delta.kills || 0)),
+      specialMovesUsed: Math.max(0, (stats.specialMovesUsed || 0) + (delta.specialMovesUsed || 0)),
+      ultimatesUsed: Math.max(0, (stats.ultimatesUsed || 0) + (delta.ultimatesUsed || 0)),
+      skillsUsed: Math.max(0, (stats.skillsUsed || 0) + (delta.skillsUsed || 0)),
+      sparkingCount: Math.max(0, (stats.sparkingCount || 0) + (delta.sparkingCount || 0)),
+      chargeCount: Math.max(0, (stats.chargeCount || 0) + (delta.chargeCount || 0)),
+      guardCount: Math.max(0, (stats.guardCount || 0) + (delta.guardCount || 0)),
+      shotEnergyBulletCount: Math.max(0, (stats.shotEnergyBulletCount || 0) + (delta.shotEnergyBulletCount || 0)),
+      zCounterCount: Math.max(0, (stats.zCounterCount || 0) + (delta.zCounterCount || 0)),
+      superCounterCount: Math.max(0, (stats.superCounterCount || 0) + (delta.superCounterCount || 0)),
+      revengeCounterCount: Math.max(0, (stats.revengeCounterCount || 0) + (delta.revengeCounterCount || 0)),
+      s1Blast: Math.max(0, (stats.s1Blast || 0) + (delta.s1Blast || 0)),
+      s2Blast: Math.max(0, (stats.s2Blast || 0) + (delta.s2Blast || 0)),
+      ultBlast: Math.max(0, (stats.ultBlast || 0) + (delta.ultBlast || 0)),
+      s1HitBlast: Math.max(0, (stats.s1HitBlast || 0) + (delta.s1HitBlast || 0)),
+      s2HitBlast: Math.max(0, (stats.s2HitBlast || 0) + (delta.s2HitBlast || 0)),
+      uLTHitBlast: Math.max(0, (stats.uLTHitBlast || 0) + (delta.uLTHitBlast || 0)),
+      tags: Math.max(0, (stats.tags || 0) + (delta.tags || 0)),
+      dragonDashMileage: Math.max(0, (stats.dragonDashMileage || 0) + (delta.dragonDashMileage || 0)),
+      throwCount: Math.max(0, (stats.throwCount || 0) + (delta.throwCount || 0)),
+      lightningAttackCount: Math.max(0, (stats.lightningAttackCount || 0) + (delta.lightningAttackCount || 0)),
+      vanishingAttackCount: Math.max(0, (stats.vanishingAttackCount || 0) + (delta.vanishingAttackCount || 0)),
+      dragonHomingCount: Math.max(0, (stats.dragonHomingCount || 0) + (delta.dragonHomingCount || 0)),
+      speedImpactCount: Math.max(0, (stats.speedImpactCount || 0) + (delta.speedImpactCount || 0)),
+      speedImpactWins: Math.max(0, (stats.speedImpactWins || 0) + (delta.speedImpactWins || 0)),
+      sparkingComboCount: Math.max(0, (stats.sparkingComboCount || 0) + (delta.sparkingComboCount || 0)),
+      hasFusionStats: true,
+    };
+  };
+
   return (
     <div className={`min-h-screen p-4 transition-colors duration-300 ${
       darkMode 
@@ -7254,12 +7649,12 @@ export default function App() {
                   {(() => {
                     // Collect all character performance scores from both teams for relative scoring
                     const allMatchScores = [...p1Team, ...p2Team].map(char => {
-                      const stats = extractStats(char, charMap, capsuleMap, 0, aiStrategies);
+                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, 0, aiStrategies), char);
                       return calculateMatchPerformanceScore(stats);
                     });
                     
                     return p1Team.map((char, i) => {
-                      const stats = extractStats(char, charMap, capsuleMap, i + 1, aiStrategies);
+                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
                       const performanceScore = calculateMatchPerformanceScore(stats);
                       const efficiency = stats.damageTaken > 0 ? (stats.damageDone / stats.damageTaken).toFixed(2) : '∞';
                       const dps = stats.battleTime > 0 ? Math.round(stats.damageDone / stats.battleTime) : 0;
@@ -7538,12 +7933,12 @@ export default function App() {
                   {(() => {
                     // Collect all character performance scores from both teams for relative scoring
                     const allMatchScores = [...p1Team, ...p2Team].map(char => {
-                      const stats = extractStats(char, charMap, capsuleMap, 0, aiStrategies);
+                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, 0, aiStrategies), char);
                       return calculateMatchPerformanceScore(stats);
                     });
                     
                     return p2Team.map((char, i) => {
-                      const stats = extractStats(char, charMap, capsuleMap, i + 1, aiStrategies);
+                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
                       const performanceScore = calculateMatchPerformanceScore(stats);
                       const efficiency = stats.damageTaken > 0 ? (stats.damageDone / stats.damageTaken).toFixed(2) : '∞';
                       const dps = stats.battleTime > 0 ? Math.round(stats.damageDone / stats.battleTime) : 0;

@@ -24,6 +24,7 @@ export default defineConfig({
         try {
           copyFileSync(`${sharedPath}/characters.csv`, `${localPath}/characters.csv`)
           copyFileSync(`${sharedPath}/capsules.csv`, `${localPath}/capsules.csv`)
+          copyFileSync(`${sharedPath}/transformations.json`, `${localPath}/transformations.json`)
         } catch (err) {
           console.warn('Could not copy shared referencedata files:', err.message)
         }
