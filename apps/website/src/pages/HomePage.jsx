@@ -24,9 +24,29 @@ export default function HomePage({ site, darkMode }) {
 
   const topTeams = (() => {
     if (!season?.kais) return [];
-    const sorted = season.kais
-      .flatMap((k) => k.teams || [])
-      .sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    // Compute standings from the active phase's schedule
+    const activePhase = season.active_phase || 'main_season';
+    const schedule = activePhase === 'preseason'
+      ? season.preseason_schedule
+      : season.schedule;
+    const record = {};
+    for (const week of schedule || []) {
+      for (const m of week.matches || []) {
+        if (m.status !== 'completed' || !m.winner) continue;
+        [m.home, m.away].forEach((t) => {
+          if (!record[t]) record[t] = { wins: 0, losses: 0 };
+          if (m.winner === t) record[t].wins += 1;
+          else record[t].losses += 1;
+        });
+      }
+    }
+    // Get all teams from kais and apply computed records
+    const allTeams = season.kais.flatMap((k) => (k.teams || []).map((t) => ({
+      team: t.team,
+      wins: record[t.team]?.wins || 0,
+      losses: record[t.team]?.losses || 0,
+    })));
+    const sorted = allTeams.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
     // Assign dense ranks (ties get same rank)
     let rank = 1;
     const ranked = sorted.map((t, i) => {

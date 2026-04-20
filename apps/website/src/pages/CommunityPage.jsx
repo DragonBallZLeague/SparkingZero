@@ -39,13 +39,14 @@ export default function CommunityPage({ darkMode }) {
 
       {/* Volunteer Roles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-12">
-        {(data.roles || []).map((role) => {
+        {(data.roles || []).map((role, index, arr) => {
           const Icon = iconMap[role.icon] || Shield;
           const members = role.members || [];
+          const isLastOdd = arr.length % 2 !== 0 && index === arr.length - 1;
           return (
             <div
               key={role.name}
-              className={`rounded-xl border flex flex-col ${
+              className={`rounded-xl border flex flex-col ${isLastOdd ? 'md:col-span-2' : ''} ${
                 darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
               }`}
             >

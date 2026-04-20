@@ -1,63 +1,125 @@
 season: Season 0
 game: "Dragon Ball: Sparking! Zero"
 status: Upcoming
+active_phase: preseason
 kais:
   - name: North Kai
     teams:
       - team: Primal Instincts
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Z-Fighters
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Master & Student
-        wins: 0
-        losses: 0
-        ties: 0
   - name: East Kai
     teams:
       - team: Sentai Squad
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Tiny Terrors
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Malevolent Souls
-        wins: 0
-        losses: 0
-        ties: 0
   - name: West Kai
     teams:
       - team: Time Patrol
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Budokai
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Cinema
-        wins: 0
-        losses: 0
-        ties: 0
   - name: South Kai
     teams:
       - team: Creations
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Cold Kingdom
-        wins: 0
-        losses: 0
-        ties: 0
       - team: Demons
-        wins: 0
-        losses: 0
-        ties: 0
+preseason_schedule:
+  - week: 1
+    matches:
+      - home: Cinema
+        away: Creations
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Master & Student
+        away: Budokai
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Z-Fighters
+        away: Primal Instincts
+        status: upcoming
+        divisional: true
+        video_url: ""
+      - home: Demons
+        away: Cold Kingdom
+        status: upcoming
+        divisional: true
+        video_url: ""
+      - home: Malevolent Souls
+        away: Tiny Terrors
+        status: upcoming
+        divisional: true
+        video_url: ""
+      - home: Sentai Squad
+        away: Time Patrol
+        status: upcoming
+        divisional: false
+        video_url: ""
+  - week: 2
+    matches:
+      - home: Tiny Terrors
+        away: Creations
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Cinema
+        away: Primal Instincts
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Cold Kingdom
+        away: Sentai Squad
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Demons
+        away: Z-Fighters
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Malevolent Souls
+        away: Budokai
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Master & Student
+        away: Time Patrol
+        status: upcoming
+        divisional: false
+        video_url: ""
+  - week: 3
+    matches:
+      - home: Sentai Squad
+        away: Z-Fighters
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Primal Instincts
+        away: Tiny Terrors
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Cinema
+        away: Demons
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Master & Student
+        away: Malevolent Souls
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Time Patrol
+        away: Cold Kingdom
+        status: upcoming
+        divisional: false
+        video_url: ""
+      - home: Budokai
+        away: Creations
+        status: upcoming
+        divisional: false
+        video_url: ""
 schedule:
   - week: 1
     matches:

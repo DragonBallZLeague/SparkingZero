@@ -110,6 +110,7 @@ collections:
       - { name: "season", label: "Season Name", widget: "string" }
       - { name: "game", label: "Game", widget: "string", default: "Dragon Ball: Sparking! Zero" }
       - { name: "status", label: "Status", widget: "select", options: ["Active", "Completed", "Upcoming"] }
+      - { name: "active_phase", label: "Active Phase", widget: "select", options: ["preseason", "main_season", "playoffs"], default: "preseason", hint: "Which phase of the season is currently active" }
       - name: "kais"
         label: "Kais (Divisions)"
         widget: "list"
@@ -122,8 +123,25 @@ collections:
             summary: "{{team}}"
             fields:
               - { name: "team", label: "Team", widget: "string" }
-              - { name: "wins", label: "Wins", widget: "number", value_type: "int" }
-              - { name: "losses", label: "Losses", widget: "number", value_type: "int" }
+      - name: "preseason_schedule"
+        label: "Pre-Season Schedule"
+        widget: "list"
+        required: false
+        summary: "Pre-Season Week {{week}}"
+        hint: "Pre-season matches (mirrors the last 3 weeks of the main season with home/away reversed)"
+        fields:
+          - { name: "week", label: "Week Number", widget: "number", value_type: "int" }
+          - name: "matches"
+            label: "Matches"
+            widget: "list"
+            summary: "{{home}} vs {{away}}"
+            fields:
+              - { name: "home", label: "Home Team", widget: "string" }
+              - { name: "away", label: "Away Team", widget: "string" }
+              - { name: "winner", label: "Winner", widget: "string", required: false, hint: "Enter the winning team's name" }
+              - { name: "status", label: "Status", widget: "select", options: ["upcoming", "completed", "live"] }
+              - { name: "divisional", label: "Divisional Match", widget: "boolean", default: false, required: false, hint: "Check if both teams are in the same Kai (division)" }
+              - { name: "video_url", label: "Video URL", widget: "string", required: false }
       - name: "schedule"
         label: "Weekly Schedule"
         widget: "list"
