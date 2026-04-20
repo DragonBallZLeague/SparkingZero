@@ -389,6 +389,11 @@ export default function SeasonPage({ darkMode }) {
               >
                 {isCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
                 Week {week.week}
+                {week.stream_date && (
+                  <span className={`text-sm font-normal ml-1 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+                    · {week.stream_date}
+                  </span>
+                )}
               </button>
               {!isCollapsed && <div className="grid gap-3">
                 {(week.matches || []).map((m, i) => {

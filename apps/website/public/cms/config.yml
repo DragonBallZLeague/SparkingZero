@@ -131,6 +131,7 @@ collections:
         hint: "Pre-season matches (mirrors the last 3 weeks of the main season with home/away reversed)"
         fields:
           - { name: "week", label: "Week Number", widget: "number", value_type: "int" }
+          - { name: "stream_date", label: "Stream Date", widget: "string", required: false, hint: "e.g. April 26, 2026" }
           - name: "matches"
             label: "Matches"
             widget: "list"
@@ -148,6 +149,7 @@ collections:
         summary: "Week {{week}}"
         fields:
           - { name: "week", label: "Week Number", widget: "number", value_type: "int" }
+          - { name: "stream_date", label: "Stream Date", widget: "string", required: false, hint: "e.g. April 26, 2026" }
           - name: "matches"
             label: "Matches"
             widget: "list"
