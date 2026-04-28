@@ -142,18 +142,21 @@ teams:
       - Frost
     description: Characters who have either been a member of the Cold family or
       served under them.
-  - name: Creations
-    slug: creations
-    color: "#10B981"
-    description: Characters created through artificial means, either through magic
-      or engineering.
-    manager: TBD
+  - color: "#10B981"
+    restrictions: |-
+      * Great Ape Baby (GT) is a banned starting form
+      * Omega Shenron (GT) is a banned starting form
+      * Orange Piccolo is a banned starting form
     roster:
       - Android 17 (Z)
       - Android 19
       - Baby Vegeta (GT)
       - Cell 1st Form
       - Mecha Frieza
+    name: Creations
+    slug: creations
+    manager: TBD
+    icon: /SparkingZero/images/creationslogo.png
     master_list:
       - Piccolo
       - Piccolo (Fused with Kami)
@@ -183,21 +186,22 @@ teams:
       - Gamma 2
       - Majin Duu
       - Majin Kuu
+    description: Characters created through artificial means, either through magic
+      or engineering.
+  - color: "#DC2626"
     restrictions: |-
-      * Great Ape Baby (GT) is a banned starting form
       * Omega Shenron (GT) is a banned starting form
       * Orange Piccolo is a banned starting form
-  - name: Demons
-    slug: demons
-    color: "#DC2626"
-    description: Characters of a canon demonic nature or heritage.
-    manager: TBD
     roster:
       - Dabura
       - Third Eye Gomah
       - Majin Buu
       - Majin Duu
       - Piccolo (Super Hero) Power Awakening
+    name: Demons
+    slug: demons
+    manager: TBD
+    icon: /SparkingZero/images/demonslogo.png
     master_list:
       - Piccolo
       - Piccolo (Fused with Kami)
@@ -223,20 +227,22 @@ teams:
       - Cell Max
       - Majin Duu
       - Third Eye Gomah
+    description: Characters of a canon demonic nature or heritage.
+  - color: "#6366F1"
     restrictions: |-
+      * Broly (Z) Legendary Super Saiyan is a banned starting form
       * Omega Shenron (GT) is a banned starting form
-      * Orange Piccolo is a banned starting form
-  - name: Malevolent Souls
-    slug: malevolent-souls
-    color: "#6366F1"
-    description: Characters who performed indisputably evil acts.
-    manager: TBD
+      * Great Ape Baby (GT) is a banned starting form
     roster:
       - Broly (Z)
       - Frieza (Z) 1st Form
       - Super Garlic Jr.
       - Super Buu
       - Syn Shenron (GT)
+    name: Malevolent Souls
+    slug: malevolent-souls
+    manager: TBD
+    icon: /SparkingZero/images/malevolentsoulslogo.png
     master_list:
       - Vegeta (Z - Scouter)
       - Majin Vegeta
@@ -289,22 +295,19 @@ teams:
       - Frost
       - Cell Max
       - Third Eye Gomah
-    restrictions: |-
-      * Broly (Z) Legendary Super Saiyan is a banned starting form
-      * Omega Shenron (GT) is a banned starting form
-      * Great Ape Baby (GT) is a banned starting form
-  - name: Master & Student
-    slug: master-&-student
-    color: "#0EA5E9"
-    description: Characters who acted either as a mentor or who were shown training
-      under one.
-    manager: TBD
+    description: Characters who performed indisputably evil acts.
+  - color: "#0EA5E9"
+    restrictions: "* Forms beyond Super Saiyan are not allowed"
     roster:
       - Cabba
       - Goku (Z - End)
       - Shallot
       - Vegeta (Z - Scouter)
       - Vegeta (Super)
+    name: Master & Student
+    slug: master-&-student
+    manager: TBD
+    icon: /SparkingZero/images/masterandstudentlogo.png
     master_list:
       - Goku (Z - Early)
       - Goku (Z - Mid)
@@ -338,7 +341,8 @@ teams:
       - Nappa
       - Shallot
       - Cabba
-    restrictions: "* Forms beyond Super Saiyan are not allowed"
+    description: Characters who acted either as a mentor or who were shown training
+      under one.
   - color: "#c48f02"
     restrictions: |-
       * Broly (Z) Legendary Super Saiyan is a banned starting form
@@ -354,7 +358,7 @@ teams:
     name: Primal Instincts
     slug: primal-instincts
     manager: TBD
-    icon: /SparkingZero/images/kaijulogo.png
+    icon: /SparkingZero/images/primallogo.png
     master_list:
       - Goku (GT)
       - Vegeta (Z - Scouter)
@@ -390,7 +394,7 @@ teams:
     name: Sentai Squad
     slug: sentai-squad
     manager: TBD
-    icon: /SparkingZero/images/sentailogo.png
+    icon: /SparkingZero/images/sentailogos0.png
     master_list:
       - Gohan (Adult)
       - Videl
@@ -409,18 +413,18 @@ teams:
       - Gamma 2
       - Shallot
     description: Characters inspired by Sentai style series.
-  - name: Time Patrol
-    slug: time-patrol
-    color: "#A855F7"
-    description: Characters who have performed time travel/time magic, or played a
-      very significant role in an alternate timeline.
-    manager: TBD
+  - color: "#A855F7"
+    restrictions: "* Forms beyond Super Saiyan are not allowed"
     roster:
       - Gohan (Future)
       - Goku Black
       - Guldo
       - Future Trunks
       - Zamasu
+    name: Time Patrol
+    slug: time-patrol
+    manager: TBD
+    icon: /SparkingZero/images/timepatrollogo.png
     master_list:
       - Goku (Super)
       - Vegeta (Super)
@@ -438,7 +442,8 @@ teams:
       - Bardock
       - Android 18
       - Android 17 (Z)
-    restrictions: "* Forms beyond Super Saiyan are not allowed"
+    description: Characters who have performed time travel/time magic, or played a
+      very significant role in an alternate timeline.
   - color: "#a7fdd8"
     restrictions: "* Forms beyond Super Saiyan are not allowed"
     roster:
