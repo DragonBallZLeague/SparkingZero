@@ -69,20 +69,23 @@ export default function HomePage({ site, darkMode }) {
         <div className={`absolute inset-0 bg-gradient-to-br ${darkMode ? 'from-orange-600/20 via-transparent to-red-600/10' : 'from-blue-600/20 via-transparent to-blue-500/10'}`} />
         <div className={`absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] ${darkMode ? 'from-orange-500/10' : 'from-blue-500/10'} via-transparent to-transparent`} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="text-center">
-            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-6 ${darkMode ? 'bg-orange-500/10 border-orange-500/20' : 'bg-blue-500/10 border-blue-500/20'}`}>
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border ${darkMode ? 'bg-orange-500/10 border-orange-500/20' : 'bg-blue-500/10 border-blue-500/20'}`}>
               <Zap className={`w-4 h-4 ${darkMode ? 'text-orange-400' : 'text-blue-600'}`} />
               <span className={`text-sm font-medium ${darkMode ? 'text-orange-400' : 'text-blue-600'}`}>
                 {site?.current_season} — {site?.current_season_status}
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
-              <span className={`bg-gradient-to-r bg-clip-text text-transparent ${darkMode ? 'from-orange-400 via-yellow-300 to-red-400' : 'from-blue-600 via-sky-400 to-blue-500'}`}>
-                {site?.site_name}
-              </span>
-            </h1>
+            <div className="flex justify-center">
+              <img
+                src={`${import.meta.env.BASE_URL}images/league-logo.png`}
+                alt="Dragon Ball Sparking Zero League"
+                className="w-full max-w-2xl sm:max-w-5xl drop-shadow-2xl"
+                draggable={false}
+              />
+            </div>
 
             <p className={`text-lg sm:text-xl max-w-2xl mx-auto mb-8 ${
               darkMode ? 'text-gray-300' : 'text-stone-600'
