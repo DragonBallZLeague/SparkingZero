@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon, Zap, ChevronDown, ExternalLink } from 'lucide-react';
+import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from 'lucide-react';
 
 const toolLinks = [
   { label: 'Match Analyzer', href: 'https://dragonballzleague.github.io/SparkingZero/analyzer/' },
@@ -36,10 +36,12 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}
           <Link to="/" className="flex items-center gap-2 group" onClick={() => setMobileOpen(false)}>
-            <Zap className={`w-7 h-7 transition-colors ${darkMode ? 'text-orange-500 group-hover:text-yellow-400' : 'text-blue-500 group-hover:text-blue-400'}`} />
-            <span className="font-bold text-lg hidden sm:inline">
-              {site?.short_name || 'DBSZL'}
-            </span>
+            <img
+              src={`${import.meta.env.BASE_URL}images/SZLEmblem.png`}
+              alt={site?.short_name || 'DBSZL'}
+              className="h-10 w-auto transition-transform duration-200 group-hover:scale-[1.02]"
+              draggable={false}
+            />
           </Link>
 
           {/* Desktop Nav */}
