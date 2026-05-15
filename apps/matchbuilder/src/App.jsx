@@ -1607,12 +1607,13 @@ const MatchBuilder = () => {
             let sparking = "";
             settings.forEach((item) => {
               if (!item.key || item.key === "None") return;
-              if (item.key.startsWith("00_1_")) costume = item.key;
+              if (/^\d\d_1_/.test(item.key)) costume = item.key;
               else if (item.key.startsWith("00_7_")) ai = item.key;
               else if (item.key.startsWith("00_6_")) sparking = item.key;
               else capsules.push(item.key);
             });
-            char.capsules = [...capsules, ...Array(7 - capsules.length).fill("")].slice(0, 7);
+            const padLen = Math.max(0, 7 - capsules.length);
+            char.capsules = [...capsules, ...Array(padLen).fill("")].slice(0, 7);
             char.costume = costume;
             char.ai = ai;
             char.sparking = sparking;
