@@ -143,6 +143,13 @@ collections:
               - { name: "status", label: "Status", widget: "select", options: ["upcoming", "completed", "live"] }
               - { name: "divisional", label: "Divisional Match", widget: "boolean", default: false, required: false, hint: "Check if both teams are in the same Kai (division)" }
               - { name: "video_url", label: "Video URL", widget: "string", required: false }
+              - name: "lineup_file"
+                label: "Lineup File"
+                widget: "file"
+                required: false
+                media_folder: "/apps/website/public/content/lineups"
+                public_folder: ""
+                hint: "Upload the lineup YAML file for this match"
       - name: "schedule"
         label: "Weekly Schedule"
         widget: "list"
@@ -161,6 +168,13 @@ collections:
               - { name: "status", label: "Status", widget: "select", options: ["upcoming", "completed", "live"] }
               - { name: "divisional", label: "Divisional Match", widget: "boolean", default: false, required: false, hint: "Check if both teams are in the same Kai (division)" }
               - { name: "video_url", label: "Video URL", widget: "string", required: false }
+              - name: "lineup_file"
+                label: "Lineup File"
+                widget: "file"
+                required: false
+                media_folder: "/apps/website/public/content/lineups"
+                public_folder: ""
+                hint: "Upload the lineup YAML file for this match"
       - name: "playoffs"
         label: "Playoffs"
         widget: "object"
