@@ -298,7 +298,7 @@ export default function TeamsPage({ darkMode }) {
                       <img
                         src={team.banner}
                         alt={`${team.name} banner`}
-                        className="w-full h-auto object-cover max-h-48"
+                        className="w-full h-auto"
                       />
                     </div>
                   )}

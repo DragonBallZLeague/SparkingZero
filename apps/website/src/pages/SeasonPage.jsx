@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Trophy, ArrowUpDown, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown } from 'lucide-react';
+import { Calendar, Trophy, ArrowUpDown, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
 import { loadContent } from '../utils/contentLoader';
 import yaml from 'js-yaml';
 
@@ -28,6 +28,181 @@ function computeStandingsFromSchedule(schedule) {
   return record;
 }
 
+function parseCapsule(str) {
+  const m = str.match(/^(.+?)\s+\((\d+)\)$/);
+  return m ? { name: m[1], cost: m[2] } : { name: str, cost: null };
+}
+
+function CharacterCard({ char, darkMode }) {
+  const hasTransformAi = char.transformAi && char.transformAi !== '';
+  return (
+    <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800/80' : 'bg-stone-100'}`}>
+      <div className={`font-bold text-sm mb-2 ${darkMode ? 'text-white' : 'text-stone-900'}`}>
+        {char.character}
+      </div>
+      {char.costume && (
+        <div className={`text-xs mb-1.5 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+          {char.costume}
+        </div>
+      )}
+      <div className="space-y-0.5">
+        {(char.capsules || []).map((cap, ci) => {
+          const { name, cost } = parseCapsule(cap);
+          return (
+            <div key={ci} className={`flex justify-between items-center text-xs ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>
+              <span>{name}</span>
+              {cost !== null && (
+                <span className={`font-bold ml-3 shrink-0 ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{cost}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-gray-700/50' : 'border-stone-200'} flex items-start justify-between gap-2 text-xs`}>
+        <span className={`shrink-0 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>AI Strategy</span>
+        <span className={`text-right font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{char.ai}</span>
+      </div>
+      {hasTransformAi && (
+        <div className={`flex items-start justify-between gap-2 text-xs mt-0.5`}>
+          <span className={`shrink-0 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>Transformation AI</span>
+          <span className={`text-right ${darkMode ? 'text-purple-400/70' : 'text-purple-500/80'}`}>{char.transformAi}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LineupPanel({ data, loading, darkMode, homeTeam, awayTeam, homeBanner, awayBanner }) {
+  const [activeTeam, setActiveTeam] = useState(0);
+  const [homeBannerRatio, setHomeBannerRatio] = useState(null);
+  const [awayBannerRatio, setAwayBannerRatio] = useState(null);
+  if (loading) {
+    return (
+      <div className={`p-6 text-center text-sm animate-pulse ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+        Loading lineup...
+      </div>
+    );
+  }
+  if (!data) return null;
+  const team1 = data.team1 || [];
+  const team2 = data.team2 || [];
+  return (
+    <div className="relative">
+      {/* Desktop: banner backgrounds behind the full panel, split left/right */}
+      <div className="hidden sm:block absolute inset-0 pointer-events-none overflow-hidden">
+        {homeBanner && (
+          <div
+            className="absolute left-0 top-0 w-1/2 h-full overflow-hidden"
+            style={{
+              containerType: 'size',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 10%, transparent 50%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, transparent 50%)',
+            }}
+          >
+            <img
+              src={homeBanner}
+              alt=""
+              aria-hidden="true"
+              onLoad={(e) => setHomeBannerRatio(e.currentTarget.naturalHeight / e.currentTarget.naturalWidth)}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: homeBannerRatio !== null ? `calc(50cqh * ${homeBannerRatio - 1})` : '-9999px',
+                width: '100cqh',
+                height: 'auto',
+                maxWidth: 'none',
+                transform: 'translateY(-50%) rotate(-90deg)',
+                opacity: 0.75,
+                pointerEvents: 'none',
+              }}
+            />
+          </div>
+        )}
+        {awayBanner && (
+          <div
+            className="absolute right-0 top-0 w-1/2 h-full overflow-hidden"
+            style={{
+              containerType: 'size',
+              maskImage: 'linear-gradient(to left, transparent 0%, black 10%, transparent 50%)',
+              WebkitMaskImage: 'linear-gradient(to left, transparent 0%, black 10%, transparent 50%)',
+            }}
+          >
+            <img
+              src={awayBanner}
+              alt=""
+              aria-hidden="true"
+              onLoad={(e) => setAwayBannerRatio(e.currentTarget.naturalHeight / e.currentTarget.naturalWidth)}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: awayBannerRatio !== null ? `calc(50cqh * ${awayBannerRatio - 1})` : '-9999px',
+                width: '100cqh',
+                height: 'auto',
+                maxWidth: 'none',
+                transform: 'translateY(-50%) rotate(90deg)',
+                opacity: 0.75,
+                pointerEvents: 'none',
+              }}
+            />
+          </div>
+        )}
+      </div>
+      {/* Content */}
+      <div className="relative p-3 sm:p-4">
+        {/* Mobile: tab switcher */}
+        <div className={`flex sm:hidden gap-1 p-1 rounded-xl mb-3 ${darkMode ? 'bg-gray-800/60' : 'bg-stone-200'}`}>
+          <button
+            onClick={() => setActiveTeam(0)}
+            className={`flex-1 text-xs py-1.5 rounded-lg font-medium transition-colors truncate px-2 ${
+              activeTeam === 0
+                ? darkMode ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'
+                : darkMode ? 'text-gray-400 hover:text-white' : 'text-stone-500 hover:text-stone-800'
+            }`}
+          >
+            {homeTeam}
+          </button>
+          <button
+            onClick={() => setActiveTeam(1)}
+            className={`flex-1 text-xs py-1.5 rounded-lg font-medium transition-colors truncate px-2 ${
+              activeTeam === 1
+                ? darkMode ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'
+                : darkMode ? 'text-gray-400 hover:text-white' : 'text-stone-500 hover:text-stone-800'
+            }`}
+          >
+            {awayTeam}
+          </button>
+        </div>
+        {/* Mobile: single active team */}
+        <div className="sm:hidden space-y-2">
+          {(activeTeam === 0 ? team1 : team2).map((char, i) => (
+            <CharacterCard key={i} char={char} darkMode={darkMode} />
+          ))}
+        </div>
+        {/* Desktop: side-by-side */}
+        <div className="hidden sm:flex items-start justify-center gap-4">
+          <div className="w-full max-w-xs">
+            <div className="space-y-2">
+              {team1.map((char, i) => (
+                <CharacterCard key={i} char={char} darkMode={darkMode} />
+              ))}
+            </div>
+          </div>
+          <div className={`flex-shrink-0 self-center text-lg font-bold px-2 ${darkMode ? 'text-gray-600' : 'text-stone-300'}`}>
+            Vs
+          </div>
+          <div className="w-full max-w-xs">
+            <div className="space-y-2">
+              {team2.map((char, i) => (
+                <CharacterCard key={i} char={char} darkMode={darkMode} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SeasonPage({ darkMode }) {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -38,6 +213,9 @@ export default function SeasonPage({ darkMode }) {
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [selectedPhase, setSelectedPhase] = useState(null);
   const [collapsedWeeks, setCollapsedWeeks] = useState({});
+  const [openLineups, setOpenLineups] = useState({});
+  const [lineupCache, setLineupCache] = useState({});
+  const [lineupLoading, setLineupLoading] = useState({});
 
   // Load site config to get list of all seasons
   useEffect(() => {
@@ -107,6 +285,25 @@ export default function SeasonPage({ darkMode }) {
 
   const getTeamSlug = (name) =>
     teams?.teams?.find((t) => t.name === name)?.slug || null;
+
+  const getTeamBanner = (name) =>
+    teams?.teams?.find((t) => t.name === name)?.banner || null;
+
+  const toggleLineup = async (matchKey, lineupFile) => {
+    const isOpening = !openLineups[matchKey];
+    setOpenLineups(prev => ({ ...prev, [matchKey]: !prev[matchKey] }));
+    if (!isOpening || !lineupFile || lineupCache[lineupFile] || lineupLoading[lineupFile]) return;
+    setLineupLoading(prev => ({ ...prev, [lineupFile]: true }));
+    try {
+      const resp = await fetch(`${import.meta.env.BASE_URL}content/lineups/${lineupFile}`);
+      const text = await resp.text();
+      setLineupCache(prev => ({ ...prev, [lineupFile]: yaml.load(text) }));
+    } catch (e) {
+      console.error('Failed to load lineup:', e);
+    } finally {
+      setLineupLoading(prev => ({ ...prev, [lineupFile]: false }));
+    }
+  };
 
   const tabs = [
     { key: 'standings', label: 'Standings', icon: Trophy },
@@ -401,6 +598,9 @@ export default function SeasonPage({ darkMode }) {
                   const homeWin = isCompleted && m.winner === m.home;
                   const awayWin = isCompleted && m.winner === m.away;
                   const hasVideo = isCompleted && m.video_url;
+                  const hasLineup = !!m.lineup_file;
+                  const matchKey = `${weekKey}-${i}`;
+                  const isLineupOpen = !!openLineups[matchKey];
 
                   const hasGradientBorder = isCompleted && m.winner;
                   const gradientColors = homeWin
@@ -409,7 +609,7 @@ export default function SeasonPage({ darkMode }) {
 
                   const innerCard = (
                     <div
-                      className={`rounded-xl p-4 flex items-center justify-between transition-colors ${
+                      className={`rounded-t-xl p-2 sm:p-4 flex items-center justify-between transition-colors ${
                         hasVideo ? 'cursor-pointer' : ''
                       } ${
                         hasGradientBorder
@@ -422,29 +622,29 @@ export default function SeasonPage({ darkMode }) {
                       }`}
                     >
                       {/* Home Team */}
-                      <div className={`flex items-center gap-3 flex-1 ${
+                      <div className={`flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0 ${
                         homeWin ? 'font-bold text-green-400' : awayWin ? 'text-red-400' : ''
                       }`}>
                         {getTeamIcon(m.home) ? (
                           <img
                             src={getTeamIcon(m.home)}
                             alt={m.home}
-                            className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md object-cover flex-shrink-0"
                           />
                         ) : (
                           <div
-                            className="w-7 h-7 rounded-md flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md flex-shrink-0"
                             style={{ backgroundColor: getTeamColor(m.home) }}
                           />
                         )}
-                        <span className="truncate">{m.home}</span>
+                        <span className="truncate text-sm sm:text-base">{m.home}</span>
                       </div>
 
                       {/* Result */}
-                      <div className="flex items-center gap-2 px-4">
+                      <div className="flex items-center gap-2 px-1.5 sm:px-4 flex-shrink-0">
                         {isCompleted ? (
-                          <div className="flex flex-col items-center gap-1">
-                            <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                          <div className="flex flex-col items-center justify-center gap-1 h-[40px] sm:h-[52px]">
+                            <span className={`text-xs sm:text-sm font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${
                               darkMode ? 'bg-blue-500/20 text-blue-400 ring-1 ring-blue-500/40' : 'bg-blue-100 text-blue-700 ring-1 ring-blue-300'
                             }`}>
                               Final
@@ -463,8 +663,8 @@ export default function SeasonPage({ darkMode }) {
                             )}
                           </div>
                         ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <span className={`text-sm px-3 py-1 rounded-full ${
+                          <div className="flex flex-col items-center justify-center gap-1 h-[40px] sm:h-[52px]">
+                            <span className={`text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${
                               darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
                             }`}>
                               Upcoming
@@ -481,19 +681,19 @@ export default function SeasonPage({ darkMode }) {
                       </div>
 
                       {/* Away Team */}
-                      <div className={`flex items-center gap-3 flex-1 justify-end text-right ${
+                      <div className={`flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0 justify-end text-right ${
                         awayWin ? 'font-bold text-green-400' : homeWin ? 'text-red-400' : ''
                       }`}>
-                        <span className="truncate">{m.away}</span>
+                        <span className="truncate text-sm sm:text-base">{m.away}</span>
                         {getTeamIcon(m.away) ? (
                           <img
                             src={getTeamIcon(m.away)}
                             alt={m.away}
-                            className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md object-cover flex-shrink-0"
                           />
                         ) : (
                           <div
-                            className="w-7 h-7 rounded-md flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md flex-shrink-0"
                             style={{ backgroundColor: getTeamColor(m.away) }}
                           />
                         )}
@@ -501,23 +701,93 @@ export default function SeasonPage({ darkMode }) {
                     </div>
                   );
 
-                  const card = hasGradientBorder ? (
-                    <div
-                      className="rounded-xl p-[1px]"
-                      style={{
-                        background: `linear-gradient(to right, ${gradientColors})`,
-                      }}
-                    >
-                      {innerCard}
-                    </div>
-                  ) : innerCard;
+                  const tabBorder = darkMode
+                    ? 'border-l border-r border-b border-gray-800'
+                    : 'border-l border-r border-b border-stone-200';
 
-                  return hasVideo ? (
-                    <a key={i} href={m.video_url} target="_blank" rel="noopener noreferrer">
-                      {card}
-                    </a>
-                  ) : (
-                    <React.Fragment key={i}>{card}</React.Fragment>
+                  const viewBuildsButton = (
+                    <button
+                      onClick={() => hasLineup && toggleLineup(matchKey, m.lineup_file)}
+                      disabled={!hasLineup}
+                      className={`w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium transition-colors border-t ${
+                        hasGradientBorder ? 'rounded-none' : isLineupOpen ? 'rounded-none' : 'rounded-b-xl'
+                      } ${hasGradientBorder ? '' : tabBorder} ${
+                        !hasLineup
+                          ? darkMode
+                            ? 'bg-gray-900 text-gray-700 cursor-not-allowed border-gray-800'
+                            : 'bg-stone-50 text-stone-300 cursor-not-allowed border-stone-200'
+                          : isLineupOpen
+                            ? darkMode
+                              ? 'bg-gray-800 text-blue-400 border-gray-700 hover:bg-gray-700'
+                              : 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'
+                            : darkMode
+                              ? 'bg-gray-900 text-gray-500 border-gray-800 hover:text-gray-200 hover:bg-gray-800'
+                              : 'bg-stone-50 text-stone-400 border-stone-200 hover:text-stone-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <Users className="w-3 h-3" />
+                      <span>{!hasLineup ? 'Builds Unavailable' : isLineupOpen ? 'Hide Builds' : 'View Builds'}</span>
+                      {hasLineup && (isLineupOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+                    </button>
+                  );
+
+                  if (hasGradientBorder) {
+                    return (
+                      <div key={i}>
+                        <div
+                          className="rounded-xl p-[1px]"
+                          style={{ background: `linear-gradient(to right, ${gradientColors})` }}
+                        >
+                          <div className={`rounded-[11px] overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-stone-50 shadow-sm'}`}>
+                            {hasVideo ? (
+                              <a href={m.video_url} target="_blank" rel="noopener noreferrer">
+                                {innerCard}
+                              </a>
+                            ) : innerCard}
+                            {viewBuildsButton}
+                            {isLineupOpen && (
+                              <LineupPanel
+                                data={lineupCache[m.lineup_file]}
+                                loading={!!lineupLoading[m.lineup_file]}
+                                darkMode={darkMode}
+                                homeTeam={m.home}
+                                awayTeam={m.away}
+                                homeBanner={getTeamBanner(m.home)}
+                                awayBanner={getTeamBanner(m.away)}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={i}>
+                      {hasVideo ? (
+                        <a href={m.video_url} target="_blank" rel="noopener noreferrer">
+                          {innerCard}
+                        </a>
+                      ) : innerCard}
+                      {viewBuildsButton}
+                      {isLineupOpen && (
+                        <div className={`rounded-b-xl overflow-hidden ${
+                          darkMode
+                            ? 'bg-gray-900 border-l border-r border-b border-gray-800'
+                            : 'bg-stone-50 border-l border-r border-b border-stone-200'
+                        }`}>
+                          <LineupPanel
+                            data={lineupCache[m.lineup_file]}
+                            loading={!!lineupLoading[m.lineup_file]}
+                            darkMode={darkMode}
+                            homeTeam={m.home}
+                            awayTeam={m.away}
+                            homeBanner={getTeamBanner(m.home)}
+                            awayBanner={getTeamBanner(m.away)}
+                          />
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>}
