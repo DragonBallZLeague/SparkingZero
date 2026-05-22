@@ -1,0 +1,119 @@
+matchName: PS0_W2_M6
+team1Name: Master & Student
+team2Name: tp pre week2
+
+# ── Master & Student ────────────────────
+team1:
+  - character: Goku (Z - End)
+    costume: Outfit 2
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Light Body (4)
+      - Fighting Spirit (5)
+      - Dragon Spirit (3)
+      - Power Unleashed (2)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: 'Balanced Strategy: Restrain'
+    sparking: Absolute Domination
+
+  - character: Vegeta (Super)
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Super Transformation (1)
+      - Dragon Spirit (3)
+      - Ki Blast Attack Boost 2 (3)
+      - Perfect Guard (5)
+      - Energy Saver 2 (2)
+      - Blast Attack Boost 1 (1)
+    ai: 'Balanced Strategy: Blasts'
+    transformAi: 'Balanced Strategy: Blasts'
+    sparking: Malicious Intent
+
+  - character: Super Vegeta
+    costume: Outfit 3
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Master Roshi Training (1)
+      - Melee Charge 3 (3)
+      - Perfect Guard (5)
+      - Latent Power! (5)
+      - Smash Attack Boost 2 (3)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Absolute Domination
+
+  - character: Shallot
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Blast Attack Boost 1 (1)
+      - Melee Charge 3 (3)
+      - Style of the Strong (2)
+      - Indomitable Fighting Spirit (3)
+      - Latent Power Unleashed 2 (2)
+    ai: 'Defense Strategy: Skills'
+    transformAi: ''
+    sparking: Berserker
+
+# ── tp pre week2 ────────────────────────
+team2:
+  - character: Goku Black Super Saiyan Rosé
+    costume: Outfit 1
+    capsules:
+      - Dragon Heart (3)
+      - Secret Measures (2)
+      - Super Transformation (1)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Dragon Spirit (3)
+      - Power of Earth (5)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: 'Defense Strategy: Gauge Recovery'
+    sparking: The Power of Love
+
+  - character: Zamasu
+    costume: Outfit 1
+    capsules:
+      - Dragon Heart (3)
+      - Secret Measures (2)
+      - Super Transformation (1)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Dragon Spirit (3)
+      - Power of Earth (5)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: ''
+    sparking: Next-Gen Hero
+
+  - character: Guldo
+    costume: Outfit 1
+    capsules:
+      - Fighting Spirit (5)
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Savior (5)
+      - Blast Attack Boost 1 (1)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: KYOUFUNO GINYUU TOKUSENTAI
+
+  - character: Super Trunks
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Melee Charge 3 (3)
+      - Latent Power! (5)
+      - King Kai Training (3)
+      - Indomitable Fighting Spirit (3)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: 'Balanced Strategy: Melee'
+    sparking: PROLOGUE & SUBTITLE 2
+
+fusionSelections:
+  team1: {}
+  team2:
+    Fused Zamasu: Goku Black Super Saiyan Rosé
