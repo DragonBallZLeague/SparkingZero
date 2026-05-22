@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Trophy, ArrowUpDown, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
 import { loadContent } from '../utils/contentLoader';
 import yaml from 'js-yaml';
@@ -205,13 +205,15 @@ function LineupPanel({ data, loading, darkMode, homeTeam, awayTeam, homeBanner, 
 
 export default function SeasonPage({ darkMode }) {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState(null);
   const [teams, setTeams] = useState(null);
   const [siteData, setSiteData] = useState(null);
-  const [activeTab, setActiveTab] = useState('standings');
   const [sortBy, setSortBy] = useState('wins');
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [selectedPhase, setSelectedPhase] = useState(null);
+
+  const activeTab = searchParams.get('tab') || 'standings';
+  const selectedPhase = searchParams.get('phase') || null;
   const [collapsedWeeks, setCollapsedWeeks] = useState({});
   const [openLineups, setOpenLineups] = useState({});
   const [lineupCache, setLineupCache] = useState({});
@@ -237,7 +239,13 @@ export default function SeasonPage({ darkMode }) {
       .then((text) => {
         const seasonData = yaml.load(text);
         setData(seasonData);
-        setSelectedPhase(seasonData.active_phase || 'main_season');
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          if (!next.get('phase')) {
+            next.set('phase', seasonData.active_phase || 'main_season');
+          }
+          return next;
+        }, { replace: true });
       });
   }, [selectedSeason]);
 
@@ -363,7 +371,7 @@ export default function SeasonPage({ darkMode }) {
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
-            onClick={() => setActiveTab(key)}
+            onClick={() => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('tab', key); return n; })}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === key
                 ? darkMode ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'
@@ -384,7 +392,7 @@ export default function SeasonPage({ darkMode }) {
             return (
               <button
                 key={phase}
-                onClick={() => setSelectedPhase(phase)}
+                onClick={() => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('phase', phase); return n; })}
                 className={`relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-purple-600 text-white'
