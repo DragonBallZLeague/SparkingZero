@@ -7538,7 +7538,8 @@ export default function App() {
             {analysisContent && analysisContent.tags && (() => {
               const t = analysisContent.tags;
               const tagDefs = [
-                { key: 'season',    label: t.season,    color: darkMode ? 'bg-violet-900/40 text-violet-300 border-violet-600' : 'bg-violet-100 text-violet-700 border-violet-300' },
+                { key: 'seasonNumber', label: t.seasonNumber != null ? `S${t.seasonNumber}` : null, color: darkMode ? 'bg-violet-900/40 text-violet-300 border-violet-600' : 'bg-violet-100 text-violet-700 border-violet-300' },
+                { key: 'seasonPhase',  label: t.seasonPhase,  color: darkMode ? 'bg-indigo-900/40 text-indigo-300 border-indigo-600' : 'bg-indigo-100 text-indigo-700 border-indigo-300' },
                 // Team tag is an array — render one badge per team
                 ...(Array.isArray(t.team) ? t.team : (t.team ? [t.team] : [])).map(name => (
                   { key: `team-${name}`, label: name, color: darkMode ? 'bg-blue-900/40 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-700 border-blue-300' }

@@ -3,11 +3,12 @@ import { Filter, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 // Tag dimension config — order, label, color theming
 const TAG_DIMS = [
-  { key: 'season',    label: 'Season',     dark: { pill: 'bg-violet-900/50 text-violet-300 border-violet-700', on: 'bg-violet-600 text-white border-violet-500' }, light: { pill: 'bg-violet-50 text-violet-600 border-violet-200', on: 'bg-violet-500 text-white border-violet-400' } },
-  { key: 'team',      label: 'Team',       dark: { pill: 'bg-blue-900/50 text-blue-300 border-blue-700',     on: 'bg-blue-600 text-white border-blue-500' },   light: { pill: 'bg-blue-50 text-blue-600 border-blue-200',   on: 'bg-blue-500 text-white border-blue-400' } },
-  { key: 'matchType', label: 'Type',       dark: { pill: 'bg-amber-900/50 text-amber-300 border-amber-700',   on: 'bg-amber-600 text-white border-amber-500' },  light: { pill: 'bg-amber-50 text-amber-600 border-amber-200', on: 'bg-amber-500 text-white border-amber-400' } },
-  { key: 'difficulty', label: 'Difficulty', dark: { pill: 'bg-red-900/50 text-red-300 border-red-700',         on: 'bg-red-600 text-white border-red-500' },      light: { pill: 'bg-red-50 text-red-600 border-red-200',     on: 'bg-red-500 text-white border-red-400' } },
-  { key: 'matchSize', label: 'Size',       dark: { pill: 'bg-emerald-900/50 text-emerald-300 border-emerald-700', on: 'bg-emerald-600 text-white border-emerald-500' }, light: { pill: 'bg-emerald-50 text-emerald-600 border-emerald-200', on: 'bg-emerald-500 text-white border-emerald-400' } },
+  { key: 'seasonNumber', label: 'Season',     format: v => `S${v}`, dark: { pill: 'bg-violet-900/50 text-violet-300 border-violet-700',  on: 'bg-violet-600 text-white border-violet-500' },  light: { pill: 'bg-violet-50 text-violet-600 border-violet-200',  on: 'bg-violet-500 text-white border-violet-400' } },
+  { key: 'seasonPhase',  label: 'Phase',      dark: { pill: 'bg-indigo-900/50 text-indigo-300 border-indigo-700',  on: 'bg-indigo-600 text-white border-indigo-500' },  light: { pill: 'bg-indigo-50 text-indigo-600 border-indigo-200',  on: 'bg-indigo-500 text-white border-indigo-400' } },
+  { key: 'team',         label: 'Team',       dark: { pill: 'bg-blue-900/50 text-blue-300 border-blue-700',        on: 'bg-blue-600 text-white border-blue-500' },      light: { pill: 'bg-blue-50 text-blue-600 border-blue-200',        on: 'bg-blue-500 text-white border-blue-400' } },
+  { key: 'matchType',    label: 'Type',       dark: { pill: 'bg-amber-900/50 text-amber-300 border-amber-700',     on: 'bg-amber-600 text-white border-amber-500' },    light: { pill: 'bg-amber-50 text-amber-600 border-amber-200',     on: 'bg-amber-500 text-white border-amber-400' } },
+  { key: 'difficulty',   label: 'Difficulty', dark: { pill: 'bg-red-900/50 text-red-300 border-red-700',           on: 'bg-red-600 text-white border-red-500' },        light: { pill: 'bg-red-50 text-red-600 border-red-200',           on: 'bg-red-500 text-white border-red-400' } },
+  { key: 'matchSize',    label: 'Size',       dark: { pill: 'bg-emerald-900/50 text-emerald-300 border-emerald-700', on: 'bg-emerald-600 text-white border-emerald-500' }, light: { pill: 'bg-emerald-50 text-emerald-600 border-emerald-200', on: 'bg-emerald-500 text-white border-emerald-400' } },
 ];
 
 export default function TagFilterSelector({ onSelect, darkMode = true }) {
@@ -120,7 +121,7 @@ export default function TagFilterSelector({ onSelect, darkMode = true }) {
               const colors = dm ? dim.dark : dim.light;
               return [...active].map(v => (
                 <span key={`${dim.key}-${v}`} className={`shrink-0 inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[10px] font-bold border ${colors.on}`}>
-                  {v}
+                  {dim.format ? dim.format(v) : v}
                   <X
                     className="w-2.5 h-2.5 cursor-pointer opacity-70 hover:opacity-100"
                     onClick={e => { e.stopPropagation(); toggle(dim.key, v); }}
@@ -172,7 +173,7 @@ export default function TagFilterSelector({ onSelect, darkMode = true }) {
                             isOn ? colors.on : colors.pill
                           } ${isOn ? 'shadow-sm' : 'opacity-80 hover:opacity-100'}`}
                         >
-                          {v}
+                          {dim.format ? dim.format(v) : v}
                           {isOn && <X className="w-2.5 h-2.5 ml-0.5" />}
                         </button>
                       );

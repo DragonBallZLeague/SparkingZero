@@ -352,13 +352,23 @@ function SubmissionDetail({ user, onLogout }) {
                                 </Typography>
                               </Box>
                             )}
-                            {file.teamData.season && (
+                            {file.teamData.seasonNumber != null && (
                               <Box>
                                 <Typography variant="caption" sx={{ color: '#8b98a5' }}>
                                   Season
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#e7e9ea' }}>
-                                  {file.teamData.season}
+                                  Season {file.teamData.seasonNumber}
+                                </Typography>
+                              </Box>
+                            )}
+                            {file.teamData.seasonPhase && (
+                              <Box>
+                                <Typography variant="caption" sx={{ color: '#8b98a5' }}>
+                                  Phase
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#e7e9ea' }}>
+                                  {file.teamData.seasonPhase}
                                 </Typography>
                               </Box>
                             )}
