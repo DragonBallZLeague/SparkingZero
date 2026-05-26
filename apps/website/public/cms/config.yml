@@ -57,44 +57,48 @@ collections:
               - { name: "label", label: "Label", widget: "string" }
               - { name: "path", label: "Path", widget: "string" }
 
-  # --- TEAMS ---
+  # --- TEAM ROSTERS (one file per season, mirrors seasons/ structure) ---
   - name: "teams"
-    label: "Teams"
-    files:
+    label: "Team Rosters"
+    folder: "apps/website/public/content/teams"
+    create: true
+    extension: "yaml"
+    format: "yaml"
+    identifier_field: "label"
+    slug: "{{label | slugify}}"
+    summary: "{{label}} Team Rosters"
+    fields:
+      - { name: "label", label: "Season Label", widget: "string", hint: "e.g. Season 0 — must match the corresponding season file (season-0.yaml)" }
       - name: "teams"
-        label: "All Teams"
-        file: "apps/website/public/content/teams.yaml"
+        label: "Teams"
+        widget: "list"
+        summary: "{{name}}"
         fields:
-          - name: "teams"
-            label: "Teams"
+          - { name: "name", label: "Team Name", widget: "string" }
+          - { name: "slug", label: "URL Slug", widget: "string" }
+          - { name: "color", label: "Team Color (hex)", widget: "color" }
+          - { name: "icon", label: "Team Icon", widget: "image", required: false, hint: "Square icon image for the team" }
+          - { name: "banner", label: "Team Banner", widget: "image", required: false, hint: "Wide banner image for the team" }
+          - { name: "description", label: "Description", widget: "text" }
+          - { name: "manager", label: "Manager", widget: "string", required: false }
+          - name: "roster"
+            label: "Roster"
             widget: "list"
-            summary: "{{name}}"
-            fields:
-              - { name: "name", label: "Team Name", widget: "string" }
-              - { name: "slug", label: "URL Slug", widget: "string" }
-              - { name: "color", label: "Team Color (hex)", widget: "color" }
-              - { name: "icon", label: "Team Icon", widget: "image", required: false, hint: "Square icon image for the team" }
-              - { name: "banner", label: "Team Banner", widget: "image", required: false, hint: "Wide banner image for the team" }
-              - { name: "description", label: "Description", widget: "text" }
-              - { name: "manager", label: "Manager", widget: "string", required: false }
-              - name: "roster"
-                label: "Roster"
-                widget: "list"
-                hint: "Active roster (up to 5 characters)"
-                summary: "{{character}}"
-                field: { name: "character", label: "Character", widget: "string" }
-              - name: "restrictions"
-                label: "Restrictions"
-                widget: "markdown"
-                required: false
-                hint: "Special rules or banned forms for this team (supports bullet lists)"
-              - name: "master_list"
-                label: "Master List"
-                widget: "list"
-                required: false
-                hint: "Full list of all characters that fit the team theme"
-                summary: "{{character}}"
-                field: { name: "character", label: "Character", widget: "string" }
+            hint: "Active roster (up to 5 characters)"
+            summary: "{{character}}"
+            field: { name: "character", label: "Character", widget: "string" }
+          - name: "restrictions"
+            label: "Restrictions"
+            widget: "markdown"
+            required: false
+            hint: "Special rules or banned forms for this team (supports bullet lists)"
+          - name: "master_list"
+            label: "Master List"
+            widget: "list"
+            required: false
+            hint: "Full list of all characters that fit the team theme"
+            summary: "{{character}}"
+            field: { name: "character", label: "Character", widget: "string" }
 
   # --- SEASONS (one file per season) ---
   - name: "seasons"

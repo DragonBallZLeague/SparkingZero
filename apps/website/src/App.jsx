@@ -8,16 +8,11 @@ import SeasonPage from './pages/SeasonPage';
 import ArchivesPage from './pages/ArchivesPage';
 import CommunityPage from './pages/CommunityPage';
 import TeamSchedulePage from './pages/TeamSchedulePage';
-import { loadContent } from './utils/contentLoader';
 import RulesPage from './pages/RulesPage';
+import { SeasonProvider, useSeasonContext } from './contexts/SeasonContext';
 
-function App() {
-  const [darkMode, setDarkMode] = useState(true);
-  const [siteData, setSiteData] = useState(null);
-
-  useEffect(() => {
-    loadContent('site.yaml').then(setSiteData);
-  }, []);
+function AppShell({ darkMode, setDarkMode }) {
+  const { siteData } = useSeasonContext();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
@@ -33,23 +28,33 @@ function App() {
   }
 
   return (
+    <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-950 text-white' : 'bg-stone-200 text-stone-800'}`}>
+      <Navbar site={siteData} darkMode={darkMode} setDarkMode={setDarkMode} />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage site={siteData} darkMode={darkMode} />} />
+          <Route path="/teams" element={<TeamsPage darkMode={darkMode} />} />
+          <Route path="/season" element={<SeasonPage darkMode={darkMode} />} />
+          <Route path="/archives" element={<ArchivesPage darkMode={darkMode} />} />
+          <Route path="/community" element={<CommunityPage darkMode={darkMode} />} />
+          <Route path="/teams/:slug/schedule" element={<TeamSchedulePage darkMode={darkMode} />} />
+          <Route path="/rules" element={<RulesPage darkMode={darkMode} />} />
+          <Route path="/rules/:section" element={<RulesPage darkMode={darkMode} />} />
+        </Routes>
+      </main>
+      <Footer site={siteData} darkMode={darkMode} />
+    </div>
+  );
+}
+
+function App() {
+  const [darkMode, setDarkMode] = useState(true);
+
+  return (
     <BrowserRouter basename="/SparkingZero">
-      <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-950 text-white' : 'bg-stone-200 text-stone-800'}`}>
-        <Navbar site={siteData} darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<HomePage site={siteData} darkMode={darkMode} />} />
-            <Route path="/teams" element={<TeamsPage darkMode={darkMode} />} />
-            <Route path="/season" element={<SeasonPage darkMode={darkMode} />} />
-            <Route path="/archives" element={<ArchivesPage darkMode={darkMode} />} />
-            <Route path="/community" element={<CommunityPage darkMode={darkMode} />} />
-            <Route path="/teams/:slug/schedule" element={<TeamSchedulePage darkMode={darkMode} />} />
-            <Route path="/rules" element={<RulesPage darkMode={darkMode} />} />
-            <Route path="/rules/:section" element={<RulesPage darkMode={darkMode} />} />
-          </Routes>
-        </main>
-        <Footer site={siteData} darkMode={darkMode} />
-      </div>
+      <SeasonProvider>
+        <AppShell darkMode={darkMode} setDarkMode={setDarkMode} />
+      </SeasonProvider>
     </BrowserRouter>
   );
 }

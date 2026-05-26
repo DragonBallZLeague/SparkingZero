@@ -1,31 +1,30 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Calendar, Trophy, Home, Plane, Shield, ExternalLink, ChevronLeft, ChevronDown } from 'lucide-react';
-import { loadContent } from '../utils/contentLoader';
 import yaml from 'js-yaml';
+import { useSeasonContext } from '../contexts/SeasonContext';
 
 export default function TeamSchedulePage({ darkMode }) {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
 
   const [teamsData, setTeamsData] = useState(null);
   const [seasonData, setSeasonData] = useState(null);
-  const [siteData, setSiteData] = useState(null);
-  const [selectedSeason, setSelectedSeason] = useState(null);
 
-  useEffect(() => {
-    loadContent('site.yaml').then((site) => {
-      setSiteData(site);
-      setSelectedSeason(site.current_season_file || 'season-1.yaml');
-    });
-    loadContent('teams.yaml').then(setTeamsData);
-  }, []);
-
+  // When season changes, load both the teams file and the season schedule file
   useEffect(() => {
     if (!selectedSeason) return;
+    setTeamsData(null);
+    setSeasonData(null);
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then(r => r.text())
+      .then(text => setTeamsData(yaml.load(text)))
+      .catch(() => setTeamsData(null));
     fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
       .then((r) => r.text())
-      .then((text) => setSeasonData(yaml.load(text)));
+      .then((text) => setSeasonData(yaml.load(text)))
+      .catch(() => setSeasonData(null));
   }, [selectedSeason]);
 
   const team = useMemo(

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Trophy, ArrowUpDown, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
-import { loadContent } from '../utils/contentLoader';
+import { useSeasonContext } from '../contexts/SeasonContext';
 import yaml from 'js-yaml';
 
 const PHASE_LABELS = {
@@ -206,11 +206,10 @@ function LineupPanel({ data, loading, darkMode, homeTeam, awayTeam, homeBanner, 
 export default function SeasonPage({ darkMode }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
   const [data, setData] = useState(null);
   const [teams, setTeams] = useState(null);
-  const [siteData, setSiteData] = useState(null);
   const [sortBy, setSortBy] = useState('wins');
-  const [selectedSeason, setSelectedSeason] = useState(null);
 
   const activeTab = searchParams.get('tab') || 'standings';
   const selectedPhase = searchParams.get('phase') || null;
@@ -219,20 +218,10 @@ export default function SeasonPage({ darkMode }) {
   const [lineupCache, setLineupCache] = useState({});
   const [lineupLoading, setLineupLoading] = useState({});
 
-  // Load site config to get list of all seasons
-  useEffect(() => {
-    loadContent('site.yaml').then((site) => {
-      setSiteData(site);
-      // Default to current season
-      const currentFile = site.current_season_file || 'season-1.yaml';
-      setSelectedSeason(currentFile);
-    });
-    loadContent('teams.yaml').then(setTeams);
-  }, []);
-
-  // Load selected season data
+  // Load selected season data and matching teams file
   useEffect(() => {
     if (!selectedSeason) return;
+    setData(null);
     // Fetch from seasons/ subfolder
     fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
       .then((r) => r.text())
@@ -241,12 +230,15 @@ export default function SeasonPage({ darkMode }) {
         setData(seasonData);
         setSearchParams((prev) => {
           const next = new URLSearchParams(prev);
-          if (!next.get('phase')) {
-            next.set('phase', seasonData.active_phase || 'main_season');
-          }
+          next.set('phase', seasonData.active_phase || 'main_season');
           return next;
         }, { replace: true });
       });
+    // Load teams for this season
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setTeams(yaml.load(text)))
+      .catch(() => setTeams(null));
   }, [selectedSeason]);
 
   // Compute standings from main season schedule
@@ -469,7 +461,7 @@ export default function SeasonPage({ darkMode }) {
                           return (
                             <tr
                               key={s.team}
-                              onClick={() => slug && navigate(`/teams/${slug}/schedule`)}
+                              onClick={() => slug && navigate(`/teams/${slug}/schedule?season=${selectedSeason}`)}
                               className={`border-b last:border-0 transition-colors ${
                                 slug ? 'cursor-pointer' : ''
                               } ${

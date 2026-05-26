@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Users, Calendar, Trophy, ChevronRight, ExternalLink, Eye, Star } from 'lucide-react';
+import { Zap, Users, Calendar, Trophy, ChevronRight, ExternalLink, Eye, Star, ChevronDown } from 'lucide-react';
 import { loadContent } from '../utils/contentLoader';
 import yaml from 'js-yaml';
+import { useSeasonContext } from '../contexts/SeasonContext';
 
 export default function HomePage({ site, darkMode }) {
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
   const [teams, setTeams] = useState(null);
   const [season, setSeason] = useState(null);
   const [howTo, setHowTo] = useState(null);
   const [howToTab, setHowToTab] = useState('watch');
 
   useEffect(() => {
-    loadContent('teams.yaml').then(setTeams);
     loadContent('rules/how-to-participate.yaml').then(setHowTo);
-    // Load current season from seasons/ folder
-    loadContent('site.yaml').then((siteData) => {
-      const file = siteData.current_season_file || 'season-1.yaml';
-      fetch(`${import.meta.env.BASE_URL}content/seasons/${file}`)
-        .then((r) => r.text())
-        .then((text) => setSeason(yaml.load(text)));
-    });
   }, []);
+
+  // Load season and teams data when selected season changes
+  useEffect(() => {
+    if (!selectedSeason) return;
+    setSeason(null);
+    setTeams(null);
+    fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setSeason(yaml.load(text)));
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setTeams(yaml.load(text)))
+      .catch(() => {});
+  }, [selectedSeason]);
 
   const topTeams = (() => {
     if (!season?.kais) return [];
@@ -198,17 +206,35 @@ export default function HomePage({ site, darkMode }) {
       {/* Current Standings Preview */}
       {topTeams.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Trophy className="w-6 h-6 text-yellow-400" />
               Top Teams
             </h2>
-            <Link
-              to="/season"
-              className={`text-sm inline-flex items-center gap-1 ${darkMode ? 'text-orange-400 hover:text-orange-300' : 'text-blue-600 hover:text-blue-500'}`}
-            >
-              Full Standings <ChevronRight className="w-4 h-4" />
-            </Link>
+            <div className="flex items-center gap-3">
+              {(siteData?.all_seasons?.length ?? 0) > 1 && (
+                <div className="relative">
+                  <select
+                    value={selectedSeason || ''}
+                    onChange={(e) => setSelectedSeason(e.target.value)}
+                    className={`appearance-none pl-3 pr-8 py-1.5 rounded-lg border text-xs font-medium cursor-pointer ${
+                      darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-stone-100 border-stone-300 text-stone-800'
+                    }`}
+                  >
+                    {(siteData?.all_seasons || []).map((s) => (
+                      <option key={s.file} value={s.file}>{s.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                </div>
+              )}
+              <Link
+                to="/season"
+                className={`text-sm inline-flex items-center gap-1 ${darkMode ? 'text-orange-400 hover:text-orange-300' : 'text-blue-600 hover:text-blue-500'}`}
+              >
+                Full Standings <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

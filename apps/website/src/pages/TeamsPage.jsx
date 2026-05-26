@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Users, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
-import { loadContent } from '../utils/contentLoader';
+import yaml from 'js-yaml';
+import { useSeasonContext } from '../contexts/SeasonContext';
 
 const CALC_BASE = 'https://dragonballzleague.github.io/SparkingZero/calculator/#';
 const NULLS7 = [null, null, null, null, null, null, null];
@@ -183,6 +184,7 @@ function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdo
 }
 
 export default function TeamsPage({ darkMode }) {
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
   const [data, setData] = useState(null);
   const [expandedTeam, setExpandedTeam] = useState(null);
   const [calcNames, setCalcNames] = useState(null);
@@ -203,9 +205,15 @@ export default function TeamsPage({ darkMode }) {
       .catch(() => setTransformAdj({}));
   }, []);
 
+  // Load teams for the selected season
   useEffect(() => {
-    loadContent('teams.yaml').then(setData);
-  }, []);
+    if (!selectedSeason) return;
+    setData(null);
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then(r => r.text())
+      .then(text => setData(yaml.load(text)))
+      .catch(() => setData(null));
+  }, [selectedSeason]);
 
   // Auto-expand team from URL param
   useEffect(() => {
@@ -219,16 +227,37 @@ export default function TeamsPage({ darkMode }) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading teams...</div>;
   }
 
+  const allSeasons = siteData?.all_seasons || [];
+  const currentSeasonLabel = allSeasons.find(s => s.file === selectedSeason)?.label || selectedSeason;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <Users className="w-8 h-8 text-blue-400" />
-          Teams
-        </h1>
-        <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-          Click on a team to view their full roster and details.
-        </p>
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <Users className="w-8 h-8 text-blue-400" />
+            Teams
+          </h1>
+          <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+            Click on a team to view their full roster and details.
+          </p>
+        </div>
+        {allSeasons.length > 1 && (
+          <div className="relative">
+            <select
+              value={selectedSeason || ''}
+              onChange={(e) => { setSelectedSeason(e.target.value); setExpandedTeam(null); }}
+              className={`appearance-none pl-3 pr-8 py-2 rounded-lg border text-sm font-medium cursor-pointer ${
+                darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-stone-100 border-stone-300 text-stone-800'
+              }`}
+            >
+              {allSeasons.map((s) => (
+                <option key={s.file} value={s.file}>{s.label}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+        )}
       </div>
 
       <div className="space-y-3">
