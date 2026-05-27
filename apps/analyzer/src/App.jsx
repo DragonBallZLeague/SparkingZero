@@ -50,7 +50,9 @@ import {
   Filter,
   Download,
   Brain,
-  Minus
+  Minus,
+  Copy,
+  Check
 } from 'lucide-react';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
@@ -860,8 +862,123 @@ export function getBuildTypeColor(buildComposition, darkMode = false) {
   return colorMap[primaryType] || (darkMode ? 'text-gray-400 bg-gray-700 border-gray-600' : 'text-gray-600 bg-gray-50 border-gray-200');
 }
 
+/**
+ * Generate a YAML string for a character build in the match-builder format
+ */
+function generateBuildYaml(characterName, capsules, aiStrategy) {
+  const safeScalar = (v) => {
+    if (v === null || v === undefined || v === '') return "''";
+    const s = String(v);
+    // Quote if the value contains YAML-special chars or leading/trailing whitespace
+    if (/[:#\[\]{},!|>&*'"%@`?\\]/.test(s) || s !== s.trim()) {
+      return `'${s.replace(/'/g, "''")}'`;
+    }
+    return s;
+  };
+
+  const lines = [
+    `character: ${safeScalar(characterName)}`,
+    `costume: ''`,
+    `capsules:`,
+  ];
+  if (capsules && capsules.length > 0) {
+    capsules.forEach(c => {
+      const name = typeof c === 'string' ? c : (c.name || '');
+      lines.push(`  - ${safeScalar(name)}`);
+    });
+  } else {
+    lines.push(`  []`);
+  }
+  lines.push(
+    `ai: ${safeScalar(aiStrategy || '')}`,
+    `transformAi: ''`,
+    `sparking: ''`,
+  );
+  return lines.join('\n');
+}
+
+/**
+ * Small hook-like helper to handle transient "copied!" feedback
+ */
+function useCopyFeedback(ms = 1500) {
+  const [copied, setCopied] = React.useState(false);
+  const trigger = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), ms);
+  };
+  return [copied, trigger];
+}
+
+/**
+ * Reusable pair of Copy-YAML / Download-YAML buttons
+ */
+function BuildYamlButtons({ characterName, capsules, aiStrategy, darkMode }) {
+  const [copied, triggerCopied] = useCopyFeedback();
+
+  const getYaml = () => generateBuildYaml(characterName, capsules, aiStrategy);
+
+  const handleCopy = async (e) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(getYaml());
+      triggerCopied();
+    } catch {
+      // fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = getYaml();
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      triggerCopied();
+    }
+  };
+
+  const handleDownload = (e) => {
+    e.stopPropagation();
+    const yaml = getYaml();
+    const filename = `${(characterName || 'build').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_')}.yaml`;
+    const blob = new Blob([yaml], { type: 'text/yaml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const btnBase = `flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors border`;
+  const copyBtn = copied
+    ? darkMode
+      ? `${btnBase} bg-green-900/40 border-green-600 text-green-300`
+      : `${btnBase} bg-green-50 border-green-400 text-green-700`
+    : darkMode
+      ? `${btnBase} bg-gray-700 border-gray-500 text-gray-300 hover:bg-gray-600`
+      : `${btnBase} bg-white border-gray-300 text-gray-600 hover:bg-gray-50`;
+  const dlBtn = darkMode
+    ? `${btnBase} bg-gray-700 border-gray-500 text-gray-300 hover:bg-gray-600`
+    : `${btnBase} bg-white border-gray-300 text-gray-600 hover:bg-gray-50`;
+
+  return (
+    <div className="flex items-center gap-1.5 pt-1">
+      <button onClick={handleCopy} className={copyBtn} title="Copy build as YAML">
+        {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+        {copied ? 'Copied!' : 'Copy YAML'}
+      </button>
+      <button onClick={handleDownload} className={dlBtn} title="Download build as .yaml file">
+        <Download className="w-3 h-3" />
+        Download
+      </button>
+    </div>
+  );
+}
+
 // Component to display build type with tooltip for team rankings
-function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equippedCapsules, totalCapsuleCost, darkMode, tooltipKey }) {
+function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equippedCapsules, totalCapsuleCost, darkMode, tooltipKey, characterName }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   
   const { refs, floatingStyles } = useFloating({
@@ -968,6 +1085,15 @@ function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equipped
           {count} {count === 1 ? 'match' : 'matches'}
         </strong>
       </div>
+      {/* YAML export buttons */}
+      {(equippedCapsules?.length > 0 || aiStrategy) && (
+        <BuildYamlButtons
+          characterName={characterName}
+          capsules={equippedCapsules}
+          aiStrategy={aiStrategy}
+          darkMode={darkMode}
+        />
+      )}
     </div>
   );
 }
@@ -1235,6 +1361,7 @@ function BuildTableView({
               totalCapsuleCost={currentBuild.totalCapsuleCost}
               darkMode={darkMode}
               tooltipKey={`${buildKey}-floating-panel-${selectedIndex}`}
+              characterName={buildKey}
             />
             {primaryTeam && (
               <div className={`flex items-center justify-between font-semibold text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -1445,6 +1572,15 @@ function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
             <div className={`text-xs italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
               No capsules equipped
             </div>
+          )}
+          {/* YAML export buttons — only show when there's something to export */}
+          {(hasEquipment || hasAI) && (
+            <BuildYamlButtons
+              characterName={stats.name}
+              capsules={stats.equippedCapsules}
+              aiStrategy={stats.aiStrategy}
+              darkMode={darkMode}
+            />
           )}
         </>
       )}
@@ -9467,6 +9603,7 @@ export default function App() {
                                                                                 totalCapsuleCost={stat.mostCommonBuildData.totalCapsuleCost}
                                                                                 darkMode={darkMode}
                                                                                 tooltipKey={`${opponent}-${position}-${stat.characterName}-build`}
+                                                                                characterName={stat.characterName}
                                                                               />
                                                                             </div>
                                                                           ) : (
