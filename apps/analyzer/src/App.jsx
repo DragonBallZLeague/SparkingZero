@@ -5882,22 +5882,33 @@ export default function App() {
                   if (fileIds.length === 0) return;
 
                   const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
-                  const fileContents = await Promise.all(
-                    fileIds.map(async id => {
-                      const staticUrl = `${base}BR_Data/${id}`;
-                      try {
-                        const res = await fetch(staticUrl);
-                        if (res.ok) {
-                          const content = await res.json();
-                          return { name: id, content, tags: extractTagsFromMatchFile(content) };
+
+                  // Fetch in batches to avoid exhausting GitHub Pages connection limits.
+                  // Firing all requests simultaneously causes alphabetically-last folders
+                  // (e.g. Tiny Terrors) to have most requests rejected.
+                  const BATCH_SIZE = 200;
+                  const allContents = [];
+                  for (let i = 0; i < fileIds.length; i += BATCH_SIZE) {
+                    const batch = fileIds.slice(i, i + BATCH_SIZE);
+                    const batchResults = await Promise.all(
+                      batch.map(async id => {
+                        const staticUrl = `${base}BR_Data/${id}`;
+                        try {
+                          const res = await fetch(staticUrl);
+                          if (res.ok) {
+                            const content = await res.json();
+                            return { name: id, content, tags: extractTagsFromMatchFile(content) };
+                          }
+                        } catch (err) {
+                          // ignore individual file errors and continue
                         }
-                      } catch (err) {
-                        // ignore individual file errors and continue
-                      }
-                      return null;
-                    })
-                  );
-                  setFileContent(fileContents.filter(Boolean));
+                        return null;
+                      })
+                    );
+                    allContents.push(...batchResults.filter(Boolean));
+                    // Update progressively so Team Rankings reflects loaded data sooner
+                    setFileContent([...allContents]);
+                  }
                 }}
               />
             </div>
@@ -8459,7 +8470,7 @@ export default function App() {
               <div>
                 <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Team Rankings</h2>
                 <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Teams ranked by win rate from {mode === 'reference' ? 1 : manualFiles.filter(f => !f.error).length} battle file{(mode === 'reference' ? 1 : manualFiles.filter(f => !f.error).length) !== 1 ? 's' : ''}
+                  Teams ranked by win rate from {mode === 'reference' ? (Array.isArray(fileContent) ? fileContent.length : 0) : manualFiles.filter(f => !f.error).length} battle file{(mode === 'reference' ? (Array.isArray(fileContent) ? fileContent.length : 0) : manualFiles.filter(f => !f.error).length) !== 1 ? 's' : ''}
                 </p>
                 <p className={`text-sm ${darkMode ? 'text-amber-400' : 'text-amber-600'} mt-1`}>
                   Team stats calculated from top 5 characters by combat performance score
