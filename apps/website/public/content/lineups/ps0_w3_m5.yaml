@@ -1,0 +1,120 @@
+matchName: PS0_W3_M5
+team1Name: Time patrol
+team2Name: Cold Kingdom
+
+# ── Time patrol ─────────────────────────
+team1:
+  - character: Gohan (Future)
+    costume: Outfit 1
+    capsules:
+      - Fighting Spirit (5)
+      - Fury! (4)
+      - Blast Attack Boost 3 (5)
+      - King Kai Training (3)
+      - Latent Power Unleashed 2 (2)
+      - Blast Attack Boost 1 (1)
+      - Brolys Ring (1)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: Next-Gen Hero
+
+  - character: Super Trunks
+    costume: Outfit 1
+    capsules:
+      - Savior (5)
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - Melee Charge 3 (3)
+      - Fury! (4)
+      - Latent Power Unleashed 1 (1)
+      - Active Heart (1)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: ''
+    sparking: KYOUFUNO GINYUU TOKUSENTAI
+
+  - character: Goku Black Super Saiyan Rosé
+    costume: Outfit 1
+    capsules:
+      - Dragon Heart (3)
+      - Secret Measures (2)
+      - Super Transformation (1)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Dragon Spirit (3)
+      - Latent Power! (5)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: 'Defense Strategy: Gauge Recovery'
+    sparking: The Power of Love
+
+  - character: Zamasu
+    costume: Outfit 1
+    capsules:
+      - Dragon Heart (3)
+      - Secret Measures (2)
+      - Super Transformation (1)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Dragon Spirit (3)
+      - Latent Power! (5)
+    ai: 'Balanced Strategy: Blasts'
+    transformAi: 'Defense Strategy: Gauge Recovery'
+    sparking: The Power of Love
+
+# ── Cold Kingdom ────────────────────────
+team2:
+  - character: Frieza (Super)
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 2 (3)
+      - Rush Attack Boost 2 (3)
+      - Fury! (4)
+      - Latent Power! (5)
+      - King Kai Training (3)
+      - Latent Power Unleashed 2 (2)
+    ai: 'Defense Strategy: Counters'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: Morally Gray
+
+  - character: Frost
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Savior (5)
+      - Dragon Spirit (3)
+      - Ki Blast Attack Boost 2 (3)
+      - Energy Saver 1 (1)
+      - Style of the Strong (2)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Realm of the Gods
+
+  - character: Cooler Final Form
+    costume: ''
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - The Secret to Dragon Dashes (5)
+      - Rush Attack Boost 1 (1)
+      - Fury! (4)
+      - Indomitable Fighting Spirit (3)
+      - Active Heart (1)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Strangely Evil
+
+  - character: Metal Cooler
+    costume: Outfit 1
+    capsules:
+      - The Secret to Dragon Dashes (5)
+      - Latent Power! (5)
+      - Melee Charge 2 (2)
+      - Indomitable Fighting Spirit (3)
+      - Rush Attack Boost 3 (5)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: ''
+    sparking: Divine Judgment
+
+fusionSelections:
+  team1:
+    Fused Zamasu: Goku Black Super Saiyan Rosé
+  team2: {}

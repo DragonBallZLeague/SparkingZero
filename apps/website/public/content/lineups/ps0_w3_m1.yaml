@@ -1,0 +1,115 @@
+matchName: PS0_W3_M1
+team1Name: sentai
+team2Name: Z-Fighters
+
+# ── sentai ──────────────────────────────
+team1:
+  - character: Toppo
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Latent Power! (5)
+      - Super Transformation (1)
+      - Master Roshi Training (1)
+      - Latent Power Unleashed 2 (2)
+      - Power of Namek (5)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: 'Attack Strategy: Vanishing'
+    sparking: ''
+
+  - character: Jeice
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Blast Attack Boost 1 (1)
+      - Fury! (4)
+      - Rising Tension (3)
+      - Rising Fighting Spirit (3)
+      - Energy Saver 3 (3)
+      - Energy Saver 1 (1)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: ''
+    sparking: ''
+
+  - character: Jiren
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Super Transformation (1)
+      - Master Roshi Training (1)
+      - Latent Power Unleashed 2 (2)
+      - Latent Power! (5)
+      - Power of Namek (5)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: 'Attack Strategy: Vanishing'
+    sparking: ''
+
+  - character: Ribrianne
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Rising Tension (3)
+      - Dragon Spirit (3)
+      - Rising Fighting Spirit (3)
+      - The Secret to Counters (5)
+    ai: 'Balanced Strategy: Movement'
+    transformAi: ''
+    sparking: ''
+
+# ── Z-Fighters ──────────────────────────
+team2:
+  - character: Tien
+    costume: Outfit 2
+    capsules:
+      - Blast Attack Boost 1 (1)
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Rising Fighting Spirit (3)
+      - Rising Tension (3)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: ''
+    sparking: Super Earthling
+
+  - character: Trunks (Sword) Super Saiyan
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - Latent Power! (5)
+      - Rising Fighting Spirit (3)
+      - Light Body (4)
+      - Secret Measures (2)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: ''
+    sparking: Hope for the Future
+
+  - character: Gohan (Teen) Super Saiyan
+    costume: Outfit 3
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Secret Measures (2)
+      - Dragon Spirit (3)
+      - Fury! (4)
+      - Fighting Spirit (5)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: 'Defense Strategy: Gauge Recovery'
+    sparking: Hidden Power Unleashed
+
+  - character: Goku (Z - Mid) Super Saiyan
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Savior (5)
+      - Light Body (4)
+      - Dragon Spirit (3)
+      - Ultimate Burst (2)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: Realm of the Gods
