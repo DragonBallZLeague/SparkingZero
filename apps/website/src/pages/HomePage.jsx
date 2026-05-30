@@ -4,6 +4,7 @@ import { Zap, Users, Calendar, Trophy, ChevronRight, ExternalLink, Eye, Star, Ch
 import { loadContent } from '../utils/contentLoader';
 import yaml from 'js-yaml';
 import { useSeasonContext } from '../contexts/SeasonContext';
+import { sortTeamsWithTiebreakers } from '../utils/standings';
 
 export default function HomePage({ site, darkMode }) {
   const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
@@ -48,13 +49,14 @@ export default function HomePage({ site, darkMode }) {
         });
       }
     }
-    // Get all teams from kais and apply computed records
+    // Get all teams from kais, including avg_damage
     const allTeams = season.kais.flatMap((k) => (k.teams || []).map((t) => ({
       team: t.team,
+      avg_damage: t.avg_damage ?? null,
       wins: record[t.team]?.wins || 0,
       losses: record[t.team]?.losses || 0,
     })));
-    const sorted = allTeams.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    const sorted = sortTeamsWithTiebreakers(allTeams, schedule);
     // Assign dense ranks (ties get same rank)
     let rank = 1;
     const ranked = sorted.map((t, i) => {

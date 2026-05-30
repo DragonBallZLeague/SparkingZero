@@ -127,6 +127,7 @@ collections:
             summary: "{{team}}"
             fields:
               - { name: "team", label: "Team", widget: "string" }
+              - { name: "avg_damage", label: "Avg Damage (Top 5)", widget: "number", value_type: "int", required: false, hint: "Average damage of the team's top 5 characters — used as final tiebreaker" }
       - name: "preseason_schedule"
         label: "Pre-Season Schedule"
         widget: "list"

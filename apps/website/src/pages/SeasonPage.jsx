@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Calendar, Trophy, ArrowUpDown, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
+import { Calendar, Trophy, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
 import { useSeasonContext } from '../contexts/SeasonContext';
 import yaml from 'js-yaml';
+import { applyTiebreakers, sortTeamsWithTiebreakers } from '../utils/standings';
 
 const PHASE_LABELS = {
   preseason: 'Pre-Season',
@@ -209,8 +210,6 @@ export default function SeasonPage({ darkMode }) {
   const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
   const [data, setData] = useState(null);
   const [teams, setTeams] = useState(null);
-  const [sortBy, setSortBy] = useState('wins');
-
   const activeTab = searchParams.get('tab') || 'standings';
   const selectedPhase = searchParams.get('phase') || null;
   const [collapsedWeeks, setCollapsedWeeks] = useState({});
@@ -265,17 +264,26 @@ export default function SeasonPage({ darkMode }) {
   const activePhase = data.active_phase || 'main_season';
   const allSeasons = siteData?.all_seasons || [];
 
-  const sortKaiTeams = (kaiTeams) =>
-    [...kaiTeams].map((s) => ({
+  const sortKaiTeams = (kaiTeams) => {
+    const withRecords = [...kaiTeams].map((s) => ({
       ...s,
       ...(displayedStandings[s.team] || { wins: 0, losses: 0 }),
-    })).sort((a, b) => {
-      if (sortBy === 'wins') return b.wins - a.wins || a.losses - b.losses;
-      if (sortBy === 'losses') return a.losses - b.losses || b.wins - a.wins;
-      const aWr = a.wins / Math.max(a.wins + a.losses, 1);
-      const bWr = b.wins / Math.max(b.wins + b.losses, 1);
-      return bWr - aWr;
-    });
+    }));
+    withRecords.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    const result = [];
+    let i = 0;
+    while (i < withRecords.length) {
+      let j = i + 1;
+      while (
+        j < withRecords.length &&
+        withRecords[j].wins === withRecords[i].wins &&
+        withRecords[j].losses === withRecords[i].losses
+      ) { j++; }
+      result.push(...applyTiebreakers(withRecords.slice(i, j), scheduleForPhase));
+      i = j;
+    }
+    return result;
+  };
 
   const getTeamColor = (name) =>
     teams?.teams?.find((t) => t.name === name)?.color || '#6B7280';
@@ -427,30 +435,9 @@ export default function SeasonPage({ darkMode }) {
                         <tr className={`border-b ${darkMode ? 'border-gray-800 bg-gray-900/80' : 'border-stone-200 bg-stone-100'}`}>
                           <th className="text-left py-3 px-4 font-semibold">#</th>
                           <th className="text-left py-3 px-4 font-semibold">Team</th>
-                          <th className="text-center py-3 px-4 font-semibold">
-                            <button
-                              onClick={() => setSortBy('wins')}
-                              className={`inline-flex items-center gap-1 ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}
-                            >
-                              W <ArrowUpDown className="w-3 h-3" />
-                            </button>
-                          </th>
-                          <th className="text-center py-3 px-4 font-semibold">
-                            <button
-                              onClick={() => setSortBy('losses')}
-                              className={`inline-flex items-center gap-1 ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}
-                            >
-                              L <ArrowUpDown className="w-3 h-3" />
-                            </button>
-                          </th>
-                          <th className="text-center py-3 px-4 font-semibold">
-                            <button
-                              onClick={() => setSortBy('winrate')}
-                              className={`inline-flex items-center gap-1 ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}
-                            >
-                              Win% <ArrowUpDown className="w-3 h-3" />
-                            </button>
-                          </th>
+                          <th className="text-center py-3 px-4 font-semibold">W</th>
+                          <th className="text-center py-3 px-4 font-semibold">L</th>
+                          <th className="text-center py-3 px-4 font-semibold">Win%</th>
                         </tr>
                       </thead>
                       <tbody>
