@@ -11,10 +11,30 @@ const TAG_DIMS = [
   { key: 'matchSize',    label: 'Size',       dark: { pill: 'bg-emerald-900/50 text-emerald-300 border-emerald-700', on: 'bg-emerald-600 text-white border-emerald-500' }, light: { pill: 'bg-emerald-50 text-emerald-600 border-emerald-200', on: 'bg-emerald-500 text-white border-emerald-400' } },
 ];
 
+// Parse activeFilters from the current URL search params
+function parseFiltersFromURL() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const filters = {};
+    TAG_DIMS.forEach(d => {
+      const val = params.get(d.key);
+      if (val) {
+        filters[d.key] = new Set(val.split(',').map(v => v.trim()).filter(Boolean));
+      }
+    });
+    return filters;
+  } catch {
+    return {};
+  }
+}
+
 export default function TagFilterSelector({ onSelect, darkMode = true }) {
   const [tagsIndex, setTagsIndex] = useState(null);
-  const [activeFilters, setActiveFilters] = useState({});
-  const [expanded, setExpanded] = useState(false);
+  const [activeFilters, setActiveFilters] = useState(() => parseFiltersFromURL());
+  const [expanded, setExpanded] = useState(() => {
+    const f = parseFiltersFromURL();
+    return Object.values(f).some(s => s.size > 0);
+  });
 
   useEffect(() => {
     const base = import.meta.env?.BASE_URL || '';
@@ -23,6 +43,24 @@ export default function TagFilterSelector({ onSelect, darkMode = true }) {
       .then(data => { if (data) setTagsIndex(data); })
       .catch(() => {});
   }, []);
+
+  // Sync activeFilters to URL query params
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      TAG_DIMS.forEach(d => {
+        const s = activeFilters[d.key];
+        if (s && s.size > 0) {
+          params.set(d.key, [...s].join(','));
+        } else {
+          params.delete(d.key);
+        }
+      });
+      const newSearch = params.toString();
+      const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
+      history.replaceState(null, '', newUrl);
+    } catch { /* non-browser env */ }
+  }, [activeFilters]);
 
   // Collect unique values per dimension
   const availableValues = useMemo(() => {

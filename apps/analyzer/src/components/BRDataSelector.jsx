@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -41,7 +41,7 @@ function naturalSort(a, b) {
  * - ['Events', 'Tests']: Select multiple folders
  * - ['Events/Season 0 Showcase']: Select specific subfolders (use full path)
  */
-const DEFAULT_SELECTION = ['Tests'];
+const DEFAULT_SELECTION = 'all';
 
 // Helper function to get all child IDs of a node (including files)
 function getAllChildIds(node, path = []) {
@@ -134,6 +134,9 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
   const [searchQuery, setSearchQuery] = useState('');
   // Collapsed state for compact UI (start collapsed on page load)
   const [collapsed, setCollapsed] = useState(true);
+  // Refs for debounced auto-load
+  const debounceRef = useRef(null);
+  const initialLoadDoneRef = useRef(false);
 
   useEffect(() => {
     // Load the pre-generated static JSON (works on GH Pages / static deploys).
@@ -204,6 +207,7 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
           }
           
           setSelected(selectedIds);
+          initialLoadDoneRef.current = true;
           if (onSelect) {
             const fileIds = selectedIds.filter(id => id.includes('.json'));
             onSelect(fileIds);
@@ -228,6 +232,22 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
     if (!tagFilterPaths) return null;
     return new Set(tagFilterPaths);
   }, [tagFilterPaths]);
+
+  // Auto-load: whenever selected or tagFilterSet changes (after initial load), debounce and call onSelect
+  useEffect(() => {
+    if (!initialLoadDoneRef.current) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (onSelect) {
+        const effectiveSelection = tagFilterSet
+          ? selected.filter(id => !id.includes('.json') || tagFilterSet.has(id))
+          : selected;
+        const fileIds = effectiveSelection.filter(id => id.includes('.json'));
+        onSelect(fileIds);
+      }
+    }, 400);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [selected, tagFilterSet]);
 
   // Filter items based on search query AND tag filters
   const filteredItems = useMemo(() => {
@@ -487,16 +507,6 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
             <Chip style={{ backgroundColor: '#2563eb', color: 'rgba(255, 255, 255, 0.7)' }} label={`${selectedFileCount} Matches`} size="small" />
           </Box>
         </Paper>
-        <Button
-          onClick={(e) => { e.stopPropagation(); handleApplySelection(); }}
-          variant="contained"
-          color="success"
-          size="small"
-          disabled={selectedFileCount === 0}
-          sx={{ whiteSpace: 'nowrap' }}
-        >
-          Load {selectedFileCount} File{selectedFileCount !== 1 ? 's' : ''}
-        </Button>
         <IconButton size="small" onClick={(e) => { e.stopPropagation(); setCollapsed(false); }}>
           <ArrowRightIcon />
         </IconButton>
@@ -592,17 +602,7 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
             />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Button 
-            onClick={handleApplySelection} 
-            variant="contained" 
-            color="success" 
-            size="small"
-            disabled={selectedFileCount === 0}
-          >
-            Load {selectedFileCount} File{selectedFileCount !== 1 ? 's' : ''}
-          </Button>
-        </Box>
+
       </Box>
 
       {/* Active Category/Subcategory Filters */}

@@ -4312,6 +4312,7 @@ export default function App() {
   const [fileContent, setFileContent] = useState(null);
   const [fileTags, setFileTags] = useState(null); // Tags for the currently displayed match file
   const [tagFilterPaths, setTagFilterPaths] = useState(null); // Paths from TagFilterSelector (null = no filter)
+  const fetchGenRef = useRef(0); // Incremented on each new onSelect call; stale batches check this before writing
   // Separate state for the header match-analysis selector so we don't override global fileContent
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
   const [analysisFileContent, setAnalysisFileContent] = useState(null);
@@ -5881,6 +5882,9 @@ export default function App() {
                   const fileIds = selectedIds.filter(id => id.endsWith('.json'));
                   if (fileIds.length === 0) return;
 
+                  // Increment generation so any in-progress batch fetch knows it is stale
+                  const myGen = ++fetchGenRef.current;
+
                   const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
 
                   // Fetch in batches to avoid exhausting GitHub Pages connection limits.
@@ -5889,6 +5893,8 @@ export default function App() {
                   const BATCH_SIZE = 200;
                   const allContents = [];
                   for (let i = 0; i < fileIds.length; i += BATCH_SIZE) {
+                    // Abort if a newer onSelect has started
+                    if (fetchGenRef.current !== myGen) return;
                     const batch = fileIds.slice(i, i + BATCH_SIZE);
                     const batchResults = await Promise.all(
                       batch.map(async id => {
@@ -5905,6 +5911,7 @@ export default function App() {
                         return null;
                       })
                     );
+                    if (fetchGenRef.current !== myGen) return;
                     allContents.push(...batchResults.filter(Boolean));
                     // Update progressively so Team Rankings reflects loaded data sooner
                     setFileContent([...allContents]);
