@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Users, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
+import { Users, ChevronDown, ChevronUp, Calendar, UserMinus } from 'lucide-react';
 import yaml from 'js-yaml';
 import { useSeasonContext } from '../contexts/SeasonContext';
 
@@ -31,6 +31,14 @@ function buildTransformAdj(data) {
     }
   }
   return fwd;
+}
+
+function normalizeRoster(roster = []) {
+  return roster.map(entry =>
+    typeof entry === 'string'
+      ? { character: entry, benched: [] }
+      : { character: entry.character || entry, benched: entry.benched || [] }
+  );
 }
 
 function getFormChain(name, calcNames, transformAdj) {
@@ -344,18 +352,36 @@ export default function TeamsPage({ darkMode }) {
                   </h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                    {(team.roster || []).map((char) => (
-                      <CharLink
-                        key={char}
-                        name={char}
-                        calcNames={calcNames}
-                        transformAdj={transformAdj}
-                        darkMode={darkMode}
-                        noDropdown
-                        className={`px-3 py-2 rounded-lg text-sm text-center ${
-                          darkMode ? 'bg-gray-800/50 text-gray-200' : 'bg-stone-100 text-stone-700'
-                        }`}
-                      />
+                    {normalizeRoster(team.roster).map(({ character, benched }) => (
+                      <div key={character} className="flex flex-col">
+                        <CharLink
+                          name={character}
+                          calcNames={calcNames}
+                          transformAdj={transformAdj}
+                          darkMode={darkMode}
+                          noDropdown
+                          className={`px-3 py-2 rounded-lg text-sm text-center ${
+                            darkMode ? 'bg-gray-800/50 text-gray-200' : 'bg-stone-100 text-stone-700'
+                          }`}
+                        />
+                        {benched.length > 0 && (
+                          <div className={`mt-1 px-2 py-1.5 rounded-b-lg -mt-1 pt-2 border-t ${
+                            darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-stone-100 border-stone-200'
+                          }`}>
+                            <div className={`flex items-center justify-center gap-1 mb-1`}>
+                              <UserMinus className={`w-3 h-3 ${darkMode ? 'text-rose-400' : 'text-rose-500'}`} />
+                              <span className={`text-[9px] font-bold uppercase tracking-wider ${darkMode ? 'text-rose-400' : 'text-rose-500'}`}>Benched</span>
+                            </div>
+                            <div className="flex flex-wrap gap-1 justify-center">
+                              {benched.slice().sort((a, b) => a - b).map(wk => (
+                                <span key={wk} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                                  darkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-600'
+                                }`}>Wk {wk}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
 

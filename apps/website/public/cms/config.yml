@@ -86,7 +86,14 @@ collections:
             widget: "list"
             hint: "Active roster (up to 5 characters)"
             summary: "{{character}}"
-            field: { name: "character", label: "Character", widget: "string" }
+            fields:
+              - { name: "character", label: "Character", widget: "string" }
+              - name: "benched"
+                label: "Benched Weeks"
+                widget: "list"
+                required: false
+                hint: "Main season week numbers when this character was benched (e.g. 3)"
+                field: { name: "week", label: "Week", widget: "number", value_type: "int" }
           - name: "restrictions"
             label: "Restrictions"
             widget: "markdown"

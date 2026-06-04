@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Calendar, Trophy, Home, Plane, Shield, ExternalLink, ChevronLeft, ChevronDown } from 'lucide-react';
+import { Calendar, Trophy, Home, Plane, Shield, ExternalLink, ChevronLeft, ChevronDown, Users, UserMinus } from 'lucide-react';
 import yaml from 'js-yaml';
 import { useSeasonContext } from '../contexts/SeasonContext';
+
+function normalizeRoster(roster = []) {
+  return roster.map(entry =>
+    typeof entry === 'string'
+      ? { character: entry, benched: [] }
+      : { character: entry.character || entry, benched: entry.benched || [] }
+  );
+}
 
 export default function TeamSchedulePage({ darkMode }) {
   const { slug } = useParams();
@@ -141,6 +149,22 @@ export default function TeamSchedulePage({ darkMode }) {
   const upcoming = allMatches.filter((m) => m.status === 'upcoming');
   const completed = allMatches.filter((m) => m.status === 'completed');
 
+  const rosterNormalized = useMemo(() => normalizeRoster(team?.roster), [team]);
+
+  // Build a map of week -> benched character names for quick lookup
+  const benchedByWeek = useMemo(() => {
+    const map = {};
+    for (const { character, benched } of rosterNormalized) {
+      for (const wk of benched) {
+        if (!map[wk]) map[wk] = [];
+        map[wk].push(character);
+      }
+    }
+    return map;
+  }, [rosterNormalized]);
+
+  const hasBenches = rosterNormalized.some(r => r.benched.length > 0);
+
   if (!teamsData || !seasonData || !siteData) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading…</div>;
   }
@@ -247,6 +271,38 @@ export default function TeamSchedulePage({ darkMode }) {
           ))}
         </div>
 
+        {/* Roster & Benches card */}
+        <div className={`rounded-2xl border p-5 mb-6 ${card}`}>
+          <h2 className={`font-semibold mb-4 flex items-center gap-2`}>
+            <Users className={`w-4 h-4 ${darkMode ? 'text-orange-400' : 'text-blue-500'}`} />
+            Roster{hasBenches ? ' & Benches' : ''}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            {rosterNormalized.map(({ character, benched }) => (
+              <div key={character} className={`px-3 py-2.5 rounded-lg ${darkMode ? 'bg-gray-800/50' : 'bg-stone-100'}`}>
+                <div className={`text-sm font-medium text-center ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>{character}</div>
+                {benched.length > 0 ? (
+                  <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-gray-700' : 'border-stone-200'}`}>
+                    <div className={`flex items-center justify-center gap-1 mb-1.5`}>
+                      <UserMinus className={`w-3 h-3 ${darkMode ? 'text-rose-400' : 'text-rose-500'}`} />
+                      <span className={`text-[9px] font-bold uppercase tracking-wider ${darkMode ? 'text-rose-400' : 'text-rose-500'}`}>Benched</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 justify-center">
+                      {benched.slice().sort((a, b) => a - b).map(wk => (
+                        <span key={wk} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                          darkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-600'
+                        }`}>Wk {wk}</span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`text-[10px] text-center mt-1 ${muted}`}>No benches</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Schedule table */}
         <div className={`rounded-2xl border overflow-hidden ${card}`}>
           <div className={`px-5 py-4 border-b flex items-center gap-2 ${darkMode ? 'border-gray-800' : 'border-stone-200'}`}>
@@ -262,6 +318,11 @@ export default function TeamSchedulePage({ darkMode }) {
                   <th className="py-3 px-4 text-left">Opponent</th>
                   <th className="py-3 px-4 text-center">H/A</th>
                   <th className="py-3 px-4 text-center">Div</th>
+                  <th className="py-3 px-4 text-left">
+                    <span className="inline-flex items-center gap-1">
+                      <UserMinus className="w-3 h-3" /> Benched
+                    </span>
+                  </th>
                   <th className="py-3 px-4 text-center">Result</th>
                   <th className="py-3 px-4 text-center">VOD</th>
                 </tr>
@@ -269,7 +330,7 @@ export default function TeamSchedulePage({ darkMode }) {
               <tbody>
                 {preseasonMatches.length > 0 && (
                   <tr>
-                    <td colSpan={6} className={`py-2 px-4 text-xs font-bold uppercase tracking-wider ${
+                    <td colSpan={7} className={`py-2 px-4 text-xs font-bold uppercase tracking-wider ${
                       darkMode ? 'bg-gray-800/60 text-green-400' : 'bg-stone-100 text-green-700'
                     }`}>
                       Pre-Season
@@ -301,6 +362,9 @@ export default function TeamSchedulePage({ darkMode }) {
                         </span>
                       )}
                     </td>
+                    <td className={`py-3 px-4 text-xs ${muted}`}>
+                      <span className={muted}>—</span>
+                    </td>
                     <td className={`py-3 px-4 text-center ${resultColor(m.result)}`}>
                       {m.result ?? <span className={`text-xs ${muted}`}>—</span>}
                     </td>
@@ -322,7 +386,7 @@ export default function TeamSchedulePage({ darkMode }) {
                 ))}
                 {teamMatches.length > 0 && (
                   <tr>
-                    <td colSpan={6} className={`py-2 px-4 text-xs font-bold uppercase tracking-wider ${
+                    <td colSpan={7} className={`py-2 px-4 text-xs font-bold uppercase tracking-wider ${
                       darkMode ? 'bg-gray-800/60 text-orange-400' : 'bg-stone-100 text-blue-700'
                     }`}>
                       Main Season
@@ -352,6 +416,21 @@ export default function TeamSchedulePage({ darkMode }) {
                         }`}>
                           <Shield className="w-3 h-3" /> DIV
                         </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {benchedByWeek[m.week]?.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {benchedByWeek[m.week].map(char => (
+                            <span key={char} className={`inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                              darkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-600'
+                            }`}>
+                              <UserMinus className="w-2.5 h-2.5" />{char}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className={`text-xs ${muted}`}>—</span>
                       )}
                     </td>
                     <td className={`py-3 px-4 text-center ${resultColor(m.result)}`}>
