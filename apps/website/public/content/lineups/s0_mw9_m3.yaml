@@ -1,0 +1,117 @@
+matchName: S0 MW9 M3
+team1Name: Primal Instinct
+team2Name: Z-Fighters
+
+# ── Primal Instinct ─────────────────────
+team1:
+  - character: Dyspo
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Smash Attack Boost 2 (3)
+      - Power Unleashed (2)
+      - Light Body (4)
+      - Indomitable Fighting Spirit (3)
+      - Master Roshi Training (1)
+      - Rising Fighting Spirit (3)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: ''
+
+  - character: Bardock
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - The Secret to Counters (5)
+      - Combo Master (1)
+      - Combo King (2)
+      - Ki Blast Attack Boost 3 (5)
+      - Ki Blast Charge 1 (1)
+    ai: 'Attack Strategy: Combos'
+    transformAi: ''
+    sparking: ''
+
+  - character: Caulifla Super Saiyan 2
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Light Body (4)
+      - Power Unleashed (2)
+      - Energy Saver 3 (3)
+      - Perfect Guard (5)
+      - Active Heart (1)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: ''
+    sparking: ''
+
+  - character: Goku (Mini) Super Saiyan
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 1 (1)
+      - Blast Attack Boost 2 (3)
+      - Indomitable Fighting Spirit (3)
+      - Latent Power! (5)
+      - Master Roshi Training (1)
+      - Secret Measures (2)
+      - Super Transformation (1)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: ''
+
+# ── Z-Fighters ──────────────────────────
+team2:
+  - character: Android 16
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Fury! (4)
+      - Latent Power! (5)
+      - Master Roshi Training (1)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Strangely Innocent
+
+  - character: Gohan (Teen) Super Saiyan
+    costume: Outfit 4
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Rising Fighting Spirit (3)
+      - Secret Measures (2)
+      - Dragon Spirit (3)
+      - Latent Power! (5)
+      - Master Roshi Training (1)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: 'Defense Strategy: Gauge Recovery'
+    sparking: Hidden Power Unleashed
+
+  - character: Goku (Z - Mid) Super Saiyan
+    costume: Outfit 4
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Savior (5)
+      - Light Body (4)
+      - Secret Measures (2)
+      - Dragon Spirit (3)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: Super Saiyan
+
+  - character: Tien
+    costume: Outfit 4
+    capsules:
+      - Blast Attack Boost 1 (1)
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Rising Fighting Spirit (3)
+      - Waters Blessing (3)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Super Earthling
