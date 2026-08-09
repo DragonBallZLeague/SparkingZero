@@ -193,20 +193,28 @@ collections:
         required: false
         fields:
           - { name: "status", label: "Status", widget: "select", options: ["Not Started", "In Progress", "Completed"], default: "Not Started" }
-          - { name: "format", label: "Format", widget: "string", default: "Single Elimination Bo5" }
-          - name: "bracket"
-            label: "Bracket Matches"
+          - { name: "format", label: "Format", widget: "string", default: "12-Team Single Elimination" }
+          - name: "rounds"
+            label: "Rounds"
             widget: "list"
             required: false
-            summary: "{{round}} — {{team_a}} vs {{team_b}}"
+            summary: "{{round}}"
             fields:
-              - { name: "round", label: "Round", widget: "string" }
-              - { name: "match", label: "Match #", widget: "number", value_type: "int" }
-              - { name: "team_a", label: "Team A", widget: "string" }
-              - { name: "team_b", label: "Team B", widget: "string" }
-              - { name: "score_a", label: "Score A", widget: "number", value_type: "int", required: false }
-              - { name: "score_b", label: "Score B", widget: "number", value_type: "int", required: false }
-              - { name: "winner", label: "Winner", widget: "string", required: false }
+              - { name: "round", label: "Round Name", widget: "string", hint: "e.g. Wild Card, Quarterfinals, Semifinals, Tenkaichi Bowl" }
+              - name: "matches"
+                label: "Matches"
+                widget: "list"
+                summary: "{{team_a}} vs {{team_b}}"
+                fields:
+                  - { name: "match", label: "Match #", widget: "number", value_type: "int", required: false }
+                  - { name: "team_a", label: "Team A", widget: "string" }
+                  - { name: "team_b", label: "Team B", widget: "string" }
+                  - { name: "seed_a", label: "Seed A", widget: "number", value_type: "int", required: false, hint: "Seeding number for Team A (omit for later rounds)" }
+                  - { name: "seed_b", label: "Seed B", widget: "number", value_type: "int", required: false, hint: "Seeding number for Team B (omit for later rounds)" }
+                  - { name: "score_a", label: "Score A", widget: "number", value_type: "int", required: false }
+                  - { name: "score_b", label: "Score B", widget: "number", value_type: "int", required: false }
+                  - { name: "winner", label: "Winner", widget: "string", required: false }
+                  - { name: "status", label: "Status", widget: "select", options: ["upcoming", "completed", "live"], default: "upcoming" }
 
   # --- COMMUNITY ---
   - name: "community"

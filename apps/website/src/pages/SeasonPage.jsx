@@ -204,6 +204,233 @@ function LineupPanel({ data, loading, darkMode, homeTeam, awayTeam, homeBanner, 
   );
 }
 
+// ─── Playoff Bracket ──────────────────────────────────────────────────────────
+
+const BRACKET_MATCH_H = 76;
+const BRACKET_SLOT_H = 108;
+const BRACKET_ROUND_W = 176;
+const BRACKET_CONN_W = 36;
+
+function BracketTeamRow({ team, seed, won, lost, score, darkMode, icon, color }) {
+  return (
+    <div
+      className={`flex items-center gap-1.5 px-2 ${
+        won ? (darkMode ? 'bg-green-500/10' : 'bg-green-50') : ''
+      }`}
+      style={{ height: 37 }}
+    >
+      {seed != null && (
+        <span className="text-[10px] w-3.5 flex-shrink-0 font-mono text-gray-500">{seed}</span>
+      )}
+      {icon ? (
+        <img
+          src={icon}
+          alt={team || ''}
+          className="w-5 h-5 rounded flex-shrink-0 object-cover"
+          style={{ opacity: lost ? 0.35 : 1 }}
+        />
+      ) : (
+        <div
+          className="w-5 h-5 rounded flex-shrink-0"
+          style={{ backgroundColor: color || '#6B7280', opacity: lost ? 0.35 : 1 }}
+        />
+      )}
+      <span
+        className={`text-xs flex-1 truncate min-w-0 ${lost ? 'opacity-40 ' : ''}${
+          won
+            ? darkMode ? 'font-semibold text-green-400' : 'font-semibold text-green-600'
+            : darkMode ? 'text-gray-200' : 'text-stone-700'
+        }`}
+      >
+        {team || 'TBD'}
+      </span>
+      {score != null && (
+        <span
+          className={`text-xs font-bold flex-shrink-0 ${
+            won
+              ? darkMode ? 'text-green-400' : 'text-green-600'
+              : lost
+                ? 'opacity-40 text-gray-500'
+                : darkMode ? 'text-gray-400' : 'text-stone-500'
+          }`}
+        >
+          {score}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function BracketMatchCard({ match, darkMode, getTeamIcon, getTeamColor, isFinal }) {
+  const isCompleted = match?.status === 'completed';
+  const teamAWon = isCompleted && match.winner === match.team_a;
+  const teamBWon = isCompleted && match.winner === match.team_b;
+  return (
+    <div
+      className={`rounded-lg overflow-hidden border ${
+        isFinal
+          ? darkMode ? 'border-yellow-500/50 bg-gray-800' : 'border-yellow-500/60 bg-white shadow-md'
+          : darkMode ? 'border-gray-700 bg-gray-800' : 'border-stone-200 bg-white shadow-sm'
+      }`}
+      style={{ height: BRACKET_MATCH_H }}
+    >
+      <BracketTeamRow
+        team={match.team_a} seed={match.seed_a}
+        won={teamAWon} lost={teamBWon}
+        score={isCompleted ? match.score_a : null}
+        darkMode={darkMode}
+        icon={getTeamIcon(match.team_a)}
+        color={getTeamColor(match.team_a)}
+      />
+      <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-stone-200'}`} />
+      <BracketTeamRow
+        team={match.team_b} seed={match.seed_b}
+        won={teamBWon} lost={teamAWon}
+        score={isCompleted ? match.score_b : null}
+        darkMode={darkMode}
+        icon={getTeamIcon(match.team_b)}
+        color={getTeamColor(match.team_b)}
+      />
+    </div>
+  );
+}
+
+function PlayoffBracket({ playoffs, darkMode, getTeamIcon, getTeamColor }) {
+  const rounds = playoffs?.rounds;
+  if (!rounds?.length) {
+    return (
+      <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-stone-400'}`}>
+        Bracket will be displayed once playoffs begin.
+      </p>
+    );
+  }
+
+  const maxMatches = Math.max(...rounds.map((r) => r.matches.length));
+  const totalH = maxMatches * BRACKET_SLOT_H;
+  const stroke = darkMode ? '#374151' : '#CBD5E1';
+
+  const getMatchCenter = (roundIdx, matchIdx) => {
+    const slotH = totalH / rounds[roundIdx].matches.length;
+    return (matchIdx + 0.5) * slotH;
+  };
+
+  const renderConnector = (ri) => {
+    const fromN = rounds[ri].matches.length;
+    const toN = rounds[ri + 1].matches.length;
+    const groupSize = fromN / toN;
+    const midX = BRACKET_CONN_W / 2;
+    const paths = [];
+
+    if (groupSize === 1) {
+      for (let mi = 0; mi < fromN; mi++) {
+        const y = getMatchCenter(ri, mi);
+        paths.push(
+          <path key={`h${mi}`} d={`M0,${y}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        );
+      }
+    } else {
+      for (let gi = 0; gi < toN; gi++) {
+        const toY = getMatchCenter(ri + 1, gi);
+        const firstFrom = gi * groupSize;
+        const topY = getMatchCenter(ri, firstFrom);
+        const botY = getMatchCenter(ri, firstFrom + groupSize - 1);
+        for (let fi = 0; fi < groupSize; fi++) {
+          const fy = getMatchCenter(ri, firstFrom + fi);
+          paths.push(<path key={`h${gi}-${fi}`} d={`M0,${fy}H${midX}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
+        }
+        paths.push(<path key={`v${gi}`} d={`M${midX},${topY}V${botY}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
+        paths.push(<path key={`t${gi}`} d={`M${midX},${toY}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
+      }
+    }
+
+    return (
+      <svg key={`conn-${ri}`} width={BRACKET_CONN_W} height={totalH} style={{ flexShrink: 0 }}>
+        {paths}
+      </svg>
+    );
+  };
+
+  const finalRound = rounds[rounds.length - 1];
+  const champion = finalRound?.matches?.[0]?.status === 'completed' ? finalRound.matches[0].winner : null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+        <span className={darkMode ? 'text-gray-400' : 'text-stone-500'}>
+          Format:{' '}
+          <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>
+            {playoffs.format}
+          </span>
+        </span>
+        <span className={darkMode ? 'text-gray-400' : 'text-stone-500'}>
+          Series:{' '}
+          <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>
+            Best of 3
+          </span>
+        </span>
+        {champion && (
+          <span className="flex items-center gap-1.5">
+            <Trophy className="w-4 h-4 text-yellow-400" />
+            <span className="font-semibold text-yellow-400">{champion}</span>
+          </span>
+        )}
+      </div>
+
+      <div className="overflow-x-auto pb-2">
+        {/* Round labels row */}
+        <div className="flex mb-2">
+          {rounds.map((round, ri) => (
+            <React.Fragment key={ri}>
+              <div style={{ width: BRACKET_ROUND_W, flexShrink: 0 }} className="text-center">
+                <span className={`text-xs font-semibold ${
+                  ri === rounds.length - 1
+                    ? 'text-yellow-400'
+                    : darkMode ? 'text-gray-400' : 'text-stone-500'
+                }`}>
+                  {round.round}
+                </span>
+              </div>
+              {ri < rounds.length - 1 && <div style={{ width: BRACKET_CONN_W, flexShrink: 0 }} />}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Bracket body */}
+        <div className="flex" style={{ height: totalH }}>
+          {rounds.map((round, ri) => {
+            const n = round.matches.length;
+            const slotH = totalH / n;
+            const isFinalRound = ri === rounds.length - 1;
+            return (
+              <React.Fragment key={ri}>
+                <div style={{ width: BRACKET_ROUND_W, flexShrink: 0, position: 'relative', height: totalH }}>
+                  {round.matches.map((match, mi) => {
+                    const top = mi * slotH + (slotH - BRACKET_MATCH_H) / 2;
+                    return (
+                      <div key={mi} style={{ position: 'absolute', top, left: 4, right: 4 }}>
+                        <BracketMatchCard
+                          match={match}
+                          darkMode={darkMode}
+                          getTeamIcon={getTeamIcon}
+                          getTeamColor={getTeamColor}
+                          isFinal={isFinalRound}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                {ri < rounds.length - 1 && renderConnector(ri)}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+
 export default function SeasonPage({ darkMode }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -256,6 +483,51 @@ export default function SeasonPage({ darkMode }) {
     // main_season and playoffs both show main season standings
     return mainSeasonStandings;
   }, [selectedPhase, preseasonStandings, mainSeasonStandings]);
+
+  // Compute overall playoff seeds and clinching status from main season standings
+  const playoffSeeds = useMemo(() => {
+    if (!data?.kais) return new Map();
+    const ms = data.schedule || [];
+    const remaining = {};
+    for (const week of ms) {
+      for (const m of week.matches || []) {
+        if (m.status === 'completed') continue;
+        [m.home, m.away].forEach((t) => { remaining[t] = (remaining[t] || 0) + 1; });
+      }
+    }
+    const sortByRecord = (teamObjs) => {
+      const withRec = teamObjs.map((t) => ({ ...t, ...(mainSeasonStandings[t.team] || { wins: 0, losses: 0 }) }));
+      withRec.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+      const out = [];
+      let i = 0;
+      while (i < withRec.length) {
+        let j = i + 1;
+        while (j < withRec.length && withRec[j].wins === withRec[i].wins && withRec[j].losses === withRec[i].losses) j++;
+        out.push(...applyTiebreakers(withRec.slice(i, j), ms));
+        i = j;
+      }
+      return out;
+    };
+    const divWinners = [];
+    const wildcards = [];
+    const clinched = new Set();
+    for (const kai of data.kais) {
+      const sorted = sortByRecord(kai.teams || []);
+      if (!sorted.length) continue;
+      const leaderWins = mainSeasonStandings[sorted[0].team]?.wins || 0;
+      const hasClinched = sorted.slice(1).every((t) => {
+        const tWins = mainSeasonStandings[t.team]?.wins || 0;
+        return leaderWins > tWins + (remaining[t.team] || 0);
+      });
+      if (hasClinched) clinched.add(sorted[0].team);
+      divWinners.push(sorted[0]);
+      wildcards.push(...sorted.slice(1));
+    }
+    const seeds = new Map();
+    sortByRecord(divWinners).forEach((t, i) => seeds.set(t.team, { seed: i + 1, isDivWinner: true, isClinched: clinched.has(t.team) }));
+    sortByRecord(wildcards).forEach((t, i) => seeds.set(t.team, { seed: i + divWinners.length + 1, isDivWinner: false, isClinched: false }));
+    return seeds;
+  }, [data, mainSeasonStandings]);
 
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading season...</div>;
@@ -413,13 +685,25 @@ export default function SeasonPage({ darkMode }) {
         </div>
       </div>
 
-      {/* Standings — grouped by Kai */}
+      {/* Standings — grouped by Kai, or bracket when in playoffs phase */}
       {activeTab === 'standings' && (
         <div className="space-y-8">
           <h2 className={`text-xl font-bold ${darkMode ? 'text-gray-200' : 'text-stone-800'}`}>
-            {standingsLabel}
+            {selectedPhase === 'playoffs' ? 'Playoff Bracket' : standingsLabel}
           </h2>
-          {(data.kais || []).map((kai) => {
+          {selectedPhase === 'playoffs' ? (
+            <div className={`rounded-xl border p-4 sm:p-6 ${
+              darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
+            }`}>
+              <PlayoffBracket
+                playoffs={data.playoffs}
+                darkMode={darkMode}
+                getTeamIcon={getTeamIcon}
+                getTeamColor={getTeamColor}
+              />
+            </div>
+          ) : null}
+          {selectedPhase !== 'playoffs' && (data.kais || []).map((kai) => {
             const sortedTeams = sortKaiTeams(kai.teams || []);
             return (
               <div key={kai.name}>
@@ -433,7 +717,7 @@ export default function SeasonPage({ darkMode }) {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className={`border-b ${darkMode ? 'border-gray-800 bg-gray-900/80' : 'border-stone-200 bg-stone-100'}`}>
-                          <th className="text-left py-3 px-4 font-semibold">#</th>
+                          <th className="text-left py-3 px-4 font-semibold">{selectedPhase === 'preseason' ? '#' : 'Seed'}</th>
                           <th className="text-left py-3 px-4 font-semibold">Team</th>
                           <th className="text-center py-3 px-4 font-semibold">W</th>
                           <th className="text-center py-3 px-4 font-semibold">L</th>
@@ -445,6 +729,8 @@ export default function SeasonPage({ darkMode }) {
                           const played = s.wins + s.losses;
                           const wr = played > 0 ? ((s.wins / played) * 100).toFixed(0) : '—';
                           const slug = getTeamSlug(s.team);
+                          const ps = selectedPhase !== 'preseason' ? playoffSeeds.get(s.team) : null;
+                          const clinchRow = ps?.isClinched;
                           return (
                             <tr
                               key={s.team}
@@ -452,12 +738,20 @@ export default function SeasonPage({ darkMode }) {
                               className={`border-b last:border-0 transition-colors ${
                                 slug ? 'cursor-pointer' : ''
                               } ${
-                                darkMode
-                                  ? 'border-gray-800 hover:bg-gray-800/40'
-                                  : 'border-stone-200 hover:bg-stone-100'
+                                clinchRow
+                                  ? darkMode
+                                    ? 'border-yellow-900/40 bg-yellow-500/5 hover:bg-yellow-500/10'
+                                    : 'border-yellow-200 bg-yellow-50/60 hover:bg-yellow-50'
+                                  : darkMode
+                                    ? 'border-gray-800 hover:bg-gray-800/40'
+                                    : 'border-stone-200 hover:bg-stone-100'
                               }`}
                             >
-                              <td className="py-3 px-4 font-medium text-gray-400">{i + 1}</td>
+                              <td className={`py-3 px-4 font-semibold ${
+                                clinchRow ? 'text-yellow-400' : ps ? darkMode ? 'text-gray-300' : 'text-stone-600' : 'text-gray-400'
+                              }`}>
+                                {ps ? ps.seed : i + 1}
+                              </td>
                               <td className="py-3 px-4">
                                 <div className="flex items-center gap-3">
                                   {getTeamIcon(s.team) ? (
@@ -496,50 +790,21 @@ export default function SeasonPage({ darkMode }) {
         <div className="space-y-8">
           {/* Schedule header */}
           <h2 className={`text-xl font-bold ${darkMode ? 'text-gray-200' : 'text-stone-800'}`}>
-            {selectedPhase === 'preseason' ? 'Pre-Season Schedule' : 'Main Season Schedule'}
+            {selectedPhase === 'preseason' ? 'Pre-Season Schedule' : selectedPhase === 'playoffs' ? 'Playoff Bracket' : 'Main Season Schedule'}
           </h2>
 
           {/* Playoffs phase shows the bracket instead of weekly schedule */}
           {selectedPhase === 'playoffs' ? (
-            data.playoffs ? (
-              <div className={`rounded-xl border p-6 ${
-                darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
-              }`}>
-                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-                  <Trophy className="w-5 h-5 text-yellow-400" />
-                  Playoffs — {data.playoffs.format}
-                </h3>
-                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-                  Status: {data.playoffs.status}
-                </p>
-                {data.playoffs.bracket?.length > 0 ? (
-                  <div className="mt-4 space-y-3">
-                    {data.playoffs.bracket.map((m, i) => (
-                      <div key={i} className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-stone-100'}`}>
-                        <div className="text-xs text-gray-400 mb-1">{m.round} — Match {m.match}</div>
-                        <div className="flex items-center justify-between">
-                          <span className={m.winner === m.team_a ? 'font-bold text-green-400' : ''}>
-                            {m.team_a}
-                          </span>
-                          <span className="font-bold">{m.score_a} - {m.score_b}</span>
-                          <span className={m.winner === m.team_b ? 'font-bold text-green-400' : ''}>
-                            {m.team_b}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className={`mt-2 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Bracket will be displayed once playoffs begin.
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-stone-500'}`}>
-                Playoffs data not available yet.
-              </p>
-            )
+            <div className={`rounded-xl border p-4 sm:p-6 ${
+              darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
+            }`}>
+              <PlayoffBracket
+                playoffs={data.playoffs}
+                darkMode={darkMode}
+                getTeamIcon={getTeamIcon}
+                getTeamColor={getTeamColor}
+              />
+            </div>
           ) : (
             /* Pre-season or Main season weekly schedule */
             <>
