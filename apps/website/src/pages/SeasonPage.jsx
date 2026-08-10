@@ -261,43 +261,372 @@ function BracketTeamRow({ team, seed, won, lost, score, darkMode, icon, color })
   );
 }
 
-function BracketMatchCard({ match, darkMode, getTeamIcon, getTeamColor, isFinal }) {
-  const isCompleted = match?.status === 'completed';
+// Derive team names per match from seedings array + prior round winners
+function deriveRounds(rawRounds, seedings) {
+  if (!rawRounds?.length || !seedings?.length) return rawRounds || [];
+  const n = seedings.length;
+  const wcCount = rawRounds[0].matches.length;
+  const byeCount = n - wcCount * 2;
+  const winners = [];
+  return rawRounds.map((round, ri) => {
+    winners[ri] = [];
+    const matches = round.matches.map((m, mi) => {
+      let team_a = m.team_a || null;
+      let team_b = m.team_b || null;
+      let seed_a = m.seed_a ?? null;
+      let seed_b = m.seed_b ?? null;
+      if (ri === 0) {
+        // Wild Card: seed(byeCount+1+mi) vs seed(n-mi)
+        const aIdx = byeCount + mi;
+        const bIdx = n - 1 - mi;
+        if (!team_a) { team_a = seedings[aIdx] ?? null; seed_a = aIdx + 1; }
+        if (!team_b) { team_b = seedings[bIdx] ?? null; seed_b = bIdx + 1; }
+      } else if (ri === 1) {
+        // Quarterfinals: top bye seeds vs WC winners
+        if (!team_a) { team_a = seedings[mi] ?? null; seed_a = mi + 1; }
+        if (!team_b) {
+          team_b = winners[0]?.[mi] ?? null;
+          if (team_b) seed_b = seedings.indexOf(team_b) + 1 || null;
+        }
+      } else {
+        // Semifinals / Final: pair previous round winners
+        if (!team_a) {
+          team_a = winners[ri - 1]?.[mi * 2] ?? null;
+          if (team_a) seed_a = (seedings.indexOf(team_a) + 1) || null;
+        }
+        if (!team_b) {
+          team_b = winners[ri - 1]?.[mi * 2 + 1] ?? null;
+          if (team_b) seed_b = (seedings.indexOf(team_b) + 1) || null;
+        }
+      }
+      winners[ri][mi] = m.winner ?? null;
+      return { ...m, team_a, team_b, seed_a, seed_b };
+    });
+    return { ...round, matches };
+  });
+}
+
+function PlayoffMatchDetailPanel({
+  roundName, match, matchKey, darkMode,
+  getTeamIcon, getTeamColor, getTeamBanner,
+  openLineups, lineupCache, lineupLoading, toggleLineup, onClose,
+}) {
+  if (!match) return null;
+  const isCompleted = match.status === 'completed';
   const teamAWon = isCompleted && match.winner === match.team_a;
   const teamBWon = isCompleted && match.winner === match.team_b;
-  return (
-    <div
-      className={`rounded-lg overflow-hidden border ${
-        isFinal
-          ? darkMode ? 'border-yellow-500/50 bg-gray-800' : 'border-yellow-500/60 bg-white shadow-md'
-          : darkMode ? 'border-gray-700 bg-gray-800' : 'border-stone-200 bg-white shadow-sm'
-      }`}
-      style={{ height: BRACKET_MATCH_H }}
-    >
-      <BracketTeamRow
-        team={match.team_a} seed={match.seed_a}
-        won={teamAWon} lost={teamBWon}
-        score={isCompleted ? match.score_a : null}
-        darkMode={darkMode}
-        icon={getTeamIcon(match.team_a)}
-        color={getTeamColor(match.team_a)}
-      />
-      <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-stone-200'}`} />
-      <BracketTeamRow
-        team={match.team_b} seed={match.seed_b}
-        won={teamBWon} lost={teamAWon}
-        score={isCompleted ? match.score_b : null}
-        darkMode={darkMode}
-        icon={getTeamIcon(match.team_b)}
-        color={getTeamColor(match.team_b)}
-      />
+  const isLineupOpen = !!openLineups[matchKey];
+  const hasVideo = !!(match.video_url);
+  const hasLineup = !!(match.lineup_file);
+  const gradientColors = teamAWon
+    ? 'rgba(34,197,94,0.45), rgba(34,197,94,0.18) 35%, transparent 50%, rgba(239,68,68,0.18) 65%, rgba(239,68,68,0.45)'
+    : 'rgba(239,68,68,0.45), rgba(239,68,68,0.18) 35%, transparent 50%, rgba(34,197,94,0.18) 65%, rgba(34,197,94,0.45)';
+
+  const header = (
+    <div className={`flex items-center justify-between px-4 py-2 border-b ${
+      darkMode ? 'border-gray-800 bg-gray-900/60' : 'border-stone-200 bg-stone-100'
+    }`}>
+      <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-stone-700'}`}>{roundName}</span>
+      <button onClick={onClose} className={`text-xs px-2 py-1 rounded transition-colors ${
+        darkMode ? 'text-gray-500 hover:text-white' : 'text-stone-400 hover:text-stone-700'
+      }`}>✕</button>
+    </div>
+  );
+
+  const scoreRow = (
+    <div className="p-3 sm:p-4">
+      <div className="flex items-center gap-3">
+        {/* Team A */}
+        <div className={`flex-1 flex items-center gap-2 min-w-0 ${teamBWon ? 'opacity-40' : ''}`}>
+          {match.team_a && getTeamIcon(match.team_a) ? (
+            <img src={getTeamIcon(match.team_a)} alt={match.team_a}
+              className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+          ) : (
+            <div className="w-8 h-8 rounded-lg flex-shrink-0"
+              style={{ backgroundColor: match.team_a ? getTeamColor(match.team_a) : '#6B7280' }} />
+          )}
+          <div className="min-w-0">
+            {match.seed_a != null && <div className="text-[10px] text-gray-500 leading-none">#{match.seed_a}</div>}
+            <div className={`text-sm font-semibold truncate ${
+              teamAWon ? (darkMode ? 'text-green-400' : 'text-green-600') : darkMode ? 'text-gray-200' : 'text-stone-700'
+            }`}>{match.team_a || 'TBD'}</div>
+          </div>
+        </div>
+        {/* Score with Watch inline */}
+        <div className="flex-shrink-0 text-center min-w-[60px]">
+          {isCompleted ? (
+            <div className="flex flex-col items-center gap-0.5">
+              <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block ${
+                darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'
+              }`}>Final</div>
+              <div className="text-xl font-bold flex items-center justify-center gap-1">
+                <span className={teamAWon ? (darkMode ? 'text-green-400' : 'text-green-600') : 'text-gray-400'}>{match.score_a}</span>
+                <span className={`text-sm ${darkMode ? 'text-gray-700' : 'text-stone-300'}`}>-</span>
+                <span className={teamBWon ? (darkMode ? 'text-green-400' : 'text-green-600') : 'text-gray-400'}>{match.score_b}</span>
+              </div>
+              {hasVideo && (
+                <a href={match.video_url} target="_blank" rel="noopener noreferrer"
+                  className={`text-xs flex items-center gap-1 mt-0.5 ${darkMode ? 'text-orange-400' : 'text-blue-600'}`}>
+                  <ExternalLink className="w-3 h-3" /> Watch
+                </a>
+              )}
+            </div>
+          ) : (
+            <span className={`text-xs px-2 py-1 rounded-full ${
+              match.status === 'live'
+                ? 'bg-red-500/20 text-red-400'
+                : darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
+            }`}>{match.status === 'live' ? '● Live' : 'Upcoming'}</span>
+          )}
+        </div>
+        {/* Team B */}
+        <div className={`flex-1 flex items-center gap-2 justify-end text-right min-w-0 ${teamAWon ? 'opacity-40' : ''}`}>
+          <div className="min-w-0">
+            {match.seed_b != null && <div className="text-[10px] text-gray-500 leading-none">#{match.seed_b}</div>}
+            <div className={`text-sm font-semibold truncate ${
+              teamBWon ? (darkMode ? 'text-green-400' : 'text-green-600') : darkMode ? 'text-gray-200' : 'text-stone-700'
+            }`}>{match.team_b || 'TBD'}</div>
+          </div>
+          {match.team_b && getTeamIcon(match.team_b) ? (
+            <img src={getTeamIcon(match.team_b)} alt={match.team_b}
+              className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+          ) : (
+            <div className="w-8 h-8 rounded-lg flex-shrink-0"
+              style={{ backgroundColor: match.team_b ? getTeamColor(match.team_b) : '#6B7280' }} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const viewBuildsBtn = hasLineup && (
+    <button onClick={() => toggleLineup(matchKey, match.lineup_file)}
+      className={`w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium border-t transition-colors ${
+        isLineupOpen
+          ? darkMode ? 'bg-gray-800 text-blue-400 border-gray-700' : 'bg-blue-50 text-blue-600 border-blue-200'
+          : darkMode ? 'bg-gray-900 text-gray-500 border-gray-800 hover:text-white hover:bg-gray-800' : 'bg-stone-50 text-stone-400 border-stone-200 hover:text-stone-700'
+      }`}>
+      <Users className="w-3 h-3" />
+      {isLineupOpen ? 'Hide Builds' : 'View Builds'}
+      {isLineupOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+    </button>
+  );
+
+  const panelContent = (
+    <>
+      {header}
+      {scoreRow}
+      {viewBuildsBtn}
+      {isLineupOpen && hasLineup && (
+        <LineupPanel
+          data={lineupCache[match.lineup_file]}
+          loading={!!lineupLoading[match.lineup_file]}
+          darkMode={darkMode}
+          homeTeam={match.team_a}
+          awayTeam={match.team_b}
+          homeBanner={match.team_a ? getTeamBanner(match.team_a) : null}
+          awayBanner={match.team_b ? getTeamBanner(match.team_b) : null}
+        />
+      )}
+    </>
+  );
+
+  return isCompleted ? (
+    <div className="mt-4 rounded-xl p-[1px]" style={{ background: `linear-gradient(to right, ${gradientColors})` }}>
+      <div className={`rounded-[11px] overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-stone-50'}`}>
+        {panelContent}
+      </div>
+    </div>
+  ) : (
+    <div className={`mt-4 rounded-xl border overflow-hidden ${
+      darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
+    }`}>
+      {panelContent}
     </div>
   );
 }
 
-function PlayoffBracket({ playoffs, darkMode, getTeamIcon, getTeamColor }) {
-  const rounds = playoffs?.rounds;
-  if (!rounds?.length) {
+function PlayoffListView({
+  rounds, darkMode, getTeamIcon, getTeamColor, getTeamBanner,
+  openLineups, lineupCache, lineupLoading, toggleLineup,
+}) {
+  return (
+    <div className="space-y-6">
+      {rounds.map((round, ri) => (
+        <div key={ri}>
+          <h4 className={`text-sm font-bold mb-3 ${
+            ri === rounds.length - 1 ? 'text-yellow-400' : darkMode ? 'text-orange-400' : 'text-blue-600'
+          }`}>{round.round}</h4>
+          <div className="grid gap-3">
+            {round.matches.map((match, mi) => {
+              const matchKey = `playoff-r${ri}-m${mi}`;
+              const isCompleted = match.status === 'completed';
+              const teamAWon = isCompleted && match.winner === match.team_a;
+              const teamBWon = isCompleted && match.winner === match.team_b;
+              const isLineupOpen = !!openLineups[matchKey];
+              const hasVideo = isCompleted && !!(match.video_url);
+              const hasLineup = !!(match.lineup_file);
+              const gradientColors = teamAWon
+                ? 'rgba(34,197,94,0.45), rgba(34,197,94,0.18) 35%, transparent 50%, rgba(239,68,68,0.18) 65%, rgba(239,68,68,0.45)'
+                : 'rgba(239,68,68,0.45), rgba(239,68,68,0.18) 35%, transparent 50%, rgba(34,197,94,0.18) 65%, rgba(34,197,94,0.45)';
+
+              const innerRow = (
+                <div className={`p-2 sm:p-3 flex items-center ${
+                  isCompleted
+                    ? darkMode ? 'bg-gray-900' : 'bg-stone-50'
+                    : `rounded-t-xl border ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'} ${hasLineup ? '' : 'rounded-b-xl'}`
+                }`}>
+                  {/* Team A */}
+                  <div className={`flex items-center gap-2 flex-1 min-w-0 ${teamBWon ? 'opacity-40' : ''}`}>
+                    {match.team_a && getTeamIcon(match.team_a) ? (
+                      <img src={getTeamIcon(match.team_a)} alt={match.team_a}
+                        className="w-6 h-6 rounded-md object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-md flex-shrink-0"
+                        style={{ backgroundColor: match.team_a ? getTeamColor(match.team_a) : '#6B7280' }} />
+                    )}
+                    <div className="min-w-0">
+                      {match.seed_a != null && <div className="text-[10px] text-gray-500 leading-none">#{match.seed_a}</div>}
+                      <span className={`text-sm truncate block font-medium ${
+                        teamAWon ? (darkMode ? 'text-green-400' : 'text-green-600') : darkMode ? 'text-gray-200' : 'text-stone-700'
+                      }`}>{match.team_a || 'TBD'}</span>
+                    </div>
+                  </div>
+                  {/* Center */}
+                  <div className="flex flex-col items-center gap-1 px-2 sm:px-4 flex-shrink-0">
+                    {isCompleted ? (
+                      <>
+                        <div className="flex items-center gap-1 font-bold text-base">
+                          <span className={teamAWon ? (darkMode ? 'text-green-400' : 'text-green-600') : 'text-gray-400'}>{match.score_a}</span>
+                          <span className={`text-xs ${darkMode ? 'text-gray-700' : 'text-stone-300'}`}>-</span>
+                          <span className={teamBWon ? (darkMode ? 'text-green-400' : 'text-green-600') : 'text-gray-400'}>{match.score_b}</span>
+                        </div>
+                        {hasVideo && (
+                          <a href={match.video_url} target="_blank" rel="noopener noreferrer"
+                            className={`text-xs flex items-center gap-1 ${darkMode ? 'text-orange-400' : 'text-blue-600'}`}>
+                            <ExternalLink className="w-3 h-3" /> Watch
+                          </a>
+                        )}
+                      </>
+                    ) : (
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        match.status === 'live'
+                          ? 'bg-red-500/20 text-red-400'
+                          : darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
+                      }`}>{match.status === 'live' ? '● Live' : 'vs'}</span>
+                    )}
+                  </div>
+                  {/* Team B */}
+                  <div className={`flex items-center gap-2 flex-1 min-w-0 justify-end text-right ${teamAWon ? 'opacity-40' : ''}`}>
+                    <div className="min-w-0">
+                      {match.seed_b != null && <div className="text-[10px] text-gray-500 leading-none">#{match.seed_b}</div>}
+                      <span className={`text-sm truncate block font-medium ${
+                        teamBWon ? (darkMode ? 'text-green-400' : 'text-green-600') : darkMode ? 'text-gray-200' : 'text-stone-700'
+                      }`}>{match.team_b || 'TBD'}</span>
+                    </div>
+                    {match.team_b && getTeamIcon(match.team_b) ? (
+                      <img src={getTeamIcon(match.team_b)} alt={match.team_b}
+                        className="w-6 h-6 rounded-md object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-md flex-shrink-0"
+                        style={{ backgroundColor: match.team_b ? getTeamColor(match.team_b) : '#6B7280' }} />
+                    )}
+                  </div>
+                </div>
+              );
+
+              const viewBuildsBtn = hasLineup ? (
+                <button
+                  onClick={() => toggleLineup(matchKey, match.lineup_file)}
+                  className={`w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium border-t transition-colors ${
+                    isCompleted
+                      ? isLineupOpen
+                        ? darkMode ? 'bg-gray-800 text-blue-400 border-gray-700' : 'bg-blue-50 text-blue-600 border-blue-200'
+                        : darkMode ? 'bg-gray-900 text-gray-500 border-gray-800 hover:text-white hover:bg-gray-800' : 'bg-stone-50 text-stone-400 border-stone-200 hover:text-stone-700'
+                      : isLineupOpen
+                        ? darkMode ? 'border-l border-r border-b bg-gray-800 text-blue-400 border-gray-700 rounded-none' : 'border-l border-r border-b bg-blue-50 text-blue-600 border-blue-200 rounded-none'
+                        : darkMode ? 'border-l border-r border-b bg-gray-900 text-gray-500 border-gray-800 hover:text-white hover:bg-gray-800 rounded-b-xl' : 'border-l border-r border-b bg-stone-50 text-stone-400 border-stone-200 hover:text-stone-700 rounded-b-xl'
+                  }`}
+                >
+                  <Users className="w-3 h-3" />
+                  {isLineupOpen ? 'Hide Builds' : 'View Builds'}
+                  {isLineupOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+              ) : null;
+
+              const lineupContent = isLineupOpen && hasLineup ? (
+                isCompleted ? (
+                  <LineupPanel
+                    data={lineupCache[match.lineup_file]}
+                    loading={!!lineupLoading[match.lineup_file]}
+                    darkMode={darkMode}
+                    homeTeam={match.team_a}
+                    awayTeam={match.team_b}
+                    homeBanner={match.team_a ? getTeamBanner(match.team_a) : null}
+                    awayBanner={match.team_b ? getTeamBanner(match.team_b) : null}
+                  />
+                ) : (
+                  <div className={`rounded-b-xl overflow-hidden border-l border-r border-b ${
+                    darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200'
+                  }`}>
+                    <LineupPanel
+                      data={lineupCache[match.lineup_file]}
+                      loading={!!lineupLoading[match.lineup_file]}
+                      darkMode={darkMode}
+                      homeTeam={match.team_a}
+                      awayTeam={match.team_b}
+                      homeBanner={match.team_a ? getTeamBanner(match.team_a) : null}
+                      awayBanner={match.team_b ? getTeamBanner(match.team_b) : null}
+                    />
+                  </div>
+                )
+              ) : null;
+
+              return isCompleted ? (
+                <div key={mi} className="rounded-xl p-[1px]" style={{ background: `linear-gradient(to right, ${gradientColors})` }}>
+                  <div className={`rounded-[11px] overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-stone-50'}`}>
+                    {innerRow}
+                    {viewBuildsBtn}
+                    {lineupContent}
+                  </div>
+                </div>
+              ) : (
+                <div key={mi}>
+                  {innerRow}
+                  {viewBuildsBtn}
+                  {lineupContent}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PlayoffBracket({
+  playoffs, seedingsMap, darkMode,
+  getTeamIcon, getTeamColor, getTeamBanner,
+  openLineups, lineupCache, lineupLoading, toggleLineup,
+}) {
+  const [selectedKey, setSelectedKey] = useState(null);
+  const [view, setView] = useState('bracket');
+
+  const seedings = React.useMemo(() => {
+    if (playoffs?.seedings?.length) return playoffs.seedings;
+    if (!seedingsMap?.size) return [];
+    const arr = new Array(seedingsMap.size);
+    seedingsMap.forEach((val, team) => { arr[val.seed - 1] = team; });
+    return arr;
+  }, [playoffs?.seedings, seedingsMap]);
+
+  const derivedRounds = React.useMemo(
+    () => deriveRounds(playoffs?.rounds, seedings),
+    [playoffs?.rounds, seedings]
+  );
+
+  if (!derivedRounds?.length) {
     return (
       <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-stone-400'}`}>
         Bracket will be displayed once playoffs begin.
@@ -305,28 +634,25 @@ function PlayoffBracket({ playoffs, darkMode, getTeamIcon, getTeamColor }) {
     );
   }
 
-  const maxMatches = Math.max(...rounds.map((r) => r.matches.length));
+  const maxMatches = Math.max(...derivedRounds.map((r) => r.matches.length));
   const totalH = maxMatches * BRACKET_SLOT_H;
   const stroke = darkMode ? '#374151' : '#CBD5E1';
 
-  const getMatchCenter = (roundIdx, matchIdx) => {
-    const slotH = totalH / rounds[roundIdx].matches.length;
-    return (matchIdx + 0.5) * slotH;
+  const getMatchCenter = (ri, mi) => {
+    const slotH = totalH / derivedRounds[ri].matches.length;
+    return (mi + 0.5) * slotH;
   };
 
   const renderConnector = (ri) => {
-    const fromN = rounds[ri].matches.length;
-    const toN = rounds[ri + 1].matches.length;
+    const fromN = derivedRounds[ri].matches.length;
+    const toN = derivedRounds[ri + 1].matches.length;
     const groupSize = fromN / toN;
     const midX = BRACKET_CONN_W / 2;
     const paths = [];
-
     if (groupSize === 1) {
       for (let mi = 0; mi < fromN; mi++) {
         const y = getMatchCenter(ri, mi);
-        paths.push(
-          <path key={`h${mi}`} d={`M0,${y}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        );
+        paths.push(<path key={mi} d={`M0,${y}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
       }
     } else {
       for (let gi = 0; gi < toN; gi++) {
@@ -342,89 +668,140 @@ function PlayoffBracket({ playoffs, darkMode, getTeamIcon, getTeamColor }) {
         paths.push(<path key={`t${gi}`} d={`M${midX},${toY}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
       }
     }
-
-    return (
-      <svg key={`conn-${ri}`} width={BRACKET_CONN_W} height={totalH} style={{ flexShrink: 0 }}>
-        {paths}
-      </svg>
-    );
+    return <svg key={`conn-${ri}`} width={BRACKET_CONN_W} height={totalH} style={{ flexShrink: 0 }}>{paths}</svg>;
   };
 
-  const finalRound = rounds[rounds.length - 1];
-  const champion = finalRound?.matches?.[0]?.status === 'completed' ? finalRound.matches[0].winner : null;
+  const champion = derivedRounds[derivedRounds.length - 1]?.matches?.[0]?.winner ?? null;
+
+  const selectedMatchInfo = React.useMemo(() => {
+    if (!selectedKey) return null;
+    const [ri, mi] = selectedKey.split('-').map(Number);
+    const round = derivedRounds[ri];
+    if (!round) return null;
+    return { roundName: round.round, match: round.matches[mi], matchKey: `playoff-r${ri}-m${mi}` };
+  }, [selectedKey, derivedRounds]);
+
+  const sharedProps = { darkMode, getTeamIcon, getTeamColor, getTeamBanner, openLineups, lineupCache, lineupLoading, toggleLineup };
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-        <span className={darkMode ? 'text-gray-400' : 'text-stone-500'}>
-          Format:{' '}
-          <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>
-            {playoffs.format}
+      {/* Header row */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          <span className={darkMode ? 'text-gray-400' : 'text-stone-500'}>
+            Format:{' '}
+            <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>{playoffs.format}</span>
           </span>
-        </span>
-        <span className={darkMode ? 'text-gray-400' : 'text-stone-500'}>
-          Series:{' '}
-          <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>
-            Best of 3
+          <span className={darkMode ? 'text-gray-400' : 'text-stone-500'}>
+            Series:{' '}
+            <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-stone-700'}`}>Best of 3</span>
           </span>
-        </span>
-        {champion && (
-          <span className="flex items-center gap-1.5">
-            <Trophy className="w-4 h-4 text-yellow-400" />
-            <span className="font-semibold text-yellow-400">{champion}</span>
-          </span>
-        )}
-      </div>
-
-      <div className="overflow-x-auto pb-2">
-        {/* Round labels row */}
-        <div className="flex mb-2">
-          {rounds.map((round, ri) => (
-            <React.Fragment key={ri}>
-              <div style={{ width: BRACKET_ROUND_W, flexShrink: 0 }} className="text-center">
-                <span className={`text-xs font-semibold ${
-                  ri === rounds.length - 1
-                    ? 'text-yellow-400'
-                    : darkMode ? 'text-gray-400' : 'text-stone-500'
-                }`}>
-                  {round.round}
-                </span>
-              </div>
-              {ri < rounds.length - 1 && <div style={{ width: BRACKET_CONN_W, flexShrink: 0 }} />}
-            </React.Fragment>
+          {champion && (
+            <span className="flex items-center gap-1.5">
+              <Trophy className="w-4 h-4 text-yellow-400" />
+              <span className="font-semibold text-yellow-400">{champion}</span>
+            </span>
+          )}
+        </div>
+        {/* Bracket / List toggle */}
+        <div className={`flex gap-1 p-1 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-stone-200'}`}>
+          {['bracket', 'list'].map((v) => (
+            <button key={v}
+              onClick={() => { setView(v); if (v === 'list') setSelectedKey(null); }}
+              className={`px-3 py-1 text-xs rounded-md font-medium capitalize transition-colors ${
+                view === v
+                  ? darkMode ? 'bg-gray-700 text-white' : 'bg-white text-stone-800 shadow-sm'
+                  : darkMode ? 'text-gray-400 hover:text-white' : 'text-stone-500 hover:text-stone-700'
+              }`}
+            >{v}</button>
           ))}
         </div>
-
-        {/* Bracket body */}
-        <div className="flex" style={{ height: totalH }}>
-          {rounds.map((round, ri) => {
-            const n = round.matches.length;
-            const slotH = totalH / n;
-            const isFinalRound = ri === rounds.length - 1;
-            return (
-              <React.Fragment key={ri}>
-                <div style={{ width: BRACKET_ROUND_W, flexShrink: 0, position: 'relative', height: totalH }}>
-                  {round.matches.map((match, mi) => {
-                    const top = mi * slotH + (slotH - BRACKET_MATCH_H) / 2;
-                    return (
-                      <div key={mi} style={{ position: 'absolute', top, left: 4, right: 4 }}>
-                        <BracketMatchCard
-                          match={match}
-                          darkMode={darkMode}
-                          getTeamIcon={getTeamIcon}
-                          getTeamColor={getTeamColor}
-                          isFinal={isFinalRound}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                {ri < rounds.length - 1 && renderConnector(ri)}
-              </React.Fragment>
-            );
-          })}
-        </div>
       </div>
+
+      {view === 'list' ? (
+        <PlayoffListView rounds={derivedRounds} {...sharedProps} />
+      ) : (
+        <>
+          <div className="overflow-x-auto pb-2">
+            {/* Round label row */}
+            <div className="flex mb-2">
+              {derivedRounds.map((round, ri) => (
+                <React.Fragment key={ri}>
+                  <div style={{ width: BRACKET_ROUND_W, flexShrink: 0 }} className="text-center">
+                    <span className={`text-xs font-semibold ${
+                      ri === derivedRounds.length - 1 ? 'text-yellow-400' : darkMode ? 'text-gray-400' : 'text-stone-500'
+                    }`}>{round.round}</span>
+                  </div>
+                  {ri < derivedRounds.length - 1 && <div style={{ width: BRACKET_CONN_W, flexShrink: 0 }} />}
+                </React.Fragment>
+              ))}
+            </div>
+            {/* Bracket body */}
+            <div className="flex" style={{ height: totalH }}>
+              {derivedRounds.map((round, ri) => {
+                const n = round.matches.length;
+                const slotH = totalH / n;
+                const isFinalRound = ri === derivedRounds.length - 1;
+                return (
+                  <React.Fragment key={ri}>
+                    <div style={{ width: BRACKET_ROUND_W, flexShrink: 0, position: 'relative', height: totalH }}>
+                      {round.matches.map((match, mi) => {
+                        const key = `${ri}-${mi}`;
+                        const isSelected = selectedKey === key;
+                        const isCompleted = match?.status === 'completed';
+                        const teamAWon = isCompleted && match.winner === match.team_a;
+                        const teamBWon = isCompleted && match.winner === match.team_b;
+                        const top = mi * slotH + (slotH - BRACKET_MATCH_H) / 2;
+                        return (
+                          <div key={mi} style={{ position: 'absolute', top, left: 4, right: 4 }}>
+                            <div
+                              onClick={() => setSelectedKey((prev) => prev === key ? null : key)}
+                              className={`relative rounded-lg overflow-hidden border cursor-pointer transition-all ${
+                                isSelected
+                                  ? darkMode ? 'border-purple-500 bg-gray-800 shadow-lg shadow-purple-500/10' : 'border-purple-400 bg-white shadow-lg'
+                                  : isFinalRound
+                                    ? darkMode ? 'border-yellow-500/50 bg-gray-800 hover:border-yellow-400/70' : 'border-yellow-500/60 bg-white shadow-md hover:border-yellow-500'
+                                    : darkMode ? 'border-gray-700 bg-gray-800 hover:border-gray-600' : 'border-stone-200 bg-white shadow-sm hover:border-stone-300'
+                              }`}
+                              style={{ height: BRACKET_MATCH_H }}
+                            >
+                              <BracketTeamRow
+                                team={match.team_a} seed={match.seed_a}
+                                won={teamAWon} lost={teamBWon}
+                                score={isCompleted ? match.score_a : null}
+                                darkMode={darkMode}
+                                icon={match.team_a ? getTeamIcon(match.team_a) : null}
+                                color={match.team_a ? getTeamColor(match.team_a) : '#6B7280'}
+                              />
+                              <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-stone-200'}`} />
+                              <BracketTeamRow
+                                team={match.team_b} seed={match.seed_b}
+                                won={teamBWon} lost={teamAWon}
+                                score={isCompleted ? match.score_b : null}
+                                darkMode={darkMode}
+                                icon={match.team_b ? getTeamIcon(match.team_b) : null}
+                                color={match.team_b ? getTeamColor(match.team_b) : '#6B7280'}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {ri < derivedRounds.length - 1 && renderConnector(ri)}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+          {selectedMatchInfo && (
+            <PlayoffMatchDetailPanel
+              {...selectedMatchInfo}
+              {...sharedProps}
+              onClose={() => setSelectedKey(null)}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -697,9 +1074,15 @@ export default function SeasonPage({ darkMode }) {
             }`}>
               <PlayoffBracket
                 playoffs={data.playoffs}
+                seedingsMap={playoffSeeds}
                 darkMode={darkMode}
                 getTeamIcon={getTeamIcon}
                 getTeamColor={getTeamColor}
+                getTeamBanner={getTeamBanner}
+                openLineups={openLineups}
+                lineupCache={lineupCache}
+                lineupLoading={lineupLoading}
+                toggleLineup={toggleLineup}
               />
             </div>
           ) : null}
@@ -800,9 +1183,15 @@ export default function SeasonPage({ darkMode }) {
             }`}>
               <PlayoffBracket
                 playoffs={data.playoffs}
+                seedingsMap={playoffSeeds}
                 darkMode={darkMode}
                 getTeamIcon={getTeamIcon}
                 getTeamColor={getTeamColor}
+                getTeamBanner={getTeamBanner}
+                openLineups={openLineups}
+                lineupCache={lineupCache}
+                lineupLoading={lineupLoading}
+                toggleLineup={toggleLineup}
               />
             </div>
           ) : (
