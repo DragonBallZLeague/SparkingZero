@@ -1,0 +1,36 @@
+const fs = require('fs');
+const raw = fs.readFileSync('d:/DBZL/SZLeague/GitHub/SparkingZero/NADFileTesting/RenameSaveData', 'utf8').trim();
+
+// Use attached content if file is empty
+const content = raw.length > 0 ? raw : `(CharacterSelectName="",bInterruptSaveEnabled=False,bTransformBattleBackup=False,BattlePlayCharacterBackup=(Character=(Key=""),Costume=(Key=""),SparkingBGM=(Key=""),bReplaceCharacterCamera=False,CameraBlueprint=None,SequenceRebindRegexPattern="",EquipItem=,ItemSaveState=(),BattleControlMode=Pad,bKnockDown=False,bBlowIsFront=False,bRingOut=False,bFusionPotara=False,HPGaugeValue=50000.000000,HPGaugeValueMax=50000.000000,SPGaugeValue=20000.000000,BlastStockCount=0,BlastGaugeValue=0.000000,NextSkillGaugeGainHP=0.000000,bDoneLastOneHPSkillGaugeGain=False,AddMaxHP=0.000000,CpuLevel=9,CpuThinkingType=(Key="\u30c7\u30d5\u30a9\u30eb\u30c8"),BattlePlayLevel=,BattlePlayEasy=(EquipItem=,CpuLevel=-1),BattlePlayOrb=(EquipItem=,CpuLevel=-1),BattlePlayOrbEasy=(EquipItem=,CpuLevel=-1),CostumeDamageLv=0,CostumeScratchLv=0,OriginalCharacter=(Key=""),ChangedStates=,PreChangedStates=,SpLevel=1,SpUpData=(Hp=0,Attack=0,Blast=0,SP=0,SkillStock=0,Defense=0)),TransformPlayCharacterBackup=(Character=(Key=""),Costume=(Key=""),SparkingBGM=(Key=""),bReplaceCharacterCamera=False,CameraBlueprint=None,SequenceRebindRegexPattern="",EquipItem=,ItemSaveState=(),BattleControlMode=Pad,bKnockDown=False,bBlowIsFront=False,bRingOut=False,bFusionPotara=False,HPGaugeValue=50000.000000,HPGaugeValueMax=50000.000000,SPGaugeValue=20000.000000,BlastStockCount=0,BlastGaugeValue=0.000000,NextSkillGaugeGainHP=0.000000,bDoneLastOneHPSkillGaugeGain=False,AddMaxHP=0.000000,CpuLevel=9,CpuThinkingType=(Key="\u30c7\u30d5\u30a9\u30eb\u30c8"),BattlePlayLevel=,BattlePlayEasy=(EquipItem=,CpuLevel=-1),BattlePlayOrb=(EquipItem=,CpuLevel=-1),BattlePlayOrbEasy=(EquipItem=,CpuLevel=-1),CostumeDamageLv=0,CostumeScratchLv=0,OriginalCharacter=(Key=""),ChangedStates=,PreChangedStates=,SpLevel=1,SpUpData=(Hp=0,Attack=0,Blast=0,SP=0,SkillStock=0,Defense=0)),CharacterDataRecord=(("0310_00_20260804_145653_693", (BattlePlayCharacter=(Character=(Key="0310_00"),Costume=(Key="0310_00_00"),SparkingBGM=(Key="BGM_M0200"),EquipItem=((Key="00_1_0000_0310_00"),(Key="00_6_0000"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_7_0011")),CpuLevel=20,CpuThinkingType=(Key="\u30bf\u30a4\u30d7\uff11\uff12")),TransformPlayCharacter=(Character=(Key="0310_00"),Costume=(Key="0310_00_00"),SparkingBGM=(Key="BGM_M0200"),EquipItem=((Key="00_1_0000_0310_00"),(Key="00_6_0000"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_7_0011")),CpuLevel=20,CpuThinkingType=(Key="\u30bf\u30a4\u30d7\uff11\uff12")),SaveTime=2026.08.04-14.56.53)),("0310_00_20260730_154337_748", (BattlePlayCharacter=(Character=(Key="0310_00"),Costume=(Key="0310_00_02"),SparkingBGM=(Key="BGM_M1023_SPK"),EquipItem=((Key="20_1_0001_0310_00"),(Key="00_1_1000"),(Key="00_6_1023"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00")),CpuLevel=0,CpuThinkingType=(Key="\u30bf\u30a4\u30d7\uff11\uff12"),SpLevel=78,SpUpData=(Hp=20,Attack=27,SP=20,Defense=10)),TransformPlayCharacter=(Character=(Key="0310_00"),Costume=(Key="0310_00_02"),SparkingBGM=(Key="BGM_M1023_SPK"),EquipItem=((Key="20_1_0001_0310_00"),(Key="00_1_1000"),(Key="00_6_1023"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00")),CpuLevel=0,CpuThinkingType=(Key="\u30bf\u30a4\u30d7\uff11\uff12"),SpLevel=78,SpUpData=(Hp=20,Attack=27,SP=20,Defense=10)),bFavorite=True,Exp=136334,DifficultyLevel=Lv_02,MasterSkillFrameMax=3,MasterSkill=((MasterSkillDataList=(Key="MasterSkill_0011"),SubSkillDataLists=((Key="SubSkill_0058"),(Key="SubSkill_0061"),(Key="SubSkill_0000"))),(MasterSkillDataList=(Key="MasterSkill_0003"),SubSkillDataLists=((Key="SubSkill_0057"),(Key="SubSkill_0049"),(Key="SubSkill_0045"))),(MasterSkillDataList=(Key="MasterSkill_0009"),SubSkillDataLists=((Key="SubSkill_0035"),(Key="SubSkill_0067"),(Key="SubSkill_0006")))),MythicalOrb=(PosessedList=(7,6,4,3,1,2)),SaveTime=2026.08.04-13.14.04,LapCount=14,ClearCount=3,LapGetExp=109072,BringItemList=((Key="ShopBase_50_20_22_0000"),(Key="ShopBase_50_20_22_0001"),(Key="ShopBase_50_20_22_0010")),LastPlayNormalEnemyBGM=(Key="BGM_M0100"))),("0310_00_20260730_162700_928", (BattlePlayCharacter=(Character=(Key="0310_00"),Costume=(Key="0310_00_02"),SparkingBGM=(Key="BGM_M1023_SPK"),EquipItem=((Key="20_1_0001_0310_00"),(Key="00_6_1023"),(Key="00_1_1000"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_7_0011")),CpuLevel=0,CpuThinkingType=(Key="\u30bf\u30a4\u30d7\uff11\uff12"),SpLevel=5,SpUpData=(Blast=2,Defense=2)),TransformPlayCharacter=(Character=(Key="0310_00"),Costume=(Key="0310_00_02"),SparkingBGM=(Key="BGM_M1023_SPK"),EquipItem=((Key="20_1_0001_0310_00"),(Key="00_6_1023"),(Key="00_1_1000"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_0017"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_4_1000_0310_00"),(Key="00_7_0011")),CpuLevel=0,CpuThinkingType=(Key="\u30bf\u30a4\u30d7\uff11\uff12"),SpLevel=5,SpUpData=(Blast=2,Defense=2)),Exp=4185,DifficultyLevel=Lv_Flexible,SaveTime=2026.07.30-16.36.53,LapCount=1,LapGetExp=3934,LastPlayNormalEnemyBGM=(Key="BGM_M0103")))),WorldMapData=(PointMap=(),CurrentPoint=(Key=""),PrevPoint=(Key=""),TurnNumber=1,NextTurnNumber=1,TurnMaxNumber=10,StaminaValue=100.000000,PrevStaminaValue=100.000000,StaminaValueMax=100.000000,RecoverableCount=1,ReLotterableCount=0,BringItemList=,OneLegItemArray=,AllLegItemArray=,EventResult=,TakenDamageMax=0,KarmaValue=0,IsStaminaRecoveredUntilWorldMap=False),IsShowTips=True,IsShowChallengingTips=True,IsShowTipsBattleSetup=True,SalesItemPurchaseList=(True,True,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False),DifficultyLevelMax=Lv_03,DifficultyLevelMaxUpdate=0)`;
+
+let result = '';
+let indent = 0;
+let i = 0;
+const TAB = '    ';
+const input = content;
+
+while (i < input.length) {
+    const ch = input[i];
+
+    if (ch === '(') {
+        result += '(\n';
+        indent++;
+        result += TAB.repeat(indent);
+        i++;
+    } else if (ch === ')') {
+        indent--;
+        result += '\n' + TAB.repeat(indent) + ')';
+        i++;
+    } else if (ch === ',') {
+        result += ',\n' + TAB.repeat(indent);
+        i++;
+        while (i < input.length && input[i] === ' ') i++;
+    } else {
+        result += ch;
+        i++;
+    }
+}
+
+fs.writeFileSync('d:/DBZL/SZLeague/GitHub/SparkingZero/NADFileTesting/RenameSaveData', result, 'utf8');
+console.log('Done. Lines: ' + result.split('\n').length);
