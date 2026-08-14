@@ -1,0 +1,118 @@
+matchName: S0 MW10 M2
+team1Name: Primal Instinct
+team2Name: Cinema
+
+# ── Primal Instinct ─────────────────────
+team1:
+  - character: Dyspo
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Smash Attack Boost 2 (3)
+      - Power Unleashed (2)
+      - Light Body (4)
+      - Indomitable Fighting Spirit (3)
+      - Master Roshi Training (1)
+      - Rising Fighting Spirit (3)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: ''
+
+  - character: Caulifla Super Saiyan 2
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Ultimate Burst (2)
+      - Divine Blow (3)
+      - Savior (5)
+      - Style of the Strong (2)
+      - Power Unleashed (2)
+      - Rush Attack Boost 1 (1)
+    ai: 'Attack Strategy: Ultimate Blasts'
+    transformAi: ''
+    sparking: ''
+
+  - character: Bergamo
+    costume: ''
+    capsules:
+      - Blast Attack Boost 2 (3)
+      - Blast Attack Boost 1 (1)
+      - Ki Blast Attack Boost 2 (3)
+      - Perfect Guard (5)
+      - Fighting Spirit (5)
+      - Energy Saver 3 (3)
+    ai: 'Balanced Strategy: Restrain'
+    transformAi: ''
+    sparking: ''
+
+  - character: Bardock
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - The Secret to Counters (5)
+      - Combo Master (1)
+      - Combo King (2)
+      - Ki Blast Attack Boost 3 (5)
+      - Ki Blast Charge 1 (1)
+    ai: 'Attack Strategy: Vanishing'
+    transformAi: ''
+    sparking: ''
+
+# ── Cinema ──────────────────────────────
+team2:
+  - character: Android 13
+    costume: ''
+    capsules:
+      - Blast Attack Boost 2 (3)
+      - Latent Power! (5)
+      - Indomitable Fighting Spirit (3)
+      - Active Heart (1)
+      - Ki Blast Attack Boost 2 (3)
+      - Rising Tension (3)
+      - Latent Power Unleashed 2 (2)
+    ai: 'Balanced Strategy: Restrain'
+    transformAi: 'Defense Strategy: Blasts'
+    sparking: Malicious Intent
+
+  - character: Bojack
+    costume: ''
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Ki Blast Attack Boost 1 (1)
+      - Ki Blast Attack Boost 3 (5)
+      - Rising Fighting Spirit (3)
+      - Perfect Guard (5)
+      - Brolys Ring (1)
+    ai: 'Balanced Strategy: Movement'
+    transformAi: ''
+    sparking: Reign of Terror
+
+  - character: Broly (Super) Super Saiyan
+    costume: ''
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Blast Attack Boost 1 (1)
+      - Rising Fighting Spirit (3)
+      - Fury! (4)
+      - Fighting Spirit (5)
+      - Super Transformation (1)
+      - Master Roshi Training (1)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: Berserker
+
+  - character: Goku (Super)
+    costume: Outfit 3
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 1 (1)
+      - Fighting Spirit (5)
+      - Perfect Guard (5)
+      - Latent Power Unleashed 2 (2)
+      - Dragon Spirit (3)
+      - Master Roshi Training (1)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: 'Balanced Strategy: Melee'
+    sparking: Black Roses
