@@ -671,4 +671,23 @@ playoffs:
   format: 12-Team Single Elimination
   status: In Progress
   seedings: []
-  rounds: []
+  rounds:
+    - round: Wild Card
+      matches:
+        - status: upcoming
+        - status: upcoming
+        - status: upcoming
+        - status: upcoming
+    - round: Quarterfinals
+      matches:
+        - status: upcoming
+        - status: upcoming
+        - status: upcoming
+        - status: upcoming
+    - round: Semifinals
+      matches:
+        - status: upcoming
+        - status: upcoming
+    - round: Tenkaichi Bowl
+      matches:
+        - status: upcoming
