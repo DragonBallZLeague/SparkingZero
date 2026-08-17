@@ -1,6 +1,6 @@
 /**
- * Exports Blasts/, Numerics/, CharacterData/ JSON files to a single Excel workbook
- * with 3 sheets. Run from repo root: node GSTest/export-excel.js
+ * Exports Blasts/, Numerics/, CharacterData/, Skills/ JSON files to a single
+ * Excel workbook. Run from repo root: node GSTest/export-excel.js
  */
 const fs = require('fs');
 const path = require('path');
@@ -129,6 +129,89 @@ function parseBlastValue(raw) {
   return result;
 }
 
+function parseSkillValue(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+
+  const parts = raw.split('|').map(p => p.trim()).filter(Boolean);
+  if (parts.length === 0) return null;
+
+  const result = {
+    skillName: parts[0],
+    skillType: null,
+    cost: null,
+    raw: raw.trim(),
+  };
+
+  for (let i = 1; i < parts.length; i++) {
+    const token = parts[i];
+    const colon = token.indexOf(':');
+    if (colon === -1) continue;
+
+    const key = token.slice(0, colon).trim().toLowerCase();
+    const val = token.slice(colon + 1).trim();
+
+    if (key === 'skilltype') {
+      result.skillType = val || null;
+    } else if (key === 'cost') {
+      const num = parseFloat(val);
+      result.cost = isNaN(num) ? null : num;
+    }
+  }
+
+  return result;
+}
+
+// Buff/action entries: any key in a Skills file other than Skill1Data/Skill2Data/
+// SkillFileData is a per-action buff, keyed like "actEXA1 - Buff_Common_036_ACO"
+// (actionId - buffDataAsset). Value format is:
+//   Buff Categories<None|list> | Armor: <value> | Effective Time: <value> |
+//   Resource Change: {json} | Parameter Change: {json} | 
+function parseBuffKey(key) {
+  const sep = key.indexOf(' - ');
+  if (sep === -1) return { actionId: key.trim(), buffAsset: null };
+  return {
+    actionId:  key.slice(0, sep).trim(),
+    buffAsset: key.slice(sep + 3).trim(),
+  };
+}
+
+function parseBuffValue(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  const parts = raw.split(' | ');
+  if (parts.length === 0) return null;
+
+  const result = {};
+
+  const catRaw = (parts[0] ?? '').replace(/^Buff Categories/, '').trim();
+  result.buffCategories = (catRaw === '' || catRaw === 'None') ? null : catRaw;
+
+  for (let i = 1; i < parts.length; i++) {
+    const token = parts[i];
+    const colon = token.indexOf(':');
+    if (colon === -1) continue;
+
+    const key = token.slice(0, colon).trim();
+    const val = token.slice(colon + 1).trim();
+
+    if (key === 'Armor') {
+      result.armor = (val === '' || val === 'None') ? null : val;
+    } else if (key === 'Effective Time') {
+      const n = parseFloat(val);
+      result.effectiveTime = isNaN(n) ? val : n;
+    } else if (key === 'Resource Change') {
+      try {
+        flattenValue(result, 'resource', JSON.parse(val));
+      } catch { /* malformed JSON section – skip */ }
+    } else if (key === 'Parameter Change') {
+      try {
+        flattenValue(result, 'param', JSON.parse(val));
+      } catch { /* malformed JSON section – skip */ }
+    }
+  }
+
+  return result;
+}
+
 // ── SHEET 1: NUMERICS ─────────────────────────────────────────────────────────
 
 console.log('Reading Numerics…');
@@ -174,11 +257,17 @@ for (const { name, file } of getJsonFiles(path.join(GSTEST, 'Numerics'))) {
 
 console.log('Reading Blasts…');
 const blastRows = [];
-const BLAST_SLOTS = ['Blast1Data', 'Blast2Data', 'UltimateData'];
+// Preferred ordering for known slots; any other slot key found in a file (e.g. ULT2, ULT3, SPM3…) is still captured.
+const KNOWN_SLOT_ORDER = ['Blast1Data', 'Blast2Data', 'UltimateData', 'ULT2', 'ULT3', 'SPM3', 'SPM4'];
 
 for (const { name, file } of getJsonFiles(path.join(GSTEST, 'Blasts'))) {
   const outer = readUtf16Json(file);
-  for (const slot of BLAST_SLOTS) {
+  const allSlots = Object.keys(outer);
+  const orderedSlots = [
+    ...KNOWN_SLOT_ORDER.filter(s => allSlots.includes(s)),
+    ...allSlots.filter(s => !KNOWN_SLOT_ORDER.includes(s)),
+  ];
+  for (const slot of orderedSlots) {
     if (!outer[slot]) continue;
     const parsed = parseBlastValue(outer[slot]);
     if (!parsed) continue;
@@ -251,6 +340,54 @@ for (const { name, file } of getJsonFiles(path.join(GSTEST, 'CharacterData'))) {
   charRows.push(row);
 }
 
+// ── SHEET 4: SKILLS ───────────────────────────────────────────────────────────
+
+console.log('Reading Skills…');
+const skillRows = [];
+const buffRows = [];
+const SKILL_SLOTS = ['Skill1Data', 'Skill2Data'];
+const NON_BUFF_KEYS = new Set(['Skill1Data', 'Skill2Data', 'SkillFileData']);
+
+for (const { name, file } of getJsonFiles(path.join(GSTEST, 'Skills'))) {
+  const outer = readUtf16Json(file);
+
+  for (const slot of SKILL_SLOTS) {
+    const parsed = parseSkillValue(outer[slot]);
+    if (!parsed) continue;
+    skillRows.push({
+      character: name,
+      slot,
+      ...parsed,
+    });
+  }
+
+  if (outer.SkillFileData && String(outer.SkillFileData).trim()) {
+    skillRows.push({
+      character: name,
+      slot: 'SkillFileData',
+      skillName: null,
+      skillType: null,
+      cost: null,
+      raw: String(outer.SkillFileData).trim(),
+    });
+  }
+
+  // Any remaining keys are per-action buffs, e.g. "actEXA1 - Buff_Common_036_ACO"
+  for (const key of Object.keys(outer)) {
+    if (NON_BUFF_KEYS.has(key)) continue;
+    if (!outer[key]) continue;
+    const parsed = parseBuffValue(outer[key]);
+    if (!parsed) continue;
+    const { actionId, buffAsset } = parseBuffKey(key);
+    buffRows.push({
+      character: name,
+      actionId,
+      buffAsset,
+      ...parsed,
+    });
+  }
+}
+
 // ── WRITE WORKBOOK ────────────────────────────────────────────────────────────
 
 console.log('Writing workbook…');
@@ -258,6 +395,8 @@ const wb = XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(numericsRows), 'Numerics');
 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(blastRows),    'Blasts');
 XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(charRows),     'CharacterData');
+XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(skillRows),    'Skills');
+XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(buffRows),     'Buffs');
 
 try {
   XLSX.writeFile(wb, OUT_PATH);
@@ -275,3 +414,5 @@ try {
 console.log(`  Numerics:      ${numericsRows.length} rows`);
 console.log(`  Blasts:        ${blastRows.length} rows`);
 console.log(`  CharacterData: ${charRows.length} rows`);
+console.log(`  Skills:        ${skillRows.length} rows`);
+console.log(`  Buffs:         ${buffRows.length} rows`);

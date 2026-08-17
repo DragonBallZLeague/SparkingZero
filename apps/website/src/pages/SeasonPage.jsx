@@ -261,49 +261,104 @@ function BracketTeamRow({ team, seed, won, lost, score, darkMode, icon, color })
   );
 }
 
-// Derive team names per match from seedings array + prior round winners
+// Standard recursive tournament seed order (same idea NCAA/single-elim
+// brackets use): for a bracket of `size` slots, returns the slots in the
+// top-to-bottom order that keeps seed 1 & seed 2 apart until the final.
+// seedOrder(2) = [1,2]; seedOrder(4) = [1,4,2,3]; seedOrder(8) = [1,8,4,5,2,7,3,6].
+function seedOrder(size) {
+  if (size <= 1) return [1];
+  const prev = seedOrder(size / 2);
+  const out = [];
+  prev.forEach((s) => { out.push(s); out.push(size + 1 - s); });
+  return out;
+}
+
+// Builds each round in DISPLAY order (not raw seed-ascending order) so
+// that every connector between rounds is a simple straight or adjacent
+// line — no bending across rows. This is the actual bracket-seeding
+// layout: read the 8 "post wild-card" slots (4 byes + 4 wild-card games)
+// off seedOrder(8) = [1,8,4,5,2,7,3,6]. The bye seeds in that list
+// (1,4,2,3) become the Quarterfinal row order; the wild-card hosts
+// (8,5,7,6) become the Wild Card row order — and because both come from
+// the same list, a Wild Card row always lines up with the Quarterfinal
+// row it feeds. Semifinals then simply pair adjacent Quarterfinal rows
+// (0&1, 2&3), which — thanks to the reorder — correctly groups seed 1's
+// path with seed 4's path, and seed 2's path with seed 3's.
 function deriveRounds(rawRounds, seedings) {
   if (!rawRounds?.length || !seedings?.length) return rawRounds || [];
   const n = seedings.length;
   const wcCount = rawRounds[0].matches.length;
   const byeCount = n - wcCount * 2;
-  const winners = [];
-  return rawRounds.map((round, ri) => {
-    winners[ri] = [];
-    const matches = round.matches.map((m, mi) => {
+  const postWcCount = byeCount + wcCount;
+
+  const order = seedOrder(postWcCount);
+  const wcDisplayOrder = order.filter((v) => v > byeCount).map((v) => v - byeCount - 1);
+  const qfDisplayOrder = order.filter((v) => v <= byeCount).map((v) => v - 1);
+
+  // --- Wild Card, reordered ---
+  const wcMatches = wcDisplayOrder.map((origMi) => {
+    const m = rawRounds[0].matches[origMi];
+    let team_a = m.team_a || null;
+    let team_b = m.team_b || null;
+    let seed_a = m.seed_a ?? null;
+    let seed_b = m.seed_b ?? null;
+    const aIdx = byeCount + origMi;
+    const bIdx = n - 1 - origMi;
+    if (!team_a) { team_a = seedings[aIdx] ?? null; seed_a = aIdx + 1; }
+    if (!team_b) { team_b = seedings[bIdx] ?? null; seed_b = bIdx + 1; }
+    return { ...m, team_a, team_b, seed_a, seed_b, sourceA: null, sourceB: null };
+  });
+  const wcWinners = wcMatches.map((m) => m.winner ?? null);
+
+  // --- Quarterfinals, reordered — each display row now lines up with the
+  // Wild Card row directly above it, so sourceB is just that same row. ---
+  const qfMatches = qfDisplayOrder.map((origMi, dispRow) => {
+    const m = rawRounds[1].matches[origMi];
+    let team_a = m.team_a || null;
+    let team_b = m.team_b || null;
+    let seed_a = m.seed_a ?? origMi + 1;
+    let seed_b = m.seed_b ?? null;
+    if (!team_a) team_a = seedings[origMi] ?? null;
+    const sourceB = dispRow;
+    if (!team_b) {
+      team_b = wcWinners[sourceB] ?? null;
+      if (team_b) seed_b = seedings.indexOf(team_b) + 1 || null;
+    }
+    return { ...m, team_a, team_b, seed_a, seed_b, sourceA: null, sourceB };
+  });
+  const qfWinners = qfMatches.map((m) => m.winner ?? null);
+
+  const rounds = [
+    { ...rawRounds[0], matches: wcMatches },
+    { ...rawRounds[1], matches: qfMatches },
+  ];
+
+  // --- Semifinals, Final, and beyond: adjacent rows of the previous
+  // (already-reordered) round pair up directly — row 0&1, row 2&3, etc. ---
+  let prevWinners = qfWinners;
+  for (let ri = 2; ri < rawRounds.length; ri++) {
+    const matches = rawRounds[ri].matches.map((m, mi) => {
       let team_a = m.team_a || null;
       let team_b = m.team_b || null;
       let seed_a = m.seed_a ?? null;
       let seed_b = m.seed_b ?? null;
-      if (ri === 0) {
-        // Wild Card: seed(byeCount+1+mi) vs seed(n-mi)
-        const aIdx = byeCount + mi;
-        const bIdx = n - 1 - mi;
-        if (!team_a) { team_a = seedings[aIdx] ?? null; seed_a = aIdx + 1; }
-        if (!team_b) { team_b = seedings[bIdx] ?? null; seed_b = bIdx + 1; }
-      } else if (ri === 1) {
-        // Quarterfinals: top bye seeds vs WC winners
-        if (!team_a) { team_a = seedings[mi] ?? null; seed_a = mi + 1; }
-        if (!team_b) {
-          team_b = winners[0]?.[mi] ?? null;
-          if (team_b) seed_b = seedings.indexOf(team_b) + 1 || null;
-        }
-      } else {
-        // Semifinals / Final: pair previous round winners
-        if (!team_a) {
-          team_a = winners[ri - 1]?.[mi * 2] ?? null;
-          if (team_a) seed_a = (seedings.indexOf(team_a) + 1) || null;
-        }
-        if (!team_b) {
-          team_b = winners[ri - 1]?.[mi * 2 + 1] ?? null;
-          if (team_b) seed_b = (seedings.indexOf(team_b) + 1) || null;
-        }
+      const sourceA = mi * 2;
+      const sourceB = mi * 2 + 1;
+      if (!team_a) {
+        team_a = prevWinners[sourceA] ?? null;
+        if (team_a) seed_a = (seedings.indexOf(team_a) + 1) || null;
       }
-      winners[ri][mi] = m.winner ?? null;
-      return { ...m, team_a, team_b, seed_a, seed_b };
+      if (!team_b) {
+        team_b = prevWinners[sourceB] ?? null;
+        if (team_b) seed_b = (seedings.indexOf(team_b) + 1) || null;
+      }
+      return { ...m, team_a, team_b, seed_a, seed_b, sourceA, sourceB };
     });
-    return { ...round, matches };
-  });
+    rounds.push({ ...rawRounds[ri], matches });
+    prevWinners = matches.map((m) => m.winner ?? null);
+  }
+
+  return rounds;
 }
 
 function PlayoffMatchDetailPanel({
@@ -643,31 +698,39 @@ function PlayoffBracket({
     return (mi + 0.5) * slotH;
   };
 
+  // Draws connectors purely from each match's sourceA/sourceB — the exact
+  // same indices deriveRounds used to decide the matchup. This can never
+  // drift out of sync with the pairing logic again, unlike the old
+  // approach which re-derived row positions from scratch assuming a fixed
+  // "groupSize" pattern that didn't hold for the seeded (mirrored) pairs.
   const renderConnector = (ri) => {
-    const fromN = derivedRounds[ri].matches.length;
-    const toN = derivedRounds[ri + 1].matches.length;
-    const groupSize = fromN / toN;
     const midX = BRACKET_CONN_W / 2;
     const paths = [];
-    if (groupSize === 1) {
-      for (let mi = 0; mi < fromN; mi++) {
-        const y = getMatchCenter(ri, mi);
-        paths.push(<path key={mi} d={`M0,${y}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
+    derivedRounds[ri + 1].matches.forEach((match, ti) => {
+      const ty = getMatchCenter(ri + 1, ti);
+      const sources = [match.sourceA, match.sourceB].filter((s) => s !== null && s !== undefined);
+
+      if (sources.length === 1) {
+        // One side enters this round directly (e.g. a bye seed) — only the
+        // other side has an incoming match, so draw a single bent line.
+        const fy = getMatchCenter(ri, sources[0]);
+        paths.push(
+          <path key={`s${ti}`} d={`M0,${fy}H${midX}V${ty}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        );
+      } else if (sources.length === 2) {
+        const [s1, s2] = sources;
+        const y1 = getMatchCenter(ri, s1);
+        const y2 = getMatchCenter(ri, s2);
+        const topY = Math.min(y1, y2);
+        const botY = Math.max(y1, y2);
+        paths.push(
+          <path key={`h${ti}a`} d={`M0,${y1}H${midX}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />,
+          <path key={`h${ti}b`} d={`M0,${y2}H${midX}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />,
+          <path key={`v${ti}`} d={`M${midX},${topY}V${botY}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />,
+          <path key={`t${ti}`} d={`M${midX},${ty}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        );
       }
-    } else {
-      for (let gi = 0; gi < toN; gi++) {
-        const toY = getMatchCenter(ri + 1, gi);
-        const firstFrom = gi * groupSize;
-        const topY = getMatchCenter(ri, firstFrom);
-        const botY = getMatchCenter(ri, firstFrom + groupSize - 1);
-        for (let fi = 0; fi < groupSize; fi++) {
-          const fy = getMatchCenter(ri, firstFrom + fi);
-          paths.push(<path key={`h${gi}-${fi}`} d={`M0,${fy}H${midX}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
-        }
-        paths.push(<path key={`v${gi}`} d={`M${midX},${topY}V${botY}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
-        paths.push(<path key={`t${gi}`} d={`M${midX},${toY}H${BRACKET_CONN_W}`} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />);
-      }
-    }
+    });
     return <svg key={`conn-${ri}`} width={BRACKET_CONN_W} height={totalH} style={{ flexShrink: 0 }}>{paths}</svg>;
   };
 
