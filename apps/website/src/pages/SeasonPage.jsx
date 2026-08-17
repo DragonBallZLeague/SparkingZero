@@ -955,9 +955,18 @@ export default function SeasonPage({ darkMode }) {
       const sorted = sortByRecord(kai.teams || []);
       if (!sorted.length) continue;
       const leaderWins = mainSeasonStandings[sorted[0].team]?.wins || 0;
+      const leaderRemaining = remaining[sorted[0].team] || 0;
       const hasClinched = sorted.slice(1).every((t) => {
         const tWins = mainSeasonStandings[t.team]?.wins || 0;
-        return leaderWins > tWins + (remaining[t.team] || 0);
+        const tRemaining = remaining[t.team] || 0;
+        // Still mathematically possible for t to catch/pass the leader.
+        if (leaderWins + leaderRemaining < tWins) return false;
+        if (leaderWins > tWins + tRemaining) return true;
+        // Tied (or leader could still be caught) but both teams are done
+        // playing — the tiebreaker that sortByRecord already applied is
+        // final, so the leader's spot is locked in.
+        if (leaderRemaining === 0 && tRemaining === 0) return true;
+        return false;
       });
       if (hasClinched) clinched.add(sorted[0].team);
       divWinners.push(sorted[0]);
