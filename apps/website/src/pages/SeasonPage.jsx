@@ -208,7 +208,7 @@ function LineupPanel({ data, loading, darkMode, homeTeam, awayTeam, homeBanner, 
 
 const BRACKET_MATCH_H = 76;
 const BRACKET_SLOT_H = 108;
-const BRACKET_ROUND_W = 176;
+const BRACKET_ROUND_W = 220;
 const BRACKET_CONN_W = 36;
 
 function BracketTeamRow({ team, seed, won, lost, score, darkMode, icon, color }) {
@@ -220,13 +220,13 @@ function BracketTeamRow({ team, seed, won, lost, score, darkMode, icon, color })
       style={{ height: 37 }}
     >
       {seed != null && (
-        <span className="text-[10px] w-3.5 flex-shrink-0 font-mono text-gray-500">{seed}</span>
+        <span className="text-[12px] w-3.5 flex-shrink-0 font-mono text-gray-500">{seed}</span>
       )}
       {icon ? (
         <img
           src={icon}
           alt={team || ''}
-          className="w-5 h-5 rounded flex-shrink-0 object-cover"
+          className="w-6 h-6 rounded flex-shrink-0 object-cover"
           style={{ opacity: lost ? 0.35 : 1 }}
         />
       ) : (
@@ -236,7 +236,7 @@ function BracketTeamRow({ team, seed, won, lost, score, darkMode, icon, color })
         />
       )}
       <span
-        className={`text-xs flex-1 truncate min-w-0 ${lost ? 'opacity-40 ' : ''}${
+        className={`text-sm flex-1 truncate min-w-0 ${lost ? 'opacity-40 ' : ''}${
           won
             ? darkMode ? 'font-semibold text-green-400' : 'font-semibold text-green-600'
             : darkMode ? 'text-gray-200' : 'text-stone-700'
