@@ -73,6 +73,37 @@ function CharacterCard({ char, darkMode }) {
   );
 }
 
+// A playoff match can carry up to two lineup files — one per week of the
+// series. `lineup_file` is kept as a fallback so existing match data
+// (uploaded before week 2 support existed) keeps working as "week 1".
+function getLineupWeekFiles(match) {
+  const week1 = match?.lineup_file_week1 || match?.lineup_file || null;
+  const week2 = match?.lineup_file_week2 || null;
+  return { week1, week2, hasLineup: !!(week1 || week2), hasBothWeeks: !!(week1 && week2) };
+}
+
+function LineupWeekSwitcher({ activeWeek, onSelectWeek, darkMode }) {
+  return (
+    <div className="flex justify-center mx-3 sm:mx-4 mt-3">
+      <div className={`inline-flex gap-1 p-1 rounded-lg ${darkMode ? 'bg-gray-800/60' : 'bg-stone-200'}`}>
+        {[1, 2].map((wk) => (
+          <button
+            key={wk}
+            onClick={() => onSelectWeek(wk)}
+            className={`px-4 py-1 text-xs rounded-md font-medium transition-colors ${
+              activeWeek === wk
+                ? darkMode ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'
+                : darkMode ? 'text-gray-400 hover:text-white' : 'text-stone-500 hover:text-stone-800'
+            }`}
+          >
+            Week {wk}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function LineupPanel({ data, loading, darkMode, homeTeam, awayTeam, homeBanner, awayBanner }) {
   const [activeTeam, setActiveTeam] = useState(0);
   const [homeBannerRatio, setHomeBannerRatio] = useState(null);
@@ -364,7 +395,8 @@ function deriveRounds(rawRounds, seedings) {
 function PlayoffMatchDetailPanel({
   roundName, match, matchKey, darkMode,
   getTeamIcon, getTeamColor, getTeamBanner,
-  openLineups, lineupCache, lineupLoading, toggleLineup, onClose,
+  openLineups, lineupCache, lineupLoading, toggleLineup,
+  lineupWeek, selectLineupWeek, onClose,
 }) {
   if (!match) return null;
   const isCompleted = match.status === 'completed';
@@ -372,7 +404,10 @@ function PlayoffMatchDetailPanel({
   const teamBWon = isCompleted && match.winner === match.team_b;
   const isLineupOpen = !!openLineups[matchKey];
   const hasVideo = !!(match.video_url);
-  const hasLineup = !!(match.lineup_file);
+  const hasScore = match.score_a != null && match.score_b != null;
+  const { week1: week1File, week2: week2File, hasLineup, hasBothWeeks } = getLineupWeekFiles(match);
+  const activeWeek = lineupWeek[matchKey] || (week1File ? 1 : 2);
+  const activeLineupFile = activeWeek === 2 ? week2File : week1File;
   const gradientColors = teamAWon
     ? 'rgba(34,197,94,0.45), rgba(34,197,94,0.18) 35%, transparent 50%, rgba(239,68,68,0.18) 65%, rgba(239,68,68,0.45)'
     : 'rgba(239,68,68,0.45), rgba(239,68,68,0.18) 35%, transparent 50%, rgba(34,197,94,0.18) 65%, rgba(34,197,94,0.45)';
@@ -426,6 +461,19 @@ function PlayoffMatchDetailPanel({
                 </a>
               )}
             </div>
+          ) : hasScore ? (
+            <div className="flex flex-col items-center gap-0.5">
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                match.status === 'live'
+                  ? 'bg-red-500/20 text-red-400'
+                  : darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
+              }`}>{match.status === 'live' ? '● Live' : 'Upcoming'}</span>
+              <div className="text-xl font-bold flex items-center justify-center gap-1">
+                <span className="text-gray-400">{match.score_a}</span>
+                <span className={`text-sm ${darkMode ? 'text-gray-700' : 'text-stone-300'}`}>-</span>
+                <span className="text-gray-400">{match.score_b}</span>
+              </div>
+            </div>
           ) : (
             <span className={`text-xs px-2 py-1 rounded-full ${
               match.status === 'live'
@@ -455,7 +503,7 @@ function PlayoffMatchDetailPanel({
   );
 
   const viewBuildsBtn = hasLineup && (
-    <button onClick={() => toggleLineup(matchKey, match.lineup_file)}
+    <button onClick={() => toggleLineup(matchKey, activeLineupFile)}
       className={`w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium border-t transition-colors ${
         isLineupOpen
           ? darkMode ? 'bg-gray-800 text-blue-400 border-gray-700' : 'bg-blue-50 text-blue-600 border-blue-200'
@@ -472,10 +520,17 @@ function PlayoffMatchDetailPanel({
       {header}
       {scoreRow}
       {viewBuildsBtn}
+      {isLineupOpen && hasLineup && hasBothWeeks && (
+        <LineupWeekSwitcher
+          activeWeek={activeWeek}
+          darkMode={darkMode}
+          onSelectWeek={(wk) => selectLineupWeek(matchKey, wk, wk === 2 ? week2File : week1File)}
+        />
+      )}
       {isLineupOpen && hasLineup && (
         <LineupPanel
-          data={lineupCache[match.lineup_file]}
-          loading={!!lineupLoading[match.lineup_file]}
+          data={lineupCache[activeLineupFile]}
+          loading={!!lineupLoading[activeLineupFile]}
           darkMode={darkMode}
           homeTeam={match.team_a}
           awayTeam={match.team_b}
@@ -504,6 +559,7 @@ function PlayoffMatchDetailPanel({
 function PlayoffListView({
   rounds, darkMode, getTeamIcon, getTeamColor, getTeamBanner,
   openLineups, lineupCache, lineupLoading, toggleLineup,
+  lineupWeek, selectLineupWeek,
 }) {
   return (
     <div className="space-y-6">
@@ -520,7 +576,10 @@ function PlayoffListView({
               const teamBWon = isCompleted && match.winner === match.team_b;
               const isLineupOpen = !!openLineups[matchKey];
               const hasVideo = isCompleted && !!(match.video_url);
-              const hasLineup = !!(match.lineup_file);
+              const hasScore = match.score_a != null && match.score_b != null;
+              const { week1: week1File, week2: week2File, hasLineup, hasBothWeeks } = getLineupWeekFiles(match);
+              const activeWeek = lineupWeek[matchKey] || (week1File ? 1 : 2);
+              const activeLineupFile = activeWeek === 2 ? week2File : week1File;
               const gradientColors = teamAWon
                 ? 'rgba(34,197,94,0.45), rgba(34,197,94,0.18) 35%, transparent 50%, rgba(239,68,68,0.18) 65%, rgba(239,68,68,0.45)'
                 : 'rgba(239,68,68,0.45), rgba(239,68,68,0.18) 35%, transparent 50%, rgba(34,197,94,0.18) 65%, rgba(34,197,94,0.45)';
@@ -563,6 +622,19 @@ function PlayoffListView({
                           </a>
                         )}
                       </>
+                    ) : hasScore ? (
+                      <>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          match.status === 'live'
+                            ? 'bg-red-500/20 text-red-400'
+                            : darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
+                        }`}>{match.status === 'live' ? '● Live' : 'Upcoming'}</span>
+                        <div className="flex items-center gap-1 font-bold text-base">
+                          <span className="text-gray-400">{match.score_a}</span>
+                          <span className={`text-xs ${darkMode ? 'text-gray-700' : 'text-stone-300'}`}>-</span>
+                          <span className="text-gray-400">{match.score_b}</span>
+                        </div>
+                      </>
                     ) : (
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         match.status === 'live'
@@ -592,7 +664,7 @@ function PlayoffListView({
 
               const viewBuildsBtn = hasLineup ? (
                 <button
-                  onClick={() => toggleLineup(matchKey, match.lineup_file)}
+                  onClick={() => toggleLineup(matchKey, activeLineupFile)}
                   className={`w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium border-t transition-colors ${
                     isCompleted
                       ? isLineupOpen
@@ -609,30 +681,35 @@ function PlayoffListView({
                 </button>
               ) : null;
 
+              const weekSwitcher = isLineupOpen && hasLineup && hasBothWeeks && (
+                <LineupWeekSwitcher
+                  activeWeek={activeWeek}
+                  darkMode={darkMode}
+                  onSelectWeek={(wk) => selectLineupWeek(matchKey, wk, wk === 2 ? week2File : week1File)}
+                />
+              );
+
+              const lineupPanel = (
+                <LineupPanel
+                  data={lineupCache[activeLineupFile]}
+                  loading={!!lineupLoading[activeLineupFile]}
+                  darkMode={darkMode}
+                  homeTeam={match.team_a}
+                  awayTeam={match.team_b}
+                  homeBanner={match.team_a ? getTeamBanner(match.team_a) : null}
+                  awayBanner={match.team_b ? getTeamBanner(match.team_b) : null}
+                />
+              );
+
               const lineupContent = isLineupOpen && hasLineup ? (
                 isCompleted ? (
-                  <LineupPanel
-                    data={lineupCache[match.lineup_file]}
-                    loading={!!lineupLoading[match.lineup_file]}
-                    darkMode={darkMode}
-                    homeTeam={match.team_a}
-                    awayTeam={match.team_b}
-                    homeBanner={match.team_a ? getTeamBanner(match.team_a) : null}
-                    awayBanner={match.team_b ? getTeamBanner(match.team_b) : null}
-                  />
+                  <>{weekSwitcher}{lineupPanel}</>
                 ) : (
                   <div className={`rounded-b-xl overflow-hidden border-l border-r border-b ${
                     darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200'
                   }`}>
-                    <LineupPanel
-                      data={lineupCache[match.lineup_file]}
-                      loading={!!lineupLoading[match.lineup_file]}
-                      darkMode={darkMode}
-                      homeTeam={match.team_a}
-                      awayTeam={match.team_b}
-                      homeBanner={match.team_a ? getTeamBanner(match.team_a) : null}
-                      awayBanner={match.team_b ? getTeamBanner(match.team_b) : null}
-                    />
+                    {weekSwitcher}
+                    {lineupPanel}
                   </div>
                 )
               ) : null;
@@ -664,6 +741,7 @@ function PlayoffBracket({
   playoffs, seedingsMap, darkMode,
   getTeamIcon, getTeamColor, getTeamBanner,
   openLineups, lineupCache, lineupLoading, toggleLineup,
+  lineupWeek, selectLineupWeek,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [view, setView] = useState('bracket');
@@ -744,7 +822,11 @@ function PlayoffBracket({
     return { roundName: round.round, match: round.matches[mi], matchKey: `playoff-r${ri}-m${mi}` };
   }, [selectedKey, derivedRounds]);
 
-  const sharedProps = { darkMode, getTeamIcon, getTeamColor, getTeamBanner, openLineups, lineupCache, lineupLoading, toggleLineup };
+  const sharedProps = {
+    darkMode, getTeamIcon, getTeamColor, getTeamBanner,
+    openLineups, lineupCache, lineupLoading, toggleLineup,
+    lineupWeek, selectLineupWeek,
+  };
 
   return (
     <div className="space-y-4">
@@ -831,7 +913,7 @@ function PlayoffBracket({
                               <BracketTeamRow
                                 team={match.team_a} seed={match.seed_a}
                                 won={teamAWon} lost={teamBWon}
-                                score={isCompleted ? match.score_a : null}
+                                score={match.score_a != null ? match.score_a : null}
                                 darkMode={darkMode}
                                 icon={match.team_a ? getTeamIcon(match.team_a) : null}
                                 color={match.team_a ? getTeamColor(match.team_a) : '#6B7280'}
@@ -840,7 +922,7 @@ function PlayoffBracket({
                               <BracketTeamRow
                                 team={match.team_b} seed={match.seed_b}
                                 won={teamBWon} lost={teamAWon}
-                                score={isCompleted ? match.score_b : null}
+                                score={match.score_b != null ? match.score_b : null}
                                 darkMode={darkMode}
                                 icon={match.team_b ? getTeamIcon(match.team_b) : null}
                                 color={match.team_b ? getTeamColor(match.team_b) : '#6B7280'}
@@ -883,6 +965,7 @@ export default function SeasonPage({ darkMode }) {
   const [openLineups, setOpenLineups] = useState({});
   const [lineupCache, setLineupCache] = useState({});
   const [lineupLoading, setLineupLoading] = useState({});
+  const [lineupWeek, setLineupWeek] = useState({});
 
   // Load selected season data and matching teams file
   useEffect(() => {
@@ -1018,10 +1101,8 @@ export default function SeasonPage({ darkMode }) {
   const getTeamBanner = (name) =>
     teams?.teams?.find((t) => t.name === name)?.banner || null;
 
-  const toggleLineup = async (matchKey, lineupFile) => {
-    const isOpening = !openLineups[matchKey];
-    setOpenLineups(prev => ({ ...prev, [matchKey]: !prev[matchKey] }));
-    if (!isOpening || !lineupFile || lineupCache[lineupFile] || lineupLoading[lineupFile]) return;
+  const fetchLineupFile = async (lineupFile) => {
+    if (!lineupFile || lineupCache[lineupFile] || lineupLoading[lineupFile]) return;
     setLineupLoading(prev => ({ ...prev, [lineupFile]: true }));
     try {
       const resp = await fetch(`${import.meta.env.BASE_URL}content/lineups/${lineupFile}`);
@@ -1032,6 +1113,20 @@ export default function SeasonPage({ darkMode }) {
     } finally {
       setLineupLoading(prev => ({ ...prev, [lineupFile]: false }));
     }
+  };
+
+  const toggleLineup = (matchKey, lineupFile) => {
+    const isOpening = !openLineups[matchKey];
+    setOpenLineups(prev => ({ ...prev, [matchKey]: !prev[matchKey] }));
+    if (isOpening) fetchLineupFile(lineupFile);
+  };
+
+  // Switches which week's lineup file is shown for a playoff match
+  // (only relevant for series that have both a week 1 and week 2 file)
+  // and lazily fetches that file the first time it's selected.
+  const selectLineupWeek = (matchKey, week, lineupFile) => {
+    setLineupWeek(prev => ({ ...prev, [matchKey]: week }));
+    fetchLineupFile(lineupFile);
   };
 
   const tabs = [
@@ -1155,6 +1250,8 @@ export default function SeasonPage({ darkMode }) {
                 lineupCache={lineupCache}
                 lineupLoading={lineupLoading}
                 toggleLineup={toggleLineup}
+                lineupWeek={lineupWeek}
+                selectLineupWeek={selectLineupWeek}
               />
             </div>
           ) : null}
@@ -1264,6 +1361,8 @@ export default function SeasonPage({ darkMode }) {
                 lineupCache={lineupCache}
                 lineupLoading={lineupLoading}
                 toggleLineup={toggleLineup}
+                lineupWeek={lineupWeek}
+                selectLineupWeek={selectLineupWeek}
               />
             </div>
           ) : (
