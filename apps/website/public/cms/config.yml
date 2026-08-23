@@ -217,7 +217,13 @@ collections:
                   - { name: "winner", label: "Winner", widget: "string", required: false }
                   - { name: "status", label: "Status", widget: "select", options: ["upcoming", "completed", "live"], default: "upcoming" }
                   - { name: "video_url", label: "Video URL", widget: "string", required: false, hint: "YouTube or stream link for this match" }
-                  - { name: "lineup_file", label: "Lineup File", widget: "file", required: false, media_folder: "/apps/website/public/content/lineups", hint: "YAML lineup file for this match" }
+                  - name: "lineup_file"
+                    label: "Lineup File"
+                    widget: "file"
+                    required: false
+                    media_folder: "/apps/website/public/content/lineups"
+                    public_folder: ""
+                    hint: "Upload the lineup YAML file for this match"
 
   # --- COMMUNITY ---
   - name: "community"
