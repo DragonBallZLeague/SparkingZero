@@ -675,9 +675,21 @@ playoffs:
     - round: Wild Card
       matches:
         - status: upcoming
+          lineup_file: /apps/website/public/content/lineups/s0_po1_m1.yaml
+          score_a: 1
+          score_b: 0
         - status: upcoming
+          lineup_file: /apps/website/public/content/lineups/s0_po1_m2.yaml
+          score_a: 0
+          score_b: 1
         - status: upcoming
+          lineup_file: /apps/website/public/content/lineups/s0_po1_m3.yaml
+          score_a: 1
+          score_b: 0
         - status: upcoming
+          lineup_file: /apps/website/public/content/lineups/s0_po1_m4.yaml
+          score_b: 1
+          score_a: 0
     - round: Quarterfinals
       matches:
         - status: upcoming
