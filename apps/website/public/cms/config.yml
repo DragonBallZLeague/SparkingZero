@@ -210,7 +210,7 @@ collections:
               - name: "matches"
                 label: "Matches"
                 widget: "list"
-                summary: "Match {{fields.status}}"
+                summary: "Match {{index}} — {{fields.status}}"
                 fields:
                   - { name: "score_a", label: "Score A", widget: "number", value_type: "int", required: false }
                   - { name: "score_b", label: "Score B", widget: "number", value_type: "int", required: false }
