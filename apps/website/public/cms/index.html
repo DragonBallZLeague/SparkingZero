@@ -134,10 +134,15 @@
       return out;
     }
 
-    // Mirrors deriveRounds() in SeasonPage.jsx, but also tags each match
-    // with entryNumber = its 1-based position in the CMS "Matches" list
-    // for that round, so you can match what you see here to what you're
-    // editing.
+    // Mirrors deriveRounds() in SeasonPage.jsx. Wild Card and Quarterfinal
+    // matches are now entered in the CMS in bracket top-to-bottom DISPLAY
+    // order (matches[0] is the first match shown in that round, etc.) — the
+    // old "raw seed-pair order" storage convention is gone, so entryNumber
+    // now always equals the match's actual display position, no translation
+    // needed. We still need to know which seeds meet at each display slot
+    // (that pairing is fixed by the standard bracket seedOrder()), so that
+    // part of the math stays — it's just applied by display row instead of
+    // by raw storage index.
     function deriveRoundsForPreview(rawRounds, seedings) {
       if (!rawRounds || !rawRounds.length || !seedings || !seedings.length) return rawRounds || [];
       const n = seedings.length;
@@ -148,36 +153,38 @@
       if (byeCount < 0 || rawRounds.length < 2) return rawRounds; // mismatched data — bail safely
 
       const order = seedOrder(postWcCount);
-      const wcDisplayOrder = order.filter(function (v) { return v > byeCount; }).map(function (v) { return v - byeCount - 1; });
-      const qfDisplayOrder = order.filter(function (v) { return v <= byeCount; }).map(function (v) { return v - 1; });
+      // seedSlotForWcDisp[dispRow] / seedSlotForQfDisp[dispRow] give the
+      // "seed pairing index" (0-based) for the match at that display row —
+      // i.e. which seeds face off at that position in the bracket.
+      const seedSlotForWcDisp = order.filter(function (v) { return v > byeCount; }).map(function (v) { return v - byeCount - 1; });
+      const seedSlotForQfDisp = order.filter(function (v) { return v <= byeCount; }).map(function (v) { return v - 1; });
 
-      const wcMatches = wcDisplayOrder.map(function (origMi) {
-        const m = rawRounds[0].matches[origMi] || {};
+      const wcMatches = seedSlotForWcDisp.map(function (seedSlot, dispRow) {
+        const m = rawRounds[0].matches[dispRow] || {};
         let team_a = m.team_a || null;
         let team_b = m.team_b || null;
         let seed_a = m.seed_a != null ? m.seed_a : null;
         let seed_b = m.seed_b != null ? m.seed_b : null;
-        const aIdx = byeCount + origMi;
-        const bIdx = n - 1 - origMi;
+        const aIdx = byeCount + seedSlot;
+        const bIdx = n - 1 - seedSlot;
         if (!team_a) { team_a = seedings[aIdx] || null; seed_a = aIdx + 1; }
         if (!team_b) { team_b = seedings[bIdx] || null; seed_b = bIdx + 1; }
-        return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: origMi + 1 });
+        return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: dispRow + 1 });
       });
       const wcWinners = wcMatches.map(function (m) { return m.winner || null; });
 
-      const qfMatches = qfDisplayOrder.map(function (origMi, dispRow) {
-        const m = (rawRounds[1] && rawRounds[1].matches[origMi]) || {};
+      const qfMatches = seedSlotForQfDisp.map(function (seedSlot, dispRow) {
+        const m = (rawRounds[1] && rawRounds[1].matches[dispRow]) || {};
         let team_a = m.team_a || null;
         let team_b = m.team_b || null;
-        let seed_a = m.seed_a != null ? m.seed_a : (origMi + 1);
+        let seed_a = m.seed_a != null ? m.seed_a : (seedSlot + 1);
         let seed_b = m.seed_b != null ? m.seed_b : null;
-        if (!team_a) team_a = seedings[origMi] || null;
-        const sourceB = dispRow;
+        if (!team_a) team_a = seedings[seedSlot] || null;
         if (!team_b) {
-          team_b = wcWinners[sourceB] || null;
+          team_b = wcWinners[dispRow] || null;
           if (team_b) seed_b = (seedings.indexOf(team_b) + 1) || null;
         }
-        return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: origMi + 1 });
+        return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: dispRow + 1 });
       });
       const qfWinners = qfMatches.map(function (m) { return m.winner || null; });
 
@@ -268,7 +275,7 @@
       return h('div', { style: { marginTop: '24px' } },
         h('h2', { style: { fontSize: '16px', marginBottom: '8px' } }, '🏆 Playoffs'),
         h('p', { style: { fontSize: '12px', color: '#78716c', fontStyle: 'italic', marginBottom: '12px', lineHeight: 1.5 } },
-          'Team names are computed live from seeding + the site\'s bracket pairing rules (or from the manual Seedings list, if filled in). "Entry N" is that match\'s position in the Matches list for that round in the form.'
+          'Team names are computed live from seeding + the site\'s bracket pairing rules (or from the manual Seedings list, if filled in). Enter matches for each round in the order they should appear top-to-bottom in the bracket — "Entry N" below always matches that position in the Matches list for the round in the form.'
         ),
         seedings.length ? h('div', { style: { marginBottom: '16px' } },
           h('div', { style: { fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#57534e', marginBottom: '6px' } },
@@ -540,9 +547,9 @@
     });
 
     // Register all preview templates
-    CMS.registerPreviewTemplate('site', SitePreview);
+    CMS.registerPreviewTemplate('settings', SitePreview);
     CMS.registerPreviewTemplate('teams', TeamsPreview);
-    CMS.registerPreviewTemplate('season', SeasonPreview);
+    CMS.registerPreviewTemplate('seasons', SeasonPreview);
     CMS.registerPreviewTemplate('community', CommunityPreview);
   </script>
 </body>

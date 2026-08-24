@@ -304,17 +304,24 @@ function seedOrder(size) {
   return out;
 }
 
-// Builds each round in DISPLAY order (not raw seed-ascending order) so
-// that every connector between rounds is a simple straight or adjacent
-// line — no bending across rows. This is the actual bracket-seeding
-// layout: read the 8 "post wild-card" slots (4 byes + 4 wild-card games)
-// off seedOrder(8) = [1,8,4,5,2,7,3,6]. The bye seeds in that list
-// (1,4,2,3) become the Quarterfinal row order; the wild-card hosts
-// (8,5,7,6) become the Wild Card row order — and because both come from
-// the same list, a Wild Card row always lines up with the Quarterfinal
-// row it feeds. Semifinals then simply pair adjacent Quarterfinal rows
-// (0&1, 2&3), which — thanks to the reorder — correctly groups seed 1's
-// path with seed 4's path, and seed 2's path with seed 3's.
+// Builds each round's connector-source indices in DISPLAY order (not raw
+// seed-ascending order) so that every connector between rounds is a simple
+// straight or adjacent line — no bending across rows. This is the actual
+// bracket-seeding layout: read the 8 "post wild-card" slots (4 byes + 4
+// wild-card games) off seedOrder(8) = [1,8,4,5,2,7,3,6]. The bye seeds in
+// that list (1,4,2,3) become the Quarterfinal row order; the wild-card
+// hosts (8,5,7,6) become the Wild Card row order — and because both come
+// from the same list, a Wild Card row always lines up with the
+// Quarterfinal row it feeds. Semifinals then simply pair adjacent
+// Quarterfinal rows (0&1, 2&3), which — thanks to the reorder — correctly
+// groups seed 1's path with seed 4's path, and seed 2's path with seed 3's.
+//
+// Wild Card and Quarterfinal matches are entered in the CMS in this same
+// top-to-bottom display order (matches[0] is the first match shown in that
+// round), so `matches[dispRow]` IS the match for a given display row —
+// no separate raw-order lookup needed. We still need to know which seeds
+// meet at each display slot (that pairing is fixed by seedOrder()), so
+// that part of the math stays; it's just applied by display row now.
 function deriveRounds(rawRounds, seedings) {
   if (!rawRounds?.length || !seedings?.length) return rawRounds || [];
   const n = seedings.length;
@@ -323,33 +330,33 @@ function deriveRounds(rawRounds, seedings) {
   const postWcCount = byeCount + wcCount;
 
   const order = seedOrder(postWcCount);
-  const wcDisplayOrder = order.filter((v) => v > byeCount).map((v) => v - byeCount - 1);
-  const qfDisplayOrder = order.filter((v) => v <= byeCount).map((v) => v - 1);
+  const seedSlotForWcDisp = order.filter((v) => v > byeCount).map((v) => v - byeCount - 1);
+  const seedSlotForQfDisp = order.filter((v) => v <= byeCount).map((v) => v - 1);
 
-  // --- Wild Card, reordered ---
-  const wcMatches = wcDisplayOrder.map((origMi) => {
-    const m = rawRounds[0].matches[origMi];
+  // --- Wild Card, read in display order ---
+  const wcMatches = seedSlotForWcDisp.map((seedSlot, dispRow) => {
+    const m = rawRounds[0].matches[dispRow];
     let team_a = m.team_a || null;
     let team_b = m.team_b || null;
     let seed_a = m.seed_a ?? null;
     let seed_b = m.seed_b ?? null;
-    const aIdx = byeCount + origMi;
-    const bIdx = n - 1 - origMi;
+    const aIdx = byeCount + seedSlot;
+    const bIdx = n - 1 - seedSlot;
     if (!team_a) { team_a = seedings[aIdx] ?? null; seed_a = aIdx + 1; }
     if (!team_b) { team_b = seedings[bIdx] ?? null; seed_b = bIdx + 1; }
     return { ...m, team_a, team_b, seed_a, seed_b, sourceA: null, sourceB: null };
   });
   const wcWinners = wcMatches.map((m) => m.winner ?? null);
 
-  // --- Quarterfinals, reordered — each display row now lines up with the
-  // Wild Card row directly above it, so sourceB is just that same row. ---
-  const qfMatches = qfDisplayOrder.map((origMi, dispRow) => {
-    const m = rawRounds[1].matches[origMi];
+  // --- Quarterfinals, read in display order — each display row lines up
+  // with the Wild Card row directly above it, so sourceB is that same row. ---
+  const qfMatches = seedSlotForQfDisp.map((seedSlot, dispRow) => {
+    const m = rawRounds[1].matches[dispRow];
     let team_a = m.team_a || null;
     let team_b = m.team_b || null;
-    let seed_a = m.seed_a ?? origMi + 1;
+    let seed_a = m.seed_a ?? seedSlot + 1;
     let seed_b = m.seed_b ?? null;
-    if (!team_a) team_a = seedings[origMi] ?? null;
+    if (!team_a) team_a = seedings[seedSlot] ?? null;
     const sourceB = dispRow;
     if (!team_b) {
       team_b = wcWinners[sourceB] ?? null;
