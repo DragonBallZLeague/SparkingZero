@@ -19,6 +19,283 @@
     // These make the CMS preview pane much more readable.
     // ================================================================
 
+    const h = CMS.h;
+
+    // ----------------------------------------------------------------
+    // Playoff bracket helpers — used by the Playoffs section inside
+    // SeasonPreview below. Ported 1:1 from utils/standings.js (seeding /
+    // tiebreakers) and SeasonPage.jsx (seedOrder / deriveRounds), so the
+    // seeds and matchups shown here should match the live site exactly.
+    // ----------------------------------------------------------------
+
+    function computeStandingsFromSchedule(schedule) {
+      const record = {};
+      (schedule || []).forEach(function (week) {
+        (week.matches || []).forEach(function (m) {
+          if (m.status !== 'completed' || !m.winner) return;
+          [m.home, m.away].forEach(function (t) {
+            if (!t) return;
+            if (!record[t]) record[t] = { wins: 0, losses: 0 };
+            if (m.winner === t) record[t].wins += 1;
+            else record[t].losses += 1;
+          });
+        });
+      });
+      return record;
+    }
+
+    // Ported from computeH2HStandings() in utils/standings.js
+    function computeH2HStandings(teamNames, schedule) {
+      const nameSet = {};
+      teamNames.forEach(function (t) { nameSet[t] = true; });
+      const record = {};
+      teamNames.forEach(function (t) { record[t] = { wins: 0, losses: 0 }; });
+      (schedule || []).forEach(function (week) {
+        (week.matches || []).forEach(function (m) {
+          if (m.status !== 'completed' || !m.winner) return;
+          if (!nameSet[m.home] || !nameSet[m.away]) return;
+          if (m.winner === m.home) { record[m.home].wins += 1; record[m.away].losses += 1; }
+          else if (m.winner === m.away) { record[m.away].wins += 1; record[m.home].losses += 1; }
+        });
+      });
+      return record;
+    }
+
+    // Ported from applyTiebreakers() in utils/standings.js: sorts a group
+    // of teams with identical W/L by 1) head-to-head among the group, 2)
+    // avg_damage (higher wins, null loses), 3) alphabetical.
+    function applyTiebreakers(tiedGroup, schedule) {
+      if (tiedGroup.length <= 1) return tiedGroup;
+      const names = tiedGroup.map(function (t) { return t.team; });
+      const h2h = computeH2HStandings(names, schedule);
+      const copy = tiedGroup.slice();
+      copy.sort(function (a, b) {
+        const ah = h2h[a.team];
+        const bh = h2h[b.team];
+        if (ah.wins !== bh.wins) return bh.wins - ah.wins;
+        if (ah.losses !== bh.losses) return ah.losses - bh.losses;
+        const ad = a.avg_damage != null ? a.avg_damage : null;
+        const bd = b.avg_damage != null ? b.avg_damage : null;
+        if (ad !== null && bd === null) return -1;
+        if (ad === null && bd !== null) return 1;
+        if (ad !== null && bd !== null && ad !== bd) return bd - ad;
+        return String(a.team).localeCompare(String(b.team));
+      });
+      return copy;
+    }
+
+    // Ported from sortTeamsWithTiebreakers() in utils/standings.js
+    function sortTeamsWithTiebreakers(teams, schedule) {
+      const sorted = teams.slice().sort(function (a, b) { return (b.wins - a.wins) || (a.losses - b.losses); });
+      const result = [];
+      let i = 0;
+      while (i < sorted.length) {
+        let j = i + 1;
+        while (j < sorted.length && sorted[j].wins === sorted[i].wins && sorted[j].losses === sorted[i].losses) j++;
+        result.push.apply(result, applyTiebreakers(sorted.slice(i, j), schedule));
+        i = j;
+      }
+      return result;
+    }
+
+    // Mirrors the sortByRecord() closure inside playoffSeeds in
+    // SeasonPage.jsx: merge in win/loss record, then tiebreaker-sort.
+    function sortByRecord(teamObjs, standings, schedule) {
+      const withRec = teamObjs.map(function (t) {
+        const rec = standings[t.team] || { wins: 0, losses: 0 };
+        return Object.assign({}, t, rec);
+      });
+      return sortTeamsWithTiebreakers(withRec, schedule);
+    }
+
+    // Mirrors the playoffSeeds computation in SeasonPage.jsx (division
+    // winners seeded 1..N by record, then wildcards seeded N+1..).
+    function computeSeedings(kais, schedule) {
+      const standings = computeStandingsFromSchedule(schedule);
+      const divWinners = [];
+      let wildcards = [];
+      (kais || []).forEach(function (kai) {
+        const sorted = sortByRecord(kai.teams || [], standings, schedule);
+        if (!sorted.length) return;
+        divWinners.push(sorted[0]);
+        wildcards = wildcards.concat(sorted.slice(1));
+      });
+      const seededDivWinners = sortByRecord(divWinners, standings, schedule);
+      const seededWildcards = sortByRecord(wildcards, standings, schedule);
+      return seededDivWinners.concat(seededWildcards).map(function (t) { return t.team; });
+    }
+
+    // Mirrors seedOrder() in SeasonPage.jsx exactly.
+    function seedOrder(size) {
+      if (size <= 1) return [1];
+      const prev = seedOrder(size / 2);
+      const out = [];
+      prev.forEach(function (s) { out.push(s); out.push(size + 1 - s); });
+      return out;
+    }
+
+    // Mirrors deriveRounds() in SeasonPage.jsx, but also tags each match
+    // with entryNumber = its 1-based position in the CMS "Matches" list
+    // for that round, so you can match what you see here to what you're
+    // editing.
+    function deriveRoundsForPreview(rawRounds, seedings) {
+      if (!rawRounds || !rawRounds.length || !seedings || !seedings.length) return rawRounds || [];
+      const n = seedings.length;
+      const wcCount = ((rawRounds[0] && rawRounds[0].matches) || []).length;
+      const byeCount = n - wcCount * 2;
+      const postWcCount = byeCount + wcCount;
+
+      if (byeCount < 0 || rawRounds.length < 2) return rawRounds; // mismatched data — bail safely
+
+      const order = seedOrder(postWcCount);
+      const wcDisplayOrder = order.filter(function (v) { return v > byeCount; }).map(function (v) { return v - byeCount - 1; });
+      const qfDisplayOrder = order.filter(function (v) { return v <= byeCount; }).map(function (v) { return v - 1; });
+
+      const wcMatches = wcDisplayOrder.map(function (origMi) {
+        const m = rawRounds[0].matches[origMi] || {};
+        let team_a = m.team_a || null;
+        let team_b = m.team_b || null;
+        let seed_a = m.seed_a != null ? m.seed_a : null;
+        let seed_b = m.seed_b != null ? m.seed_b : null;
+        const aIdx = byeCount + origMi;
+        const bIdx = n - 1 - origMi;
+        if (!team_a) { team_a = seedings[aIdx] || null; seed_a = aIdx + 1; }
+        if (!team_b) { team_b = seedings[bIdx] || null; seed_b = bIdx + 1; }
+        return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: origMi + 1 });
+      });
+      const wcWinners = wcMatches.map(function (m) { return m.winner || null; });
+
+      const qfMatches = qfDisplayOrder.map(function (origMi, dispRow) {
+        const m = (rawRounds[1] && rawRounds[1].matches[origMi]) || {};
+        let team_a = m.team_a || null;
+        let team_b = m.team_b || null;
+        let seed_a = m.seed_a != null ? m.seed_a : (origMi + 1);
+        let seed_b = m.seed_b != null ? m.seed_b : null;
+        if (!team_a) team_a = seedings[origMi] || null;
+        const sourceB = dispRow;
+        if (!team_b) {
+          team_b = wcWinners[sourceB] || null;
+          if (team_b) seed_b = (seedings.indexOf(team_b) + 1) || null;
+        }
+        return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: origMi + 1 });
+      });
+      const qfWinners = qfMatches.map(function (m) { return m.winner || null; });
+
+      const rounds = [
+        Object.assign({}, rawRounds[0], { matches: wcMatches }),
+        Object.assign({}, rawRounds[1], { matches: qfMatches }),
+      ];
+
+      let prevWinners = qfWinners;
+      for (let ri = 2; ri < rawRounds.length; ri++) {
+        const matches = ((rawRounds[ri] && rawRounds[ri].matches) || []).map(function (m, mi) {
+          let team_a = m.team_a || null;
+          let team_b = m.team_b || null;
+          let seed_a = m.seed_a != null ? m.seed_a : null;
+          let seed_b = m.seed_b != null ? m.seed_b : null;
+          const sourceA = mi * 2;
+          const sourceB = mi * 2 + 1;
+          if (!team_a) {
+            team_a = prevWinners[sourceA] || null;
+            if (team_a) seed_a = (seedings.indexOf(team_a) + 1) || null;
+          }
+          if (!team_b) {
+            team_b = prevWinners[sourceB] || null;
+            if (team_b) seed_b = (seedings.indexOf(team_b) + 1) || null;
+          }
+          return Object.assign({}, m, { team_a: team_a, team_b: team_b, seed_a: seed_a, seed_b: seed_b, entryNumber: mi + 1 });
+        });
+        rounds.push(Object.assign({}, rawRounds[ri], { matches: matches }));
+        prevWinners = matches.map(function (m) { return m.winner || null; });
+      }
+
+      return rounds;
+    }
+
+    function playoffTeamLabel(team, seed, won) {
+      return h('span', {},
+        h('span', { style: won ? { color: '#16a34a', fontWeight: 700 } : (!team ? { color: '#a8a29e' } : {}) }, team || 'TBD'),
+        seed != null ? h('span', { style: { fontSize: '11px', color: '#a8a29e' } }, ' (#' + seed + ')') : null
+      );
+    }
+
+    function playoffMatchRow(match, key) {
+      const isCompleted = match.status === 'completed';
+      const aWon = isCompleted && match.winner && match.winner === match.team_a;
+      const bWon = isCompleted && match.winner && match.winner === match.team_b;
+      const hasScore = match.score_a != null && match.score_b != null;
+      return h('div', {
+        key: key,
+        style: {
+          display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
+          border: '1px solid #e7e5e4', borderRadius: '8px', marginBottom: '6px', backgroundColor: '#fff'
+        }
+      },
+        h('span', {
+          style: {
+            fontSize: '11px', fontWeight: 700, color: 'white', backgroundColor: '#8b5cf6',
+            borderRadius: '999px', padding: '2px 8px', flexShrink: 0, whiteSpace: 'nowrap'
+          }
+        }, 'Entry ' + match.entryNumber),
+        h('div', { style: { fontSize: '14px', flex: 1 } },
+          playoffTeamLabel(match.team_a, match.seed_a, aWon),
+          '  vs  ',
+          playoffTeamLabel(match.team_b, match.seed_b, bWon)
+        ),
+        hasScore ? h('span', { style: { fontSize: '12px', color: '#78716c', flexShrink: 0 } }, match.score_a + ' - ' + match.score_b) : null,
+        h('span', {
+          style: {
+            fontSize: '11px', padding: '2px 8px', borderRadius: '999px', flexShrink: 0, whiteSpace: 'nowrap',
+            backgroundColor: '#fef3c7', color: '#92400e'
+          }
+        }, match.status || 'upcoming')
+      );
+    }
+
+    // Renders the full Playoffs section (seeding + bracket), or null if
+    // there's no playoffs data yet.
+    function renderPlayoffsSection(playoffs, kais, schedule) {
+      if (!playoffs) return null;
+      const rawRounds = playoffs.rounds || [];
+      if (!rawRounds.length) return null;
+
+      const manualSeedings = (playoffs.seedings || [])
+        .map(function (s) { return (s && s.team) ? s.team : null; })
+        .filter(Boolean);
+      const seedings = manualSeedings.length ? manualSeedings : computeSeedings(kais, schedule);
+      const derivedRounds = deriveRoundsForPreview(rawRounds, seedings);
+
+      return h('div', { style: { marginTop: '24px' } },
+        h('h2', { style: { fontSize: '16px', marginBottom: '8px' } }, '🏆 Playoffs'),
+        h('p', { style: { fontSize: '12px', color: '#78716c', fontStyle: 'italic', marginBottom: '12px', lineHeight: 1.5 } },
+          'Team names are computed live from seeding + the site\'s bracket pairing rules (or from the manual Seedings list, if filled in). "Entry N" is that match\'s position in the Matches list for that round in the form.'
+        ),
+        seedings.length ? h('div', { style: { marginBottom: '16px' } },
+          h('div', { style: { fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#57534e', marginBottom: '6px' } },
+            'Computed Seeding' + (manualSeedings.length ? ' (manual)' : ' (from standings)')
+          ),
+          h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px' } },
+            seedings.map(function (team, i) {
+              return h('span', {
+                key: i,
+                style: { fontSize: '12px', padding: '4px 8px', borderRadius: '6px', backgroundColor: '#f5f5f4', border: '1px solid #e7e5e4' }
+              }, '#' + (i + 1) + ' ' + (team || '—'));
+            })
+          )
+        ) : h('div', { style: { fontSize: '13px', color: '#a8a29e', marginBottom: '16px' } },
+          'No seedings yet — add teams/records to your divisions or a manual Seedings list to resolve team names.'
+        ),
+        derivedRounds.map(function (round, ri) {
+          return h('div', { key: ri, style: { marginBottom: '18px' } },
+            h('div', { style: { fontSize: '13px', fontWeight: 700, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '6px' } },
+              round.round || ('Round ' + (ri + 1))
+            ),
+            (round.matches || []).map(function (match, mi) { return playoffMatchRow(match, mi); })
+          );
+        })
+      );
+    }
+
     // --- Teams Preview ---
     const TeamsPreview = CMS.createClass({
       render: function () {
@@ -89,6 +366,8 @@
         const status = entry.getIn(['data', 'status']) || '';
         const standings = entry.getIn(['data', 'standings']);
         const schedule = entry.getIn(['data', 'schedule']);
+        const rawData = entry.getIn(['data']);
+        const plainData = rawData && rawData.toJS ? rawData.toJS() : {};
 
         return CMS.h('div', { style: { fontFamily: 'sans-serif', padding: '20px', maxWidth: '800px' } },
           CMS.h('h1', { style: { borderBottom: '3px solid #22c55e', paddingBottom: '10px' } },
@@ -173,7 +452,10 @@
                 }) : null
               );
             })
-          ) : null
+          ) : null,
+
+          // Playoffs (seeding + bracket, teams resolved live)
+          renderPlayoffsSection(plainData.playoffs, plainData.kais, plainData.schedule)
         );
       }
     });
