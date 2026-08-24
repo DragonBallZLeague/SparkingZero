@@ -675,23 +675,23 @@ playoffs:
     - round: Wild Card
       matches:
         - status: upcoming
-          lineup_file_week1: s0_po1_m1.yaml
-          lineup_file_week2:
-          score_a: 1
-          score_b: 0
-        - status: upcoming
           lineup_file_week1: s0_po1_m2.yaml
-          lineup_file_week2:
-          score_a: 0
-          score_b: 1
-        - status: upcoming
-          lineup_file_week1: s0_po1_m3.yaml
-          lineup_file_week2:
+          lineup_file_week2: null
           score_a: 1
           score_b: 0
         - status: upcoming
           lineup_file_week1: s0_po1_m4.yaml
-          lineup_file_week2:
+          lineup_file_week2: null
+          score_a: 0
+          score_b: 1
+        - status: upcoming
+          lineup_file_week1: s0_po1_m3.yaml
+          lineup_file_week2: null
+          score_a: 1
+          score_b: 0
+        - status: upcoming
+          lineup_file_week1: s0_po1_m1.yaml
+          lineup_file_week2: null
           score_b: 1
           score_a: 0
     - round: Quarterfinals
