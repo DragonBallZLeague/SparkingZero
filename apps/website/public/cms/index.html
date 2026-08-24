@@ -368,6 +368,29 @@
     // --- Season Preview ---
     const SeasonPreview = CMS.createClass({
       render: function () {
+        try {
+          return this.renderSeason();
+        } catch (err) {
+          // If anything above throws, Decap silently swallows it and falls
+          // back to the generic default preview (plain "Label: value"
+          // dump) — which is confusing because it looks like the custom
+          // preview was never written, rather than "it crashed." Surface
+          // the actual error here instead so it's obvious what broke.
+          return CMS.h('div', {
+            style: {
+              fontFamily: 'monospace', padding: '20px', backgroundColor: '#fef2f2',
+              border: '2px solid #ef4444', borderRadius: '8px', color: '#991b1b',
+              whiteSpace: 'pre-wrap', fontSize: '13px'
+            }
+          },
+            CMS.h('strong', {}, '⚠️ SeasonPreview crashed: '),
+            String(err && err.message ? err.message : err),
+            '\n\n',
+            String(err && err.stack ? err.stack : '')
+          );
+        }
+      },
+      renderSeason: function () {
         const entry = this.props.entry;
         const season = entry.getIn(['data', 'season']) || '';
         const status = entry.getIn(['data', 'status']) || '';
