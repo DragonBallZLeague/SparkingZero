@@ -5638,16 +5638,14 @@ export default function App() {
         }`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center justify-center gap-3 flex-1">
-              <Swords className={`w-12 h-12 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
               <div className="text-center">
                 <h1 className={`text-4xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                  Dragon Ball Sparking Zero
+                  Dragon Ball Z League 
                 </h1>
                 <h2 className={`text-xl ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Match Analyzer
+                  Analyzer
                 </h2>
               </div>
-              <Trophy className={`w-12 h-12 ${darkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
             </div>
             
             {/* Dark Mode Toggle */}
@@ -6215,9 +6213,6 @@ export default function App() {
                 <TrendingUp className={`w-8 h-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                 <div>
                   <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Aggregated Character Performance</h2>
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Data from {mode === 'reference' ? 1 : manualFiles.filter(f => !f.error).length} battle file{(mode === 'reference' ? 1 : manualFiles.filter(f => !f.error).length) !== 1 ? 's' : ''}
-                  </p>
                 </div>
               </div>
               <button 

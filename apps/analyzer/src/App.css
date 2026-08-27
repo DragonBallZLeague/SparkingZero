@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 /* Enhanced Dragon Ball Sparking Zero Analyzer */
 
 /* Smooth transitions for all interactive elements */
@@ -1903,3 +1905,159 @@ table {
 .bg-orange-100 { background-color: #ffedd5; }
 .bg-red-900\/40 { background-color: rgba(127, 29, 29, 0.4); }
 .bg-green-900\/40 { background-color: rgba(20, 83, 45, 0.4); }
+/* =================================================================== */
+/* MODERN REDESIGN LAYER (appended)                                    */
+/* Every rule below overrides an existing utility class purely by      */
+/* cascade order (same selector specificity, declared later = wins).   */
+/* Nothing above this line was changed, no class names were renamed,   */
+/* and no component logic was touched -- this is a pure visual re-skin.*/
+/* =================================================================== */
+
+:root {
+  --surface-1: #f8fafc;
+  --surface-border: rgba(15, 23, 42, 0.07);
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
+}
+
+body {
+  font-family: 'Inter', -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* ---------- Fluid, full-width page shell (fixes empty side gutters) ---------- */
+.max-w-7xl {
+  max-width: min(1760px, 97vw);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.min-h-screen.p-4 {
+  padding: clamp(0.75rem, 1.1vw + 0.55rem, 1.75rem);
+}
+
+/* Calmer, more modern background gradient */
+.bg-gradient-to-br {
+  background:
+    radial-gradient(1100px 550px at 8% -12%, rgba(255, 255, 255, 0.16), transparent 60%),
+    linear-gradient(135deg, #fb923c 0%, #ef4444 45%, #7c3aed 100%);
+}
+
+/* ---------- Softer, layered elevation instead of heavy flat drop-shadows ---------- */
+.shadow-lg  { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 24px -12px rgba(15, 23, 42, 0.14); }
+.shadow-xl  { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 32px -14px rgba(15, 23, 42, 0.16); }
+.shadow-2xl { box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 24px 48px -16px rgba(15, 23, 42, 0.20); }
+
+/* ---------- Rounder, calmer corners across every card/tile ---------- */
+.rounded-2xl { border-radius: var(--radius-xl); }
+.rounded-xl  { border-radius: var(--radius-lg); }
+.rounded-lg  { border-radius: var(--radius-md); }
+
+/* ---------- Primary cards: trade heavy shadow-only styling for a hairline border + softer shadow ---------- */
+.bg-white.rounded-2xl,
+.bg-white.rounded-xl {
+  border: 1px solid var(--surface-border);
+}
+.bg-gray-800.rounded-2xl,
+.bg-gray-800.rounded-xl {
+  background-color: #1e2434;
+}
+
+/* ---------- Flatten "boxes-in-boxes": nested tiles get quieter fills and softer hairlines ---------- */
+/* NOTE: these stay fully opaque -- bg-gray-700 in particular is also used by */
+/* sticky/floating panels (e.g. the Filters & Sorting bar), and any alpha     */
+/* transparency there lets scrolled content show through underneath it.      */
+.bg-gray-50 { background-color: var(--surface-1); }
+.bg-gray-700 { background-color: #2b3245; }
+.border-gray-200 { border-color: rgba(15, 23, 42, 0.07); }
+.border-gray-700 { border-color: rgba(148, 163, 184, 0.18); }
+.border-gray-300 { border-color: rgba(15, 23, 42, 0.12); }
+
+/* Tighter letter-spacing reads more modern at large display sizes */
+.text-4xl { letter-spacing: -0.02em; }
+.text-3xl { letter-spacing: -0.015em; }
+.text-2xl { letter-spacing: -0.01em; }
+
+/* Header row: allow the title block and the dark-mode toggle to wrap gracefully */
+.app-header-row {
+  flex-wrap: wrap;
+  row-gap: 0.75rem;
+}
+.app-header-toggle {
+  flex-shrink: 0;
+}
+
+/* =================================================================== */
+/* Mobile-first responsive pass                                        */
+/* =================================================================== */
+@media (max-width: 640px) {
+  .min-h-screen.p-4 { padding: 0.6rem; }
+  .max-w-7xl { max-width: 100%; }
+
+  /* Scale the display type down so headers don't dominate a phone screen */
+  .text-4xl { font-size: 1.5rem;  line-height: 1.9rem; }
+  .text-3xl { font-size: 1.35rem; line-height: 1.75rem; }
+  .text-2xl { font-size: 1.15rem; line-height: 1.5rem; }
+  .text-xl  { font-size: 1.05rem; line-height: 1.4rem; }
+
+  /* Trim padding density so content isn't squeezed on small screens */
+  .p-6 { padding: 1rem; }
+  .p-4 { padding: 0.8rem; }
+  .gap-6 { gap: 0.75rem; }
+  .gap-4 { gap: 0.6rem; }
+  .mb-6 { margin-bottom: 1rem; }
+
+  /* Keep the header title centered and the toggle full-width-friendly when wrapped */
+  .app-header-row { justify-content: center; text-align: center; }
+
+  /* Never let a raw multi-column grid get cramped on a phone */
+  .grid-cols-3,
+  .grid-cols-4,
+  .grid-cols-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-9 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 400px) {
+  .grid-cols-3,
+  .grid-cols-4,
+  .grid-cols-5,
+  .grid-cols-9 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* =================================================================== */
+/* FINAL OVERRIDE -- deliberately the very last rule in the file so    */
+/* nothing above it (or any duplicated/merged rule) can win the        */
+/* cascade. Targets a dedicated className (not a fragile bracket       */
+/* selector) added directly on the sticky Filters & Sorting panel.     */
+/* This panel sits at position:sticky/top:0 with a high z-index above  */
+/* scrolling content, so it must be fully opaque or rows scrolling     */
+/* underneath will visually bleed through it.                          */
+/* =================================================================== */
+.filters-sort-panel {
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 12px 28px -10px rgba(15, 23, 42, 0.35) !important;
+  isolation: isolate;
+}
+/* Dark mode renders this panel with bg-gray-700; light mode with bg-gray-50 -- pin each opaque */
+.filters-sort-panel.bg-gray-700 { background-color: #1c2131 !important; }
+.filters-sort-panel.bg-gray-50  { background-color: #ffffff !important; }
+
+/* =================================================================== */
+/* JSX REWORK — small utilities needed by the modernized components    */
+/* =================================================================== */
+.p-3\.5 { padding: 0.875rem; }
+.gap-2\.5 { gap: 0.625rem; }
+.leading-none { line-height: 1; }
+
+/* Shared "stat tile" look used by StatBar / BattleTimeVariance / StatGroup, */
+/* replacing the old flat filled box with a quieter, bordered surface.      */
+.stat-tile {
+  background-color: var(--surface-1);
+  border: 1px solid var(--surface-border);
+}
+.dark-stat-tile {
+  background-color: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
