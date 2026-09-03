@@ -23,7 +23,6 @@ teams:
     manager: TBD
     icon: /SparkingZero/images/budokailogo.png
     master_list:
-      - Goku (Z - Early)
       - Goku (Z - End)
       - Goku (Super)
       - Goku (Teen)
@@ -32,7 +31,6 @@ teams:
       - Gohan (Teen)
       - Gohan (Adult)
       - Ultimate Gohan
-      - Piccolo
       - Krillin
       - Yamcha
       - Tien
@@ -63,6 +61,18 @@ teams:
       - Shallot
       - Android 18
       - Spopovich
+      - Goku (World Martial Arts Tournament)
+      - Tien (World Martial Arts Tournament)
+      - Ma Junior
+      - Chi Chi
+      - Grandpa Gohan
+      - Nam
+      - Mercenary Tao
+      - Spike the Devil Man
+      - Uub (Kid)
+      - Supreme Kai
+      - Mighty Mask
+      - Pikkon
     description: Characters who participated in a tournament.
   - color: "#fff5ac"
     restrictions: |-
@@ -554,9 +564,9 @@ teams:
     description: Characters of a very small stature.
   - color: "#017e28"
     restrictions: |-
+      *  Cell must start in first form
       * Forms beyond Super Saiyan are not allowed
-      * Gohan Beast is a banned starting form
-      * Orange Piccolo is a banned starting form
+      * Kale cannot start in berserk form
     roster:
       - character: Gohan (Teen) Super Saiyan
         benched: []
