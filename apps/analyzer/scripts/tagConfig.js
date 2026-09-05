@@ -25,7 +25,16 @@ const tagConfig = {
     type: 'string',
     allowed: [
       '0',
-      // Add new season numbers here as they begin: '1', '2', etc.
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10'
     ]
   },
   seasonPhase: {

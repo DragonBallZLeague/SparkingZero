@@ -208,11 +208,16 @@ function processMatchFile(filePath, folderTeam, matchType) {
   tags.difficulty = getDifficultyFromContent(content);
   tags.matchSize = getMatchSizeFromContent(content);
 
-  // Validate scalar tags against allowed values
-  for (const key of ['seasonNumber', 'seasonPhase', 'matchType', 'difficulty', 'matchSize']) {
+  // Validate scalar tags against allowed values.
+  // seasonNumber is excluded: it's parsed directly from the filename via regex (always a
+  // digit string or null), so a hand-maintained allowlist would need updating every season.
+  for (const key of ['seasonPhase', 'matchType', 'difficulty', 'matchSize']) {
     if (tagConfig[key] && Array.isArray(tagConfig[key].allowed) && !tagConfig[key].allowed.includes(tags[key])) {
       tags[key] = null;
     }
+  }
+  if (tags.seasonNumber !== null && !/^\d+$/.test(tags.seasonNumber)) {
+    tags.seasonNumber = null;
   }
   // Validate team array: keep only allowed team names
   if (Array.isArray(tags.team)) {
