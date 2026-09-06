@@ -4,6 +4,7 @@ import { useFloating, offset, flip, shift, size, autoUpdate } from '@floating-ui
 import { Plus, Trash2, Copy, Download, Upload, X, Sparkles, Minus, ClipboardPaste } from "lucide-react";
 import yaml from "js-yaml";
 import { YamlPanel } from "./YamlPanel";
+import { NavBar } from "@szl/ui";
 
 // Helper: find AI id from either display name or id (case-insensitive, trimmed)
 const findAiIdFromValue = (val, aiItems) => {
@@ -1723,30 +1724,23 @@ const MatchBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 p-4 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles className="w-12 h-12 text-orange-400 animate-pulse mx-auto mb-4" />
-          <div className="text-white text-2xl font-bold tracking-wider">Loading data...</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700">
+        <NavBar current="matchbuilder" title="Sparking Zero Match Builder" />
+        <div className="p-4 flex items-center justify-center">
+          <div className="text-center">
+            <Sparkles className="w-12 h-12 text-orange-400 animate-pulse mx-auto mb-4" />
+            <div className="text-white text-2xl font-bold tracking-wider">Loading data...</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700">
+      <NavBar current="matchbuilder" title="Match Builder" />
+      <div className="p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 shadow-xl mb-6 border-2 border-orange-400 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-400/10"></div>
-          <div className="relative z-10">
-            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-300 via-orange-400 to-orange-300 text-center mb-1 tracking-tight drop-shadow-lg">
-              DRAGON BALL Z LEAGUE
-            </h1>
-            <p className="text-xl font-bold text-blue-300 text-center tracking-widest drop-shadow">
-              SPARKING! ZERO MATCH BUILDER
-            </p>
-          </div>
-        </div>
-
         {error && (
           <div className={`bg-red-600 border-2 border-red-700 text-white px-4 py-3 rounded-xl mb-4 font-semibold shadow-lg transition-opacity duration-700 ${errorFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             ⚠️ {error}
@@ -2170,6 +2164,7 @@ const MatchBuilder = () => {
             onClose={closeYamlPanel}
           />
         )}
+      </div>
       </div>
     </div>
   );

@@ -2,22 +2,27 @@
 
 ## Overview
 
-This document explains the GitHub Pages deployment configuration for the SparkingZero monorepo application. The repository now contains multiple apps under the `apps/` directory:
-- `apps/matchbuilder` - Main SZ Match Builder application
-- `apps/analyzer` - Battle Result Analyzer application
+This document explains the GitHub Pages deployment configuration for the SparkingZero monorepo. The repository contains multiple apps under `apps/`, all published together to one GitHub Pages site:
+
+- `apps/website` — Core public site, built to the site **root** (`/`)
+- `apps/analyzer` — Battle Result Analyzer (`/analyzer/`)
+- `apps/matchbuilder` — Match Builder (`/matchbuilder/`)
+- `apps/calculator` — Character Calculator (`/calculator/`)
+- `apps/admin` — Admin Dashboard (`/admin/`)
+- `apps/submit` — Static submission page, copied as-is (`/submit/`)
 
 ## Project Structure
 
-This is now a monorepo with workspaces configured in the root `package.json`. Each app has its own build configuration while being deployed together to GitHub Pages.
+Match Builder, Analyzer, and Calculator are npm workspaces defined in the root `package.json`. Website and Admin have their own independent `package.json`/`node_modules` and are installed/built separately in the workflow.
 
 ## Configuration Files
 
 ### 1. `.github/workflows/deploy.yml`
-The GitHub Actions workflow that automates the build and deployment process for both applications.
+The GitHub Actions workflow that builds every app and deploys them together to GitHub Pages.
 
 **Triggers:**
 - Push to `main` branch
-- Push to `dev-branch` branch  
+- Push to `dev-branch` branch
 - Manual trigger via `workflow_dispatch`
 
 **Permissions:**
@@ -25,58 +30,43 @@ The GitHub Actions workflow that automates the build and deployment process for 
 - `pages: write` - Write to GitHub Pages
 - `id-token: write` - Required for GitHub Pages deployment
 
-**Jobs:**
-1. **build** - Builds both applications
-   - Checks out the code
-   - Sets up Node.js 20
-   - Installs dependencies for the main app with `npm ci` in `apps/matchbuilder`
-   - Builds the main app with output to `../../dist/matchbuilder`
-   - Installs dependencies for the analyzer app in `apps/analyzer`
-   - Builds the analyzer app with output to `../../dist/analyzer`
-   - Uploads the `dist` folder as a Pages artifact
+**Build job steps (in order):**
+1. Checkout + set up Node 20
+2. Install deps and build **Match Builder** → `dist/matchbuilder`
+3. Install deps for **Analyzer**, run `scripts/fix-json-encoding.js` on `BR_Data`, build → `dist/analyzer`
+4. Install deps and build **Admin** (with `VITE_ADMIN_CLIENT_ID` secret, base `/SparkingZero/admin/`) → `dist/admin`
+5. Install deps and build **Calculator** → `dist/calculator`
+6. Copy the static **Submit** app as-is → `dist/submit`
+7. Sync `referencedata/transformations.json` into `apps/website/public/content/` and `apps/matchbuilder/public/`
+8. Install deps and build **Website** directly into `dist/` (root, `--emptyOutDir=false` so earlier app builds aren't wiped)
+9. Copy `dist/index.html` → `dist/404.html` so the Website's client-side (React Router) routes survive a hard refresh
+10. Upload `dist/` as the Pages artifact
 
-2. **deploy** - Deploys to GitHub Pages
-   - Depends on the build job
-   - Deploys the artifact to GitHub Pages
-   - Sets the deployment URL in the environment
+**deploy job:**
+- Depends on `build`
+- Deploys the uploaded artifact to GitHub Pages
 
-### 2. `apps/matchbuilder/vite.config.js`
-Configures the base path for the main application.
+### 2. Per-app `vite.config.js` `base` paths
+Each tool app sets its own `base` so assets resolve correctly under its subpath:
 
-```javascript
-base: '/SparkingZero/matchbuilder/'
-```
-
-This ensures all assets are loaded correctly when the app is served from the `/SparkingZero/matchbuilder/` subdirectory on GitHub Pages.
+- `apps/matchbuilder/vite.config.js` → `base: '/SparkingZero/matchbuilder/'`
+- `apps/analyzer/vite.config.js` → `base: '/SparkingZero/analyzer/'`
+- `apps/calculator/vite.config.js` → `base: '/SparkingZero/calculator/'`
+- `apps/admin` → base is passed at build time via `--base=/SparkingZero/admin/` in the workflow
+- `apps/website/vite.config.js` → `base: '/SparkingZero/'` (site root)
 
 ### 3. Root `package.json`
-Contains the workspace configuration and monorepo build scripts.
-
-**Workspaces:**
-- `apps/matchbuilder`
-- `apps/analyzer`
+Contains the workspace configuration (Match Builder, Analyzer, Calculator) and monorepo build scripts.
 
 **Key Scripts:**
-- `build` - Builds the main matchbuilder app
-- `build:analyzer` - Builds the analyzer app
-- `build:all` - Builds both applications
-- `dev` - Runs the main app in development mode
-- `dev:analyzer` - Runs the analyzer app in development mode
-- `predeploy` - Runs before deploy (calls build:all)
-- `deploy` - Deploys to gh-pages (for manual deployment)
+- `build` - Builds Match Builder
+- `build:analyzer` - Builds Analyzer
+- `build:calculator` - Builds Calculator
+- `build:all` - Builds Match Builder + Analyzer + Calculator
+- `dev` / `dev:analyzer` / `dev:calculator` - Run each app's dev server
+- `predeploy` / `deploy` - Manual `gh-pages` publish helper (CI uses the Actions workflow above, not this script)
 
-### 4. `apps/matchbuilder/package.json`
-Contains the main app dependencies and build scripts.
-
-**Key Scripts:**
-- `build` - Builds the application using Vite
-- `dev` - Runs development server
-- `preview` - Preview the built app
-
-**Key Dependencies:**
-- `vite` - Build tool
-- React and related dependencies
-- Tailwind CSS and related tools
+Website and Admin are **not** part of this workspace — build/dev them from within `apps/website/` and `apps/admin/` respectively.
 
 ## GitHub Repository Settings
 
@@ -91,11 +81,14 @@ To complete the deployment setup, ensure the following settings are configured i
 ### Automatic Deployment
 1. Push changes to `main` or `dev-branch` branch
 2. GitHub Actions workflow automatically triggers
-3. Both applications are built
-4. Built files are deployed to GitHub Pages
-   - Landing page: `https://dragonballzleague.github.io/SparkingZero/`
-   - Main app: `https://dragonballzleague.github.io/SparkingZero/matchbuilder/`
-   - Analyzer app: `https://dragonballzleague.github.io/SparkingZero/analyzer/`
+3. All apps are built as described above
+4. Built files are deployed to GitHub Pages:
+   - Website (root): `https://dragonballzleague.github.io/SparkingZero/`
+   - Analyzer: `https://dragonballzleague.github.io/SparkingZero/analyzer/`
+   - Match Builder: `https://dragonballzleague.github.io/SparkingZero/matchbuilder/`
+   - Character Calculator: `https://dragonballzleague.github.io/SparkingZero/calculator/`
+   - Admin Dashboard: `https://dragonballzleague.github.io/SparkingZero/admin/`
+   - Submit: `https://dragonballzleague.github.io/SparkingZero/submit/`
 
 ### Manual Deployment via GitHub UI
 1. Go to the **Actions** tab in the repository
@@ -105,65 +98,72 @@ To complete the deployment setup, ensure the following settings are configured i
 5. Click **Run workflow** button
 
 ### Local Development
-To work with the main matchbuilder app:
 
 ```bash
-npm install  # Install workspace dependencies
-npm run dev  # Start main app development server
+npm install              # Match Builder / Analyzer / Calculator workspace deps
+npm run dev               # Match Builder dev server
+npm run dev:analyzer       # Analyzer dev server
+npm run dev:calculator     # Calculator dev server
 ```
-
-To work with the analyzer app:
 
 ```bash
-npm run dev:analyzer  # Start analyzer development server
+cd apps/website && npm install && npm run dev   # Website dev server
+cd apps/admin && npm install && npm run dev      # Admin dev server (needs VITE_ADMIN_CLIENT_ID, see .env.example)
 ```
 
-### Local Testing
-To test the build locally:
+### Local Build Testing
 
 ```bash
 npm install
-npm run build:all  # Build both apps
+npm run build:all        # Match Builder + Analyzer + Calculator into dist/
+cd apps/website && npm run build -- --outDir=../../dist --emptyOutDir=false
+cd apps/admin && npm run build -- --outDir=../../dist/admin --base=/SparkingZero/admin/
+mkdir -p dist/submit && cp -r apps/submit/* dist/submit/
 ```
 
-You can then serve the `dist` directory to test how both apps will work when deployed.
+You can then serve the `dist` directory to test how all the apps behave together when deployed.
 
 ## Troubleshooting
 
 ### Common Issues
 
 **Issue: Assets not loading (404 errors)**
-- Verify `base: '/SparkingZero/matchbuilder/'` is set in `apps/matchbuilder/vite.config.js`
-- Check that the repository name matches the base path
-- For the analyzer app, ensure the build output is correctly set to `../../dist/analyzer`
+- Verify the affected app's `base` matches its `dist/<app>` subfolder (see the `vite.config.js` list above)
+- Check that the repository name (`SparkingZero`) matches the base path prefix
+- For Analyzer, ensure the build output is correctly set to `../../dist/analyzer`
 
 **Issue: Workflow fails on build**
-- Check Node.js version compatibility (now using Node 20)
-- Ensure all dependencies are in respective app `package.json` files
-- Review build logs in Actions tab
-- Verify working directory paths in workflow are correct
+- Check Node.js version compatibility (workflow uses Node 20)
+- Ensure all dependencies are declared in the relevant app's `package.json`
+- Review build logs in the Actions tab
+- Verify `working-directory` paths in the workflow are correct for the step that failed
 
-**Issue: One app works but the other doesn't**
-- Check that both build steps completed successfully
-- Verify output directories are correct (`../../dist/matchbuilder` for main app, `../../dist/analyzer` for analyzer)
-- Ensure both apps have their dependencies installed separately
+**Issue: One app works but another doesn't**
+- Check that every build step in `deploy.yml` completed successfully
+- Verify each `--outDir` matches the URL/table above
+- Ensure each app's dependencies were installed in its own step (they are not shared, except the Match Builder/Analyzer/Calculator workspace)
+
+**Issue: Website routes 404 on refresh (e.g. `/teams`)**
+- Confirm the "Create 404.html for SPA client-side routing" step ran and `dist/404.html` exists
+- GitHub Pages serves `404.html` for any unmatched path, which lets the Website's React Router take over
+
+**Issue: Admin Dashboard fails to authenticate**
+- Confirm the `VITE_ADMIN_CLIENT_ID` repository secret is set
+- See [docs/ADMIN_DASHBOARD_SETUP.md](docs/ADMIN_DASHBOARD_SETUP.md) for GitHub OAuth App setup
 
 **Issue: Pages not updating**
 - Check if workflow completed successfully
 - Verify GitHub Pages is set to use GitHub Actions
 - Clear browser cache
 
-## Files Modified/Created
-
-1. `.github/workflows/deploy.yml` - Updated for monorepo structure
-2. `package.json` - Updated to workspace configuration
-3. `apps/matchbuilder/` - New location for main app files
-4. `DEPLOYMENT.md` - Updated for monorepo documentation
-
 ## Repository URLs
 
 - **Repository**: https://github.com/DragonBallZLeague/SparkingZero
-- **Landing Page**: https://dragonballzleague.github.io/SparkingZero/
-- **Main App**: https://dragonballzleague.github.io/SparkingZero/matchbuilder/
-- **Analyzer App**: https://dragonballzleague.github.io/SparkingZero/analyzer/
+- **Website (root)**: https://dragonballzleague.github.io/SparkingZero/
+- **Analyzer**: https://dragonballzleague.github.io/SparkingZero/analyzer/
+- **Match Builder**: https://dragonballzleague.github.io/SparkingZero/matchbuilder/
+- **Character Calculator**: https://dragonballzleague.github.io/SparkingZero/calculator/
+- **Admin Dashboard**: https://dragonballzleague.github.io/SparkingZero/admin/
+- **Submit**: https://dragonballzleague.github.io/SparkingZero/submit/
 - **Workflow Runs**: https://github.com/DragonBallZLeague/SparkingZero/actions
+

@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
+import { resolve } from 'path';
 
 // Plugin: serve static HTML tools that live outside the React SPA
 // /admin/ → public/admin/index.html
@@ -32,5 +33,10 @@ function serveStaticToolsPlugin() {
 export default defineConfig({
   plugins: [serveStaticToolsPlugin(), react()],
   base: '/SparkingZero/',
+  resolve: {
+    alias: {
+      '@szl/ui': resolve(__dirname, '../../packages/ui/src'),
+    },
+  },
   assetsInclude: ['**/*.yaml', '**/*.yml'],
 });

@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from 'lucide-react';
+import { APPS } from '@szl/ui';
 
-const toolLinks = [
-  { label: 'Match Analyzer', href: 'https://dragonballzleague.github.io/SparkingZero/analyzer/' },
-  { label: 'Match Builder', href: 'https://dragonballzleague.github.io/SparkingZero/matchbuilder/' },
-  { label: 'Character Calculator', href: 'https://dragonballzleague.github.io/SparkingZero/calculator/' },
-];
+const toolLabels = { analyzer: 'Match Analyzer', matchbuilder: 'Match Builder', calculator: 'Character Calculator' };
+const toolLinks = APPS.filter((app) => app.key !== 'home').map((app) => ({
+  label: toolLabels[app.key] || app.label,
+  href: app.href,
+}));
 
 export default function Navbar({ site, darkMode, setDarkMode }) {
   const [mobileOpen, setMobileOpen] = useState(false);

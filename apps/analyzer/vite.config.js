@@ -5,6 +5,11 @@ import { resolve } from 'path';
 
 export default defineConfig({
   base: '/SparkingZero/analyzer/',
+  resolve: {
+    alias: {
+      '@szl/ui': resolve(__dirname, '../../packages/ui/src'),
+    },
+  },
   server: {
     port: 5173,
     strictPort: true

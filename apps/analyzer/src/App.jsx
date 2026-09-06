@@ -18,6 +18,7 @@ import transformationsData from '../../../referencedata/transformations.json';
 import CapsuleSynergyAnalysis from './components/CapsuleSynergyAnalysis.jsx';
 import AIStrategyAnalysis from './components/ai-strategy/AIStrategyAnalysis.jsx';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
+import { NavBar } from '@szl/ui';
 import { 
   Trophy, 
   Swords, 
@@ -36,8 +37,6 @@ import {
   Star,
   Settings,
   Package,
-  Moon,
-  Sun,
   Table,
   ChevronDown,
   ChevronUp,
@@ -3385,7 +3384,7 @@ function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrategiesMap 
       teams = ["Team 1", "Team 2"];
     }
     
-    if (!teams || !Array.isArray(teams) || teams.length < 2 || !battleWinLose || !characterRecord) {
+    if (!teams || !Array.isArray(teams) || teams.length < 1 || !battleWinLose || !characterRecord) {
       return;
     }
     
@@ -5626,43 +5625,17 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen p-4 transition-colors duration-300 ${
+    <div className={`min-h-screen transition-colors duration-300 ${
       darkMode 
         ? 'bg-gray-900' 
         : 'bg-gradient-to-br from-orange-500 via-red-600 to-purple-700'
     }`}>
+      <NavBar
+        current="analyzer"
+        title="Battle Result Analyzer"
+      />
+      <div className="p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className={`rounded-2xl shadow-2xl p-6 mb-6 ${
-          darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-        }`}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center justify-center gap-3 flex-1">
-              <div className="text-center">
-                <h1 className={`text-4xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                  Dragon Ball Z League 
-                </h1>
-                <h2 className={`text-xl ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Analyzer
-                </h2>
-              </div>
-            </div>
-            
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-3 rounded-xl transition-all duration-300 ${
-                darkMode 
-                  ? 'bg-gray-700 hover:bg-gray-600 text-yellow-400' 
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-              }`}
-              title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {darkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-        
         {/* Mode Selection */}
         <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
           darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
@@ -9673,6 +9646,7 @@ export default function App() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

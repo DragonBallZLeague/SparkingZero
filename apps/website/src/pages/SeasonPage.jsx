@@ -82,6 +82,35 @@ function getLineupWeekFiles(match) {
   return { week1, week2, hasLineup: !!(week1 || week2), hasBothWeeks: !!(week1 && week2) };
 }
 
+// A playoff match can carry up to two video links — one per week of the
+// series. `video_url` is kept as a fallback so existing match data
+// (uploaded before week 2 support existed) keeps working as "week 1".
+function getVideoWeekUrls(match) {
+  const week1 = match?.video_url_week1 || match?.video_url || null;
+  const week2 = match?.video_url_week2 || null;
+  return { week1, week2, hasVideo: !!(week1 || week2), hasBothWeeks: !!(week1 && week2) };
+}
+
+function PlayoffVideoLinks({ week1, week2, darkMode }) {
+  const linkClass = `text-xs flex items-center gap-1 leading-tight ${darkMode ? 'text-orange-400' : 'text-blue-600'}`;
+  return (
+    <div className="flex items-center gap-2">
+      {week1 && (
+        <a href={week1} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          <ExternalLink className="w-3 h-3 flex-shrink-0" />
+          <span>Watch{week2 && <><br />Week 1</>}</span>
+        </a>
+      )}
+      {week2 && (
+        <a href={week2} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          <ExternalLink className="w-3 h-3 flex-shrink-0" />
+          <span>Watch<br />Week 2</span>
+        </a>
+      )}
+    </div>
+  );
+}
+
 function LineupWeekSwitcher({ activeWeek, onSelectWeek, darkMode }) {
   return (
     <div className="flex justify-center mx-3 sm:mx-4 mt-3">
@@ -410,7 +439,7 @@ function PlayoffMatchDetailPanel({
   const teamAWon = isCompleted && match.winner === match.team_a;
   const teamBWon = isCompleted && match.winner === match.team_b;
   const isLineupOpen = !!openLineups[matchKey];
-  const hasVideo = !!(match.video_url);
+  const { week1: videoWeek1, week2: videoWeek2, hasVideo } = getVideoWeekUrls(match);
   const hasScore = match.score_a != null && match.score_b != null;
   const { week1: week1File, week2: week2File, hasLineup, hasBothWeeks } = getLineupWeekFiles(match);
   const activeWeek = lineupWeek[matchKey] || (week1File ? 1 : 2);
@@ -462,10 +491,9 @@ function PlayoffMatchDetailPanel({
                 <span className={teamBWon ? (darkMode ? 'text-green-400' : 'text-green-600') : 'text-gray-400'}>{match.score_b}</span>
               </div>
               {hasVideo && (
-                <a href={match.video_url} target="_blank" rel="noopener noreferrer"
-                  className={`text-xs flex items-center gap-1 mt-0.5 ${darkMode ? 'text-orange-400' : 'text-blue-600'}`}>
-                  <ExternalLink className="w-3 h-3" /> Watch
-                </a>
+                <div className="mt-0.5">
+                  <PlayoffVideoLinks week1={videoWeek1} week2={videoWeek2} darkMode={darkMode} />
+                </div>
               )}
             </div>
           ) : hasScore ? (
@@ -582,7 +610,8 @@ function PlayoffListView({
               const teamAWon = isCompleted && match.winner === match.team_a;
               const teamBWon = isCompleted && match.winner === match.team_b;
               const isLineupOpen = !!openLineups[matchKey];
-              const hasVideo = isCompleted && !!(match.video_url);
+              const { week1: videoWeek1, week2: videoWeek2, hasVideo: hasVideoUrl } = getVideoWeekUrls(match);
+              const hasVideo = isCompleted && hasVideoUrl;
               const hasScore = match.score_a != null && match.score_b != null;
               const { week1: week1File, week2: week2File, hasLineup, hasBothWeeks } = getLineupWeekFiles(match);
               const activeWeek = lineupWeek[matchKey] || (week1File ? 1 : 2);
@@ -623,10 +652,7 @@ function PlayoffListView({
                           <span className={teamBWon ? (darkMode ? 'text-green-400' : 'text-green-600') : 'text-gray-400'}>{match.score_b}</span>
                         </div>
                         {hasVideo && (
-                          <a href={match.video_url} target="_blank" rel="noopener noreferrer"
-                            className={`text-xs flex items-center gap-1 ${darkMode ? 'text-orange-400' : 'text-blue-600'}`}>
-                            <ExternalLink className="w-3 h-3" /> Watch
-                          </a>
+                          <PlayoffVideoLinks week1={videoWeek1} week2={videoWeek2} darkMode={darkMode} />
                         )}
                       </>
                     ) : hasScore ? (

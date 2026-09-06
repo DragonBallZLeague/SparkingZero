@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { ChevronLeft, ChevronRight, GitCompareArrows } from 'lucide-react';
+import { ChevronLeft, ChevronRight, GitCompareArrows, Link2 } from 'lucide-react';
+import { NavBar } from '@szl/ui';
 import CharacterSelector from './components/CharacterSelector.jsx';
 import StatsPanel from './components/StatsPanel.jsx';
 import CapsuleBuilder from './components/CapsuleBuilder.jsx';
@@ -591,45 +592,35 @@ function App() {
 
   return (
     <div className="h-screen bg-sz-dark text-gray-100 flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="bg-sz-panel border-b border-sz-border px-4 py-2.5 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3">
-          {/* Layered title icons: bg + color overlay */}
-          <div className="flex flex-col items-center sm:flex-row sm:items-center sm:-space-x-1">
-            <div className="relative w-24 h-7 sm:h-10">
-              <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body02_bg.png`}    alt="" className="absolute inset-0 w-full h-full object-contain" />
-              <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body02_Color.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
-            </div>
-            <div className="relative w-16 h-7 sm:h-10 -translate-x-2 sm:translate-x-0">
-              <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body03_bg.png`}    alt="" className="absolute inset-0 w-full h-full object-contain" />
-              <img src={`${import.meta.env.BASE_URL}titleicons/T_UI_Logo_Body03_Color.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
-            </div>
-          </div>
-          <h1 className="text-lg font-bold text-white tracking-wide">Character Calculator</h1>
-        </div>
-        <div className="flex gap-2">
-          {selectedCharacter && !compareMode && (
+      <NavBar
+        current="calculator"
+        title="Character Calculator"
+        right={
+          <>
+            {selectedCharacter && !compareMode && (
+              <button
+                onClick={handleCopyLink}
+                className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded bg-sz-border hover:bg-gray-600 text-gray-300 transition-colors active:bg-amber-600 active:text-black"
+              >
+                <Link2 size={15} />
+                <span className="hidden sm:inline">Copy Link</span>
+              </button>
+            )}
             <button
-              onClick={handleCopyLink}
-              className="text-sm px-3 py-1.5 rounded bg-sz-border hover:bg-gray-600 text-gray-300 transition-colors active:bg-amber-600 active:text-black"
+              onClick={() => setCompareMode(m => !m)}
+              className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded transition-colors ${
+                compareMode
+                  ? 'bg-sz-orange text-black font-semibold'
+                  : 'bg-sz-border hover:bg-gray-600 text-gray-300'
+              }`}
+              title={compareMode ? 'Exit Compare Mode' : 'Compare Characters'}
             >
-              Copy Link
+              <GitCompareArrows size={15} />
+              <span className="hidden sm:inline">{compareMode ? 'Exit Compare' : 'Compare'}</span>
             </button>
-          )}
-          <button
-            onClick={() => setCompareMode(m => !m)}
-            className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded transition-colors ${
-              compareMode
-                ? 'bg-sz-orange text-black font-semibold'
-                : 'bg-sz-border hover:bg-gray-600 text-gray-300'
-            }`}
-            title={compareMode ? 'Exit Compare Mode' : 'Compare Characters'}
-          >
-            <GitCompareArrows size={15} />
-            <span className="hidden sm:inline">{compareMode ? 'Exit Compare' : 'Compare'}</span>
-          </button>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       {/* Desktop: Main 3-column layout — fills remaining height */}
       <div className="hidden min-[1217px]:flex flex-1 overflow-hidden">
