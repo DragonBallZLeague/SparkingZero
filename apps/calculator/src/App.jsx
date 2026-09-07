@@ -1265,12 +1265,12 @@ function App() {
           className="flex items-center gap-1 hover:opacity-80 transition-opacity hover:text-orange-500"
           title="Kame House Discord"
         >
-          <span className="text-sz font-semibold hover:text-orange-500">Character data provided by </span>
-          <span className="text-sz text-blue-500 font-semibold mr-1">Kame House </span>
+          <span className="text-xs font-semibold hover:text-orange-500">Character data provided by </span>
+          <span className="text-xs text-blue-500 font-semibold mr-1">Kame House </span>
           <img
             src={`${import.meta.env.BASE_URL}general_imgs/KameHouseIcon.png`}
             alt="Kame House"
-            className="h-9 w-9 rounded-full object-cover"
+            className="h-7 w-7 rounded-full object-cover"
           />
         </a>
       </footer>

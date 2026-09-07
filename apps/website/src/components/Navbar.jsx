@@ -79,15 +79,13 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                 Tools <ChevronDown className={`w-3.5 h-3.5 transition-transform ${toolsOpen ? 'rotate-180' : ''}`} />
               </button>
               {toolsOpen && (
-                <div className={`absolute right-0 mt-1 w-56 rounded-lg border shadow-lg py-1 ${
+                <div className={`absolute right-0 mt-1 w-40 rounded-lg border shadow-lg py-1 ${
                   darkMode ? 'bg-gray-900 border-gray-700' : 'bg-stone-50 border-stone-300'
                 }`}>
                   {toolLinks.map((tool) => (
                     <a
                       key={tool.href}
                       href={tool.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       onClick={() => setToolsOpen(false)}
                       className={`flex items-center justify-between px-4 py-2 text-sm transition-colors ${
                         darkMode
@@ -96,7 +94,6 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                       }`}
                     >
                       {tool.label}
-                      <ExternalLink className="w-3.5 h-3.5 opacity-50" />
                     </a>
                   ))}
                 </div>
@@ -173,8 +170,6 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
               <a
                 key={tool.href}
                 href={tool.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium ${
                   darkMode
@@ -183,7 +178,6 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                 }`}
               >
                 {tool.label}
-                <ExternalLink className="w-3.5 h-3.5 opacity-50" />
               </a>
             ))}
           </div>
