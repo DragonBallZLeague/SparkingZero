@@ -1,6 +1,6 @@
 import React from 'react';
 import { Brain, TrendingUp, Users, Target, Shield, Zap, AlertCircle, Package, User } from 'lucide-react';
-import { getBuildTypeColor } from '../../App';
+import { getBuildTypeColor } from '../../utils/buildComposition.js';
 
 /**
  * AIStrategyCard Component

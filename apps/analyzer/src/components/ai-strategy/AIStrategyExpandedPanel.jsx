@@ -18,7 +18,7 @@ import {
   Clock,
   User
 } from 'lucide-react';
-import { getBuildTypeColor } from '../../App';
+import { getBuildTypeColor } from '../../utils/buildComposition.js';
 import BehaviorInsightsSection from './BehaviorInsightsSection.jsx';
 
 /**

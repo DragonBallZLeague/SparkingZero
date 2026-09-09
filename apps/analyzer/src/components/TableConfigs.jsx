@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatNumber } from '../utils/formatters';
-import { getBuildTypeColor } from '../App'; // Import build type color function for new 7-category system
+import { getBuildTypeColor } from '../utils/buildComposition.js'; // Import build type color function for new 7-category system
 import { 
   Trophy, 
   Target, 

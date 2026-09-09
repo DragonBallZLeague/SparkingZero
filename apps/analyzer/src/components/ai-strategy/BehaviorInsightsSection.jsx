@@ -3,7 +3,7 @@ import { Lightbulb, Brain, BarChart3, Package, ChevronDown, ChevronUp, CheckCirc
 import { generateBehavioralInsights } from '../../utils/aiStrategyInsights.js';
 import InsightCard from './InsightCard.jsx';
 import ActionComparisonBar from './ActionComparisonBar.jsx';
-import { getBuildTypeColor } from '../../App.jsx';
+import { getBuildTypeColor } from '../../utils/buildComposition.js';
 
 // Icon mapping for archetypes
 const iconMap = {
