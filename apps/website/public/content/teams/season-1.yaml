@@ -1,15 +1,11 @@
 label: Season 1
 teams:
   - color: "#ffbeb6"
-    restrictions: |-
-      * Forms beyond Super Saiyan are not allowed
-      * Kale Super Saiyan (Berserk) is a banned starting form
-      * Toppo God of Destruction is a banned starting form
-      * Jiren Full Power is a banned starting form
+    restrictions: "*"
     roster: []
     name: Budokai
     slug: budokai
-    banner: /SparkingZero/images/budokaiBanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/budokailogo.png
     master_list:
@@ -64,18 +60,14 @@ teams:
       - Mighty Mask
       - Pikkon
       - Pan (GT)
+      - Uub (GT)
     description: Characters who participated in a tournament.
   - color: "#fff5ac"
-    restrictions: |-
-      * Broly (Z) Legendary Super Saiyan is a banned starting form
-      * Broly (Super) Super Saiyan (Full Power) is a banned starting form
-      * Gohan Beast is a banned starting form
-      * Great Ape Baby (GT) is a banned starting form
-      * Vegeta (GT) Super Saiyan 4 is a banned starting form
+    restrictions: "*"
     roster: []
     name: Cinema
     slug: cinema
-    banner: /SparkingZero/images/cinemabanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/cinemalogo.png
     master_list:
@@ -128,7 +120,7 @@ teams:
     roster: []
     name: Cold Kingdom
     slug: cold-kingdom
-    banner: /SparkingZero/images/coldkingdomBanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/coldlogo.png
     master_list:
@@ -162,14 +154,11 @@ teams:
     description: Characters who have either been a member of the Cold family or
       served under them.
   - color: "#dd0220"
-    restrictions: |-
-      * Great Ape Baby (GT) is a banned starting form
-      * Omega Shenron (GT) is a banned starting form
-      * Orange Piccolo is a banned starting form
+    restrictions: "*"
     roster: []
     name: Creations
     slug: creations
-    banner: /SparkingZero/images/creationsbanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/creationslogo.png
     master_list:
@@ -210,13 +199,11 @@ teams:
     description: Characters created through artificial means, either through magic
       or engineering.
   - color: "#b3aaaa"
-    restrictions: |-
-      * Omega Shenron (GT) is a banned starting form
-      * Orange Piccolo is a banned starting form
+    restrictions: ""
     roster: []
     name: Demons
     slug: demons
-    banner: /SparkingZero/images/demonsbanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/demonslogo.png
     master_list:
@@ -254,14 +241,11 @@ teams:
       - Nuova Shenron (GT)
     description: Characters of a canon demonic nature or heritage.
   - color: "#a1ff35"
-    restrictions: |-
-      * Broly (Z) Legendary Super Saiyan is a banned starting form
-      * Omega Shenron (GT) is a banned starting form
-      * Great Ape Baby (GT) is a banned starting form
+    restrictions: "*"
     roster: []
     name: Malevolent Souls
     slug: malevolent-souls
-    banner: /SparkingZero/images/malevolentsoulsbanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/malevolentsoulslogo.png
     master_list:
@@ -329,11 +313,11 @@ teams:
       - Mercenary Tao
     description: Characters who performed indisputably evil acts.
   - color: "#bc82e2"
-    restrictions: "* Forms beyond Super Saiyan are not allowed"
+    restrictions: "*"
     roster: []
     name: Master & Student
     slug: master-&-student
-    banner: /SparkingZero/images/masterandstudentBanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/masterandstudentlogo.png
     master_list:
@@ -384,15 +368,10 @@ teams:
       - Goku Black
     description: Characters who acted either as a mentor or who were shown training
       under one.
-  - name: Outlaws/Renegades
+  - name: Outlaw Stars
     color: "#8c888c"
     roster: []
-    restrictions: |-
-      \* Cell must start in first form
-
-      \* Forms beyond Super Saiyan are not allowed
-
-      \* Kale cannot start in berserk form
+    restrictions: \*
     master_list:
       - Goku (Teen)
       - Goku (GT)
@@ -432,16 +411,15 @@ teams:
       - Trunks (GT)
       - Cheelai
       - Supreme Kai
+    icon: /SparkingZero/images/image.png
+    slug: outlaw-stars
+    description: Characters who fight against their established authorities
   - color: "#c87f08"
-    restrictions: |-
-      * Broly (Z) Legendary Super Saiyan is a banned starting form
-      * Kale Super Saiyan (Berserk) is a banned starting form
-      * Great Ape Baby (GT) is a banned starting form 
-      * Goku (GT) Super Saiyan 4 is a banned starting form
+    restrictions: "*"
     roster: []
     name: Primal Instincts
     slug: primal-instincts
-    banner: /SparkingZero/images/primalinstinctsbanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/primallogo.png
     master_list:
@@ -470,14 +448,11 @@ teams:
       - Spike the Devil Man
     description: Characters with mammalian animalistic features.
   - color: "#f79040"
-    restrictions: |-
-      * Gohan (Adult) Super Saiyan 2 is a banned starting form
-      * Toppo God of Destruction is a banned starting form
-      * Jiren Full Power is a banned starting form
+    restrictions: "*"
     roster: []
     name: Sentai Squad
     slug: sentai-squad
-    banner: /SparkingZero/images/sentaiBanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/sentailogos0.png
     master_list:
@@ -492,6 +467,7 @@ teams:
       - Toppo
       - Dyspo
       - Ribrianne
+      - Bergamo
       - Kakunsa
       - Roasie
       - Gamma 1
@@ -502,28 +478,16 @@ teams:
       - "Frieza Soldier "
       - Zarbon
       - Android 17 (Super)
+      - Uub (GT)
+      - Android 18
+      - Gotenks
     description: Characters inspired by Sentai style series.
   - color: "#a7fdd8"
-    restrictions: |-
-      * Broly (Z) Legendary Super Saiyan is a banned starting form
-      * Kale Super Saiyan (Berserk) is a banned starting form
-      * Great Ape Baby (GT) is a banned starting form 
-      * Goku (GT) Super Saiyan 4 is a banned starting form
-      * Vegeta (GT) Super Saiyan 4 is a banned starting form
-    roster:
-      - character: Vegeta (Mini) Super Saiyan
-        benched: []
-      - character: Gotenks Super Saiyan
-        benched: []
-      - character: Kid Buu
-        benched: []
-      - character: Panzy
-        benched: []
-      - character: Trunks (Kid) Super Saiyan
-        benched: []
+    restrictions: "*"
+    roster: []
     name: Tiny Terrors
     slug: tiny-terrors
-    banner: /SparkingZero/images/tinyterrorsbanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/tinyterrorslogo.png
     master_list:
@@ -553,14 +517,11 @@ teams:
       - Frieza (Z) 1st Form
     description: Characters of a very small stature.
   - color: "#017e28"
-    restrictions: |-
-      *  Cell must start in first form
-      * Forms beyond Super Saiyan are not allowed
-      * Kale cannot start in berserk form
+    restrictions: "*"
     roster: []
     name: Z-Fighters
     slug: z-fighters
-    banner: /SparkingZero/images/zfightersBanner.png
+    banner: ""
     manager: TBD
     icon: /SparkingZero/images/zfighterslogo.png
     master_list:
