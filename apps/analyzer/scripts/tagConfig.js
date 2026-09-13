@@ -13,6 +13,7 @@ const tagConfig = {
       'Demons',
       'Malevolent Souls',
       'Master and Student',
+      'Outlaw Stars',
       'Primal Instincts',
       'Sentai',
       'Time Patrol',

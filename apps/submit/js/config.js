@@ -41,6 +41,7 @@ const TEAMS = [
     { value: 'Demons', label: 'Demons' },
     { value: 'Malevolent Souls', label: 'Malevolent Souls' },
     { value: 'Master and Student', label: 'Master & Student' },
+    { value: 'Outlaw Stars', label: 'Outlaw Stars' },
     { value: 'Primal Instincts', label: 'Primal Instincts' },
     { value: 'Sentai', label: 'Sentai' },
     { value: 'Time Patrol', label: 'Time Patrol' },

@@ -3001,11 +3001,16 @@ const CharacterSlot = ({
     const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
     if (maxSamePerTeam) {
       const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
-      const maxCount = maxSamePerTeam.params?.maxCount || 2;
+      const defaultMax = maxSamePerTeam.params?.maxCount || 2;
+      const overrides = maxSamePerTeam.params?.overrides || {};
       const counts = {};
       teamUsed.forEach(id => counts[id] = (counts[id] || 0) + 1);
-      const violations_found = Object.entries(counts).filter(([id, count]) => count > maxCount);
+      const violations_found = Object.entries(counts).filter(([id, count]) => {
+        const maxCount = Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : defaultMax;
+        return count > maxCount;
+      });
       violations_found.forEach(([id, count]) => {
+        const maxCount = Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : defaultMax;
         const cap = capsules.find(c => c.id === id);
         const capsuleName = cap ? (cap['Item Names'] || cap.name || cap.id) : id;
         violations.push({ 
@@ -3014,7 +3019,6 @@ const CharacterSlot = ({
         });
       });
     }
-    
     // Rule 2: max-cost-group-per-character (check in both soft and hard mode)
     const maxCostGroup = (ruleset?.restrictions || []).find(r => r.type === 'max-cost-group-per-character');
     if (maxCostGroup) {
@@ -3198,7 +3202,9 @@ const CharacterSlot = ({
               // Rule 1: max-same-per-team (hard mode only)
               const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
               if (maxSamePerTeam && ruleset?.mode === 'hard') {
-                const maxCount = maxSamePerTeam.params?.maxCount || 2;
+                const defaultMax = maxSamePerTeam.params?.maxCount || 2;
+                const overrides = maxSamePerTeam.params?.overrides || {};
+                const getMax = (id) => Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : defaultMax;
                 // Count how many times each capsule is used in the team (excluding this slot)
                 const teamUsedWithoutCurrent = teamUsed.filter((id, idx) => {
                   // We need to exclude the current character's current slot
@@ -3209,7 +3215,7 @@ const CharacterSlot = ({
                 available = available.filter(c => {
                   if (c.id === capsuleId) return true; // Always allow current selection
                   const count = teamUsedWithoutCurrent.filter(id => id === c.id).length;
-                  return count < maxCount;
+                  return count < getMax(c.id);
                 });
               }
 
@@ -3297,7 +3303,12 @@ const CharacterSlot = ({
                         else if (cost === 2) baseClass = 'bg-amber-200 text-slate-800';
                         else if (cost === 3) baseClass = 'bg-amber-300 text-slate-800';
                         else if (cost === 4) baseClass = 'bg-amber-400 text-slate-800';
-                        else if (cost >= 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 6) baseClass = 'bg-orange-500 text-slate-800';
+                        else if (cost === 7) baseClass = 'bg-orange-600 text-slate-800';
+                        else if (cost === 8) baseClass = 'bg-red-600 text-slate-800';
+                        else if (cost === 9) baseClass = 'bg-red-700 text-slate-800';
+                        else if (cost >= 10) baseClass = 'bg-gradient-to-r from-red-700 to-red-900 text-white';
                         // determine if we should show red: either cost meets expensive threshold OR character is over budget
                         const rulesetActive = !!(ruleset && ruleset.scope && ruleset.scope !== 'none');
                         const showOver = (rulesetActive && over > 0) || (cost >= EXPENSIVE_THRESHOLD);
@@ -3318,7 +3329,12 @@ const CharacterSlot = ({
                         else if (cost === 2) baseClass = 'bg-amber-200 text-slate-800';
                         else if (cost === 3) baseClass = 'bg-amber-300 text-slate-800';
                         else if (cost === 4) baseClass = 'bg-amber-400 text-slate-800';
-                        else if (cost >= 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 6) baseClass = 'bg-orange-500 text-slate-800';
+                        else if (cost === 7) baseClass = 'bg-orange-600 text-slate-800';
+                        else if (cost === 8) baseClass = 'bg-red-600 text-slate-800';
+                        else if (cost === 9) baseClass = 'bg-red-700 text-slate-800';
+                        else if (cost >= 10) baseClass = 'bg-gradient-to-r from-red-700 to-red-900 text-white';
                         const rulesetActive = !!(ruleset && ruleset.scope && ruleset.scope !== 'none');
                         const showOver = (rulesetActive && over > 0) || (cost >= EXPENSIVE_THRESHOLD);
                         const badgeClass = showOver ? 'bg-red-900 text-white' : baseClass;
