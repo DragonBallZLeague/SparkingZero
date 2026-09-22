@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loadContent } from '../utils/contentLoader';
 
-const SeasonContext = createContext(null);
+// Exported so the CMS preview pane can supply its own value (the site.yaml being
+// edited) instead of the fetched one - see cms/previews.jsx.
+export const SeasonContext = createContext(null);
 
 export function SeasonProvider({ children }) {
   const [siteData, setSiteData] = useState(null);

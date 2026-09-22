@@ -12,6 +12,12 @@ backend:
   base_url: https://sparking-zero-iota.vercel.app
   auth_endpoint: api/oauth
 
+# Local testing only: when /cms is opened from localhost AND `npx decap-server` is
+# running from the repo root, the panel reads and writes the working tree instead of
+# committing to GitHub. Decap ignores this on any other host, so it is inert in
+# production.
+local_backend: true
+
 # Where uploaded media goes
 media_folder: "apps/website/public/images"
 public_folder: "/SparkingZero/images"

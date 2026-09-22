@@ -4,33 +4,14 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { Users, ChevronDown, ChevronUp, Calendar, UserMinus } from 'lucide-react';
 import yaml from 'js-yaml';
 import { useSeasonContext } from '../contexts/SeasonContext';
+import { useCharacterIndex } from '../hooks/useCharacterIndex';
 
 const CALC_BASE = 'https://dragonballzleague.github.io/SparkingZero/calculator/#';
 const NULLS7 = [null, null, null, null, null, null, null];
-const CALC_CHARS_URL = 'https://dragonballzleague.github.io/SparkingZero/calculator/data/characters.json';
-const TRANSFORM_URL = `${import.meta.env.BASE_URL}content/transformations.json`;
 
 function calcLink(charName) {
   const json = JSON.stringify({ c: charName, p: NULLS7, op: NULLS7 });
   return CALC_BASE + btoa(encodeURIComponent(json));
-}
-
-function buildTransformAdj(data) {
-  const idToName = {};
-  for (const [id, entry] of Object.entries(data)) {
-    if (typeof entry === 'object' && entry.name) idToName[id] = entry.name;
-  }
-  const fwd = {};
-  for (const [, entry] of Object.entries(data)) {
-    if (typeof entry !== 'object' || !entry.name) continue;
-    const from = entry.name;
-    if (!fwd[from]) fwd[from] = [];
-    for (const toId of (entry.transformsTo || [])) {
-      if (!toId || !idToName[toId]) continue;
-      fwd[from].push(idToName[toId]);
-    }
-  }
-  return fwd;
 }
 
 function normalizeRoster(roster = []) {
@@ -82,7 +63,7 @@ function getFormChain(name, calcNames, transformAdj) {
   return ordered;
 }
 
-function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdown }) {
+function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdown, portalTarget }) {
   const [open, setOpen] = useState(false);
   const [dropPos, setDropPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -174,7 +155,7 @@ function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdo
         </a>
       ))}
     </div>,
-    document.body
+    portalTarget || document.body
   );
 
   return (
@@ -191,52 +172,29 @@ function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdo
   );
 }
 
-export default function TeamsPage({ darkMode }) {
-  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
-  const [data, setData] = useState(null);
-  const [expandedTeam, setExpandedTeam] = useState(null);
-  const [calcNames, setCalcNames] = useState(null);
-  const [transformAdj, setTransformAdj] = useState(null);
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    fetch(CALC_CHARS_URL)
-      .then(r => r.json())
-      .then(chars => setCalcNames(new Set(chars.map(c => c.name))))
-      .catch(() => setCalcNames(new Set()));
-  }, []);
-
-  useEffect(() => {
-    fetch(TRANSFORM_URL)
-      .then(r => r.json())
-      .then(data => setTransformAdj(buildTransformAdj(data)))
-      .catch(() => setTransformAdj({}));
-  }, []);
-
-  // Load teams for the selected season
-  useEffect(() => {
-    if (!selectedSeason) return;
-    setData(null);
-    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
-      .then(r => r.text())
-      .then(text => setData(yaml.load(text)))
-      .catch(() => setData(null));
-  }, [selectedSeason]);
-
-  // Auto-expand team from URL param
-  useEffect(() => {
-    const slug = searchParams.get('team');
-    if (slug && data?.teams) {
-      setExpandedTeam(slug);
-    }
-  }, [searchParams, data]);
-
+/**
+ * Presentational Teams page: renders already-loaded team data.
+ *
+ * Kept free of data fetching, routing and context so the exact same markup can be
+ * rendered by the site (TeamsPage below) and by the CMS preview pane
+ * (`cms/previews.jsx`) - there is no second, hand-maintained copy of this layout.
+ */
+export function TeamsView({
+  data,
+  darkMode = true,
+  calcNames = null,
+  transformAdj = null,
+  expandedTeam = null,
+  onToggleTeam = () => {},
+  allSeasons = [],
+  selectedSeason = null,
+  onSeasonChange = () => {},
+  portalTarget = null,
+}) {
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading teams...</div>;
   }
 
-  const allSeasons = siteData?.all_seasons || [];
-  const currentSeasonLabel = allSeasons.find(s => s.file === selectedSeason)?.label || selectedSeason;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -254,7 +212,7 @@ export default function TeamsPage({ darkMode }) {
           <div className="relative">
             <select
               value={selectedSeason || ''}
-              onChange={(e) => { setSelectedSeason(e.target.value); setExpandedTeam(null); }}
+              onChange={(e) => onSeasonChange(e.target.value)}
               className={`appearance-none pl-3 pr-8 py-2 rounded-lg border text-sm font-medium cursor-pointer ${
                 darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-stone-100 border-stone-300 text-stone-800'
               }`}
@@ -282,7 +240,7 @@ export default function TeamsPage({ darkMode }) {
             >
               {/* Team Header (clickable) */}
               <button
-                onClick={() => setExpandedTeam(isExpanded ? null : team.slug)}
+                onClick={() => onToggleTeam(isExpanded ? null : team.slug)}
                 className={`w-full flex items-center justify-between p-5 text-left transition-colors ${
                   darkMode ? 'hover:bg-gray-800/50' : 'hover:bg-stone-100'
                 }`}
@@ -359,6 +317,7 @@ export default function TeamsPage({ darkMode }) {
                           calcNames={calcNames}
                           transformAdj={transformAdj}
                           darkMode={darkMode}
+                          portalTarget={portalTarget}
                           noDropdown
                           className={`px-3 py-2 rounded-lg text-sm text-center ${
                             darkMode ? 'bg-gray-800/50 text-gray-200' : 'bg-stone-100 text-stone-700'
@@ -400,6 +359,7 @@ export default function TeamsPage({ darkMode }) {
                               calcNames={calcNames}
                               transformAdj={transformAdj}
                               darkMode={darkMode}
+                              portalTarget={portalTarget}
                               className={`block px-2.5 py-1.5 rounded text-xs text-center ${
                                 darkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-stone-100 text-stone-500'
                               }`}
@@ -427,5 +387,45 @@ export default function TeamsPage({ darkMode }) {
         })}
       </div>
     </div>
+  );
+}
+
+export default function TeamsPage({ darkMode }) {
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
+  const [data, setData] = useState(null);
+  const [expandedTeam, setExpandedTeam] = useState(null);
+  const [searchParams] = useSearchParams();
+  const { calcNames, transformAdj } = useCharacterIndex();
+
+  // Load teams for the selected season
+  useEffect(() => {
+    if (!selectedSeason) return;
+    setData(null);
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then(r => r.text())
+      .then(text => setData(yaml.load(text)))
+      .catch(() => setData(null));
+  }, [selectedSeason]);
+
+  // Auto-expand team from URL param
+  useEffect(() => {
+    const slug = searchParams.get('team');
+    if (slug && data?.teams) {
+      setExpandedTeam(slug);
+    }
+  }, [searchParams, data]);
+
+  return (
+    <TeamsView
+      data={data}
+      darkMode={darkMode}
+      calcNames={calcNames}
+      transformAdj={transformAdj}
+      expandedTeam={expandedTeam}
+      onToggleTeam={setExpandedTeam}
+      allSeasons={siteData?.all_seasons || []}
+      selectedSeason={selectedSeason}
+      onSeasonChange={(file) => { setSelectedSeason(file); setExpandedTeam(null); }}
+    />
   );
 }

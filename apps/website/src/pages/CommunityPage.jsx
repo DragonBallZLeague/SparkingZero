@@ -14,13 +14,14 @@ const iconMap = {
   Heart,
 };
 
-export default function CommunityPage({ darkMode }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    loadContent('community.yaml').then(setData);
-  }, []);
-
+/**
+ * Presentational CommunityView: renders already-loaded content.
+ *
+ * Pure props in, markup out - no fetching, routing or context - so the site
+ * (container below) and the CMS preview pane (`cms/previews.jsx`) render the
+ * exact same component instead of two copies that drift apart.
+ */
+export function CommunityView({ data, darkMode = true }) {
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading community...</div>;
   }
@@ -141,4 +142,14 @@ export default function CommunityPage({ darkMode }) {
       })}
     </div>
   );
+}
+
+export default function CommunityPage({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('community.yaml').then(setData);
+  }, []);
+
+  return <CommunityView data={data} darkMode={darkMode} />;
 }

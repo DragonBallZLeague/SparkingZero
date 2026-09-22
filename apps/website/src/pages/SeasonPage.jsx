@@ -33,40 +33,37 @@ function computeStandingsFromSchedule(schedule) {
 }
 
 
-export default function SeasonPage({ darkMode }) {
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
-  const [data, setData] = useState(null);
-  const [teams, setTeams] = useState(null);
-  const activeTab = searchParams.get('tab') || 'standings';
-  const selectedPhase = searchParams.get('phase') || null;
-  const [collapsedWeeks, setCollapsedWeeks] = useState({});
-  const { openLineups, lineupCache, lineupLoading, lineupWeek, toggleLineup, selectLineupWeek } = useLineups();
-
-  // Load selected season data and matching teams file
-  useEffect(() => {
-    if (!selectedSeason) return;
-    setData(null);
-    // Fetch from seasons/ subfolder
-    fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
-      .then((r) => r.text())
-      .then((text) => {
-        const seasonData = yaml.load(text);
-        setData(seasonData);
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          next.set('phase', seasonData.active_phase || 'main_season');
-          return next;
-        }, { replace: true });
-      });
-    // Load teams for this season
-    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
-      .then((r) => r.text())
-      .then((text) => setTeams(yaml.load(text)))
-      .catch(() => setTeams(null));
-  }, [selectedSeason]);
-
+/**
+ * Presentational Season page: standings, schedule and playoff bracket for one
+ * already-loaded season file.
+ *
+ * Pure props in, markup out - no fetching, routing or context - so the site
+ * (container below) and the CMS preview pane (`cms/previews.jsx`) render the
+ * exact same component instead of two copies that drift apart. The standings and
+ * playoff-seed math stays here so a preview gets the real numbers, not a
+ * re-implementation.
+ */
+export function SeasonView({
+  data,
+  teams = null,
+  darkMode = true,
+  allSeasons = [],
+  selectedSeason = null,
+  onSeasonChange = () => {},
+  activeTab = 'standings',
+  onTabChange = () => {},
+  selectedPhase = null,
+  onPhaseChange = () => {},
+  collapsedWeeks = {},
+  setCollapsedWeeks = () => {},
+  onTeamClick = () => {},
+  openLineups = {},
+  lineupCache = {},
+  lineupLoading = {},
+  toggleLineup = () => {},
+  lineupWeek = {},
+  selectLineupWeek = () => {},
+}) {
   // Compute standings from main season schedule
   const mainSeasonStandings = useMemo(() => {
     return computeStandingsFromSchedule(data?.schedule);
@@ -137,13 +134,11 @@ export default function SeasonPage({ darkMode }) {
     sortByRecord(wildcards).forEach((t, i) => seeds.set(t.team, { seed: i + divWinners.length + 1, isDivWinner: false, isClinched: false }));
     return seeds;
   }, [data, mainSeasonStandings]);
-
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading season...</div>;
   }
 
   const activePhase = data.active_phase || 'main_season';
-  const allSeasons = siteData?.all_seasons || [];
 
   const sortKaiTeams = (kaiTeams) => {
     const withRecords = [...kaiTeams].map((s) => ({
@@ -213,7 +208,7 @@ export default function SeasonPage({ darkMode }) {
             <div className="relative">
               <select
                 value={selectedSeason || ''}
-                onChange={(e) => setSelectedSeason(e.target.value)}
+                onChange={(e) => onSeasonChange(e.target.value)}
                 className={`appearance-none pl-4 pr-10 py-2 rounded-xl border text-sm font-medium cursor-pointer ${
                   darkMode
                     ? 'bg-gray-900 border-gray-700 text-white'
@@ -236,7 +231,7 @@ export default function SeasonPage({ darkMode }) {
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
-            onClick={() => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('tab', key); return n; })}
+            onClick={() => onTabChange(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === key
                 ? darkMode ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'
@@ -257,7 +252,7 @@ export default function SeasonPage({ darkMode }) {
             return (
               <button
                 key={phase}
-                onClick={() => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('phase', phase); return n; })}
+                onClick={() => onPhaseChange(phase)}
                 className={`relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-purple-600 text-white'
@@ -335,7 +330,7 @@ export default function SeasonPage({ darkMode }) {
                           return (
                             <tr
                               key={s.team}
-                              onClick={() => slug && navigate(`/teams/${slug}/schedule?season=${selectedSeason}`)}
+                              onClick={() => slug && onTeamClick(slug)}
                               className={`border-b last:border-0 transition-colors ${
                                 slug ? 'cursor-pointer' : ''
                               } ${
@@ -660,5 +655,64 @@ export default function SeasonPage({ darkMode }) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SeasonPage({ darkMode }) {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
+  const [data, setData] = useState(null);
+  const [teams, setTeams] = useState(null);
+  const activeTab = searchParams.get('tab') || 'standings';
+  const selectedPhase = searchParams.get('phase') || null;
+  const [collapsedWeeks, setCollapsedWeeks] = useState({});
+  const { openLineups, lineupCache, lineupLoading, lineupWeek, toggleLineup, selectLineupWeek } = useLineups();
+
+  // Load selected season data and matching teams file
+  useEffect(() => {
+    if (!selectedSeason) return;
+    setData(null);
+    // Fetch from seasons/ subfolder
+    fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => {
+        const seasonData = yaml.load(text);
+        setData(seasonData);
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('phase', seasonData.active_phase || 'main_season');
+          return next;
+        }, { replace: true });
+      });
+    // Load teams for this season
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setTeams(yaml.load(text)))
+      .catch(() => setTeams(null));
+  }, [selectedSeason]);
+
+  return (
+    <SeasonView
+      data={data}
+      teams={teams}
+      darkMode={darkMode}
+      allSeasons={siteData?.all_seasons || []}
+      selectedSeason={selectedSeason}
+      onSeasonChange={setSelectedSeason}
+      activeTab={activeTab}
+      onTabChange={(key) => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('tab', key); return n; })}
+      selectedPhase={selectedPhase}
+      onPhaseChange={(phase) => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('phase', phase); return n; })}
+      collapsedWeeks={collapsedWeeks}
+      setCollapsedWeeks={setCollapsedWeeks}
+      onTeamClick={(slug) => navigate(`/teams/${slug}/schedule?season=${selectedSeason}`)}
+      openLineups={openLineups}
+      lineupCache={lineupCache}
+      lineupLoading={lineupLoading}
+      toggleLineup={toggleLineup}
+      lineupWeek={lineupWeek}
+      selectLineupWeek={selectLineupWeek}
+    />
   );
 }

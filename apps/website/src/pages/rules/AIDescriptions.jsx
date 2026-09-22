@@ -31,13 +31,15 @@ const COLOR_MAP = {
   },
 };
 
-export default function AIDescriptions({ darkMode }) {
-  const [data, setData] = useState(null);
+/**
+ * Presentational AIDescriptions rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function AIDescriptionsView({ data, darkMode = true }) {
   const [activeCat, setActiveCat] = useState(0);
 
-  useEffect(() => {
-    loadContent('rules/ai-descriptions.yaml').then(setData);
-  }, []);
 
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
@@ -109,4 +111,14 @@ export default function AIDescriptions({ darkMode }) {
       )}
     </div>
   );
+}
+
+export default function AIDescriptions({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/ai-descriptions.yaml').then(setData);
+  }, []);
+
+  return <AIDescriptionsView data={data} darkMode={darkMode} />;
 }

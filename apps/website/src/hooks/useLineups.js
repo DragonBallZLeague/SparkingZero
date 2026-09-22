@@ -9,6 +9,20 @@ import yaml from 'js-yaml';
  * returned shape is exactly the prop bag PlayoffBracket / PlayoffListView /
  * PlayoffMatchDetailPanel expect.
  */
+/**
+ * A no-op bag with the same shape, for components rendered without lineup loading
+ * (the blocks destructure these, so an empty object would throw).
+ */
+export const EMPTY_LINEUPS = {
+  openLineups: {},
+  lineupCache: {},
+  lineupLoading: {},
+  lineupWeek: {},
+  fetchLineupFile: () => {},
+  toggleLineup: () => {},
+  selectLineupWeek: () => {},
+};
+
 export function useLineups() {
   const [openLineups, setOpenLineups] = useState({});
   const [lineupCache, setLineupCache] = useState({});

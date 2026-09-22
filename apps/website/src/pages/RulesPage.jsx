@@ -2,75 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { BookOpen, ChevronDown } from 'lucide-react';
 
-import HowToParticipate from './rules/HowToParticipate';
-import LeagueWideRules from './rules/LeagueWideRules';
-import LegalPotaras from './rules/LegalPotaras';
-import BuildRules from './rules/BuildRules';
-import AIDescriptions from './rules/AIDescriptions';
-import BenchRules from './rules/BenchRules';
-import CoachingRules from './rules/CoachingRules';
-import StaffOnTeamRules from './rules/StaffOnTeamRules';
-import OffSeasonSchedule from './rules/OffSeasonSchedule';
-import PostSeasonSeeding from './rules/PostSeasonSeeding';
-import TestingRules from './rules/TestingRules';
-import Mods from './rules/Mods';
-
-const NAV_GROUPS = [
-  {
-    label: 'Getting Started',
-    items: [
-      { id: 'how-to-participate', label: 'How to Participate' },
-    ],
-  },
-  {
-    label: 'League Rules',
-    items: [
-      { id: 'league-wide-rules', label: 'League Wide Rules' },
-      { id: 'legal-potaras', label: 'Legal Capsules' },
-      { id: 'build-rules', label: 'Build Rules' },
-      { id: 'ai-descriptions', label: 'AI Descriptions' },
-    ],
-  },
-  {
-    label: 'Team Operations',
-    items: [
-      { id: 'bench-rules', label: 'Bench Rules' },
-      { id: 'coaching-rules', label: 'Coaching Rules' },
-      { id: 'staff-on-team-rules', label: 'Staff on Team Rules' },
-    ],
-  },
-  {
-    label: 'Season Structure',
-    items: [
-      { id: 'off-season-schedule', label: 'Off-Season Schedule' },
-      { id: 'post-season-seeding', label: 'Post Season Seeding' },
-    ],
-  },
-  {
-    label: 'Testing & Mods',
-    items: [
-      { id: 'testing-rules', label: 'Testing Rules' },
-      { id: 'mods', label: 'Mods' },
-    ],
-  },
-];
+import { RULE_SECTIONS, NAV_GROUPS } from './rules/sections';
 
 const ALL_ITEMS = NAV_GROUPS.flatMap((g) => g.items);
 
-const SECTION_COMPONENTS = {
-  'how-to-participate': HowToParticipate,
-  'league-wide-rules': LeagueWideRules,
-  'legal-potaras': LegalPotaras,
-  'build-rules': BuildRules,
-  'ai-descriptions': AIDescriptions,
-  'bench-rules': BenchRules,
-  'coaching-rules': CoachingRules,
-  'staff-on-team-rules': StaffOnTeamRules,
-  'off-season-schedule': OffSeasonSchedule,
-  'post-season-seeding': PostSeasonSeeding,
-  'testing-rules': TestingRules,
-  'mods': Mods,
-};
 
 export default function RulesPage({ darkMode }) {
   const { section } = useParams();
@@ -78,9 +13,9 @@ export default function RulesPage({ darkMode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const activeId = section && SECTION_COMPONENTS[section] ? section : 'how-to-participate';
+  const activeId = section && RULE_SECTIONS[section] ? section : 'how-to-participate';
   const activeItem = ALL_ITEMS.find((i) => i.id === activeId);
-  const ActiveComponent = SECTION_COMPONENTS[activeId];
+  const ActiveComponent = RULE_SECTIONS[activeId].Page;
 
   // Close mobile dropdown on outside click
   useEffect(() => {

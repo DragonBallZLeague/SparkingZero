@@ -19,9 +19,21 @@ function competitionKinds(event) {
   return [...kinds];
 }
 
-export default function EventsPage({ darkMode }) {
-  const { eventsData, allSeasons, seasonLabel, selectedSeason, setSelectedSeason } = useSeasonEvents();
-
+/**
+ * Presentational Events index: the season's events as cards.
+ *
+ * Pure props in, markup out - no fetching, routing or context - so the site
+ * (container below) and the CMS preview pane (`cms/previews.jsx`) render the
+ * exact same component instead of two copies that drift apart.
+ */
+export function EventsView({
+  eventsData,
+  darkMode = true,
+  seasonLabel = '',
+  allSeasons = [],
+  selectedSeason = null,
+  onSeasonChange = () => {},
+}) {
   if (!eventsData) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading events...</div>;
   }
@@ -44,7 +56,7 @@ export default function EventsPage({ darkMode }) {
           <div className="relative">
             <select
               value={selectedSeason || ''}
-              onChange={(e) => setSelectedSeason(e.target.value)}
+              onChange={(e) => onSeasonChange(e.target.value)}
               className={`appearance-none pl-3 pr-8 py-2 rounded-lg border text-sm font-medium cursor-pointer ${
                 darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-stone-100 border-stone-300 text-stone-800'
               }`}
@@ -113,5 +125,20 @@ export default function EventsPage({ darkMode }) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function EventsPage({ darkMode }) {
+  const { eventsData, allSeasons, seasonLabel, selectedSeason, setSelectedSeason } = useSeasonEvents();
+
+  return (
+    <EventsView
+      eventsData={eventsData}
+      darkMode={darkMode}
+      seasonLabel={seasonLabel}
+      allSeasons={allSeasons}
+      selectedSeason={selectedSeason}
+      onSeasonChange={setSelectedSeason}
+    />
   );
 }

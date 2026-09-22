@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { loadContent } from '../../utils/contentLoader';
 import MarkdownContent from './MarkdownContent';
 
-export default function PostSeasonSeeding({ darkMode }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    loadContent('rules/post-season-seeding.yaml').then(setData);
-  }, []);
-
+/**
+ * Presentational PostSeasonSeeding rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function PostSeasonSeedingView({ data, darkMode = true }) {
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
   return (
@@ -21,4 +21,14 @@ export default function PostSeasonSeeding({ darkMode }) {
       )}
     </div>
   );
+}
+
+export default function PostSeasonSeeding({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/post-season-seeding.yaml').then(setData);
+  }, []);
+
+  return <PostSeasonSeedingView data={data} darkMode={darkMode} />;
 }

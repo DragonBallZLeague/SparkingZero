@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DBSZL Content Manager</title>
+  <!--
+    No <link rel="cms-config-url"> on purpose: Vite rewrites link[href] for every
+    rel and would apply the base path twice in dev, 404ing the config. Decap's
+    default is config.yml relative to this page - public/cms/config.yml is served at
+    exactly that path, and stays outside the build so it is editable without one.
+  -->
+  <style>
+    [data-slate-editor] { min-height: 80px; }
+  </style>
+</head>
+<body>
+  <!--
+    Decap CMS ships its own bundled React, so it is loaded from the CDN rather than
+    npm: decap-cms-app 3.x peers on React 19 and this site is on React 18. main.jsx
+    renders the preview pane with the site's own React, in its own root (see
+    preview-bridge.jsx).
+
+    CMS_MANUAL_INIT defers Decap's boot until main.jsx has registered the preview
+    templates. The version is pinned on purpose - an unpinned range once silently
+    broke this panel when upstream moved `createClass` off the CMS object.
+  -->
+  <script>window.CMS_MANUAL_INIT = true;</script>
+  <script src="https://unpkg.com/decap-cms@3.16.3/dist/decap-cms.js"></script>
+  <script type="module" src="./main.jsx"></script>
+</body>
+</html>

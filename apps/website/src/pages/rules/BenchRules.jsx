@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { loadContent } from '../../utils/contentLoader';
 import MarkdownContent from './MarkdownContent';
 
-export default function BenchRules({ darkMode }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    loadContent('rules/bench-rules.yaml').then(setData);
-  }, []);
-
+/**
+ * Presentational BenchRules rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function BenchRulesView({ data, darkMode = true }) {
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
   return (
@@ -21,4 +21,14 @@ export default function BenchRules({ darkMode }) {
       )}
     </div>
   );
+}
+
+export default function BenchRules({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/bench-rules.yaml').then(setData);
+  }, []);
+
+  return <BenchRulesView data={data} darkMode={darkMode} />;
 }
