@@ -1,21 +1,2 @@
-# Season 0 — off-shoot events.
-#
-# One file per season (mirrors teams/season-N.yaml). Each event is an ordered
-# list of `blocks`; a block is either an info section or a competition:
-#
-#   markdown      { title, content }
-#   participants  { title, show?: [names] }         → renders event `participants`
-#   single_match  { title, team_a, team_b, status, winner, score_a?, score_b?, video_url, lineup_file }
-#   series        { title, best_of, team_a, team_b, games: [{ status, winner, video_url, lineup_file }] }
-#   bracket       { title, format, series_label?, seedings?, rounds: [{ round, matches: [...] }] }
-#   gauntlet      { title, stages: [{ name, opponent }], runs: [{ team, results: [{ result, video_url, lineup_file }] }] }
-#
-# Anywhere a block names a side (team_a, winner, opponent, run.team, ...) it is
-# a NAME that is looked up first in the event's `participants`, then in that
-# season's league teams (teams/season-N.yaml) — so league teams get their
-# icon/color/banner for free and ad-hoc squads/bosses are defined once here.
-# Builds live in content/lineups/ exactly like season matches; a participant's
-# own build (e.g. a boss team) is the `team1` side of its lineup_file.
-
 label: Season 0
-events:
+events: []
