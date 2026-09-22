@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Calendar, Trophy, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
+import { Calendar, Trophy, Medal, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
 import { useSeasonContext } from '../contexts/SeasonContext';
 import yaml from 'js-yaml';
 import { applyTiebreakers, sortTeamsWithTiebreakers } from '../utils/standings';
@@ -592,16 +592,17 @@ function PlayoffMatchDetailPanel({
 }
 
 function PlayoffListView({
-  rounds, darkMode, getTeamIcon, getTeamColor, getTeamBanner,
+  rounds, highlightIndex, darkMode, getTeamIcon, getTeamColor, getTeamBanner,
   openLineups, lineupCache, lineupLoading, toggleLineup,
   lineupWeek, selectLineupWeek,
 }) {
+  const finalIndex = highlightIndex ?? rounds.length - 1;
   return (
     <div className="space-y-6">
       {rounds.map((round, ri) => (
         <div key={ri}>
           <h4 className={`text-sm font-bold mb-3 ${
-            ri === rounds.length - 1 ? 'text-yellow-400' : darkMode ? 'text-orange-400' : 'text-blue-600'
+            ri === finalIndex ? 'text-yellow-400' : darkMode ? 'text-orange-400' : 'text-blue-600'
           }`}>{round.round}</h4>
           <div className="grid gap-3">
             {round.matches.map((match, mi) => {
@@ -847,13 +848,31 @@ function PlayoffBracket({
 
   const champion = derivedRounds[derivedRounds.length - 1]?.matches?.[0]?.winner ?? null;
 
+  // The 3rd Place Match runs alongside the Tenkaichi Bowl between the two
+  // Semifinal losers. It isn't part of the winners bracket tree — deriveRounds
+  // only tracks winners advancing forward — so it's kept as its own field and
+  // rendered separately rather than threaded through the round/connector logic.
+  const thirdPlaceMatch = playoffs?.third_place_match ?? null;
+  const tpCompleted = thirdPlaceMatch?.status === 'completed';
+  const tpAWon = tpCompleted && thirdPlaceMatch.winner === thirdPlaceMatch.team_a;
+  const tpBWon = tpCompleted && thirdPlaceMatch.winner === thirdPlaceMatch.team_b;
+
+  const listRounds = thirdPlaceMatch
+    ? [...derivedRounds, { round: '3rd Place Match', matches: [thirdPlaceMatch] }]
+    : derivedRounds;
+
   const selectedMatchInfo = React.useMemo(() => {
     if (!selectedKey) return null;
+    if (selectedKey === '3p') {
+      return thirdPlaceMatch
+        ? { roundName: '3rd Place Match', match: thirdPlaceMatch, matchKey: 'playoff-3p' }
+        : null;
+    }
     const [ri, mi] = selectedKey.split('-').map(Number);
     const round = derivedRounds[ri];
     if (!round) return null;
     return { roundName: round.round, match: round.matches[mi], matchKey: `playoff-r${ri}-m${mi}` };
-  }, [selectedKey, derivedRounds]);
+  }, [selectedKey, derivedRounds, thirdPlaceMatch]);
 
   const sharedProps = {
     darkMode, getTeamIcon, getTeamColor, getTeamBanner,
@@ -880,6 +899,12 @@ function PlayoffBracket({
               <span className="font-semibold text-yellow-400">{champion}</span>
             </span>
           )}
+          {tpCompleted && thirdPlaceMatch.winner && (
+            <span className="flex items-center gap-1.5">
+              <Medal className="w-4 h-4 text-orange-400" />
+              <span className="font-semibold text-orange-400">{thirdPlaceMatch.winner}</span>
+            </span>
+          )}
         </div>
         {/* Bracket / List toggle */}
         <div className={`flex gap-1 p-1 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-stone-200'}`}>
@@ -897,7 +922,7 @@ function PlayoffBracket({
       </div>
 
       {view === 'list' ? (
-        <PlayoffListView rounds={derivedRounds} {...sharedProps} />
+        <PlayoffListView rounds={listRounds} highlightIndex={derivedRounds.length - 1} {...sharedProps} />
       ) : (
         <>
           <div className="overflow-x-auto pb-2">
@@ -970,6 +995,42 @@ function PlayoffBracket({
                 );
               })}
             </div>
+            {thirdPlaceMatch && (
+              <div className="flex mt-4" style={{ marginLeft: (derivedRounds.length - 1) * (BRACKET_ROUND_W + BRACKET_CONN_W) }}>
+                <div style={{ width: BRACKET_ROUND_W, flexShrink: 0 }}>
+                  <div className="text-center mb-2">
+                    <span className={`text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>3rd Place Match</span>
+                  </div>
+                  <div
+                    onClick={() => setSelectedKey((prev) => prev === '3p' ? null : '3p')}
+                    className={`relative rounded-lg overflow-hidden border cursor-pointer transition-all ${
+                      selectedKey === '3p'
+                        ? darkMode ? 'border-purple-500 bg-gray-800 shadow-lg shadow-purple-500/10' : 'border-purple-400 bg-white shadow-lg'
+                        : darkMode ? 'border-gray-700 bg-gray-800 hover:border-gray-600' : 'border-stone-200 bg-white shadow-sm hover:border-stone-300'
+                    }`}
+                    style={{ height: BRACKET_MATCH_H }}
+                  >
+                    <BracketTeamRow
+                      team={thirdPlaceMatch.team_a} seed={thirdPlaceMatch.seed_a}
+                      won={tpAWon} lost={tpBWon}
+                      score={thirdPlaceMatch.score_a != null ? thirdPlaceMatch.score_a : null}
+                      darkMode={darkMode}
+                      icon={thirdPlaceMatch.team_a ? getTeamIcon(thirdPlaceMatch.team_a) : null}
+                      color={thirdPlaceMatch.team_a ? getTeamColor(thirdPlaceMatch.team_a) : '#6B7280'}
+                    />
+                    <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-stone-200'}`} />
+                    <BracketTeamRow
+                      team={thirdPlaceMatch.team_b} seed={thirdPlaceMatch.seed_b}
+                      won={tpBWon} lost={tpAWon}
+                      score={thirdPlaceMatch.score_b != null ? thirdPlaceMatch.score_b : null}
+                      darkMode={darkMode}
+                      icon={thirdPlaceMatch.team_b ? getTeamIcon(thirdPlaceMatch.team_b) : null}
+                      color={thirdPlaceMatch.team_b ? getTeamColor(thirdPlaceMatch.team_b) : '#6B7280'}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           {selectedMatchInfo && (
             <PlayoffMatchDetailPanel
