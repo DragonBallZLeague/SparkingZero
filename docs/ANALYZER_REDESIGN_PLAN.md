@@ -1,6 +1,15 @@
 # Analyzer App Cleanup, Reorganization & Redesign Plan
 
-Status: **Approved** (2026-09-06). Implementation not yet started — this document is the reference plan for future work sessions.
+Status: **In progress** (2026-09-06 approved). **Phase 1 (Foundation) complete** — see "Progress" below. Phase 2 (Design System & Mobile Foundation) is next.
+
+## Progress
+
+- **Phase 1 — Foundation: ✅ Complete**
+  - `react-router-dom` added as a dependency and wired in `src/main.jsx` (`BrowserRouter` + a single catch-all `<Route path="/*" element={<App />} />` for now, so behavior is unchanged until pages are actually split out).
+  - `src/routes.js` added as the central URL scheme (home/characters/teams/matches/meta/sandbox paths from this plan), documented there as consumed by real routes in later phases.
+  - Aggregation math extraction started: `src/utils/aggregation/characterAggregation.js`, `teamAggregation.js`, `positionAggregation.js` pulled out of `App.jsx`. (Verify before starting Phase 2/3 whether `App.jsx`'s inline `filteredAggregatedData` `useMemo` and the other ~4 duplicate call sites noted below have been switched over to these, or whether that consolidation is still pending.)
+- **Phase 2 — Design System & Mobile Foundation: not started** (real Tailwind migration, shared design tokens, responsive app shell, mobile `DataTable` strategy, accessibility pass).
+- **Phases 3–7**: not started.
 
 ## Goals
 

@@ -1011,8 +1011,8 @@ function PlayoffBracket({
                         );
                       })}
                       {isFinalRound && thirdPlaceMatch && (
-                        <div style={{ position: 'absolute', top: tpCardTop - 20, left: 4, right: 4 }} className="text-center">
-                          <span className={`text-[11px] font-semibold ${darkMode ? 'text-gray-500' : 'text-stone-400'}`}>3rd Place Match</span>
+                        <div style={{ position: 'absolute', top: tpCardTop - 40, left: 4, right: 4 }} className="text-center">
+                          <span className={`text-xs font-semibold ${darkMode ? 'text-amber-600/80' : 'text-amber-700'}`}>3rd Place Match</span>
                         </div>
                       )}
                       {isFinalRound && thirdPlaceMatch && (
