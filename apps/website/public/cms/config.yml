@@ -263,6 +263,203 @@ collections:
                     public_folder: ""
                     hint: "Upload the Week 2 lineup YAML for this match (optional — leave blank if the series only needs one lineup)"
 
+  # --- EVENTS (one file per season, mirrors teams/ structure) ---
+  # Each event is an ordered list of "blocks" (info sections and competitions).
+  # Anywhere a block asks for a team/side name, it is matched first against the
+  # event's Participants list, then against that season's Team Rosters.
+  - name: "events"
+    label: "Events"
+    folder: "apps/website/public/content/events"
+    create: true
+    extension: "yaml"
+    format: "yaml"
+    identifier_field: "label"
+    slug: "{{label | slugify}}"
+    summary: "{{label}} Events"
+    fields:
+      - { name: "label", label: "Season Label", widget: "string", hint: "e.g. Season 0 — must match the corresponding season file (season-0.yaml)" }
+      - name: "events"
+        label: "Events"
+        widget: "list"
+        summary: "{{name}} ({{status}})"
+        fields:
+          - { name: "slug", label: "URL Slug", widget: "string", hint: "Used in the page URL (/events/<slug>). Reuse the same slug across seasons for recurring events, e.g. boss-rush" }
+          - { name: "name", label: "Event Name", widget: "string" }
+          - { name: "tagline", label: "Tagline", widget: "string", required: false }
+          - { name: "timing", label: "Timing", widget: "select", options: ["preseason", "mid-season", "off-season"], required: false }
+          - { name: "status", label: "Status", widget: "select", options: ["upcoming", "in_progress", "completed"], default: "upcoming" }
+          - { name: "date", label: "Date", widget: "string", required: false, hint: "Free text, e.g. 9/18/2026" }
+          - { name: "banner", label: "Banner Image", widget: "image", required: false }
+          - name: "participants"
+            label: "Participants"
+            widget: "list"
+            required: false
+            summary: "{{name}}"
+            hint: "Ad-hoc squads, tag pairs, or bosses that aren't league teams. League teams don't need to be listed here."
+            fields:
+              - { name: "name", label: "Name", widget: "string" }
+              - { name: "color", label: "Color (hex)", widget: "color", required: false }
+              - { name: "icon", label: "Icon", widget: "image", required: false }
+              - { name: "banner", label: "Banner", widget: "image", required: false }
+              - { name: "description", label: "Description", widget: "text", required: false }
+              - name: "members"
+                label: "Members"
+                widget: "list"
+                required: false
+                summary: "{{character}}"
+                fields:
+                  - { name: "character", label: "Character", widget: "string" }
+                  - { name: "team", label: "League Team", widget: "string", required: false, hint: "Which league team this character came from" }
+              - name: "lineup_file"
+                label: "Build (Lineup File)"
+                widget: "file"
+                required: false
+                media_folder: "/apps/website/public/content/lineups"
+                public_folder: ""
+                hint: "Optional. This participant's own build is read from the team1 side of the uploaded lineup file (e.g. a boss team)."
+          - name: "blocks"
+            label: "Page Blocks"
+            widget: "list"
+            hint: "Shown top-to-bottom on the event page. Mix info sections and competitions freely."
+            types:
+              - name: "markdown"
+                label: "Info Section"
+                widget: "object"
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: "title", label: "Title", widget: "string", hint: "e.g. How It Works, Rules" }
+                  - { name: "content", label: "Content", widget: "markdown" }
+              - name: "participants"
+                label: "Participants Grid"
+                widget: "object"
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: "title", label: "Title", widget: "string", hint: "e.g. The Squads, The Bosses" }
+                  - name: "show"
+                    label: "Only Show"
+                    widget: "list"
+                    required: false
+                    hint: "Participant names to show. Leave empty to show all."
+                    field: { name: "name", label: "Participant Name", widget: "string" }
+              - name: "single_match"
+                label: "Single Match"
+                widget: "object"
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: "title", label: "Title", widget: "string" }
+                  - { name: "team_a", label: "Side A", widget: "string" }
+                  - { name: "team_b", label: "Side B", widget: "string" }
+                  - { name: "status", label: "Status", widget: "select", options: ["upcoming", "live", "completed"], default: "upcoming" }
+                  - { name: "winner", label: "Winner", widget: "string", required: false, hint: "Must exactly match Side A or Side B" }
+                  - { name: "score_a", label: "Score A", widget: "number", value_type: "int", required: false }
+                  - { name: "score_b", label: "Score B", widget: "number", value_type: "int", required: false }
+                  - { name: "map", label: "Map", widget: "string", required: false }
+                  - { name: "video_url", label: "Video URL", widget: "string", required: false }
+                  - name: "lineup_file"
+                    label: "Lineup File"
+                    widget: "file"
+                    required: false
+                    media_folder: "/apps/website/public/content/lineups"
+                    public_folder: ""
+              - name: "series"
+                label: "Best-of Series"
+                widget: "object"
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: "title", label: "Title", widget: "string" }
+                  - { name: "best_of", label: "Best Of", widget: "number", value_type: "int", default: 3 }
+                  - { name: "team_a", label: "Side A", widget: "string" }
+                  - { name: "team_b", label: "Side B", widget: "string" }
+                  - { name: "winner", label: "Series Winner (override)", widget: "string", required: false, hint: "Normally derived from game winners — only set to override" }
+                  - name: "games"
+                    label: "Games"
+                    widget: "list"
+                    summary: "Game {{index}} — {{fields.status}}"
+                    fields:
+                      - { name: "status", label: "Status", widget: "select", options: ["upcoming", "live", "completed"], default: "upcoming" }
+                      - { name: "winner", label: "Winner", widget: "string", required: false, hint: "Must exactly match Side A or Side B" }
+                      - { name: "map", label: "Map", widget: "string", required: false }
+                      - { name: "video_url", label: "Video URL", widget: "string", required: false }
+                      - name: "lineup_file"
+                        label: "Lineup File"
+                        widget: "file"
+                        required: false
+                        media_folder: "/apps/website/public/content/lineups"
+                        public_folder: ""
+              - name: "bracket"
+                label: "Tournament Bracket"
+                widget: "object"
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: "title", label: "Title", widget: "string" }
+                  - { name: "format", label: "Format", widget: "string", required: false, hint: "e.g. 8-Team Single Elimination" }
+                  - { name: "series_label", label: "Series Label", widget: "string", required: false, hint: "e.g. Best of 3, Single Match" }
+                  - name: "seedings"
+                    label: "Seedings"
+                    widget: "list"
+                    required: false
+                    hint: "Optional. Names in seed order — when set, first-round matchups are derived from seeds like the playoffs. Leave empty and fill team_a/team_b on each match instead."
+                    field: { name: "team", label: "Name", widget: "string" }
+                  - name: "rounds"
+                    label: "Rounds"
+                    widget: "list"
+                    summary: "{{round}}"
+                    fields:
+                      - { name: "round", label: "Round Name", widget: "string" }
+                      - name: "matches"
+                        label: "Matches"
+                        widget: "list"
+                        summary: "Match {{index}} — {{fields.status}}"
+                        fields:
+                          - { name: "team_a", label: "Side A", widget: "string", required: false, hint: "Leave blank in later rounds to auto-fill from the previous round's winners" }
+                          - { name: "team_b", label: "Side B", widget: "string", required: false }
+                          - { name: "score_a", label: "Score A", widget: "number", value_type: "int", required: false }
+                          - { name: "score_b", label: "Score B", widget: "number", value_type: "int", required: false }
+                          - { name: "winner", label: "Winner", widget: "string", required: false }
+                          - { name: "status", label: "Status", widget: "select", options: ["upcoming", "live", "completed"], default: "upcoming" }
+                          - { name: "video_url", label: "Video URL", widget: "string", required: false }
+                          - name: "lineup_file"
+                            label: "Lineup File"
+                            widget: "file"
+                            required: false
+                            media_folder: "/apps/website/public/content/lineups"
+                            public_folder: ""
+              - name: "gauntlet"
+                label: "Gauntlet (Boss Rush)"
+                widget: "object"
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: "title", label: "Title", widget: "string" }
+                  - name: "stages"
+                    label: "Stages"
+                    widget: "list"
+                    summary: "{{name}} — {{opponent}}"
+                    hint: "In order. Every team attempts stage 1 first, then 2, and so on."
+                    fields:
+                      - { name: "name", label: "Stage Name", widget: "string", hint: "e.g. Boss 1" }
+                      - { name: "opponent", label: "Opponent", widget: "string", hint: "A participant or league team name" }
+                  - name: "runs"
+                    label: "Team Runs"
+                    widget: "list"
+                    summary: "{{team}}"
+                    fields:
+                      - { name: "team", label: "Team", widget: "string" }
+                      - name: "results"
+                        label: "Results"
+                        widget: "list"
+                        required: false
+                        hint: "One entry per stage attempted, in stage order. A loss ends the run."
+                        summary: "Stage {{index}} — {{fields.result}}"
+                        fields:
+                          - { name: "result", label: "Result", widget: "select", options: ["win", "loss"] }
+                          - { name: "video_url", label: "Video URL", widget: "string", required: false }
+                          - name: "lineup_file"
+                            label: "Lineup File"
+                            widget: "file"
+                            required: false
+                            media_folder: "/apps/website/public/content/lineups"
+                            public_folder: ""
+
   # --- COMMUNITY ---
   - name: "community"
     label: "Community"
