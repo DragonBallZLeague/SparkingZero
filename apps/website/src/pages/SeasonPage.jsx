@@ -849,23 +849,25 @@ function PlayoffBracket({
 
   // The 3rd Place Match runs alongside the Tenkaichi Bowl between the two
   // Semifinal losers. It isn't part of the winners bracket tree — deriveRounds
-  // only tracks winners advancing forward — so its teams are derived here from
-  // the Semifinal round (the round immediately before the final) instead, the
-  // same "explicit override wins" pattern deriveRounds uses for every other
-  // match: an admin can still hand-set team_a/team_b once decided.
-  const rawThirdPlace = playoffs?.third_place_match ?? null;
+  // only tracks winners advancing forward — so its teams are always derived
+  // here from the Semifinal round (the round immediately before the final);
+  // unlike every other round, team_a/team_b aren't editable data (there's
+  // nothing to hand-set — the pairing is fully determined by who loses the
+  // Semifinals). `matches` is a list — like every other round — even though
+  // there's only ever one entry, for the same repeatable-list CMS editing UI.
+  const rawThirdPlace = playoffs?.third_place_match?.matches?.[0] ?? null;
   const semifinalLosers = (derivedRounds[derivedRounds.length - 2]?.matches ?? []).map((m) =>
     m.winner ? (m.winner === m.team_a ? m.team_b : m.team_a) : null
   );
-  const tpTeamA = rawThirdPlace?.team_a || semifinalLosers[0] || null;
-  const tpTeamB = rawThirdPlace?.team_b || semifinalLosers[1] || null;
+  const tpTeamA = semifinalLosers[0] ?? null;
+  const tpTeamB = semifinalLosers[1] ?? null;
   const thirdPlaceMatch = rawThirdPlace
     ? {
         ...rawThirdPlace,
         team_a: tpTeamA,
         team_b: tpTeamB,
-        seed_a: rawThirdPlace.seed_a ?? (tpTeamA ? (seedings.indexOf(tpTeamA) + 1 || null) : null),
-        seed_b: rawThirdPlace.seed_b ?? (tpTeamB ? (seedings.indexOf(tpTeamB) + 1 || null) : null),
+        seed_a: tpTeamA ? (seedings.indexOf(tpTeamA) + 1 || null) : null,
+        seed_b: tpTeamB ? (seedings.indexOf(tpTeamB) + 1 || null) : null,
       }
     : null;
   const tpCompleted = thirdPlaceMatch?.status === 'completed';
