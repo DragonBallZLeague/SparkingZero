@@ -9,6 +9,13 @@ const toolLinks = APPS.filter((app) => app.key !== 'home').map((app) => ({
   href: app.href,
 }));
 
+// A nav item stays highlighted on its sub-routes too (/events/:slug,
+// /teams/:slug/schedule, /rules/:section); Home only matches exactly.
+function isActivePath(pathname, itemPath) {
+  if (itemPath === '/') return pathname === '/';
+  return pathname === itemPath || pathname.startsWith(itemPath + '/');
+}
+
 export default function Navbar({ site, darkMode, setDarkMode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -48,7 +55,7 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
             {nav.map((item) => {
-              const active = location.pathname === item.path;
+              const active = isActivePath(location.pathname, item.path);
               return (
                 <Link
                   key={item.path}
@@ -142,7 +149,7 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
           darkMode ? 'border-gray-800 bg-gray-950' : 'border-stone-300 bg-stone-100'
         }`}>
           {nav.map((item) => {
-            const active = location.pathname === item.path;
+            const active = isActivePath(location.pathname, item.path);
             return (
               <Link
                 key={item.path}

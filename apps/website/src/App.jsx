@@ -9,6 +9,8 @@ import ArchivesPage from './pages/ArchivesPage';
 import CommunityPage from './pages/CommunityPage';
 import TeamSchedulePage from './pages/TeamSchedulePage';
 import RulesPage from './pages/RulesPage';
+import EventsPage from './pages/EventsPage';
+import EventDetailPage from './pages/EventDetailPage';
 import { SeasonProvider, useSeasonContext } from './contexts/SeasonContext';
 
 function AppShell({ darkMode, setDarkMode }) {
@@ -38,6 +40,8 @@ function AppShell({ darkMode, setDarkMode }) {
           <Route path="/archives" element={<ArchivesPage darkMode={darkMode} />} />
           <Route path="/community" element={<CommunityPage darkMode={darkMode} />} />
           <Route path="/teams/:slug/schedule" element={<TeamSchedulePage darkMode={darkMode} />} />
+          <Route path="/events" element={<EventsPage darkMode={darkMode} />} />
+          <Route path="/events/:slug" element={<EventDetailPage darkMode={darkMode} />} />
           <Route path="/rules" element={<RulesPage darkMode={darkMode} />} />
           <Route path="/rules/:section" element={<RulesPage darkMode={darkMode} />} />
         </Routes>
