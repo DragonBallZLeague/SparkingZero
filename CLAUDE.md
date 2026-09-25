@@ -45,7 +45,7 @@ npm run dev:calculator   # Calculator         -> :5175
 
 # Build
 npm run build             # Match Builder
-npm run build:analyzer    # Analyzer (prebuild also runs autoTagMatches.js, generate-br-data-structure.js, generate-br-data-tags.js over BR_Data)
+npm run build:analyzer    # Analyzer (prebuild also runs autoTagMatches.js, generate-br-data-structure.js, generate-br-data-tags.js, generate-br-aggregates.js over BR_Data)
 npm run build:calculator  # Calculator
 npm run build:all         # Match Builder + Analyzer + Calculator
 (cd apps/website && npm run build)
@@ -91,7 +91,7 @@ Beyond `deploy.yml`, three more workflows gate/automate changes under `apps/anal
 
 ## In-progress work
 
-The Analyzer app is mid-redesign per `docs/ANALYZER_REDESIGN_PLAN.md` (splitting the ~9,600-line `App.jsx` into routed pages, real Tailwind, shared design tokens, deep-linkable Character/Team/Match pages, share-snippet export). **Phase 1 (Foundation)** is done: `react-router-dom` is wired in `src/main.jsx` behind a catch-all route, `src/routes.js` defines the target URL scheme, and aggregation math has started moving into `src/utils/aggregation/`. Phase 2 (Design System & Mobile Foundation — real Tailwind, design tokens, responsive shell) is next. Check that doc's "Progress" section before starting analyzer redesign work, and keep it updated as phases complete.
+The Analyzer app is mid-redesign per `docs/ANALYZER_REDESIGN_PLAN.md`, audited and revised 2026-09-25 (splitting the 6,678-line `App.jsx` into routed pages, real Tailwind, shared design tokens, deep-linkable Character/Team/Match pages, share-snippet export). **Phase 1 (Foundation)** is done: `react-router-dom` is wired in `src/main.jsx` behind a catch-all route, `src/routes.js` defines the target URL scheme (though nothing imports it yet), and the aggregation math has been fully extracted into `src/utils/aggregation/`. **Phase 1.5 (Data layer)** is done: a build-time compact match corpus (`apps/analyzer/scripts/generate-br-aggregates.js` → `public/br-aggregates/`, wired into the analyzer prebuild) replaced the old ~2,232-file / ~67 MB page load with 2 requests / ~101 KB gzipped, verified against the raw data by `npm run verify-aggregates`. **Phase 2a (real Tailwind + shared tokens) is next.** Two cross-cutting items from that plan touch this file's concerns: the deploy workflow's `cp dist/index.html dist/404.html` means **analyzer deep links 404 into the website SPA** and needs a smart dispatcher, and the shared design tokens (canonical accent `#f97316`) are planned to live in `packages/ui`. Check that doc's "Progress" section before starting analyzer redesign work, and keep it updated as phases complete.
 
 ## Website content model
 

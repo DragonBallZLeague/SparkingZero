@@ -18,12 +18,13 @@ import transformationsData from '../../../referencedata/transformations.json';
 import CapsuleSynergyAnalysis from './components/CapsuleSynergyAnalysis.jsx';
 import AIStrategyAnalysis from './components/ai-strategy/AIStrategyAnalysis.jsx';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
+import { loadMatches } from './utils/corpusLoader.js';
 import { calculateMatchPerformanceScore, parseCharacterCSV, getTeams, extractStats, parseBattleTime, formatBattleTime } from './utils/statCalculations.js';
 import { getBuildComposition, getBuildTypeColor } from './utils/buildComposition.js';
 import { getFusionPartnerFamilyForms, computeMatchFusionDeltas } from './utils/fusionSplit.js';
 import { getAggregatedCharacterData } from './utils/aggregation/characterAggregation.js';
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
-import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate, getPositionInsight } from './utils/aggregation/positionAggregation.js';
+import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
 import { NavBar } from '@szl/ui';
 import { 
   Trophy, 
@@ -2831,40 +2832,24 @@ export default function App() {
                   const fileIds = selectedIds.filter(id => id.endsWith('.json'));
                   if (fileIds.length === 0) return;
 
-                  // Increment generation so any in-progress batch fetch knows it is stale
+                  // Increment generation so any in-progress load knows it is stale
                   const myGen = ++fetchGenRef.current;
+                  const isStale = () => fetchGenRef.current !== myGen;
 
-                  const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
-
-                  // Fetch in batches to avoid exhausting GitHub Pages connection limits.
-                  // Firing all requests simultaneously causes alphabetically-last folders
-                  // (e.g. Tiny Terrors) to have most requests rejected.
-                  const BATCH_SIZE = 200;
-                  const allContents = [];
-                  for (let i = 0; i < fileIds.length; i += BATCH_SIZE) {
-                    // Abort if a newer onSelect has started
-                    if (fetchGenRef.current !== myGen) return;
-                    const batch = fileIds.slice(i, i + BATCH_SIZE);
-                    const batchResults = await Promise.all(
-                      batch.map(async id => {
-                        const staticUrl = `${base}BR_Data/${id}`;
-                        try {
-                          const res = await fetch(staticUrl);
-                          if (res.ok) {
-                            const content = await res.json();
-                            return { name: id, content, tags: extractTagsFromMatchFile(content) };
-                          }
-                        } catch (err) {
-                          // ignore individual file errors and continue
-                        }
-                        return null;
-                      })
-                    );
-                    if (fetchGenRef.current !== myGen) return;
-                    allContents.push(...batchResults.filter(Boolean));
-                    // Update progressively so Team Rankings reflects loaded data sooner
-                    setFileContent([...allContents]);
-                  }
+                  // Loads from the compact corpus in public/br-aggregates/ (one
+                  // request per season/team folder instead of one per match), with
+                  // a per-file fallback if the corpus is missing or out of date.
+                  // See src/utils/corpusLoader.js.
+                  const loaded = await loadMatches(fileIds, {
+                    isStale,
+                    extractTags: extractTagsFromMatchFile,
+                    // Render progressively so Team Rankings reflects loaded data sooner
+                    onProgress: partial => {
+                      if (!isStale()) setFileContent([...partial]);
+                    },
+                  });
+                  if (isStale()) return;
+                  setFileContent(loaded);
                 }}
               />
             </div>
