@@ -35,13 +35,33 @@ function naturalSort(a, b) {
  * Controls which folders/files are selected by default when the app loads.
  * 
  * Options:
+ * - 'latest-season': Select the newest Seasons/<Season N> folder (default)
  * - 'all': Select all files in BR_Data
  * - 'none': Select nothing by default
  * - ['Events']: Select only the Events folder
  * - ['Events', 'Tests']: Select multiple folders
  * - ['Events/Season 0 Showcase']: Select specific subfolders (use full path)
+ *
+ * The default is 'latest-season', not 'all'. Active game updates and league rule
+ * changes make the newest season the most reliable data, and it is what a casual
+ * viewer arrives wanting to see; loading all ~2,500 matches up front served
+ * neither audience. Everything else stays one click away in the tree.
  */
-const DEFAULT_SELECTION = 'all';
+const DEFAULT_SELECTION = 'latest-season';
+
+/**
+ * Finds the newest season folder, e.g. "Seasons/Season 12". Sorts numerically so
+ * Season 10 beats Season 9. Returns null when there is no Seasons folder, in
+ * which case the caller falls back to selecting everything.
+ */
+function resolveLatestSeasonFolder(structure) {
+  const seasons = structure && structure.Seasons;
+  if (!seasons || typeof seasons !== 'object') return null;
+  const names = Object.keys(seasons).filter(key => key !== 'files');
+  if (names.length === 0) return null;
+  names.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+  return `Seasons/${names[names.length - 1]}`;
+}
 
 // Helper function to get all child IDs of a node (including files)
 function getAllChildIds(node, path = []) {
@@ -156,8 +176,16 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
         // Apply default selection based on DEFAULT_SELECTION config
         if (data) {
           const selectedIds = [];
-          
-          if (DEFAULT_SELECTION === 'all') {
+
+          // 'latest-season' resolves against the loaded tree so it never needs
+          // updating when a new season starts.
+          let effectiveDefault = DEFAULT_SELECTION;
+          if (effectiveDefault === 'latest-season') {
+            const latestSeason = resolveLatestSeasonFolder(data);
+            effectiveDefault = latestSeason ? [latestSeason] : 'all';
+          }
+
+          if (effectiveDefault === 'all') {
             // Select all files in BR_Data
             function collectAllIds(node, path = []) {
               Object.entries(node).forEach(([key, value]) => {
@@ -170,11 +198,11 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
               });
             }
             collectAllIds(data);
-          } else if (DEFAULT_SELECTION === 'none') {
+          } else if (effectiveDefault === 'none') {
             // Don't select anything
-          } else if (Array.isArray(DEFAULT_SELECTION)) {
+          } else if (Array.isArray(effectiveDefault)) {
             // Select specific folders/subfolders
-            DEFAULT_SELECTION.forEach(folderPath => {
+            effectiveDefault.forEach(folderPath => {
               const pathParts = folderPath.split('/');
               let node = data;
               
