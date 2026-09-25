@@ -1,0 +1,26 @@
+/*
+ * Tailwind entry for the analyzer. Imported by main.jsx BEFORE App.jsx pulls in
+ * App.css, and that order is load-bearing - see docs/ANALYZER_REDESIGN_PLAN.md
+ * Phase 2a.
+ *
+ * App.css hand-rolls ~713 Tailwind-lookalike utility classes, 123 of which share
+ * a name with a class Tailwind generates. Several of those differ in a way that
+ * changes rendering: .gap-4 is 0.6rem here but 1rem in Tailwind, .max-w-4xl and
+ * .max-w-7xl add "margin: 0 auto", .border-b and .border-l-2 carry an explicit
+ * border-style, and a handful of violet/teal shades use different hex values
+ * than Tailwind's palette. Emitting Tailwind FIRST means App.css wins every tie
+ * at equal specificity, so turning Tailwind on changes nothing that already
+ * renders - it only fills in classes App.css never defined (notably the nine
+ * broken responsive classes) plus anything new we write.
+ *
+ * As App.css rules are deleted per-component in Phase 2b, Tailwind's equivalents
+ * take over automatically. That is the migration path.
+ *
+ * NOTE: "@tailwind base" is deliberately omitted. Preflight would reset margins,
+ * heading sizes and border defaults across a 6,600-line component that was never
+ * written against it. It gets enabled in Phase 2b once App.css is gone. Until
+ * then, border-width utilities need an explicit border-style (App.css's versions
+ * already include one).
+ */
+@tailwind components;
+@tailwind utilities;

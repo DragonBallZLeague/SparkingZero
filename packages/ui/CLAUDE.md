@@ -20,4 +20,12 @@ There is no build step. Each consuming app's `vite.config.js` aliases `@szl/ui` 
 
 - Because there's no isolated build/test for this package, verify changes by running one of the consuming apps' dev servers (e.g. `npm run dev:analyzer` from the repo root) and checking the nav bar renders correctly, rather than trying to test this package standalone.
 - If you add a component intended for cross-app reuse, add it here rather than duplicating it into an individual app's `src/components/` — that duplication is exactly what this package exists to avoid.
-- Known design-token debt (flagged in `docs/ANALYZER_REDESIGN_PLAN.md`): the various apps still have inconsistent `sz-orange`/`dragon-orange`/`dbz.orange`-style color naming. Unifying that into one palette here is planned as part of the Analyzer redesign's Phase 2 (Design System), not yet done.
+
+## `src/tokens.js` — shared design tokens
+
+Added in the Analyzer redesign's Phase 2a, closing out the old `sz-orange`/`dragon-orange`/`dbz.orange` naming split. Exports `brand`, `surface`, `radius` and `font`. **Canonical accent is `#f97316`.**
+
+- **CommonJS on purpose.** Each app's `tailwind.config.js` loads it directly, and those are a mix of CJS (analyzer, match builder) and ESM (website, calculator); `module.exports` is the form both can consume. Do not convert it to ESM.
+- All four apps now source their palette from it, and each keeps its **existing token names as aliases** onto the shared values (`dbz.*`, `sz-*`, `dragon-*`) so no existing markup breaks. New work should prefer the shared `brand.*` names.
+- All four `tailwind.config.js` files also scan `../../packages/ui/src/**/*.{js,jsx}`, so Tailwind classes used inside this package are generated. That was previously missing, which is why `NavBar.css` is hand-written plain CSS rather than Tailwind classes.
+- Admin and Submit do **not** consume this package, so tokens do not reach them.

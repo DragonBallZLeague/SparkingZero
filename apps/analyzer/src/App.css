@@ -19,7 +19,12 @@ body {
 
 /* Base utility classes inspired by Tailwind */
 .min-h-screen { min-height: 100vh; }
-.bg-gradient-to-br { background: linear-gradient(135deg, #f59e0b 0%, #dc2626 50%, #7c3aed 100%); }
+/* App background gradient. NOTE: this repurposes Tailwind's `bg-gradient-to-br`
+   class name to mean one specific gradient. The first stop was #f59e0b (amber);
+   it is now the canonical league orange from packages/ui/src/tokens.js, so the
+   analyzer matches the website and calculator. Phase 2b should rename this to a
+   non-Tailwind class name to stop it shadowing a real utility. */
+.bg-gradient-to-br { background: linear-gradient(135deg, #f97316 0%, #dc2626 50%, #7c3aed 100%); }
 .p-4 { padding: 1rem; }
 .p-6 { padding: 1.5rem; }
 .max-w-7xl { max-width: 80rem; margin: 0 auto; }

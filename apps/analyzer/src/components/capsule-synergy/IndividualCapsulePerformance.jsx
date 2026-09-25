@@ -17,7 +17,7 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useFloating, offset, flip, shift, autoUpdate } from '@floating-ui/react';
-import * as XLSX from 'xlsx';
+import { exportRowsToXlsx } from '../../utils/exportSheet.js';
 import { Info } from 'lucide-react';
 
 export default function IndividualCapsulePerformance({ performanceData, capsuleMap, aiCompatibilityData }) {
@@ -115,7 +115,7 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
   };
 
   // Export to Excel
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     const exportData = tableData.map(row => ({
       'Capsule': row.name,
       'Build Type': row.buildType,
@@ -129,10 +129,7 @@ export default function IndividualCapsulePerformance({ performanceData, capsuleM
       'Damage Efficiency': (row.damageEfficiency || 0).toFixed(2)
     }));
 
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Capsule Performance');
-    XLSX.writeFile(wb, 'capsule_performance.xlsx');
+    await exportRowsToXlsx(exportData, 'Capsule Performance', 'capsule_performance.xlsx');
   };
 
   // Get unique build types for filter
