@@ -11,7 +11,8 @@
     "watch-br-data": "node scripts/watch-br-data.js",
     "build-aggregates": "node scripts/generate-br-aggregates.js",
     "verify-aggregates": "node scripts/verify-br-aggregates.mjs",
-    "verify-slugs": "node scripts/verify-character-slugs.mjs"
+    "verify-slugs": "node scripts/verify-character-slugs.mjs",
+    "verify-filters": "node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
