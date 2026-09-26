@@ -51,7 +51,7 @@ These are the tie-breakers. Each one is testable against a proposed change:
 ### Concrete goals
 
 1. Serve both audiences well, per the above — not one at the other's expense.
-2. Every character, team, and match gets a real, shareable URL. **⚠️ Blocked in production today — see "Deep links are broken in production" below.**
+2. Every character, team, and match gets a real, shareable URL. The production fallback that broke these is **fixed** — see the section below.
 3. A "share snippet" image card on Character/Team/Match pages and the Sandbox, for pasting into Discord. (Depends on goal 2.)
 4. Clean up and consolidate the codebase.
 5. Modernize the visuals and fix mobile compatibility.
@@ -157,7 +157,7 @@ The **tagging pipeline is a solid foundation**: `scripts/autoTagMatches.js` → 
 
 ---
 
-## ⚠️ Blocker: deep links are broken in production
+## ~~Blocker~~: deep links are broken in production — ✅ FIXED (2026-09-26)
 
 `.github/workflows/deploy.yml:90-92` does:
 
@@ -177,6 +177,8 @@ The **tagging pipeline is a solid foundation**: `scripts/autoTagMatches.js` → 
 3. Each sub-app's `index.html` (or the top of `main.jsx`, before the router mounts) checks that `sessionStorage` key and, if present, clears it and `history.replaceState`s back to the original URL.
 
 This is the standard `spa-github-pages` pattern. One workflow change plus a few lines per sub-app entry, and it fixes deep linking for every sub-app at once — not just the analyzer.
+
+**Implemented 2026-09-26.** `scripts/build-404.js` replaces the `cp` step: it keeps the website's markup, so website deep links behave exactly as before with no extra redirect, and injects a dispatcher into `<head>` covering analyzer, matchbuilder, calculator, admin and submit. `restoreDeepLink()` lives in `packages/ui/src/deepLink.js` and is called before the router in `apps/analyzer/src/main.jsx`; `apps/admin/src/main.jsx` carries an inline copy because Admin does not consume `@szl/ui`. `scripts/verify-404.mjs` asserts the routing table — including the awkward case of a match id that ends in `.json`, and an `/assets/` path that must stay a real 404 — and imports the same `resolveRedirect` that is stringified into the page, so the tested and shipped logic cannot diverge. It runs in the deploy workflow. `scripts/serve-dist.js` reproduces the Pages 404 rule locally, which no dev server does.
 
 *Alternative if this proves troublesome:* `HashRouter` for the analyzer only (`/analyzer/#/characters/0620_00`). Zero infra risk, works immediately, but uglier links and diverges from the website's `BrowserRouter` pattern. Prefer the dispatcher.
 
@@ -340,7 +342,7 @@ Manual Upload mode gets the new design system and image-card sharing (no deep li
 
 - **Share snippet format:** image card first (canvas/`html-to-image`), text/markdown fallback deferred.
 - **Routing:** react-router `BrowserRouter`, with `basename={import.meta.env.BASE_URL}` (the analyzer's existing approach — better than the website's hardcoded literal).
-- **Deep-link production fix:** smart 404 dispatcher in the deploy workflow, prerequisite of Phase 3. HashRouter is the fallback if it proves troublesome.
+- **Deep-link production fix:** smart 404 dispatcher in the deploy workflow — **implemented 2026-09-26** (`scripts/build-404.js` + `restoreDeepLink()`), so Phase 3 is unblocked. HashRouter was the fallback and was not needed.
 - **Data loading:** build-time slim aggregate index (Phase 1.5), before any page rebuild.
 - **Rollout order:** Foundation → **Data layer** → Tailwind/tokens → Character → Team/Match → Home → Meta → Sandbox, with the `App.css` teardown running incrementally alongside the page rebuilds rather than gating them.
 - **Canonical accent color:** `#f97316`. The analyzer shifts off `#f59e0b`.

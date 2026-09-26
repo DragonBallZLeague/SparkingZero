@@ -21,6 +21,15 @@ There is no build step. Each consuming app's `vite.config.js` aliases `@szl/ui` 
 - Because there's no isolated build/test for this package, verify changes by running one of the consuming apps' dev servers (e.g. `npm run dev:analyzer` from the repo root) and checking the nav bar renders correctly, rather than trying to test this package standalone.
 - If you add a component intended for cross-app reuse, add it here rather than duplicating it into an individual app's `src/components/` — that duplication is exactly what this package exists to avoid.
 
+## `src/deepLink.js` — `restoreDeepLink(basePath)`
+
+Restores a deep link that the site-root 404 dispatcher had to bounce. GitHub Pages serves `/SparkingZero/404.html` for any path that is not a real file, so `scripts/build-404.js` stashes the original URL in `sessionStorage` and redirects into the owning sub-app; this puts the URL back before the router reads it.
+
+- **Call it at the very top of the app's entry module, before the router is created.** `apps/analyzer/src/main.jsx` does this. It is a no-op during normal navigation.
+- The `sessionStorage` key (`szl:deep-link`) must stay in sync with `STORAGE_KEY` in `scripts/build-404.js` **and** with the inline copy in `apps/admin/src/main.jsx` — Admin does not consume this package, so it carries its own duplicate rather than widening that boundary.
+- It only restores paths that start with the app's own base, so a stale or hand-edited entry cannot navigate somewhere unrelated, and one app cannot restore another app's URL.
+- Test with `node scripts/serve-dist.js` against a build; no dev server reproduces the Pages 404 rule.
+
 ## `src/tokens.js` — shared design tokens
 
 Added in the Analyzer redesign's Phase 2a, closing out the old `sz-orange`/`dragon-orange`/`dbz.orange` naming split. Exports `brand`, `surface`, `radius` and `font`. **Canonical accent is `#f97316`.**
