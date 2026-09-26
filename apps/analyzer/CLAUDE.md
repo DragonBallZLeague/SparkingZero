@@ -15,6 +15,7 @@ This app is mid-rewrite per **`docs/ANALYZER_REDESIGN_PLAN.md`** (audited and re
 - **Phase 1.5 (Data layer): ✅ core complete.** The app no longer fetches ~2,232 files / ~67 MB on load — the default view is **2 requests / ~101 KB gzipped**. See "The compact match corpus" below. Still open: `filteredAggregatedData` (`App.jsx:1413`, ~697 lines inline) is deferred to the Phase 3 Character page rebuild.
 - **Phase 2a (Tailwind + tokens + dependency cleanup): ✅ complete.** Real Tailwind v3 runs now; shared tokens live in `packages/ui/src/tokens.js`; `xlsx`, `@mui/x-tree-view`, `@mui/lab` and a duplicate `@vitejs/plugin-react` are gone. See "Styling: Tailwind and App.css coexist" below — **the CSS load order is load-bearing, read it before touching styles.**
 - **Phase 2b (App.css teardown) is next**: retire the 2,062-line `App.css` and the 1,199 `darkMode` ternaries incrementally, per component, as pages get rebuilt — using Tailwind's `dark:` variant plus a `ThemeContext`. Then **2c** (responsive shell, accessibility, state persistence).
+- **Character URLs are name slugs, decided 2026-09-26.** `/characters/android-13`, not `/characters/0620_00` — see "Character URLs are name slugs" below before building the Phase 3 Character page.
 - **Deep links now survive a refresh.** `scripts/build-404.js` generates the site-root `dist/404.html` with a dispatcher that redirects sub-app paths into the right app; `restoreDeepLink()` from `@szl/ui` (called at the top of `src/main.jsx`, before the router) puts the original URL back. This was the Phase 3 prerequisite. See the root `CLAUDE.md` for how it works, and note that **no dev server reproduces the Pages 404 rule** — use `node scripts/serve-dist.js` against a build to test deep links.
 - **Phases 3–7 (Character/Team/Match page rebuilds, stats-only Home page, Meta page, Sandbox polish, share-snippet image export): not started.**
 
@@ -59,10 +60,22 @@ This is how match data reaches the client. **Do not add code that fetches `BR_Da
 2. `scripts/generate-br-data-structure.js` — builds `public/br-data-structure.json`, the file tree `BRDataSelector` reads.
 3. `scripts/generate-br-data-tags.js` — builds the tag index (`public/br-data-tags.json`) that `TagFilterSelector` filters against.
 4. `scripts/generate-br-aggregates.js` — builds the compact match corpus in `public/br-aggregates/` (see above).
+5. `scripts/verify-character-slugs.mjs` — guards the character URL scheme (see "Character URLs are name slugs" below). **Fails the build** on a slug collision.
 
 If match data looks stale/missing in the UI after adding files directly (rather than through a PR), re-run `npm run dev` (which triggers Vite) or manually run these three scripts — they don't run automatically on file save, only on build/prebuild.
 
 Separately, `scripts/fix-json-encoding.js` (`npm run fix-json`) and `scripts/watch-br-data.js` handle encoding issues (UTF-16 LE / UTF-8 BOM) in submitted JSON — this also runs in CI (`.github/workflows/deploy.yml` and `.github/workflows/validate-json.yml`, see root `CLAUDE.md`). `scripts/br-data-api-server.js` and `scripts/generateCapsuleMetadata.js`/`src/config/capsuleMetadata.json` support local tooling — check their headers before assuming they run in the build.
+
+## Character URLs are name slugs (read before building the Character page)
+
+Characters are addressed in URLs by a slug of their name, **not** by the internal CSV key: `/analyzer/characters/android-13`, not `/analyzer/characters/0620_00`. Deep links get shared in Discord, and `0620_00` (which is Android 13) tells the reader nothing.
+
+- **`src/utils/characterSlug.js`** owns this. `buildCharacterSlugIndex(csvText)` returns `{ idToName, idToSlug, slugToId, collisions }`; `characterUrlKey(id, index)` gives the URL form; `resolveCharacterParam(param, index)` turns a URL param back into an id.
+- **Raw ids still resolve, permanently.** This is not redundancy — a newly released character can appear in submitted match data *before* `referencedata/characters.csv` gains a row, and with no name there is no slug. The id route keeps that character reachable, displaying the raw key until the CSV catches up. It also protects links shared before any future rename.
+- **The two namespaces provably cannot collide**: every id matches `CHARACTER_ID_PATTERN` (`^\d{4}_\d{2}$`) and no character name contains an underscore, so the dispatch is one regex test rather than a guess.
+- **`npm run verify-slugs`** (`scripts/verify-character-slugs.mjs`, in `prebuild`) asserts slug uniqueness, namespace separation and a lossless `id -> slug -> id` round trip, and **fails the build** on a violation. All 241 characters currently pass with zero collisions. **Do not change `slugifyCharacterName()` without re-running it** — altering the algorithm silently rots every link already shared. A character in match data but missing from the CSV is a warning, not a failure.
+- `src/routes.js` stays a pure path builder; `ROUTES.character()` takes the URL key, not an id. Phase 3 should **redirect a raw-id URL to its slug** so the canonical form lands in the address bar.
+- Two related gotchas: `statCalculations.js:parseCharacterCSV` splits on the *first* comma (harmless — it only reads the id — but it is why slug parsing does not reuse it), and **47 named characters never appear in the corpus**, so build a `/characters` index from match data, not from the CSV, or it will list dead pages.
 
 ## Reference data
 

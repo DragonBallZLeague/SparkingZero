@@ -145,7 +145,7 @@ The 2026-09-06 audit is superseded. Several of its figures were stale by the tim
 
 ### Identity for deep links
 
-- **Character IDs are stable.** `battlePlayCharacter.character.key` / `originalCharacter.key` are strings like `0620_00`, resolved through `referencedata/characters.csv` (241 entries). `/characters/0620_00` works directly. Note `statCalculations.js:51-54` prefers `originalCharacter`, so transformed forms collapse to their base — which is exactly what `fusionSplit.js` and `formStatsCalculator.js` exist to unwind, and what a per-form tab on the Character page should surface.
+- **Characters are addressed by NAME SLUG, with the id as a permanent alias.** `battlePlayCharacter.character.key` / `originalCharacter.key` are stable strings like `0620_00`, resolved through `referencedata/characters.csv` (241 entries) — but a raw key is meaningless to a reader (`0620_00` is **Android 13**), and these links get pasted into Discord. The canonical URL is therefore `/characters/android-13`. See "Character URL scheme" below for the verification behind this. Note `statCalculations.js:51-54` prefers `originalCharacter`, so transformed forms collapse to their base — which is exactly what `fusionSplit.js` and `formStatsCalculator.js` exist to unwind, and what a per-form tab on the Character page should surface.
 - **There is no match ID field.** No `matchId`, `id`, `date` or `uuid` exists in any BR_Data file. Match identity is the **relative file path** (`Seasons/Season 0/S0 Week 1 Match 1.json`) — the same key used by `br-data-tags.json`, `BRDataSelector`'s tree ids, and `handleNavigateToMatch`. Those paths contain spaces and slashes, so `/matches/:matchId` needs deliberate encode/decode (`routes.js` already `encodeURIComponent`s, but round-tripping through the router needs testing). Filenames do encode structured info (`OS0 Time Patrol Test 58 Match 1 R3`) if a cleaner slug is preferred later.
 - **Team IDs** are plain display names from `tags.team[]` (12 values, e.g. "Master and Student"). Slugging is straightforward but does not exist yet.
 
@@ -184,6 +184,43 @@ This is the standard `spa-github-pages` pattern. One workflow change plus a few 
 
 ---
 
+## Character URL scheme — slug, not key (decided 2026-09-26)
+
+**Decision: the canonical character URL carries the name as a slug.** `/analyzer/characters/android-13`, not `/analyzer/characters/0620_00`.
+
+The driver is principle 1 and the share-snippet goal: these links are meant to be pasted into Discord, and an internal key tells the reader nothing. `0620_00` *is* Android 13, and no participant would guess that. A link that names the character is self-describing in exactly the way a tag filter is — the same reasoning that moved default scoping onto visible tag filters rather than a silent folder pre-selection.
+
+### Why this is safe (verified against the real data, not assumed)
+
+| Property | Result |
+|---|---|
+| Name uniqueness | **241 characters, 241 unique names** — no duplicates at all |
+| Slug uniqueness | **241 unique slugs, zero collisions**, including diacritics (`Goku Black Super Saiyan Rosé` → `goku-black-super-saiyan-rose`) and the long form chains (`goku-super-super-saiyan-god-super-saiyan`) |
+| Coverage in real data | **194 distinct characters appear across all 2,505 matches; all 194 resolve to a name.** No orphans |
+| Name stability | Every commit touching `characters.csv` is a **pure insertion** (209 rows, then 33 DLC additions). **Zero renames, zero deletions** in the file's entire history — which is what makes name-based links safe from rot |
+| Namespace separation | All 241 ids match `^\d{4}_\d{2}$`, and **no character name contains an underscore**, so no slug can ever be mistaken for an id |
+
+### Raw ids remain valid forever
+
+`resolveCharacterParam()` accepts a slug *or* a raw id. That is not belt-and-braces, it covers a real failure mode: **a newly released character appears in submitted match data before `characters.csv` gains a row for it.** With no name there is no slug, and a slug-only route would make that character unreachable precisely when curiosity about it peaks. The id route always resolves, and the page degrades to showing the raw key until the CSV catches up. It also means any link shared before a hypothetical future rename keeps working.
+
+Because the two namespaces provably cannot collide, the dispatch is a single regex test rather than a heuristic or a guess-and-fallback.
+
+### What enforces it
+
+- **`apps/analyzer/src/utils/characterSlug.js`** — `slugifyCharacterName()`, `buildCharacterSlugIndex()`, `resolveCharacterParam()`, `characterUrlKey()`. Splits the CSV on the **last** comma, so a name containing a comma (none do today) cannot silently truncate and corrupt a slug.
+- **`npm run verify-slugs`** (`scripts/verify-character-slugs.mjs`, wired into `prebuild`) — asserts slug uniqueness, namespace separation, and a lossless `id → slug → id` round trip, and **fails the build** on a violation. Slug uniqueness is true today but nothing else guarantees it: a future DLC name differing from an existing one only by punctuation would silently collide and two characters would fight over one URL. Same philosophy as `verify-404.mjs` and `verify-aggregates` — catch it in CI, not in production. A character present in match data but missing from the CSV is a **warning**, not a failure, since the id route still serves it.
+- **`src/routes.js`** stays a pure path builder with no data dependency; `ROUTES.character()` takes the URL key that `characterUrlKey(id, index)` produces.
+
+**Do not change `slugifyCharacterName()` without re-running the verifier** — altering the algorithm silently rots every link already shared.
+
+### Two related findings
+
+- `statCalculations.js:parseCharacterCSV` splits on the *first* comma. Harmless (it only reads the id, and no name contains a comma) but it is why slug parsing deliberately does not reuse it.
+- **47 named characters never appear in the corpus.** A `/characters` index built from `characters.csv` would therefore list 47 dead pages — build it from the match data instead.
+
+---
+
 ## Feature audit — keep / merge / rebuild / cut
 
 | Feature | Audience | Recommendation |
@@ -213,7 +250,7 @@ This is the standard `spa-github-pages` pattern. One workflow change plus a few 
 ```
 /analyzer/                          → Home: stats-only landing (see Phase 5 — NOT standings)
 /analyzer/characters                → Character leaderboard (searchable, sortable)
-/analyzer/characters/:charId        → Single character deep-dive (charId = e.g. 0620_00)
+/analyzer/characters/:charSlug      → Single character deep-dive (name slug, e.g. android-13; raw id also accepted)
 /analyzer/teams                     → Team rankings
 /analyzer/teams/:teamSlug           → Single team deep-dive
 /analyzer/matches                   → Match browser (BRDataSelector + tag filters, driven by br-data-tags.json)
@@ -293,7 +330,7 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 
 **Prerequisite: the 404 dispatcher must ship first.**
 
-First page on the new architecture. Real `<Route>` entries replace the catch-all; `src/routes.js` finally gets imported; `TagFilterSelector` moves from `history.replaceState` to `useSearchParams`; `<ShareButton>` is introduced here. Per-form/fusion tabs surface what `fusionSplit.js` and `formStatsCalculator.js` already compute.
+First page on the new architecture. Real `<Route>` entries replace the catch-all; `src/routes.js` finally gets imported; `TagFilterSelector` moves from `history.replaceState` to `useSearchParams`; `<ShareButton>` is introduced here. This is where `utils/characterSlug.js` gets wired up — the route resolves `:charSlug` through `resolveCharacterParam()`, and should **redirect a raw-id URL to its slug** so the canonical, shareable form is what ends up in the address bar. Per-form/fusion tabs surface what `fusionSplit.js` and `formStatsCalculator.js` already compute.
 
 This is also where the participant workflow starts paying off, and the page should be shaped by principles 1 and 4 rather than by what `App.jsx` currently renders:
 
@@ -342,6 +379,7 @@ Manual Upload mode gets the new design system and image-card sharing (no deep li
 
 - **Share snippet format:** image card first (canvas/`html-to-image`), text/markdown fallback deferred.
 - **Routing:** react-router `BrowserRouter`, with `basename={import.meta.env.BASE_URL}` (the analyzer's existing approach — better than the website's hardcoded literal).
+- **Character URLs use the name slug, not the internal key.** `/characters/android-13`, not `/characters/0620_00`. Raw ids stay valid forever as an alias. Verified and enforced at build time — see "Character URL scheme" below. **Decided 2026-09-26.**
 - **Deep-link production fix:** smart 404 dispatcher in the deploy workflow — **implemented 2026-09-26** (`scripts/build-404.js` + `restoreDeepLink()`), so Phase 3 is unblocked. HashRouter was the fallback and was not needed.
 - **Data loading:** build-time slim aggregate index (Phase 1.5), before any page rebuild.
 - **Rollout order:** Foundation → **Data layer** → Tailwind/tokens → Character → Team/Match → Home → Meta → Sandbox, with the `App.css` teardown running incrementally alongside the page rebuilds rather than gating them.
