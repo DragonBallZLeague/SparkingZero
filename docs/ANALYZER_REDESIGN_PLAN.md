@@ -97,9 +97,20 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 
 **Still open in this phase:** `filteredAggregatedData` (`App.jsx:1413`, ~697 lines inline) has *not* been extracted — it is a code-organisation concern rather than a data-layer one, and folding a 697-line refactor into the data change would have put untested stat math at risk for no payload benefit. Do it with the Character page rebuild (Phase 3), where the consuming view is being rewritten anyway. The per-row `seq` ordering key is emitted and ready for trend views, but nothing consumes it yet.
 
-### Phase 2 — Design System & Mobile Foundation: not started
+### Phase 2a — Tailwind + tokens + dependency cleanup: ✅ Complete (2026-09-25)
 
-Split in this revision into **2a** (Tailwind + tokens + dependency consolidation), **2b** (incremental `App.css` teardown, de-gated), and **2c** (responsive shell + accessibility + state persistence).
+- **Real Tailwind v3 is running.** `postcss.config.js` added (CommonJS — this package has no `"type": "module"` and its prebuild scripts must stay CJS), `src/index.css` holds the directives, imported by `main.jsx` **before** `App.css`.
+- **That load order is load-bearing.** An audit found `App.css` defines 713 single-class rules, **123 of which collide with a class Tailwind generates** — and some collisions change rendering, not just colour notation: `.gap-4` is `0.6rem` here vs Tailwind's `1rem`; `.max-w-4xl` and `.max-w-7xl` add `margin: 0 auto`; `.border-b` and `.border-l-2` carry an explicit `border-style`; and several violet/teal shades use genuinely different hex values than Tailwind's palette. Emitting Tailwind first means `App.css` wins every tie at equal specificity, so **turning Tailwind on changed nothing that already rendered** — confirmed by inspecting the built bundle, where the App.css value is last in all three spot-checked cases.
+- **Preflight is deliberately OFF** (`corePlugins.preflight: false`, and `@tailwind base` omitted). It would reset headings, margins and border defaults across a component tree never written against it. It gets enabled in 2b once `App.css` is gone. Until then, border-width utilities need an explicit border-style.
+- **All 9 previously-broken responsive classes now generate**, and the `xl:` breakpoint has a media query for the first time.
+- **Shared tokens live in `packages/ui/src/tokens.js`** — CommonJS, so both the CJS configs (analyzer, match builder) and the ESM ones (website, calculator) can load it. All four Tailwind configs now source from it and scan `packages/ui`. Each app keeps its existing token **names** as aliases onto the shared values, so no existing markup changed: the website's `dbz.*`, the calculator's `sz-*`, the analyzer's `dragon-*`. New work should prefer the shared `brand.*` names.
+- **One deliberate visual change**: the analyzer's app background gradient's first stop moved from amber `#f59e0b` to the canonical `#f97316` (`App.css:22`). The `amber-500` utilities at lines 163/491/501 correctly keep `#f59e0b` — that is a real amber, not a brand accent. That line also shadows Tailwind's real `bg-gradient-to-br`; 2b should rename it.
+- **Dependencies**: removed `xlsx` (its two trivial call sites moved onto `exceljs` via the new `src/utils/exportSheet.js`), `@mui/x-tree-view` and `@mui/lab` (zero imports anywhere), and the duplicate `@vitejs/plugin-react` devDependency. **Analyzer JS went 2,267 kB → 1,981 kB (gzip 622 → 526 kB).**
+- Match builder's 47-entry `safelist` was **kept**. It exists because that app assembles class names at runtime where Tailwind's scanner cannot see them, so removing entries needs per-class verification. Noted as future work rather than done blind.
+
+### Phase 2b — App.css teardown: not started
+
+### Phase 2c — Responsive shell, accessibility, persistence: not started
 
 ### Phases 3–7: not started
 

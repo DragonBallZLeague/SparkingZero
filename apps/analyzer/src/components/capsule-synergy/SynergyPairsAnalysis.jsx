@@ -12,7 +12,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import * as XLSX from 'xlsx';
+import { exportRowsToXlsx } from '../../utils/exportSheet.js';
 
 export default function SynergyPairsAnalysis({ synergyData, capsuleMap }) {
   const [sortBy, setSortBy] = useState('synergyBonus');
@@ -99,7 +99,7 @@ export default function SynergyPairsAnalysis({ synergyData, capsuleMap }) {
   };
 
   // Export to Excel
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     const exportData = tableData.map(row => ({
       'Capsule 1': row.name1,
       'Capsule 2': row.name2,
@@ -114,10 +114,7 @@ export default function SynergyPairsAnalysis({ synergyData, capsuleMap }) {
       'Efficiency': (row.damageEfficiency || 0).toFixed(2)
     }));
 
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Synergy Pairs');
-    XLSX.writeFile(wb, 'capsule_synergy_pairs.xlsx');
+    await exportRowsToXlsx(exportData, 'Synergy Pairs', 'capsule_synergy_pairs.xlsx');
   };
 
   if (!synergyData || Object.keys(synergyData).length === 0) {

@@ -1,6 +1,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// Tailwind utilities must load BEFORE App.css - see src/index.css for why.
+import './index.css';
 import App from './App';
 
 // Router foundation only (see docs/ANALYZER_REDESIGN_PLAN.md Phase 1) — a single
