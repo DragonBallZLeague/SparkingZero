@@ -137,14 +137,39 @@ check('all five levels selected skips the filter entirely',
 const onlyExcellent = filterAggregatedData(aggregated, { performanceFilters: ['excellent'] });
 check('a single level is a strict subset', onlyExcellent.length < base.length,
   'excellent=' + onlyExcellent.length + ' vs base=' + base.length);
-const levels = new Set(base.map(c => getPerformanceLevel(c.combatPerformanceScore, base.map(x => x.combatPerformanceScore))));
-check('getPerformanceLevel emits "below-average", never "below" (documented mismatch)',
-  levels.has('below-average') ? !levels.has('below') : true,
-  'levels seen: ' + [...levels].join(', '));
-const belowOnly = filterAggregatedData(aggregated, { performanceFilters: ['below'] });
-check('KNOWN BUG preserved: filtering by "below" matches nothing',
-  belowOnly.length === 0,
-  'got ' + belowOnly.length + ' rows - if this now returns rows, the bug was fixed; update this check');
+// The five level strings are a contract between getPerformanceLevel and the
+// filter UI. They disagreed on the fourth one until 2026-09-26 ('below' vs
+// 'below-average'), which silently dropped every below-average character.
+// The partition check below is what catches that class of bug: if any level
+// string does not match, its rows belong to no single-level selection and the
+// union comes up short.
+const LEVELS = ['excellent', 'good', 'average', 'below-average', 'poor'];
+const scores = base.map(c => c.combatPerformanceScore);
+const levelsSeen = new Set(base.map(c => getPerformanceLevel(c.combatPerformanceScore, scores)));
+check('getPerformanceLevel only ever emits the five contract levels',
+  [...levelsSeen].every(l => LEVELS.includes(l)),
+  'unexpected level(s): ' + [...levelsSeen].filter(l => !LEVELS.includes(l)).join(', '));
+
+const union = new Set();
+for (const level of LEVELS) {
+  const rows = filterAggregatedData(aggregated, { performanceFilters: [level] });
+  rows.forEach(r => union.add(r.name));
+  // A level present in the data must be selectable on its own.
+  if (levelsSeen.has(level)) {
+    check('filtering by "' + level + '" returns its rows', rows.length > 0,
+      level + ' is present in the data but selecting it returned nothing - the ' +
+      'filter value and getPerformanceLevel disagree on this level');
+    check('every row returned for "' + level + '" really is that level',
+      rows.every(r => getPerformanceLevel(r.combatPerformanceScore, scores) === level));
+  }
+}
+check('the five levels partition the whole default view (no row is unreachable)',
+  union.size === base.length,
+  union.size + ' of ' + base.length + ' rows reachable by single-level selection');
+
+// Regression guard: the old wrong value must not quietly work again.
+check('the retired value "below" matches nothing',
+  filterAggregatedData(aggregated, { performanceFilters: ['below'] }).length === 0);
 
 // ---- Robustness -------------------------------------------------------------
 console.log('\nRobustness:');

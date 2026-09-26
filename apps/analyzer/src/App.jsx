@@ -1322,7 +1322,10 @@ export default function App() {
   // Search and filter state for Aggregated Character Performance
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   // Old combobox state variables removed - now using Combobox component
-  const [performanceFilters, setPerformanceFilters] = useState(['excellent', 'good', 'average', 'below', 'poor']);
+  // Values must match what getPerformanceLevel() returns - 'below-average', not
+  // 'below'. They disagreed until 2026-09-26, which silently dropped every
+  // below-average character as soon as any level was deselected.
+  const [performanceFilters, setPerformanceFilters] = useState(['excellent', 'good', 'average', 'below-average', 'poor']);
   const [minMatches, setMinMatches] = useState(1);
   const [maxMatches, setMaxMatches] = useState(999);
   const [sortBy, setSortBy] = useState('combatScore');
@@ -2597,7 +2600,7 @@ export default function App() {
                       { value: 'excellent', label: 'Excellent', color: 'green' },
                       { value: 'good', label: 'Good', color: 'yellow' },
                       { value: 'average', label: 'Average', color: 'orange' },
-                      { value: 'below', label: 'Below Average', color: 'red' },
+                      { value: 'below-average', label: 'Below Average', color: 'red' },
                       { value: 'poor', label: 'Poor', color: 'gray' }
                     ].map(filter => {
                       const isActive = performanceFilters.includes(filter.value);

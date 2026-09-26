@@ -5,12 +5,12 @@
  * Moved verbatim out of App.jsx in Phase 3 so utils/aggregation/filterAggregated.js
  * can use it without importing from a React component.
  *
- * NOTE: with no distribution it returns the string "below-average", but the
- * performance-filter UI in App.jsx stores the level as "below". Those two do not
- * match, so a below-average character is dropped whenever any level is
- * deselected. That mismatch predates this extraction and is deliberately
- * preserved here - fixing it changes which rows the table shows and belongs in
- * its own change.
+ * Returns exactly one of: "excellent", "good", "average", "below-average",
+ * "poor". Those strings are a contract - the badge switches and style maps in
+ * App.jsx and the leaderboard performance filter all key off them, so renaming one
+ * means updating every consumer. The filter UI used to store the fourth level as
+ * "below", which matched nothing and silently dropped every below-average
+ * character whenever any level was deselected; fixed 2026-09-26.
  */
 export function getPerformanceLevel(value, allValues = []) {
   // Fallback simple thresholds when no distribution is provided
