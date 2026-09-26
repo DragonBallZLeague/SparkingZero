@@ -1289,7 +1289,9 @@ export default function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
   const [fileTags, setFileTags] = useState(null); // Tags for the currently displayed match file
-  const [tagFilterPaths, setTagFilterPaths] = useState(null); // Paths from TagFilterSelector (null = no filter)
+  // undefined = TagFilterSelector has not reported yet (BRDataSelector waits, so the
+  // first load is already scoped); null = ready with no filter; array = matching paths.
+  const [tagFilterPaths, setTagFilterPaths] = useState(undefined);
   const fetchGenRef = useRef(0); // Incremented on each new onSelect call; stale batches check this before writing
   // Separate state for the header match-analysis selector so we don't override global fileContent
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);

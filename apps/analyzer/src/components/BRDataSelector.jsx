@@ -35,33 +35,19 @@ function naturalSort(a, b) {
  * Controls which folders/files are selected by default when the app loads.
  * 
  * Options:
- * - 'latest-season': Select the newest Seasons/<Season N> folder (default)
- * - 'all': Select all files in BR_Data
+ * - 'all': Select all files in BR_Data (default)
  * - 'none': Select nothing by default
  * - ['Events']: Select only the Events folder
  * - ['Events', 'Tests']: Select multiple folders
  * - ['Events/Season 0 Showcase']: Select specific subfolders (use full path)
  *
- * The default is 'latest-season', not 'all'. Active game updates and league rule
- * changes make the newest season the most reliable data, and it is what a casual
- * viewer arrives wanting to see; loading all ~2,500 matches up front served
- * neither audience. Everything else stays one click away in the tree.
+ * This tree stays fully selected. Narrowing the default view to the current
+ * season is done by TagFilterSelector instead — see computeDefaultFilters()
+ * there. Tags are visible and self-describing, so a viewer can see at a glance
+ * that the data is scoped and how; a silently pre-selected folder looks like
+ * the whole dataset. Keep it that way: pre-filtering here would hide the scope.
  */
-const DEFAULT_SELECTION = 'latest-season';
-
-/**
- * Finds the newest season folder, e.g. "Seasons/Season 12". Sorts numerically so
- * Season 10 beats Season 9. Returns null when there is no Seasons folder, in
- * which case the caller falls back to selecting everything.
- */
-function resolveLatestSeasonFolder(structure) {
-  const seasons = structure && structure.Seasons;
-  if (!seasons || typeof seasons !== 'object') return null;
-  const names = Object.keys(seasons).filter(key => key !== 'files');
-  if (names.length === 0) return null;
-  names.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
-  return `Seasons/${names[names.length - 1]}`;
-}
+const DEFAULT_SELECTION = 'all';
 
 // Helper function to get all child IDs of a node (including files)
 function getAllChildIds(node, path = []) {
@@ -176,14 +162,7 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
         // Apply default selection based on DEFAULT_SELECTION config
         if (data) {
           const selectedIds = [];
-
-          // 'latest-season' resolves against the loaded tree so it never needs
-          // updating when a new season starts.
-          let effectiveDefault = DEFAULT_SELECTION;
-          if (effectiveDefault === 'latest-season') {
-            const latestSeason = resolveLatestSeasonFolder(data);
-            effectiveDefault = latestSeason ? [latestSeason] : 'all';
-          }
+          const effectiveDefault = DEFAULT_SELECTION;
 
           if (effectiveDefault === 'all') {
             // Select all files in BR_Data
@@ -236,10 +215,11 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
           
           setSelected(selectedIds);
           initialLoadDoneRef.current = true;
-          if (onSelect) {
-            const fileIds = selectedIds.filter(id => id.includes('.json'));
-            onSelect(fileIds);
-          }
+          // Deliberately NOT calling onSelect here. The auto-load effect below
+          // does it once the tag filter has reported in, so the first load is
+          // already scoped. Calling it here would fire with all ~2,500 files
+          // before the default season filter arrives, pulling the entire corpus
+          // and undoing the Phase 1.5 data-layer work.
         }
       } catch (err) {
         console.error('Failed to load static br-data structure:', err);
@@ -255,8 +235,10 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
     return flattenStructure(structure);
   }, [structure]);
 
-  // Build a Set from tagFilterPaths for O(1) lookups (null = no filter active)
+  // Build a Set from tagFilterPaths for O(1) lookups.
+  // undefined = TagFilterSelector hasn't reported yet; null = ready, no filter.
   const tagFilterSet = useMemo(() => {
+    if (tagFilterPaths === undefined) return undefined;
     if (!tagFilterPaths) return null;
     return new Set(tagFilterPaths);
   }, [tagFilterPaths]);
@@ -264,6 +246,9 @@ export default function BRDataSelector({ onSelect, tagFilterPaths }) {
   // Auto-load: whenever selected or tagFilterSet changes (after initial load), debounce and call onSelect
   useEffect(() => {
     if (!initialLoadDoneRef.current) return;
+    // Wait for the tag filter to report in, so the very first load is already
+    // scoped to the default season instead of fetching every shard first.
+    if (tagFilterSet === undefined) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       if (onSelect) {

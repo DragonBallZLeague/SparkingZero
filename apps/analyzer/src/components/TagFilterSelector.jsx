@@ -11,6 +11,37 @@ const TAG_DIMS = [
   { key: 'matchSize',    label: 'Size',       dark: { pill: 'bg-emerald-900/50 text-emerald-300 border-emerald-700', on: 'bg-emerald-600 text-white border-emerald-500' }, light: { pill: 'bg-emerald-50 text-emerald-600 border-emerald-200', on: 'bg-emerald-500 text-white border-emerald-400' } },
 ];
 
+/**
+ * The filter applied on first load when the URL carries none.
+ *
+ * Scoping the default view to the current season is a product decision (see
+ * docs/ANALYZER_REDESIGN_PLAN.md, "Design principles" #2: the newest season is
+ * the most reliable data because the game and the league's rules both change
+ * between seasons). It is expressed as a TAG filter rather than a pre-selected
+ * folder because tags are visible and self-describing — the pills in this
+ * component's header show an unfamiliar viewer both THAT the data is scoped and
+ * HOW, and let them widen it without understanding the folder layout.
+ *
+ * `matchType: Season` excludes tests and events; the season number then pins it
+ * to the newest season that actually has league matches, so this keeps working
+ * when Season 1 begins without anyone editing it.
+ */
+function computeDefaultFilters(tagsIndex) {
+  let latestSeason = null;
+  for (const tags of Object.values(tagsIndex || {})) {
+    if (!tags || tags.matchType !== 'Season') continue;
+    const n = parseInt(tags.seasonNumber, 10);
+    if (!Number.isNaN(n) && (latestSeason === null || n > latestSeason)) latestSeason = n;
+  }
+  // No league matches tagged yet — leave everything visible rather than
+  // defaulting to an empty view.
+  if (latestSeason === null) return {};
+  return {
+    matchType: new Set(['Season']),
+    seasonNumber: new Set([String(latestSeason)]),
+  };
+}
+
 // Parse activeFilters from the current URL search params
 function parseFiltersFromURL() {
   try {
@@ -40,8 +71,29 @@ export default function TagFilterSelector({ onSelect, darkMode = true }) {
     const base = import.meta.env?.BASE_URL || '';
     fetch(`${base}br-data-tags.json`)
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data) setTagsIndex(data); })
-      .catch(() => {});
+      .then(data => {
+        if (!data) {
+          // Signal "ready, no filter" so BRDataSelector stops waiting on us and
+          // still loads. Without this the app would sit empty forever.
+          onSelect?.(null);
+          return;
+        }
+        // A URL that already carries filters wins — a shared deep link must not
+        // be overridden by the default. Both state updates land in one render
+        // (React 18 batching), so the index is never briefly live with no
+        // filter, which would flash a full-corpus load.
+        const urlFilters = parseFiltersFromURL();
+        const hasUrlFilters = Object.values(urlFilters).some(s => s.size > 0);
+        if (!hasUrlFilters) {
+          const defaults = computeDefaultFilters(data);
+          if (Object.keys(defaults).length > 0) {
+            setActiveFilters(defaults);
+            setExpanded(true);
+          }
+        }
+        setTagsIndex(data);
+      })
+      .catch(() => { onSelect?.(null); });
   }, []);
 
   // Sync activeFilters to URL query params
