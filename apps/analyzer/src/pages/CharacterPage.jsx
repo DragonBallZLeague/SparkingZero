@@ -1,14 +1,13 @@
 import React from 'react';
 import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
-import { CharacterLayout, LayoutSwitcher, LAYOUTS, DEFAULT_LAYOUT } from './character/CharacterLayouts.jsx';
+import CharacterTabs from './character/CharacterTabs.jsx';
 
 /**
  * One character's detail page, behind /characters/<name-slug>.
  *
  * This file owns the four states the route can be in and nothing else; the
  * content lives in character/CharacterBlocks.jsx and its arrangement in
- * character/CharacterLayouts.jsx.
+ * character/CharacterTabs.jsx.
  *
  * The page is purely presentational - every number already exists on the
  * aggregated row characterAggregation.js produced, and nothing is recalculated
@@ -34,18 +33,6 @@ export default function CharacterPage({
   onBack = null,
   onOpenMatch = null,
 }) {
-  // TEMPORARY, for choosing between the three candidate layouts against real
-  // data. Goes away with the two layouts that are not picked.
-  const [searchParams, setSearchParams] = useSearchParams();
-  const requested = searchParams.get('layout');
-  const previewing = LAYOUTS.some(l => l.id === requested);
-  const layout = previewing ? requested : DEFAULT_LAYOUT;
-  const setLayout = (next) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('layout', next);
-    setSearchParams(params, { replace: true });
-  };
-
   const notice = (icon, title, body) => (
     <div className={`rounded-2xl p-6 border border-solid mb-6 ${
       darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
@@ -124,18 +111,14 @@ export default function CharacterPage({
   }
 
   return (
-    <>
-      {previewing && <LayoutSwitcher layout={layout} onChange={setLayout} darkMode={darkMode} />}
-      <CharacterLayout
-        layout={layout}
-        character={character}
-        rank={rank}
-        totalInScope={totalInScope}
-        scopeLabel={scopeLabel}
-        darkMode={darkMode}
-        onBack={onBack}
-        onOpenMatch={onOpenMatch}
-      />
-    </>
+    <CharacterTabs
+      character={character}
+      rank={rank}
+      totalInScope={totalInScope}
+      scopeLabel={scopeLabel}
+      darkMode={darkMode}
+      onBack={onBack}
+      onOpenMatch={onOpenMatch}
+    />
   );
 }

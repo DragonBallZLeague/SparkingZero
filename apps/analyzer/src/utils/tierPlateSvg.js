@@ -32,7 +32,14 @@ export const TIER_ART = {
   // Ball Z mark, and it sits apart from the ramp below rather than on it.
   // (Red and blue-to-red slabs were both tried and rejected: with a red letter
   // there is not enough separating the glyph from its own floor at small sizes.)
-  Z: { plate: ['#3a7fc4', '#1b4a84'], letter: ['#ffb08a', '#e03a22'] },
+  //
+  // The red is CRIMSON, not orange-red. The earlier pair was hue ~8-20 degrees,
+  // which at pill size read as bronze rather than as the top tier - a warm metal
+  // rather than a mark. These sit at ~350 degrees, cool enough to be plainly red.
+  // Note this pair does three jobs at once: the glyph's gradient (light at the
+  // top, deep below), the pill's text colour (the light one) and the pill's
+  // border and background tint (the deep one). Judge any change on both.
+  Z: { plate: ['#3a7fc4', '#1b4a84'], letter: ['#ff8fa0', '#c8102e'] },
   // S down to C: purple, gold, blue, grey. (Swapped S and A from the rarity
   // ramp's gold-then-purple to try purple as the higher tier - under review.)
   // B shares Z's blue slab, which is fine - Z is told apart by its red letter,

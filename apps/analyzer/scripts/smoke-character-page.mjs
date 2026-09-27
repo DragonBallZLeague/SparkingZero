@@ -52,7 +52,7 @@ try {
   const { parseCharacterCSV } = await vite.ssrLoadModule('/src/utils/statCalculations.js');
   const { loadCapsuleData } = await vite.ssrLoadModule('/src/utils/capsuleDataProcessor.js');
   const CharacterPage = (await vite.ssrLoadModule('/src/pages/CharacterPage.jsx')).default;
-  const { LAYOUTS } = await vite.ssrLoadModule('/src/pages/character/CharacterLayouts.jsx');
+
 
   // ---- real data ----------------------------------------------------------
   const charMap = parseCharacterCSV(fs.readFileSync(path.join(refData, 'characters.csv'), 'utf8'));
@@ -93,12 +93,34 @@ try {
     process.exit(1);
   }
 
-  console.log(`\nRendering ${subjects.length} character(s) x ${LAYOUTS.length} layout(s) x 2 themes\n`);
+  // The page is tabbed, and tab state is internal - a server render only ever
+  // produces the Overview panel. So the other tabs' blocks are rendered
+  // DIRECTLY below, or Builds, Forms and Matches would silently lose coverage
+  // the moment the layout stopped showing everything at once.
+  const blocks = await vite.ssrLoadModule('/src/pages/character/CharacterBlocks.jsx');
 
-  const render = (row, layout, darkMode) => {
+  const PANELS = [
+    ['Overview:usage', (c, darkMode) => React.createElement(blocks.UsageBlock, { character: c, darkMode })],
+    ['Overview:positions', (c, darkMode, view) => React.createElement(blocks.PositionBlock, { byPosition: view.byPosition, darkMode })],
+    ['Builds', (c, darkMode) => React.createElement(blocks.BuildsBlock, { character: c, darkMode, limit: 6 })],
+    ['Forms', (c, darkMode) => React.createElement(blocks.FormsBlock, { character: c, darkMode })],
+    ['Matches', (c, darkMode, view) => React.createElement(blocks.MatchesBlock, {
+      character: c, recentMatches: view.recentMatches, darkMode, onOpenMatch: () => {},
+    })],
+  ];
+
+  // useCharacterView is a hook, so the blocks need a host component.
+  function PanelHost({ character, darkMode, build }) {
+    const view = blocks.useCharacterView(character);
+    return build(character, darkMode, view);
+  }
+
+  console.log(`\nRendering ${subjects.length} character(s) x 2 themes, page + ${PANELS.length} panels\n`);
+
+  const render = (row, darkMode) => {
     const el = React.createElement(
       MemoryRouter,
-      { initialEntries: [`/characters/x?layout=${layout}`] },
+      { initialEntries: ['/characters/x'] },
       React.createElement(
         Routes,
         null,
@@ -120,11 +142,11 @@ try {
   };
 
   for (const { label, row } of subjects) {
-    for (const { id: layout } of LAYOUTS) {
+    {
       for (const darkMode of [true, false]) {
-        const what = `${label} (${row.name}) / ${layout} / ${darkMode ? 'dark' : 'light'}`;
+        const what = `${label} (${row.name}) / page / ${darkMode ? 'dark' : 'light'}`;
         try {
-          const html = render(row, layout, darkMode);
+          const html = render(row, darkMode);
           if (!html || html.length < 200) {
             console.error('  FAIL ' + what + '\n         rendered only ' + (html || '').length + ' chars');
             failed = true;
@@ -143,6 +165,30 @@ try {
           const stack = (err && err.stack || '').split('\n').slice(1, 7).join('\n');
           if (stack) console.error(stack.replace(/^/gm, '    '));
           failed = true;
+        }
+      }
+
+      // Each tab's panel, rendered on its own.
+      for (const [panel, build] of PANELS) {
+        for (const darkMode of [true, false]) {
+          const what = `${label} (${row.name}) / ${panel} / ${darkMode ? 'dark' : 'light'}`;
+          try {
+            const html = renderToString(React.createElement(PanelHost, { character: row, darkMode, build }));
+            // An empty string is legitimate here: BuildsBlock and FormsBlock
+            // return null when a character has nothing to show.
+            if (html.includes('[object Object]')) {
+              console.error('  FAIL ' + what + '\n         rendered a literal "[object Object]"');
+              failed = true;
+            } else {
+              console.log('  ok   ' + what + '  (' + html.length + ' chars)');
+            }
+          } catch (err) {
+            console.error('  FAIL ' + what);
+            console.error('         ' + (err && err.message));
+            const stack = (err && err.stack || '').split('\n').slice(1, 7).join('\n');
+            if (stack) console.error(stack.replace(/^/gm, '    '));
+            failed = true;
+          }
         }
       }
     }
@@ -239,4 +285,4 @@ if (failed) {
   console.error('FAILED - the character page throws or renders wrongly.');
   process.exit(1);
 }
-console.log('PASSED - the character page renders for every sampled character, layout and theme.');
+console.log('PASSED - the character page and every tab panel render for each sampled character and theme.');
