@@ -40,7 +40,21 @@ import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
 const aggDir = path.resolve(__dirname, '..', 'public', 'br-aggregates');
-const pagePath = path.resolve(__dirname, '..', 'src', 'pages', 'CharacterPage.jsx');
+// EVERY file that makes up the page, not just its entry point.
+//
+// This was a single path until the page was split into blocks and layouts,
+// at which point the entry file stopped containing any `character.` reads at
+// all and this verifier passed while checking nothing. Globbing the page's
+// whole directory is what stops that recurring.
+const pageDir = path.resolve(__dirname, '..', 'src', 'pages');
+function pageSources(dir, out = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) pageSources(full, out);
+    else if (/^Character.*.jsx?$/.test(entry.name) || /[\/]character[\/]/.test(full)) out.push(full);
+  }
+  return out;
+}
 
 let failures = 0;
 function check(label, cond, detail) {
@@ -89,12 +103,21 @@ console.log(`\n${shardFiles.length} shards -> ${rows.length} aggregated characte
 //
 // Scraped from the source so the list cannot fall behind the page. Optional
 // chaining is included on purpose: `character?.matches` still has to resolve.
-const source = fs.readFileSync(pagePath, 'utf8');
+const sourceFiles = pageSources(pageDir);
+if (!sourceFiles.length) {
+  console.error('Found no character page sources under src/pages - the page moved?');
+  process.exit(1);
+}
+console.log('page sources scanned: ' + sourceFiles.map(f => path.basename(f)).join(', '));
+const source = sourceFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n');
 const readFields = [...new Set(
   [...source.matchAll(/\bcharacter\??\.([A-Za-z_$][\w$]*)/g)].map(m => m[1])
 )].sort();
 
 console.log('Fields CharacterPage reads off a character row (' + readFields.length + ', scraped from source):');
+check('the scrape found a plausible number of fields',
+  readFields.length >= 15,
+  'only found ' + readFields.length + ' - if the page moved, this verifier is checking nothing');
 const missingEverywhere = [];
 for (const field of readFields) {
   // Present on at least one row is the bar, not every row: formStatsArray only
