@@ -93,6 +93,16 @@ They disagreed until 2026-09-26: the filter UI stored the fourth level as `'belo
 
 ## Performance scoring and tiers
 
+**Tiers are Z/A/B/C/D, absolute, and frozen at build time.** `scripts/generate-performance-bands.mjs` runs in `prebuild` and writes `src/config/performance-bands.json`, which is **committed on purpose** — a recalibration should appear as a reviewable diff, not drift silently between deploys. Basis: a rolling window of the last 2 seasons, Ultra difficulty only, all match types, no minimum match count. Read that script's header before changing any of those rules; each one was chosen against measured data.
+
+Two modules, split for a reason: **`src/utils/tierScale.js`** holds the scale and imports nothing, so the generator can read it before its own output file exists; **`src/utils/performanceTier.js`** adds the generated cutoffs and `tierForScore()`. Merging them reintroduces a bootstrap cycle where the build cannot run on a clean checkout.
+
+`src/components/TierBadge.jsx` renders the tier (plus `<TierLegend>`). **Never pass it a reference population** — that is the bug it was built to replace. For "how does this stat compare to what is on screen", `PerformanceIndicator`'s relative comparison is still correct.
+
+Z is the top tier, following the Dragon Ball convention rather than the generic S-tier.
+
+
+
 **`src/utils/performanceScore.js` owns the damage-efficiency term.** Efficiency is damage dealt over damage taken, carries 25% of the score weight un-normalised, and is therefore unbounded. The codebase had **three different answers** for "what if nothing was taken?" — return raw damage (mixing units, a five-figure number where a single-digit ratio belongs), return a `999` sentinel, or return `avgDamage/1000`. All three could inflate a score into the hundreds of thousands on a narrow selection. `combatEfficiency(dealt, taken)` replaces all of them with one clamp at `EFFICIENCY_CAP = 5`, about 3x the highest ratio ever observed in league play.
 
 It is a guard rail, **not** a rebalancing: on S0 in-season data real ratios run 0.26–1.73 (median 1.00), and 593 character/team entries across four corpus slices are identical before and after the change. **If the cap starts binding on real data, that is a signal worth investigating, not a number to raise.**

@@ -19,6 +19,7 @@ import { fileURLToPath } from 'url';
 import { filterAggregatedData } from '../src/utils/aggregation/filterAggregated.js';
 import { getAggregatedCharacterData } from '../src/utils/aggregation/characterAggregation.js';
 import { getPerformanceLevel } from '../src/utils/performanceLevel.js';
+import { tierForScore, TIERS, TIER_CUTOFFS } from '../src/utils/performanceTier.js';
 import { parseCharacterCSV } from '../src/utils/statCalculations.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -131,45 +132,58 @@ check('empty selection means no character filter',
   filterAggregatedData(aggregated, { selectedCharacters: [] }).length === base.length);
 
 // ---- Performance filter, including the known mismatch -----------------------
-console.log('\nperformanceFilters:');
-check('all five levels selected skips the filter entirely',
-  filterAggregatedData(aggregated, { performanceFilters: ['excellent', 'good', 'average', 'below', 'poor'] }).length === base.length);
-const onlyExcellent = filterAggregatedData(aggregated, { performanceFilters: ['excellent'] });
-check('a single level is a strict subset', onlyExcellent.length < base.length,
-  'excellent=' + onlyExcellent.length + ' vs base=' + base.length);
-// The five level strings are a contract between getPerformanceLevel and the
-// filter UI. They disagreed on the fourth one until 2026-09-26 ('below' vs
-// 'below-average'), which silently dropped every below-average character.
-// The partition check below is what catches that class of bug: if any level
-// string does not match, its rows belong to no single-level selection and the
-// union comes up short.
-const LEVELS = ['excellent', 'good', 'average', 'below-average', 'poor'];
-const scores = base.map(c => c.combatPerformanceScore);
-const levelsSeen = new Set(base.map(c => getPerformanceLevel(c.combatPerformanceScore, scores)));
-check('getPerformanceLevel only ever emits the five contract levels',
-  [...levelsSeen].every(l => LEVELS.includes(l)),
-  'unexpected level(s): ' + [...levelsSeen].filter(l => !LEVELS.includes(l)).join(', '));
+console.log('\nminScore threshold (replaced the performance-level chips):');
+check('minScore 0 means no filter', filterAggregatedData(aggregated, { minScore: 0 }).length === base.length);
+const scoresSorted = base.map(c => c.combatPerformanceScore).filter(Number.isFinite).sort((a, b) => a - b);
+const midScore = scoresSorted[Math.floor(scoresSorted.length / 2)];
+const above = filterAggregatedData(aggregated, { minScore: midScore });
+check('minScore keeps only rows at or above it',
+  above.every(c => c.combatPerformanceScore >= midScore),
+  'threshold ' + midScore);
+check('minScore is a strict subset of the default view', above.length < base.length && above.length > 0,
+  above.length + ' of ' + base.length);
+check('minScore above every score yields nothing',
+  filterAggregatedData(aggregated, { minScore: scoresSorted[scoresSorted.length - 1] + 1 }).length === 0);
+check('minScore is monotonic (raising it never adds rows)',
+  (() => {
+    let prev = Infinity;
+    for (const t of [0, 20, 40, 60, 80, 100]) {
+      const n = filterAggregatedData(aggregated, { minScore: t }).length;
+      if (n > prev) return false;
+      prev = n;
+    }
+    return true;
+  })());
 
-const union = new Set();
-for (const level of LEVELS) {
-  const rows = filterAggregatedData(aggregated, { performanceFilters: [level] });
-  rows.forEach(r => union.add(r.name));
-  // A level present in the data must be selectable on its own.
-  if (levelsSeen.has(level)) {
-    check('filtering by "' + level + '" returns its rows', rows.length > 0,
-      level + ' is present in the data but selecting it returned nothing - the ' +
-      'filter value and getPerformanceLevel disagree on this level');
-    check('every row returned for "' + level + '" really is that level',
-      rows.every(r => getPerformanceLevel(r.combatPerformanceScore, scores) === level));
-  }
-}
-check('the five levels partition the whole default view (no row is unreachable)',
-  union.size === base.length,
-  union.size + ' of ' + base.length + ' rows reachable by single-level selection');
-
-// Regression guard: the old wrong value must not quietly work again.
-check('the retired value "below" matches nothing',
-  filterAggregatedData(aggregated, { performanceFilters: ['below'] }).length === 0);
+console.log('\nabsolute tiers (Z/A/B/C/D):');
+// The cutoffs are frozen at build time, so a tier must depend ONLY on the score -
+// never on which rows happen to be on screen. That was the bug they replaced.
+check('every cutoff is a finite number and they descend',
+  (() => {
+    let prev = Infinity;
+    for (const t of TIERS) {
+      const c = TIER_CUTOFFS[t];
+      if (c === undefined) continue;
+      if (!Number.isFinite(c) || c > prev) return false;
+      prev = c;
+    }
+    return true;
+  })(),
+  JSON.stringify(TIER_CUTOFFS));
+check('the bottom tier has no cutoff', TIER_CUTOFFS[TIERS[TIERS.length - 1]] === undefined);
+check('tierForScore matches the cutoffs exactly',
+  TIERS.every(t => TIER_CUTOFFS[t] === undefined || tierForScore(TIER_CUTOFFS[t]) === t));
+check('a score below every cutoff is the bottom tier',
+  tierForScore(-1) === TIERS[TIERS.length - 1]);
+check('a non-numeric score still yields a renderable tier',
+  TIERS.includes(tierForScore(undefined)) && TIERS.includes(tierForScore(NaN)));
+check('tier is independent of the filtered view (the whole point)',
+  (() => {
+    const wide = filterAggregatedData(aggregated);
+    const narrow = filterAggregatedData(aggregated, { minScore: midScore });
+    const byName = new Map(wide.map(c => [c.name, tierForScore(c.combatPerformanceScore)]));
+    return narrow.every(c => byName.get(c.name) === tierForScore(c.combatPerformanceScore));
+  })());
 
 // ---- Robustness -------------------------------------------------------------
 console.log('\nRobustness:');

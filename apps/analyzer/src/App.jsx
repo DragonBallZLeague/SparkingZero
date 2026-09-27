@@ -26,7 +26,8 @@ import { getAggregatedCharacterData } from './utils/aggregation/characterAggrega
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
 import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
-import { getPerformanceLevel, PERFORMANCE_LEVELS } from './utils/performanceLevel.js';
+import { getPerformanceLevel } from './utils/performanceLevel.js';
+import TierBadge, { TierLegend } from './components/TierBadge.jsx';
 import { NavBar } from '@szl/ui';
 import { 
   Trophy, 
@@ -1321,8 +1322,9 @@ export default function App() {
   
   // Search and filter state for Aggregated Character Performance
   const [selectedCharacters, setSelectedCharacters] = useState([]);
-  // PERFORMANCE_LEVELS is the single source of these names - see performanceLevel.js.
-  const [performanceFilters, setPerformanceFilters] = useState([...PERFORMANCE_LEVELS]);
+  // Minimum combat score to show. Replaced the five performance-level chips in
+  // Phase 3 - see filterAggregated.js for why those were unsound. 0 means no filter.
+  const [minScore, setMinScore] = useState(0);
   const [minMatches, setMinMatches] = useState(1);
   const [maxMatches, setMaxMatches] = useState(999);
   const [sortBy, setSortBy] = useState('combatScore');
@@ -1336,7 +1338,7 @@ export default function App() {
     setSelectedBuildIndex({});
     setSelectedBuildSort({});
     setActiveBuildFilters({});
-  }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, performanceFilters, minMatches, maxMatches, sortBy, sortDirection]);
+  }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, minScore, minMatches, maxMatches, sortBy, sortDirection]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
@@ -1424,7 +1426,7 @@ export default function App() {
       selectedTeams,
       selectedAIStrategies,
       selectedMaps,
-      performanceFilters,
+      minScore,
       minMatches,
       maxMatches,
       sortBy,
@@ -1432,7 +1434,7 @@ export default function App() {
       activeBuildFilters,
       charMap,
     }),
-    [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches,
+    [aggregatedData, selectedCharacters, minScore, minMatches, maxMatches,
      sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps,
      activeBuildFilters, charMap]
   );
@@ -1457,7 +1459,6 @@ export default function App() {
       selectedAIStrategies,
       selectedMaps,
       activeBuildFilters,
-      performanceFilters: PERFORMANCE_LEVELS,
       charMap,
     }),
     [aggregatedData, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters, charMap]
@@ -2610,60 +2611,51 @@ export default function App() {
                   </div>
                 </div>
                 
-                {/* Performance Level Filters */}
+                {/* Minimum score + tier legend (replaced the performance-level chips) */}
                 <div className="mb-4">
                   <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
                     darkMode ? 'text-gray-300' : 'text-gray-700'
                   }`}>
                     <Filter className="w-4 h-4" />
-                    Performance Level
+                    Minimum Score
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { value: 'excellent', label: 'Excellent', color: 'green' },
-                      { value: 'good', label: 'Good', color: 'yellow' },
-                      { value: 'average', label: 'Average', color: 'orange' },
-                      { value: 'below-average', label: 'Below Average', color: 'red' },
-                      { value: 'poor', label: 'Poor', color: 'gray' }
-                    ].map(filter => {
-                      const isActive = performanceFilters.includes(filter.value);
-                      const colorClasses = {
-                        green: isActive 
-                          ? (darkMode ? 'bg-green-900 border-green-500 text-green-200' : 'bg-green-100 border-green-500 text-green-700')
-                          : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500'),
-                        yellow: isActive
-                          ? (darkMode ? 'bg-yellow-900 border-yellow-500 text-yellow-200' : 'bg-yellow-100 border-yellow-500 text-yellow-700')
-                          : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500'),
-                        orange: isActive
-                          ? (darkMode ? 'bg-orange-900 border-orange-500 text-orange-200' : 'bg-orange-100 border-orange-500 text-orange-700')
-                          : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500'),
-                        red: isActive
-                          ? (darkMode ? 'bg-red-900 border-red-500 text-red-200' : 'bg-red-100 border-red-500 text-red-700')
-                          : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500'),
-                        gray: isActive
-                          ? (darkMode ? 'bg-gray-700 border-gray-500 text-gray-200' : 'bg-gray-200 border-gray-500 text-gray-800')
-                          : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
-                      };
-                      
-                      return (
-                        <button
-                          key={filter.value}
-                          onClick={() => {
-                            setPerformanceFilters(prev => 
-                              isActive 
-                                ? prev.filter(f => f !== filter.value)
-                                : [...prev, filter.value]
-                            );
-                          }}
-                          className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ${
-                            colorClasses[filter.color]
-                          } hover:opacity-80`}
-                        >
-                          {filter.label}
-                        </button>
-                      );
-                    })}
+                  <div className="flex items-center gap-3 mb-3">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={minScore}
+                      onChange={(e) => setMinScore(Number(e.target.value))}
+                      className="flex-1"
+                      aria-label="Minimum combat performance score"
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      value={minScore}
+                      onChange={(e) => setMinScore(Math.max(0, Number(e.target.value) || 0))}
+                      className={`w-20 px-2 py-1 rounded border text-sm ${
+                        darkMode
+                          ? 'bg-gray-800 border-gray-600 text-gray-200'
+                          : 'bg-white border-gray-300 text-gray-800'
+                      }`}
+                      aria-label="Minimum combat performance score"
+                    />
+                    {minScore > 0 && (
+                      <button
+                        onClick={() => setMinScore(0)}
+                        className={`text-xs px-2 py-1 rounded ${
+                          darkMode
+                            ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700'
+                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
+                  <TierLegend darkMode={darkMode} />
                 </div>
                 
                 {/* Matches Filter */}
@@ -2972,7 +2964,8 @@ export default function App() {
                         <div className="flex items-center gap-3">
                           <Swords className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
                           <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{char.name}</h3>
-                          <PerformanceIndicator value={char.combatPerformanceScore} allValues={combatPerformanceScores} darkMode={darkMode} />
+                          {/* Absolute tier, never relative to the rows on screen. */}
+                          <TierBadge score={char.combatPerformanceScore} character={char} darkMode={darkMode} />
                         </div>
                         <div className="flex items-center gap-4">
                           <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>

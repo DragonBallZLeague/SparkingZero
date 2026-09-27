@@ -221,7 +221,7 @@ Because the two namespaces provably cannot collide, the dispatch is a single reg
 
 ---
 
-## Performance tiers — decided 2026-09-26
+## Performance tiers — decided 2026-09-26, **implemented 2026-09-27**
 
 The leaderboard's performance banding was **percentile-relative to whatever the user had currently filtered to**, which made it self-referential: deselecting "Excellent" re-ranked everyone left, so a character turned green without their score changing. The band was also communicated *only* by colour, named nowhere except the filter chips.
 
@@ -248,6 +248,16 @@ Percentile banding forces a 10/20/30/20/20 spread *by construction*, so it can n
 ### Why not the existing absolute thresholds
 
 The fallback thresholds in `App.jsx` (`>=200` excellent, `>=120` good) were never calibrated: the **highest score anywhere in the corpus is 103.3**, so both bands were literally unreachable and every character in the league would have been "Average" or below.
+
+### Shipped
+
+- `scripts/generate-performance-bands.mjs` (in `prebuild`, also `npm run build-bands`) writes `src/config/performance-bands.json` — **committed**, so a recalibration is a reviewable diff. It refuses to write if the basis matches no matches or fewer than 20 scored characters, rather than emitting nonsense cutoffs.
+- `src/utils/tierScale.js` holds the scale (names, percentiles, labels, provisional threshold) with **no imports**, so the generator can read it before its own output exists. `src/utils/performanceTier.js` adds the generated cutoffs and `tierForScore()`.
+- `src/components/TierBadge.jsx` — the badge plus `<TierLegend>`. Provisional tiers render dashed with a `?`.
+- The five level chips are gone, replaced by a minimum-score slider + number input.
+- `npm run verify-filters` asserts the cutoffs descend, that `tierForScore` agrees with them exactly, and — the point of the whole change — that **a character's tier is identical whether computed from the full view or a filtered one**.
+
+Current calibration: 1,350 matches / 148 characters from Seasons 0+1 Ultra, giving Z ≥ 75, A ≥ 65.4, B ≥ 55.2, C ≥ 48.4 and a 16/30/43/29/30 spread.
 
 ### Supporting work
 

@@ -10,11 +10,12 @@
  *
  * The option defaults mirror the initial useState values in App.jsx exactly, so
  * calling this with no options reproduces the app's own default view rather than
- * some other notion of "unfiltered". In particular performanceFilters lists all
- * five levels (the block skips that filter unless between 1 and 4 are selected)
- * and maxMatches is 999, not Infinity.
+ * some other notion of "unfiltered": minMatches is 1, maxMatches is 999 (not
+ * Infinity) and minScore is 0.
  */
-import { getPerformanceLevel } from '../performanceLevel.js';
+// The five performance-level chips this used to filter by were replaced in Phase 3
+// by an absolute minimum-score threshold (see minScore below), so no level lookup
+// is needed here any more.
 import { combatEfficiency } from '../performanceScore.js';
 
 export function filterAggregatedData(aggregatedData, options = {}) {
@@ -23,7 +24,7 @@ export function filterAggregatedData(aggregatedData, options = {}) {
     selectedTeams = [],
     selectedAIStrategies = [],
     selectedMaps = [],
-    performanceFilters = ['excellent', 'good', 'average', 'below-average', 'poor'],
+    minScore = 0,
     minMatches = 1,
     maxMatches = 999,
     sortBy = 'combatScore',
@@ -673,13 +674,16 @@ export function filterAggregatedData(aggregatedData, options = {}) {
       return matchesForFilter >= minMatches && matchesForFilter <= maxMatches;
     });
     
-    // Apply performance level filter
-    if (performanceFilters.length > 0 && performanceFilters.length < 5) {
-      const combatScores = filtered.map(c => c.combatPerformanceScore);
-      filtered = filtered.filter(char => {
-        const level = getPerformanceLevel(char.combatPerformanceScore, combatScores);
-        return performanceFilters.includes(level);
-      });
+    // Apply the minimum-score threshold.
+    //
+    // This replaced five performance-level checkboxes. Those compared each
+    // character against a percentile of THE ROWS THAT SURVIVED FILTERING, which
+    // made them self-referential: hiding a level re-ranked whoever was left, so a
+    // character could change level without their score changing. An absolute
+    // score threshold cannot do that, reads directly against the number shown on
+    // each card, and survives being shared in a URL.
+    if (Number.isFinite(minScore) && minScore > 0) {
+      filtered = filtered.filter(char => (char.combatPerformanceScore || 0) >= minScore);
     }
     
     // Apply sorting
