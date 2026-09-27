@@ -176,8 +176,21 @@ try {
             const html = renderToString(React.createElement(PanelHost, { character: row, darkMode, build }));
             // An empty string is legitimate here: BuildsBlock and FormsBlock
             // return null when a character has nothing to show.
+            // matches[].position is NUMERIC in the data, so a table that forgets
+            // to translate it shows "1 / 2 / 3" as row labels - which shipped
+            // once. Check the ROW LABELS specifically: the section's own hint
+            // text says "Lead, Middle and Anchor", so searching the whole panel
+            // for those words passes no matter what the rows contain. (It did,
+            // on the first attempt at this check.)
+            const rowLabels = [...(/<tbody>([\s\S]*?)<\/tbody>/.exec(html)?.[1] || '')
+              .matchAll(/<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/g)]
+              .map(m => m[1].replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '').trim());
+            const namesSlots = rowLabels.length > 0 && rowLabels.every(l => !/^\d+$/.test(l));
             if (html.includes('[object Object]')) {
               console.error('  FAIL ' + what + '\n         rendered a literal "[object Object]"');
+              failed = true;
+            } else if (panel === 'Overview:positions' && html && !namesSlots) {
+              console.error('  FAIL ' + what + '\n         position row labels are ' + JSON.stringify(rowLabels) + ' - raw slot numbers?');
               failed = true;
             } else {
               console.log('  ok   ' + what + '  (' + html.length + ' chars)');

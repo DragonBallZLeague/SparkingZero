@@ -40,6 +40,36 @@ export const secs = (n) => {
   return m > 0 ? `${m}m ${String(s).padStart(2, '0')}s` : `${s}s`;
 };
 
+/**
+ * A team slot, in words.
+ *
+ * The aggregated row carries position in TWO vocabularies: matches[].position
+ * is a number (1/2/3) and primaryPosition is a name ('Starter'/'Middle'/
+ * 'Anchor'). The app itself cannot agree on the first slot's name either - the
+ * Position Analysis section and the redesign plan say 'Lead', while
+ * characterAggregation.js and the team panel say 'Starter'. Left alone, this
+ * page showed '1', 'Starter' and 'Lead' for the same slot at once.
+ *
+ * Everything on the page goes through here so it can only ever show one word
+ * per slot. FIRST_SLOT is the one to change if the league's term is Starter.
+ */
+const FIRST_SLOT = 'Lead';
+const POSITION_NAMES = { 1: FIRST_SLOT, 2: 'Middle', 3: 'Anchor' };
+const POSITION_ALIASES = { starter: 1, lead: 1, middle: 2, anchor: 3 };
+
+/** Slot number for a position in either vocabulary, or null. */
+export function positionSlot(position) {
+  if (position == null || position === '') return null;
+  const asNumber = Number(position);
+  if (Number.isInteger(asNumber) && POSITION_NAMES[asNumber]) return asNumber;
+  return POSITION_ALIASES[String(position).trim().toLowerCase()] ?? null;
+}
+
+export function positionLabel(position) {
+  const slot = positionSlot(position);
+  return slot ? POSITION_NAMES[slot] : (position == null || position === '' ? '—' : String(position));
+}
+
 // ---- shared chrome ----------------------------------------------------------
 
 /**
@@ -109,16 +139,16 @@ export function useCharacterView(character) {
   const byPosition = useMemo(() => {
     const groups = new Map();
     for (const m of character?.matches || []) {
-      const key = m.position || 'Unknown';
-      if (!groups.has(key)) groups.set(key, { position: key, played: 0, won: 0, damage: 0, taken: 0 });
+      const slot = positionSlot(m.position);
+      const key = slot ?? 'unknown';
+      if (!groups.has(key)) groups.set(key, { slot, position: positionLabel(m.position), played: 0, won: 0, damage: 0, taken: 0 });
       const g = groups.get(key);
       g.played += 1;
       if (m.won) g.won += 1;
       g.damage += m.damageDone || 0;
       g.taken += m.damageTaken || 0;
     }
-    const order = { Lead: 0, Middle: 1, Anchor: 2 };
-    return [...groups.values()].sort((a, b) => (order[a.position] ?? 9) - (order[b.position] ?? 9));
+    return [...groups.values()].sort((a, b) => (a.slot ?? 9) - (b.slot ?? 9));
   }, [character]);
 
   // Newest last in the corpus, so reverse for "most recent first".
@@ -246,7 +276,7 @@ export function UsageBlock({ character, darkMode, columns = 4 }) {
     <Section icon={Users} title="Usage" hint="how it was fielded" darkMode={darkMode}>
       <div className={`grid ${cols} gap-x-4 gap-y-3`}>
         <Fact label="Most used by" value={character.primaryTeam} darkMode={darkMode} />
-        <Fact label="Usual position" value={character.primaryPosition} darkMode={darkMode} />
+        <Fact label="Usual position" value={positionLabel(character.primaryPosition)} darkMode={darkMode} />
         <Fact label="Usual AI" value={character.primaryAIStrategy} darkMode={darkMode} />
         <Fact label="Top map" value={character.primaryMap} darkMode={darkMode} />
       </div>
@@ -269,7 +299,7 @@ export function PositionBlock({ byPosition, darkMode }) {
   const th = `text-left text-[10px] font-semibold uppercase tracking-wider pb-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`;
   const td = `py-1.5 text-sm tabular-nums ${darkMode ? 'text-gray-200' : 'text-gray-800'}`;
   return (
-    <Section icon={Layers} title="By position" hint="Lead, Middle and Anchor face different matchups" darkMode={darkMode}>
+    <Section icon={Layers} title="By position" hint={`${POSITION_NAMES[1]}, Middle and Anchor face different matchups`} darkMode={darkMode}>
       <table className="w-full">
         <thead>
           <tr>
@@ -282,7 +312,7 @@ export function PositionBlock({ byPosition, darkMode }) {
         </thead>
         <tbody>
           {byPosition.map(p => (
-            <tr key={p.position} className={`border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'}`}>
+            <tr key={p.slot ?? p.position} className={`border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'}`}>
               <td className={td + ' font-semibold'}>{p.position}</td>
               <td className={td + ' text-right'}>{nf(p.played)}</td>
               <td className={td + ' text-right'}>{pct((p.won / p.played) * 100)}</td>
@@ -411,7 +441,7 @@ export function MatchesBlock({ character, recentMatches, darkMode, onOpenMatch }
                   </td>
                   <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{m.team || '—'}</td>
                   <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{m.opponentTeam || '—'}</td>
-                  <td className={`py-1.5 pr-3 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{m.position || '—'}</td>
+                  <td className={`py-1.5 pr-3 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{positionLabel(m.position)}</td>
                   <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{nf(m.damageDone)}</td>
                   <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{nf(m.damageTaken)}</td>
                   <td className={`py-1.5 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
