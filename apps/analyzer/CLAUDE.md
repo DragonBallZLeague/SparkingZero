@@ -171,6 +171,17 @@ Copies an **absolute** link to the current view — origin + `BASE_URL` + pathna
 
 It shares the live location by default, query string included, so a scoped or filtered view travels with the link. `navigator.clipboard` needs a secure context and is absent over plain-HTTP LAN testing, so there is an `execCommand` fallback. **Image-card export is not built yet** — that is the remaining piece of the share-snippet goal.
 
+## Team positions: Starter / Middle / Anchor
+
+The league calls the first slot the **Starter**, never "Lead". **`src/utils/positions.js` is the single source** for every user-facing position label: `POSITION_NAMES`, `positionSlot()` and `positionLabel()`. It imports nothing, so aggregation code and build scripts can use it.
+
+- The raw data stores position as a **number** (`matches[].position` is 1/2/3), while `primaryPosition` is a **word**. Anything that displays a position must go through `positionLabel()`, or a table shows "1 / 2 / 3" — which shipped once on the Character page.
+- The app used to mix both names: Position Analysis, its table and the Excel export said "Lead"; `characterAggregation.js` and the team panel said "Starter". All now read `POSITION_NAMES`.
+- **Key colour maps and lookups on the slot number, not the word.** `preparePositionData()` emits the label and the Position column colour-coded rows by matching that same string, so renaming one side alone would have silently uncoloured the rows. That map is now keyed by `positionSlot(value)`.
+- `positionSlot()` still accepts `"Lead"`, so anything carrying the old word resolves rather than breaking.
+- The team panel's richer ordinal model for 4v4/5v5 ("Second (Middle)", …) is separate and intentional; only its slot-1 name comes from here.
+- `smoke-character-page` asserts slot 1 renders as Starter and fails if it is renamed back.
+
 ## Reference data
 
 Imports `characters.csv`/`capsules.csv` directly from `/referencedata/` at build time via Vite's `?raw` import (see root `CLAUDE.md` — **edit those files at the repo root, never the local `referencedata/` copy that `vite.config.js`'s `copy-shared-referencedata` plugin writes here**, it's overwritten on every build). `src/config/buildRules.js` and `src/config/capsule-rules.yaml` encode capsule-restriction/build-legality rules used by the synergy/AI-strategy analysis.

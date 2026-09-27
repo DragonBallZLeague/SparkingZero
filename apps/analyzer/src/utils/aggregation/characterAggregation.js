@@ -3,6 +3,7 @@ import { extractStats } from '../statCalculations.js';
 import { getFusionPartnerFamilyForms } from '../fusionSplit.js';
 import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { combatEfficiency } from '../performanceScore.js';
+import { POSITION_NAMES } from '../positions.js';
 
 export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
   const characterStats = {};
@@ -803,7 +804,7 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
     const primaryPositionNum = [1, 2, 3].reduce((best, p) => positionCounts[p] > positionCounts[best] ? p : best, 1);
     const primaryPosition = positionCounts[1] === 0 && positionCounts[2] === 0 && positionCounts[3] === 0
       ? null
-      : primaryPositionNum === 1 ? 'Starter' : primaryPositionNum === 2 ? 'Middle' : 'Anchor';
+      : POSITION_NAMES[primaryPositionNum];
     
     // Calculate averages for per-form stats
     const formStatsArray = Object.values(char.formStats).map(formStat => {

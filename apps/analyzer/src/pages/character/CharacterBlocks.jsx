@@ -10,6 +10,7 @@ import {
   tierForScore, isProvisionalTier, tierMatchCount, PROVISIONAL_BELOW_MATCHES,
 } from '../../utils/performanceTier.js';
 import { tierPillColors } from '../../utils/tierPlateSvg.js';
+import { POSITION_NAMES, positionSlot, positionLabel } from '../../utils/positions.js';
 
 /**
  * The character page's CONTENT, with no opinion about arrangement.
@@ -39,36 +40,6 @@ export const secs = (n) => {
   const s = Math.round(n % 60);
   return m > 0 ? `${m}m ${String(s).padStart(2, '0')}s` : `${s}s`;
 };
-
-/**
- * A team slot, in words.
- *
- * The aggregated row carries position in TWO vocabularies: matches[].position
- * is a number (1/2/3) and primaryPosition is a name ('Starter'/'Middle'/
- * 'Anchor'). The app itself cannot agree on the first slot's name either - the
- * Position Analysis section and the redesign plan say 'Lead', while
- * characterAggregation.js and the team panel say 'Starter'. Left alone, this
- * page showed '1', 'Starter' and 'Lead' for the same slot at once.
- *
- * Everything on the page goes through here so it can only ever show one word
- * per slot. FIRST_SLOT is the one to change if the league's term is Starter.
- */
-const FIRST_SLOT = 'Lead';
-const POSITION_NAMES = { 1: FIRST_SLOT, 2: 'Middle', 3: 'Anchor' };
-const POSITION_ALIASES = { starter: 1, lead: 1, middle: 2, anchor: 3 };
-
-/** Slot number for a position in either vocabulary, or null. */
-export function positionSlot(position) {
-  if (position == null || position === '') return null;
-  const asNumber = Number(position);
-  if (Number.isInteger(asNumber) && POSITION_NAMES[asNumber]) return asNumber;
-  return POSITION_ALIASES[String(position).trim().toLowerCase()] ?? null;
-}
-
-export function positionLabel(position) {
-  const slot = positionSlot(position);
-  return slot ? POSITION_NAMES[slot] : (position == null || position === '' ? '—' : String(position));
-}
 
 // ---- shared chrome ----------------------------------------------------------
 

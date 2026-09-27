@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatNumber } from '../utils/formatters';
+import { POSITION_NAMES, positionSlot } from '../utils/positions.js';
 import { getBuildTypeColor } from '../utils/buildComposition.js'; // Import build type color function for new 7-category system
 import { 
   Trophy, 
@@ -2282,13 +2283,16 @@ export const getPositionTableConfig = (darkMode = false) => ({
       sortable: true,
       filterable: true,
       render: (row, value) => {
+        // Keyed by SLOT, not by the word. This map used to be keyed 'Lead' /
+        // 'Middle' / 'Anchor' to match the labels preparePositionData emits,
+        // so renaming the label alone would have silently uncoloured the row.
         const colors = {
-          'Lead': darkMode ? 'text-red-400 bg-red-900/20' : 'text-red-600 bg-red-50',
-          'Middle': darkMode ? 'text-blue-400 bg-blue-900/20' : 'text-blue-600 bg-blue-50',
-          'Anchor': darkMode ? 'text-green-400 bg-green-900/20' : 'text-green-600 bg-green-50'
+          1: darkMode ? 'text-red-400 bg-red-900/20' : 'text-red-600 bg-red-50',
+          2: darkMode ? 'text-blue-400 bg-blue-900/20' : 'text-blue-600 bg-blue-50',
+          3: darkMode ? 'text-green-400 bg-green-900/20' : 'text-green-600 bg-green-50'
         };
         return (
-          <span className={`px-2 py-1 rounded text-sm font-medium ${colors[value] || 'text-gray-500'}`}>
+          <span className={`px-2 py-1 rounded text-sm font-medium ${colors[positionSlot(value)] || 'text-gray-500'}`}>
             {value}
           </span>
         );
@@ -2495,7 +2499,7 @@ export const prepareCharacterData = (aggregatedData) => {
 export const preparePositionData = (positionData) => {
   if (!positionData) return [];
   
-  const positions = ['Lead', 'Middle', 'Anchor'];
+  const positions = [POSITION_NAMES[1], POSITION_NAMES[2], POSITION_NAMES[3]];
   const result = [];
   
   [1, 2, 3].forEach((position, index) => {

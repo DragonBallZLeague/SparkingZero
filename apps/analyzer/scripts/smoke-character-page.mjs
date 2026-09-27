@@ -98,6 +98,17 @@ try {
   // DIRECTLY below, or Builds, Forms and Matches would silently lose coverage
   // the moment the layout stopped showing everything at once.
   const blocks = await vite.ssrLoadModule('/src/pages/character/CharacterBlocks.jsx');
+  const { POSITION_NAMES, positionLabel } = await vite.ssrLoadModule('/src/utils/positions.js');
+
+  // The position vocabulary itself. Slot 1 is the Starter in league terms, and
+  // every spelling the data or older code uses must land on it.
+  console.log('\nPosition names follow league terminology:');
+  for (const [input, want] of [[1, 'Starter'], ['1', 'Starter'], ['Starter', 'Starter'], ['Lead', 'Starter'],
+                                [2, 'Middle'], [3, 'Anchor'], [null, '—']]) {
+    const got = positionLabel(input);
+    if (got === want) console.log('  ok   ' + JSON.stringify(input) + ' -> ' + got);
+    else { console.error('  FAIL ' + JSON.stringify(input) + ' -> ' + JSON.stringify(got) + ', want ' + want); failed = true; }
+  }
 
   const PANELS = [
     ['Overview:usage', (c, darkMode) => React.createElement(blocks.UsageBlock, { character: c, darkMode })],
@@ -185,7 +196,10 @@ try {
             const rowLabels = [...(/<tbody>([\s\S]*?)<\/tbody>/.exec(html)?.[1] || '')
               .matchAll(/<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/g)]
               .map(m => m[1].replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '').trim());
-            const namesSlots = rowLabels.length > 0 && rowLabels.every(l => !/^\d+$/.test(l));
+            // And the names must be the LEAGUE'S names. "Lead" is not one - the
+            // league calls slot 1 the Starter, and the app used to mix both.
+            const LEAGUE_NAMES = new Set(Object.values(POSITION_NAMES));
+            const namesSlots = rowLabels.length > 0 && rowLabels.every(l => LEAGUE_NAMES.has(l));
             if (html.includes('[object Object]')) {
               console.error('  FAIL ' + what + '\n         rendered a literal "[object Object]"');
               failed = true;

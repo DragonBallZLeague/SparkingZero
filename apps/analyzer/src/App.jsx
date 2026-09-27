@@ -29,6 +29,7 @@ import { NavBar } from '@szl/ui';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CharacterPage from './pages/CharacterPage.jsx';
 import { ROUTES, pathForView, viewForPath } from './routes.js';
+import { POSITION_NAMES } from './utils/positions.js';
 import {
   buildCharacterSlugIndex,
   resolveCharacterParam,
@@ -152,7 +153,7 @@ export default function App() {
   }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
   const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
-  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Lead, 2=Middle, 3=Anchor)
+  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Starter, 2=Middle, 3=Anchor)
   const [positionCharacterFilters, setPositionCharacterFilters] = useState({ 1: [], 2: [], 3: [] }); // Character filters for each position
   const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
@@ -2343,7 +2344,7 @@ export default function App() {
                 <div>
                   <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Character Position Analysis</h2>
                   <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Performance breakdown by team position (Lead, Middle, Anchor)
+                    Performance breakdown by team position ({POSITION_NAMES[1]}, {POSITION_NAMES[2]}, {POSITION_NAMES[3]})
                   </p>
                 </div>
               </div>
@@ -2414,7 +2415,7 @@ export default function App() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map(position => {
                 const posData = positionData[position];
-                const positionNames = ['Lead', 'Middle', 'Anchor'];
+                const positionNames = [POSITION_NAMES[1], POSITION_NAMES[2], POSITION_NAMES[3]];
                 const positionColors = [
                   { light: 'text-red-600', dark: 'text-red-400', bg: 'bg-red-50', darkBg: 'bg-red-900/20', border: 'border-red-200', darkBorder: 'border-red-600' },
                   { light: 'text-blue-600', dark: 'text-blue-400', bg: 'bg-blue-50', darkBg: 'bg-blue-900/20', border: 'border-blue-200', darkBorder: 'border-blue-600' },
@@ -4682,7 +4683,7 @@ export default function App() {
                                               // Position labels
                                               const getPositionLabel = (pos) => {
                                                 const maxPos = Math.max(...matchupStats.map(s => s.position));
-                                                if (pos === 1) return 'Starter';
+                                                if (pos === 1) return POSITION_NAMES[1];
                                                 if (pos === maxPos) return 'Anchor';
                                                 if (maxPos === 3) return 'Middle';
                                                 // For middle positions in teams with 4+ members
