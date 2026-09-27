@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useFloating, offset, flip, autoUpdate } from '@floating-ui/react';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -33,6 +33,13 @@ import { TIERS, TIER_LABELS } from './utils/tierScale.js';
 import { tierPillColors } from './utils/tierPlateSvg.js';
 import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
 import { NavBar } from '@szl/ui';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ROUTES, pathForView, viewForPath } from './routes.js';
+import {
+  buildCharacterSlugIndex,
+  resolveCharacterParam,
+  characterUrlKey,
+} from './utils/characterSlug.js';
 import { 
   Trophy, 
   Swords, 
@@ -1303,7 +1310,20 @@ export default function App() {
   // Separate state for the header match-analysis selector so we don't override global fileContent
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
   const [analysisFileContent, setAnalysisFileContent] = useState(null);
-  const [viewType, setViewType] = useState('single');
+  // viewType lives in the URL, not in state.
+  //
+  // Keeping the setter's name and signature means the ~10 existing
+  // setViewType('single') call sites and the view dropdowns keep working
+  // untouched - they now navigate instead of setting state, and the view
+  // becomes linkable, refreshable and shareable for free.
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { charParam } = useParams();
+  const viewType = viewForPath(location.pathname);
+  const setViewType = useCallback(
+    (next) => navigate(pathForView(next) + location.search),
+    [navigate, location.search]
+  );
   const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
   const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
   const [manualFiles, setManualFiles] = useState([]);
@@ -1349,6 +1369,32 @@ export default function App() {
   }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, scoreRange, selectedTiers, minMatches, maxMatches, sortBy, sortDirection]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
+
+  // Bidirectional id <-> slug lookup, for the /characters/:charParam deep link.
+  const charSlugIndex = useMemo(() => buildCharacterSlugIndex(charactersCSV), []);
+
+  // A character deep link scopes the leaderboard to that one character.
+  //
+  // Two jobs. First, resolve the URL segment - a name slug, or a raw id, which
+  // stays valid forever so old links and characters missing from characters.csv
+  // keep working. Second, CANONICALISE: if the link arrived with a raw id and
+  // that character does have a slug, rewrite the URL to the slug so what ends up
+  // in the address bar (and in whatever someone copies from it) is the legible
+  // form. replace: true because the id URL should not become a back-button stop.
+  useEffect(() => {
+    if (!charParam) return;
+    const id = resolveCharacterParam(charParam, charSlugIndex);
+    if (!id) return; // unknown character - leave the view unfiltered
+
+    const canonical = characterUrlKey(id, charSlugIndex);
+    if (canonical && canonical !== charParam) {
+      navigate(ROUTES.character(canonical) + location.search, { replace: true });
+      return;
+    }
+
+    const name = charSlugIndex.idToName.get(id);
+    if (name) setSelectedCharacters([name]);
+  }, [charParam, charSlugIndex, navigate, location.search]);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
   const capsuleMap = capsuleInfo.capsuleMap;
   

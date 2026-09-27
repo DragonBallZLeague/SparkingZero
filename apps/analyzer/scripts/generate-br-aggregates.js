@@ -229,6 +229,15 @@ function main() {
     process.exit(1);
   }
 
+  // Read the old manifest BEFORE the wipe, so the write at the end can tell
+  // whether the corpus actually changed (see the end of this function).
+  const indexPath = path.join(outDir, 'index.json');
+  const previous = fs.existsSync(indexPath)
+    ? (() => { try { return JSON.parse(fs.readFileSync(indexPath, 'utf8')); } catch { return null; } })()
+    : null;
+
+  // Wiping is deliberate: it clears out shards for folders that have since been
+  // renamed or removed, which would otherwise linger and be served forever.
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -298,7 +307,21 @@ function main() {
 
   manifest.shards.sort((a, b) => naturalCompare(a.slug, b.slug));
   manifest.totalMatches = totalMatches;
-  fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(manifest, null, 2), 'utf8');
+
+  // Carry the old timestamp forward when the corpus has not actually changed.
+  //
+  // `generated` is a timestamp, so a fresh one on every run left this file dirty
+  // in git after every single build even when not one match had changed. That
+  // churn is pure noise: it makes `git status` useless for seeing real work and
+  // it blocks a checkout for no reason. Nothing downstream reads `generated`, so
+  // if the manifest matches in every other respect, reusing the old value makes
+  // the output byte-identical and git stays quiet. The file is still always
+  // written, because the wipe above deleted it.
+  const sameCorpus = previous &&
+    JSON.stringify({ ...previous, generated: null }) ===
+    JSON.stringify({ ...manifest, generated: null });
+  if (sameCorpus) manifest.generated = previous.generated;
+  fs.writeFileSync(indexPath, JSON.stringify(manifest, null, 2), 'utf8');
 
   const outBytes = manifest.shards.reduce((sum, s) => sum + s.bytes, 0);
   const mb = n => (n / 1024 / 1024).toFixed(1);
