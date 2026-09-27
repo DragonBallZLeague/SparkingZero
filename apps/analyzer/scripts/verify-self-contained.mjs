@@ -41,9 +41,17 @@ const GLOBALS = new Set([
   'requestAnimationFrame', 'cancelAnimationFrame', 'AbortController',
   'HTMLElement', 'Event', 'CustomEvent', 'IntersectionObserver', 'ResizeObserver',
   'TextEncoder', 'TextDecoder', 'crypto', 'performance', 'globalThis', 'process',
-  // The JSX transform injects React; files that use hooks import it anyway.
-  'React',
 ]);
+
+// NOT in that list, deliberately: `React`.
+//
+// It was, on the reasoning that the automatic JSX runtime injects it. That is
+// true for JSX itself - which never mentions the identifier, so it is never
+// flagged - but it is NOT true for an explicit `React.useState(...)` or
+// `React.Fragment`. Whitelisting the name made this checker blind to exactly
+// the bug it exists to catch: useCopyFeedback moved out of App.jsx still
+// calling React.useState, and the character page rendered as a blank white
+// screen. A file that names React must import React.
 
 function collectPattern(node, out) {
   if (!node) return;

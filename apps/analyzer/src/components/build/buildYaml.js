@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 
 /**
  * Determine build composition based on capsule cost distribution

@@ -15,6 +15,7 @@
     "verify-filters": "node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs",
     "verify-character-page": "node --import ./scripts/json-import-hook.mjs scripts/verify-character-page.mjs",
     "verify-self-contained": "node scripts/verify-self-contained.mjs",
+    "smoke-character-page": "node scripts/smoke-character-page.mjs",
     "build-bands": "node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs",
     "verify-routes": "node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs"
   },
