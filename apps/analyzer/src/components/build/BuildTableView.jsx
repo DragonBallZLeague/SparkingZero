@@ -14,7 +14,6 @@ export function BuildTableView({
   setSelectedBuildIndex,
   selectedBuildSort,
   setSelectedBuildSort,
-  allScores,       // for PerformanceScoreBadge colour context
   primaryTeam,     // optional — shown in detail panel footer
   activeBuildFilters,      // track active build filter per character
   setActiveBuildFilters,   // setter for active build filter
@@ -249,7 +248,6 @@ export function BuildTableView({
                 label="Score"
                 size="small"
                 darkMode={darkMode}
-                allScores={allScores}
               />
               <button
                 onClick={(e) => { e.stopPropagation(); setPanelOpen(false); }}

@@ -148,6 +148,64 @@ try {
     }
   }
 
+  // ---- the score pill -------------------------------------------------------
+  //
+  // One component behind every "Score: 105" in the app. Its colour used to be
+  // RELATIVE - callers passed the other scores on screen - so the same score
+  // rendered green in one panel and orange in another. It is absolute now, from
+  // the score's tier, which is only worth anything if the tiers actually produce
+  // different colours.
+  console.log('\nThe score pill colours by tier, and every tier is reachable:');
+  const { PerformanceScoreBadge } = await vite.ssrLoadModule('/src/components/stats/PerformanceScoreBadge.jsx');
+  const { TIERS } = await vite.ssrLoadModule('/src/utils/tierScale.js');
+  const { TIER_CUTOFFS, tierForScore } = await vite.ssrLoadModule('/src/utils/performanceTier.js');
+
+  const seen = new Map();
+  for (const tier of TIERS) {
+    // A score comfortably inside the band, not on its edge.
+    const cut = TIER_CUTOFFS[tier];
+    const probe = cut === undefined ? 0 : cut + 1;
+    const actual = tierForScore(probe);
+    try {
+      const html = renderToString(React.createElement(PerformanceScoreBadge, {
+        score: probe, label: 'Score', size: 'small', darkMode: true,
+      }));
+      const bg = /background:\s*([^;"]+)/.exec(html);
+      if (!bg) {
+        console.error('  FAIL tier ' + tier + ' (score ' + probe + ') rendered no background colour');
+        failed = true;
+      } else if (seen.has(bg[1])) {
+        console.error('  FAIL tier ' + tier + ' shares a colour with ' + seen.get(bg[1]));
+        failed = true;
+      } else {
+        seen.set(bg[1], tier);
+        console.log('  ok   score ' + String(probe).padEnd(6) + '-> tier ' + actual + '  ' + bg[1]);
+      }
+    } catch (err) {
+      console.error('  FAIL tier ' + tier + ': ' + (err && err.message));
+      failed = true;
+    }
+  }
+
+  // The pill must survive whatever a score turns out to be.
+  for (const junk of [0, -5, NaN, undefined, null, 1e6]) {
+    try {
+      // React's SSR splits adjacent text nodes with <!-- --> markers, so
+      // "Score: 0" arrives as "Score<!-- -->: <!-- -->0". Strip them before
+      // asserting on the visible text.
+      const html = renderToString(React.createElement(PerformanceScoreBadge, { score: junk, darkMode: true }));
+      const text = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '');
+      if (!text.includes('Score:')) { console.error('  FAIL score ' + junk + ' rendered no label'); failed = true; }
+      else if (/NaN|undefined|null/.test(text)) {
+        console.error('  FAIL score ' + junk + ' rendered "' + text.trim() + '"');
+        failed = true;
+      } else console.log('  ok   score ' + String(junk) + ' -> "' + text.trim() + '"');
+    } catch (err) {
+      console.error('  FAIL score ' + junk + ': ' + (err && err.message));
+      failed = true;
+    }
+  }
+
   // ---- the states with no character ---------------------------------------
   console.log('\nThe states with no character:');
   for (const reason of ['loading', 'empty-scope', 'not-found']) {

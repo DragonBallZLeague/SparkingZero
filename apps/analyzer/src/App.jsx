@@ -20,7 +20,6 @@ import { getAggregatedCharacterData } from './utils/aggregation/characterAggrega
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
 import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
-import { getPerformanceLevel } from './utils/performanceLevel.js';
 import TierPlate from './components/TierPlate.jsx';
 import RangeSlider from './components/RangeSlider.jsx';
 import { TIERS, TIER_LABELS } from './utils/tierScale.js';
@@ -1924,7 +1923,6 @@ export default function App() {
                   ? allAvgBattleTimeValues.reduce((sum, val) => sum + val, 0) / allAvgBattleTimeValues.length
                   : 0;
                 
-                const combatPerformanceScores = performanceReference.map(c => c.combatPerformanceScore);
                 
                 return (
                   <div key={i} className={`rounded-xl p-6 border transition-colors ${
@@ -2303,7 +2301,6 @@ export default function App() {
                                     setSelectedBuildIndex={setSelectedBuildIndex}
                                     selectedBuildSort={selectedBuildSort}
                                     setSelectedBuildSort={setSelectedBuildSort}
-                                    allScores={combatPerformanceScores}
                                     primaryTeam={char.primaryTeam}
                                     activeBuildFilters={activeBuildFilters}
                                     setActiveBuildFilters={setActiveBuildFilters}
@@ -3070,11 +3067,6 @@ export default function App() {
                 <div className="space-y-3">
                   {(() => {
                     // Collect all character performance scores from both teams for relative scoring
-                    const allMatchScores = [...p1Team, ...p2Team].map(char => {
-                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, 0, aiStrategies), char);
-                      return calculateMatchPerformanceScore(stats);
-                    });
-                    
                     return p1Team.map((char, i) => {
                       const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
                       const performanceScore = calculateMatchPerformanceScore(stats);
@@ -3093,7 +3085,7 @@ export default function App() {
                                 <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{stats.kills} KOs</span>
                               </div>
                             </div>
-                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} allScores={allMatchScores} />
+                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} />
                           </div>
                           
                           {/* Combat Performance Section */}
@@ -3354,11 +3346,6 @@ export default function App() {
                 <div className="space-y-3">
                   {(() => {
                     // Collect all character performance scores from both teams for relative scoring
-                    const allMatchScores = [...p1Team, ...p2Team].map(char => {
-                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, 0, aiStrategies), char);
-                      return calculateMatchPerformanceScore(stats);
-                    });
-                    
                     return p2Team.map((char, i) => {
                       const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
                       const performanceScore = calculateMatchPerformanceScore(stats);
@@ -3377,7 +3364,7 @@ export default function App() {
                                 <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{stats.kills} KOs</span>
                               </div>
                             </div>
-                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} allScores={allMatchScores} />
+                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} />
                           </div>
                           
                           {/* Combat Performance Section */}
@@ -3972,7 +3959,6 @@ export default function App() {
                               <div className={`p-3 space-y-2 border-t ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
                                 {(() => {
                                   // Collect all performance scores for relative scoring
-                                  const allCharScores = Object.values(team.characterAverages).map(c => c.performanceScore);
                                   
                                   return Object.entries(team.characterAverages)
                                     .sort((a, b) => b[1].performanceScore - a[1].performanceScore)
@@ -4076,7 +4062,7 @@ export default function App() {
                                             {/* Score and Expand Icon - Rightmost */}
                                             <div className="flex items-center gap-3">
                                               <div className="text-right">
-                                                <PerformanceScoreBadge score={charStats.performanceScore} label="Score" size="small" darkMode={darkMode} allScores={allCharScores} />
+                                                <PerformanceScoreBadge score={charStats.performanceScore} label="Score" size="small" darkMode={darkMode} />
                                                 <div className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                   {charStats.activeMatchesPlayed} matches ({charStats.usageRate}%)
                                                 </div>
@@ -4338,7 +4324,6 @@ export default function App() {
                                                       setSelectedBuildIndex={setSelectedBuildIndex}
                                                       selectedBuildSort={selectedBuildSort}
                                                       setSelectedBuildSort={setSelectedBuildSort}
-                                                      allScores={allCharScores}
                                                       activeBuildFilters={activeBuildFilters}
                                                       setActiveBuildFilters={setActiveBuildFilters}
                                                       darkMode={darkMode}
@@ -4686,7 +4671,6 @@ export default function App() {
                                             
                                             {isMatchupExpanded && (() => {
                                               // Use same score pool as character performance section for consistent coloring
-                                              const allCharScores = Object.values(team.characterAverages).map(c => c.performanceScore);
                                               
                                               // Group matchups by position
                                               const positionGroups = matchupStats.reduce((groups, stat) => {
@@ -4793,26 +4777,12 @@ export default function App() {
                                                                             {isBest && <span className={`text-sm ${darkMode ? 'text-amber-400' : 'text-amber-600'}`}>★</span>}
                                                                           </div>
                                                                           <div className="flex flex-col items-end gap-1">
-                                                                            {(() => {
-                                                                              const score = parseFloat(stat.avgPerformanceScore) || 0;
-                                                                              // Use same score pool as character performance section for consistent coloring
-                                                                              const level = getPerformanceLevel(score, allCharScores);
-                                                                              const colorClasses = {
-                                                                                excellent: darkMode ? 'bg-green-900/30 text-green-300 border-green-600' : 'bg-green-100 text-green-700 border-green-300',
-                                                                                good: darkMode ? 'bg-blue-900/30 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-700 border-blue-300',
-                                                                                average: darkMode ? 'bg-yellow-900/30 text-yellow-300 border-yellow-600' : 'bg-yellow-100 text-yellow-700 border-yellow-300',
-                                                                                'below-average': darkMode ? 'bg-orange-900/30 text-orange-300 border-orange-600' : 'bg-orange-100 text-orange-700 border-orange-300',
-                                                                                poor: darkMode ? 'bg-red-900/30 text-red-300 border-red-600' : 'bg-red-100 text-red-700 border-red-300'
-                                                                              };
-                                                                              // Ensure we have a valid score to display
-                                                                              const displayScore = isNaN(score) ? 0 : Math.round(score);
-                                                                              return (
-                                                                                <div className={`inline-flex items-center gap-1.5 rounded-lg border font-bold text-sm px-2 ${colorClasses[level]}`}>
-                                                                                  <Star className="w-3 h-3"/>
-                                                                                  <span>Score: {displayScore}</span>
-                                                                                </div>
-                                                                              );
-                                                                            })()}
+                                                                            <PerformanceScoreBadge
+                                                                              score={parseFloat(stat.avgPerformanceScore) || 0}
+                                                                              label="Score"
+                                                                              size="small"
+                                                                              darkMode={darkMode}
+                                                                            />
                                                                           </div>
                                                                         </div>
                                                                         
