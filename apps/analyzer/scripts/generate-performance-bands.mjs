@@ -141,7 +141,27 @@ const bands = {
 };
 
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, JSON.stringify(bands, null, 2) + '\n');
+
+// Only rewrite when the CALIBRATION actually changed.
+//
+// The point of committing this file is that a recalibration shows up as a
+// reviewable diff. A 'generated' timestamp that moves on every build defeats
+// that: it dirties the working tree on every build and buries the one diff
+// that matters. So the timestamp is compared out, and carried over from the
+// existing file when nothing else differs.
+const existing = fs.existsSync(outPath)
+  ? (() => { try { return JSON.parse(fs.readFileSync(outPath, 'utf8')); } catch { return null; } })()
+  : null;
+const unchanged = existing &&
+  JSON.stringify({ ...existing, generated: null }) ===
+  JSON.stringify({ ...bands, generated: null });
+
+if (unchanged) {
+  bands.generated = existing.generated;
+  console.log('generate-performance-bands: calibration unchanged, file left alone');
+} else {
+  fs.writeFileSync(outPath, JSON.stringify(bands, null, 2) + '\n');
+}
 
 console.log('generate-performance-bands: seasons ' + bands.basis.seasons.join('+') +
   ', ' + REQUIRED_DIFFICULTY + ' only -> ' + files.length + ' matches, ' + scores.length + ' characters');

@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Filter, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 // Tag dimension config — order, label, color theming
@@ -42,30 +43,35 @@ function computeDefaultFilters(tagsIndex) {
   };
 }
 
-// Parse activeFilters from the current URL search params
-function parseFiltersFromURL() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const filters = {};
-    TAG_DIMS.forEach(d => {
-      const val = params.get(d.key);
-      if (val) {
-        filters[d.key] = new Set(val.split(',').map(v => v.trim()).filter(Boolean));
-      }
-    });
-    return filters;
-  } catch {
-    return {};
-  }
+/** URLSearchParams -> { dimension: Set(values) }. */
+function parseFilters(params) {
+  const filters = {};
+  if (!params) return filters;
+  TAG_DIMS.forEach(d => {
+    const val = params.get(d.key);
+    if (val) {
+      filters[d.key] = new Set(val.split(',').map(v => v.trim()).filter(Boolean));
+    }
+  });
+  return filters;
+}
+
+function hasAnyFilter(filters) {
+  return Object.values(filters).some(set => set && set.size > 0);
 }
 
 export default function TagFilterSelector({ onSelect, darkMode = true }) {
+  // The router owns the query string now. This used to read window.location and
+  // write through history.replaceState, which bypassed react-router entirely -
+  // the two would have fought over the URL as soon as real routes landed.
+  const [searchParams, setSearchParams] = useSearchParams();
   const [tagsIndex, setTagsIndex] = useState(null);
-  const [activeFilters, setActiveFilters] = useState(() => parseFiltersFromURL());
-  const [expanded, setExpanded] = useState(() => {
-    const f = parseFiltersFromURL();
-    return Object.values(f).some(s => s.size > 0);
-  });
+  const [activeFilters, setActiveFilters] = useState(() => parseFilters(searchParams));
+  const [expanded, setExpanded] = useState(() => hasAnyFilter(parseFilters(searchParams)));
+
+  // Whether the URL already carried filters when this mounted. Captured once,
+  // because the fetch below runs on mount and must not see later edits.
+  const hadUrlFiltersAtMount = useRef(hasAnyFilter(parseFilters(searchParams)));
 
   useEffect(() => {
     const base = import.meta.env?.BASE_URL || '';
@@ -82,9 +88,7 @@ export default function TagFilterSelector({ onSelect, darkMode = true }) {
         // be overridden by the default. Both state updates land in one render
         // (React 18 batching), so the index is never briefly live with no
         // filter, which would flash a full-corpus load.
-        const urlFilters = parseFiltersFromURL();
-        const hasUrlFilters = Object.values(urlFilters).some(s => s.size > 0);
-        if (!hasUrlFilters) {
+        if (!hadUrlFiltersAtMount.current) {
           const defaults = computeDefaultFilters(data);
           if (Object.keys(defaults).length > 0) {
             setActiveFilters(defaults);
@@ -96,23 +100,30 @@ export default function TagFilterSelector({ onSelect, darkMode = true }) {
       .catch(() => { onSelect?.(null); });
   }, []);
 
-  // Sync activeFilters to URL query params
+  // Push activeFilters into the query string.
+  //
+  // Two things this must not do. It must not clobber query params owned by other
+  // parts of the app, so it edits a copy of the CURRENT params and only touches
+  // its own keys. And it must not loop: setSearchParams re-renders with new
+  // params, which re-runs this effect, so it writes only on a real difference.
+  //
+  // replace: true keeps filter tweaking out of the back-button history, matching
+  // the old replaceState behaviour - a viewer adjusting pills should not have to
+  // press Back ten times to leave the page.
   useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      TAG_DIMS.forEach(d => {
-        const s = activeFilters[d.key];
-        if (s && s.size > 0) {
-          params.set(d.key, [...s].join(','));
-        } else {
-          params.delete(d.key);
-        }
-      });
-      const newSearch = params.toString();
-      const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
-      history.replaceState(null, '', newUrl);
-    } catch { /* non-browser env */ }
-  }, [activeFilters]);
+    const next = new URLSearchParams(searchParams);
+    TAG_DIMS.forEach(d => {
+      const set = activeFilters[d.key];
+      if (set && set.size > 0) {
+        next.set(d.key, [...set].join(','));
+      } else {
+        next.delete(d.key);
+      }
+    });
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [activeFilters, searchParams, setSearchParams]);
 
   // Collect unique values per dimension
   const availableValues = useMemo(() => {
