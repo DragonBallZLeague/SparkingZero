@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ChevronDown, ChevronRight, CalendarDays } from 'lucide-react';
 import { useSeasonEvents } from '../hooks/useSeasonEvents';
-import { StatusBadge, TimingBadge } from '../components/events/entities';
+import { StatusBadge, TimingBadge, eventSlug } from '../components/events/entities';
 
 const BLOCK_KIND_LABELS = {
   single_match: 'Single Match',
@@ -82,8 +82,8 @@ export function EventsView({
             const kinds = competitionKinds(event);
             return (
               <Link
-                key={event.slug}
-                to={`/events/${event.slug}`}
+                key={eventSlug(event)}
+                to={`/events/${eventSlug(event)}`}
                 className={`group rounded-xl border overflow-hidden transition-all flex flex-col ${
                   darkMode
                     ? 'bg-gray-900 border-gray-800 hover:border-purple-500/60'
@@ -91,7 +91,11 @@ export function EventsView({
                 }`}
               >
                 {event.banner && (
-                  <img src={event.banner} alt="" className="w-full h-32 object-cover" />
+                  // Fixed aspect ratio (not a fixed height) so the banner keeps the
+                  // same composition at every card width - a fixed h-32 cropped the
+                  // sides off wide banners on phones. 14:3 matches the recommended
+                  // 1400x300 banner size; other ratios are center-cropped.
+                  <img src={event.banner} alt="" className="w-full aspect-[14/3] object-cover object-center" />
                 )}
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">

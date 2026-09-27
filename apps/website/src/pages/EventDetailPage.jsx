@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronDown, CalendarDays, Sparkles } from 'lucide-react';
 import { useSeasonEvents } from '../hooks/useSeasonEvents';
 import { useLineups, EMPTY_LINEUPS } from '../hooks/useLineups';
-import { makeResolver, StatusBadge, TimingBadge } from '../components/events/entities';
+import { makeResolver, eventSlug, StatusBadge, TimingBadge } from '../components/events/entities';
 import { MarkdownBlock, ParticipantsBlock, BracketBlock } from '../components/events/InfoBlocks';
 import { SingleMatchBlock, SeriesBlock } from '../components/events/MatchBlocks';
 import { GauntletBlock } from '../components/events/GauntletBlock';
@@ -102,7 +102,7 @@ export default function EventDetailPage({ darkMode }) {
   const { eventsData, teamsData, allSeasons, seasonLabel, selectedSeason, setSelectedSeason } = useSeasonEvents();
   const lineups = useLineups();
 
-  const event = eventsData?.events?.find((e) => e.slug === slug) || null;
+  const event = eventsData?.events?.find((e) => eventSlug(e) === slug) || null;
   const resolve = useMemo(() => makeResolver(event, teamsData), [event, teamsData]);
 
   if (!eventsData) {

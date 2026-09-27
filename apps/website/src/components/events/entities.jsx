@@ -121,3 +121,14 @@ export function BlockSection({ title, darkMode, children, actions = null }) {
     </section>
   );
 }
+
+// The CMS "URL Slug" field is free text, and authors naturally paste the whole
+// path ("/events/allstars0"). Linking that as `/events/${slug}` produced
+// /events/events/allstars0, which matches no route and rendered a blank page,
+// so both the index links and the detail lookup go through this.
+export function eventSlug(event) {
+  return String(event?.slug || '')
+    .trim()
+    .replace(/^\/+|\/+$/g, '')
+    .replace(/^events\//i, '');
+}

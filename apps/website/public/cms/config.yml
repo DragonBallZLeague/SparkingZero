@@ -289,13 +289,13 @@ collections:
         widget: "list"
         summary: "{{name}} ({{status}})"
         fields:
-          - { name: "slug", label: "URL Slug", widget: "string", hint: "Used in the page URL (/events/<slug>). Reuse the same slug across seasons for recurring events, e.g. boss-rush" }
+          - { name: "slug", label: "URL Slug", widget: "string", pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "Just the slug, e.g. allstars0 or boss-rush - lowercase letters, numbers and dashes, no slashes or /events/ prefix"], hint: "Used in the page URL (/events/<slug>). Reuse the same slug across seasons for recurring events, e.g. boss-rush" }
           - { name: "name", label: "Event Name", widget: "string" }
           - { name: "tagline", label: "Tagline", widget: "string", required: false }
           - { name: "timing", label: "Timing", widget: "select", options: ["preseason", "mid-season", "off-season"], required: false }
           - { name: "status", label: "Status", widget: "select", options: ["upcoming", "in_progress", "completed"], default: "upcoming" }
           - { name: "date", label: "Date", widget: "string", required: false, hint: "Free text, e.g. 9/18/2026" }
-          - { name: "banner", label: "Banner Image", widget: "image", required: false }
+          - { name: "banner", label: "Banner Image", widget: "image", required: false, hint: "Best at 1400x300 (14:3). Shown at that ratio on the Events cards at every screen size, so keep text large and away from the edges" }
           - name: "participants"
             label: "Participants"
             widget: "list"
