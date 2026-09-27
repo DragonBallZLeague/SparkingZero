@@ -9,19 +9,39 @@
  * Used by the verifier scripts that import real aggregation modules:
  *   node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs
  */
-import { registerHooks } from 'module';
+import * as nodeModule from 'module';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-registerHooks({
-  load(url, context, nextLoad) {
-    if (url.startsWith('file:') && url.endsWith('.json')) {
-      return {
-        format: 'module',
-        shortCircuit: true,
-        source: 'export default ' + fs.readFileSync(fileURLToPath(url), 'utf8') + ';',
-      };
+// module.registerHooks (synchronous, in-thread) only exists from Node 22.15; CI
+// runs Node 20, so fall back to the async off-thread module.register (Node 20.6+).
+if (typeof nodeModule.registerHooks === 'function') {
+  nodeModule.registerHooks({
+    load(url, context, nextLoad) {
+      if (url.startsWith('file:') && url.endsWith('.json')) {
+        return {
+          format: 'module',
+          shortCircuit: true,
+          source: 'export default ' + fs.readFileSync(fileURLToPath(url), 'utf8') + ';',
+        };
+      }
+      return nextLoad(url, context);
+    },
+  });
+} else {
+  const loader = `
+    import fs from 'fs';
+    import { fileURLToPath } from 'url';
+    export async function load(url, context, nextLoad) {
+      if (url.startsWith('file:') && url.endsWith('.json')) {
+        return {
+          format: 'module',
+          shortCircuit: true,
+          source: 'export default ' + fs.readFileSync(fileURLToPath(url), 'utf8') + ';',
+        };
+      }
+      return nextLoad(url, context);
     }
-    return nextLoad(url, context);
-  },
-});
+  `;
+  nodeModule.register('data:text/javascript,' + encodeURIComponent(loader));
+}

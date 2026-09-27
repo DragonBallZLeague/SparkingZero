@@ -31,7 +31,7 @@ The GitHub Actions workflow that builds every app and deploys them together to G
 - `id-token: write` - Required for GitHub Pages deployment
 
 **Build job steps (in order):**
-1. Checkout + set up Node 20
+1. Checkout + set up Node 22
 2. Install deps and build **Match Builder** → `dist/matchbuilder`
 3. Install deps for **Analyzer**, run `scripts/fix-json-encoding.js` on `BR_Data`, build → `dist/analyzer`
 4. Install deps and build **Admin** (with `VITE_ADMIN_CLIENT_ID` secret, base `/SparkingZero/admin/`) → `dist/admin`
@@ -133,7 +133,7 @@ You can then serve the `dist` directory to test how all the apps behave together
 - For Analyzer, ensure the build output is correctly set to `../../dist/analyzer`
 
 **Issue: Workflow fails on build**
-- Check Node.js version compatibility (workflow uses Node 20)
+- Check Node.js version compatibility (workflows use Node 22; match it locally)
 - Ensure all dependencies are declared in the relevant app's `package.json`
 - Review build logs in the Actions tab
 - Verify `working-directory` paths in the workflow are correct for the step that failed

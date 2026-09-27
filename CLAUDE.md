@@ -27,6 +27,8 @@ Supporting infra:
 
 ## Development commands
 
+Node **22** is required (pinned in the root `.nvmrc`, which both `deploy.yml` and `validate-json.yml` read via `node-version-file`) — match it locally, since build scripts use Node 22 APIs such as `module.registerHooks` in `apps/analyzer/scripts/json-import-hook.mjs`, which also keeps a Node 20 fallback.
+
 The root `package.json` npm workspace covers **only** Match Builder, Analyzer, and Calculator. Website and Admin have their own independent `package.json`/`node_modules`.
 
 ```bash
