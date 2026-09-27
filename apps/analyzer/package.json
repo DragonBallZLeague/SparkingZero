@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/autoTagMatches.js && node scripts/generate-br-data-structure.js && node scripts/generate-br-data-tags.js && node scripts/generate-br-aggregates.js && node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs && node scripts/verify-character-slugs.mjs && node scripts/verify-routes.mjs",
+    "prebuild": "node scripts/autoTagMatches.js && node scripts/generate-br-data-structure.js && node scripts/generate-br-data-tags.js && node scripts/generate-br-aggregates.js && node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs && node scripts/verify-character-slugs.mjs && node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "fix-json": "node scripts/fix-json-encoding.js",
@@ -14,8 +14,9 @@
     "verify-slugs": "node scripts/verify-character-slugs.mjs",
     "verify-filters": "node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs",
     "verify-character-page": "node --import ./scripts/json-import-hook.mjs scripts/verify-character-page.mjs",
+    "verify-self-contained": "node scripts/verify-self-contained.mjs",
     "build-bands": "node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs",
-    "verify-routes": "node scripts/verify-routes.mjs"
+    "verify-routes": "node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
