@@ -742,16 +742,20 @@ playoffs:
           video_url_week2: https://youtu.be/e5XX2Fkp3y4?is=dhBesCwGByS8Y22Q
     - round: Semifinals
       matches:
-        - status: upcoming
+        - status: completed
           lineup_file_week1: s0_sf1_m1r1.yaml
-          score_a: 1
+          score_a: 2
           video_url_week1: https://youtu.be/k70JuHCFdqE?is=H4-PWX0jeaXgl-20
           lineup_file_week2: s0_sf2_m1r3.yaml
-        - status: upcoming
+          score_b: 1
+          winner: Sentai Squad
+        - status: completed
           lineup_file_week1: s0_sf1_m2r1.yaml
-          score_a: 1
+          score_a: 2
           video_url_week1: https://youtu.be/6ne93ctpnFQ?is=LZA-kevaJyJ40xso
           lineup_file_week2: s0_sf2_m2r3.yaml
+          score_b: 0
+          winner: Budokai
     - round: Tenkaichi Bowl
       matches:
         - status: upcoming
