@@ -1,0 +1,254 @@
+/**
+ * Checks the data contract behind the /characters/<name-slug> page.
+ *
+ * WHY THIS EXISTS
+ *
+ * CharacterPage.jsx is purely presentational - it reads about thirty fields off
+ * an aggregated character row and renders them. Nothing there can throw if a
+ * field goes missing: it renders an em dash, or 'NaN', or quietly omits a whole
+ * section. So a rename in characterAggregation.js does not break the build and
+ * does not break the page in any way a person would notice. It just publishes a
+ * page with holes in it.
+ *
+ * Two assumptions are checked, both of which are silent when violated:
+ *
+ *   1. Every `character.<field>` the page reads exists on real aggregated rows.
+ *      The field list is SCRAPED FROM THE PAGE SOURCE rather than written out
+ *      here, so this cannot drift from what actually ships - the same reason
+ *      verify-404.mjs imports the real resolveRedirect instead of restating the
+ *      routing table.
+ *
+ *   2. A slug resolves to a row. The page joins characters.csv to the corpus by
+ *      NAME (slug -> id -> name -> row.name). If a row name ever stops matching
+ *      a CSV name, every deep link for that character lands on the page's
+ *      "no data" notice, which looks exactly like an out-of-scope filter.
+ *
+ * Deliberately NOT in prebuild: it aggregates real corpus shards, like
+ * verify-filters. Run it when you change the page or the aggregation.
+ *
+ * Usage: npm run verify-character-page
+ */
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getAggregatedCharacterData } from '../src/utils/aggregation/characterAggregation.js';
+import { parseCharacterCSV } from '../src/utils/statCalculations.js';
+import { buildCharacterSlugIndex, characterUrlKey, resolveCharacterParam } from '../src/utils/characterSlug.js';
+import { tierForScore } from '../src/utils/performanceTier.js';
+import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
+const aggDir = path.resolve(__dirname, '..', 'public', 'br-aggregates');
+const pagePath = path.resolve(__dirname, '..', 'src', 'pages', 'CharacterPage.jsx');
+
+let failures = 0;
+function check(label, cond, detail) {
+  if (cond) { console.log('  ok   ' + label); return; }
+  failures++;
+  console.error('  FAIL ' + label + (detail ? '\n         ' + detail : ''));
+}
+
+// ---- Build the real input ---------------------------------------------------
+const csv = fs.readFileSync(path.join(refData, 'characters.csv'), 'utf8');
+const charMap = parseCharacterCSV(csv);
+const slugIndex = buildCharacterSlugIndex(csv);
+
+// The SAME lookups App passes, and this matters more than it looks. With an
+// empty capsuleMap, topBuilds[].buildComposition comes back as the string
+// 'No Build'; with the real one it is an object ({ primary, label, type,
+// breakdown }). A verifier that passes {} therefore proves nothing about what
+// the page renders in a browser - and rendering that object as a React child
+// throws. Same for the maps and AI-strategy lookups.
+const capsuleInfo = loadCapsuleData(fs.readFileSync(path.join(refData, 'capsules.csv'), 'utf8'));
+const capsuleMap = capsuleInfo.capsuleMap;
+const aiStrategies = {};
+for (const strat of capsuleInfo.aiStrategies || []) if (strat.id) aiStrategies[strat.id] = strat;
+const mapsMap = {};
+const mapLines = fs.readFileSync(path.join(refData, 'maps.csv'), 'utf8').trim().split(/\r?\n/).slice(1);
+for (const line of mapLines) {
+  const [mapName, mapId] = line.trim().split(',').map(v => v.trim());
+  if (mapId && mapName) mapsMap[mapId] = mapName;
+}
+
+const shardFiles = fs.readdirSync(aggDir).filter(f => f !== 'index.json' && f.endsWith('.json'));
+if (!shardFiles.length) {
+  console.error('No corpus shards found. Run: npm run build-aggregates');
+  process.exit(1);
+}
+
+const rows = [];
+for (const f of shardFiles) {
+  const shard = JSON.parse(fs.readFileSync(path.join(aggDir, f), 'utf8'));
+  const files = Object.values(shard.files).map(r => ({ name: r.name, content: r.content }));
+  rows.push(...getAggregatedCharacterData(files, charMap, capsuleMap, aiStrategies, mapsMap));
+}
+console.log(`\n${shardFiles.length} shards -> ${rows.length} aggregated character rows\n`);
+
+// ---- 1. Every field the page reads exists -----------------------------------
+//
+// Scraped from the source so the list cannot fall behind the page. Optional
+// chaining is included on purpose: `character?.matches` still has to resolve.
+const source = fs.readFileSync(pagePath, 'utf8');
+const readFields = [...new Set(
+  [...source.matchAll(/\bcharacter\??\.([A-Za-z_$][\w$]*)/g)].map(m => m[1])
+)].sort();
+
+console.log('Fields CharacterPage reads off a character row (' + readFields.length + ', scraped from source):');
+const missingEverywhere = [];
+for (const field of readFields) {
+  // Present on at least one row is the bar, not every row: formStatsArray only
+  // exists for characters that transformed, topCapsules can legitimately be
+  // absent. A field on NO row is the real signal - it means a rename.
+  const present = rows.some(r => Object.prototype.hasOwnProperty.call(r, field));
+  if (!present) missingEverywhere.push(field);
+}
+check('every field appears on at least one row',
+  missingEverywhere.length === 0,
+  missingEverywhere.length ? 'absent from all ' + rows.length + ' rows: ' + missingEverywhere.join(', ') : '');
+
+// The headline numbers are the page's whole point; a hole in one of these is not
+// a cosmetic gap, so they must be present AND finite on every single row.
+const HEADLINE = [
+  'combatPerformanceScore', 'winRate', 'wins', 'losses', 'avgDamage', 'avgTaken',
+  'efficiency', 'dps', 'survivalRate', 'avgKills', 'matchCount', 'avgBattleTime',
+  'hpRetention', 'totalDamage', 'totalTaken', 'totalKills', 'survivalCount',
+];
+for (const field of HEADLINE) {
+  const bad = rows.filter(r => !Number.isFinite(r[field]));
+  check('headline stat ' + field + ' is a finite number on every row',
+    bad.length === 0,
+    bad.length ? bad.length + ' row(s) not finite, e.g. ' + bad[0].name + ' = ' + JSON.stringify(bad[0][field]) : '');
+}
+
+// ---- 1b. Fields rendered straight into JSX must be primitives ---------------
+//
+// React throws on an object as a child, so this class of mistake is a blank
+// page rather than a missing stat. The list is short and deliberate: these are
+// the fields CharacterPage puts directly into markup as text.
+console.log('\nFields rendered as text must not be objects:');
+const RENDERED_AS_TEXT = [
+  'name', 'primaryTeam', 'primaryPosition', 'primaryAIStrategy', 'primaryMap',
+  'formHistory',
+];
+for (const field of RENDERED_AS_TEXT) {
+  const bad = rows.filter(r => r[field] != null && typeof r[field] === 'object');
+  check(field + ' is never an object',
+    bad.length === 0,
+    bad.length ? bad.length + ' row(s), e.g. ' + bad[0].name + ' -> ' + JSON.stringify(bad[0][field]).slice(0, 80) : '');
+}
+
+// Same trap one level down, in the builds list.
+const BUILD_TEXT = [
+  ['aiStrategy', b => b.aiStrategy],
+  ['buildComposition.label', b => b.buildComposition?.label],
+  ['equippedCapsules[].name', b => (b.equippedCapsules || [])[0]?.name],
+];
+for (const [label, get] of BUILD_TEXT) {
+  const bad = rows.filter(r => (r.topBuilds || []).some(b => {
+    const v = get(b);
+    return v != null && typeof v === 'object';
+  }));
+  check('topBuilds ' + label + ' is never an object', bad.length === 0,
+    bad.length ? 'e.g. ' + bad[0].name : '');
+}
+
+// ---- 2. Nested reads --------------------------------------------------------
+console.log('\nNested shapes the page renders:');
+const withMatches = rows.filter(r => Array.isArray(r.matches) && r.matches.length);
+check('rows carry a matches array', withMatches.length === rows.length,
+  withMatches.length + ' of ' + rows.length);
+
+// The recent-matches table and the position split read these per match.
+const MATCH_FIELDS = ['position', 'won', 'damageDone', 'damageTaken', 'team', 'opponentTeam', 'fileName'];
+for (const field of MATCH_FIELDS) {
+  const anyRowMissing = withMatches.find(r =>
+    !r.matches.every(m => Object.prototype.hasOwnProperty.call(m, field)));
+  check('every match entry has ' + field, !anyRowMissing,
+    anyRowMissing ? 'e.g. ' + anyRowMissing.name : '');
+}
+
+// A match must say where it was played - the table falls back map -> mapId, so
+// at least one of the two has to be there.
+const noMap = withMatches.find(r => !r.matches.every(m => m.map != null || m.mapId != null));
+check('every match entry has map or mapId', !noMap, noMap ? 'e.g. ' + noMap.name : '');
+
+// Position grouping divides by played count, so an empty position label would
+// produce a NaN win rate rather than an error.
+const positions = new Set();
+withMatches.forEach(r => r.matches.forEach(m => positions.add(m.position)));
+check('match positions are non-empty labels',
+  ![...positions].some(p => p === '' || p == null),
+  'saw: ' + [...positions].map(p => JSON.stringify(p)).join(', '));
+
+const withBuilds = rows.filter(r => Array.isArray(r.topBuilds) && r.topBuilds.length);
+check('some rows carry topBuilds', withBuilds.length > 0, withBuilds.length + ' rows');
+for (const field of ['buildComposition', 'aiStrategy', 'count', 'avgPerformanceScore']) {
+  const bad = withBuilds.find(r => !r.topBuilds.every(b => Object.prototype.hasOwnProperty.call(b, field)));
+  check('every topBuilds entry has ' + field, !bad, bad ? 'e.g. ' + bad.name : '');
+}
+
+// The page shows buildComposition.label, so the object has to carry one.
+const noLabel = withBuilds.find(r =>
+  r.topBuilds.some(b => b.buildComposition && typeof b.buildComposition === 'object' && !b.buildComposition.label));
+check('every buildComposition object carries a label', !noLabel,
+  noLabel ? 'e.g. ' + noLabel.name : '');
+
+// The page tints a build's score pill with tierForScore, which needs a number.
+const badBuildScore = withBuilds.find(r =>
+  r.topBuilds.some(b => b.avgPerformanceScore != null && !Number.isFinite(b.avgPerformanceScore)));
+check('topBuilds scores are finite when present', !badBuildScore,
+  badBuildScore ? 'e.g. ' + badBuildScore.name : '');
+
+// PerFormStatsDisplayAggregated sorts on formNumber, so it must be numeric.
+const withForms = rows.filter(r => r.hasMultipleForms && Array.isArray(r.formStatsArray) && r.formStatsArray.length);
+check('multi-form rows carry formStatsArray', withForms.length > 0, withForms.length + ' rows');
+const badFormNum = withForms.find(r => !r.formStatsArray.every(f => Number.isFinite(f.formNumber)));
+check('every form entry has a numeric formNumber', !badFormNum,
+  badFormNum ? 'e.g. ' + badFormNum.name : '');
+
+// ---- 3. A slug actually reaches a row --------------------------------------
+console.log('\nThe slug -> name -> row join the deep link depends on:');
+const csvNames = new Set(slugIndex.idToName.values());
+const unjoinable = [...new Set(rows.map(r => r.name))].filter(n => !csvNames.has(n));
+check('every aggregated row name exists in characters.csv',
+  unjoinable.length === 0,
+  unjoinable.length ? unjoinable.length + ' name(s) with no CSV row: ' + unjoinable.slice(0, 8).join(', ') : '');
+
+// Walk the whole path the app walks: row name -> id -> slug -> back to the row.
+const nameToId = new Map();
+for (const [id, name] of slugIndex.idToName) if (!nameToId.has(name)) nameToId.set(name, id);
+
+let roundTripped = 0;
+const brokenRoundTrip = [];
+for (const name of new Set(rows.map(r => r.name))) {
+  const id = nameToId.get(name);
+  if (!id) continue;
+  const slug = characterUrlKey(id, slugIndex);
+  const backToId = resolveCharacterParam(slug, slugIndex);
+  const backToName = backToId ? slugIndex.idToName.get(backToId) : null;
+  if (backToName === name) roundTripped++;
+  else brokenRoundTrip.push(`${name} -> ${slug} -> ${backToName}`);
+}
+check('name -> slug -> name round-trips for every character in the corpus',
+  brokenRoundTrip.length === 0,
+  brokenRoundTrip.length ? brokenRoundTrip.slice(0, 5).join('; ') : roundTripped + ' characters');
+
+// A raw id must keep working: it is the escape hatch for a character that is in
+// match data before characters.csv has a row for it.
+const sampleId = [...nameToId.values()][0];
+check('a raw id still resolves', resolveCharacterParam(sampleId, slugIndex) === sampleId,
+  'id ' + sampleId);
+
+// ---- 4. Every row gets a tier ----------------------------------------------
+console.log('\nEvery row the page can render gets a tier:');
+const noTier = rows.filter(r => !tierForScore(r.combatPerformanceScore));
+check('tierForScore returns a tier for every row', noTier.length === 0,
+  noTier.length ? noTier.length + ' row(s), e.g. ' + noTier[0].name + ' score ' + noTier[0].combatPerformanceScore : '');
+
+console.log();
+if (failures) {
+  console.error(`FAILED - ${failures} check(s). The character page would render holes.`);
+  process.exit(1);
+}
+console.log('PASSED - every field the character page reads is present and usable.');

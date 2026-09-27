@@ -5,7 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import MUITextField from '@mui/material/TextField';
 import './App.css';
 import BRDataSelector from './components/BRDataSelector.jsx';
-import TagFilterSelector from './components/TagFilterSelector.jsx';
+import TagFilterSelector, { describeTagFilters } from './components/TagFilterSelector.jsx';
 import { Combobox } from './components/Combobox.jsx';
 import { MultiSelectCombobox } from './components/MultiSelectCombobox.jsx';
 import { formatNumber } from './utils/formatters.js';
@@ -33,7 +33,8 @@ import { TIERS, TIER_LABELS } from './utils/tierScale.js';
 import { tierPillColors } from './utils/tierPlateSvg.js';
 import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
 import { NavBar } from '@szl/ui';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import CharacterPage from './pages/CharacterPage.jsx';
 import { ROUTES, pathForView, viewForPath } from './routes.js';
 import {
   buildCharacterSlugIndex,
@@ -1319,6 +1320,7 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { charParam } = useParams();
+  const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
   const setViewType = useCallback(
     (next) => navigate(pathForView(next) + location.search),
@@ -1373,27 +1375,25 @@ export default function App() {
   // Bidirectional id <-> slug lookup, for the /characters/:charParam deep link.
   const charSlugIndex = useMemo(() => buildCharacterSlugIndex(charactersCSV), []);
 
-  // A character deep link scopes the leaderboard to that one character.
+  // CANONICALISE a character deep link: a raw id is accepted forever (old links,
+  // and characters that appear in match data before characters.csv gains a row),
+  // but if that character has a slug the URL is rewritten to it, so the legible
+  // form is what lands in the address bar and in whatever someone copies out of
+  // it. replace: true because the id URL should not become a back-button stop.
   //
-  // Two jobs. First, resolve the URL segment - a name slug, or a raw id, which
-  // stays valid forever so old links and characters missing from characters.csv
-  // keep working. Second, CANONICALISE: if the link arrived with a raw id and
-  // that character does have a slug, rewrite the URL to the slug so what ends up
-  // in the address bar (and in whatever someone copies from it) is the legible
-  // form. replace: true because the id URL should not become a back-button stop.
+  // Note what this deliberately does NOT do: narrow selectedCharacters. The route
+  // renders a real page now, so the leaderboard filter is left untouched - the
+  // rank on the page means "among the characters in this data scope", which a
+  // one-character filter would flatten to #1 of 1, and Back should return the
+  // visitor to the view they actually had.
   useEffect(() => {
     if (!charParam) return;
     const id = resolveCharacterParam(charParam, charSlugIndex);
-    if (!id) return; // unknown character - leave the view unfiltered
-
+    if (!id) return; // unknown character - the page renders a not-found notice
     const canonical = characterUrlKey(id, charSlugIndex);
     if (canonical && canonical !== charParam) {
       navigate(ROUTES.character(canonical) + location.search, { replace: true });
-      return;
     }
-
-    const name = charSlugIndex.idToName.get(id);
-    if (name) setSelectedCharacters([name]);
   }, [charParam, charSlugIndex, navigate, location.search]);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
   const capsuleMap = capsuleInfo.capsuleMap;
@@ -1530,6 +1530,53 @@ export default function App() {
     }),
     [aggregatedData, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters, charMap]
   );
+
+  // ---- /characters/<name-slug> ---------------------------------------------
+  //
+  // Ranked against performanceReference, not filteredAggregatedData. That memo
+  // above explains why at length; the short version is that it applies the
+  // filters which change WHICH MATCHES COUNT and ignores the ones that only
+  // change what you are looking at. So '#12 of 107' means the same thing however
+  // the visitor has sorted or narrowed the table, and it is already sorted by
+  // score descending, which is what a rank should mean here.
+  const deepLinkedCharacter = useMemo(() => {
+    if (!charParam) return null;
+    const id = resolveCharacterParam(charParam, charSlugIndex);
+    // A character can reach match data before characters.csv gains a row, in
+    // which case there is no name to join on - fall back to the raw URL segment.
+    const wanted = (id && charSlugIndex.idToName.get(id)) || charParam;
+
+    // Nothing aggregated yet means the corpus is still arriving, NOT that the
+    // character is unknown. Someone opening a pasted link hits this first, and
+    // flashing 'no data for Android 13' before the data lands reads as a broken
+    // link. The rest of the app gets away with rendering nothing at all; a page
+    // that is the whole point of the URL should say it is working.
+    if (!performanceReference.length) return { label: wanted, character: null, pending: true };
+
+    const i = performanceReference.findIndex(c => c.name === wanted);
+    if (i === -1) return { label: wanted, character: null };
+    return {
+      label: wanted,
+      character: performanceReference[i],
+      rank: i + 1,
+      totalInScope: performanceReference.length,
+    };
+  }, [charParam, charSlugIndex, performanceReference]);
+
+  // What the numbers on that page actually cover. Read off the query string so
+  // the page's own description of its scope and the link someone pasted cannot
+  // disagree - they are the same source.
+  const dataScopeLabel = useMemo(() => {
+    const parts = [];
+    const tags = describeTagFilters(searchParams);
+    if (tags) parts.push(tags);
+    if (selectedTeams.length) parts.push('teams ' + selectedTeams.join('/'));
+    if (selectedAIStrategies.length) parts.push('AI ' + selectedAIStrategies.join('/'));
+    if (selectedMaps.length) parts.push('maps ' + selectedMaps.join('/'));
+    const matchCount = Array.isArray(fileContent) ? fileContent.length : null;
+    const scope = parts.length ? parts.join(' · ') : 'all available match data';
+    return matchCount ? scope + ' (' + matchCount.toLocaleString() + ' matches)' : scope;
+  }, [searchParams, selectedTeams, selectedAIStrategies, selectedMaps, fileContent]);
 
   // Extract unique teams and AI strategies from aggregated data
   const availableCharacters = useMemo(() => {
@@ -2559,8 +2606,23 @@ export default function App() {
           </div>
         )}
 
+        {/* Character detail page - /characters/<name-slug> */}
+        {deepLinkedCharacter && (
+          <CharacterPage
+            character={deepLinkedCharacter.character}
+            missingLabel={deepLinkedCharacter.label}
+            pending={deepLinkedCharacter.pending}
+            rank={deepLinkedCharacter.rank}
+            totalInScope={deepLinkedCharacter.totalInScope}
+            scopeLabel={dataScopeLabel}
+            darkMode={darkMode}
+            onBack={() => navigate(ROUTES.characters + location.search)}
+            onOpenMatch={handleNavigateToMatch}
+          />
+        )}
+
         {/* Aggregated Data Display */}
-        {((mode === 'reference' && viewType === 'aggregated') || 
+        {!deepLinkedCharacter && ((mode === 'reference' && viewType === 'aggregated') || 
           (mode === 'manual' && viewType === 'aggregated' && manualFiles.filter(f => !f.error).length > 0)) && 
           aggregatedData.length > 0 && (
           <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
@@ -3448,7 +3510,7 @@ export default function App() {
         )}
 
         {/* Position-Based Performance Analysis */}
-        {((mode === 'reference' && viewType === 'aggregated') || 
+        {!deepLinkedCharacter && ((mode === 'reference' && viewType === 'aggregated') || 
           (mode === 'manual' && viewType === 'aggregated' && manualFiles.filter(f => !f.error).length > 0)) && 
           Object.keys(positionData).length > 0 && (
           <div className={`rounded-2xl shadow-xl p-6 mb-6 ${

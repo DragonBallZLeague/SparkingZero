@@ -13,6 +13,7 @@
     "verify-aggregates": "node scripts/verify-br-aggregates.mjs",
     "verify-slugs": "node scripts/verify-character-slugs.mjs",
     "verify-filters": "node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs",
+    "verify-character-page": "node --import ./scripts/json-import-hook.mjs scripts/verify-character-page.mjs",
     "build-bands": "node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs",
     "verify-routes": "node scripts/verify-routes.mjs"
   },
