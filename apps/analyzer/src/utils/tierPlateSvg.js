@@ -132,6 +132,23 @@ export function tierPlateSvg(tier, options = {}) {
  * colour; the plate carries the identity and the pill echoes it quietly.
  */
 export function tierPillColors(tier) {
+  // Z is set apart on purpose - it is the only tier whose pill is not a tint of
+  // its plate. A dark crimson-black fill, a bright crimson ring, and a halo that
+  // slowly breathes (the animation lives in index.css under TIER_PILL_Z_CLASS;
+  // pair this with tierPillClass()). Chosen over flat, sheen, gold, ember and
+  // flame treatments after four rounds of side-by-side demos: at pill size a
+  // tint of crimson read as underwhelming for the top tier, and the breathing
+  // halo makes Z findable in a long list without shouting.
+  // boxShadow is the resting midpoint of the breath, so the pill still glows if
+  // the animation is off (reduced motion) or the class is missing.
+  if (tier === 'Z') {
+    return {
+      background: '#2a1418',
+      color: '#ff8fa0',
+      borderColor: '#e0284a',
+      boxShadow: '0 0 9px rgba(224, 40, 74, 0.55)',
+    };
+  }
   const art = TIER_ART[tier] || TIER_ART.C;
   const [light, deep] = art.letter;
   return {
@@ -139,6 +156,17 @@ export function tierPillColors(tier) {
     color: light,
     borderColor: deep,
   };
+}
+
+/** The class that gives a Z pill its breathing halo (defined in index.css). */
+export const TIER_PILL_Z_CLASS = 'szl-tier-pill-z';
+
+/**
+ * Extra className for a score pill of this tier. Use it at every site that uses
+ * tierPillColors(), or a Z pill loses its breathing halo there.
+ */
+export function tierPillClass(tier) {
+  return tier === 'Z' ? TIER_PILL_Z_CLASS : '';
 }
 
 /** #rrggbb -> rgba(), for the pill tint. */

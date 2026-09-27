@@ -9,7 +9,7 @@ import { BuildTypeTooltipWrapper } from '../../components/build/index.js';
 import {
   tierForScore, isProvisionalTier, tierMatchCount, PROVISIONAL_BELOW_MATCHES,
 } from '../../utils/performanceTier.js';
-import { tierPillColors } from '../../utils/tierPlateSvg.js';
+import { tierPillColors, tierPillClass } from '../../utils/tierPlateSvg.js';
 import { POSITION_NAMES, positionSlot, positionLabel } from '../../utils/positions.js';
 
 /**
@@ -154,7 +154,7 @@ export function IdentityBlock({
             </h1>
             <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
               <span
-                className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border border-solid whitespace-nowrap"
+                className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tier)}`}
                 style={tierPillColors(tier)}
               >
                 <Star className="w-3 h-3" />
@@ -352,7 +352,7 @@ export function BuildsBlock({ character, darkMode, limit = 3 }) {
               </span>
               {b.avgPerformanceScore != null && (
                 <span
-                  className="text-[11px] px-1.5 py-0.5 rounded-full border border-solid font-semibold whitespace-nowrap"
+                  className={`text-[11px] px-1.5 py-0.5 rounded-full border border-solid font-semibold whitespace-nowrap ${tierPillClass(tierForScore(b.avgPerformanceScore))}`}
                   style={tierPillColors(tierForScore(b.avgPerformanceScore))}
                 >
                   {Math.round(b.avgPerformanceScore)}

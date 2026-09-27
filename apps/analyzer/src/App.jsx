@@ -23,7 +23,7 @@ import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
 import TierPlate from './components/TierPlate.jsx';
 import RangeSlider from './components/RangeSlider.jsx';
 import { TIERS, TIER_LABELS } from './utils/tierScale.js';
-import { tierPillColors } from './utils/tierPlateSvg.js';
+import { tierPillColors, tierPillClass } from './utils/tierPlateSvg.js';
 import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
 import { NavBar } from '@szl/ui';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -1945,7 +1945,7 @@ export default function App() {
                           {/* Familiar score pill, tinted from the same palette as the
                               plate (tierPillColors) so the two cannot drift apart. */}
                           <span
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap"
+                            className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tierForScore(char.combatPerformanceScore))}`}
                             style={tierPillColors(tierForScore(char.combatPerformanceScore))}
                           >
                             <Star className="w-3 h-3" />

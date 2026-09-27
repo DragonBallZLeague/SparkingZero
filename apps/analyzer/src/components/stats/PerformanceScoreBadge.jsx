@@ -1,7 +1,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { tierForScore } from '../../utils/performanceTier.js';
-import { tierPillColors } from '../../utils/tierPlateSvg.js';
+import { tierPillColors, tierPillClass } from '../../utils/tierPlateSvg.js';
 
 /**
  * The "Score: 105" pill. One implementation, used everywhere a score appears.
@@ -40,7 +40,7 @@ export function PerformanceScoreBadge({ score, label = 'Score', size = 'medium',
     <div
       // border-solid is explicit because Tailwind preflight is off in this app,
       // so a bare `border` utility draws nothing.
-      className={`inline-flex items-center gap-1 rounded-lg border border-solid font-bold whitespace-nowrap ${sizeClasses[size] || sizeClasses.medium}`}
+      className={`inline-flex items-center gap-1 rounded-lg border border-solid font-bold whitespace-nowrap ${sizeClasses[size] || sizeClasses.medium} ${tierPillClass(tier)}`}
       style={tierPillColors(tier)}
       title={`Tier ${tier}`}
     >

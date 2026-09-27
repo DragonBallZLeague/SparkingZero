@@ -260,6 +260,19 @@ try {
     }
   }
 
+  // Z alone gets the breathing halo, on its own dark fill. The class carries the
+  // animation, so a pill that forgets it would quietly stop breathing.
+  {
+    const zHtml = renderToString(React.createElement(PerformanceScoreBadge, {
+      score: (TIER_CUTOFFS.Z ?? 0) + 1, darkMode: true }));
+    const sHtml = renderToString(React.createElement(PerformanceScoreBadge, {
+      score: (TIER_CUTOFFS.S ?? 0) + 1, darkMode: true }));
+    const zOk = zHtml.includes('szl-tier-pill-z') && /background:\s*#2a1418/i.test(zHtml);
+    const sOk = !sHtml.includes('szl-tier-pill-z');
+    if (zOk && sOk) console.log('  ok   Z pill breathes on its dark fill; S does not');
+    else { console.error('  FAIL Z breathing class / fill wrong (Z ok: ' + zOk + ', S clean: ' + sOk + ')'); failed = true; }
+  }
+
   // The pill must survive whatever a score turns out to be.
   for (const junk of [0, -5, NaN, undefined, null, 1e6]) {
     try {
