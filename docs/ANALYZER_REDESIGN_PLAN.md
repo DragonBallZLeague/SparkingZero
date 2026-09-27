@@ -227,29 +227,15 @@ The leaderboard's performance banding was **percentile-relative to whatever the 
 
 ### Decision
 
-**Absolute tier cutoffs, frozen from a recent calibration window.** Tiers are **Z / A / B / C / D** (Z highest — the Dragon Ball convention, not the generic S-tier).
+**Absolute tier cutoffs, frozen from a recent calibration window.** Tiers are **Z / S / A / B / C** (Z highest, ahead of S — the Dragon Ball convention, not the generic S-at-the-top).
 
 | Tier | Score ≥ | Share of the calibration population |
 |---|---|---|
 | **Z** | 75.0 | top 10% |
-| **A** | 65.4 | next 20% |
-| **B** | 55.2 | middle 30% |
-| **C** | 48.4 | next 20% |
-| **D** | — | bottom 20% |
-
-**Calibration basis: a rolling window of the last 2 seasons, Ultra difficulty only, all match types.** Rolling (rather than "season N onward") so the oldest season drops off as new ones land — the game and the league have changed enough over two years that old data misleads. Ultra-only is a hard rule: the league's early difficulty change splits Season 0 into 1,155 Strong and 980 Ultra matches, and mixing them would compare characters across different rulesets.
-
-**The basis is not filtered by match count.** This was tested rather than assumed: low-sample characters skew *low*, not high (median 46–49 across 1–9 matches versus 62.0 for 10+), so they do not inflate the top. The Z cutoff is identical (75.0) whether the basis requires 1, 3 or 5 matches; only the B and C boundaries move. Filtering the basis would push weak-but-rarely-played characters into D, conflating "poor" with "barely played" — at min=10, D swells to 33% of the roster. Low-confidence characters are handled by **marking their badge provisional**, not by bending the scale everyone is measured against.
-
-### Why not scope-relative percentiles
-
-Percentile banding forces a 10/20/30/20/20 spread *by construction*, so it can never say "this season's field was strong", and "Excellent" only ever means "top 10% of what you happen to be looking at". It also makes a shared link meaningless, since the recipient's filters would change the badge — which breaks the share-snippet goal and principle 5.
-
-### Why not the existing absolute thresholds
-
-The fallback thresholds in `App.jsx` (`>=200` excellent, `>=120` good) were never calibrated: the **highest score anywhere in the corpus is 103.3**, so both bands were literally unreachable and every character in the league would have been "Average" or below.
-
-### Shipped
+| **S** | 65.4 | next 20% |
+| **A** | 55.2 | middle 30% |
+| **B** | 48.4 | next 20% |
+| **C** | — | bottom 20% |
 
 - `scripts/generate-performance-bands.mjs` (in `prebuild`, also `npm run build-bands`) writes `src/config/performance-bands.json` — **committed**, so a recalibration is a reviewable diff. It refuses to write if the basis matches no matches or fewer than 20 scored characters, rather than emitting nonsense cutoffs.
 - `src/utils/tierScale.js` holds the scale (names, percentiles, labels, provisional threshold) with **no imports**, so the generator can read it before its own output exists. `src/utils/performanceTier.js` adds the generated cutoffs and `tierForScore()`.

@@ -185,6 +185,45 @@ check('tier is independent of the filtered view (the whole point)',
     return narrow.every(c => byName.get(c.name) === tierForScore(c.combatPerformanceScore));
   })());
 
+console.log('\nmaxScore and tier selection:');
+check('maxScore keeps only rows at or below it',
+  filterAggregatedData(aggregated, { maxScore: midScore }).every(c => c.combatPerformanceScore <= midScore));
+check('min and max together isolate a band',
+  (() => {
+    const band = filterAggregatedData(aggregated, { minScore: midScore, maxScore: midScore + 10 });
+    return band.every(c => c.combatPerformanceScore >= midScore && c.combatPerformanceScore <= midScore + 10);
+  })());
+check('an inverted window yields nothing',
+  filterAggregatedData(aggregated, { minScore: 80, maxScore: 20 }).length === 0);
+check('tiers null means no tier filter',
+  filterAggregatedData(aggregated, { tiers: null }).length === base.length);
+check('every tier selected matches the full view',
+  filterAggregatedData(aggregated, { tiers: [...TIERS] }).length === base.length);
+check('an empty tier list matches nothing, rather than silently meaning all',
+  filterAggregatedData(aggregated, { tiers: [] }).length === 0);
+for (const t of TIERS) {
+  const rows = filterAggregatedData(aggregated, { tiers: [t] });
+  check('tiers:[' + t + '] returns only ' + t + ' characters',
+    rows.every(c => tierForScore(c.combatPerformanceScore) === t));
+}
+check('the tiers partition the view (every row reachable by exactly one tier)',
+  (() => {
+    const seen = new Set();
+    for (const t of TIERS) {
+      for (const c of filterAggregatedData(aggregated, { tiers: [t] })) {
+        if (seen.has(c.name)) return false;
+        seen.add(c.name);
+      }
+    }
+    return seen.size === base.length;
+  })());
+check('tiers and the score window combine with AND',
+  (() => {
+    const both = filterAggregatedData(aggregated, { tiers: [TIERS[0]], minScore: 0 });
+    const tierOnly = filterAggregatedData(aggregated, { tiers: [TIERS[0]] });
+    return both.length === tierOnly.length;
+  })());
+
 // ---- Robustness -------------------------------------------------------------
 console.log('\nRobustness:');
 check('non-array input returns []', filterAggregatedData(null).length === 0);

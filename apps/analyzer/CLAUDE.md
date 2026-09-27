@@ -93,13 +93,17 @@ They disagreed until 2026-09-26: the filter UI stored the fourth level as `'belo
 
 ## Performance scoring and tiers
 
-**Tiers are Z/A/B/C/D, absolute, and frozen at build time.** `scripts/generate-performance-bands.mjs` runs in `prebuild` and writes `src/config/performance-bands.json`, which is **committed on purpose** — a recalibration should appear as a reviewable diff, not drift silently between deploys. Basis: a rolling window of the last 2 seasons, Ultra difficulty only, all match types, no minimum match count. Read that script's header before changing any of those rules; each one was chosen against measured data.
+**Tiers are Z/S/A/B/C (Z highest), absolute, and frozen at build time.** `scripts/generate-performance-bands.mjs` runs in `prebuild` and writes `src/config/performance-bands.json`, which is **committed on purpose** — a recalibration should appear as a reviewable diff, not drift silently between deploys. Basis: a rolling window of the last 2 seasons, Ultra difficulty only, all match types, no minimum match count. Read that script's header before changing any of those rules; each one was chosen against measured data.
 
 Two modules, split for a reason: **`src/utils/tierScale.js`** holds the scale and imports nothing, so the generator can read it before its own output file exists; **`src/utils/performanceTier.js`** adds the generated cutoffs and `tierForScore()`. Merging them reintroduces a bootstrap cycle where the build cannot run on a clean checkout.
 
-`src/components/TierBadge.jsx` renders the tier (plus `<TierLegend>`). **Never pass it a reference population** — that is the bug it was built to replace. For "how does this stat compare to what is on screen", `PerformanceIndicator`'s relative comparison is still correct.
+`src/components/TierPlate.jsx` renders the tier. The artwork is an SVG string built by `src/utils/tierPlateSvg.js`, which also exports `tierPillColors()` so the score pill is tinted from the **same** palette and cannot drift from the plate. **Never pass TierPlate a reference population** — that is the bug it was built to replace. For "how does this stat compare to what is on screen", `PerformanceIndicator`'s relative comparison is still correct.
 
-Z is the top tier, following the Dragon Ball convention rather than the generic S-tier.
+Three plate states exist and must stay distinguishable: normal, **provisional** (thin sample, stays in colour), and **deselected** (a filter switched off, fully greyscale). They fold into the SVG's single `style` attribute — emitting a second `style=` is silently dropped by the HTML parser, which once left deselected plates in colour.
+
+The leaderboard filter is **tier toggle buttons plus a two-thumb score range** (`src/components/RangeSlider.jsx`), combined with AND. Cutoff numbers are deliberately not shown in the UI; a tooltip explains the scale instead.
+
+Z is the top tier, ahead of S — the Dragon Ball convention, not the generic S-at-the-top. Z keeps a blue slab with a red letter as the Dragon Ball Z mark; S→C follow the loot-rarity ramp (purple, gold, blue, grey). Red and blue-to-red slabs for Z were both tried and rejected — with a red letter there is too little separating the glyph from its own floor at small sizes.
 
 
 

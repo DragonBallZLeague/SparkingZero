@@ -27,7 +27,11 @@ import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './u
 import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
 import { getPerformanceLevel } from './utils/performanceLevel.js';
-import TierBadge, { TierLegend } from './components/TierBadge.jsx';
+import TierPlate from './components/TierPlate.jsx';
+import RangeSlider from './components/RangeSlider.jsx';
+import { TIERS, TIER_LABELS } from './utils/tierScale.js';
+import { tierPillColors } from './utils/tierPlateSvg.js';
+import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
 import { NavBar } from '@szl/ui';
 import { 
   Trophy, 
@@ -1322,9 +1326,13 @@ export default function App() {
   
   // Search and filter state for Aggregated Character Performance
   const [selectedCharacters, setSelectedCharacters] = useState([]);
-  // Minimum combat score to show. Replaced the five performance-level chips in
-  // Phase 3 - see filterAggregated.js for why those were unsound. 0 means no filter.
-  const [minScore, setMinScore] = useState(0);
+  // Score window and tier selection. These replaced the five performance-level
+  // chips - see filterAggregated.js for why those were unsound. They are
+  // independent and combine with AND: tiers are the quick read, the window is
+  // the precise one. scoreRange null means no window; selectedTiers holds every
+  // tier by default, which the filter treats as no tier filter.
+  const [scoreRange, setScoreRange] = useState(null);
+  const [selectedTiers, setSelectedTiers] = useState(() => [...TIERS]);
   const [minMatches, setMinMatches] = useState(1);
   const [maxMatches, setMaxMatches] = useState(999);
   const [sortBy, setSortBy] = useState('combatScore');
@@ -1338,7 +1346,7 @@ export default function App() {
     setSelectedBuildIndex({});
     setSelectedBuildSort({});
     setActiveBuildFilters({});
-  }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, minScore, minMatches, maxMatches, sortBy, sortDirection]);
+  }, [selectedTeams, selectedAIStrategies, selectedMaps, selectedCharacters, scoreRange, selectedTiers, minMatches, maxMatches, sortBy, sortDirection]);
 
   const charMap = useMemo(() => parseCharacterCSV(charactersCSV), []);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
@@ -1426,7 +1434,9 @@ export default function App() {
       selectedTeams,
       selectedAIStrategies,
       selectedMaps,
-      minScore,
+      minScore: scoreRange ? scoreRange[0] : 0,
+      maxScore: scoreRange ? scoreRange[1] : null,
+      tiers: selectedTiers.length === TIERS.length ? null : selectedTiers,
       minMatches,
       maxMatches,
       sortBy,
@@ -1434,7 +1444,7 @@ export default function App() {
       activeBuildFilters,
       charMap,
     }),
-    [aggregatedData, selectedCharacters, minScore, minMatches, maxMatches,
+    [aggregatedData, selectedCharacters, scoreRange, selectedTiers, minMatches, maxMatches,
      sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps,
      activeBuildFilters, charMap]
   );
@@ -1453,6 +1463,17 @@ export default function App() {
   //
   // Phase 3 replaces this with absolute tier cutoffs, at which point no reference
   // population is needed at all.
+  // Ceiling for the score slider. Taken from the data rather than hardcoded to
+  // 100, since scores are unbounded in principle and a fixed ceiling would make
+  // the top of the range unreachable.
+  const scoreBounds = useMemo(() => {
+    const scores = (aggregatedData || [])
+      .map(c => c.combatPerformanceScore)
+      .filter(Number.isFinite);
+    if (!scores.length) return { max: 100 };
+    return { max: Math.max(10, Math.ceil(Math.max(...scores))) };
+  }, [aggregatedData]);
+
   const performanceReference = useMemo(
     () => filterAggregatedData(aggregatedData, {
       selectedTeams,
@@ -2611,51 +2632,74 @@ export default function App() {
                   </div>
                 </div>
                 
-                {/* Minimum score + tier legend (replaced the performance-level chips) */}
+                {/* Tier toggles + score window. These replaced the five
+                    performance-level chips; see filterAggregated.js for why those
+                    were unsound. Cutoff numbers are deliberately not shown - the
+                    tooltip explains the scale instead. */}
                 <div className="mb-4">
                   <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
                     darkMode ? 'text-gray-300' : 'text-gray-700'
                   }`}>
                     <Filter className="w-4 h-4" />
-                    Minimum Score
-                  </div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value={minScore}
-                      onChange={(e) => setMinScore(Number(e.target.value))}
-                      className="flex-1"
-                      aria-label="Minimum combat performance score"
-                    />
-                    <input
-                      type="number"
-                      min="0"
-                      value={minScore}
-                      onChange={(e) => setMinScore(Math.max(0, Number(e.target.value) || 0))}
-                      className={`w-20 px-2 py-1 rounded border text-sm ${
-                        darkMode
-                          ? 'bg-gray-800 border-gray-600 text-gray-200'
-                          : 'bg-white border-gray-300 text-gray-800'
+                    Tier
+                    <span
+                      title={tierBasisSummary() + ' A character with fewer than 5 matches shows a provisional tier.'}
+                      className={`cursor-help text-xs rounded-full border w-4 h-4 inline-flex items-center justify-center ${
+                        darkMode ? 'border-gray-500 text-gray-400' : 'border-gray-400 text-gray-500'
                       }`}
-                      aria-label="Minimum combat performance score"
-                    />
-                    {minScore > 0 && (
+                      aria-label="What are tiers?"
+                    >
+                      ?
+                    </span>
+                    {selectedTiers.length !== TIERS.length && (
                       <button
-                        onClick={() => setMinScore(0)}
-                        className={`text-xs px-2 py-1 rounded ${
+                        onClick={() => setSelectedTiers([...TIERS])}
+                        className={`ml-auto text-xs px-2 py-0.5 rounded ${
                           darkMode
                             ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700'
                             : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                         }`}
                       >
-                        Clear
+                        Show all tiers
                       </button>
                     )}
                   </div>
-                  <TierLegend darkMode={darkMode} />
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    {TIERS.map(tier => {
+                      const active = selectedTiers.includes(tier);
+                      return (
+                        <button
+                          key={tier}
+                          onClick={() => setSelectedTiers(prev => (
+                            prev.includes(tier) ? prev.filter(t => t !== tier) : [...prev, tier]
+                          ))}
+                          aria-pressed={active}
+                          title={`${TIER_LABELS[tier] || tier}${active ? '' : ' (hidden)'}`}
+                          className="p-0.5 rounded transition-opacity hover:opacity-80"
+                        >
+                          <TierPlate tier={tier} size="small" showTooltip={false} deselected={!active} />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className={`text-sm font-medium mb-2 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Score
+                  </div>
+                  <RangeSlider
+                    label="score"
+                    min={0}
+                    max={scoreBounds.max}
+                    value={scoreRange || [0, scoreBounds.max]}
+                    onChange={next => setScoreRange(
+                      next[0] <= 0 && next[1] >= scoreBounds.max ? null : next
+                    )}
+                    darkMode={darkMode}
+                    ariaLabelMin="Minimum combat performance score"
+                    ariaLabelMax="Maximum combat performance score"
+                  />
                 </div>
                 
                 {/* Matches Filter */}
@@ -2962,10 +3006,20 @@ export default function App() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <Swords className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
+                          {/* The plate leads the row as the rank marker, so it replaces
+                              the old Swords icon rather than sitting beside it. The tier
+                              is absolute - never relative to the rows on screen. */}
+                          <TierPlate score={char.combatPerformanceScore} character={char} size="medium" darkMode={darkMode} />
                           <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{char.name}</h3>
-                          {/* Absolute tier, never relative to the rows on screen. */}
-                          <TierBadge score={char.combatPerformanceScore} character={char} darkMode={darkMode} />
+                          {/* Familiar score pill, tinted from the same palette as the
+                              plate (tierPillColors) so the two cannot drift apart. */}
+                          <span
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap"
+                            style={tierPillColors(tierForScore(char.combatPerformanceScore))}
+                          >
+                            <Star className="w-3 h-3" />
+                            Score: {Math.round(char.combatPerformanceScore)}
+                          </span>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>

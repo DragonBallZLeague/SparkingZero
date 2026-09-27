@@ -11,11 +11,10 @@
  * The option defaults mirror the initial useState values in App.jsx exactly, so
  * calling this with no options reproduces the app's own default view rather than
  * some other notion of "unfiltered": minMatches is 1, maxMatches is 999 (not
- * Infinity) and minScore is 0.
+ * Infinity), minScore is 0, maxScore is null (no ceiling) and tiers is null
+ * (every tier).
  */
-// The five performance-level chips this used to filter by were replaced in Phase 3
-// by an absolute minimum-score threshold (see minScore below), so no level lookup
-// is needed here any more.
+import { tierForScore } from '../performanceTier.js';
 import { combatEfficiency } from '../performanceScore.js';
 
 export function filterAggregatedData(aggregatedData, options = {}) {
@@ -25,6 +24,8 @@ export function filterAggregatedData(aggregatedData, options = {}) {
     selectedAIStrategies = [],
     selectedMaps = [],
     minScore = 0,
+    maxScore = null,
+    tiers = null,
     minMatches = 1,
     maxMatches = 999,
     sortBy = 'combatScore',
@@ -674,16 +675,28 @@ export function filterAggregatedData(aggregatedData, options = {}) {
       return matchesForFilter >= minMatches && matchesForFilter <= maxMatches;
     });
     
-    // Apply the minimum-score threshold.
+    // Apply the score window and the tier selection.
     //
-    // This replaced five performance-level checkboxes. Those compared each
-    // character against a percentile of THE ROWS THAT SURVIVED FILTERING, which
-    // made them self-referential: hiding a level re-ranked whoever was left, so a
-    // character could change level without their score changing. An absolute
-    // score threshold cannot do that, reads directly against the number shown on
-    // each card, and survives being shared in a URL.
+    // Both replaced the five performance-level checkboxes, which compared each
+    // character against a percentile of THE ROWS THAT SURVIVED FILTERING and so
+    // were self-referential: hiding a level re-ranked whoever was left, and a
+    // character could change level without their score changing. Tiers are now
+    // absolute cutoffs, so filtering by one cannot move anybody.
+    //
+    // The two are independent and combine with AND: tiers are the quick,
+    // readable cut, the score window is the precise one. Picking a tier and a
+    // window that do not overlap yields nothing, which the row count reports.
     if (Number.isFinite(minScore) && minScore > 0) {
       filtered = filtered.filter(char => (char.combatPerformanceScore || 0) >= minScore);
+    }
+    if (Number.isFinite(maxScore)) {
+      filtered = filtered.filter(char => (char.combatPerformanceScore || 0) <= maxScore);
+    }
+    // null means "no tier filter"; an empty array means "none selected", which
+    // legitimately matches nothing rather than silently meaning "all".
+    if (Array.isArray(tiers)) {
+      const wanted = new Set(tiers);
+      filtered = filtered.filter(char => wanted.has(tierForScore(char.combatPerformanceScore)));
     }
     
     // Apply sorting

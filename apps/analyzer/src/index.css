@@ -24,3 +24,52 @@
  */
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Dual-thumb range slider (components/RangeSlider.jsx).
+ *
+ * Two range inputs are overlaid on one track, so the inputs themselves must be
+ * transparent to pointer events or the upper one swallows every click and the
+ * lower thumb becomes undraggable. Only the thumbs opt back in.
+ *
+ * Plain CSS rather than Tailwind because vendor pseudo-elements
+ * (::-webkit-slider-thumb, ::-moz-range-thumb) cannot be expressed as utilities.
+ */
+.szl-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+}
+.szl-range:focus { outline: none; }
+
+.szl-range::-webkit-slider-runnable-track { background: transparent; border: none; }
+.szl-range::-moz-range-track { background: transparent; border: none; }
+
+.szl-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #f97316;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  margin-top: 0;
+}
+.szl-range::-moz-range-thumb {
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #f97316;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+.szl-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.5); }
+.szl-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.5); }

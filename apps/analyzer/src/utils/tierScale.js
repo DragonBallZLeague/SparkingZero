@@ -6,26 +6,26 @@
  * config/performance-bands.json, while performanceTier.js READS that file. Were
  * they one module, the generator could not run before its own output existed.
  *
- * Z is the top tier, following the Dragon Ball convention rather than the generic
- * S-tier used elsewhere in fighting games.
+ * Z is the top tier, ahead of S - the Dragon Ball convention, rather than the generic
+ * S-at-the-top used elsewhere in fighting games.
  */
 
 /** Best to worst. The last entry is the fallback and has no cutoff. */
-export const TIERS = ['Z', 'A', 'B', 'C', 'D'];
+export const TIERS = ['Z', 'S', 'A', 'B', 'C'];
 
 /**
  * Percentile of the calibration population each cutoff is taken from, giving a
- * 10 / 20 / 30 / 20 / 20 spread. D is whatever falls below C.
+ * 10 / 20 / 30 / 20 / 20 spread. C is whatever falls below B.
  */
-export const TIER_PERCENTILES = { Z: 0.90, A: 0.70, B: 0.40, C: 0.20 };
+export const TIER_PERCENTILES = { Z: 0.90, S: 0.70, A: 0.40, B: 0.20 };
 
 /** Short labels for legends and tooltips. */
 export const TIER_LABELS = {
   Z: 'Top tier',
+  S: 'Excellent',
   A: 'Strong',
   B: 'Solid',
-  C: 'Below par',
-  D: 'Struggling',
+  C: 'Developing',
 };
 
 /**
