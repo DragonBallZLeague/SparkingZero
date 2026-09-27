@@ -13,12 +13,25 @@ events:
           wanted to make an event to show them off. Every current team got to
           select at least 2 new characters who are on their roster, plus
           another, and get to build them for mach match. Its all for fun!
-  - status: completed
-    name: All-Stars 0
-    slug: /events/allstars0
-    tagline: Best of the Best
-    date: 9/19/2026-9/26/2026
-    timing: off-season
+  - participants:
+      - name: Team Beerus
+        color: "#bd2b2c"
+        description: |-
+          Budokai
+          Creations
+          Sentai Squad
+          Z-Fighters
+          Tiny Terrors
+          Time Patrol
+      - name: Team Champa
+        color: "#d448dc"
+        description: |-
+          Malevolent Souls 
+          Primal Instinct
+          Cold Kingdom
+          Master & Student
+          Cinema
+          Demons
     blocks:
       - type: markdown
         title: Qualifications
@@ -29,4 +42,10 @@ events:
 
 
           * Any character must reach an average combat score of 50,000 to qualify for All-Stars.
+    timing: off-season
+    name: All-Stars 0
+    slug: /events/allstars0
     banner: /SparkingZero/images/1000009419.png
+    tagline: Best of the Best
+    date: 9/19/2026-9/26/2026
+    status: completed
