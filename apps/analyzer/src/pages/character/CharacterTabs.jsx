@@ -57,7 +57,7 @@ export default function CharacterTabs(props) {
 
       <div
         role="tablist"
-        className={`flex gap-1 mt-5 mb-4 overflow-x-auto border-b border-solid ${
+        className={`flex gap-1 mt-5 mb-4 overflow-x-auto border-0 border-b border-solid ${
           darkMode ? 'border-gray-700' : 'border-gray-200'
         }`}
       >

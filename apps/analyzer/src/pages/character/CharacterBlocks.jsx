@@ -83,7 +83,7 @@ export function positionLabel(position) {
 export function Section({ icon: Icon, title, hint = null, children, darkMode, className = '' }) {
   return (
     <section className={className}>
-      <div className={`flex items-baseline gap-2 pb-1.5 mb-3 border-b border-solid ${
+      <div className={`flex items-baseline gap-2 pb-1.5 mb-3 border-0 border-b border-solid ${
         darkMode ? 'border-gray-700' : 'border-gray-200'
       }`}>
         {Icon && <Icon className={`w-4 h-4 self-center ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />}
@@ -312,7 +312,7 @@ export function PositionBlock({ byPosition, darkMode }) {
         </thead>
         <tbody>
           {byPosition.map(p => (
-            <tr key={p.slot ?? p.position} className={`border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'}`}>
+            <tr key={p.slot ?? p.position} className={`border-0 border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'}`}>
               <td className={td + ' font-semibold'}>{p.position}</td>
               <td className={td + ' text-right'}>{nf(p.played)}</td>
               <td className={td + ' text-right'}>{pct((p.won / p.played) * 100)}</td>
@@ -358,7 +358,7 @@ export function BuildsBlock({ character, darkMode, limit = 3 }) {
           <div
             key={i}
             className={`flex items-start justify-between gap-3 py-2 ${
-              i > 0 ? 'border-t border-solid ' + (darkMode ? 'border-gray-700/60' : 'border-gray-100') : ''
+              i > 0 ? 'border-0 border-t border-solid ' + (darkMode ? 'border-gray-700/60' : 'border-gray-100') : ''
             }`}
           >
             <div className="min-w-0 flex-1">
@@ -424,7 +424,7 @@ export function MatchesBlock({ character, recentMatches, darkMode, onOpenMatch }
               return (
                 <tr
                   key={i}
-                  className={`border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'} ${
+                  className={`border-0 border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'} ${
                     clickable ? 'cursor-pointer ' + (darkMode ? 'hover:bg-gray-700/40' : 'hover:bg-gray-50') : ''
                   }`}
                   onClick={clickable ? () => onOpenMatch(m.fileName) : undefined}

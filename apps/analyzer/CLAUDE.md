@@ -39,7 +39,12 @@ Reusable, already-decoupled pieces worth knowing about:
 Real Tailwind v3 runs here as of Phase 2a, **alongside** the legacy `App.css`. The arrangement is deliberate and fragile in one specific way:
 
 - `src/main.jsx` imports `src/index.css` **before** `App.jsx` pulls in `App.css`. **Do not reorder those imports.** `App.css` hand-rolls 713 utility classes, 123 of which share a name with a class Tailwind generates, and some differ in ways that change rendering — `.gap-4` is `0.6rem` here vs Tailwind's `1rem`, `.max-w-4xl`/`.max-w-7xl` add `margin: 0 auto`, `.border-b`/`.border-l-2` carry an explicit `border-style`, and several violet/teal shades use different hex values. Tailwind emitting first means `App.css` wins every tie, which is what keeps the existing UI looking identical.
-- **Preflight is off** (`corePlugins.preflight: false` plus no `@tailwind base`). Consequence: a bare `border`/`border-b` utility renders no visible border unless a `border-style` is also set. `App.css`'s versions include one; new Tailwind-only markup must add `border-solid` explicitly. Preflight turns on in Phase 2b once `App.css` is gone.
+- **Preflight is off** (`corePlugins.preflight: false` plus no `@tailwind base`), so border utilities do not behave as the Tailwind docs describe. Preflight normally sets `border-width: 0` on everything; without it, `border-width` keeps its CSS initial value of **`medium` (~3px) on every side**, hidden only because `border-style` defaults to `none`. Two rules follow:
+  - **A full border** needs `border border-solid` — `border` alone draws nothing.
+  - **A single side** needs `border-0 border-b border-solid` (or `-t`/`-l`/`-r`). **Without `border-0`, `border-solid` switches on all four sides** and `border-b` only narrows the bottom one, giving a 1px rule inside a ~3px box. That shipped once — every section heading, table row and the tab bar on the Character page rendered as a box — because an earlier version of this bullet said only "add `border-solid`". `border-0` is emitted before the side utilities in the built CSS, so the single side survives.
+  - A bare `<button>` also keeps the UA's grey fill and border — state `bg-transparent border-0`, or an explicit background.
+
+  Preflight turns on in Phase 2b once `App.css` is gone, at which point `border-0` becomes redundant but harmless.
 - **Design tokens come from `packages/ui/src/tokens.js`** (CommonJS, shared by all four apps). Canonical accent is `#f97316`. Legacy names (`dragon-*` here, `dbz.*` on the website, `sz-*` on the calculator) are aliases onto the shared values — prefer `brand.*` in new work.
 - `App.css:22` repurposes Tailwind's real `bg-gradient-to-br` class name to mean one specific gradient. Rename it in 2b rather than adding more like it.
 
