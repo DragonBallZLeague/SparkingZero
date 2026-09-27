@@ -15,6 +15,7 @@
  * and maxMatches is 999, not Infinity.
  */
 import { getPerformanceLevel } from '../performanceLevel.js';
+import { combatEfficiency } from '../performanceScore.js';
 
 export function filterAggregatedData(aggregatedData, options = {}) {
   const {
@@ -336,9 +337,7 @@ export function filterAggregatedData(aggregatedData, options = {}) {
           const avgHealthMax = Math.round(build.totalHealthMax / denominator);
           
           // Calculate derived stats (use totals, not rounded averages, for accuracy)
-          const damageEfficiency = build.totalDamageTaken > 0 
-            ? build.totalDamageDealt / build.totalDamageTaken 
-            : build.totalDamageDealt;
+          const damageEfficiency = combatEfficiency(build.totalDamageDealt, build.totalDamageTaken);
           const damagePerSecond = build.totalBattleDuration > 0 
             ? build.totalDamageDealt / build.totalBattleDuration 
             : 0;
@@ -489,9 +488,7 @@ export function filterAggregatedData(aggregatedData, options = {}) {
         const damagePerSecond = (formStat.totalBattleTime || 0) > 0 
           ? (formStat.totalDamageDone || 0) / formStat.totalBattleTime 
           : 0;
-        const damageEfficiency = (formStat.totalDamageTaken || 0) > 0
-          ? (formStat.totalDamageDone || 0) / formStat.totalDamageTaken
-          : ((formStat.totalDamageDone || 0) > 0 ? 999 : 0);
+        const damageEfficiency = combatEfficiency(formStat.totalDamageDone || 0, formStat.totalDamageTaken || 0);
         
         return {
           ...formStat,

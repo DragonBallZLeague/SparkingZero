@@ -12,6 +12,13 @@
  * "below", which matched nothing and silently dropped every below-average
  * character whenever any level was deselected; fixed 2026-09-26.
  */
+/**
+ * The five level names, best to worst. Exported so callers cannot drift from
+ * what getPerformanceLevel() returns - they did once, and below-average
+ * characters silently vanished from the table for it.
+ */
+export const PERFORMANCE_LEVELS = ['excellent', 'good', 'average', 'below-average', 'poor'];
+
 export function getPerformanceLevel(value, allValues = []) {
   // Fallback simple thresholds when no distribution is provided
   if (!Array.isArray(allValues) || allValues.length === 0) {

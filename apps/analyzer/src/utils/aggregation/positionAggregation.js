@@ -1,4 +1,5 @@
 import { extractStats } from '../statCalculations.js';
+import { combatEfficiency } from '../performanceScore.js';
 
 export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMatchTypeFilters = ['2v2', '3v3', '4v4', '5v5']) {
   const positionStats = {
@@ -193,7 +194,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
         const avgHealth = char.totalHealth / denom;
         const avgBattleTime = char.totalBattleTime / denom;
         const avgDPS = char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0;
-        const damageEfficiency = char.totalTaken > 0 ? (char.totalDamage / char.totalTaken) : char.totalDamage;
+        const damageEfficiency = combatEfficiency(char.totalDamage, char.totalTaken);
         const avgHPGaugeValueMax = char.totalHPGaugeValueMax / denom;
         
         // Calculate performance score

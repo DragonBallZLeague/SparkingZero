@@ -1,4 +1,5 @@
 import { getBuildComposition } from './buildComposition.js';
+import { combatEfficiency } from './performanceScore.js';
 
 // Single source of truth for per-character match stat extraction — used by every
 // aggregation util (character/team/position) plus the single-match view.
@@ -8,7 +9,7 @@ export function calculateMatchPerformanceScore(stats) {
   const avgBattleTime = stats.battleTime || 1; // Avoid division by zero
   const healthRetention = stats.hPGaugeValueMax > 0 ? stats.hPGaugeValue / stats.hPGaugeValueMax : 0;
   
-  const damageEfficiency = avgTaken > 0 ? avgDamage / avgTaken : avgDamage / 1000;
+  const damageEfficiency = combatEfficiency(avgDamage, avgTaken);
   const damagePerSecond = avgBattleTime > 0 ? avgDamage / avgBattleTime : 0;
   
   // Base performance score (normalized metrics) - matches aggregated calculation

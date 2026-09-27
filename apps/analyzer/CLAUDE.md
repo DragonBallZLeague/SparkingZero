@@ -91,6 +91,18 @@ Characters are addressed in URLs by a slug of their name, **not** by the interna
 
 They disagreed until 2026-09-26: the filter UI stored the fourth level as `'below'` while the function returned `'below-average'`, so **19.8% of character rows (202 of 1,018 across all 15 shards) silently vanished as soon as a user deselected any performance level.** Fixed by moving the UI onto `'below-average'` — the function was right and had five consumers agreeing with it, the filter had one. `verify-filters` now asserts that the five levels **partition** the whole view, so no row is unreachable; that check is what catches this class of bug, and it is why a level rename cannot regress silently again.
 
+## Performance scoring and tiers
+
+**`src/utils/performanceScore.js` owns the damage-efficiency term.** Efficiency is damage dealt over damage taken, carries 25% of the score weight un-normalised, and is therefore unbounded. The codebase had **three different answers** for "what if nothing was taken?" — return raw damage (mixing units, a five-figure number where a single-digit ratio belongs), return a `999` sentinel, or return `avgDamage/1000`. All three could inflate a score into the hundreds of thousands on a narrow selection. `combatEfficiency(dealt, taken)` replaces all of them with one clamp at `EFFICIENCY_CAP = 5`, about 3x the highest ratio ever observed in league play.
+
+It is a guard rail, **not** a rebalancing: on S0 in-season data real ratios run 0.26–1.73 (median 1.00), and 593 character/team entries across four corpus slices are identical before and after the change. **If the cap starts binding on real data, that is a signal worth investigating, not a number to raise.**
+
+**Performance levels must never be measured against the filtered list.** `App.jsx`'s `performanceReference` memo is the population a character's level and stat bars are compared against. The rule: filters that change *which matches count* (team, AI strategy, map, build filters) define the field because they genuinely change each character's stats; filters that only change *what you are looking at* (performance level, character selection, the match-count window) must not. Measuring against the post-filter list made the levels self-referential — deselecting "Excellent" re-ranked whoever remained, so a character turned green without their score changing.
+
+**`PERFORMANCE_LEVELS` in `performanceLevel.js` is the single source of the level names.** They are a contract shared by the badge switches, the style maps and the filter, and they drifted once already.
+
+Phase 3 replaces all of this with **absolute Z/A/B/C/D cutoffs** calibrated from a rolling last-2-seasons, Ultra-only window — see `docs/ANALYZER_REDESIGN_PLAN.md` "Performance tiers". At that point no reference population is needed at all. Note the score formula is still **duplicated across ~15 sites in 8 files**; consolidating it is outstanding.
+
 ## Reference data
 
 Imports `characters.csv`/`capsules.csv` directly from `/referencedata/` at build time via Vite's `?raw` import (see root `CLAUDE.md` — **edit those files at the repo root, never the local `referencedata/` copy that `vite.config.js`'s `copy-shared-referencedata` plugin writes here**, it's overwritten on every build). `src/config/buildRules.js` and `src/config/capsule-rules.yaml` encode capsule-restriction/build-legality rules used by the synergy/AI-strategy analysis.

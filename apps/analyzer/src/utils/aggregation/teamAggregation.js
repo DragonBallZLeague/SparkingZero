@@ -1,5 +1,6 @@
 import { getTeams, extractStats } from '../statCalculations.js';
 import { calculatePerFormStats } from '../formStatsCalculator.js';
+import { combatEfficiency } from '../performanceScore.js';
 
 // Recompute team character averages from a filtered subset of raw match data.
 // Used by the build filter feature in the teams view to re-scope stats without full re-aggregation
@@ -22,9 +23,7 @@ export function recomputeTeamCharStats(rawMatches, originalStats) {
   const avgHealthRemaining = totalHealthRemaining / denom;
   const avgHealthMax = totalHealthMax / denom;
 
-  const damageEfficiency = totalDamageTaken > 0
-    ? Math.round((totalDamageDealt / totalDamageTaken) * 100) / 100
-    : (totalDamageDealt > 0 ? 999 : 0);
+  const damageEfficiency = Math.round(combatEfficiency(totalDamageDealt, totalDamageTaken) * 100) / 100;
   const damagePerSecond = totalBattleDuration > 0
     ? Math.round((totalDamageDealt / totalBattleDuration) * 100) / 100 : 0;
   const healthRetention = avgHealthMax > 0 ? avgHealthRemaining / avgHealthMax : 0;
@@ -523,7 +522,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
           }
           
           // Calculate performance score for this match
-          const damageEfficiency = (p1Stats.damageTaken || 1) > 0 ? p1Stats.damageDone / p1Stats.damageTaken : p1Stats.damageDone;
+          const damageEfficiency = combatEfficiency(p1Stats.damageDone, p1Stats.damageTaken || 1);
           const dps = (p1Stats.battleTime || 1) > 0 ? p1Stats.damageDone / p1Stats.battleTime : 0;
           const healthRetention = (p1Stats.hPGaugeValueMax || 1) > 0 ? p1Stats.hPGaugeValue / p1Stats.hPGaugeValueMax : 0;
           const baseScore = (
@@ -728,9 +727,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
         const avgHealthRemaining = totalHealthRemaining / Math.max(denom, 1);
         const avgHealthMax = totalHealthMax / Math.max(denom, 1);
         
-        const damageEfficiency = totalDamageTaken > 0 ? 
-          Math.round((totalDamageDealt / totalDamageTaken) * 100) / 100 : 
-          (totalDamageDealt > 0 ? 999 : 0);
+        const damageEfficiency = Math.round(combatEfficiency(totalDamageDealt, totalDamageTaken) * 100) / 100;
         const damagePerSecond = totalBattleDuration > 0 ? 
           Math.round((totalDamageDealt / totalBattleDuration) * 100) / 100 : 0;
         const healthRetention = avgHealthMax > 0 ? avgHealthRemaining / avgHealthMax : 0;
@@ -874,9 +871,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
             const avgHealthRemaining = build.totalHealthRemaining / Math.max(denom, 1);
             const avgHealthMax = build.totalHealthMax / Math.max(denom, 1);
             
-            const damageEfficiency = build.totalDamageTaken > 0 ? 
-              Math.round((build.totalDamageDealt / build.totalDamageTaken) * 100) / 100 : 
-              (build.totalDamageDealt > 0 ? 999 : 0);
+            const damageEfficiency = Math.round(combatEfficiency(build.totalDamageDealt, build.totalDamageTaken) * 100) / 100;
             const damagePerSecond = build.totalBattleDuration > 0 ? 
               Math.round((build.totalDamageDealt / build.totalBattleDuration) * 100) / 100 : 0;
             const healthRetention = avgHealthMax > 0 ? avgHealthRemaining / avgHealthMax : 0;
@@ -979,7 +974,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
           const avgBattleTime = matchCount > 0 ? formData.totalBattleTime / matchCount : 0;
           
           // Calculate derived stats using total-based calculations
-          const damageEfficiency = formData.totalDamageTaken > 0 ? formData.totalDamageDone / formData.totalDamageTaken : 0;
+          const damageEfficiency = combatEfficiency(formData.totalDamageDone, formData.totalDamageTaken);
           const damagePerSecond = formData.totalBattleTime > 0 ? formData.totalDamageDone / formData.totalBattleTime : 0;
           
           return {

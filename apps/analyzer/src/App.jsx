@@ -26,7 +26,7 @@ import { getAggregatedCharacterData } from './utils/aggregation/characterAggrega
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
 import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
-import { getPerformanceLevel } from './utils/performanceLevel.js';
+import { getPerformanceLevel, PERFORMANCE_LEVELS } from './utils/performanceLevel.js';
 import { NavBar } from '@szl/ui';
 import { 
   Trophy, 
@@ -1321,11 +1321,8 @@ export default function App() {
   
   // Search and filter state for Aggregated Character Performance
   const [selectedCharacters, setSelectedCharacters] = useState([]);
-  // Old combobox state variables removed - now using Combobox component
-  // Values must match what getPerformanceLevel() returns - 'below-average', not
-  // 'below'. They disagreed until 2026-09-26, which silently dropped every
-  // below-average character as soon as any level was deselected.
-  const [performanceFilters, setPerformanceFilters] = useState(['excellent', 'good', 'average', 'below-average', 'poor']);
+  // PERFORMANCE_LEVELS is the single source of these names - see performanceLevel.js.
+  const [performanceFilters, setPerformanceFilters] = useState([...PERFORMANCE_LEVELS]);
   const [minMatches, setMinMatches] = useState(1);
   const [maxMatches, setMaxMatches] = useState(999);
   const [sortBy, setSortBy] = useState('combatScore');
@@ -1438,6 +1435,32 @@ export default function App() {
     [aggregatedData, selectedCharacters, performanceFilters, minMatches, maxMatches,
      sortBy, sortDirection, selectedTeams, selectedAIStrategies, selectedMaps,
      activeBuildFilters, charMap]
+  );
+
+  // The population a character's performance level and stat bars are measured
+  // against. Deliberately NOT filteredAggregatedData: measuring against the
+  // post-filter list made the levels self-referential - deselecting "Excellent"
+  // re-ranked whoever was left, so a character could turn green without their
+  // score changing at all.
+  //
+  // The rule: filters that change WHICH MATCHES COUNT (team / AI strategy / map,
+  // and the build filters) define the field, because they genuinely change each
+  // character's stats. Filters that only change WHAT YOU ARE LOOKING AT
+  // (performance level, character selection, the match-count window) must not.
+  // Passing all five levels disables the level filter - see filterAggregated.js.
+  //
+  // Phase 3 replaces this with absolute tier cutoffs, at which point no reference
+  // population is needed at all.
+  const performanceReference = useMemo(
+    () => filterAggregatedData(aggregatedData, {
+      selectedTeams,
+      selectedAIStrategies,
+      selectedMaps,
+      activeBuildFilters,
+      performanceFilters: PERFORMANCE_LEVELS,
+      charMap,
+    }),
+    [aggregatedData, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters, charMap]
   );
 
   // Extract unique teams and AI strategies from aggregated data
@@ -2921,16 +2944,19 @@ export default function App() {
               
               {filteredAggregatedData.map((char, i) => {
                 const expanded = expandedRows[`agg_${i}`] || false;
-                const allDamageValues = filteredAggregatedData.map(c => c.totalDamage);
-                const allDamageTakenValues = filteredAggregatedData.map(c => c.totalTaken);
-                const allAvgDamageValues = filteredAggregatedData.map(c => c.avgDamage);
-                const allAvgTakenValues = filteredAggregatedData.map(c => c.avgTaken);
-                const allAvgHealthValues = filteredAggregatedData.map(c => c.avgHealth);
-                const allAvgBattleTimeValues = filteredAggregatedData.map(c => c.avgBattleTime);
-                const avgBattleTime = allAvgBattleTimeValues.reduce((sum, val) => sum + val, 0) / allAvgBattleTimeValues.length;
+                // Measured against performanceReference, not the filtered list, so a
+                // character's level and bars do not move when rows are hidden.
+                const allDamageValues = performanceReference.map(c => c.totalDamage);
+                const allDamageTakenValues = performanceReference.map(c => c.totalTaken);
+                const allAvgDamageValues = performanceReference.map(c => c.avgDamage);
+                const allAvgTakenValues = performanceReference.map(c => c.avgTaken);
+                const allAvgHealthValues = performanceReference.map(c => c.avgHealth);
+                const allAvgBattleTimeValues = performanceReference.map(c => c.avgBattleTime);
+                const avgBattleTime = allAvgBattleTimeValues.length
+                  ? allAvgBattleTimeValues.reduce((sum, val) => sum + val, 0) / allAvgBattleTimeValues.length
+                  : 0;
                 
-                // Get all combat performance scores from the filtered data
-                const combatPerformanceScores = filteredAggregatedData.map(c => c.combatPerformanceScore);
+                const combatPerformanceScores = performanceReference.map(c => c.combatPerformanceScore);
                 
                 return (
                   <div key={i} className={`rounded-xl p-6 border transition-colors ${
@@ -3055,14 +3081,14 @@ export default function App() {
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Over Time:</span>
                                     <div className="flex items-center gap-2">
                                       <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{Math.round(char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0).toLocaleString()}/sec</strong>
-                                      <PerformanceIndicatorLabel value={char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0} allValues={filteredAggregatedData.map(c => c.totalBattleTime > 0 ? c.totalDamage / c.totalBattleTime : 0)} darkMode={darkMode} />
+                                      <PerformanceIndicatorLabel value={char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0} allValues={performanceReference.map(c => c.totalBattleTime > 0 ? c.totalDamage / c.totalBattleTime : 0)} darkMode={darkMode} />
                                     </div>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Efficiency:</span>
                                     <div className="flex items-center gap-2">
                                       <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.totalTaken > 0 ? (char.totalDamage / char.totalTaken).toFixed(2) : '0.00')}x</strong>
-                                      <PerformanceIndicatorLabel value={char.totalTaken > 0 ? char.totalDamage / char.totalTaken : 0} allValues={filteredAggregatedData.map(c => c.totalTaken > 0 ? c.totalDamage / c.totalTaken : 0)} darkMode={darkMode} />
+                                      <PerformanceIndicatorLabel value={char.totalTaken > 0 ? char.totalDamage / char.totalTaken : 0} allValues={performanceReference.map(c => c.totalTaken > 0 ? c.totalDamage / c.totalTaken : 0)} darkMode={darkMode} />
                                     </div>
                                   </div>
                                 </div>

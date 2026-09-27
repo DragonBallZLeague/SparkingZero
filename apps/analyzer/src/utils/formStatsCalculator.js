@@ -1,3 +1,4 @@
+import { combatEfficiency } from './performanceScore.js';
 /**
  * Form Stats Calculator Utility
  * 
@@ -291,9 +292,7 @@ export function formatPerFormStatsForDisplay(perFormStats, charMap = {}) {
       ? (formStat.damageDone || 0) / formStat.battleTime 
       : 0;
     
-    const damageEfficiency = (formStat.damageTaken || 0) > 0
-      ? (formStat.damageDone || 0) / formStat.damageTaken
-      : (formStat.damageDone > 0 ? 999 : 0);
+    const damageEfficiency = combatEfficiency(formStat.damageDone || 0, formStat.damageTaken || 0);
     
     // Calculate blast hit rates
     const s1HitRate = (formStat.s1Blast || 0) > 0

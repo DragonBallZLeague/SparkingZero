@@ -8,6 +8,7 @@
  */
 
 import { detectSynergyType } from './capsuleEffectParser.js';
+import { combatEfficiency } from './performanceScore.js';
 
 /**
  * Calculate individual capsule performance from match data
@@ -371,7 +372,7 @@ function calculateMatchPerformanceScore(match) {
   const avgBattleTime = match.battleTime || 1;
   const healthRetention = match.hPGaugeValueMax > 0 ? match.hPGaugeValue / match.hPGaugeValueMax : 0;
   
-  const damageEfficiency = avgTaken > 0 ? avgDamage / avgTaken : avgDamage / 1000;
+  const damageEfficiency = combatEfficiency(avgDamage, avgTaken);
   const damagePerSecond = avgBattleTime > 0 ? avgDamage / avgBattleTime : 0;
   
   const baseScore = (

@@ -221,6 +221,47 @@ Because the two namespaces provably cannot collide, the dispatch is a single reg
 
 ---
 
+## Performance tiers — decided 2026-09-26
+
+The leaderboard's performance banding was **percentile-relative to whatever the user had currently filtered to**, which made it self-referential: deselecting "Excellent" re-ranked everyone left, so a character turned green without their score changing. The band was also communicated *only* by colour, named nowhere except the filter chips.
+
+### Decision
+
+**Absolute tier cutoffs, frozen from a recent calibration window.** Tiers are **Z / A / B / C / D** (Z highest — the Dragon Ball convention, not the generic S-tier).
+
+| Tier | Score ≥ | Share of the calibration population |
+|---|---|---|
+| **Z** | 75.0 | top 10% |
+| **A** | 65.4 | next 20% |
+| **B** | 55.2 | middle 30% |
+| **C** | 48.4 | next 20% |
+| **D** | — | bottom 20% |
+
+**Calibration basis: a rolling window of the last 2 seasons, Ultra difficulty only, all match types.** Rolling (rather than "season N onward") so the oldest season drops off as new ones land — the game and the league have changed enough over two years that old data misleads. Ultra-only is a hard rule: the league's early difficulty change splits Season 0 into 1,155 Strong and 980 Ultra matches, and mixing them would compare characters across different rulesets.
+
+**The basis is not filtered by match count.** This was tested rather than assumed: low-sample characters skew *low*, not high (median 46–49 across 1–9 matches versus 62.0 for 10+), so they do not inflate the top. The Z cutoff is identical (75.0) whether the basis requires 1, 3 or 5 matches; only the B and C boundaries move. Filtering the basis would push weak-but-rarely-played characters into D, conflating "poor" with "barely played" — at min=10, D swells to 33% of the roster. Low-confidence characters are handled by **marking their badge provisional**, not by bending the scale everyone is measured against.
+
+### Why not scope-relative percentiles
+
+Percentile banding forces a 10/20/30/20/20 spread *by construction*, so it can never say "this season's field was strong", and "Excellent" only ever means "top 10% of what you happen to be looking at". It also makes a shared link meaningless, since the recipient's filters would change the badge — which breaks the share-snippet goal and principle 5.
+
+### Why not the existing absolute thresholds
+
+The fallback thresholds in `App.jsx` (`>=200` excellent, `>=120` good) were never calibrated: the **highest score anywhere in the corpus is 103.3**, so both bands were literally unreachable and every character in the league would have been "Average" or below.
+
+### Supporting work
+
+- **`src/utils/performanceScore.js`** — `combatEfficiency()` clamps the damage-efficiency term (see that file for why the old code had three different answers for "what if nothing was taken?"). **Proven to change no real score:** 593 character and team entries across four corpus slices are byte-identical before and after.
+- **The performance-level filter is replaced by a minimum-score input**, matching the Matches Played control beside it. With absolute cutoffs the five chips are redundant, and a score threshold is self-describing and shareable as a querystring.
+- **Badges must be labelled**, not colour-only — `Score: 80 · A` plus a legend naming the basis.
+
+### Still open
+
+- The score formula itself is **duplicated across ~15 sites in 8 files**. `combatEfficiency()` consolidates the part that was broken; consolidating the rest is Phase 3+.
+- `PerformanceScoreBadge` in the team and single-match views still measures against team-local or match-local populations. Absolute cutoffs make those consistent for free once adopted.
+
+---
+
 ## Feature audit — keep / merge / rebuild / cut
 
 | Feature | Audience | Recommendation |
@@ -379,6 +420,7 @@ Manual Upload mode gets the new design system and image-card sharing (no deep li
 
 - **Share snippet format:** image card first (canvas/`html-to-image`), text/markdown fallback deferred.
 - **Routing:** react-router `BrowserRouter`, with `basename={import.meta.env.BASE_URL}` (the analyzer's existing approach — better than the website's hardcoded literal).
+- **Performance tiers are Z/A/B/C/D with absolute cutoffs**, calibrated from a rolling last-2-seasons Ultra-only window, not percentiles relative to the current filter. The level filter becomes a minimum-score input. See "Performance tiers" below. **Decided 2026-09-26.**
 - **Character URLs use the name slug, not the internal key.** `/characters/android-13`, not `/characters/0620_00`. Raw ids stay valid forever as an alias. Verified and enforced at build time — see "Character URL scheme" below. **Decided 2026-09-26.**
 - **Deep-link production fix:** smart 404 dispatcher in the deploy workflow — **implemented 2026-09-26** (`scripts/build-404.js` + `restoreDeepLink()`), so Phase 3 is unblocked. HashRouter was the fallback and was not needed.
 - **Data loading:** build-time slim aggregate index (Phase 1.5), before any page rebuild.

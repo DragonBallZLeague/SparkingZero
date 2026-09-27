@@ -1,3 +1,4 @@
+import { combatEfficiency } from './performanceScore.js';
 /**
  * Team Performance Matrix Generator
  * 
@@ -149,7 +150,7 @@ function recalculateCharacterStatsForTeam(character, teamMatches, teamName) {
   
   // Calculate derived stats - use total-based efficiency (aggregate then calculate)
   const dps = Math.round((avgDamage / Math.max(avgBattleTime, 0.1)) * 10) / 10;
-  const efficiency = totalTaken > 0 ? Math.round((totalDamage / totalTaken) * 100) / 100 : 0;
+  const efficiency = Math.round(combatEfficiency(totalDamage, totalTaken) * 100) / 100;
   const healthRetention = avgHPGaugeValueMax > 0 ? (avgHealth / avgHPGaugeValueMax) * 100 : 0;
   const winRate = matchCount > 0 ? (wins / matchCount) * 100 : 0;
   const speedImpactWinRate = totalSpeedImpacts > 0 ? Math.round((totalSpeedImpactWins / totalSpeedImpacts) * 1000) / 10 : 0;
