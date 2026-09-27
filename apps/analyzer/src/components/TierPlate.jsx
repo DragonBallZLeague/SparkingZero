@@ -5,6 +5,7 @@ import {
   tierMatchCount,
   TIER_LABELS,
   PROVISIONAL_BELOW_MATCHES,
+  tierBasisSummary,
 } from '../utils/performanceTier.js';
 import { tierPlateSvg, PLATE_SIZES, TIER_ART } from '../utils/tierPlateSvg.js';
 
@@ -38,7 +39,7 @@ export default function TierPlate({
   const title = showTooltip
     ? [
         `Tier ${tier} — ${TIER_LABELS[tier] || ''}`,
-        'Fixed score tiers, calibrated from the last two seasons.',
+        tierBasisSummary(),
         provisional
           ? `Provisional: ${matches} match${matches === 1 ? '' : 'es'}, fewer than the ${PROVISIONAL_BELOW_MATCHES} needed for a settled tier.`
           : '',

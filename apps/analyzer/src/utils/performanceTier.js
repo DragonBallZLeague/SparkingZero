@@ -60,16 +60,12 @@ export function isProvisionalTier(charOrCount) {
   return tierMatchCount(charOrCount) < PROVISIONAL_BELOW_MATCHES;
 }
 
-/** One-line description of what the tiers are relative to, for a legend. */
+/**
+ * One line for a tooltip. Deliberately short: the match and character counts and
+ * the difficulty rule are calibration detail that belongs in the committed bands
+ * file, not in front of a reader who just wants to know what a tier means.
+ */
 export function tierBasisSummary() {
-  const b = TIER_BASIS;
-  const seasons = Array.isArray(b.seasons) ? b.seasons : [];
-  const seasonText = seasons.length > 1
-    ? 'Seasons ' + seasons.join(' and ')
-    : seasons.length === 1 ? 'Season ' + seasons[0] : 'league play';
-  const sample = b.matches
-    ? ' (' + b.matches.toLocaleString() + ' matches, ' + b.characters + ' characters)'
-    : '';
-  return 'Fixed score tiers, calibrated from ' + seasonText +
-    (b.difficulty ? ' on ' + b.difficulty + ' difficulty' : '') + sample + '.';
+  const n = TIER_BASIS.seasonWindow || 2;
+  return 'Fixed score tiers, calculated from the last ' + n + ' seasons.';
 }
