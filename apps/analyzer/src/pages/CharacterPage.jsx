@@ -105,7 +105,10 @@ function Fact({ label, value, darkMode }) {
 export default function CharacterPage({
   character,
   missingLabel = null,
-  pending = false,
+  // 'loading' | 'empty-scope' | 'not-found' - only read when there is no
+  // character. They are kept apart because they send someone to three different
+  // places: wait, widen the filters, or check the name.
+  reason = 'not-found',
   rank = null,
   totalInScope = null,
   scopeLabel = null,
@@ -142,9 +145,14 @@ export default function CharacterPage({
     [character]
   );
 
-  // Still loading. Kept distinct from "not found" on purpose - see the
-  // deepLinkedCharacter memo in App.jsx for why the difference matters.
-  if (pending) {
+  // Only a fetch actually in flight counts as loading.
+  //
+  // This used to key off "is the aggregated list empty?", which was wrong in a
+  // way that never resolved: a tag filter matching no files (S1 + Season is
+  // empty today - every Season 1 file is tagged Test) leaves it empty forever,
+  // so the spinner ran until the tab was closed. App.jsx decides now, from the
+  // real signals.
+  if (reason === 'loading') {
     return (
       <div className={`rounded-2xl p-6 border border-solid mb-6 ${
         darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
@@ -161,9 +169,11 @@ export default function CharacterPage({
 
   // The route accepts any segment, and the catch-all means a typo - or a link to
   // a character absent from the current data scope - lands here rather than
-  // 404ing. Say which, and say the likely reason: the visitor did not choose the
-  // filters and has no way to guess that the scope is why the page is empty.
+  // 404ing. Which of those it is matters: one is fixed by widening the filters,
+  // the other by checking the name, and the visitor chose neither of them if
+  // they arrived from a pasted link.
   if (!character) {
+    const emptyScope = reason === 'empty-scope';
     return (
       <div className={`rounded-2xl p-6 border border-solid mb-6 ${
         darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
@@ -172,12 +182,24 @@ export default function CharacterPage({
           <AlertCircle className={`w-6 h-6 shrink-0 ${darkMode ? 'text-amber-400' : 'text-amber-600'}`} />
           <div>
             <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              No data for {missingLabel || 'this character'}
+              {emptyScope
+                ? 'No matches in this data scope'
+                : `No data for ${missingLabel || 'this character'}`}
             </h1>
             <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Either the name in the link is not a character, or it has no matches in the
-              data currently in scope{scopeLabel ? <> — <span className="font-semibold">{scopeLabel}</span></> : null}.
-              Widening the filters on the character leaderboard may bring it back.
+              {emptyScope ? (
+                <>
+                  The current filters{scopeLabel ? <> — <span className="font-semibold">{scopeLabel}</span></> : null} match
+                  no match files at all, so there is nothing to show for {missingLabel || 'any character'}.
+                  Widen the tag filters to bring data back.
+                </>
+              ) : (
+                <>
+                  Either the name in the link is not a character, or it has no matches in the
+                  data currently in scope{scopeLabel ? <> — <span className="font-semibold">{scopeLabel}</span></> : null}.
+                  Widening the filters on the character leaderboard may bring it back.
+                </>
+              )}
             </p>
             {onBack && (
               <button

@@ -1546,22 +1546,34 @@ export default function App() {
     // which case there is no name to join on - fall back to the raw URL segment.
     const wanted = (id && charSlugIndex.idToName.get(id)) || charParam;
 
-    // Nothing aggregated yet means the corpus is still arriving, NOT that the
-    // character is unknown. Someone opening a pasted link hits this first, and
-    // flashing 'no data for Android 13' before the data lands reads as a broken
-    // link. The rest of the app gets away with rendering nothing at all; a page
-    // that is the whole point of the URL should say it is working.
-    if (!performanceReference.length) return { label: wanted, character: null, pending: true };
+    // Three ways to have no character, and they must not be confused.
+    //
+    // "Nothing aggregated yet" is NOT a loading signal - a filter combination
+    // that matches no files (S1 + Season is empty today: every S1 file is tagged
+    // Test) leaves this empty forever, and treating that as loading spins a
+    // spinner that never resolves. Ask the actual loading signals instead:
+    // tagFilterPaths undefined means the tag selector has not reported, and
+    // files chosen with no content yet means a fetch is in flight.
+    const filesChosen = Array.isArray(selectedFilePath) && selectedFilePath.length > 0;
+    if (tagFilterPaths === undefined || (filesChosen && !fileContent)) {
+      return { label: wanted, character: null, reason: 'loading' };
+    }
+
+    // An empty tag filter is a dead end, not a missing character - say which,
+    // because "no data for Toppo" sends someone looking for the wrong problem.
+    if (Array.isArray(tagFilterPaths) && tagFilterPaths.length === 0) {
+      return { label: wanted, character: null, reason: 'empty-scope' };
+    }
 
     const i = performanceReference.findIndex(c => c.name === wanted);
-    if (i === -1) return { label: wanted, character: null };
+    if (i === -1) return { label: wanted, character: null, reason: 'not-found' };
     return {
       label: wanted,
       character: performanceReference[i],
       rank: i + 1,
       totalInScope: performanceReference.length,
     };
-  }, [charParam, charSlugIndex, performanceReference]);
+  }, [charParam, charSlugIndex, performanceReference, tagFilterPaths, selectedFilePath, fileContent]);
 
   // What the numbers on that page actually cover. Read off the query string so
   // the page's own description of its scope and the link someone pasted cannot
@@ -2611,7 +2623,7 @@ export default function App() {
           <CharacterPage
             character={deepLinkedCharacter.character}
             missingLabel={deepLinkedCharacter.label}
-            pending={deepLinkedCharacter.pending}
+            reason={deepLinkedCharacter.reason}
             rank={deepLinkedCharacter.rank}
             totalInScope={deepLinkedCharacter.totalInScope}
             scopeLabel={dataScopeLabel}
