@@ -134,7 +134,7 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 - **Team names:** the analyzer shows the website's team names through a shared list, while tags and folders keep their names.
 - **Deleted:** the never-shipped Build Analyzer and Synergy Pairs files.
 
-**Next: a real-data demo** of the shell, the Characters table, the tier list and the two Builds-table layouts.
+**The real-data demo followed** (`apps/analyzer/design/shell-demo/`) and was reviewed the same day; see "Settled on the demo". **Next: rebuilding the shell and the Characters page in React** to match it (Phase 2c).
 
 ### Phase 2c — Responsive shell, accessibility, persistence: not started
 
@@ -371,6 +371,7 @@ Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg,
    - Season, match type, difficulty, team and "+ Filter" as dropdown chips, with the match count.
    - Sticky, and no taller than ~50px.
    - Page-specific filters (tier, score, AI strategy, map) join the same bar instead of a separate form.
+   - Chips are multi-select, with OR within a chip and AND between chips. See "Settled on the demo" for the details.
    - On a phone it becomes a "Filters (n)" button that opens a bottom sheet, with the active chips on one horizontally scrolling line.
    - Scope stays visible, self-describing and in the query string, for the same reason default scoping is a tag filter.
 3. **One level of flat panels.** The layers are page background, then section panel, then content.
@@ -407,7 +408,7 @@ Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg,
    - It has rows Z, S, A, B and C, each holding the portraits and names of the characters in that tier. Tapping one opens that character's page.
    - It computes nothing new: it groups the existing absolute tiers, under the same scope bar, at a URL of its own.
    - It appears in two places:
-     - as a "Table | Tier list" switch on the Characters page
+     - as a "Table | Tier list" switch on the Characters page, in the page's own control row (not the tab row)
      - as the first thing on Home: the current-season tier list, a format casual fans already recognise
    - **Position is a picker, not columns.** An All / Starter / Middle / Anchor picker sits above the list, and a character with few matches at that position is dimmed like any provisional sample.
      - Columns per position were rejected on the data. In the default scope only 19 characters have 5+ matches as Starter, 47 as Middle and 19 as Anchor, and the typical character has ~5 matches at each position it plays. Across all data, tests included, the counts are 111 / 101 / 102.
@@ -423,7 +424,11 @@ Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg,
 ### Still open
 
 - ~~The page-by-page review~~: done, see the next section.
-- **A real-data demo before the rebuild**, judged side by side at both widths the way the Overview was settled. It covers the shell (tab row and scope bar), the table leaderboard, the tier list and the two candidate layouts for the Meta Builds table.
+- **A real-data demo before the rebuild**, judged side by side at both widths the way the Overview was settled. It covers the shell (tab row and scope bar), the table leaderboard, the tier list and the two candidate layouts for the Meta Builds table. **Built 2026-09-28** in `apps/analyzer/design/shell-demo/` (a throwaway; its README says how to run it). **The league gave its verdict the same day**; see "Settled on the demo" under "Page-by-page review". Measured on it:
+  - The Characters table is 3.6 desktop screens (23 today) and 3.9 phone screens (16.5 today).
+  - The first data row sits 263px down on a desktop and 259px on a phone. It was 216px on a desktop before the view switch moved into the page's own row, a deliberate trade against the ~150px target.
+  - The tier list is 1.2 desktop screens.
+  - For 25 rows, Builds layout A is 1.8 screens and layout B 5.3.
 
 ---
 
@@ -469,20 +474,24 @@ Which pages stay, which go, which change, and what each one holds. It builds on 
 
   "Meta movers" waits for time-ordered data, and the spotlight cards are left out.
 - **Characters** (phone first).
-  - One row per character: portrait, name, tier, score, matches, win rate, average damage, damage per second, efficiency, survival. A column picker adds the rest.
-  - An All / Starter / Middle / Anchor picker, and the Table / Tier list switch.
+  - One row per character: portrait, name, tier plate, score pill, matches, average damage, damage per second, efficiency, survival, damage taken, battle time, and win % last.
+  - On a phone: portrait, name, score pill, and two stat columns picked with two pickers above the table. They default to average damage and efficiency, never win %.
+  - A Position chip (Starter / Middle / Anchor, any combination) in the scope bar.
+  - A control row under the scope bar: the Table / Tier list switch on the left and the character count on the right. On a phone the table's two column pickers take the count's place, and the table header carries the count.
+  - In the tier list, each tier's row is tinted in its own colour: crimson for Z, then purple, gold, blue and grey. The colour is the tier pill's ring, not the plate, because Z and B share a blue plate.
   - A row opens the Character page. The stats that used to expand inside each card belong to that page now.
   - Its export button carries the position split, which was the Data Tables page's position table.
 - **Character page** (phone first).
   - Overview stays as approved.
   - Usage, Builds, Forms and Matches are restyled to "Visual direction". Builds are one row per build with the capsules as the one-column list (see Meta below).
+  - When Usage is restyled, its position table (`PositionBlock`) moves Win rate from the third column to the last (see "Win % is a team measure" below).
   - The open tab goes into the query string, so "look at Goku's builds" is a link.
 - **Teams** (phone first).
   - 13 rows: logo, name, record in the current scope, win rate, damage, efficiency, HP kept, characters used.
   - A row opens the Team page. A link goes to the website's standings, which stay the website's.
 - **Team page** (new, phone first, the detail-page layout).
   - A headline strip: record, win rate, efficiency, characters used.
-  - **Roster**: every character the team fielded, with its matches, how often it played each position, win rate and score.
+  - **Roster**: every character the team fielded, with its matches, how often it played each position, and its score. The character's own win % goes last, if it is shown at all.
   - **Lineups**: each match's lineup from Starter to Anchor, with builds. This is the lineup-planning page the plan asks for.
   - **Matches**: the team's matches as match rows.
 - **Matches** (phone first).
@@ -498,9 +507,11 @@ Which pages stay, which go, which change, and what each one holds. It builds on 
     - It shows builds used **5+ times** by default, the same cutoff below which a build counts as a thin sample. The floor is a visible chip in the scope bar, not a hidden rule. That is 47 rows in the default scope and about 450 with tests.
     - It shows 25 rows, then "Show more", with character, AI strategy and "contains capsule" filters, sorted by score.
     - A "Best per character | All builds" switch gives one row per character as the short version.
-    - **Capsules are always the familiar one-column list**, grouped by capsule type with the AI strategy last, never spread across columns. The demo compares two layouts on real data:
-      - **A. Compact rows plus the list beside them**: each row shows portrait, character, a capsule-type cost bar in the build-type colours, AI strategy, uses, win rate and score (about 50px). The selected row's one-column list shows in the right-hand column on desktop and opens under the row on a phone. 47 rows are about 2.5 screens.
-      - **B. The list in every row**: each row carries its own one-column list, about 120px tall. 47 rows are about 6 screens.
+    - **Capsules are always the familiar one-column list**, grouped by capsule type with the AI strategy last, never spread across columns.
+    - **Layout: compact rows with the list beside them** (layout A, chosen on the demo over a list inside every row).
+      - Each row is about 46px: portrait, character, the build-type pill and a capsule-type cost bar, AI strategy, uses, average damage, efficiency, score pill, and win % last.
+      - The selected row's one-column list, with uses, average damage, efficiency and score, shows in the right-hand column from 1180px up. Narrower, including on a phone, it opens under the row.
+      - On a phone a row shows the character, the cost bar, uses, efficiency and score.
   - **AI strategies**: the existing table, flattened. Its expanded panel becomes a detail view rather than an inline box.
   - **Capsules**: the existing capsule table.
 - **Sandbox** (desktop first).
@@ -513,6 +524,28 @@ Which pages stay, which go, which change, and what each one holds. It builds on 
     - It exports the current scope, so widening the scope to everything exports everything.
     - It gains a Position sheet and a Capsules sheet, so it still holds everything the Data Tables page had.
   - `/tables` redirects to `/characters`, so old links land somewhere.
+
+### Settled on the demo (2026-09-28)
+
+The league reviewed the real-data demo in `apps/analyzer/design/shell-demo/` and settled these:
+
+- **Builds: layout A**, compact rows with the list beside them. It was "significantly more appealing" than a list in every row.
+- **Table colour stays as designed.** Numbers are white, and each cell's thin bar turns green for the top fifth of the column and red for the bottom fifth. The top rows of a score-sorted table come out mostly green, and that is accepted.
+- **The Z pill's pulse is slower**: 3.6s a cycle, down from 2.6s, in `src/index.css` as well as the demo. It stays on in tables.
+- **A score is a tier-coloured pill in every table**, on desktop and phone alike. A desktop table also keeps the tier plate column, which carries the letter. A phone drops the plate and keeps the pill.
+- **Win % is a team measure.** One character's win % mostly reflects the team around it, so it is unreliable as a measure of that character or its build.
+  - For characters and builds it is the last column and never a default. It is left out wherever only a few stats fit: phone column pickers, the build side panel, headline strips.
+  - Prefer the measures a character controls: efficiency, damage taken, average damage, damage per second, survival and the score.
+  - On team views (Teams, the Team page, records) win % is fine to lead. The Character Overview already leaves it out on purpose.
+- **Filters are multi-select.** Every chip except the Builds floor takes several values:
+  - **OR within a chip, AND between chips.** "Season matches, Events" means either kind; "Starter, Middle" pools the matches at either position.
+  - **Capsules are the exception**: a build must contain every capsule picked, which is what someone planning a build means.
+  - Each list starts with an "All …" row that clears the chip, and picking every value collapses back to "all".
+  - The list stays open while values are ticked. In long searchable lists (characters, capsules) the picked values rise to the top.
+  - An unset chip shows its name ("Team"). A set one shows its values ("Season matches, Events"), or the first value and a count ("Tests +2") when that runs long, or "With 2 capsules".
+  - A phone gets the same lists as bottom sheets with a Done button.
+- **A page's own controls stay in the page.** The tab row holds only the site's sections. A switch that changes just the current page goes in a control row inside the page, below the scope bar. That covers Characters' Table / Tier list, Meta's "Best per character | All builds" and Matches' "Matches | Performances". The demo first put Table / Tier list in the tab row, where it read as part of the whole site.
+- **Tier-list rows are tinted in their tier's colour**, a little stronger behind the plate than behind the portraits: 13% opacity and 5%, lowered from 7% at the league's request.
 
 ### How pages get their data
 
@@ -732,7 +765,7 @@ Team test data is reachable from here but is not the default lens (principle 3) 
 
 ### 6. Meta/Builds page consolidation
 
-One page with tabs: **Builds** (new, a league-wide build table), **AI strategies** and **Capsules**. See "Page-by-page review" for the Builds table's floor, filters and the two layouts the demo compares. The Build Analyzer Tool is no longer part of this: it never shipped and was deleted on 2026-09-28.
+One page with tabs: **Builds** (new, a league-wide build table), **AI strategies** and **Capsules**. See "Page-by-page review" for the Builds table's floor, filters and layout (compact rows with the capsule list beside them, chosen on the demo). The Build Analyzer Tool is no longer part of this: it never shipped and was deleted on 2026-09-28.
 
 ### 7. Sandbox polish
 
@@ -774,3 +807,9 @@ Manual Upload mode gets the new design system and image-card sharing (no deep li
   - Meta gains a Builds table with a visible 5+ uses floor. Capsules always show as the one-column list.
   - Team names come from a shared list with the website's names and logos. Tags and folders keep their ASCII names, and the analyzer's slug avoids `&`.
   - Home v1 is the tier list, the curated boards and the latest results.
+- **Settled on the shell demo** (2026-09-28, see "Settled on the demo"):
+  - Builds use layout A, compact rows with the capsule list beside them.
+  - Table colour stays as designed, and the Z pulse slows to 3.6s.
+  - A score is a tier-coloured pill in every table.
+  - Win % is a team measure: it goes last for characters and builds, and is never a default there.
+  - Filter chips are multi-select, OR within a chip and AND between chips, except capsules, which must all be in the build.

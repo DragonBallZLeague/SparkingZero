@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analyzer shell demo</title>
+<style>
+:root {
+  --nav: 61px; --scope: 52px;
+  --bg: #111827; --panel: #1a2031; --chip: #1e2434; --raised: #2b3245; --pop: #222a3b;
+  --line: rgba(148, 163, 184, .16); --line2: rgba(148, 163, 184, .09);
+  --text: #f1f5f9; --muted: #94a3b8; --faint: #64748b;
+  --accent: #f97316; --accent-soft: rgba(249, 115, 22, .12); --accent-line: rgba(249, 115, 22, .55);
+  --good: #16e05a; --bad: #ff2b3a; --track: #262e40; --fill: #56627a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body { font: 14px/1.45 Inter, "Segoe UI", Roboto, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+.muted { color: var(--muted); } .faint { color: var(--faint); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- the shared navbar (a copy of @szl/ui's, for honest heights) ---- */
+.nav { position: sticky; top: 0; z-index: 50; background: rgba(3, 7, 18, .92); backdrop-filter: blur(8px); border-bottom: 1px solid #1f2937; }
+.nav-accent { height: 4px; background: linear-gradient(to right, #f97316, #eab308, #ef4444); }
+.nav-inner { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.nav-brand { display: flex; align-items: center; gap: 12px; }
+.nav-brand img { height: 36px; }
+.nav-div { width: 1px; height: 22px; background: #374151; }
+.nav-title { font-size: 13px; font-weight: 600; color: #9ca3af; }
+.nav-links { display: flex; gap: 4px; }
+.nav-links span { padding: 6px 12px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #d1d5db; }
+.nav-links .on { background: rgba(249, 115, 22, .15); color: #fb923c; }
+.nav-burger { display: none; width: 22px; height: 14px; border-top: 2px solid #d1d5db; border-bottom: 2px solid #d1d5db; position: relative; }
+.nav-burger::after { content: ''; position: absolute; left: 0; right: 0; top: 4px; border-top: 2px solid #d1d5db; }
+
+/* ---- tab row ---- */
+.tabs { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+.tablist { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-left: -12px; }
+.tablist::-webkit-scrollbar { display: none; }
+.tab { appearance: none; background: none; border: 0; border-bottom: 2px solid transparent; padding: 13px 12px 11px; font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.tab:hover { color: #e2e8f0; }
+.tab[aria-selected="true"] { color: #fff; border-bottom-color: var(--accent); }
+
+/* ---- segmented control ---- */
+.seg { display: inline-flex; padding: 3px; border-radius: 9px; background: var(--chip); border: 1px solid var(--line); flex: none; }
+.seg button { border: 0; background: none; padding: 4px 12px; border-radius: 6px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--raised); color: #fff; }
+.seg.demo { border-style: dashed; border-color: rgba(250, 204, 21, .45); }
+.demo-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #facc15; margin-right: 6px; }
+
+/* ---- scope bar ---- */
+.scope { position: sticky; top: var(--nav); z-index: 40; background: rgba(17, 24, 39, .96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.scope .wrap { height: var(--scope); display: flex; align-items: center; gap: 10px; }
+.chips { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 28px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { height: 32px; padding: 0 9px 0 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--chip); color: var(--muted); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; font-size: 13px; font-weight: 500; flex: none; }
+.chip:hover { border-color: rgba(148, 163, 184, .35); }
+.chip.set { color: #fff; border-color: var(--accent-line); background: var(--accent-soft); }
+.chip.add { background: transparent; border-style: dashed; }
+.chip svg { width: 10px; height: 10px; opacity: .7; }
+.chip-sep { width: 1px; height: 20px; background: var(--line); flex: none; margin: 0 2px; }
+.scope-end { display: flex; align-items: center; gap: 10px; flex: none; font-size: 13px; }
+.btn { height: 32px; padding: 0 11px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: #e2e8f0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; flex: none; }
+.btn:hover { border-color: rgba(148, 163, 184, .35); }
+.btn svg { width: 14px; height: 14px; }
+.btn.filters { display: none; }
+.btn.filters.on { color: #fff; border-color: var(--accent-line); background: var(--accent-soft); }
+
+/* ---- popovers and phone sheets ---- */
+.backdrop { position: fixed; inset: 0; z-index: 60; }
+.backdrop.dim { background: rgba(0, 0, 0, .5); }
+.pop { position: fixed; z-index: 61; min-width: 220px; max-width: 320px; max-height: 60vh; overflow: auto; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 16px 36px -10px rgba(0, 0, 0, .7); padding: 6px; }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 61; max-height: 78vh; overflow: auto; background: var(--pop); border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; padding: 6px 12px 18px; }
+.sheet-grip { width: 36px; height: 4px; border-radius: 2px; background: #475569; margin: 4px auto 8px; }
+.sheet-title { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 6px 10px; font-weight: 700; font-size: 15px; }
+.opt { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; padding: 7px 10px; border-radius: 6px; background: none; border: 0; text-align: left; cursor: pointer; color: #e2e8f0; font-size: 13.5px; }
+.opt:hover:not(:disabled) { background: rgba(148, 163, 184, .1); }
+.opt .tick { width: 14px; flex: none; color: var(--accent); font-weight: 700; }
+.opt .box { width: 15px; height: 15px; flex: none; border-radius: 4px; border: 1.5px solid #64748b; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #111827; }
+.opt[aria-checked="true"] .box { background: var(--accent); border-color: var(--accent); }
+.pop-done { display: block; width: 100%; margin-top: 10px; height: 44px; border-radius: 8px; border: 0; background: var(--accent); color: #111827; font-weight: 700; cursor: pointer; }
+.opt:disabled { color: var(--faint); cursor: default; }
+.opt .cnt { margin-left: auto; color: var(--faint); font-size: 12px; }
+.opt img { width: 22px; height: 22px; border-radius: 5px; background: var(--raised); }
+.pop-note { font-size: 12px; color: var(--faint); padding: 6px 10px 4px; border-top: 1px solid var(--line2); margin-top: 4px; }
+.pop-search { width: 100%; height: 34px; border-radius: 7px; border: 1px solid var(--line); background: var(--bg); color: #fff; padding: 0 10px; font: inherit; font-size: 13px; margin-bottom: 4px; }
+.sheet .opt { min-height: 44px; font-size: 15px; }
+.frow { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 0 6px; border: 0; border-bottom: 1px solid var(--line2); background: none; cursor: pointer; font-size: 15px; }
+.frow span:last-child { color: var(--muted); }
+.frow.set span:last-child { color: #fb923c; }
+
+/* ---- page ---- */
+main { padding: 16px 0 64px; }
+.bar-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.count { font-size: 13px; color: var(--muted); }
+.count b { color: #fff; font-weight: 600; }
+.legend { font-size: 12px; color: var(--faint); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.placeholder { padding: 28px 24px; max-width: 720px; }
+.placeholder h2 { margin: 0 0 6px; font-size: 16px; }
+.placeholder p { margin: 0; color: var(--muted); }
+.subtabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.subtab { background: none; border: 0; border-bottom: 2px solid transparent; padding: 6px 0 8px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.subtab[aria-selected="true"] { color: #fff; border-bottom-color: var(--accent); }
+
+/* ---- grid tables ---- */
+.gt { --cols: 1fr; }
+.gh, .gr { display: grid; grid-template-columns: var(--cols); align-items: center; column-gap: 12px; padding: 0 14px; }
+.gh { position: sticky; top: calc(var(--nav) + var(--scope)); z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; min-height: 38px; }
+.gh > * { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); text-align: right; white-space: nowrap; }
+.gh .l { text-align: left; }
+.gh button { all: unset; cursor: pointer; }
+.gh button:hover { color: #e2e8f0; }
+.gh .sorted, .gh .sorted button { color: #fb923c; }
+.gr { min-height: 46px; border-bottom: 1px solid var(--line2); cursor: pointer; text-decoration: none; color: inherit; }
+.gr:last-child { border-bottom: 0; }
+.gr:hover { background: rgba(148, 163, 184, .05); }
+.gr > * { text-align: right; min-width: 0; }
+.gr .l { text-align: left; }
+.rk { color: var(--faint); font-size: 12px; }
+.who { display: flex; align-items: center; gap: 10px; }
+.pt { width: 34px; height: 34px; border-radius: 8px; background: var(--raised); flex: none; display: block; }
+.nm { font-weight: 600; color: #f8fafc; line-height: 1.2; }
+.nm a { text-decoration: none; } .nm a:hover { text-decoration: underline; }
+.sub { font-size: 12px; color: var(--muted); line-height: 1.3; }
+.v { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.v .n { font-variant-numeric: tabular-nums; }
+.track { width: 52px; height: 3px; border-radius: 2px; background: var(--track); overflow: hidden; display: block; }
+.track i { display: block; height: 100%; background: var(--fill); border-radius: 2px; }
+.prov .track i { filter: saturate(.45); opacity: .62; }
+.plate svg { display: block; margin-left: auto; }
+.score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; border: 1px solid; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pill.prov { filter: saturate(.45); opacity: .62; }
+.pill-z { animation: z-breathe 3.6s ease-in-out infinite; }
+@keyframes z-breathe { 0%, 100% { box-shadow: 0 0 4px rgba(224, 40, 74, .35); } 50% { box-shadow: 0 0 14px rgba(224, 40, 74, .75), 0 0 2px rgba(224, 40, 74, .9); } }
+@media (prefers-reduced-motion: reduce) { .pill-z { animation: none; } }
+.phone-cols { display: none; }
+
+/* ---- tier list ---- */
+.tl-row { display: grid; grid-template-columns: 128px 1fr; border-bottom: 1px solid var(--line2); }
+.tl-row:last-child { border-bottom: 0; }
+.tl-head { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 14px 8px; border-right: 1px solid var(--line2); }
+.tl-head .lbl { font-size: 12px; font-weight: 600; color: #cbd5e1; }
+.tl-head .c { font-size: 11px; color: var(--faint); }
+.tiles { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; align-content: flex-start; }
+.tile { width: 78px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 5px 2px; border-radius: 8px; text-decoration: none; color: inherit; }
+.tile:hover { background: rgba(148, 163, 184, .08); }
+.tile img { width: 54px; height: 54px; border-radius: 10px; background: var(--raised); display: block; }
+.tile span { font-size: 11px; line-height: 1.2; text-align: center; color: #cbd5e1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tile.prov img { filter: saturate(.45); opacity: .5; }
+.tile.prov span { color: var(--faint); }
+
+/* ---- builds ---- */
+.builds { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.builds.with-side { grid-template-columns: minmax(0, 1fr) 330px; }
+.side { position: sticky; top: calc(var(--nav) + var(--scope) + 16px); padding: 16px; }
+.gr.sel { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+.bp { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; border: 1px solid; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+.comp { display: flex; height: 6px; border-radius: 3px; overflow: hidden; gap: 2px; background: var(--track); width: 100%; max-width: 150px; }
+.comp i { display: block; height: 100%; }
+.bline { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bline .bp { flex: none; }
+.bline .comp { flex: 1 1 auto; min-width: 40px; max-width: 120px; }
+.ai { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.caps { list-style: none; margin: 0; padding: 0; }
+.caps li { display: grid; grid-template-columns: 8px 1fr auto; gap: 8px; align-items: center; padding: 3px 0; font-size: 13px; color: #e5e7eb; border-top: 1px solid var(--line2); text-align: left; }
+.caps li:first-child { border-top: 0; }
+.caps li i { width: 8px; height: 8px; border-radius: 2px; display: block; }
+.caps li em { font-style: normal; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.caps li.ailine { grid-template-columns: auto 1fr; margin-top: 2px; border-top-color: var(--line); color: #cbd5e1; }
+.aitag { font-size: 10px; font-weight: 700; letter-spacing: .05em; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+.caps.tight { max-width: 300px; }
+.caps.tight li { padding: 1px 0; font-size: 12.5px; border-top: 0; }
+.caps.tight li.ailine { border-top: 1px solid var(--line2); margin-top: 3px; padding-top: 3px; }
+.gr.b-row { align-items: start; padding-top: 10px; padding-bottom: 10px; cursor: default; }
+.gr.b-row:hover { background: none; }
+.gr.b-row > .r { padding-top: 2px; }
+.exp { padding: 4px 14px 14px 58px; border-bottom: 1px solid var(--line2); }
+.side-head { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+.side-head .pt { width: 48px; height: 48px; border-radius: 10px; }
+.side-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 0 12px; border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); margin-bottom: 12px; }
+.side-stats div { display: flex; flex-direction: column; gap: 2px; }
+.side-stats span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.side-stats b { font-size: 15px; font-variant-numeric: tabular-nums; }
+.kick { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 6px; }
+.open-link { display: inline-block; margin-top: 12px; font-size: 13px; color: #fb923c; text-decoration: none; font-weight: 600; }
+.open-link:hover { text-decoration: underline; }
+.more { display: block; width: 100%; padding: 12px; border: 0; border-top: 1px solid var(--line); background: none; color: #fb923c; font-weight: 600; cursor: pointer; border-radius: 0 0 10px 10px; }
+.more:hover { background: rgba(249, 115, 22, .06); }
+.empty { padding: 28px; text-align: center; color: var(--muted); }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #0b1220; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #e2e8f0; z-index: 70; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .7); opacity: 0; pointer-events: none; transition: opacity .2s; max-width: calc(100vw - 32px); }
+.toast.on { opacity: 1; }
+.demo-foot { margin-top: 28px; font-size: 12px; color: var(--faint); }
+
+/* ---- phone ---- */
+@media (max-width: 639px) {
+  .wrap { padding: 0 16px; }
+  .nav-links { display: none; } .nav-burger { display: block; } .nav-title { display: none; }
+  .tabs-right { display: none; }
+  .btn.filters { display: inline-flex; }
+  .scope-end .cnt-txt, .scope-end .xl { display: none; }
+  .chip { height: 30px; font-size: 12.5px; padding: 0 8px 0 10px; }
+  .gh, .gr { padding: 0 10px; column-gap: 8px; }
+  .desk { display: none !important; }
+  .phone-cols { display: flex; }
+  .nm { font-size: 13px; }
+  /* tier rows stack: the plate becomes a strip, and the portraits get the full width, five across */
+  .tl-row { grid-template-columns: 1fr; }
+  .tl-head { flex-direction: row; justify-content: flex-start; gap: 8px; padding: 10px 12px 0; border-right: 0; }
+  .tiles { padding: 6px 4px 10px; gap: 2px; }
+  .tile { width: calc((100% - 8px) / 5); } .tile img { width: 50px; height: 50px; border-radius: 9px; } .tile span { font-size: 10.5px; }
+  .who .comp { width: 120px; flex: none; }
+  .exp { padding: 4px 10px 12px 10px; }
+  main { padding-top: 12px; }
+}
+@media (min-width: 640px) { .phone { display: none !important; } }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-accent"></div>
+  <div class="nav-inner">
+    <div class="nav-brand"><img id="logo" alt="DBSZL"><span class="nav-div"></span><span class="nav-title">Battle Result Analyzer</span></div>
+    <nav class="nav-links"><span>Home</span><span class="on">Analyzer</span><span>Match Builder</span><span>Calculator</span></nav>
+    <span class="nav-burger" aria-hidden="true"></span>
+  </div>
+</header>
+<div id="app"></div>
+<div id="layer"></div>
+<div class="toast" id="toast"></div>
+<script>
+const DATA = /*DATA*/null;
+const PORTRAITS = /*PORTRAITS*/null;
+
+// ---------------------------------------------------------------- constants --
+const PROD = 'https://dragonballzleague.github.io/SparkingZero/analyzer/characters/';
+const PAGES = [['home', 'Home'], ['characters', 'Characters'], ['teams', 'Teams'], ['matches', 'Matches'], ['meta', 'Meta'], ['sandbox', 'Sandbox']];
+const SEASONS = [['0', 'Season 0'], ['1', 'Season 1']];
+const TYPES = [['Season', 'Season matches'], ['Test', 'Tests'], ['Event', 'Events']];
+const POS = [['1', 'Starter'], ['2', 'Middle'], ['3', 'Anchor']];
+const FLOORS = [1, 2, 3, 5, 10];
+const CAP_COL = { melee: '#f87171', blast: '#fb923c', 'ki blast': '#facc15', skill: '#c084fc', defense: '#60a5fa', 'ki efficiency': '#4ade80', utility: '#9ca3af' };
+const capCol = t => CAP_COL[t] || '#94a3b8';
+const fmtInt = v => Math.round(v).toLocaleString('en-US');
+// Win % comes last on purpose: for one character it mostly reflects the team
+// around it, so it is never a lead or default column. It leads on team views.
+const STATS = [
+  { k: 'n', label: 'Matches', short: 'Games', fmt: v => v, dir: 0 },
+  { k: 'dmg', label: 'Avg damage', short: 'Dmg', fmt: fmtInt, dir: 1 },
+  { k: 'dps', label: 'Dmg / sec', short: 'DPS', fmt: fmtInt, dir: 1 },
+  { k: 'eff', label: 'Efficiency', short: 'Eff', fmt: v => v.toFixed(2) + '×', dir: 1 },
+  { k: 'sv', label: 'Survival', short: 'Surv', fmt: v => Math.round(v) + '%', dir: 1 },
+  { k: 'tk', label: 'Avg taken', short: 'Taken', fmt: fmtInt, dir: -1 },
+  { k: 'bt', label: 'Battle time', short: 'Time', fmt: v => Math.floor(v / 60) + ':' + String(v % 60).padStart(2, '0'), dir: 0 },
+  { k: 'w', label: 'Win %', short: 'Win', fmt: v => Math.round(v) + '%', dir: 1 },
+];
+const PLACEHOLDERS = {
+  home: ['Home', 'The current-season tier list first, then six curated top-5 boards (Top Damage, Best Survivor, Best Starter, Best Anchor, Best Combo, Most Efficient), then the latest week’s results. Not built in this demo: the tier list is under Characters → Tier list.'],
+  teams: ['Teams', '13 rows: logo, name, record in this scope, win rate, damage, efficiency, HP kept, characters used. A row opens the Team page (Roster · Lineups · Matches). Not built in this demo.'],
+  matches: ['Matches', 'One row per match: name, both teams, winner, size, map, difficulty and each side’s portraits, filtered by the scope bar. Not built in this demo.'],
+  sandbox: ['Sandbox', 'Drop battle-result files here, then see them as Match, Characters, Teams and Meta, labelled as your uploads. Not built in this demo.'],
+  ai: ['AI strategies', 'The existing AI strategy table, flattened. Not rebuilt in this demo.'],
+  capsules: ['Capsules', 'The existing capsule table. Not rebuilt in this demo.'],
+};
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const caret = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+const dlIcon = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0-3-3m3 3 3-3M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const filtIcon = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M4.5 8h7M7 12h2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const isPhone = () => window.matchMedia('(max-width: 639px)').matches;
+const isWide = () => window.matchMedia('(min-width: 1180px)').matches;
+
+// -------------------------------------------------------------------- state --
+// Multi-select chips hold arrays of string values; an empty array means "all".
+const S = {
+  page: 'characters', view: 'table', season: ['0'], type: ['Season'], pos: [],
+  sort: 's', dir: -1, phoneStats: ['dmg', 'eff'],
+  meta: 'builds', group: 'all', floor: 5, bChar: [], bAi: [], bCap: [],
+  bSort: 's', bDir: -1, shown: 25, sel: null, exp: null,
+};
+const LISTS = ['season', 'type', 'pos'];
+const HASH_KEYS = ['page', 'view', 'season', 'type', 'pos', 'sort', 'dir', 'meta', 'group', 'floor'];
+function readHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  for (const k of HASH_KEYS) {
+    if (!p.has(k)) continue;
+    const v = p.get(k);
+    S[k] = LISTS.includes(k) ? (v === 'all' ? [] : v.split(/[+ ]/)) : (k === 'floor' || k === 'dir' ? Number(v) : v);
+  }
+}
+function writeHash() {
+  const p = new URLSearchParams();
+  for (const k of HASH_KEYS) p.set(k, LISTS.includes(k) ? (S[k].length ? S[k].join('+') : 'all') : S[k]);
+  history.replaceState(null, '', '#' + p.toString().replace(/%2B/g, '+'));
+}
+let open = null;          // { id } - the chip whose options are showing, or 'sheet'
+let popFilter = '';       // search text inside a searchable popover
+
+// --------------------------------------------------------------------- data --
+// A key lists the chosen values in their canonical order, or 'all' for none or every one.
+const keyOf = (sel, values) => (!sel.length || sel.length === values.length ? 'all' : values.filter(v => sel.includes(v)).join('+'));
+const SEASON_VALUES = SEASONS.map(x => x[0]), TYPE_VALUES = TYPES.map(x => x[0]), POS_VALUES = POS.map(x => x[0]);
+function scopeFor(seasons, types) {
+  const id = `${keyOf(seasons, SEASON_VALUES)}-${keyOf(types, TYPE_VALUES)}`;
+  const real = DATA.aliases[id] || id;
+  return DATA.scopes.find(x => x.id === real) || null;
+}
+const scope = () => scopeFor(S.season, S.type) || DATA.scopes.find(x => x.id === DATA.defaultScope);
+const posRows = () => scope().chars[keyOf(S.pos, POS_VALUES)] || [];
+const ch = i => DATA.chars[i];
+const portrait = i => PORTRAITS[ch(i).id] || '';
+const charUrl = (i, code) => PROD + encodeURIComponent(ch(i).slug) + (code ? '?build=' + code : '');
+const plate = (t, size, prov) => `<span class="plate" title="${esc(t + ' tier: ' + DATA.tierLabels[t] + (prov ? ' (fewer than 5 matches)' : ''))}">${DATA.plates[`${t}-${size}-${prov ? 'p' : 'f'}`]}</span>`;
+function pill(t, text, prov) {
+  const c = DATA.pills[t];
+  return `<span class="pill ${t === 'Z' ? 'pill-z' : ''} ${prov ? 'prov' : ''}" style="background:${c.background};color:${c.color};border-color:${c.borderColor}">${text}</span>`;
+}
+function labelCol(l) {
+  l = String(l || '').toLowerCase();
+  if (l.includes('melee')) return CAP_COL.melee;
+  if (l.includes('ki blast')) return CAP_COL['ki blast'];
+  if (l.includes('blast')) return CAP_COL.blast;
+  if (l.includes('defense')) return CAP_COL.defense;
+  if (l.includes('skill')) return CAP_COL.skill;
+  if (l.includes('ki efficiency')) return CAP_COL['ki efficiency'];
+  if (l.includes('balanced') || l.includes('hybrid')) return CAP_COL.skill;
+  return CAP_COL.utility;
+}
+const tint = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+const buildPill = l => { const c = labelCol(l); return `<span class="bp" style="color:${c};border-color:${c}66;background:${c}14">${esc(l)}</span>`; };
+
+// ------------------------------------------------------------- scope chips --
+// A chip is single-select (floor) or multi-select (everything else). Multi means
+// OR within the chip (Season matches or Events; Starter or Middle), except
+// capsules, where a build must contain every chosen capsule.
+function chipLabel(c) {
+  if (!c.multi) return c.set ? c.valueLabel : c.name;
+  if (!c.sel.length) return c.name;
+  if (c.fmtSel) return c.fmtSel(c.sel);
+  const ls = c.sel.map(v => (c.options.find(o => String(o.v) === String(v)) || { l: v }).l);
+  const joined = ls.join(', ');
+  return joined.length <= 26 ? joined : `${ls[0]} +${ls.length - 1}`;
+}
+function chipDefs() {
+  const sc = scope();
+  const defs = [
+    { id: 'season', name: 'Season', multi: true, sel: S.season, all: 'All seasons',
+      options: SEASONS.map(([v, l]) => { const s = scopeFor([v], S.type); return { v, l, cnt: s ? s.matches : 0, dis: !s }; }) },
+    { id: 'type', name: 'Match type', multi: true, sel: S.type, all: 'All match types',
+      options: TYPES.map(([v, l]) => { const s = scopeFor(S.season, [v]); return { v, l, cnt: s ? s.matches : 0, dis: !s }; }) },
+    { id: 'diff', name: 'Difficulty', multi: true, sel: [], all: 'Any difficulty', note: 'Not wired in this demo.',
+      options: [{ v: 'u', l: 'Ultra', dis: 1 }, { v: 's', l: 'Strong', dis: 1 }] },
+    { id: 'team', name: 'Team', multi: true, sel: [], all: 'All teams', note: 'Not wired in this demo. Names will come from the shared team list.',
+      options: sc.teams.map(t => ({ v: t, l: t, dis: 1 })) },
+  ];
+  const page = [];
+  if (S.page === 'characters') {
+    page.push({ id: 'pos', name: 'Position', multi: true, sel: S.pos, all: 'All positions',
+      note: 'Several positions pool those matches together.',
+      options: POS.map(([v, l]) => ({ v, l, cnt: (sc.chars[v] || []).length + ' chars' })) });
+  }
+  if (S.page === 'meta' && S.meta === 'builds') {
+    const inFloor = sc.builds.filter(b => b.u >= S.floor);
+    page.push({ id: 'floor', name: 'Uses', multi: false, set: S.floor > 1, cur: String(S.floor), valueLabel: `Used ${S.floor}+ times`,
+      options: FLOORS.map(f => ({ v: String(f), l: f > 1 ? `Used ${f}+ times` : 'Any number of uses', cnt: sc.builds.filter(b => b.u >= f).length + ' builds' })) });
+    const charsIn = [...new Set(inFloor.map(b => b.c))].sort((a, b) => ch(a).name.localeCompare(ch(b).name));
+    page.push({ id: 'bChar', name: 'Character', multi: true, sel: S.bChar, all: 'Any character', search: true,
+      options: charsIn.map(c => ({ v: String(c), l: ch(c).name, img: portrait(c) })) });
+    const aisIn = [...new Set(inFloor.map(b => b.a))].sort((a, b) => DATA.ais[a].localeCompare(DATA.ais[b]));
+    page.push({ id: 'bAi', name: 'AI strategy', multi: true, sel: S.bAi, all: 'Any AI strategy',
+      options: aisIn.map(a => ({ v: String(a), l: DATA.ais[a] })) });
+    const capsIn = [...new Set(inFloor.flatMap(b => b.x.map(i => DATA.caps[i].n)))].sort();
+    page.push({ id: 'bCap', name: 'Capsule', multi: true, sel: S.bCap, all: 'Any capsules', search: true,
+      note: 'Shows builds that contain every capsule you pick.',
+      fmtSel: sel => (sel.length === 1 ? 'With ' + sel[0] : `With ${sel.length} capsules`),
+      options: capsIn.map(n => ({ v: n, l: n })) });
+  }
+  for (const c of [...defs, ...page]) if (c.multi) c.set = c.sel.length > 0;
+  return { defs, page };
+}
+const allChips = () => { const { defs, page } = chipDefs(); return [...defs, ...page]; };
+
+// Toggle a value in a multi-select chip. Picking every value is the same as
+// picking none (all), so it collapses back to "all".
+function toggle(list, v, values) {
+  const next = list.includes(v) ? list.filter(x => x !== v) : [...list, v];
+  return values && next.length === values.length ? [] : next;
+}
+function pickOption(id, v) {
+  if (id === 'floor') S.floor = Number(v);
+  else if (id === 'season') S.season = v === '' ? [] : toggle(S.season, v, SEASON_VALUES);
+  else if (id === 'type') S.type = v === '' ? [] : toggle(S.type, v, TYPE_VALUES);
+  else if (id === 'pos') S.pos = v === '' ? [] : toggle(S.pos, v, POS_VALUES);
+  else if (id === 'bChar') S.bChar = v === '' ? [] : toggle(S.bChar, v);
+  else if (id === 'bAi') S.bAi = v === '' ? [] : toggle(S.bAi, v);
+  else if (id === 'bCap') S.bCap = v === '' ? [] : toggle(S.bCap, v);
+  S.shown = 25; S.sel = null; S.exp = null;
+}
+
+// ------------------------------------------------------------------- render --
+// The tab row holds only the site's sections. A switch that changes just the
+// current page lives in that page's own control row, below the scope bar.
+function renderTabs() {
+  return `<div class="wrap"><div class="tabs">
+    <div class="tablist" role="tablist">${PAGES.map(([id, l]) => `<button class="tab" role="tab" data-act="page" data-v="${id}" aria-selected="${S.page === id}">${l}</button>`).join('')}</div>
+    </div></div>`;
+}
+
+function chipHtml(c) {
+  return `<button class="chip ${c.set ? 'set' : ''}" data-act="chip" data-v="${c.id}" aria-haspopup="true" aria-expanded="${!!(open && open.id === c.id)}">${esc(chipLabel(c))}${caret}</button>`;
+}
+function renderScope() {
+  const { defs, page } = chipDefs();
+  const n = [...defs, ...page].filter(c => c.set).length;
+  const sc = scope();
+  return `<div class="scope"><div class="wrap">
+    <button class="btn filters ${n ? 'on' : ''}" data-act="sheet">${filtIcon}Filters${n ? ` (${n})` : ''}</button>
+    <div class="chips">${defs.map(chipHtml).join('')}${page.length ? '<span class="chip-sep"></span>' + page.map(chipHtml).join('') : ''}
+      <button class="chip add" data-act="chip" data-v="add">+ Filter</button></div>
+    <div class="scope-end"><span class="cnt-txt muted num">${sc.matches.toLocaleString('en-US')} matches</span>
+      <button class="btn xl" data-act="excel" title="Download all data for this scope (.xlsx)">${dlIcon}Excel</button></div>
+  </div></div>`;
+}
+
+// Where a value sits in the column, as the share of rows it beats (0..1), in the
+// "better" direction. Ranks are only coloured at the ends.
+function placeFn(rows, st) {
+  if (!st.dir) return () => null;
+  const vals = rows.map(r => r[st.k]).sort((a, b) => a - b);
+  const n = vals.length;
+  return v => {
+    if (n < 5) return null;
+    let lo = 0; while (lo < n && vals[lo] < v) lo++;
+    let hi = lo; while (hi < n && vals[hi] === v) hi++;
+    const p = ((lo + hi - 1) / 2) / (n - 1);
+    return st.dir > 0 ? p : 1 - p;
+  };
+}
+function cellVal(r, st, place, max) {
+  const p = place(r[st.k]);
+  const col = p === null ? null : p >= 0.8 ? 'var(--good)' : p < 0.2 ? 'var(--bad)' : null;
+  const w = max > 0 ? Math.max(2, Math.round((r[st.k] / max) * 100)) : 0;
+  return `<span class="v"><span class="n">${st.fmt(r[st.k])}</span><span class="track"><i style="width:${w}%;${col ? 'background:' + col : ''}"></i></span></span>`;
+}
+
+function charRows() {
+  const rows = [...posRows()];
+  const k = S.sort, d = S.dir;
+  rows.sort((a, b) => k === 'name' ? d * ch(a.c).name.localeCompare(ch(b.c).name) : d * (a[k] - b[k]) || b.s - a.s);
+  return rows;
+}
+function sortHead(key, label, cls = '') {
+  const on = S.sort === key;
+  return `<div class="${cls} ${on ? 'sorted' : ''}"><button data-act="sort" data-v="${key}">${label}${on ? (S.dir < 0 ? ' ↓' : ' ↑') : ''}</button></div>`;
+}
+function renderCharTable() {
+  const rows = charRows();
+  if (!rows.length) return `<div class="panel empty">No characters in this scope.</div>`;
+  const all = posRows();
+  const places = Object.fromEntries(STATS.map(st => [st.k, placeFn(all, st)]));
+  const maxes = Object.fromEntries(STATS.map(st => [st.k, Math.max(...all.map(r => r[st.k]))]));
+  const phone = isPhone();
+  // The score is a tier-coloured pill everywhere. A desktop also has room for
+  // the plate, which carries the tier letter; a phone drops the plate column.
+  const cols = phone
+    ? `minmax(0,1fr) 52px 54px 58px`
+    : `28px minmax(230px,2.2fr) 40px 66px repeat(${STATS.length}, minmax(64px,1fr))`;
+  const shown = phone ? S.phoneStats.map(k => STATS.find(s => s.k === k)) : STATS;
+  const nameHead = phone ? `${rows.length} characters` : 'Character';
+  const head = phone
+    ? `<div class="gh" style="--cols:${cols}">${sortHead('name', nameHead, 'l')}${sortHead('s', 'Score')}${shown.map(st => sortHead(st.k, st.short)).join('')}</div>`
+    : `<div class="gh" style="--cols:${cols}"><div>#</div>${sortHead('name', nameHead, 'l')}<div title="Faded plate = fewer than 5 matches">Tier</div>${sortHead('s', 'Score')}${shown.map(st => sortHead(st.k, st.label)).join('')}</div>`;
+  const body = rows.map((r, i) => `<a class="gr ${r.p ? 'prov' : ''}" style="--cols:${cols}" href="${charUrl(r.c)}" target="_blank" rel="noopener">
+      ${phone ? '' : `<div class="rk num">${i + 1}</div>`}
+      <div class="l who"><img class="pt" src="${portrait(r.c)}" alt=""><span class="nm">${esc(ch(r.c).name)}</span></div>
+      ${phone ? '' : `<div>${plate(r.t, 'small', r.p)}</div>`}
+      <div>${pill(r.t, r.s.toFixed(1), r.p)}</div>
+      ${shown.map(st => `<div>${cellVal(r, st, places[st.k], maxes[st.k])}</div>`).join('')}
+    </a>`).join('');
+  return `<div class="panel gt">${head}${body}</div>`;
+}
+
+function renderTierList() {
+  const rows = [...posRows()].sort((a, b) => b.s - a.s);
+  if (!rows.length) return `<div class="panel empty">No characters in this scope.</div>`;
+  const phone = isPhone();
+  // Each tier row is tinted in its own colour: the pill's ring colour, which is
+  // crimson for Z (its plate is blue, like B's), then purple, gold, blue, grey.
+  return `<div class="panel" style="overflow:hidden">${DATA.tiers.map(t => {
+    const inT = rows.filter(r => r.t === t);
+    const c = DATA.pills[t].borderColor;
+    return `<div class="tl-row" style="background:${tint(c, .05)}">
+      <div class="tl-head" style="background:${tint(c, .13)}">${plate(t, phone ? 'small' : 'large', false)}<span class="lbl">${DATA.tierLabels[t]}</span><span class="c num">${inT.length}</span></div>
+      <div class="tiles">${inT.map(r => `<a class="tile ${r.p ? 'prov' : ''}" href="${charUrl(r.c)}" target="_blank" rel="noopener" title="${esc(ch(r.c).name)}: score ${r.s.toFixed(1)}, ${r.n} matches">
+        <img src="${portrait(r.c)}" alt=""><span>${esc(ch(r.c).name)}</span></a>`).join('') || '<span class="faint" style="padding:8px;font-size:12px">None</span>'}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderCharacters() {
+  const rows = posRows();
+  const provN = rows.filter(r => r.p).length;
+  // The page's own control row: the view switch on the left; the count on the
+  // right, which a phone's table swaps for its two column pickers (its header
+  // carries the count instead).
+  const phoneTable = S.view === 'table';
+  const pageRow = `<div class="bar-row">
+      <div class="seg" role="group" aria-label="View"><button data-act="view" data-v="table" aria-pressed="${S.view === 'table'}">Table</button><button data-act="view" data-v="tiers" aria-pressed="${S.view === 'tiers'}">Tier list</button></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="count ${phoneTable ? 'desk' : ''}"><b>${rows.length}</b> characters</span>
+        ${phoneTable ? `<div class="phone" style="display:flex;gap:6px">${S.phoneStats.map((k, i) => `<button class="chip" data-act="chip" data-v="pcol${i}">${STATS.find(s => s.k === k).short}${caret}</button>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  const foot = `<div class="legend" style="margin-top:10px">${S.view === 'tiers' ? 'Fixed score tiers from the last 2 seasons. ' : ''}Faded = fewer than 5 matches${provN ? ` (${provN} here)` : ''}.</div>`;
+  return pageRow + (S.view === 'tiers' ? renderTierList() : renderCharTable()) + foot;
+}
+
+// ------------------------------------------------------------------- builds --
+function capsOf(b) {
+  const caps = b.x.map(i => DATA.caps[i]);
+  const byType = {};
+  for (const c of caps) byType[c.t] = (byType[c.t] || 0) + c.c;
+  const order = Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([t]) => t);
+  caps.sort((a, b) => order.indexOf(a.t) - order.indexOf(b.t) || b.c - a.c || a.n.localeCompare(b.n));
+  return { caps, byType, order };
+}
+const compBar = b => { const { byType, order } = capsOf(b); return `<span class="comp" title="${order.map(t => `${t} ${byType[t]}`).join(', ')}">${order.map(t => `<i style="flex:${byType[t]};background:${capCol(t)}"></i>`).join('')}</span>`; };
+function capsList(b) {
+  const { caps } = capsOf(b);
+  return `<ul class="caps">${caps.map(c => `<li${S.bCap.includes(c.n) ? ' style="color:#fff;font-weight:600"' : ''}><i style="background:${capCol(c.t)}"></i><span>${esc(c.n)}</span><em>${c.c}</em></li>`).join('')}
+    <li class="ailine"><span class="aitag">AI</span><span>${esc(DATA.ais[b.a])}</span></li></ul>`;
+}
+function buildRows() {
+  const sc = scope();
+  let rows = sc.builds.map((b, id) => ({ ...b, id })).filter(b => b.u >= S.floor);
+  if (S.bChar.length) rows = rows.filter(b => S.bChar.includes(String(b.c)));
+  if (S.bAi.length) rows = rows.filter(b => S.bAi.includes(String(b.a)));
+  if (S.bCap.length) rows = rows.filter(b => S.bCap.every(n => b.x.some(i => DATA.caps[i].n === n)));
+  if (S.group === 'best') {
+    const best = new Map();
+    for (const b of rows) { const cur = best.get(b.c); if (!cur || (b.s ?? -1) > (cur.s ?? -1)) best.set(b.c, b); }
+    rows = [...best.values()];
+  }
+  const k = S.bSort, d = S.bDir;
+  rows.sort((a, b) => d * ((a[k] ?? -1) - (b[k] ?? -1)) || b.u - a.u || (b.s ?? 0) - (a.s ?? 0));
+  return rows;
+}
+function bSortHead(key, label, cls = '') {
+  const on = S.bSort === key;
+  return `<div class="${cls} ${on ? 'sorted' : ''}"><button data-act="bsort" data-v="${key}">${label}${on ? (S.bDir < 0 ? ' ↓' : ' ↑') : ''}</button></div>`;
+}
+const scoreCell = b => b.s == null ? '<span class="faint">–</span>' : pill(b.t, b.s.toFixed(1), b.p);
+function sidePanel(b) {
+  if (!b) return `<div class="panel side empty">Select a build</div>`;
+  const { byType } = capsOf(b);
+  const cost = Object.values(byType).reduce((a, x) => a + x, 0);
+  return `<div class="panel side">
+    <div class="side-head"><img class="pt" src="${portrait(b.c)}" alt=""><div><div class="nm" style="font-size:15px">${esc(ch(b.c).name)}</div><div style="margin-top:4px">${buildPill(b.l)}</div></div></div>
+    <div class="side-stats" style="grid-template-columns:repeat(4,1fr)"><div><span>Uses</span><b>${b.u}</b></div><div><span>Avg dmg</span><b>${fmtInt(b.dmg)}</b></div><div><span>Eff</span><b>${b.eff.toFixed(2)}×</b></div><div><span>Score</span><b>${b.s == null ? '–' : b.s.toFixed(1)}</b></div></div>
+    <div class="kick"><span>Capsules</span><span class="num">${cost} cost</span></div>
+    <div style="margin-bottom:8px">${compBar(b)}</div>
+    ${capsList(b)}
+    <a class="open-link" href="${charUrl(b.c, b.code)}" target="_blank" rel="noopener">Open on ${esc(ch(b.c).name)}’s page ↗</a>
+  </div>`;
+}
+function renderBuilds(rows, list) {
+  const phone = isPhone(), wide = isWide();
+  const cols = phone ? `minmax(0,1fr) 40px 50px 56px` : `28px minmax(150px,1fr) minmax(210px,1.6fr) 44px 70px 52px 66px 48px`;
+  const head = phone
+    ? `<div class="gh" style="--cols:${cols}"><div class="l">Build</div>${bSortHead('u', 'Uses')}${bSortHead('eff', 'Eff')}${bSortHead('s', 'Score')}</div>`
+    : `<div class="gh" style="--cols:${cols}"><div>#</div><div class="l">Character</div><div class="l">Build</div>${bSortHead('u', 'Uses')}${bSortHead('dmg', 'Avg dmg')}${bSortHead('eff', 'Eff')}${bSortHead('s', 'Score')}${bSortHead('w', 'Win %')}</div>`;
+  const sel = wide ? (list.find(b => b.id === S.sel) || list[0]) : null;
+  const body = list.map((b, i) => {
+    const row = phone
+      ? `<div class="gr" style="--cols:${cols}" data-act="pick" data-v="${b.id}">
+          <div class="l who"><img class="pt" src="${portrait(b.c)}" alt=""><div style="min-width:0"><div class="nm">${esc(ch(b.c).name)}</div><div class="bline" style="margin-top:3px">${compBar(b)}</div></div></div>
+          <div class="num">${b.u}</div><div class="num">${b.eff.toFixed(2)}×</div><div>${scoreCell(b)}</div></div>`
+      : `<div class="gr ${sel && sel.id === b.id ? 'sel' : ''}" style="--cols:${cols}" data-act="pick" data-v="${b.id}">
+          <div class="rk num">${i + 1}</div>
+          <div class="l who"><img class="pt" src="${portrait(b.c)}" alt=""><span class="nm">${esc(ch(b.c).name)}</span></div>
+          <div class="l" style="min-width:0"><div class="bline">${buildPill(b.l)}${compBar(b)}</div><div class="ai" style="margin-top:3px">${esc(DATA.ais[b.a])}</div></div>
+          <div class="num">${b.u}</div><div class="num">${fmtInt(b.dmg)}</div><div class="num">${b.eff.toFixed(2)}×</div><div>${scoreCell(b)}</div><div class="num muted">${Math.round(b.w)}%</div></div>`;
+    const exp = !wide && S.exp === b.id
+      ? `<div class="exp">${phone ? `<div style="margin:2px 0 8px">${buildPill(b.l)}</div>` : ''}${capsList(b)}<a class="open-link" href="${charUrl(b.c, b.code)}" target="_blank" rel="noopener">Open on ${esc(ch(b.c).name)}’s page ↗</a></div>` : '';
+    return row + exp;
+  }).join('');
+  const more = rows.length > list.length ? `<button class="more" data-act="more">Show more (${rows.length - list.length})</button>` : '';
+  const table = `<div class="panel gt">${head}${body || '<div class="empty">No builds match.</div>'}${more}</div>`;
+  return wide ? `<div class="builds with-side">${table}${sidePanel(sel)}</div>` : table;
+}
+function renderMeta() {
+  const tabs = `<div style="display:flex;gap:18px">${[['builds', 'Builds'], ['ai', 'AI strategies'], ['capsules', 'Capsules']].map(([id, l]) =>
+    `<button class="subtab" role="tab" data-act="meta" data-v="${id}" aria-selected="${S.meta === id}">${l}</button>`).join('')}</div>`;
+  if (S.meta !== 'builds') return `<div class="subtabs" role="tablist">${tabs}</div>` + placeholder(S.meta);
+  const rows = buildRows();
+  const list = rows.slice(0, S.shown);
+  const count = `<span class="count"><b>${rows.length}</b> ${S.group === 'best' ? 'characters, best build each' : 'builds'}</span>`;
+  const group = `<div class="seg" role="group" aria-label="Group"><button data-act="group" data-v="best" aria-pressed="${S.group === 'best'}">Best per character</button><button data-act="group" data-v="all" aria-pressed="${S.group === 'all'}">All builds</button></div>`;
+  // Desktop: the sub-tabs, count and switch share one row. Phone: they stack.
+  const head = `<div class="subtabs" role="tablist" style="justify-content:space-between;align-items:center;gap:12px">${tabs}
+      <div class="desk" style="display:flex;align-items:center;gap:14px;padding-bottom:6px">${count}${group}</div></div>
+    <div class="bar-row phone">${count}${group}</div>`;
+  return head + renderBuilds(rows, list);
+}
+
+function placeholder(id) {
+  const [t, p] = PLACEHOLDERS[id];
+  return `<div class="panel placeholder"><h2>${t}</h2><p>${p}</p></div>`;
+}
+function render() {
+  const main = S.page === 'characters' ? renderCharacters() : S.page === 'meta' ? renderMeta() : placeholder(S.page);
+  document.getElementById('app').innerHTML = renderTabs() + renderScope() +
+    `<main><div class="wrap">${main}<div class="demo-foot">Design demo on real data (${esc(DATA.generated.slice(0, 10))}). Numbers come from the analyzer’s own aggregation; rows open the live Character page.</div></div></main>`;
+  renderLayer();
+  writeHash();
+}
+
+// ---------------------------------------------------------- popovers/sheets --
+function optionsHtml(c) {
+  const q = popFilter.trim().toLowerCase();
+  let opts = c.search && q ? c.options.filter(o => o.l.toLowerCase().includes(q)) : c.options;
+  const mark = on => (c.multi ? `<span class="box">${on ? '✓' : ''}</span>` : `<span class="tick">${on ? '✓' : ''}</span>`);
+  const isOn = o => (c.multi ? c.sel.includes(String(o.v)) : String(c.cur) === String(o.v));
+  // In a long searchable list the picked values rise to the top, so they stay in view.
+  if (c.multi && c.search) opts = [...opts.filter(isOn), ...opts.filter(o => !isOn(o))];
+  // A multi-select list starts with its "all" row, which clears the chip.
+  const allRow = c.multi && !q ? `<button class="opt" role="menuitemcheckbox" aria-checked="${!c.sel.length}" data-act="opt" data-chip="${c.id}" data-v="">
+      <span class="tick">${!c.sel.length ? '✓' : ''}</span><span>${esc(c.all)}</span></button>` : '';
+  return allRow + opts.map(o => `<button class="opt" role="${c.multi ? 'menuitemcheckbox' : 'menuitemradio'}" aria-checked="${isOn(o)}" ${o.dis ? 'disabled' : ''} data-act="opt" data-chip="${c.id}" data-v="${esc(o.v)}">
+      ${mark(isOn(o))}${o.img ? `<img src="${o.img}" alt="">` : ''}<span>${esc(o.l)}</span>${o.cnt !== undefined ? `<span class="cnt num">${o.cnt}</span>` : ''}</button>`).join('')
+    + (c.note ? `<div class="pop-note">${esc(c.note)}</div>` : '');
+}
+function chipById(id) {
+  if (id === 'add') return { id, name: 'Add a filter', multi: false, cur: '', note: 'Not wired in this demo. Page filters (map, AI strategy, team role) would be added here and join the bar as chips.',
+    options: [{ v: 'map', l: 'Map', dis: 1 }, { v: 'ai', l: 'AI strategy', dis: 1 }, { v: 'size', l: 'Match size', dis: 1 }, { v: 'phase', l: 'Season phase', dis: 1 }] };
+  if (id === 'pcol0' || id === 'pcol1') {
+    const slot = Number(id.slice(-1));
+    return { id, name: 'Column', multi: false, cur: S.phoneStats[slot], options: STATS.map(s => ({ v: s.k, l: s.label, dis: S.phoneStats[1 - slot] === s.k ? 1 : 0 })) };
+  }
+  return allChips().find(c => c.id === id);
+}
+function renderLayer() {
+  const layer = document.getElementById('layer');
+  if (!open) { layer.innerHTML = ''; return; }
+  const phone = isPhone();
+  if (open.id === 'sheet') {
+    const chips = allChips();
+    layer.innerHTML = `<div class="backdrop dim" data-act="close"></div><div class="sheet" role="dialog" aria-label="Filters">
+      <div class="sheet-grip"></div><div class="sheet-title"><span>Filters</span><span class="muted num" style="font-size:13px;font-weight:500">${scope().matches.toLocaleString('en-US')} matches</span></div>
+      ${chips.map(c => `<button class="frow ${c.set ? 'set' : ''}" data-act="chip" data-v="${c.id}"><span>${esc(c.name)}</span><span>${esc(c.set ? chipLabel(c) : (c.multi ? c.all : (c.options.find(o => String(o.v) === String(c.cur)) || c.options[0]).l))} ›</span></button>`).join('')}
+      <button class="btn" style="margin-top:14px;width:100%;justify-content:center;height:44px" data-act="excel">${dlIcon}Download all data (.xlsx)</button></div>`;
+    return;
+  }
+  const c = chipById(open.id);
+  if (!c) { open = null; layer.innerHTML = ''; return; }
+  const inner = `${c.search ? `<input class="pop-search" placeholder="Search…" value="${esc(popFilter)}" data-search="${c.id}">` : ''}<div class="pop-list">${optionsHtml(c)}</div>`;
+  if (phone) {
+    layer.innerHTML = `<div class="backdrop dim" data-act="close"></div><div class="sheet" role="dialog"><div class="sheet-grip"></div>
+      <div class="sheet-title"><span>${esc(c.name)}</span>${c.multi ? '<span class="muted" style="font-size:12px;font-weight:500">Pick any number</span>' : ''}</div>${inner}
+      ${c.multi ? '<button class="pop-done" data-act="close">Done</button>' : ''}</div>`;
+  } else {
+    // Anchor to the chip as it is now: its label may have changed width.
+    const chip = document.querySelector(`.chips [data-act="chip"][data-v="${c.id}"], .phone [data-act="chip"][data-v="${c.id}"]`);
+    const r = chip ? chip.getBoundingClientRect() : { left: 24, bottom: 120 };
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - 330));
+    layer.innerHTML = `<div class="backdrop" data-act="close"></div><div class="pop" role="menu" style="left:${left}px;top:${r.bottom + 6}px">${inner}</div>`;
+  }
+  const input = layer.querySelector('.pop-search');
+  if (input && !phone) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+// ------------------------------------------------------------------- events --
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act, v = el.dataset.v;
+  if (act === 'page') { S.page = v; open = null; window.scrollTo(0, 0); }
+  else if (act === 'view') S.view = v;
+  else if (act === 'meta') S.meta = v;
+  else if (act === 'group') { S.group = v; S.shown = 25; S.sel = null; S.exp = null; }
+  else if (act === 'sort') { if (S.sort === v) S.dir = -S.dir; else { S.sort = v; S.dir = v === 'name' ? 1 : -1; } }
+  else if (act === 'bsort') { if (S.bSort === v) S.bDir = -S.bDir; else { S.bSort = v; S.bDir = -1; } }
+  else if (act === 'more') S.shown += 25;
+  else if (act === 'pick') { const id = Number(v); if (isWide()) S.sel = id; else S.exp = S.exp === id ? null : id; }
+  else if (act === 'excel') { toast('Would download the full workbook for this scope: Character Averages, Match Details, Team Performance Matrix, Position, Capsules.'); open = null; }
+  else if (act === 'sheet') { open = { id: 'sheet' }; popFilter = ''; renderLayer(); return; }
+  else if (act === 'chip') {
+    open = open && open.id === v ? null : { id: v }; popFilter = '';
+    renderLayer(); return;
+  }
+  else if (act === 'opt') {
+    const id = el.dataset.chip;
+    const c = chipById(id);
+    if (id === 'pcol0' || id === 'pcol1') S.phoneStats[Number(id.slice(-1))] = v;
+    else if (!['diff', 'team', 'add'].includes(id)) pickOption(id, v);
+    // A multi-select list stays open so several values can be ticked in a row.
+    if (!(c && c.multi)) open = null;
+  }
+  else if (act === 'close') { open = null; }
+  render();
+});
+document.addEventListener('input', e => {
+  const id = e.target.dataset && e.target.dataset.search;
+  if (!id) return;
+  popFilter = e.target.value;
+  document.querySelector('#layer .pop-list').innerHTML = optionsHtml(chipById(id));
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && open) { open = null; renderLayer(); render(); } });
+let lastPhone = isPhone(), lastWide = isWide();
+window.addEventListener('resize', () => {
+  if (isPhone() !== lastPhone || isWide() !== lastWide) { lastPhone = isPhone(); lastWide = isWide(); open = null; render(); }
+});
+
+document.getElementById('logo').src = PORTRAITS.__logo || '';
+readHash();
+render();
+</script>
+</body>
+</html>
