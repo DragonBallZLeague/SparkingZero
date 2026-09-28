@@ -1,6 +1,7 @@
 import { getTeams, extractStats } from '../statCalculations.js';
 import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { combatEfficiency } from '../performanceScore.js';
+import { buildKeyOf } from '../buildKey.js';
 
 // Recompute team character averages from a filtered subset of raw match data.
 // Used by the build filter feature in the teams view to re-scope stats without full re-aggregation
@@ -824,11 +825,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
         const buildUsageMap = {};
         matches.forEach(match => {
           if (match.buildComposition && match.buildComposition.label) {
-            const capsuleKey = (match.equippedCapsules || [])
-              .map(c => c.name || c.id || '')
-              .sort()
-              .join(',');
-            const buildKey = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
+            const buildKey = buildKeyOf(match);
             if (!buildUsageMap[buildKey]) {
               buildUsageMap[buildKey] = {
                 buildLabel: match.buildComposition.label,

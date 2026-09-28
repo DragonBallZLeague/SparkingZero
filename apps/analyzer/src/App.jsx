@@ -30,6 +30,7 @@ import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'reac
 import CharacterPage from './pages/CharacterPage.jsx';
 import { ROUTES, pathForView, viewForPath } from './routes.js';
 import { POSITION_NAMES } from './utils/positions.js';
+import { buildKeyOf } from './utils/buildKey.js';
 import {
   buildCharacterSlugIndex,
   resolveCharacterParam,
@@ -3997,10 +3998,7 @@ export default function App() {
                                       let charStats = _charStats;
                                       const teamActiveBuildFilterKey = activeBuildFilters[charKey];
                                       if (teamActiveBuildFilterKey && _charStats.rawMatches) {
-                                        const filteredRawMatches = _charStats.rawMatches.filter(m => {
-                                          const cKey = (m.equippedCapsules || []).map(c => c.name || c.id || '').sort().join(',');
-                                          return `${cKey}|${m.aiStrategy || 'Default'}` === teamActiveBuildFilterKey;
-                                        });
+                                        const filteredRawMatches = _charStats.rawMatches.filter(m => buildKeyOf(m) === teamActiveBuildFilterKey);
                                         if (filteredRawMatches.length > 0) {
                                           charStats = recomputeTeamCharStats(filteredRawMatches, _charStats);
                                         }

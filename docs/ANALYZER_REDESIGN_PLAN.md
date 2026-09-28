@@ -442,9 +442,9 @@ Settled over a long design conversation with real-data demos. The working demo i
    - Uses the tier cutoffs' window via the shared `scripts/calibration-basis.mjs`, and the page's own `src/utils/characterOverview.js`, so a character and the league are measured identically.
    - Idempotent: a rebuild without a recalibration leaves no diff.
    - Found along the way: the fusion split moved battle time without the new hit totals, and three more places (the per-form stats and both fusion splits) still counted skills from `eXACount`. All now use the per-slot counts via `skillSlotUses()`.
-4. **One shared build-key function**.
-   - Today the key is written out three times: `BuildTableView`, `filterAggregated`, `App.jsx`.
-   - Add a short-code encoding for `?build=`.
+4. ✅ **One shared build-key function** (done 2026-09-28): `src/utils/buildKey.js`.
+   - It replaced six hand-written copies (the build table, the filter, both aggregations' build grouping, the team aggregation and `App.jsx`).
+   - `buildCode()` / `findBuildByCode()` make and resolve the short `?build=` code. All 3,617 real builds get a unique code within their character, checked by `verify-character-page`.
 5. **The Overview components** (Tailwind, theme-aware), replacing the current Overview blocks. Extend `verify-character-page` and `smoke-character-page` to cover them.
 6. **Delete `design/character-overview/`** once the tab matches it.
 

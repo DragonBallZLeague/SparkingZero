@@ -5,6 +5,7 @@ import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { POSITION_NAMES } from '../positions.js';
 import { styleHits, skillSlotUses } from '../actionCodes.js';
+import { buildKeyOf } from '../buildKey.js';
 
 export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
   const characterStats = {};
@@ -987,11 +988,7 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
     // Group matches by exact capsule loadout + AI strategy so different capsule sets are tracked separately
     char.matches.forEach(match => {
       if (match.buildComposition && match.buildComposition.label) {
-        const capsuleKey = (match.equippedCapsules || [])
-          .map(c => c.name || c.id || '')
-          .sort()
-          .join(',');
-        const buildLabel = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
+        const buildLabel = buildKeyOf(match);
         
         if (!buildGroups[buildLabel]) {
           buildGroups[buildLabel] = {

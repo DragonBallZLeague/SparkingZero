@@ -5,6 +5,7 @@ import { ArrowUpDown, ChevronDown, ChevronUp, Filter, Star, X } from 'lucide-rea
 import { getBuildTypeColor } from '../../utils/buildComposition.js';
 import { BuildTypeTooltipWrapper } from './BuildTypeTooltipWrapper.jsx';
 import { PerformanceScoreBadge } from '../stats/PerformanceScoreBadge.jsx';
+import { buildKeyOf } from '../../utils/buildKey.js';
 
 // Sortable build table + detail card for a character's full build history
 export function BuildTableView({
@@ -35,11 +36,7 @@ export function BuildTableView({
   const selectedIndex = selectedBuildIndex[buildKey] ?? 0;
 
   // Build filter helpers
-  const getBuildFilterKey = (build) => {
-    const capsuleKey = (build.equippedCapsules || [])
-      .map(c => c.name || c.id || '').sort().join(',');
-    return `${capsuleKey}|${build.aiStrategy || 'Default'}`;
-  };
+  const getBuildFilterKey = buildKeyOf;
   const characterActiveFilter = activeBuildFilters ? activeBuildFilters[buildKey] : null;
 
   // Close on outside click or Escape

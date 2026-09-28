@@ -16,6 +16,7 @@
  */
 import { tierForScore } from '../performanceTier.js';
 import { combatEfficiency } from '../performanceScore.js';
+import { buildKeyOf } from '../buildKey.js';
 
 export function filterAggregatedData(aggregatedData, options = {}) {
   const {
@@ -68,11 +69,7 @@ export function filterAggregatedData(aggregatedData, options = {}) {
       // Apply active build filter
       const activeBuildKey = activeBuildFilters[char.name];
       if (activeBuildKey) {
-        filteredMatches = filteredMatches.filter(match => {
-          const capsuleKey = (match.equippedCapsules || [])
-            .map(c => c.name || c.id || '').sort().join(',');
-          return `${capsuleKey}|${match.aiStrategy || 'Default'}` === activeBuildKey;
-        });
+        filteredMatches = filteredMatches.filter(match => buildKeyOf(match) === activeBuildKey);
       }
       
       // If no matches remain after filtering, return null to filter out later
@@ -289,11 +286,7 @@ export function filterAggregatedData(aggregatedData, options = {}) {
       // Group filtered matches by exact capsule loadout + AI strategy so different capsule sets are tracked separately
       filteredMatches.forEach(match => {
         if (match.buildComposition && match.buildComposition.label) {
-          const capsuleKey = (match.equippedCapsules || [])
-            .map(c => c.name || c.id || '')
-            .sort()
-            .join(',');
-          const buildLabel = `${capsuleKey}|${match.aiStrategy || 'Default'}`;
+          const buildLabel = buildKeyOf(match);
           
           if (!buildGroups[buildLabel]) {
             buildGroups[buildLabel] = {

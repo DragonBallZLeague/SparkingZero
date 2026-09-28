@@ -36,6 +36,7 @@ import { parseCharacterCSV } from '../src/utils/statCalculations.js';
 import { buildCharacterSlugIndex, characterUrlKey, resolveCharacterParam } from '../src/utils/characterSlug.js';
 import { tierForScore } from '../src/utils/performanceTier.js';
 import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
+import { buildKeyOf, buildCode, findBuildByCode } from '../src/utils/buildKey.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -268,6 +269,29 @@ console.log('\nEvery row the page can render gets a tier:');
 const noTier = rows.filter(r => !tierForScore(r.combatPerformanceScore));
 check('tierForScore returns a tier for every row', noTier.length === 0,
   noTier.length ? noTier.length + ' row(s), e.g. ' + noTier[0].name + ' score ' + noTier[0].combatPerformanceScore : '');
+
+// ---- 5. A ?build= link resolves to exactly one build ----------------------
+// Build codes are short hashes of the build key, resolved against the character's
+// own builds. A shared link is only safe if no two builds of ONE character share a
+// code, and if a code leads back to the build it was made from.
+console.log('\nEvery build a character has gets a unique, round-tripping link code:');
+{
+  let builds = 0, clashes = [], misses = 0;
+  for (const r of rows) {
+    const keys = [...new Set((r.matches || []).map(buildKeyOf))];
+    builds += keys.length;
+    const seen = new Map();
+    for (const key of keys) {
+      const code = buildCode(key);
+      if (seen.has(code)) clashes.push(`${r.name}: ${code}`);
+      seen.set(code, key);
+      if (findBuildByCode(keys, code, k => k) !== key) misses++;
+    }
+  }
+  check(`${builds} builds across ${rows.length} rows: no two builds of one character share a code`,
+    clashes.length === 0, clashes.slice(0, 3).join('; '));
+  check('every code resolves back to its own build', misses === 0, misses + ' miss(es)');
+}
 
 console.log();
 if (failures) {
