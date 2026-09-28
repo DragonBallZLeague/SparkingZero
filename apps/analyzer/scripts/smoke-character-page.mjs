@@ -110,9 +110,24 @@ try {
     else { console.error('  FAIL ' + JSON.stringify(input) + ' -> ' + JSON.stringify(got) + ', want ' + want); failed = true; }
   }
 
+  // The Overview's style band has a Radar / Bars toggle, and a server render only
+  // ever produces the default (radar) - so the bars get rendered directly too.
+  const StyleBand = (await vite.ssrLoadModule('/src/pages/character/overview/StyleBand.jsx')).default;
+  const { characterBuilds } = await vite.ssrLoadModule('/src/pages/character/overview/characterBuilds.js');
+  const { overviewFromMatches, placeOverview, STYLES } = await vite.ssrLoadModule('/src/utils/characterOverview.js');
+  const baseline = JSON.parse(fs.readFileSync(path.join(appRoot, 'src', 'config', 'style-baseline.json'), 'utf8'));
+
   const PANELS = [
-    ['Overview:usage', (c, darkMode) => React.createElement(blocks.UsageBlock, { character: c, darkMode })],
-    ['Overview:positions', (c, darkMode, view) => React.createElement(blocks.PositionBlock, { byPosition: view.byPosition, darkMode })],
+    ['Overview:bars', (c, darkMode) => {
+      const overview = overviewFromMatches(c.matches);
+      return React.createElement(StyleBand, {
+        overview, place: placeOverview(overview, baseline), baseline,
+        builds: characterBuilds(c, charMap), selected: null, allRow: c,
+        onSelectBuild: () => {}, darkMode, initialView: 'bars',
+      });
+    }],
+    ['Usage', (c, darkMode) => React.createElement(blocks.UsageBlock, { character: c, darkMode })],
+    ['Usage:positions', (c, darkMode, view) => React.createElement(blocks.PositionBlock, { byPosition: view.byPosition, darkMode })],
     ['Builds', (c, darkMode) => React.createElement(blocks.BuildsBlock, { character: c, darkMode, limit: 6 })],
     ['Forms', (c, darkMode) => React.createElement(blocks.FormsBlock, { character: c, darkMode })],
     ['Matches', (c, darkMode, view) => React.createElement(blocks.MatchesBlock, {
@@ -128,10 +143,16 @@ try {
 
   console.log(`\nRendering ${subjects.length} character(s) x 2 themes, page + ${PANELS.length} panels\n`);
 
-  const render = (row, darkMode) => {
+  // Visible text only: markup and React's <!-- --> text-node markers stripped.
+  const visibleText = html => html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' ');
+  // What a formatting slip prints instead of a number. React renders all three
+  // without complaint.
+  const JUNK = /\bNaN\b|\bundefined\b|\bnull\b|Infinity/;
+
+  const render = (row, darkMode, search = '') => {
     const el = React.createElement(
       MemoryRouter,
-      { initialEntries: ['/characters/x'] },
+      { initialEntries: ['/characters/x' + search] },
       React.createElement(
         Routes,
         null,
@@ -145,11 +166,25 @@ try {
             darkMode,
             onBack: () => {},
             onOpenMatch: () => {},
+            charMap,
           }),
         })
       )
     );
     return renderToString(el);
+  };
+
+  // The Overview is the panel a server render produces, so the page render is
+  // where its content is checked, down to the style band's six styles.
+  const overviewProblem = html => {
+    const text = visibleText(html);
+    if (JUNK.test(text)) return 'visible text contains ' + JSON.stringify(JUNK.exec(text)[0]);
+    for (const need of ['Damage dealt', 'Super 1', 'Skill 2', 'Fighting style', 'How it fights']) {
+      if (!text.includes(need)) return 'no "' + need + '" - is the Overview rendering?';
+    }
+    const at = STYLES.map(s => text.indexOf(s.name));
+    if (at.some(i => i < 0)) return 'a fighting style is missing: ' + STYLES.filter((s, i) => at[i] < 0).map(s => s.name).join(', ');
+    return null;
   };
 
   for (const { label, row } of subjects) {
@@ -166,6 +201,9 @@ try {
             // exact mistake the first version of this page made with
             // buildComposition.
             console.error('  FAIL ' + what + '\n         rendered a literal "[object Object]"');
+            failed = true;
+          } else if (overviewProblem(html)) {
+            console.error('  FAIL ' + what + '\n         ' + overviewProblem(html));
             failed = true;
           } else {
             console.log('  ok   ' + what + '  (' + html.length + ' chars)');
@@ -203,7 +241,13 @@ try {
             if (html.includes('[object Object]')) {
               console.error('  FAIL ' + what + '\n         rendered a literal "[object Object]"');
               failed = true;
-            } else if (panel === 'Overview:positions' && html && !namesSlots) {
+            } else if (JUNK.test(visibleText(html))) {
+              console.error('  FAIL ' + what + '\n         visible text contains ' + JSON.stringify(JUNK.exec(visibleText(html))[0]));
+              failed = true;
+            } else if (panel === 'Overview:bars' && !visibleText(html).includes('Per min')) {
+              console.error('  FAIL ' + what + '\n         the bars view has no "Per min" column');
+              failed = true;
+            } else if (panel === 'Usage:positions' && html && !namesSlots) {
               console.error('  FAIL ' + what + '\n         position row labels are ' + JSON.stringify(rowLabels) + ' - raw slot numbers?');
               failed = true;
             } else {
@@ -216,6 +260,48 @@ try {
             if (stack) console.error(stack.replace(/^/gm, '    '));
             failed = true;
           }
+        }
+      }
+    }
+  }
+
+  // ---- a ?build= link ---------------------------------------------------------
+  //
+  // A shared link to one build must open on that build and say so, and a code
+  // that is not this character's must fall back to every build, not to nothing.
+  console.log('\nA ?build= link opens on that build:');
+  {
+    const row = rows.find(r => characterBuilds(r, charMap).length >= 3);
+    const builds = characterBuilds(row, charMap);
+    const b = builds[1]; // not the most common, so "the default" cannot pass for it
+    const cases = [
+      ['?build=' + b.code, true, `${row.name}, build 2 of ${builds.length} (${b.count} uses)`],
+      ['?build=zzzzzz', false, 'an unknown code'],
+    ];
+    for (const [search, wantStrip, label] of cases) {
+      for (const darkMode of [true, false]) {
+        const what = `${label} / ${darkMode ? 'dark' : 'light'}`;
+        try {
+          const text = visibleText(render(row, darkMode, search));
+          const strip = text.includes('Showing one build');
+          // The identity header's match count is the build's when one is selected.
+          const count = wantStrip ? b.row.activeMatchCount || b.row.matchCount : row.activeMatchCount || row.matchCount;
+          const counted = new RegExp(`\\b${count.toLocaleString()}\\s+match`).test(text);
+          if (strip !== wantStrip) {
+            console.error(`  FAIL ${what}\n         strip ${strip ? 'shown' : 'missing'}`);
+            failed = true;
+          } else if (!counted) {
+            console.error(`  FAIL ${what}\n         header does not read ${count} matches`);
+            failed = true;
+          } else if (overviewProblem(render(row, darkMode, search))) {
+            console.error(`  FAIL ${what}\n         ${overviewProblem(render(row, darkMode, search))}`);
+            failed = true;
+          } else {
+            console.log(`  ok   ${what}`);
+          }
+        } catch (err) {
+          console.error(`  FAIL ${what}: ${err && err.message}`);
+          failed = true;
         }
       }
     }

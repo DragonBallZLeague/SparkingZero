@@ -9,11 +9,12 @@ import CharacterTabs from './character/CharacterTabs.jsx';
  * content lives in character/CharacterBlocks.jsx and its arrangement in
  * character/CharacterTabs.jsx.
  *
- * The page is purely presentational - every number already exists on the
- * aggregated row characterAggregation.js produced, and nothing is recalculated
- * here. scripts/verify-character-page.mjs asserts those fields exist on real
- * rows, because the failure mode of a rename is a silently blank stat rather
- * than a crash.
+ * The page computes nothing of its own - the tabs read the aggregated row
+ * characterAggregation.js produced, and the Overview derives its figures from
+ * that row's matches through utils/characterOverview.js, the code that also
+ * builds the league reference. scripts/verify-character-page.mjs asserts the
+ * fields it reads exist on real rows, because the failure mode of a rename is a
+ * silently blank stat rather than a crash.
  *
  * `rank` is position within the CURRENT data scope and is labelled as such. The
  * TIER beside it is absolute, from the frozen cutoffs. Those two must not be
@@ -32,6 +33,8 @@ export default function CharacterPage({
   darkMode = false,
   onBack = null,
   onOpenMatch = null,
+  // id -> name, for form names on a build-filtered row (filterAggregatedData).
+  charMap = {},
 }) {
   const notice = (icon, title, body) => (
     <div className={`rounded-2xl p-6 border border-solid mb-6 ${
@@ -119,6 +122,7 @@ export default function CharacterPage({
       darkMode={darkMode}
       onBack={onBack}
       onOpenMatch={onOpenMatch}
+      charMap={charMap}
     />
   );
 }

@@ -136,9 +136,18 @@ export default function App() {
   const { charParam } = useParams();
   const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
+  // The query string without the Character page's own `build` param. A selected
+  // build belongs to one character's page: it must not ride along to the
+  // leaderboard, another view or another character. The data-scope params do.
+  const scopeSearch = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    params.delete('build');
+    const s = params.toString();
+    return s ? `?${s}` : '';
+  }, [location.search]);
   const setViewType = useCallback(
-    (next) => navigate(pathForView(next) + location.search),
-    [navigate, location.search]
+    (next) => navigate(pathForView(next) + scopeSearch),
+    [navigate, scopeSearch]
   );
   const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
   const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
@@ -1453,8 +1462,9 @@ export default function App() {
             totalInScope={deepLinkedCharacter.totalInScope}
             scopeLabel={dataScopeLabel}
             darkMode={darkMode}
-            onBack={() => navigate(ROUTES.characters + location.search)}
+            onBack={() => navigate(ROUTES.characters + scopeSearch)}
             onOpenMatch={handleNavigateToMatch}
+            charMap={charMap}
           />
         )}
 
@@ -1960,7 +1970,7 @@ export default function App() {
                           <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                             {charUrlKeyByName.get(char.name) ? (
                               <Link
-                                to={ROUTES.character(charUrlKeyByName.get(char.name)) + location.search}
+                                to={ROUTES.character(charUrlKeyByName.get(char.name)) + scopeSearch}
                                 onClick={(e) => e.stopPropagation()}
                                 title={`Open ${char.name}'s character page`}
                                 className="group inline-flex items-center gap-1 text-inherit no-underline hover:underline"

@@ -1,0 +1,111 @@
+import React, { useState } from 'react';
+import {
+  useFloating, autoUpdate, offset, flip, shift, size,
+  useClick, useDismiss, useRole, useInteractions, FloatingPortal,
+} from '@floating-ui/react';
+import { ChevronDown } from 'lucide-react';
+import { buildTypeColor } from '../../../utils/overviewPalette.js';
+import { ScorePill } from './parts.jsx';
+
+/**
+ * Builds sharing a build type AND an AI read identically in the menu's four
+ * fields. For those only, name the capsules each has that the others in its group
+ * do not all share (at most three, then "+N more").
+ */
+function lookalikeNotes(builds) {
+  const groups = {};
+  builds.forEach((b, i) => (groups[`${b.label}|${b.aiName}`] ??= []).push(i));
+  const notes = {};
+  for (const idx of Object.values(groups)) {
+    if (idx.length < 2) continue;
+    const sets = idx.map(i => builds[i].capsules.map(c => c.name));
+    const common = sets[0].filter(n => sets.every(s => s.includes(n)));
+    idx.forEach((i, j) => {
+      const own = sets[j].filter(n => !common.includes(n));
+      notes[i] = own.length
+        ? own.slice(0, 3).join(', ') + (own.length > 3 ? `, +${own.length - 3} more` : '')
+        : 'Only the shared capsules';
+    });
+  }
+  return notes;
+}
+
+export function BuildPill({ label, darkMode }) {
+  const c = buildTypeColor(label, darkMode);
+  return (
+    <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full border border-solid whitespace-nowrap"
+      style={{ color: c, borderColor: c, background: `${c}1f` }}>
+      {label}
+    </span>
+  );
+}
+
+/**
+ * The build filter. Four things per build, as agreed: build type, AI strategy,
+ * uses and performance score - plus a fifth line only for look-alikes. Scores of
+ * builds with under 5 uses are dimmed, like a provisional tier plate.
+ */
+export default function BuildPicker({ builds, selected, allRow, onSelect, darkMode }) {
+  const [open, setOpen] = useState(false);
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: 'bottom-start',
+    middleware: [
+      offset(6), flip(), shift({ padding: 8 }),
+      size({ apply({ availableHeight, elements }) { elements.floating.style.maxHeight = `${Math.max(200, Math.min(430, availableHeight - 8))}px`; } }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    useClick(context), useDismiss(context), useRole(context, { role: 'listbox' }),
+  ]);
+  const notes = lookalikeNotes(builds);
+  const muted = darkMode ? 'text-gray-400' : 'text-gray-500';
+
+  const choose = code => { onSelect(code); setOpen(false); };
+  const option = (key, isSelected, first, pill, second, uses, note, code) => (
+    <button key={key} type="button" role="option" aria-selected={isSelected} onClick={() => choose(code)}
+      className={`w-full grid grid-cols-[1fr_auto] gap-x-3 gap-y-0.5 items-center text-left px-2.5 py-2 bg-transparent border-0 border-solid cursor-pointer rounded-md ${
+        darkMode ? 'text-gray-100 hover:bg-gray-800' : 'text-gray-900 hover:bg-gray-50'
+      } ${isSelected ? (darkMode ? 'bg-gray-800 shadow-[inset_3px_0_0_#f97316]' : 'bg-gray-50 shadow-[inset_3px_0_0_#f97316]') : ''}`}>
+      <span className="min-w-0">{first}</span>
+      <span className="justify-self-end">{pill}</span>
+      <span className={`text-xs ${muted}`}>{second}</span>
+      <span className={`text-xs tabular-nums justify-self-end whitespace-nowrap ${muted}`}>{uses}</span>
+      {note && <span className={`col-span-2 text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{note}</span>}
+    </button>
+  );
+
+  return (
+    <div>
+      <div className={`text-[11px] font-semibold uppercase tracking-wider mb-1.5 ${muted}`}>Build</div>
+      <button ref={refs.setReference} type="button" {...getReferenceProps()}
+        className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg border border-solid text-sm text-left cursor-pointer ${
+          darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
+        } ${selected ? 'border-orange-500 shadow-[inset_0_0_0_1px_#f97316]' : (darkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400')}`}>
+        <span className="flex-1 flex items-center gap-2 min-w-0">
+          {selected
+            ? <><BuildPill label={selected.label} darkMode={darkMode} /><ScorePill score={selected.score} provisional={selected.provisional} darkMode={darkMode} /></>
+            : <>All builds <span className={`text-xs ${muted}`}>({builds.length})</span></>}
+        </span>
+        <ChevronDown className={`w-4 h-4 shrink-0 ${muted}`} />
+      </button>
+      {open && (
+        <FloatingPortal>
+          <div ref={refs.setFloating} style={{ ...floatingStyles, width: 'min(390px, calc(100vw - 32px))' }} {...getFloatingProps()}
+            className={`z-50 overflow-auto rounded-xl border border-solid p-1.5 shadow-2xl ${
+              darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
+            }`}>
+            {option('all', !selected, <b>All builds</b>, <ScorePill score={allRow.combatPerformanceScore} darkMode={darkMode} />,
+              `${builds.length} builds`, `${allRow.matchCount} uses`, null, null)}
+            {builds.map((b, i) => option(b.code, selected?.code === b.code,
+              <BuildPill label={b.label} darkMode={darkMode} />,
+              <ScorePill score={b.score} provisional={b.provisional} darkMode={darkMode} />,
+              b.aiName, `${b.count} use${b.count === 1 ? '' : 's'}`, notes[i], b.code))}
+          </div>
+        </FloatingPortal>
+      )}
+    </div>
+  );
+}

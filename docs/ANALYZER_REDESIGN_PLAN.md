@@ -114,7 +114,7 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 
 ### Phase 3 — Character page: in progress
 
-Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28** and is ready to implement — see "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design, the share-snippet image card, build comparison and character comparison.
+Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design, the share-snippet image card, build comparison and character comparison.
 
 ### Phases 4–7: not started
 
@@ -445,7 +445,11 @@ Settled over a long design conversation with real-data demos. The working demo i
 4. ✅ **One shared build-key function** (done 2026-09-28): `src/utils/buildKey.js`.
    - It replaced six hand-written copies (the build table, the filter, both aggregations' build grouping, the team aggregation and `App.jsx`).
    - `buildCode()` / `findBuildByCode()` make and resolve the short `?build=` code. All 3,617 real builds get a unique code within their character, checked by `verify-character-page`.
-5. **The Overview components** (Tailwind, theme-aware), replacing the current Overview blocks. Extend `verify-character-page` and `smoke-character-page` to cover them.
+5. ✅ **The Overview components** (done 2026-09-28): `src/pages/character/overview/`, Tailwind, both themes, checked at desktop and phone width against the served build.
+   - The old Overview blocks moved to a new **Usage** tab. The always-visible `HeadlineBlock` strip is gone, since the tiles replace it and win rate is left out on purpose.
+   - `?build=` filters the whole page except the Builds tab, with the "Showing one build" strip. `App.jsx` strips the param on the way off the page.
+   - `verify-character-page` checks the Overview's per-match fields, the build list against the leaderboard's filter, and that every style places. `smoke-character-page` renders the Overview, the Bars view and a `?build=` link.
+   - Found on the way: `App.css` base classes beat Tailwind's responsive variants (the tiles stayed two columns wide), and the analyzer has had no theme toggle since 2026-09-05. Both are in `apps/analyzer/CLAUDE.md`.
 6. **Delete `design/character-overview/`** once the tab matches it.
 
 This is also where the participant workflow starts paying off, and the page should be shaped by principles 1 and 4 rather than by what `App.jsx` currently renders:

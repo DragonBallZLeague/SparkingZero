@@ -52,7 +52,9 @@ function pageSources(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) pageSources(full, out);
-    else if (/^Character.*.jsx?$/.test(entry.name) || /[\/]character[\/]/.test(full)) out.push(full);
+    // [\\/]: on Windows `full` uses backslashes, and a bare [\/] matched only
+    // Character*.jsx there, silently skipping everything under character/.
+    else if (/^Character.*.jsx?$/.test(entry.name) || (/[\\/]character[\\/]/.test(full) && /\.jsx?$/.test(entry.name))) out.push(full);
   }
   return out;
 }
@@ -104,6 +106,8 @@ console.log(`\n${shardFiles.length} shards -> ${rows.length} aggregated characte
 //
 // Scraped from the source so the list cannot fall behind the page. Optional
 // chaining is included on purpose: `character?.matches` still has to resolve.
+// The Overview names its rows `viewRow` (the character or one build of it) and
+// `allRow` (the whole character); both are aggregated rows, so both count.
 const sourceFiles = pageSources(pageDir);
 if (!sourceFiles.length) {
   console.error('Found no character page sources under src/pages - the page moved?');
@@ -112,7 +116,7 @@ if (!sourceFiles.length) {
 console.log('page sources scanned: ' + sourceFiles.map(f => path.basename(f)).join(', '));
 const source = sourceFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n');
 const readFields = [...new Set(
-  [...source.matchAll(/\bcharacter\??\.([A-Za-z_$][\w$]*)/g)].map(m => m[1])
+  [...source.matchAll(/\b(?:character|viewRow|allRow)\??\.([A-Za-z_$][\w$]*)/g)].map(m => m[1])
 )].sort();
 
 console.log('Fields CharacterPage reads off a character row (' + readFields.length + ', scraped from source):');
@@ -291,6 +295,53 @@ console.log('\nEvery build a character has gets a unique, round-tripping link co
   check(`${builds} builds across ${rows.length} rows: no two builds of one character share a code`,
     clashes.length === 0, clashes.slice(0, 3).join('; '));
   check('every code resolves back to its own build', misses === 0, misses + ' miss(es)');
+}
+
+// ---- 6. The Overview's per-match fields exist -------------------------------
+// The Overview computes from matches[], not from the row's totals, so check the
+// match-row fields it reads the same way section 1 checks row fields: scraped
+// from the source (every `m.<field>` in characterOverview.js), so the list cannot
+// drift from what ships. A renamed field would read as 0 - "Never" on the page.
+console.log('\nEvery per-match field the Overview reads exists on real match rows:');
+{
+  const src = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'utils', 'characterOverview.js'), 'utf8');
+  const fields = [...new Set([...src.matchAll(/\bm\.(\w+)/g)].map(x => x[1]))].sort();
+  const matchRows = rows.flatMap(r => r.matches || []);
+  // Blast hits are only recorded by newer files, so "on some rows" is the bar;
+  // what must never happen is a field on no row at all, or holding a non-number.
+  const missing = fields.filter(f => !matchRows.some(m => m[f] !== undefined));
+  const badType = fields.filter(f => f !== 'aiStrategy' && matchRows.some(m => m[f] !== undefined && m[f] !== null && typeof m[f] !== 'number'));
+  check(`${fields.length} fields (${fields.join(', ')}) each appear on real match rows`,
+    missing.length === 0, 'missing: ' + missing.join(', '));
+  check('each holds a number wherever it is present', badType.length === 0, 'non-numeric: ' + badType.join(', '));
+}
+
+// ---- 7. The build picker's builds are the leaderboard's -----------------------
+// Each build's row is filterAggregatedData with that build's key - the
+// leaderboard's own build filter - so its match count must equal the group's, and
+// the builds together must cover every match exactly once.
+console.log('\nThe build picker lists every build once, with the leaderboard\'s numbers:');
+{
+  const { characterBuilds } = await import('../src/pages/character/overview/characterBuilds.js');
+  const { overviewFromMatches, placeOverview, STYLES } = await import('../src/utils/characterOverview.js');
+  const baseline = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'src', 'config', 'style-baseline.json'), 'utf8'));
+  let total = 0;
+  const countOff = [], coverOff = [], unplaced = [];
+  for (const r of rows) {
+    const builds = characterBuilds(r, charMap);
+    total += builds.length;
+    for (const b of builds) if (!b.row || b.row.matchCount !== b.count) countOff.push(`${r.name} ${b.code}: ${b.count} vs ${b.row?.matchCount}`);
+    const covered = builds.reduce((s, b) => s + b.count, 0);
+    if (covered !== (r.matches || []).length) coverOff.push(`${r.name}: ${covered} of ${(r.matches || []).length}`);
+    // Every style must place for a character that fought at all, or the radar
+    // draws a spoke at nothing.
+    const place = placeOverview(overviewFromMatches(r.matches), baseline);
+    const gaps = STYLES.filter(s => place.pct['style_' + s.key] === null || place.rank['style_' + s.key] === null);
+    if (gaps.length) unplaced.push(`${r.name}: ${gaps.map(s => s.key).join('/')}`);
+  }
+  check(`${total} builds: each build's filtered row has the build's match count`, countOff.length === 0, countOff.slice(0, 3).join('; '));
+  check('the builds of each character cover all of its matches', coverOff.length === 0, coverOff.slice(0, 3).join('; '));
+  check('all six fighting styles place for every character', unplaced.length === 0, unplaced.slice(0, 3).join('; '));
 }
 
 console.log();
