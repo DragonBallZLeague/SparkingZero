@@ -19,7 +19,9 @@
     "smoke-character-page": "node scripts/smoke-character-page.mjs",
     "build-bands": "node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs",
     "build-style-baseline": "node --import ./scripts/json-import-hook.mjs scripts/generate-style-baseline.mjs",
-    "verify-routes": "node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs"
+    "verify-routes": "node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs",
+    "shot": "node scripts/dev/shot.mjs",
+    "css-diff": "node scripts/dev/css-diff.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
