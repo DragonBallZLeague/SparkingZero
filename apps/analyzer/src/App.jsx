@@ -26,7 +26,7 @@ import { TIERS, TIER_LABELS } from './utils/tierScale.js';
 import { tierPillColors, tierPillClass } from './utils/tierPlateSvg.js';
 import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
 import { NavBar } from '@szl/ui';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CharacterPage from './pages/CharacterPage.jsx';
 import { ROUTES, pathForView, viewForPath } from './routes.js';
 import { POSITION_NAMES } from './utils/positions.js';
@@ -67,7 +67,8 @@ import {
   Brain,
   Minus,
   Copy,
-  Check
+  Check,
+  ArrowUpRight
 } from 'lucide-react';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
@@ -186,6 +187,17 @@ export default function App() {
 
   // Bidirectional id <-> slug lookup, for the /characters/:charParam deep link.
   const charSlugIndex = useMemo(() => buildCharacterSlugIndex(charactersCSV), []);
+
+  // Character name -> the key its page URL uses (a name slug, or the raw id for
+  // a character not yet in characters.csv). The leaderboard links each row to
+  // its character page with this.
+  const charUrlKeyByName = useMemo(() => {
+    const byName = new Map();
+    for (const [id, name] of charSlugIndex.idToName) {
+      if (!byName.has(name)) byName.set(name, characterUrlKey(id, charSlugIndex));
+    }
+    return byName;
+  }, [charSlugIndex]);
 
   // CANONICALISE a character deep link: a raw id is accepted forever (old links,
   // and characters that appear in match data before characters.csv gains a row),
@@ -1941,7 +1953,22 @@ export default function App() {
                               the old Swords icon rather than sitting beside it. The tier
                               is absolute - never relative to the rows on screen. */}
                           <TierPlate score={char.combatPerformanceScore} character={char} size="medium" darkMode={darkMode} />
-                          <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{char.name}</h3>
+                          {/* The name opens the character page. It is a real link, so it can be
+                              middle-clicked, copied or shared, and it carries the current filters
+                              across. stopPropagation keeps a click from also toggling the row. */}
+                          <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                            {charUrlKeyByName.get(char.name) ? (
+                              <Link
+                                to={ROUTES.character(charUrlKeyByName.get(char.name)) + location.search}
+                                onClick={(e) => e.stopPropagation()}
+                                title={`Open ${char.name}'s character page`}
+                                className="group inline-flex items-center gap-1 text-inherit no-underline hover:underline"
+                              >
+                                {char.name}
+                                <ArrowUpRight className={`w-4 h-4 opacity-50 group-hover:opacity-100 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
+                              </Link>
+                            ) : char.name}
+                          </h3>
                           {/* Familiar score pill, tinted from the same palette as the
                               plate (tierPillColors) so the two cannot drift apart. */}
                           <span
