@@ -26,7 +26,14 @@ This app is mid-rewrite per **`docs/ANALYZER_REDESIGN_PLAN.md`** (audited and re
   - a tier-list view beside the leaderboard
   - character portraits, resized at build time from the Calculator's face icons
 
-  The page-by-page review is next.
+  **The page-by-page review followed the same day** ("Page-by-page review" in the plan). It says what every page holds:
+  - Home becomes a dashboard, and the Team page is new.
+  - Matches becomes a filterable list instead of the file tree.
+  - Meta gains a league-wide Builds table, where capsules always show as the one-column list.
+  - The Data Tables page goes, but the full Excel workbook stays in the scope bar.
+  - Team names show the website's spelling through a shared list, while tags and `BR_Data` folders keep their names.
+
+  Next is a real-data demo of the shell, the Characters table, the tier list and the Builds table.
 - **Character URLs are name slugs, decided 2026-09-26.** `/characters/android-13`, not `/characters/0620_00` — see "Character URLs are name slugs" below before touching anything that emits a character link.
 - **Deep links now survive a refresh.** `scripts/build-404.js` generates the site-root `dist/404.html` with a dispatcher that redirects sub-app paths into the right app; `restoreDeepLink()` from `@szl/ui` (called at the top of `src/main.jsx`, before the router) puts the original URL back. This was the Phase 3 prerequisite. See the root `CLAUDE.md` for how it works, and note that **no dev server reproduces the Pages 404 rule** — use `node scripts/serve-dist.js` against a build to test deep links.
 - **Phases 4–7 (Team/Match page rebuilds, stats-only Home page, Meta page consolidation, Sandbox polish, share-snippet image export): not started.**
@@ -43,7 +50,10 @@ Reusable, already-decoupled pieces worth knowing about:
 - `src/components/BRDataSelector.jsx` — file picker over `BR_Data/`. The tree is **hand-rolled**, not an MUI `TreeView` (`@mui/x-tree-view` and `@mui/lab` are declared dependencies but imported nowhere); it does use a handful of `@mui/material` components and icons.
 - `src/components/TagFilterSelector.jsx` — syncs filters (season/team/matchType/difficulty/matchSize) to the query string through react-router's `useSearchParams`. It edits a **copy of the current params** and touches only its own keys, so it cannot clobber query state owned by anything else, and it writes only on a real difference so `setSearchParams` cannot loop. It uses `replace: true`, keeping filter tweaks out of the back-button history. It filters against `br-data-tags.json` with zero match fetches — lean on that for the Matches browser.
 - `src/components/Combobox.jsx` / `MultiSelectCombobox.jsx`, `DataTable.jsx` / `TableConfigs.jsx` / `ExportManager.jsx` (Excel export), `PerFormStatsDisplay.jsx`.
-- `src/components/ai-strategy/*` (7 components) and `src/components/capsule-synergy/*` (including `BuildAnalyzerTool`) — the "Meta Analysis" feature set, planned to consolidate into one Meta/Builds page in Phase 6.
+- `src/components/ai-strategy/*` (7 components) and `src/components/capsule-synergy/IndividualCapsulePerformance.jsx`: the "Meta Analysis" feature set, planned to consolidate into one Meta page with Builds · AI strategies · Capsules tabs in Phase 6.
+  - The Build Analyzer and Synergy Pairs views never shipped, and their files were deleted on 2026-09-28.
+  - Their logic stays, unused, for a later look at build recommendations: `utils/buildRecommendationEngine.js`, `config/buildRules.js`, `utils/capsuleEffectParser.js`, and the pair-synergy functions in `utils/capsuleSynergyCalculator.js`.
+  - `ExportManager.jsx` and `ai-strategy/AIStrategyCard.jsx` are unused too.
 
 ## Styling (read before touching styles)
 

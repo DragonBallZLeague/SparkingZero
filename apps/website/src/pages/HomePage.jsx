@@ -327,7 +327,7 @@ export default function HomePage({ site, darkMode }) {
               {teams.teams.map((team) => (
                 <Link
                   key={team.slug}
-                  to={`/teams?team=${team.slug}`}
+                  to={`/teams?team=${encodeURIComponent(team.slug)}`}
                   className={`group rounded-xl p-4 border transition-all hover:scale-[1.02] ${
                     darkMode
                       ? 'bg-gray-900 border-gray-800 hover:border-gray-600'

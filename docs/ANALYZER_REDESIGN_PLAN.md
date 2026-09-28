@@ -124,7 +124,17 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 
 ### Visual direction: decided 2026-09-28
 
-The app-wide layout and styling direction is settled. It covers the tab row, the one-line scope bar, one level of flat panels, rows instead of cards, colour roles, density, phone-first for viewing pages, the tier-list view and character portraits. See "Visual direction" below. The page-by-page review is next, followed by a real-data demo of the shell, the table leaderboard and the tier list.
+The app-wide layout and styling direction is settled. It covers the tab row, the one-line scope bar, one level of flat panels, rows instead of cards, colour roles, density, phone-first for viewing pages, the tier-list view and character portraits. See "Visual direction" below.
+
+### Page-by-page review: decided 2026-09-28
+
+Every page has a verdict and a content list; see "Page-by-page review" below. In short:
+- **New or reshaped:** Home becomes a dashboard, the Team page is new, Matches becomes a list instead of a file tree, and Meta gains a league-wide Builds table.
+- **Removed:** the Data Tables page, and the Position Analysis section under the leaderboard. The full Excel workbook stays, in the scope bar.
+- **Team names:** the analyzer shows the website's team names through a shared list, while tags and folders keep their names.
+- **Deleted:** the never-shipped Build Analyzer and Synergy Pairs files.
+
+**Next: a real-data demo** of the shell, the Characters table, the tier list and the two Builds-table layouts.
 
 ### Phase 2c — Responsive shell, accessibility, persistence: not started
 
@@ -287,10 +297,10 @@ Current calibration: 1,350 matches / 148 characters from Seasons 0+1 Ultra, givi
 | Single Match view | Both | Keep, rebuild as its own route/page |
 | Aggregated Character Stats | Team/power-user | Keep, becomes the "Character" page — simplified default view + "Advanced" expand |
 | Team Rankings | Both | Keep, becomes the "Team" page |
-| Position Analysis | Team/power-user | Merge into Character page (as a filter/tab), not a standalone section |
-| Data Tables + Excel export | Team/power-user | Keep, consolidate into one reusable "Export" surface instead of per-view buttons |
+| Position Analysis | Team/power-user | Merge into Character page (as a filter/tab), not a standalone section. **2026-09-28:** the section is removed; position becomes the picker on Characters, the Character page's Usage tab and the Team page's Lineups tab. |
+| Data Tables + Excel export | Team/power-user | **2026-09-28:** the page is removed. Each table gets its own export, and the full workbook moves to the scope bar. See "Page-by-page review". |
 | Meta Analysis (AI Strategy + Capsule Synergy) | Team/power-user | Keep, becomes its own "Meta/Builds" page |
-| Build Analyzer Tool | Team/power-user | Keep, folds into Meta/Builds page |
+| Build Analyzer Tool | Team/power-user | ~~Keep, folds into Meta/Builds page~~. **It never shipped** (taken off the page in November 2025), and its file was deleted on 2026-09-28. The recommendation logic is kept for later. |
 | Manual File Upload mode | Team (testing) | Keep as a distinct "Sandbox" mode, clearly separated from the public league dataset |
 | Tag filtering | Both | Keep and extend (already URL-synced — good foundation, but move it onto `useSearchParams`) |
 | Reference-data mode + BRDataSelector tree | Both | Rebuild UX around real navigation/routes instead of mode/viewType radios |
@@ -316,6 +326,7 @@ Current calibration: 1,350 matches / 148 characters from Seasons 0+1 Ultra, givi
 /analyzer/matches/:matchId          → Single match report (matchId = encoded relative file path)
 /analyzer/meta                      → Build/AI/capsule meta analysis
 /analyzer/sandbox                   → Manual upload / testing workspace
+/analyzer/tables                    → Redirects to /characters (the Data Tables page was removed 2026-09-28)
 ```
 
 Filters become querystring state on these routes, extending what `TagFilterSelector` already proves out — so a filtered view is shareable, not just the base page. `src/routes.js` already defines these paths; it just needs to actually be imported.
@@ -371,7 +382,7 @@ Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg,
 4. **Rows, not cards, for anything compared**: characters, teams, builds, capsules and AI strategies.
    - A sortable table with right-aligned tabular figures, bars inside cells and a sticky header row.
    - A row click opens the detail page, replacing inline expansion.
-   - Builds follow MetaTFT: one row per build, with its capsules inline.
+   - Builds get one row each, like MetaTFT's team comps, but the capsules stay the familiar one-column list (grouped by type, AI strategy last), never spread one per column. See the Meta Builds tab in "Page-by-page review" for how.
    - On a phone a row shows portrait, name, score and 2–3 stats. The rest come from a column picker, or from sideways scrolling with the name column frozen.
    - Target: the leaderboard at ~3 desktop screens instead of 23.
 5. **Colour has jobs; plain numbers are white.** The Character Overview's colour rules apply app-wide:
@@ -385,7 +396,7 @@ Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg,
    - The Overview tab keeps its approved design and loses only the chrome and outer panel around it.
 8. **Phone-first for the pages people view; desktop-first for power tools.** About half the traffic is on phones.
    - **Phone-first**: Home, the Characters list, and the Character, Team and Match pages.
-   - **Desktop-first**: Data Tables and export, the Meta build analyzer, build and character comparison, and Sandbox. These must still work on a phone, where sideways scrolling is acceptable.
+   - **Desktop-first**: data export, the Meta tables, build and character comparison, and Sandbox. These must still work on a phone, where sideways scrolling is acceptable.
    - **Accepted tradeoffs:**
      - Desktop layouts are designed deliberately, not a stretched phone layout.
      - Nothing important lives only in a hover: tooltips open on tap, and key numbers are inline.
@@ -411,8 +422,120 @@ Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg,
 
 ### Still open
 
-- **The page-by-page review**: which pages stay in their current form, which are removed, which change, and what data each one holds.
-- **A real-data demo before the rebuild**, judged side by side at both widths the way the Overview was settled. It covers the shell (tab row and scope bar), the table leaderboard and the tier list.
+- ~~The page-by-page review~~: done, see the next section.
+- **A real-data demo before the rebuild**, judged side by side at both widths the way the Overview was settled. It covers the shell (tab row and scope bar), the table leaderboard, the tier list and the two candidate layouts for the Meta Builds table.
+
+---
+
+## Page-by-page review — decided 2026-09-28
+
+Which pages stay, which go, which change, and what each one holds. It builds on "Visual direction" above, and was settled with the league the same day.
+
+### What the review found
+
+- **The leaderboard view is really two pages.** Below the 62 character cards sits a second section, "Character Position Analysis", with a panel per position full of more character cards. It is a large part of the leaderboard's 23 screens.
+- **The Build Analyzer and Synergy Pairs views never shipped.** Both were built on 5 November 2025 as tabs 2 and 3 of the capsule analysis and taken off the page the next day, before they were ever committed wired in; only the files were left behind. **Both files were deleted on 2026-09-28.** The logic behind them is kept, unused, for a later look at build recommendations on the Character page's Builds tab: `utils/buildRecommendationEngine.js`, `config/buildRules.js`, `utils/capsuleEffectParser.js`, and `calculatePairSynergies` / `enrichPairSynergies` in `utils/capsuleSynergyCalculator.js`. Nobody has checked how good the recommendations are, so they are not shown until someone does.
+- **Every match already carries the tags a match list needs.** All 2,505 matches have season, season phase, match type, both teams, size and difficulty, and the name says the week and match number ("PS0 Week 3 Match 2"). The scope bar can filter a plain list of matches, so the file tree is not needed.
+- **A league-wide build table needs a floor.** A build is a character's exact capsule set plus AI strategy (`buildKey()`), and a typical one has 6 or 7 capsules:
+
+  | Scope | Matches | Builds | Used 3+ times | Used 5+ times | Used 10+ times |
+  |---|---|---|---|---|---|
+  | Season 0 season matches (the default) | 105 | 368 | 96 | 47 | 16 |
+  | Season 0, tests included | 2,135 | 2,240 | 958 | 447 | 193 |
+  | Everything | 2,505 | 2,554 | 1,076 | 492 | 214 |
+
+### The page map
+
+| Today | Verdict | Becomes |
+|---|---|---|
+| Home: a viewer for one picked match | Change | A dashboard. The match viewer becomes the Match page. |
+| Character leaderboard (cards) | Change | Characters, with a Table / Tier list switch |
+| Character Position Analysis | Remove the section | The position picker on Characters, the Usage tab on the Character page, the Lineups tab on the Team page |
+| Character page | Keep | The other four tabs restyled; the open tab in the URL |
+| Team Rankings (expanding cards) | Change | A Teams table; a row opens the Team page |
+| none | New | Team page |
+| File tree for picking matches (`BRDataSelector`) | Replace | Matches: a filterable list of matches |
+| Data Tables | Remove | An export on each table, plus the full workbook in the scope bar |
+| Meta: AI strategy and capsules | Change | Meta with tabs Builds · AI strategies · Capsules |
+| Build Analyzer, Synergy Pairs (never shipped) | Deleted | The logic is kept for later |
+| Manual upload mode | Change | Sandbox |
+
+### Page by page
+
+- **Home** (phone first). v1 holds three things, in this order:
+  - the current-season tier list
+  - the six curated boards (Top Damage, Best Survivor, Best Starter, Best Anchor, Best Combo, Most Efficient) as top-5 lists, each linking into the Characters table already sorted
+  - the latest week's season results, as match rows
+
+  "Meta movers" waits for time-ordered data, and the spotlight cards are left out.
+- **Characters** (phone first).
+  - One row per character: portrait, name, tier, score, matches, win rate, average damage, damage per second, efficiency, survival. A column picker adds the rest.
+  - An All / Starter / Middle / Anchor picker, and the Table / Tier list switch.
+  - A row opens the Character page. The stats that used to expand inside each card belong to that page now.
+  - Its export button carries the position split, which was the Data Tables page's position table.
+- **Character page** (phone first).
+  - Overview stays as approved.
+  - Usage, Builds, Forms and Matches are restyled to "Visual direction". Builds are one row per build with the capsules as the one-column list (see Meta below).
+  - The open tab goes into the query string, so "look at Goku's builds" is a link.
+- **Teams** (phone first).
+  - 13 rows: logo, name, record in the current scope, win rate, damage, efficiency, HP kept, characters used.
+  - A row opens the Team page. A link goes to the website's standings, which stay the website's.
+- **Team page** (new, phone first, the detail-page layout).
+  - A headline strip: record, win rate, efficiency, characters used.
+  - **Roster**: every character the team fielded, with its matches, how often it played each position, win rate and score.
+  - **Lineups**: each match's lineup from Starter to Anchor, with builds. This is the lineup-planning page the plan asks for.
+  - **Matches**: the team's matches as match rows.
+- **Matches** (phone first).
+  - One row per match: name, both teams, winner, size, map, difficulty, and each side's portraits.
+  - Filtered by the scope bar. The file tree (`BRDataSelector`, 1,154 lines) retires, and MUI with it.
+  - A "Matches | Performances" switch shows the old one-row-per-character-per-match table for power users.
+- **Match page** (phone first).
+  - Teams, result, map and size at the top.
+  - Then a table per team in lineup order: position, portrait, build, damage, damage taken, HP left, score. Tapping a row shows the rest of that character's numbers.
+  - This replaces the four levels of nested cards.
+- **Meta** (desktop first). Three tabs:
+  - **Builds** (new): every build across every character, the most direct answer to "what should I submit?". To keep it manageable:
+    - It shows builds used **5+ times** by default, the same cutoff below which a build counts as a thin sample. The floor is a visible chip in the scope bar, not a hidden rule. That is 47 rows in the default scope and about 450 with tests.
+    - It shows 25 rows, then "Show more", with character, AI strategy and "contains capsule" filters, sorted by score.
+    - A "Best per character | All builds" switch gives one row per character as the short version.
+    - **Capsules are always the familiar one-column list**, grouped by capsule type with the AI strategy last, never spread across columns. The demo compares two layouts on real data:
+      - **A. Compact rows plus the list beside them**: each row shows portrait, character, a capsule-type cost bar in the build-type colours, AI strategy, uses, win rate and score (about 50px). The selected row's one-column list shows in the right-hand column on desktop and opens under the row on a phone. 47 rows are about 2.5 screens.
+      - **B. The list in every row**: each row carries its own one-column list, about 120px tall. 47 rows are about 6 screens.
+  - **AI strategies**: the existing table, flattened. Its expanded panel becomes a detail view rather than an inline box.
+  - **Capsules**: the existing capsule table.
+- **Sandbox** (desktop first).
+  - A drop zone and a file list, then the same Match, Characters, Teams and Meta views run over the uploaded files, labelled clearly as your uploads.
+  - No share links, because uploads are not stored. The image card comes with the share-snippet work.
+- **Data export** (replaces the Data Tables page).
+  - Every table has a small export of what it shows.
+  - **The full workbook stays for power users** who want to work on all the underlying data by hand. It is today's "Export to Excel": Character Averages, Match Details and the Team Performance Matrix.
+    - It becomes a "Download all data (.xlsx)" button at the right end of the scope bar on every page, and in the Filters sheet on a phone.
+    - It exports the current scope, so widening the scope to everything exports everything.
+    - It gains a Position sheet and a Capsules sheet, so it still holds everything the Data Tables page had.
+  - `/tables` redirects to `/characters`, so old links land somewhere.
+
+### How pages get their data
+
+Today one list of loaded matches lives at the top of `App`: the file tree decides what loads, the tag filter narrows it, and every view recomputes from it.
+
+- **Scope comes from the URL.** The shell reads the scope bar's query string into one scope object.
+- **Loading follows scope.** A single hook loads only the corpus shards that scope needs and caches the aggregations.
+- **Each page derives its own rows** (characters, teams, builds, matches) from those matches. Detail pages read their character, team or match from the URL.
+- **Sandbox swaps the source** for the uploaded files, and every page works unchanged.
+
+This is also what lets `App.jsx` come apart one page at a time.
+
+### Team names: display the website's names, keep the tags
+
+The analyzer's team tags and `BR_Data/Tests/` folders say "Master and Student" and "Sentai"; the website says "Master & Student" and "Sentai Squad". **Decided:** a shared team list in `referencedata/` maps each tag to its display name, slug, website slug and logo. The analyzer shows the website's names from the start, and the Teams and Team pages reuse the website's logos (in `apps/website/public/images/`; Outlaw Stars has none). That is the second cross-app asset dependency, after portraits.
+
+**The tags and folders keep their ASCII names.** They are identifiers, not labels, and the Submit app already works this way (`value: 'Master and Student', label: 'Master & Student'`). Why `&` is a problem, found while checking:
+
+- **It already breaks a website link.** `apps/website/src/pages/HomePage.jsx` links each team to `/teams?team=${team.slug}` unencoded. For `master-&-student` the query reads as `team=master-`, so that team's card does not open from the home page. This is probably the problem remembered from when the name was first chosen.
+- **In a path it survives but gets ugly.** `ROUTES.team()` encodes it, giving `/analyzer/teams/master-%26-student` in a Discord link. The analyzer's team slug is `master-and-student`.
+- **Renaming the tags or folders would be expensive and gains nothing** once names are display data. It changes the path of every file in the team's test folder (paths become match ids in URLs), the tags of every match the team played (464 for Master and Student), `scripts/tagConfig.js`, the Submit app's value, and filter links already shared. If it is ever done, do it before match pages ship.
+- **YAML is fine.** `&` only means something at the start of a value, so `name: Master & Student` is safe.
+- **The website link is fixed** (2026-09-28): `HomePage.jsx` now encodes the slug. Every other team link on the website puts the slug in the path, where `&` is harmless. Still worth considering on the website side, outside this plan: `master-and-student` as its slug, keeping the old one working.
 
 ---
 
@@ -581,6 +704,8 @@ This is also where the participant workflow starts paying off, and the page shou
 
 Reuse the shared aggregation and `<ShareButton>` proven in step 3. Define and test the match-ID encoding scheme (relative path, spaces and slashes, round-tripped through the router). Retire MUI here with the Matches browser rebuild.
 
+What the Teams list, the Team page (Roster · Lineups · Matches), the Matches list and the Match page hold is settled in "Page-by-page review". That section also covers the shared team list in `referencedata/`, which comes first so that names, slugs and logos are right from the start.
+
 Two participant-facing additions belong here, both flowing from principle 4:
 
 - **Lineup planning as a first-class surface on the Team page.** Since a lineup is (character × AI strategy × capsules × position) and position drives matchups, a team member should be able to reason about Starter / Middle / Anchor in one place rather than by filtering a character table. `positionAggregation.js` already provides the math.
@@ -596,20 +721,22 @@ This is the casual viewer's front door, so principle 1 governs it absolutely: **
 
 - **The current-season tier list leads the page** (see "Visual direction", decision 9). It is the same view as the Characters page's Tier list, and each portrait links to that character's page.
 - **Curated category leaderboard cards** — named, opinionated boards a newcomer grasps instantly: Top Damage Dealer, Best Survivor, Best Starter, Best Anchor, Best Combo, Most Efficient. **Implement these as presets over the single Character leaderboard, not as separate features** — each card is a saved querystring that links into the full table pre-filtered and pre-sorted. One implementation, one source of truth, and a casual viewer who clicks through lands somewhere they can keep exploring.
-- Spotlight character / team stat cards.
-- Meta movers — what has risen or fallen since the last season phase (uses the Phase 1.5 ordering key).
-- Notable recent matches by damage / combo / upset.
+- The latest week's season results, as match rows.
+- **Later, not in v1** (decided 2026-09-28):
+  - Spotlight character and team stat cards.
+  - Meta movers: what has risen or fallen since the last season phase. It needs the Phase 1.5 ordering key.
+  - Notable recent matches by damage, combo or upset.
 - Clear entry points into Characters / Teams / Matches / Meta / Sandbox.
 
 Team test data is reachable from here but is not the default lens (principle 3) — a viewer who arrived to see how the season is going should see the season.
 
 ### 6. Meta/Builds page consolidation
 
-Merge AI Strategy Analysis + Capsule Synergy Analysis + Build Analyzer Tool into one page with tabs.
+One page with tabs: **Builds** (new, a league-wide build table), **AI strategies** and **Capsules**. See "Page-by-page review" for the Builds table's floor, filters and the two layouts the demo compares. The Build Analyzer Tool is no longer part of this: it never shipped and was deleted on 2026-09-28.
 
 ### 7. Sandbox polish
 
-Manual Upload mode gets the new design system and image-card sharing (no deep links — data isn't persisted). Retains the raw-file aggregation path established in Phase 1.5.
+Manual Upload mode gets the new design system and image-card sharing (no deep links — data isn't persisted). Retains the raw-file aggregation path established in Phase 1.5. It runs the same Match, Characters, Teams and Meta views over the uploaded files, so it needs no page components of its own.
 
 ---
 
@@ -641,3 +768,9 @@ Manual Upload mode gets the new design system and image-card sharing (no deep li
 - **Phone-first for viewing pages, desktop-first for power tools.** About half the traffic is on phones. **Decided 2026-09-28.**
 - **The tier list is an addition, not a replacement.** It is a view of the Characters page and the lead of Home, with position as a picker rather than columns. **Decided 2026-09-28.**
 - **Character portraits come from the Calculator's face icons**, resized at build time. **Decided 2026-09-28.**
+- **Page-by-page review** (decided 2026-09-28, see "Page-by-page review"):
+  - Data Tables goes, and each table exports itself. The full Excel workbook stays for power users, in the scope bar, and gains Position and Capsules sheets.
+  - The Build Analyzer and Synergy Pairs files are deleted. Recommendations get another look later.
+  - Meta gains a Builds table with a visible 5+ uses floor. Capsules always show as the one-column list.
+  - Team names come from a shared list with the website's names and logos. Tags and folders keep their ASCII names, and the analyzer's slug avoids `&`.
+  - Home v1 is the tier list, the curated boards and the latest results.
