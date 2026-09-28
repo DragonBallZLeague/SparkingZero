@@ -1,5 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+/*
+ * LEGACY LAYER. Everything below is in the `legacy` cascade layer, and in CSS an
+ * unlayered style beats a layered one whatever the selector's specificity or the
+ * load order. Tailwind (src/index.css) is unlayered, so any Tailwind class now
+ * wins over anything here - this file only styles what no Tailwind class on the
+ * element touches. That is the Phase 2b migration path: restyle a component in
+ * Tailwind and its App.css rules simply stop mattering; delete them as you go.
+ *
+ * Until 2026-09-28 it was the other way round: this file loaded after Tailwind
+ * and won every tie, so `grid-cols-2 sm:grid-cols-5` stayed two columns and
+ * `hidden sm:inline-flex` never showed. The redesign restyles freely rather than
+ * preserving this file's look (docs/ANALYZER_REDESIGN_PLAN.md, Phase 2b).
+ *
+ * The font @import stays above: an @import must come before every other rule.
+ */
+@layer legacy {
+
 /* Enhanced Dragon Ball Sparking Zero Analyzer */
 
 /* Smooth transitions for all interactive elements */
@@ -1917,6 +1934,11 @@ table {
 /* Nothing above this line was changed, no class names were renamed,   */
 /* and no component logic was touched -- this is a pure visual re-skin.*/
 /* =================================================================== */
+/* SUPERSEDED 2026-09-28: this file is now in the `legacy` cascade     */
+/* layer and loses to Tailwind, so these values were moved into         */
+/* tailwind.config.js (theme) and src/index.css (phone density). Edit   */
+/* them there; the rules below only matter where no Tailwind class does. */
+/* =================================================================== */
 
 :root {
   --surface-1: #f8fafc;
@@ -2066,3 +2088,5 @@ body {
   background-color: rgba(148, 163, 184, 0.06);
   border: 1px solid rgba(148, 163, 184, 0.12);
 }
+
+} /* @layer legacy */

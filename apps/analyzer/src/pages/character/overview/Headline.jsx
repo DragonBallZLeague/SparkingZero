@@ -50,32 +50,27 @@ function VolumeCircle({ value, median, top, color, darkMode }) {
 
 const label = darkMode => `text-[11px] font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`;
 
-// The phone-first base column counts are arbitrary values on purpose. App.css
-// loads after Tailwind and hand-rolls `.grid-cols-2`, `.col-span-2` and friends,
-// so a plain base class there beats Tailwind's `sm:` variant on the same element
-// and the grid never widens (apps/analyzer/CLAUDE.md, "Styling").
-const TWO_COLS = 'grid-cols-[repeat(2,minmax(0,1fr))]';
-
 export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
   const M = baseline.medians;
-  // [label, value, unit, goodness %, rank key, league value, neutral?]
+  // [label, value, unit, goodness %, rank key, league value]
   // Damage taken: less is better, so its goodness is the inverse of "more".
-  // Battle time is neutral: longer is not simply better (Anchors fight less).
+  // Every tile's rank takes the end colours, battle time included (#1 = the
+  // longest time on the field), as the league asked for.
   const tiles = [
     ['Damage dealt', fmt(o.avgDealt), '/ match', place.pct.avgDealt, 'avgDealt', fmt(M.avgDealt)],
     ['Damage taken', fmt(o.avgTaken), '/ match', place.pct.avgTaken === null ? null : 100 - place.pct.avgTaken, 'avgTaken', fmt(M.avgTaken)],
     ['Efficiency', fmt(o.efficiency, 2), '×', place.pct.efficiency, 'efficiency', `${fmt(M.efficiency, 2)}×`],
     ['Damage / sec', fmt(o.dps), '', place.pct.dps, 'dps', fmt(M.dps)],
-    ['Battle time', mmss(o.avgTime), 'avg', place.pct.avgTime, 'avgTime', mmss(M.avgTime), true],
+    ['Battle time', mmss(o.avgTime), 'avg', place.pct.avgTime, 'avgTime', mmss(M.avgTime)],
   ];
   return (
-    <div className={`grid ${TWO_COLS} sm:grid-cols-5 gap-px rounded-xl overflow-hidden border border-solid ${
+    <div className={`grid grid-cols-2 sm:grid-cols-5 gap-px rounded-xl overflow-hidden border border-solid ${
       darkMode ? 'bg-gray-700 border-gray-700' : 'bg-gray-200 border-gray-200'
     }`}>
-      {tiles.map(([lbl, val, unit, good, key, league, neutral], i) => {
-        const color = neutral ? null : rankColor(good, darkMode);
+      {tiles.map(([lbl, val, unit, good, key, league], i) => {
+        const color = rankColor(good, darkMode);
         return (
-          <div key={key} className={`p-3.5 min-w-0 ${i === 4 ? '[grid-column:span_2/span_2] sm:[grid-column:auto]' : ''} ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div key={key} className={`p-3.5 min-w-0 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''} ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <div className={label(darkMode)}>{lbl}</div>
             <div className={`text-2xl font-extrabold tracking-tight tabular-nums whitespace-nowrap mt-0.5 mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               {val}
@@ -146,8 +141,8 @@ export function MoveCards({ overview: o, place, baseline, darkMode }) {
     );
   };
 
-  // Ki blasts and skills are VOLUME: how much, not how well. Their ranks stay
-  // neutral. Ki blasts have no hit rate at all - a deflected enemy blast that lands
+  // Ki blasts and skills are VOLUME: how much, not how well - #1 is the heaviest
+  // user, and the rank takes the end colours like every other. Ki blasts have no hit rate at all - a deflected enemy blast that lands
   // is credited as the deflector's hit (docs/ACTION_CODES.md).
   const volumeCard = (name, per, key, styleKey, unit, rowLabel, digits) => {
     const tip = (
@@ -163,7 +158,7 @@ export function MoveCards({ overview: o, place, baseline, darkMode }) {
             <div className={label(darkMode)}>{name}</div>
             <div className={value}>{fmt(per, digits)}<span className={`${small} ml-1`}>{unit}</span></div>
             <div className={caption}>
-              {per ? <RankText rank={place.rank[key]} pool={place.pool[key]} color={null} darkMode={darkMode} />
+              {per ? <RankText rank={place.rank[key]} pool={place.pool[key]} color={rankColor(place.pct[key], darkMode)} darkMode={darkMode} />
                 : <span style={{ color: faint }}>Never used</span>}
             </div>
           </div>
@@ -173,7 +168,7 @@ export function MoveCards({ overview: o, place, baseline, darkMode }) {
   };
 
   return (
-    <div className={`grid ${TWO_COLS} sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-2`}>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-2">
       {hitCard('Super 1', o.blasts.s1, o.blastTotals.s1, 's1Rate', 's1Thrown', 'blast')}
       {hitCard('Super 2', o.blasts.s2, o.blastTotals.s2, 's2Rate', 's2Thrown', 'blast')}
       {hitCard('Ultimate', o.blasts.ult, o.blastTotals.ult, 'ultRate', 'ultThrown', 'ult')}

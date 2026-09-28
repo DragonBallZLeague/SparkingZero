@@ -161,7 +161,7 @@ function StyleRadar({ o, place, M, shapeColor, darkMode }) {
         const k = 'style_' + st.key;
         return (
           <Tip key={st.key} darkMode={darkMode} content={styleTip(o, place, M, st, darkMode)}
-            className={`absolute whitespace-nowrap text-[12px] sm:text-sm font-semibold leading-tight ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
+            className={`absolute whitespace-nowrap text-xs sm:text-sm font-semibold leading-tight ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
             style={{ left: `${(x / W * 100).toFixed(2)}%`, top: `${(y / H * 100).toFixed(2)}%`, transform: `translate(${tx}, ${ty})`, textAlign: side === 'middle' ? 'center' : side === 'start' ? 'left' : 'right' }}>
             <div><Swatch color={styleColor(st.key, darkMode)} className="mr-1.5 align-[0px]" />{st.name}</div>
             <div className="mt-0.5">
@@ -256,8 +256,7 @@ export default function StyleBand({
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className={`text-[11px] font-bold uppercase tracking-widest ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>How it fights</div>
           <div className="flex items-center gap-3">
-            {/* [display:none], not `hidden`: App.css's `.hidden` would beat sm:inline-flex. */}
-            <span className={`[display:none] sm:inline-flex items-center gap-1.5 text-xs whitespace-nowrap ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            <span className={`hidden sm:inline-flex items-center gap-1.5 text-xs whitespace-nowrap ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
               {viz === 'radar'
                 ? <span className={`inline-block w-4 border-0 border-t-2 border-dashed ${darkMode ? 'border-gray-400' : 'border-gray-500'}`} />
                 : <span className={`inline-block w-0.5 h-3 ${darkMode ? 'bg-gray-400' : 'bg-gray-500'}`} />}

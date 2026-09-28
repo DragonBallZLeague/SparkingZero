@@ -30,7 +30,7 @@ const CAPSULE_TYPE_COLORS = {
   },
 };
 
-/** Neutral: mid-table ranks, battle time, usage counts. */
+/** Neutral: every rank between the top and bottom fifth. */
 export const NEUTRAL = { dark: '#94a3b8', light: '#64748b' };
 
 const RANK_ENDS = { dark: { bad: '#ff2b3a', good: '#16e05a' }, light: { bad: '#c8102e', good: '#047a2e' } };

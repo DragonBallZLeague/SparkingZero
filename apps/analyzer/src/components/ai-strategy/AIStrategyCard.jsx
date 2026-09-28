@@ -163,7 +163,7 @@ export default function AIStrategyCard({
       </div>
       
       {/* Top Metrics Row - Win Rate, Performance, Unique Characters */}
-      <div className="grid grid-cols-3 gap-3 mb-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
         <div className="text-center">
           <div className={`text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             Win Rate
@@ -194,7 +194,7 @@ export default function AIStrategyCard({
       </div>
       
       {/* Secondary Metrics Row - Damage, DPS, Efficiency, Battle Time */}
-      <div className="grid grid-cols-4 gap-2 mb-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
         <div className="text-center">
           <div className={`text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             Avg Damage

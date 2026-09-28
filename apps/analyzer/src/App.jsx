@@ -2450,7 +2450,7 @@ export default function App() {
                 </div>
               </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 2xl:grid-cols-3 gap-6">
               {[1, 2, 3].map(position => {
                 const posData = positionData[position];
                 const positionNames = [POSITION_NAMES[1], POSITION_NAMES[2], POSITION_NAMES[3]];
@@ -2590,7 +2590,7 @@ export default function App() {
                           size="small"
                         />
                       </div>
-                      <div className="grid grid-cols-4 gap-3 text-sm">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                         <div className="text-center">
                           <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             Avg Damage
@@ -2731,7 +2731,7 @@ export default function App() {
                               </div>
                             </div>
                             
-                            <div className="grid grid-cols-4 gap-2 text-sm">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
                               <div>
                                 <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Damage</div>
                                 <div className={`font-medium ${darkMode ? colors.dark : colors.light}`}>
@@ -2829,7 +2829,7 @@ export default function App() {
                 <div className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Average Damage Output by Position
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {[1, 2, 3].map(position => {
                     const posData = positionData[position];
                     const avgDamage = posData.sortedCharacters.length > 0 
@@ -2870,7 +2870,7 @@ export default function App() {
                 <div className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Character Pool Diversity by Position
                 </div>
-                <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                   {[1, 2, 3].map(position => {
                     const posData = positionData[position];
                     const uniqueChars = posData.sortedCharacters.length;
@@ -3071,7 +3071,7 @@ export default function App() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
                   <StatBar 
                     value={p1Summary.totalDamage} 
                     maxValue={Math.max(p1Summary.totalDamage, p2Summary.totalDamage)} 
@@ -3350,7 +3350,7 @@ export default function App() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
                   <StatBar 
                     value={p2Summary.totalDamage} 
                     maxValue={Math.max(p1Summary.totalDamage, p2Summary.totalDamage)} 

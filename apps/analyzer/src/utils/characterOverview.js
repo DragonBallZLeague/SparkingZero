@@ -10,8 +10,7 @@
  * drift because the page and the baseline disagreed about a definition.
  *
  * The approved design (docs/ANALYZER_REDESIGN_PLAN.md, "Overview tab: approved
- * design") is the spec; the demo it was approved on is in
- * design/character-overview/.
+ * design") is the spec.
  */
 import { combatEfficiency } from './performanceScore.js';
 

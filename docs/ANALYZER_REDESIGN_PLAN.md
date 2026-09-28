@@ -100,7 +100,7 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 ### Phase 2a — Tailwind + tokens + dependency cleanup: ✅ Complete (2026-09-25)
 
 - **Real Tailwind v3 is running.** `postcss.config.js` added (CommonJS — this package has no `"type": "module"` and its prebuild scripts must stay CJS), `src/index.css` holds the directives, imported by `main.jsx` **before** `App.css`.
-- **That load order is load-bearing.** An audit found `App.css` defines 713 single-class rules, **123 of which collide with a class Tailwind generates** — and some collisions change rendering, not just colour notation: `.gap-4` is `0.6rem` here vs Tailwind's `1rem`; `.max-w-4xl` and `.max-w-7xl` add `margin: 0 auto`; `.border-b` and `.border-l-2` carry an explicit `border-style`; and several violet/teal shades use genuinely different hex values than Tailwind's palette. Emitting Tailwind first means `App.css` wins every tie at equal specificity, so **turning Tailwind on changed nothing that already rendered** — confirmed by inspecting the built bundle, where the App.css value is last in all three spot-checked cases.
+- **That load order was load-bearing** (superseded 2026-09-28, see Phase 2b below: `App.css` now sits in a cascade layer and always loses to Tailwind). An audit found `App.css` defines 713 single-class rules, **123 of which collide with a class Tailwind generates** — and some collisions change rendering, not just colour notation: `.gap-4` is `0.6rem` here vs Tailwind's `1rem`; `.max-w-4xl` and `.max-w-7xl` add `margin: 0 auto`; `.border-b` and `.border-l-2` carry an explicit `border-style`; and several violet/teal shades use genuinely different hex values than Tailwind's palette. Emitting Tailwind first means `App.css` wins every tie at equal specificity, so **turning Tailwind on changed nothing that already rendered** — confirmed by inspecting the built bundle, where the App.css value is last in all three spot-checked cases.
 - **Preflight is deliberately OFF** (`corePlugins.preflight: false`, and `@tailwind base` omitted). It would reset headings, margins and border defaults across a component tree never written against it. It gets enabled in 2b once `App.css` is gone. Until then, border-width utilities need an explicit border-style.
 - **All 9 previously-broken responsive classes now generate**, and the `xl:` breakpoint has a media query for the first time.
 - **Shared tokens live in `packages/ui/src/tokens.js`** — CommonJS, so both the CJS configs (analyzer, match builder) and the ESM ones (website, calculator) can load it. All four Tailwind configs now source from it and scan `packages/ui`. Each app keeps its existing token **names** as aliases onto the shared values, so no existing markup changed: the website's `dbz.*`, the calculator's `sz-*`, the analyzer's `dragon-*`. New work should prefer the shared `brand.*` names.
@@ -108,7 +108,19 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 - **Dependencies**: removed `xlsx` (its two trivial call sites moved onto `exceljs` via the new `src/utils/exportSheet.js`), `@mui/x-tree-view` and `@mui/lab` (zero imports anywhere), and the duplicate `@vitejs/plugin-react` devDependency. **Analyzer JS went 2,267 kB → 1,981 kB (gzip 622 → 526 kB).**
 - Match builder's 47-entry `safelist` was **kept**. It exists because that app assembles class names at runtime where Tailwind's scanner cannot see them, so removing entries needs per-class verification. Noted as future work rather than done blind.
 
-### Phase 2b — App.css teardown: not started
+### Phase 2b — App.css teardown: in progress (started 2026-09-28)
+
+**Decision (2026-09-28): the redesign restyles freely.** Keeping the legacy UI "looking identical" is no longer a goal; new styling must win over `App.css`, and the league has a list of styling fixes of its own to bring. Light mode was removed on purpose (commit `8e816462`, 2026-09-05, because it was harsh and hard to read) and is not planned to return, so dark is the only theme that matters.
+
+- ✅ **Tailwind is authoritative.** `App.css` is wrapped in `@layer legacy { … }` (its font `@import` stays above it). An unlayered style beats a layered one whatever the specificity or order, so every Tailwind class now wins over `App.css`, and `App.css` only styles what no Tailwind class on an element touches. That ended the trap where `App.css`'s base classes beat Tailwind's responsive variants (`grid-cols-2 sm:grid-cols-5` stayed two columns; `hidden sm:inline-flex` never showed), which the Character page Overview hit first.
+- ✅ **Today's look moved into the Tailwind theme.** The end of `App.css` was a "modern redesign layer" that re-skinned the app by redefining Tailwind's own class names. Its values are now in `apps/analyzer/tailwind.config.js`: radii, soft shadows, the navy card surface (`bg-gray-800` `#1e2434`, `bg-gray-700` `#2b3245`), the faint hairline `border-gray-700` (alpha scaled, so `/60` still means fainter), display letter-spacing, and the fluid `max-w-7xl` shell up to 1760px. Its phone pass is an explicit "phone density" block in `src/index.css`. **Restyle there.**
+- ✅ **Checked element by element.** Every element's computed style was diffed before and after, across every view at 1280px and 390px. What remains is intended:
+  - surfaces unified, a few RGB units apart
+  - table dividers now the same hairline as other borders
+  - the tables' teal/violet now match their names; `App.css` had tinted them, and its dark teal was barely readable
+  - responsive classes that never applied now do, including `lg:grid-cols-3` on the three position panels. At 1280px that was cramped, so it became `2xl:grid-cols-3`.
+  - Eight grids that relied on `App.css` collapsing every 3–5 column grid to two on a phone now say `grid-cols-2 sm:grid-cols-N` themselves.
+- **Next: the league's styling list**, then retire `App.css` rules as their components are restyled. Once it is empty, turn preflight on.
 
 ### Phase 2c — Responsive shell, accessibility, persistence: not started
 
@@ -354,7 +366,9 @@ See "Progress". Router wired, aggregation extracted, URL scheme defined.
 
 ### 2b. `App.css` teardown — incremental, **not** a gate
 
-Retire the 2,062-line hand-rolled `App.css` and the 1,199 `darkMode` ternaries **per component, as each page is rebuilt**, rather than as one up-front migration. Replace prop-drilled `darkMode` with Tailwind's `dark:` variant plus a small `ThemeContext` (the website prop-drills `darkMode` through every route — explicitly do *not* copy that).
+Retire the 2,062-line hand-rolled `App.css` and the 1,199 `darkMode` ternaries **per component, as each page is rebuilt**, rather than as one up-front migration. Since 2026-09-28 `App.css` sits in the `legacy` cascade layer and always loses to Tailwind, so restyling a component in Tailwind is enough to take it off `App.css`; delete the dead rules as you go.
+
+The original plan here was to replace prop-drilled `darkMode` with Tailwind's `dark:` variant plus a small `ThemeContext`. With light mode removed for the foreseeable future, **collapsing each ternary to its dark branch** is simpler and loses nothing; build a theme mechanism only if light mode ever comes back.
 
 This is the key sequencing change from the original plan: the CSS teardown rides along with visible work instead of blocking it, and the regression surface is one component at a time rather than a 6,678-line file at once.
 
@@ -364,7 +378,7 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 - Consolidate the 13 inline stat primitives out of `App.jsx` into theme-aware, responsive components under `src/components/`.
 - Reuse `packages/ui/NavBar.jsx`'s existing mobile hamburger pattern rather than inventing a new one.
 - Accessibility: contrast, focus states, 44px touch targets, keyboard nav for the tree selector and comboboxes.
-- **Add persistence** (new): a small `localStorage` layer for dark mode and filter state. There is none today, so a shared deep link always opens in defaults.
+- **Add persistence** (new): a small `localStorage` layer for filter state. There is none today, so a shared deep link always opens in defaults. (Dark mode needs none: it is the only theme.)
 - Validate at 375px / 768px / 1280px with real builds.
 
 ### 3. Character page rebuild
@@ -375,13 +389,13 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 
 #### Overview tab: approved design (2026-09-28)
 
-Settled over a long design conversation with real-data demos. The working demo is the spec: `apps/analyzer/design/character-overview/` (see its README to run it). The page answers two questions for a participant **and** a casual viewer: *how is this character doing on the stats that matter*, and *what kind of fighter is it*.
+Settled over a long design conversation with real-data demos. The demo was deleted once the tab shipped and matched it (2026-09-28); the tab itself, `apps/analyzer/src/pages/character/overview/`, is now the reference. The page answers two questions for a participant **and** a casual viewer: *how is this character doing on the stats that matter*, and *what kind of fighter is it*.
 
 **Layout, top to bottom**
 
 1. **Identity header**: tier plate and score pill for the current view. Selecting a build switches both to that build's score.
 2. **"Showing one build · Show all builds" strip**: appears above the stats only while a build is selected, so a filtered view (including one opened from a shared link) never passes for the whole picture.
-3. **Five headline tiles**: Damage dealt, Damage taken, Efficiency, Damage/sec, Battle time. Each has its value, a bar with a league-median tick, and one line reading rank on the left and "League 38,981" on the right. The league number is inline rather than in a tooltip because these are the main comparisons and phones cannot hover. Win rate is deliberately absent. Battle time is neutral (longer is not simply better).
+3. **Five headline tiles**: Damage dealt, Damage taken, Efficiency, Damage/sec, Battle time. Each has its value, a bar with a league-median tick, and one line reading rank on the left and "League 38,981" on the right. The league number is inline rather than in a tooltip because these are the main comparisons and phones cannot hover. Win rate is deliberately absent. Battle time was neutral in the approved design; at the league's request (2026-09-28) its rank now takes the end colours like every other, #1 being the longest time on the field.
 4. **Six move cards**:
    - **Super 1, Super 2, Ultimate**: hit/thrown per match written `1.5/2.3`, with a donut of the hit rate and a league-median tick.
    - **Ki blasts**: blasts fired per match only. There is no ki-blast hit rate: a deflected enemy blast that lands is credited as the deflector's hit, so one cannot be computed honestly (`apps/analyzer/docs/ACTION_CODES.md`).
@@ -416,7 +430,7 @@ Settled over a long design conversation with real-data demos. The working demo i
 **Display conventions** (also recorded as standing preferences)
 
 - **Rank reads `#42/126`**, with the pool in faint grey. Each metric shows its own pool, since hit rates exclude characters who never threw.
-- **Colour appears only at the ends**: the top fifth of the pool in green, the bottom fifth in red, everything between neutral. Banded, not a gradient, so #3 and #10 are the same green. Dark mode uses `#16e05a` / `#ff2b3a`; light mode uses `#047a2e` / `#c8102e`. Every colour reads at 4.5:1 or better as text.
+- **Colour appears only at the ends**: the top fifth of the pool in green, the bottom fifth in red, everything between neutral. **Every rank on the page follows this**, including battle time and the volume cards (ki blasts, skills), which were neutral until 2026-09-28. Banded, not a gradient, so #3 and #10 are the same green. Dark mode uses `#16e05a` / `#ff2b3a`; light mode uses `#047a2e` / `#c8102e`. Every colour reads at 4.5:1 or better as text.
 - **Style colours are the build-type colours** (`getBuildTypeColor`), with pink for Ultimates. They go on graphics; labels stay white with a style square.
 - **No "·" separators**: use aligned columns or separate elements.
 
@@ -449,8 +463,8 @@ Settled over a long design conversation with real-data demos. The working demo i
    - The old Overview blocks moved to a new **Usage** tab. The always-visible `HeadlineBlock` strip is gone, since the tiles replace it and win rate is left out on purpose.
    - `?build=` filters the whole page except the Builds tab, with the "Showing one build" strip. `App.jsx` strips the param on the way off the page.
    - `verify-character-page` checks the Overview's per-match fields, the build list against the leaderboard's filter, and that every style places. `smoke-character-page` renders the Overview, the Bars view and a `?build=` link.
-   - Found on the way: `App.css` base classes beat Tailwind's responsive variants (the tiles stayed two columns wide), and the analyzer has had no theme toggle since 2026-09-05. Both are in `apps/analyzer/CLAUDE.md`.
-6. **Delete `design/character-overview/`** once the tab matches it.
+   - Found on the way: `App.css` base classes beat Tailwind's responsive variants (the tiles stayed two columns wide). That led to making Tailwind authoritative; see Phase 2b.
+6. ✅ **Deleted `design/character-overview/`** (2026-09-28), once the tab matched it.
 
 This is also where the participant workflow starts paying off, and the page should be shaped by principles 1 and 4 rather than by what `App.jsx` currently renders:
 

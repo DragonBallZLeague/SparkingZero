@@ -1,29 +1,50 @@
 /*
- * Tailwind entry for the analyzer. Imported by main.jsx BEFORE App.jsx pulls in
- * App.css, and that order is load-bearing - see docs/ANALYZER_REDESIGN_PLAN.md
- * Phase 2a.
+ * Tailwind entry for the analyzer, and the app's styling authority.
  *
- * App.css hand-rolls ~713 Tailwind-lookalike utility classes, 123 of which share
- * a name with a class Tailwind generates. Several of those differ in a way that
- * changes rendering: .gap-4 is 0.6rem here but 1rem in Tailwind, .max-w-4xl and
- * .max-w-7xl add "margin: 0 auto", .border-b and .border-l-2 carry an explicit
- * border-style, and a handful of violet/teal shades use different hex values
- * than Tailwind's palette. Emitting Tailwind FIRST means App.css wins every tie
- * at equal specificity, so turning Tailwind on changes nothing that already
- * renders - it only fills in classes App.css never defined (notably the nine
- * broken responsive classes) plus anything new we write.
+ * Tailwind here is UNLAYERED, and App.css sits in the `legacy` cascade layer
+ * (see the top of App.css). An unlayered rule beats a layered one whatever the
+ * specificity or load order, so every Tailwind class wins over App.css - the
+ * legacy file only styles what no Tailwind class on the element touches. Import
+ * order between the two no longer matters.
  *
- * As App.css rules are deleted per-component in Phase 2b, Tailwind's equivalents
- * take over automatically. That is the migration path.
+ * App.css's "modern redesign layer" re-skinned the app by redefining Tailwind's
+ * own class names (rounder corners, softer shadows, a navy card surface, faint
+ * hairline borders, a fluid page width). Those values now live in
+ * tailwind.config.js, so the app looks as it did while Tailwind is in charge.
+ * Restyle there, not by adding rules to App.css.
  *
  * NOTE: "@tailwind base" is deliberately omitted. Preflight would reset margins,
- * heading sizes and border defaults across a 6,600-line component that was never
- * written against it. It gets enabled in Phase 2b once App.css is gone. Until
- * then, border-width utilities need an explicit border-style (App.css's versions
- * already include one).
+ * heading sizes and border defaults across a component tree that was never
+ * written against it. It gets enabled once App.css is gone. Until then,
+ * border-width utilities need an explicit border-style.
  */
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Phone density. Under 640px the common roomy utilities tighten, so cards and
+ * headings do not eat a phone screen. Carried over from App.css's "mobile-first
+ * responsive pass" when App.css moved into the legacy layer (2026-09-28); it is
+ * AFTER the utilities on purpose, so it wins on a phone and nowhere else.
+ *
+ * A deliberate design rule, not a leftover: `p-6` means 1.5rem on a desktop and
+ * 1rem on a phone, app-wide. The restyle may replace it with per-component
+ * `sm:` classes; if so, delete it here in one go. Its grid rule (3+ columns
+ * collapsing to 2) was NOT carried over - those grids now say `grid-cols-2
+ * sm:grid-cols-N` where they are written.
+ */
+@media (max-width: 639.98px) {
+  .max-w-7xl { max-width: 100%; }
+  .text-4xl { font-size: 1.5rem;  line-height: 1.9rem; }
+  .text-3xl { font-size: 1.35rem; line-height: 1.75rem; }
+  .text-2xl { font-size: 1.15rem; line-height: 1.5rem; }
+  .text-xl  { font-size: 1.05rem; line-height: 1.4rem; }
+  .p-6 { padding: 1rem; }
+  .p-4 { padding: 0.8rem; }
+  .gap-6 { gap: 0.75rem; }
+  .gap-4 { gap: 0.6rem; }
+  .mb-6 { margin-bottom: 1rem; }
+}
 
 /*
  * Dual-thumb range slider (components/RangeSlider.jsx).
