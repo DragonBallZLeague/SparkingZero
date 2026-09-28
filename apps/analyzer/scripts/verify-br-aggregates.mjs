@@ -10,8 +10,8 @@
  * Two independent checks, over every match (no sampling):
  *
  *   1. STRUCTURAL - compares raw vs compact on every field any consumer reads,
- *      including equipItem key order, the battleNumCount subset, and the
- *      pre-summed runBlast/attackHit fallbacks.
+ *      including equipItem key order, the battleNumCount subset, the pre-summed
+ *      runBlastCount, and the fighting-style hits that replace attackHitCount.
  *   2. BEHAVIOURAL - runs the real extractStats() from src/utils/statCalculations.js
  *      over both sides with identical lookup maps and deep-compares its full output.
  *      extractStats is the single source of truth every aggregation consumes, so
@@ -24,6 +24,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { extractStats, parseCharacterCSV } from '../src/utils/statCalculations.js';
+import { styleHits, STYLE_HIT_CLASSES } from '../src/utils/actionCodes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const brDataDir = path.resolve(__dirname, '..', 'BR_Data');
@@ -153,12 +154,19 @@ function checkEntry(matchName, slot, rawEntry, compactEntry) {
     ['SPM2', k => k.includes('SPM2') || k.includes('SPM3'), rawCount.runBlastCount, cmpCount.runBlastCount],
     ['EXA1', k => k.includes('EXA1'), rawCount.runBlastCount, cmpCount.runBlastCount],
     ['EXA2', k => k.includes('EXA2'), rawCount.runBlastCount, cmpCount.runBlastCount],
-    ['speedImpact', k => k.includes('actSPIMPO') || k.includes('actRI'), rawCount.attackHitCount, cmpCount.attackHitCount],
   ];
   for (const [label, predicate, rawDict, cmpDict] of checks) {
     const a = sumMatching(rawDict, predicate);
     const b = sumMatching(cmpDict, predicate);
     if (a !== b) fail(matchName, slot, `${label} fallback sum ${a} != ${b}`);
+  }
+
+  // attackHitCount is replaced by its pre-summed fighting-style hits. Classify the
+  // raw dict with the same shared function and compare; absent means all zero.
+  const rawHits = styleHits(rawCount.attackHitCount);
+  const cmpHits = cmpCount.styleHits || { rush: 0, heavy: 0, kiblast: 0 };
+  for (const cls of STYLE_HIT_CLASSES) {
+    if (rawHits[cls] !== cmpHits[cls]) fail(matchName, slot, `styleHits.${cls} ${rawHits[cls]} != ${cmpHits[cls]}`);
   }
 
   if (JSON.stringify(rawEntry.additionalCounts ?? null) !== JSON.stringify(compactEntry.additionalCounts ?? null)) {

@@ -47,7 +47,7 @@ npm run dev:calculator   # Calculator         -> :5175
 
 # Build
 npm run build             # Match Builder
-npm run build:analyzer    # Analyzer (prebuild also runs autoTagMatches.js, generate-br-data-structure.js, generate-br-data-tags.js, generate-br-aggregates.js over BR_Data, then verify-character-slugs.mjs)
+npm run build:analyzer    # Analyzer (prebuild also runs autoTagMatches.js, generate-br-data-structure.js, generate-br-data-tags.js, verify-action-codes.mjs, generate-br-aggregates.js and generate-performance-bands.mjs over BR_Data, then verify-character-slugs, verify-routes and verify-self-contained)
 npm run build:calculator  # Calculator
 npm run build:all         # Match Builder + Analyzer + Calculator
 (cd apps/website && npm run build)

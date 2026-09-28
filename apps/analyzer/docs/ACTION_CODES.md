@@ -58,9 +58,15 @@ Still unidentified, together under 1% of recorded hits in the calibration window
 `SSW1PFN`, `BSM1`, `COA0`, `BNDP`, `DS1-3`, `BSRA/BSRB*`, `ZBD`, `WAL*`, `SPC`, `DT1-3`,
 `FR1-2`, `SI1-2`, `PP*`, `BW*` and a long tail.
 
-`extractStats` currently counts every `actRI*` code as a speed impact (a fallback used only
-when `speedImpactCount` is missing). The league identifies `RI` as a movement step-in, and
-it is `SPF*` that tracks speed impacts, so that fallback is wrong.
+`extractStats` used to count every `actRI*` code as a speed impact whenever
+`speedImpactCount` was missing. `RI` is a movement step-in (it is `SPF*` that tracks speed
+impacts), so that fallback credited 13,845 phantom speed impacts to 5,207 character entries
+that had none. It was removed on 2026-09-28; speed impacts now come from the game's own
+counter only.
+
+The classification lives in `src/utils/actionCodes.js`, shared by `extractStats` and the
+corpus generator. `npm run verify-action-codes` spot-checks it against this document on
+every build; `-- --coverage` also measures the unidentified share across all of `BR_Data`.
 
 ## Traps - read before building a stat on these
 

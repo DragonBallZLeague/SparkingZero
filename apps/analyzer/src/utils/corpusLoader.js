@@ -16,7 +16,7 @@
  */
 
 /** Must match CORPUS_VERSION in scripts/generate-br-aggregates.js. */
-const EXPECTED_CORPUS_VERSION = 1;
+const EXPECTED_CORPUS_VERSION = 2;
 
 const CORPUS_DIR = 'br-aggregates';
 

@@ -17,12 +17,21 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
+
+// The move-code classifier is an ES module shared with the app (extractStats), so
+// both sides classify hits identically. Loaded in main() - see below.
+let styleHitsOf = null;
 
 const brDataDir = path.resolve(__dirname, '..', 'BR_Data');
 const outDir = path.resolve(__dirname, '..', 'public', 'br-aggregates');
 
-/** Bump when the emitted shape changes so the client can reject a stale corpus. */
-const CORPUS_VERSION = 1;
+/**
+ * Bump when the emitted shape changes so the client can reject a stale corpus.
+ * v2: attackHitCount is replaced by pre-summed `styleHits` (rush / heavy / ki-blast
+ * hits), and the synthetic speed-impact sum is gone with extractStats' fallback.
+ */
+const CORPUS_VERSION = 2;
 
 // ---------------------------------------------------------------------------
 // Keep-lists. A field is here because some consumer reads it - see the field
@@ -86,21 +95,26 @@ function sumMatching(dict, predicate) {
 }
 
 /**
- * extractStats only uses runBlastCount/attackHitCount as legacy fallbacks, via
- * substring matching over their keys. Those two dicts are the single largest
- * thing in a character entry (~560 of ~2,730 bytes), so rather than carrying them
- * we pre-sum them into synthetic dicts whose keys still satisfy the same
- * includes() checks. extractStats therefore computes an identical result.
+ * runBlastCount and attackHitCount are the single largest thing in a character
+ * entry (~560 of ~2,730 bytes), and extractStats only ever reads them summed, so
+ * they are pre-summed here:
+ *
+ * - runBlastCount becomes a synthetic dict whose keys still satisfy extractStats'
+ *   includes() checks (SPM1 / SPM2 / EXA1 / EXA2).
+ * - attackHitCount (~230 per-move codes) becomes `styleHits`: hits landed by
+ *   fighting style, classified by src/utils/actionCodes.js - the same function
+ *   extractStats applies to a raw file, so both give an identical result.
+ *
+ * Omitted when zero, which extractStats reads as zero either way.
  */
 function compactBlastCounts(battleCount) {
   const runBlast = battleCount.runBlastCount || {};
-  const attackHit = battleCount.attackHitCount || {};
 
   const spm1 = sumMatching(runBlast, k => k.includes('SPM1'));
   const spm2 = sumMatching(runBlast, k => k.includes('SPM2') || k.includes('SPM3'));
   const exa1 = sumMatching(runBlast, k => k.includes('EXA1'));
   const exa2 = sumMatching(runBlast, k => k.includes('EXA2'));
-  const speedImpact = sumMatching(attackHit, k => k.includes('actSPIMPO') || k.includes('actRI'));
+  const hits = styleHitsOf(battleCount.attackHitCount);
 
   const out = {};
   const synthesizedRunBlast = {};
@@ -109,7 +123,7 @@ function compactBlastCounts(battleCount) {
   if (exa1) synthesizedRunBlast.EXA1 = exa1;
   if (exa2) synthesizedRunBlast.EXA2 = exa2;
   if (Object.keys(synthesizedRunBlast).length) out.runBlastCount = synthesizedRunBlast;
-  if (speedImpact) out.attackHitCount = { actSPIMPO: speedImpact };
+  if (hits.rush || hits.heavy || hits.kiblast) out.styleHits = hits;
   return out;
 }
 
@@ -222,7 +236,11 @@ function collectMatchFiles(dir) {
   return results;
 }
 
-function main() {
+async function main() {
+  // A dynamic import rather than require(): the classifier is an ES module, and
+  // import() loads one from CommonJS on every Node version this repo runs.
+  ({ styleHits: styleHitsOf } = await import(pathToFileURL(path.join(__dirname, '..', 'src', 'utils', 'actionCodes.js')).href));
+
   const groups = collectMatchFiles(brDataDir);
   if (!groups.length) {
     console.error('generate-br-aggregates: no match folders found under', brDataDir);
@@ -331,4 +349,7 @@ function main() {
   if (totalSkipped) console.log('  skipped ' + totalSkipped + ' file(s)');
 }
 
-main();
+main().catch(err => {
+  console.error('generate-br-aggregates: ' + (err && err.stack || err));
+  process.exit(1);
+});

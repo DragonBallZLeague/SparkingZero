@@ -545,6 +545,10 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         speedImpactCount: stats.speedImpactCount,
         speedImpactWins: stats.speedImpactWins,
         sparkingComboCount: stats.sparkingComboCount,
+        // Fighting-style hits, for the Character page's "How it fights" profile.
+        rushHits: stats.rushHits,
+        heavyHits: stats.heavyHits,
+        kiBlastHits: stats.kiBlastHits,
         formChangeHistory: formChangeHistory,
         formChangeCount: formChangeCount,
         perFormStats: perFormStatsForMatch, // Store per-form stats with each match

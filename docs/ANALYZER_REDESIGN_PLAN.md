@@ -431,12 +431,13 @@ Settled over a long design conversation with real-data demos. The working demo i
 
 **Implementation steps**
 
-1. **Shared action-code classifier**: `src/utils/actionCodes.js`, from `ACTION_CODES.md`.
-   - Carry per-entry rush, heavy and ki-blast hit totals through the compact corpus.
-   - Expose them from `extractStats`, and prove them raw-vs-compact with `verify-aggregates`.
-2. **`extractStats` fixes**:
-   - `skillsUsed` from EXA1 + EXA2 (the leaderboard's skills figures are inflated for Season 1 today).
-   - Remove the `actRI*` speed-impact fallback (`RI` is movement).
+1. ✅ **Shared action-code classifier** (done 2026-09-28): `src/utils/actionCodes.js`, from `ACTION_CODES.md`.
+   - Per-entry rush, heavy and ki-blast hits travel through the compact corpus as `styleHits` (corpus v2).
+   - `extractStats` exposes them as `rushHits` / `heavyHits` / `kiBlastHits`, and they are carried into per-match rows. `verify-aggregates` proves raw and compact identical.
+   - `npm run verify-action-codes` (in prebuild) spot-checks the classifier against the doc.
+2. ✅ **`extractStats` fixes** (done 2026-09-28):
+   - `skillsUsed` is EXA1 + EXA2. The leaderboard had counted 12,761 skill uses across the data against 8,266 real ones.
+   - The `actRI*` speed-impact fallback is gone. It had credited 13,845 phantom speed impacts to 5,207 character entries with none.
 3. **A style-baseline generator**, beside `generate-performance-bands`.
    - Frozen and committed (e.g. `src/config/style-baseline.json`), holding the sorted per-metric values and medians that ranks need.
    - Idempotent, with the timestamp carried over, so a rebuild without a recalibration leaves no diff.

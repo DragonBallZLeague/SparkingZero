@@ -1,5 +1,6 @@
 import { getBuildComposition } from './buildComposition.js';
 import { combatEfficiency } from './performanceScore.js';
+import { styleHits } from './actionCodes.js';
 
 // Single source of truth for per-character match stat extraction — used by every
 // aggregation util (character/team/position) plus the single-match view.
@@ -48,7 +49,10 @@ export function extractStats(char, charMap, capsuleMap = {}, position = null, ai
   const count = char.battleCount || {};
   const numCount = count.battleNumCount || {};
   const runBlastCount = count.runBlastCount || {};
-  const attackHitCount = count.attackHitCount || {};
+  // Hits landed by fighting style (rush / heavy melee, ki blasts), classified by
+  // src/utils/actionCodes.js. The compact corpus carries these pre-summed as
+  // `styleHits` instead of the ~230-code attackHitCount; raw files are summed here.
+  const hits = count.styleHits || styleHits(count.attackHitCount);
   const originalForm = char.battlePlayCharacter?.originalCharacter?.key;
   const currentForm = play.character?.key;
   const charId = originalForm || currentForm || '';
@@ -178,19 +182,6 @@ export function extractStats(char, charMap, capsuleMap = {}, position = null, ai
   const s2HitRate = s2Blast > 0 ? (s2HitBlast / s2Blast) * 100 : null;
   const ultHitRate = ultBlast > 0 ? (uLTHitBlast / ultBlast) * 100 : null;
   
-  // Parse attack hit counts for combat performance metrics
-  let speedImpactCount = 0;
-  let speedImpactWins = 0;
-  
-  Object.entries(attackHitCount).forEach(([key, value]) => {
-    // Speed Impact triggers - these indicate speed impact usage
-    if (key.includes('actSPIMPO') || key.includes('actRI')) {
-      speedImpactCount += value;
-    }
-  });
-  
-  // Speed impact wins are tracked in battleNumCount.speedImpactWinCount
-  
   return {
     name,
     damageDone: count.givenDamage || 0,
@@ -200,7 +191,10 @@ export function extractStats(char, charMap, capsuleMap = {}, position = null, ai
     hPGaugeValueMax: play.hPGaugeValueMax || 40000,
     specialMovesUsed: numCount.sPMCount || 0,
     ultimatesUsed: numCount.uLTCount || 0,
-    skillsUsed: numCount.eXACount || 0,
+    // Skill 1 + Skill 2 uses from runBlastCount, NOT battleNumCount.eXACount: that
+    // total inflates ~12x in Season 1 files and records uses the skill points
+    // cannot allow (docs/ACTION_CODES.md). The per-slot counts match footage.
+    skillsUsed: exa1Count + exa2Count,
     kills: count.killCount || 0,
     formChangeHistory: formNames,
     // Survival & Health metrics
@@ -237,9 +231,17 @@ export function extractStats(char, charMap, capsuleMap = {}, position = null, ai
     lightningAttackCount: numCount.lightningAttack || 0,
     vanishingAttackCount: numCount.vanishingAttack || 0,
     dragonHomingCount: numCount.dragonHoming || 0,
-    speedImpactCount: numCount.speedImpactCount || speedImpactCount,
+    // The game's own counter only. The old fallback summed actRI* hit codes, but RI
+    // is a combo step-in (movement), not a speed impact (docs/ACTION_CODES.md), and
+    // the actSPIMPO code it also looked for appears nowhere in the data.
+    speedImpactCount: numCount.speedImpactCount || 0,
     speedImpactWins: numCount.speedImpactWinCount || 0,
     sparkingComboCount: numCount.sparkingCount > 0 ? count.maxComboNum || 0 : 0,
+    // Fighting-style hits (see `hits` above). Ki-blast hits include deflected enemy
+    // blasts that land, so they are not a basis for a hit rate.
+    rushHits: hits.rush,
+    heavyHits: hits.heavy,
+    kiBlastHits: hits.kiblast,
     // Position tracking
     position: position,
     // Equipment data
