@@ -273,6 +273,48 @@ try {
     else { console.error('  FAIL Z breathing class / fill wrong (Z ok: ' + zOk + ', S clean: ' + sOk + ')'); failed = true; }
   }
 
+  // Readable in BOTH themes. The check above - a distinct colour per tier - passed
+  // while light mode was broken: the pill took no theme and wrote its text in the
+  // tier's light letter colour, which on a white page was close to invisible. So
+  // measure what a reader gets: WCAG contrast of the text against the pill's own
+  // tinted background, composited over the page each theme puts it on (the
+  // lighter dark surface and a light-grey light one, the harsher case in each).
+  {
+    const PAGE = { dark: [31, 41, 55], light: [243, 244, 246] }; // gray-800, gray-100
+    const MIN = 4.5; // WCAG AA for normal-size text; the pill is text-xs/sm
+    const parse = s => {
+      const hex = /^#([0-9a-f]{6})$/i.exec(s.trim());
+      if (hex) return [0, 2, 4].map(i => parseInt(hex[1].slice(i, i + 2), 16)).concat(1);
+      const m = /rgba?\(([^)]+)\)/i.exec(s);
+      if (!m) return null;
+      const p = m[1].split(',').map(Number);
+      return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1];
+    };
+    const over = ([r, g, b, a], base) => [r, g, b].map((c, i) => c * a + base[i] * (1 - a));
+    const lum = rgb => {
+      const [r, g, b] = rgb.map(c => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+
+    for (const theme of ['dark', 'light']) {
+      const results = [];
+      for (const tier of TIERS) {
+        const probe = TIER_CUTOFFS[tier] === undefined ? 0 : TIER_CUTOFFS[tier] + 1;
+        const html = renderToString(React.createElement(PerformanceScoreBadge, { score: probe, darkMode: theme === 'dark' }));
+        const style = (/style="([^"]*)"/.exec(html) || [])[1] || '';
+        const bg = parse((/background:\s*([^;]+)/.exec(style) || [])[1] || '');
+        const fg = parse((/(?:^|;)\s*color:\s*([^;]+)/.exec(style) || [])[1] || '');
+        if (!bg || !fg) { results.push(tier + ' unparsed'); failed = true; continue; }
+        const ratio = contrast(over(fg, PAGE[theme]), over(bg, PAGE[theme]));
+        if (ratio < MIN) failed = true;
+        results.push(tier + ' ' + ratio.toFixed(1) + (ratio < MIN ? ' (FAIL)' : ''));
+      }
+      const bad = results.some(r => /FAIL|unparsed/.test(r));
+      (bad ? console.error : console.log)('  ' + (bad ? 'FAIL' : 'ok  ') + ' ' + theme + ' pill text contrast >= ' + MIN + ':1  ' + results.join('  '));
+    }
+  }
+
   // The pill must survive whatever a score turns out to be.
   for (const junk of [0, -5, NaN, undefined, null, 1e6]) {
     try {

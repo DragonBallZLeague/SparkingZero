@@ -1973,7 +1973,7 @@ export default function App() {
                               plate (tierPillColors) so the two cannot drift apart. */}
                           <span
                             className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tierForScore(char.combatPerformanceScore))}`}
-                            style={tierPillColors(tierForScore(char.combatPerformanceScore))}
+                            style={tierPillColors(tierForScore(char.combatPerformanceScore), darkMode)}
                           >
                             <Star className="w-3 h-3" />
                             Score: {Math.round(char.combatPerformanceScore)}

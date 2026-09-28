@@ -41,7 +41,7 @@ export function PerformanceScoreBadge({ score, label = 'Score', size = 'medium',
       // border-solid is explicit because Tailwind preflight is off in this app,
       // so a bare `border` utility draws nothing.
       className={`inline-flex items-center gap-1 rounded-lg border border-solid font-bold whitespace-nowrap ${sizeClasses[size] || sizeClasses.medium} ${tierPillClass(tier)}`}
-      style={tierPillColors(tier)}
+      style={tierPillColors(tier, darkMode)}
       title={`Tier ${tier}`}
     >
       <Star className={iconSize} />

@@ -130,8 +130,15 @@ export function tierPlateSvg(tier, options = {}) {
  *
  * The pill is tinted rather than neutral because a row should read as one
  * colour; the plate carries the identity and the pill echoes it quietly.
+ *
+ * `darkMode` matters, and every caller must pass it. The dark-theme pill writes
+ * its text in the tier's LIGHT letter colour, which on a white page is close to
+ * invisible (lavender, pale gold and ice blue on a pale tint). Light mode
+ * therefore writes in the tier's deep PLATE colour on a faint tint of it - the
+ * deep LETTER colour is still too bright for gold on white. The default is dark
+ * only because that is what every caller got before the parameter existed.
  */
-export function tierPillColors(tier) {
+export function tierPillColors(tier, darkMode = true) {
   // Z is set apart on purpose - it is the only tier whose pill is not a tint of
   // its plate. A dark crimson-black fill, a bright crimson ring, and a halo that
   // slowly breathes (the animation lives in index.css under TIER_PILL_Z_CLASS;
@@ -141,6 +148,7 @@ export function tierPillColors(tier) {
   // halo makes Z findable in a long list without shouting.
   // boxShadow is the resting midpoint of the breath, so the pill still glows if
   // the animation is off (reduced motion) or the class is missing.
+  // Z is the same in both themes: its own dark fill reads on white too.
   if (tier === 'Z') {
     return {
       background: '#2a1418',
@@ -150,6 +158,14 @@ export function tierPillColors(tier) {
     };
   }
   const art = TIER_ART[tier] || TIER_ART.C;
+  if (!darkMode) {
+    const ink = art.plate[1];
+    return {
+      background: hexToRgba(ink, 0.08),
+      color: ink,
+      borderColor: hexToRgba(ink, 0.6),
+    };
+  }
   const [light, deep] = art.letter;
   return {
     background: hexToRgba(deep, 0.16),

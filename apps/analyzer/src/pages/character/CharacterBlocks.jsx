@@ -155,7 +155,7 @@ export function IdentityBlock({
             <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
               <span
                 className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tier)}`}
-                style={tierPillColors(tier)}
+                style={tierPillColors(tier, darkMode)}
               >
                 <Star className="w-3 h-3" />
                 Score: {Math.round(character.combatPerformanceScore)}
@@ -353,7 +353,7 @@ export function BuildsBlock({ character, darkMode, limit = 3 }) {
               {b.avgPerformanceScore != null && (
                 <span
                   className={`text-[11px] px-1.5 py-0.5 rounded-full border border-solid font-semibold whitespace-nowrap ${tierPillClass(tierForScore(b.avgPerformanceScore))}`}
-                  style={tierPillColors(tierForScore(b.avgPerformanceScore))}
+                  style={tierPillColors(tierForScore(b.avgPerformanceScore), darkMode)}
                 >
                   {Math.round(b.avgPerformanceScore)}
                 </span>
