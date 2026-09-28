@@ -112,7 +112,11 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 
 ### Phase 2c — Responsive shell, accessibility, persistence: not started
 
-### Phases 3–7: not started
+### Phase 3 — Character page: in progress
+
+Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28** and is ready to implement — see "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design, the share-snippet image card, build comparison and character comparison.
+
+### Phases 4–7: not started
 
 ---
 
@@ -368,6 +372,79 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 **Prerequisite: the 404 dispatcher must ship first.**
 
 **Routing foundation done 2026-09-27**: real `<Route>` entries replace the bare catch-all (a `path="*"` fallback is kept on purpose so stale links still render), `src/routes.js` is imported by `main.jsx` and `App.jsx` and owns the view mapping, `viewType` is derived from the URL instead of state, `TagFilterSelector` has moved from `history.replaceState` to `useSearchParams`, and `/characters/:charParam` resolves a slug or a raw id and canonicalises the id to the slug. `npm run verify-routes` guards the scheme. **Character page done 2026-09-27**: `src/pages/CharacterPage.jsx` renders in place of the leaderboard on a character deep link — identity header with the absolute tier plate, headline stats, usage, the position split, the per-form breakdown (via the existing `PerFormStatsDisplayAggregated`), top builds and recent matches that click through to the match view. It is purely presentational; every number already existed in the aggregated row. `<ShareButton>` copies an absolute deep link to the current view. `npm run verify-character-page` guards the page's data contract by scraping the fields it reads out of its own source. **Still to do in this phase: the share-snippet image card, the Advanced-tab build comparison, and the querystring-driven character comparison below.** The page settled on a **tabbed** layout (compared against a dense single column and a sticky rail with real data); its **visual design is deliberately deferred** to a dedicated design conversation with demos, held once the current structural work is finished, and judged against both participants and casual viewers. The known brief so far: nothing leads the eye, and every surface shares one background and text colour.
+
+#### Overview tab: approved design (2026-09-28)
+
+Settled over a long design conversation with real-data demos. The working demo is the spec: `apps/analyzer/design/character-overview/` (see its README to run it). The page answers two questions for a participant **and** a casual viewer: *how is this character doing on the stats that matter*, and *what kind of fighter is it*.
+
+**Layout, top to bottom**
+
+1. **Identity header**: tier plate and score pill for the current view. Selecting a build switches both to that build's score.
+2. **"Showing one build · Show all builds" strip**: appears above the stats only while a build is selected, so a filtered view (including one opened from a shared link) never passes for the whole picture.
+3. **Five headline tiles**: Damage dealt, Damage taken, Efficiency, Damage/sec, Battle time. Each has its value, a bar with a league-median tick, and one line reading rank on the left and "League 38,981" on the right. The league number is inline rather than in a tooltip because these are the main comparisons and phones cannot hover. Win rate is deliberately absent. Battle time is neutral (longer is not simply better).
+4. **Six move cards**:
+   - **Super 1, Super 2, Ultimate**: hit/thrown per match written `1.5/2.3`, with a donut of the hit rate and a league-median tick.
+   - **Ki blasts**: blasts fired per match only. There is no ki-blast hit rate: a deflected enemy blast that lands is credited as the deflector's hit, so one cannot be computed honestly (`apps/analyzer/docs/ACTION_CODES.md`).
+   - **Skill 1, Skill 2**: uses per match, as a filling circle with a dashed league-median ring.
+   - Donuts and circles wear the move's style colour; only the rank text is rank-coloured.
+   - A hit rate with fewer than 10 throws in total is not ranked. It shows "Only 6 thrown" and dims its colour, as a thin-sample tier plate does.
+   - Hovering or tapping a card shows a **Me / League** table.
+5. **Style band**: a left column and a right column.
+   - **Left column**, in order:
+     - the build picker
+     - the fighting-style label (one label, or two with the second smaller)
+     - the most common build, as a one-column capsule list grouped by capsule type in the same largest-first order as its cost bar
+     - the most used AI (or "Varied" when strategies tie)
+   - **Right column**: "How it fights", with **Radar (default) / Bars** views over six styles, always in this order: **Melee, Ki Blasts, Blasts, Ultimates, Skills, Defense**.
+     - **Bars** use aligned **Per min | League | Rank** columns, with sub-bars two to a line: Rush/Heavy, Super 1/2, Skill 1/2, and Guards/Counters/Tags/Survival.
+     - **Radar** names are white with a style-colour square, the rank sits below each name, and hovering shows a Me / League table including the sub-stats.
+   - The league median appears as a tick on the bars and as a dashed hexagon on the radar.
+
+**What is measured**
+
+- **Frozen league baseline**, the same window as the tier cutoffs: the last two seasons, Ultra difficulty only, characters with 5+ appearances (126 today). A character, or a single build, is always ranked against this baseline, never against whatever is filtered on screen.
+- **Style rates are per minute on the field**, so an Anchor with long fights is not rated a heavier user than a Starter.
+  - **Melee** = rush hits + heavy hits (`ACTION_CODES.md`).
+  - **Blasts** = supers cast. **Ultimates** = ultimates cast.
+  - **Skills** = `runBlastCount` EXA1 + EXA2 (never `eXACount`, which is broken in Season 1 files).
+  - **Ki Blasts** = blasts fired.
+  - **Defense** = a blend of percentiles, re-ranked: guards 40%, counters 30%, time on field 15%, tags 10%, survival 5%. Deflects are excluded because many are automatic.
+- **Per-match figures** are per match the character actually fought in.
+- **Fighting-style labels**: Melee Fighter, Ki-Blast Spammer, Blast User, Ult Spammer, Skill User, Defensive Fighter, and All-Rounder when nothing reaches the 75th percentile. A second label shows when two styles are within 15 points.
+- **A raw zero draws an empty bar and reads "Never"**, never a tied rank.
+
+**Display conventions** (also recorded as standing preferences)
+
+- **Rank reads `#42/126`**, with the pool in faint grey. Each metric shows its own pool, since hit rates exclude characters who never threw.
+- **Colour appears only at the ends**: the top fifth of the pool in green, the bottom fifth in red, everything between neutral. Banded, not a gradient, so #3 and #10 are the same green. Dark mode uses `#16e05a` / `#ff2b3a`; light mode uses `#047a2e` / `#c8102e`. Every colour reads at 4.5:1 or better as text.
+- **Style colours are the build-type colours** (`getBuildTypeColor`), with pink for Ultimates. They go on graphics; labels stay white with a style square.
+- **No "·" separators**: use aligned columns or separate elements.
+
+**The build filter**
+
+- **A build is the leaderboard's definition**: exact capsule set plus AI strategy.
+- **The page reuses `filterAggregatedData`** with that build key, so a build's numbers are identical to the leaderboard's.
+- **The picker shows four things**: build type, AI, uses and score.
+  - A fifth line naming the capsules that differ appears only when two builds share both type and AI.
+  - Score pills for builds under 5 uses are dimmed.
+- **URL**: `?build=<short code>`.
+
+**Implementation steps**
+
+1. **Shared action-code classifier**: `src/utils/actionCodes.js`, from `ACTION_CODES.md`.
+   - Carry per-entry rush, heavy and ki-blast hit totals through the compact corpus.
+   - Expose them from `extractStats`, and prove them raw-vs-compact with `verify-aggregates`.
+2. **`extractStats` fixes**:
+   - `skillsUsed` from EXA1 + EXA2 (the leaderboard's skills figures are inflated for Season 1 today).
+   - Remove the `actRI*` speed-impact fallback (`RI` is movement).
+3. **A style-baseline generator**, beside `generate-performance-bands`.
+   - Frozen and committed (e.g. `src/config/style-baseline.json`), holding the sorted per-metric values and medians that ranks need.
+   - Idempotent, with the timestamp carried over, so a rebuild without a recalibration leaves no diff.
+4. **One shared build-key function**.
+   - Today the key is written out three times: `BuildTableView`, `filterAggregated`, `App.jsx`.
+   - Add a short-code encoding for `?build=`.
+5. **The Overview components** (Tailwind, theme-aware), replacing the current Overview blocks. Extend `verify-character-page` and `smoke-character-page` to cover them.
+6. **Delete `design/character-overview/`** once the tab matches it.
 
 This is also where the participant workflow starts paying off, and the page should be shaped by principles 1 and 4 rather than by what `App.jsx` currently renders:
 
