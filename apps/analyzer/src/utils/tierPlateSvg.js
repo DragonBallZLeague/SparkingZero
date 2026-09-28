@@ -32,7 +32,14 @@ export const TIER_ART = {
   // Ball Z mark, and it sits apart from the ramp below rather than on it.
   // (Red and blue-to-red slabs were both tried and rejected: with a red letter
   // there is not enough separating the glyph from its own floor at small sizes.)
-  Z: { plate: ['#3a7fc4', '#1b4a84'], letter: ['#ffb08a', '#e03a22'] },
+  //
+  // The red is CRIMSON, not orange-red. The earlier pair was hue ~8-20 degrees,
+  // which at pill size read as bronze rather than as the top tier - a warm metal
+  // rather than a mark. These sit at ~350 degrees, cool enough to be plainly red.
+  // Note this pair does three jobs at once: the glyph's gradient (light at the
+  // top, deep below), the pill's text colour (the light one) and the pill's
+  // border and background tint (the deep one). Judge any change on both.
+  Z: { plate: ['#3a7fc4', '#1b4a84'], letter: ['#ff8fa0', '#c8102e'] },
   // S down to C: purple, gold, blue, grey. (Swapped S and A from the rarity
   // ramp's gold-then-purple to try purple as the higher tier - under review.)
   // B shares Z's blue slab, which is fine - Z is told apart by its red letter,
@@ -125,6 +132,23 @@ export function tierPlateSvg(tier, options = {}) {
  * colour; the plate carries the identity and the pill echoes it quietly.
  */
 export function tierPillColors(tier) {
+  // Z is set apart on purpose - it is the only tier whose pill is not a tint of
+  // its plate. A dark crimson-black fill, a bright crimson ring, and a halo that
+  // slowly breathes (the animation lives in index.css under TIER_PILL_Z_CLASS;
+  // pair this with tierPillClass()). Chosen over flat, sheen, gold, ember and
+  // flame treatments after four rounds of side-by-side demos: at pill size a
+  // tint of crimson read as underwhelming for the top tier, and the breathing
+  // halo makes Z findable in a long list without shouting.
+  // boxShadow is the resting midpoint of the breath, so the pill still glows if
+  // the animation is off (reduced motion) or the class is missing.
+  if (tier === 'Z') {
+    return {
+      background: '#2a1418',
+      color: '#ff8fa0',
+      borderColor: '#e0284a',
+      boxShadow: '0 0 9px rgba(224, 40, 74, 0.55)',
+    };
+  }
   const art = TIER_ART[tier] || TIER_ART.C;
   const [light, deep] = art.letter;
   return {
@@ -132,6 +156,17 @@ export function tierPillColors(tier) {
     color: light,
     borderColor: deep,
   };
+}
+
+/** The class that gives a Z pill its breathing halo (defined in index.css). */
+export const TIER_PILL_Z_CLASS = 'szl-tier-pill-z';
+
+/**
+ * Extra className for a score pill of this tier. Use it at every site that uses
+ * tierPillColors(), or a Z pill loses its breathing halo there.
+ */
+export function tierPillClass(tier) {
+  return tier === 'Z' ? TIER_PILL_Z_CLASS : '';
 }
 
 /** #rrggbb -> rgba(), for the pill tint. */

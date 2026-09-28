@@ -1,11 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { createPortal } from 'react-dom';
-import { useFloating, offset, flip, autoUpdate } from '@floating-ui/react';
-import Autocomplete from '@mui/material/Autocomplete';
-import MUITextField from '@mui/material/TextField';
 import './App.css';
 import BRDataSelector from './components/BRDataSelector.jsx';
-import TagFilterSelector from './components/TagFilterSelector.jsx';
+import TagFilterSelector, { describeTagFilters } from './components/TagFilterSelector.jsx';
 import { Combobox } from './components/Combobox.jsx';
 import { MultiSelectCombobox } from './components/MultiSelectCombobox.jsx';
 import { formatNumber } from './utils/formatters.js';
@@ -15,8 +11,6 @@ import { exportToExcel } from './utils/excelExport.js';
 import { PerFormStatsDisplay, PerFormStatsDisplayAggregated } from './components/PerFormStatsDisplay.jsx';
 import { calculatePerFormStats } from './utils/formStatsCalculator.js';
 import transformationsData from '../../../referencedata/transformations.json';
-import CapsuleSynergyAnalysis from './components/CapsuleSynergyAnalysis.jsx';
-import AIStrategyAnalysis from './components/ai-strategy/AIStrategyAnalysis.jsx';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
 import { loadMatches } from './utils/corpusLoader.js';
 import { calculateMatchPerformanceScore, parseCharacterCSV, getTeams, extractStats, parseBattleTime, formatBattleTime } from './utils/statCalculations.js';
@@ -26,15 +20,16 @@ import { getAggregatedCharacterData } from './utils/aggregation/characterAggrega
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
 import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
-import { getPerformanceLevel } from './utils/performanceLevel.js';
 import TierPlate from './components/TierPlate.jsx';
 import RangeSlider from './components/RangeSlider.jsx';
 import { TIERS, TIER_LABELS } from './utils/tierScale.js';
-import { tierPillColors } from './utils/tierPlateSvg.js';
+import { tierPillColors, tierPillClass } from './utils/tierPlateSvg.js';
 import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
 import { NavBar } from '@szl/ui';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import CharacterPage from './pages/CharacterPage.jsx';
 import { ROUTES, pathForView, viewForPath } from './routes.js';
+import { POSITION_NAMES } from './utils/positions.js';
 import {
   buildCharacterSlugIndex,
   resolveCharacterParam,
@@ -72,7 +67,8 @@ import {
   Brain,
   Minus,
   Copy,
-  Check
+  Check,
+  ArrowUpRight
 } from 'lucide-react';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
@@ -106,1196 +102,14 @@ function naturalSort(a, b) {
   });
 }
 
-// Small stat bar used in the match panels
-function StatBar({ value, maxValue, displayValue, type = 'damage', isInverse = false, label = '', icon: Icon = Target, darkMode = false }) {
-  const percentage = Math.min((value / maxValue) * 100, 100);
-  const displayPercentage = isInverse ? 100 - percentage : percentage;
-  const actualDisplayValue = displayValue !== undefined ? displayValue : value;
 
-  const getColorClass = () => {
-    switch (type) {
-      case 'damage': return 'bg-red-500';
-      case 'health': return 'bg-green-500';
-      case 'special': return 'bg-purple-500';
-      case 'ultimate': return 'bg-orange-500';
-      case 'taken': return 'bg-blue-500';
-      case 'time': return 'bg-orange-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  return (
-    <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className={`w-4 h-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
-        <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{label}</span>
-      </div>
-      <div className="flex items-center justify-between mb-2">
-        <span className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{formatNumber(actualDisplayValue)}</span>
-      </div>
-      <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
-        <div 
-          className={`h-2 rounded-full transition-all duration-300 ${getColorClass()}`}
-          style={{ width: `${displayPercentage}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-// Parse capsules CSV data
-function parseCapsules(csvText) {
-  const lines = csvText.trim().split('\n');
-  const headers = lines[0].split(',');
-  const capsules = {};
-  const aiStrategies = {};
-  
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',');
-    const item = {
-      name: values[0]?.trim(),
-      id: values[1]?.trim(),
-      type: values[2]?.trim(),
-      exclusiveTo: values[3]?.trim(),
-      cost: parseInt(values[4]) || 0,
-      effect: values[5]?.trim()
-    };
-    
-    if (item.id) {
-      // Only include actual gameplay capsules and AI strategies
-      if (item.type === 'Capsule') {
-        capsules[item.id] = item;
-      } else if (item.type === 'AI') {
-        aiStrategies[item.id] = item;
-      }
-      // Skip Costume and Sparking BGM as they are cosmetic
-    }
-  }
-  
-  return { capsules, aiStrategies };
-}
-
-function PerformanceIndicator({ value, allValues, type = 'damage', isInverse = false, darkMode = false, size = 'medium' }) {
-  // For inverse, flip the values for robust stats
-  let values = allValues;
-  let val = value;
-  if (isInverse) {
-    const maxValue = Math.max(...allValues);
-    values = allValues.map(v => maxValue - v);
-    val = maxValue - value;
-  }
-  const level = getPerformanceLevel(val, values);
-  let colorClass;
-  switch (level) {
-    case 'excellent':
-      colorClass = darkMode ? 'bg-green-900/30 text-green-300 border-green-600' : 'bg-green-100 text-green-800 border-green-200';
-      break;
-    case 'good':
-      colorClass = darkMode ? 'bg-blue-900/30 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-800 border-blue-200';
-      break;
-    case 'average':
-      colorClass = darkMode ? 'bg-yellow-900/30 text-yellow-300 border-yellow-600' : 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      break;
-    case 'below-average':
-      colorClass = darkMode ? 'bg-red-900/30 text-red-300 border-red-600' : 'bg-red-100 text-red-800 border-red-200';
-      break;
-    default:
-      colorClass = darkMode ? 'bg-gray-900/30 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-800 border-gray-200';
-  }
-  
-  // Size configurations
-  const sizeClasses = {
-    'extra-small': { padding: 'px-1.5 py-0.5', text: 'text-xs', icon: 'w-3 h-3', gap: 'gap-1', border: 'border' },
-    'small': { padding: 'px-2 py-1', text: 'text-sm', icon: 'w-3 h-3', gap: 'gap-1.5', border: 'border' },
-    'medium': { padding: 'px-2 py-2', text: 'text-base', icon: 'w-4 h-4', gap: 'gap-2', border: 'border-2' },
-    'large': { padding: 'px-3 py-2', text: 'text-lg', icon: 'w-5 h-5', gap: 'gap-2', border: 'border-2' }
-  };
-  
-  const sizeConfig = sizeClasses[size] || sizeClasses['medium'];
-  
-  return (
-    <span className={`inline-flex items-center ${sizeConfig.gap} ${sizeConfig.padding} rounded-lg ${sizeConfig.text} font-bold ${sizeConfig.border} ${colorClass}`}>
-      <Star className={sizeConfig.icon} />
-      <span>Score:</span>
-      <span className={sizeConfig.text}>{Math.round(value)}</span>
-    </span>
-  );
-}
-
-// Performance Indicator Label Component (for combat stats)
-// Displays performance level text like "EXCELLENT", "GOOD", etc.
-function PerformanceIndicatorLabel({ value, allValues, type = 'damage', isInverse = false, darkMode = false }) {
-  // For inverse, flip the values for robust stats
-  let values = allValues;
-  let val = value;
-  if (isInverse) {
-    const maxValue = Math.max(...allValues);
-    values = allValues.map(v => maxValue - v);
-    val = maxValue - value;
-  }
-  const level = getPerformanceLevel(val, values);
-  let colorClass, icon;
-  switch (level) {
-    case 'excellent':
-      colorClass = darkMode ? 'bg-green-900/30 text-green-300 border-green-600' : 'bg-green-100 text-green-800 border-green-200';
-      icon = <Star className="w-3 h-3" />;
-      break;
-    case 'good':
-      colorClass = darkMode ? 'bg-blue-900/30 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-800 border-blue-200';
-      icon = <TrendingUp className="w-3 h-3" />;
-      break;
-    case 'average':
-      colorClass = darkMode ? 'bg-yellow-900/30 text-yellow-300 border-yellow-600' : 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      icon = <Eye className="w-3 h-3" />;
-      break;
-    case 'below-average':
-      colorClass = darkMode ? 'bg-red-900/30 text-red-300 border-red-600' : 'bg-red-100 text-red-800 border-red-200';
-      icon = <Target className="w-3 h-3" />;
-      break;
-    default:
-      colorClass = darkMode ? 'bg-gray-900/30 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-800 border-gray-200';
-      icon = <Target className="w-3 h-3" />;
-  }
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${colorClass}`}>
-      {icon}
-      {level.toUpperCase()}
-    </span>
-  );
-}
-
-// Performance Score Badge Component
-// Displays a large performance score with color coding based on level
-function PerformanceScoreBadge({ score, label = 'Score', size = 'medium', darkMode = false, allScores = [] }) {
-  // Use relative scoring if allScores provided, otherwise use fixed thresholds
-  let level;
-  if (allScores && allScores.length > 0) {
-    level = getPerformanceLevel(score, allScores);
-  } else {
-    // Fallback to fixed thresholds
-    const getScoreLevel = (score) => {
-      if (score >= 200) return 'excellent';  // Top tier performance
-      if (score >= 120) return 'good';       // Strong performance
-      if (score >= 80) return 'average';     // Decent performance
-      if (score >= 40) return 'below-average'; // Weak performance
-      return 'poor';                          // Very poor performance
-    };
-    level = getScoreLevel(score);
-  }
-  
-  const colorClasses = {
-    excellent: darkMode ? 'bg-green-900/30 text-green-300 border-green-600' : 'bg-green-100 text-green-700 border-green-300',
-    good: darkMode ? 'bg-blue-900/30 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-700 border-blue-300',
-    average: darkMode ? 'bg-yellow-900/30 text-yellow-300 border-yellow-600' : 'bg-yellow-100 text-yellow-700 border-yellow-300',
-    'below-average': darkMode ? 'bg-orange-900/30 text-orange-300 border-orange-600' : 'bg-orange-100 text-orange-700 border-orange-300',
-    poor: darkMode ? 'bg-red-900/30 text-red-300 border-red-600' : 'bg-red-100 text-red-700 border-red-300'
-  };
-
-  const sizeClasses = {
-    'extra-small': 'text-xs px-1.5 py-0.5',
-    small: 'text-sm px-2 py-0',
-    medium: 'text-base px-3 py-1.5',
-    large: 'text-lg px-4 py-2'
-  };
-
-  const iconSize = size === 'extra-small' ? 'w-3 h-3' : size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-4 h-4' : 'w-5 h-5';
-  
-  return (
-    <div className={`inline-flex items-center gap-1 rounded-lg border font-bold ${colorClasses[level]} ${sizeClasses[size]}`}>
-      <Star className={iconSize} />
-      <span>{label}: {Math.round(score)}</span>
-    </div>
-  );
-}
-
-// Stat Group Component
-// Groups related stats under a header with icon
-function StatGroup({ title, icon: Icon, children, darkMode = false, collapsible = false, defaultCollapsed = false, iconColor = 'gray' }) {
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
-
-  const iconColorClasses = {
-    red: darkMode ? 'text-red-400' : 'text-red-600',
-    green: darkMode ? 'text-green-400' : 'text-green-600',
-    yellow: darkMode ? 'text-yellow-400' : 'text-yellow-600',
-    purple: darkMode ? 'text-purple-400' : 'text-purple-600',
-    gray: darkMode ? 'text-gray-300' : 'text-gray-600'
-  };
-
-  return (
-    <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-lg p-3`}>
-      <div 
-        className={`flex items-center gap-2 mb-2 ${collapsible ? 'cursor-pointer' : ''}`}
-        onClick={() => collapsible && setCollapsed(!collapsed)}
-      >
-        <Icon className={`w-4 h-4 ${iconColorClasses[iconColor]}`} />
-        <span className={`text-sm font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-          {title}
-        </span>
-        {collapsible && (
-          <div className="ml-auto">
-            {collapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-          </div>
-        )}
-      </div>
-      {!collapsed && <div>{children}</div>}
-    </div>
-  );
-}
-
-// Metric Display Component
-// Displays a single metric with label and value
-function MetricDisplay({ label, value, icon: Icon, color = 'gray', darkMode = false, size = 'medium' }) {
-  const colorClasses = {
-    red: darkMode ? 'text-red-400' : 'text-red-600',
-    blue: darkMode ? 'text-blue-400' : 'text-blue-600',
-    green: darkMode ? 'text-green-400' : 'text-green-600',
-    yellow: darkMode ? 'text-yellow-400' : 'text-yellow-600',
-    purple: darkMode ? 'text-purple-400' : 'text-purple-600',
-    orange: darkMode ? 'text-orange-400' : 'text-orange-600',
-    teal: darkMode ? 'text-teal-400' : 'text-teal-600',
-    violet: darkMode ? 'text-violet-300' : 'text-violet-600',
-    gray: darkMode ? 'text-gray-400' : 'text-gray-600'
-  };
-
-  const sizeClasses = {
-    small: { label: 'text-xs', value: 'text-sm' },
-    medium: { label: 'text-sm', value: 'text-base font-bold' },
-    large: { label: 'text-sm', value: 'text-lg font-bold' }
-  };
-
-  return (
-    <div className="flex items-center justify-between">
-      <span className={`${sizeClasses[size].label} ${darkMode ? 'text-gray-400' : 'text-gray-600'} flex items-center gap-1`}>
-        {Icon && <Icon className="w-3 h-3" />}
-        {label}
-      </span>
-      <span className={`${sizeClasses[size].value} ${colorClasses[color]}`}>
-        {value}
-      </span>
-    </div>
-  );
-}
-
-// Blast Metric Display Component
-// Displays blast tracking with hit/thrown/rate format: "X/Y (Z%)"
-// Legacy mode displays only thrown count (for old JSON format without hit data)
-function BlastMetricDisplay({ label, thrown, hit, hitRate, color = 'blue', darkMode = false, size = 'medium', legacyMode = false }) {
-  const getColorClass = () => {
-    const colors = {
-      orange: darkMode ? 'text-orange-400' : 'text-orange-600',
-      red: darkMode ? 'text-red-400' : 'text-red-600',
-      yellow: darkMode ? 'text-yellow-400' : 'text-yellow-600',
-      purple: darkMode ? 'text-purple-400' : 'text-purple-600',
-      blue: darkMode ? 'text-blue-400' : 'text-blue-600',
-      cyan: darkMode ? 'text-cyan-400' : 'text-cyan-600',
-    };
-    return colors[color] || colors.blue;
-  };
-
-  const getRateColorClass = () => {
-    // If no blasts thrown (hitRate is null), use gray
-    if (hitRate === null) return darkMode ? 'text-gray-400' : 'text-gray-600';
-    if (hitRate >= 70) return darkMode ? 'text-green-400' : 'text-green-600';
-    if (hitRate >= 50) return darkMode ? 'text-yellow-400' : 'text-yellow-600';
-    return darkMode ? 'text-red-400' : 'text-red-600';
-  };
-
-  const sizeClasses = {
-    small: { label: 'text-xs', value: 'text-sm' },
-    medium: { label: 'text-sm', value: 'text-base font-bold' },
-    large: { label: 'text-sm', value: 'text-lg font-bold' }
-  };
-
-  // Legacy mode - display only thrown count (old JSON format)
-  if (legacyMode) {
-    return (
-      <div className="flex items-center justify-between">
-        <span className={`${sizeClasses[size].label} ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          {label}
-        </span>
-        <span className={`${sizeClasses[size].value} ${getColorClass()}`}>
-          {thrown || 0}
-        </span>
-      </div>
-    );
-  }
-
-  // New format - display hit/thrown/rate
-  return (
-    <div className={`flex items-center justify-between p-2 rounded ${
-      darkMode ? 'bg-gray-800/50' : 'bg-gray-100'
-    }`}>
-      <span className={`${sizeClasses[size].label} font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-        {label}
-      </span>
-      <div className="flex items-center gap-2">
-        <span className={`font-mono font-bold ${sizeClasses[size].value} ${getColorClass()}`}>
-          {hit}/{thrown}
-        </span>
-        <span className={`font-mono font-bold ${sizeClasses[size].value} ${getRateColorClass()}`}>
-          ({hitRate !== null ? `${hitRate.toFixed(1)}%` : 'N/A'})
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// Calculate performance score for a single match character
-// Component to show battle time variance from average
-function BattleTimeVariance({ value, averageValue, darkMode = false }) {
-  const variance = value - averageValue;
-  const isAbove = variance > 0;
-  const absVariance = Math.abs(variance);
-  
-  if (Math.abs(variance) < 1) {
-    return (
-      <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <Clock className={`w-4 h-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
-          <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Battle Time</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{formatBattleTime(value)}</span>
-          <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>~Average</span>
-        </div>
-      </div>
-    );
-  }
-  
-  return (
-    <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-      <div className="flex items-center gap-2 mb-2">
-        <Clock className={`w-4 h-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
-        <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Battle Time</span>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{formatBattleTime(value)}</span>
-        <span className={`text-xs font-medium ${isAbove ? 'text-blue-400' : 'text-red-400'}`}>
-          {isAbove ? '+' : '-'}{formatBattleTime(absVariance)} {isAbove ? 'longer' : 'shorter'}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Determine build composition based on capsule cost distribution
- * Uses new 7-category build type system with cost-based thresholds
- * 
- * @param {Object} capsuleCosts - Cost totals for each build type
- * @returns {Object} Build composition with primary, label, type, and breakdown
- */
-/**
- * Generate a YAML string for a character build in the match-builder format
- */
-function generateBuildYaml(characterName, capsules, aiStrategy) {
-  const safeScalar = (v) => {
-    if (v === null || v === undefined || v === '') return "''";
-    const s = String(v);
-    // Quote if the value contains YAML-special chars or leading/trailing whitespace
-    if (/[:#\[\]{},!|>&*'"%@`?\\]/.test(s) || s !== s.trim()) {
-      return `'${s.replace(/'/g, "''")}'`;
-    }
-    return s;
-  };
-
-  const lines = [
-    `character: ${safeScalar(characterName)}`,
-    `costume: ''`,
-    `capsules:`,
-  ];
-  if (capsules && capsules.length > 0) {
-    capsules.forEach(c => {
-      const name = typeof c === 'string' ? c : (c.name || '');
-      lines.push(`  - ${safeScalar(name)}`);
-    });
-  } else {
-    lines.push(`  []`);
-  }
-  lines.push(
-    `ai: ${safeScalar(aiStrategy || '')}`,
-    `transformAi: ''`,
-    `sparking: ''`,
-  );
-  return lines.join('\n');
-}
-
-/**
- * Small hook-like helper to handle transient "copied!" feedback
- */
-function useCopyFeedback(ms = 1500) {
-  const [copied, setCopied] = React.useState(false);
-  const trigger = () => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), ms);
-  };
-  return [copied, trigger];
-}
-
-/**
- * Reusable pair of Copy-YAML / Download-YAML buttons
- */
-function BuildYamlButtons({ characterName, capsules, aiStrategy, darkMode }) {
-  const [copied, triggerCopied] = useCopyFeedback();
-
-  const getYaml = () => generateBuildYaml(characterName, capsules, aiStrategy);
-
-  const handleCopy = async (e) => {
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(getYaml());
-      triggerCopied();
-    } catch {
-      // fallback for older browsers
-      const ta = document.createElement('textarea');
-      ta.value = getYaml();
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      triggerCopied();
-    }
-  };
-
-  const handleDownload = (e) => {
-    e.stopPropagation();
-    const yaml = getYaml();
-    const filename = `${(characterName || 'build').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_')}.yaml`;
-    const blob = new Blob([yaml], { type: 'text/yaml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const btnBase = `flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors border`;
-  const copyBtn = copied
-    ? darkMode
-      ? `${btnBase} bg-green-900/40 border-green-600 text-green-300`
-      : `${btnBase} bg-green-50 border-green-400 text-green-700`
-    : darkMode
-      ? `${btnBase} bg-gray-700 border-gray-500 text-gray-300 hover:bg-gray-600`
-      : `${btnBase} bg-white border-gray-300 text-gray-600 hover:bg-gray-50`;
-  const dlBtn = darkMode
-    ? `${btnBase} bg-gray-700 border-gray-500 text-gray-300 hover:bg-gray-600`
-    : `${btnBase} bg-white border-gray-300 text-gray-600 hover:bg-gray-50`;
-
-  return (
-    <div className="flex items-center gap-1.5 pt-1">
-      <button onClick={handleCopy} className={copyBtn} title="Copy build as YAML">
-        {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-        {copied ? 'Copied!' : 'Copy YAML'}
-      </button>
-      <button onClick={handleDownload} className={dlBtn} title="Download build as .yaml file">
-        <Download className="w-3 h-3" />
-        Download
-      </button>
-    </div>
-  );
-}
-
-// Component to display build type with tooltip for team rankings
-function BuildTypeTooltipWrapper({ buildComposition, aiStrategy, count, equippedCapsules, totalCapsuleCost, darkMode, tooltipKey, characterName }) {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  
-  const { refs, floatingStyles } = useFloating({
-    placement: 'left',
-    middleware: [offset(10), flip()],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const getBuildTypeTextColor = (typeName) => {
-    const type = typeName?.toLowerCase();
-    const textColorMap = {
-      'melee': darkMode ? 'text-red-400' : 'text-red-600',
-      'blast': darkMode ? 'text-orange-400' : 'text-orange-600',
-      'ki blast': darkMode ? 'text-yellow-400' : 'text-yellow-600',
-      'defense': darkMode ? 'text-blue-400' : 'text-blue-600',
-      'skill': darkMode ? 'text-purple-400' : 'text-purple-600',
-      'ki efficiency': darkMode ? 'text-green-400' : 'text-green-600',
-      'utility': darkMode ? 'text-gray-400' : 'text-gray-600',
-    };
-    return textColorMap[type] || (darkMode ? 'text-gray-300' : 'text-gray-700');
-  };
-
-  return (
-    <div className="space-y-2">
-      {/* Build Type */}
-      <div className="flex items-center justify-between">
-        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Build Type:</span>
-        <div
-          ref={refs.setReference}
-          className={`inline-block px-2 py-1 rounded text-xs font-medium border cursor-help ${getBuildTypeColor(buildComposition, darkMode)}`}
-          onMouseEnter={() => setTooltipOpen(true)}
-          onMouseLeave={() => setTooltipOpen(false)}
-        >
-          {buildComposition?.label || 'Unknown'}
-        </div>
-      </div>
-
-      {/* Tooltip Portal */}
-      {tooltipOpen && buildComposition && typeof document !== 'undefined' && createPortal(
-        <div
-          ref={refs.setFloating}
-          style={{ ...floatingStyles, width: '16rem', zIndex: 10000 }}
-          className={`p-3 rounded-lg shadow-xl border z-[10000] ${
-            darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'
-          }`}
-        >
-          <div className={`text-sm font-semibold mb-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-            Build Composition
-          </div>
-          <div className="space-y-1.5">
-            {buildComposition.breakdown
-              .filter(item => item.cost > 0)
-              .map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <span className={`font-medium ${getBuildTypeTextColor(item.name)}`}>
-                    {item.name}:
-                  </span>
-                  <span className={`tabular-nums ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    {item.cost} ({item.percent.toFixed(0)}%)
-                  </span>
-                </div>
-              ))}
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* Capsules List */}
-      {equippedCapsules && equippedCapsules.length > 0 && (
-        <>
-          <div className="space-y-1 pt-1 px-5">
-            {equippedCapsules.map((capsule, idx) => (
-              <div key={idx} className={`flex items-center justify-between text-sm py-1.5 rounded border-b ${
-                darkMode
-                  ? 'text-gray-200 border-gray-500/25'
-                  : 'text-gray-700 border-gray-400/20'
-              }`}>
-                <span>{capsule.name}</span>
-                <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                  {capsule.capsule.cost}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className={`flex items-center justify-between text-sm font-semibold px-5 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            <span>Capsules ({equippedCapsules.length})</span>
-            <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{totalCapsuleCost}</span></span>
-          </div>
-        </>
-      )}
-
-      {/* AI Strategy */}
-      <div className="flex items-center justify-between">
-        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>AI Strategy:</span>
-        <strong className={`text-sm ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-          {aiStrategy || 'Default'}
-        </strong>
-      </div>
-
-      {/* Times Used */}
-      <div className="flex items-center justify-between">
-        <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Times Used:</span>
-        <strong className={`text-sm ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>
-          {count} {count === 1 ? 'match' : 'matches'}
-        </strong>
-      </div>
-      {/* YAML export buttons */}
-      {(equippedCapsules?.length > 0 || aiStrategy) && (
-        <BuildYamlButtons
-          characterName={characterName}
-          capsules={equippedCapsules}
-          aiStrategy={aiStrategy}
-          darkMode={darkMode}
-        />
-      )}
-    </div>
-  );
-}
-
-// Sortable build table + detail card for a character's full build history
-function BuildTableView({
-  builds,          // full sorted builds array
-  buildKey,        // unique key per character (char.name or charKey)
-  selectedBuildIndex,
-  setSelectedBuildIndex,
-  selectedBuildSort,
-  setSelectedBuildSort,
-  allScores,       // for PerformanceScoreBadge colour context
-  primaryTeam,     // optional — shown in detail panel footer
-  activeBuildFilters,      // track active build filter per character
-  setActiveBuildFilters,   // setter for active build filter
-  darkMode,
-}) {
-  if (!builds || builds.length === 0) return null;
-
-  const [panelOpen, setPanelOpen] = useState(false);
-  const tableRef = useRef(null);
-
-  const { refs, floatingStyles } = useFloating({
-    placement: 'left',
-    middleware: [offset(8), flip()],
-    whileElementsMounted: autoUpdate,
-  });
-
-  // Sort state for this character's table: { col, dir }
-  const sortState = selectedBuildSort[buildKey] || { col: 'activeCount', dir: 'desc' };
-  const selectedIndex = selectedBuildIndex[buildKey] ?? 0;
-
-  // Build filter helpers
-  const getBuildFilterKey = (build) => {
-    const capsuleKey = (build.equippedCapsules || [])
-      .map(c => c.name || c.id || '').sort().join(',');
-    return `${capsuleKey}|${build.aiStrategy || 'Default'}`;
-  };
-  const characterActiveFilter = activeBuildFilters ? activeBuildFilters[buildKey] : null;
-
-  // Close on outside click or Escape
-  useEffect(() => {
-    if (!panelOpen) return;
-    const handleMouseDown = (e) => {
-      const inPanel = refs.floating.current?.contains(e.target);
-      const inTable = tableRef.current?.contains(e.target);
-      if (!inPanel && !inTable) setPanelOpen(false);
-    };
-    const handleKey = (e) => { if (e.key === 'Escape') setPanelOpen(false); };
-    document.addEventListener('mousedown', handleMouseDown);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [panelOpen, refs]);
-
-  // Close panel when the buildKey changes (different character expanded)
-  useEffect(() => { setPanelOpen(false); }, [buildKey]);
-
-  const handleSort = (col) => {
-    const next = sortState.col === col
-      ? { col, dir: sortState.dir === 'desc' ? 'asc' : 'desc' }
-      : { col, dir: 'desc' };
-    setSelectedBuildSort(prev => ({ ...prev, [buildKey]: next }));
-  };
-
-  // Apply table sort (independent of the aggregation sort)
-  const sortedForTable = [...builds].sort((a, b) => {
-    let av, bv;
-    switch (sortState.col) {
-      case 'activeCount': av = a.activeCount; bv = b.activeCount; break;
-      case 'avgDamage':
-        av = a.activeCount > 0 ? a.totalDamageDealt / a.activeCount : 0;
-        bv = b.activeCount > 0 ? b.totalDamageDealt / b.activeCount : 0;
-        break;
-      case 'efficiency':
-        av = a.totalDamageTaken > 0 ? a.totalDamageDealt / a.totalDamageTaken : a.totalDamageDealt;
-        bv = b.totalDamageTaken > 0 ? b.totalDamageDealt / b.totalDamageTaken : b.totalDamageDealt;
-        break;
-      case 'score': av = a.avgPerformanceScore; bv = b.avgPerformanceScore; break;
-      default: av = a.activeCount; bv = b.activeCount;
-    }
-    return sortState.dir === 'desc' ? bv - av : av - bv;
-  });
-
-  const currentBuild = sortedForTable[selectedIndex] || sortedForTable[0];
-  const bestScoreIdx = sortedForTable.reduce((best, b, i) =>
-    b.avgPerformanceScore > sortedForTable[best].avgPerformanceScore ? i : best, 0);
-  // Find the build that is currently applied as a filter (for the clear pill)
-  const activeFilterBuild = characterActiveFilter
-    ? sortedForTable.find(b => getBuildFilterKey(b) === characterActiveFilter) || null
-    : null;
-
-  const handleRowClick = (e, i) => {
-    e.stopPropagation();
-    if (selectedIndex === i && panelOpen) {
-      setPanelOpen(false);
-    } else {
-      setSelectedBuildIndex(prev => ({ ...prev, [buildKey]: i }));
-      setPanelOpen(true);
-    }
-  };
-
-  const SortIcon = ({ col }) => {
-    if (sortState.col !== col) return <ArrowUpDown className="w-3 h-3 opacity-40 inline ml-0.5" />;
-    return sortState.dir === 'desc'
-      ? <ChevronDown className="w-3 h-3 inline ml-0.5" />
-      : <ChevronUp className="w-3 h-3 inline ml-0.5" />;
-  };
-
-  const thClass = `text-center text-xs font-semibold cursor-pointer select-none whitespace-nowrap px-1.5 py-1 uppercase tracking-wide transition-colors ${darkMode ? 'text-gray-400 hover:text-indigo-300' : 'text-gray-500 hover:text-indigo-600'}`;
-  const thLeftClass = `text-left text-xs font-semibold px-1.5 py-1 uppercase tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-500'}`;
-
-  // Each row is ~28px; show 8 rows + header before scrolling
-  const ROW_HEIGHT = 28;
-  const MAX_VISIBLE_ROWS = 8;
-  const tbodyMaxHeight = ROW_HEIGHT * MAX_VISIBLE_ROWS;
-
-  return (
-    <div ref={tableRef}>
-      {/* Active build filter clear pill — shown above the table when a filter is active */}
-      {characterActiveFilter && activeFilterBuild && (
-        <div className={`flex items-center justify-between gap-2 px-3 py-2.5 mb-2 rounded-lg text-xs font-medium border ${
-          darkMode ? 'bg-amber-950/40 border-amber-700 text-amber-300' : 'bg-amber-50 border-amber-300 text-amber-800'
-        }`}>
-          <div className="flex items-center gap-1.5 min-w-0">
-            <Filter className="w-3 h-3 flex-shrink-0" />
-            <span className="truncate">
-              <span className="font-semibold">{activeFilterBuild.buildComposition?.label || '—'}</span>
-              {activeFilterBuild.aiStrategy && (
-                <span className={darkMode ? 'text-amber-400' : 'text-amber-600'}> · {activeFilterBuild.aiStrategy}</span>
-              )}
-            </span>
-          </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setActiveBuildFilters(prev => {
-                const next = { ...prev };
-                delete next[buildKey];
-                return next;
-              });
-            }}
-            className={`flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded text-xs font-bold transition-colors bg-transparent ${
-              darkMode ? 'hover:bg-amber-800 text-amber-300 hover:text-white' : 'hover:bg-amber-200 text-amber-700 hover:text-amber-900'
-            }`}
-            title="Clear build filter"
-          >
-            <X className="w-3 h-3" />
-            Clear
-          </button>
-        </div>
-      )}
-      <div className={`rounded-lg overflow-hidden border ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
-        {/* Fixed header */}
-        <table className="w-full text-xs table-fixed">
-          <colgroup>
-            <col style={{ width: '2rem' }} />
-            <col style={{ width: '10rem' }} />
-            <col />
-            <col style={{ width: '3.5rem' }} />
-            <col style={{ width: '4rem' }} />
-          </colgroup>
-          <thead>
-            <tr className={`${darkMode ? 'bg-gray-900/80 border-b border-gray-700' : 'bg-gray-100 border-b border-gray-300'}`}>
-              <th className={thLeftClass} style={{ paddingLeft: '0.75rem' }}>#</th>
-              <th className={thLeftClass}>Build Type</th>
-              <th className={thLeftClass}>AI Strategy</th>
-              <th className={thClass} onClick={() => handleSort('activeCount')}>Uses <SortIcon col="activeCount" /></th>
-              <th className={thClass} style={{ paddingRight: '0.75rem' }} onClick={() => handleSort('score')}>Score <SortIcon col="score" /></th>
-            </tr>
-          </thead>
-        </table>
-        {/* Scrollable body */}
-        <div style={{ maxHeight: `${tbodyMaxHeight}px`, overflowY: 'auto' }} className={`${darkMode ? 'scrollbar-dark bg-gray-800' : 'bg-white'}`}>
-          <table className="w-full text-xs table-fixed">
-            <colgroup>
-              <col style={{ width: '2rem' }} />
-              <col style={{ width: '10rem' }} />
-              <col />
-              <col style={{ width: '3.5rem' }} />
-              <col style={{ width: '3.5rem' }} />
-            </colgroup>
-            <tbody className={`divide-y ${darkMode ? 'divide-gray-600' : 'divide-gray-200'}`}>
-              {sortedForTable.map((build, i) => {
-                const isSelected = i === selectedIndex && panelOpen;
-                const isBestScore = i === bestScoreIdx;
-                const isActiveFilter = getBuildFilterKey(build) === characterActiveFilter;
-                const rowBase = isSelected
-                  ? darkMode ? 'bg-indigo-950 border-l-2 border-indigo-400' : 'bg-indigo-100 border-l-2 border-indigo-500'
-                  : isActiveFilter
-                    ? darkMode ? 'bg-amber-950/40 border-l-2 border-amber-500' : 'bg-amber-50 border-l-2 border-amber-500'
-                    : darkMode ? 'hover:bg-gray-700/60 border-l-2 border-transparent' : 'hover:bg-gray-50 border-l-2 border-transparent';
-                return (
-                  <tr
-                    key={i}
-                    ref={i === selectedIndex ? refs.setReference : null}
-                    className={`cursor-pointer transition-colors ${rowBase}`}
-                    onClick={(e) => handleRowClick(e, i)}
-                  >
-                    <td className={`px-1.5 py-1 font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} style={{ paddingLeft: '0.75rem' }}>
-                      {isBestScore
-                        ? <Star className="w-3 h-3 inline text-yellow-400" title="Best performance score" />
-                        : i + 1}
-                    </td>
-                    <td className="px-1.5 py-1">
-                      <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-medium border whitespace-nowrap ${getBuildTypeColor(build.buildComposition, darkMode)}`}>
-                        {build.buildComposition?.label || '—'}
-                      </span>
-                    </td>
-                    <td className={`px-1.5 py-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                      {build.aiStrategy || 'Default'}
-                    </td>
-                    <td className={`px-1.5 py-1 text-left font-medium ${darkMode ? 'text-indigo-300' : 'text-indigo-700'}`}>
-                      {build.activeCount}
-                    </td>
-                    <td className={`px-1.5 py-1 text-left font-semibold ${darkMode ? 'text-yellow-300' : 'text-yellow-700'}`} style={{ paddingRight: '0.75rem' }}>
-                      {Math.round(build.avgPerformanceScore)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Floating detail panel — portal so it escapes card overflow clipping */}
-      {panelOpen && currentBuild && typeof document !== 'undefined' && createPortal(
-        <div
-          ref={refs.setFloating}
-          style={{ ...floatingStyles, zIndex: 9999, width: '26rem' }}
-          className={`rounded-lg shadow-2xl border ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'}`}
-        >
-          {/* Panel header */}
-          <div className={`flex items-center justify-between px-3 py-2 rounded-t-lg border-b ${darkMode ? 'bg-gray-900/60 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
-            <span className={`text-xs font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Build {selectedIndex + 1} of {sortedForTable.length}
-            </span>
-            <div className="flex items-center gap-2">
-              <PerformanceScoreBadge
-                score={currentBuild.avgPerformanceScore || 0}
-                label="Score"
-                size="small"
-                darkMode={darkMode}
-                allScores={allScores}
-              />
-              <button
-                onClick={(e) => { e.stopPropagation(); setPanelOpen(false); }}
-                className={`w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold transition-colors ${darkMode ? 'bg-gray-700 hover:bg-red-700 text-gray-300 hover:text-white' : 'bg-gray-200 hover:bg-red-500 text-gray-600 hover:text-white'}`}
-                title="Close"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-          <div className="p-3">
-            <BuildTypeTooltipWrapper
-              buildComposition={currentBuild.buildComposition}
-              aiStrategy={currentBuild.aiStrategy}
-              count={currentBuild.activeCount}
-              equippedCapsules={currentBuild.equippedCapsules}
-              totalCapsuleCost={currentBuild.totalCapsuleCost}
-              darkMode={darkMode}
-              tooltipKey={`${buildKey}-floating-panel-${selectedIndex}`}
-              characterName={buildKey}
-            />
-            {primaryTeam && (
-              <div className={`flex items-center justify-between font-semibold text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                <span className={`font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Main Team:</span>
-                <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{primaryTeam}</span>
-              </div>
-            )}
-            {/* Apply / Remove build filter button */}
-            {setActiveBuildFilters && currentBuild && (() => {
-              const fKey = getBuildFilterKey(currentBuild);
-              const isCurrentFilter = characterActiveFilter === fKey;
-              return (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveBuildFilters(prev => {
-                      if (isCurrentFilter) {
-                        const next = { ...prev };
-                        delete next[buildKey];
-                        return next;
-                      }
-                      return { ...prev, [buildKey]: fKey };
-                    });
-                    setPanelOpen(false);
-                  }}
-                  className={`mt-2 w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                    isCurrentFilter
-                      ? darkMode
-                        ? 'bg-amber-800/60 hover:bg-red-800/60 text-amber-200 border border-amber-600'
-                        : 'bg-amber-100 hover:bg-red-100 text-amber-800 border border-amber-400'
-                      : darkMode
-                        ? 'bg-indigo-800/60 hover:bg-indigo-700/60 text-indigo-200 border border-indigo-600'
-                        : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300'
-                  }`}
-                >
-                  {isCurrentFilter
-                    ? <><X className="w-3 h-3" /> Remove Build Filter</>
-                    : <><Filter className="w-3 h-3" /> Apply as Filter</>}
-                </button>
-              );
-            })()}
-          </div>
-        </div>,
-        document.body
-      )}
-    </div>
-  );
-}
-
-// Component to display character build information
-function BuildDisplay({ stats, showDetailed = false, darkMode = false }) {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  
-  // Use floating-ui for proper tooltip positioning
-  const { x, y, strategy, refs, floatingStyles } = useFloating({
-    placement: 'left',
-    middleware: [offset(10), flip()],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const handleMouseEnter = () => {
-    setTooltipOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    setTooltipOpen(false);
-  };
-
-  // Check if we have any build data to display
-  const hasEquipment = stats.equippedCapsules && stats.equippedCapsules.length > 0;
-  const hasAI = stats.aiStrategy && stats.aiStrategy !== 'Unknown' && stats.aiStrategy !== 'Com' && stats.aiStrategy !== 'Player';
-  
-  // If no equipment and no AI, show "No Equipment Data"
-  if (!hasEquipment && !hasAI) {
-    return (
-      <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <Package className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>No Equipment Data</span>
-        </div>
-      </div>
-    );
-  }
-
-  const getBuildColor = (archetype) => {
-    if (archetype.includes('Aggressive')) return darkMode ? 'text-red-400 bg-red-900/30 border-red-600' : 'text-red-600 bg-red-50 border-red-200';
-    if (archetype.includes('Defensive')) return darkMode ? 'text-green-400 bg-green-900/30 border-green-600' : 'text-green-600 bg-green-50 border-green-200';
-    if (archetype.includes('Technical')) return darkMode ? 'text-blue-400 bg-blue-900/30 border-blue-600' : 'text-blue-600 bg-blue-50 border-blue-200';
-    if (archetype.includes('Hybrid')) return darkMode ? 'text-purple-400 bg-purple-900/30 border-purple-600' : 'text-purple-600 bg-purple-50 border-purple-200';
-    return darkMode ? 'text-gray-400 bg-gray-700 border-gray-600' : 'text-gray-600 bg-gray-50 border-gray-200';
-  };
-
-  /**
-   * Get text color for build type names in tooltips
-   */
-  const getBuildTypeTextColor = (typeName) => {
-    const type = typeName?.toLowerCase();
-    const textColorMap = {
-      'melee': darkMode ? 'text-red-400' : 'text-red-600',
-      'blast': darkMode ? 'text-orange-400' : 'text-orange-600',
-      'ki blast': darkMode ? 'text-yellow-400' : 'text-yellow-600',
-      'defense': darkMode ? 'text-blue-400' : 'text-blue-600',
-      'skill': darkMode ? 'text-purple-400' : 'text-purple-600',
-      'ki efficiency': darkMode ? 'text-green-400' : 'text-green-600',
-      'utility': darkMode ? 'text-gray-400' : 'text-gray-600',
-    };
-    return textColorMap[type] || (darkMode ? 'text-gray-300' : 'text-gray-700');
-  };
-
-  return (
-    <div className={`space-y-2`}>
-      {/* Build Composition (New System) - only show if we have equipment */}
-      {stats.buildComposition && hasEquipment && (
-        <div className="flex items-center justify-between">
-          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Build Type</span>
-          <div
-            ref={refs.setReference}
-            className={`inline-block px-2 py-1 rounded text-xs font-medium border cursor-help ${getBuildTypeColor(stats.buildComposition, darkMode)}`}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {stats.buildComposition.label}
-          </div>
-        </div>
-      )}
-
-      {/* Tooltip Portal - renders in document.body */}
-      {tooltipOpen && stats.buildComposition && hasEquipment && typeof document !== 'undefined' && createPortal(
-        <div
-          ref={refs.setFloating}
-          style={{ ...floatingStyles, width: '16rem', zIndex: 10000 }}
-          className={`p-3 rounded-lg shadow-xl border z-[10000] ${
-            darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'
-          }`}
-        >
-          <div className={`text-sm font-semibold mb-2 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-            Build Composition
-          </div>
-          <div className="space-y-1.5">
-            {stats.buildComposition.breakdown
-              .filter(item => item.cost > 0)
-              .map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <span className={`font-medium ${getBuildTypeTextColor(item.name)}`}>
-                    {item.name}:
-                  </span>
-                  <span className={`tabular-nums ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    {item.cost} ({item.percent.toFixed(0)}%)
-                  </span>
-                </div>
-              ))}
-          </div>
-          <div className={`mt-2 pt-2 border-t text-sm font-semibold ${
-            darkMode ? 'border-gray-600 text-gray-200' : 'border-gray-300 text-gray-800'
-          }`}>
-            Total Cost: {stats.totalCapsuleCost}
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* AI Strategy - show in non-detailed view if no equipment but has AI */}
-      {!showDetailed && hasAI && !hasEquipment && (
-        <div className="flex items-center justify-between">
-          <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI Strategy</span>
-          <span className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-            {stats.aiStrategy}
-          </span>
-        </div>
-      )}
-      
-      {showDetailed && (
-        <>
-          {/* Capsules List - only show if we have equipment */}
-          {hasEquipment && (
-            <>
-              <div className="space-y-1.5 pt-1">
-                {stats.equippedCapsules.map((capsule, idx) => (
-                  <div key={idx} className={`flex items-center justify-between text-xs p-1.5 rounded ${
-                    darkMode ? 'bg-gray-600/50' : 'bg-gray-100'
-                  }`}>
-                    <span className={`${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                      {capsule.name}
-                    </span>
-                    <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                      {capsule.capsule.cost}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className={`flex items-center justify-between text-xs font-semibold ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                <span>Capsules ({stats.equippedCapsules.length})</span>
-                <span>Total Cost: <span className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>{stats.totalCapsuleCost}</span></span>
-              </div>
-            </>
-          )}
-          {/* AI Strategy - show if available */}
-          {hasAI && (
-            <div className="flex items-center justify-between">
-              <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI Strategy</span>
-              <span className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                {stats.aiStrategy}
-              </span>
-            </div>
-          )}
-          {/* Show "No Capsules" message if AI exists but no equipment */}
-          {hasAI && !hasEquipment && (
-            <div className={`text-xs italic ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-              No capsules equipped
-            </div>
-          )}
-          {/* YAML export buttons — only show when there's something to export */}
-          {(hasEquipment || hasAI) && (
-            <BuildYamlButtons
-              characterName={stats.name}
-              capsules={stats.equippedCapsules}
-              aiStrategy={stats.aiStrategy}
-              darkMode={darkMode}
-            />
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-// Meta Analysis Component
-function MetaAnalysisContent({ aggregatedData, capsuleMap, aiStrategies, charMap, darkMode = false }) {
-  const [isAIStrategyExpanded, setIsAIStrategyExpanded] = useState(true);
-  const [isCapsuleExpanded, setIsCapsuleExpanded] = useState(true);
-  
-  if (aggregatedData.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <Database className={`w-16 h-16 mx-auto mb-4 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-        <h3 className={`text-lg font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>No Data Available</h3>
-        <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Please ensure you have match data loaded to view meta analysis.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* AI Strategy Effectiveness Analysis */}
-      <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-purple-50'} border ${darkMode ? 'border-purple-900/30' : 'border-purple-200'}`}>
-        <div className="flex items-center gap-3 mb-4">
-          <Brain className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-          <h3 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-            AI Strategy Effectiveness
-          </h3>
-          <button 
-            onClick={() => setIsAIStrategyExpanded(!isAIStrategyExpanded)}
-            className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-              darkMode 
-                ? 'bg-purple-600 hover:bg-purple-500 text-white' 
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
-            }`}
-            aria-label={isAIStrategyExpanded ? 'Collapse section' : 'Expand section'}
-          >
-            {isAIStrategyExpanded ? (
-              <Minus className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-        {isAIStrategyExpanded && (
-          <>
-            <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Compare AI strategy performance, behavioral patterns, character synergies, and build compatibility.
-            </p>
-            <AIStrategyAnalysis aggregatedData={aggregatedData} charMap={charMap} darkMode={darkMode} />
-          </>
-        )}
-      </div>
-      
-      {/* Capsule Performance Analysis */}
-      <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-700/50' : 'bg-blue-50'} border ${darkMode ? 'border-blue-900/30' : 'border-blue-200'}`}>
-        <div className="flex items-center gap-3 mb-4">
-          <Zap className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-          <h3 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-            Capsule Performance Analysis
-          </h3>
-          <button 
-            onClick={() => setIsCapsuleExpanded(!isCapsuleExpanded)}
-            className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-              darkMode 
-                ? 'bg-blue-600 hover:bg-blue-500 text-white' 
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-            aria-label={isCapsuleExpanded ? 'Collapse section' : 'Expand section'}
-          >
-            {isCapsuleExpanded ? (
-              <Minus className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-        {isCapsuleExpanded && (
-          <>
-            <p className={`mb-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              Analyze individual capsule performance across matches, characters, and AI strategies.
-            </p>
-            <CapsuleSynergyAnalysis aggregatedData={aggregatedData} darkMode={darkMode} />
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
+// The presentational components that used to live here are now in
+// src/components/stats/ and src/components/build/. They were only ever local
+// to this file, which meant any new page had to reinvent them; the Character
+// page did exactly that and drifted visually as a result.
+import { StatBar, PerformanceIndicator, PerformanceIndicatorLabel, PerformanceScoreBadge, StatGroup, MetricDisplay, BlastMetricDisplay, BattleTimeVariance } from './components/stats/index.js';
+import { BuildTableView, BuildDisplay } from './components/build/index.js';
+import MetaAnalysisContent from './components/MetaAnalysisContent.jsx';
 
 export default function App() {
   const [mode, setMode] = useState('reference');
@@ -1319,6 +133,7 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { charParam } = useParams();
+  const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
   const setViewType = useCallback(
     (next) => navigate(pathForView(next) + location.search),
@@ -1339,7 +154,7 @@ export default function App() {
   }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
   const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
-  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Lead, 2=Middle, 3=Anchor)
+  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Starter, 2=Middle, 3=Anchor)
   const [positionCharacterFilters, setPositionCharacterFilters] = useState({ 1: [], 2: [], 3: [] }); // Character filters for each position
   const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
@@ -1373,27 +188,36 @@ export default function App() {
   // Bidirectional id <-> slug lookup, for the /characters/:charParam deep link.
   const charSlugIndex = useMemo(() => buildCharacterSlugIndex(charactersCSV), []);
 
-  // A character deep link scopes the leaderboard to that one character.
+  // Character name -> the key its page URL uses (a name slug, or the raw id for
+  // a character not yet in characters.csv). The leaderboard links each row to
+  // its character page with this.
+  const charUrlKeyByName = useMemo(() => {
+    const byName = new Map();
+    for (const [id, name] of charSlugIndex.idToName) {
+      if (!byName.has(name)) byName.set(name, characterUrlKey(id, charSlugIndex));
+    }
+    return byName;
+  }, [charSlugIndex]);
+
+  // CANONICALISE a character deep link: a raw id is accepted forever (old links,
+  // and characters that appear in match data before characters.csv gains a row),
+  // but if that character has a slug the URL is rewritten to it, so the legible
+  // form is what lands in the address bar and in whatever someone copies out of
+  // it. replace: true because the id URL should not become a back-button stop.
   //
-  // Two jobs. First, resolve the URL segment - a name slug, or a raw id, which
-  // stays valid forever so old links and characters missing from characters.csv
-  // keep working. Second, CANONICALISE: if the link arrived with a raw id and
-  // that character does have a slug, rewrite the URL to the slug so what ends up
-  // in the address bar (and in whatever someone copies from it) is the legible
-  // form. replace: true because the id URL should not become a back-button stop.
+  // Note what this deliberately does NOT do: narrow selectedCharacters. The route
+  // renders a real page now, so the leaderboard filter is left untouched - the
+  // rank on the page means "among the characters in this data scope", which a
+  // one-character filter would flatten to #1 of 1, and Back should return the
+  // visitor to the view they actually had.
   useEffect(() => {
     if (!charParam) return;
     const id = resolveCharacterParam(charParam, charSlugIndex);
-    if (!id) return; // unknown character - leave the view unfiltered
-
+    if (!id) return; // unknown character - the page renders a not-found notice
     const canonical = characterUrlKey(id, charSlugIndex);
     if (canonical && canonical !== charParam) {
       navigate(ROUTES.character(canonical) + location.search, { replace: true });
-      return;
     }
-
-    const name = charSlugIndex.idToName.get(id);
-    if (name) setSelectedCharacters([name]);
   }, [charParam, charSlugIndex, navigate, location.search]);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
   const capsuleMap = capsuleInfo.capsuleMap;
@@ -1530,6 +354,65 @@ export default function App() {
     }),
     [aggregatedData, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters, charMap]
   );
+
+  // ---- /characters/<name-slug> ---------------------------------------------
+  //
+  // Ranked against performanceReference, not filteredAggregatedData. That memo
+  // above explains why at length; the short version is that it applies the
+  // filters which change WHICH MATCHES COUNT and ignores the ones that only
+  // change what you are looking at. So '#12 of 107' means the same thing however
+  // the visitor has sorted or narrowed the table, and it is already sorted by
+  // score descending, which is what a rank should mean here.
+  const deepLinkedCharacter = useMemo(() => {
+    if (!charParam) return null;
+    const id = resolveCharacterParam(charParam, charSlugIndex);
+    // A character can reach match data before characters.csv gains a row, in
+    // which case there is no name to join on - fall back to the raw URL segment.
+    const wanted = (id && charSlugIndex.idToName.get(id)) || charParam;
+
+    // Three ways to have no character, and they must not be confused.
+    //
+    // "Nothing aggregated yet" is NOT a loading signal - a filter combination
+    // that matches no files (S1 + Season is empty today: every S1 file is tagged
+    // Test) leaves this empty forever, and treating that as loading spins a
+    // spinner that never resolves. Ask the actual loading signals instead:
+    // tagFilterPaths undefined means the tag selector has not reported, and
+    // files chosen with no content yet means a fetch is in flight.
+    const filesChosen = Array.isArray(selectedFilePath) && selectedFilePath.length > 0;
+    if (tagFilterPaths === undefined || (filesChosen && !fileContent)) {
+      return { label: wanted, character: null, reason: 'loading' };
+    }
+
+    // An empty tag filter is a dead end, not a missing character - say which,
+    // because "no data for Toppo" sends someone looking for the wrong problem.
+    if (Array.isArray(tagFilterPaths) && tagFilterPaths.length === 0) {
+      return { label: wanted, character: null, reason: 'empty-scope' };
+    }
+
+    const i = performanceReference.findIndex(c => c.name === wanted);
+    if (i === -1) return { label: wanted, character: null, reason: 'not-found' };
+    return {
+      label: wanted,
+      character: performanceReference[i],
+      rank: i + 1,
+      totalInScope: performanceReference.length,
+    };
+  }, [charParam, charSlugIndex, performanceReference, tagFilterPaths, selectedFilePath, fileContent]);
+
+  // What the numbers on that page actually cover. Read off the query string so
+  // the page's own description of its scope and the link someone pasted cannot
+  // disagree - they are the same source.
+  const dataScopeLabel = useMemo(() => {
+    const parts = [];
+    const tags = describeTagFilters(searchParams);
+    if (tags) parts.push(tags);
+    if (selectedTeams.length) parts.push('teams ' + selectedTeams.join('/'));
+    if (selectedAIStrategies.length) parts.push('AI ' + selectedAIStrategies.join('/'));
+    if (selectedMaps.length) parts.push('maps ' + selectedMaps.join('/'));
+    const matchCount = Array.isArray(fileContent) ? fileContent.length : null;
+    const scope = parts.length ? parts.join(' · ') : 'all available match data';
+    return matchCount ? scope + ' (' + matchCount.toLocaleString() + ' matches)' : scope;
+  }, [searchParams, selectedTeams, selectedAIStrategies, selectedMaps, fileContent]);
 
   // Extract unique teams and AI strategies from aggregated data
   const availableCharacters = useMemo(() => {
@@ -2559,8 +1442,23 @@ export default function App() {
           </div>
         )}
 
+        {/* Character detail page - /characters/<name-slug> */}
+        {deepLinkedCharacter && (
+          <CharacterPage
+            character={deepLinkedCharacter.character}
+            missingLabel={deepLinkedCharacter.label}
+            reason={deepLinkedCharacter.reason}
+            rank={deepLinkedCharacter.rank}
+            totalInScope={deepLinkedCharacter.totalInScope}
+            scopeLabel={dataScopeLabel}
+            darkMode={darkMode}
+            onBack={() => navigate(ROUTES.characters + location.search)}
+            onOpenMatch={handleNavigateToMatch}
+          />
+        )}
+
         {/* Aggregated Data Display */}
-        {((mode === 'reference' && viewType === 'aggregated') || 
+        {!deepLinkedCharacter && ((mode === 'reference' && viewType === 'aggregated') || 
           (mode === 'manual' && viewType === 'aggregated' && manualFiles.filter(f => !f.error).length > 0)) && 
           aggregatedData.length > 0 && (
           <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
@@ -3038,7 +1936,6 @@ export default function App() {
                   ? allAvgBattleTimeValues.reduce((sum, val) => sum + val, 0) / allAvgBattleTimeValues.length
                   : 0;
                 
-                const combatPerformanceScores = performanceReference.map(c => c.combatPerformanceScore);
                 
                 return (
                   <div key={i} className={`rounded-xl p-6 border transition-colors ${
@@ -3056,11 +1953,26 @@ export default function App() {
                               the old Swords icon rather than sitting beside it. The tier
                               is absolute - never relative to the rows on screen. */}
                           <TierPlate score={char.combatPerformanceScore} character={char} size="medium" darkMode={darkMode} />
-                          <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{char.name}</h3>
+                          {/* The name opens the character page. It is a real link, so it can be
+                              middle-clicked, copied or shared, and it carries the current filters
+                              across. stopPropagation keeps a click from also toggling the row. */}
+                          <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                            {charUrlKeyByName.get(char.name) ? (
+                              <Link
+                                to={ROUTES.character(charUrlKeyByName.get(char.name)) + location.search}
+                                onClick={(e) => e.stopPropagation()}
+                                title={`Open ${char.name}'s character page`}
+                                className="group inline-flex items-center gap-1 text-inherit no-underline hover:underline"
+                              >
+                                {char.name}
+                                <ArrowUpRight className={`w-4 h-4 opacity-50 group-hover:opacity-100 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
+                              </Link>
+                            ) : char.name}
+                          </h3>
                           {/* Familiar score pill, tinted from the same palette as the
                               plate (tierPillColors) so the two cannot drift apart. */}
                           <span
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap"
+                            className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tierForScore(char.combatPerformanceScore))}`}
                             style={tierPillColors(tierForScore(char.combatPerformanceScore))}
                           >
                             <Star className="w-3 h-3" />
@@ -3417,7 +2329,6 @@ export default function App() {
                                     setSelectedBuildIndex={setSelectedBuildIndex}
                                     selectedBuildSort={selectedBuildSort}
                                     setSelectedBuildSort={setSelectedBuildSort}
-                                    allScores={combatPerformanceScores}
                                     primaryTeam={char.primaryTeam}
                                     activeBuildFilters={activeBuildFilters}
                                     setActiveBuildFilters={setActiveBuildFilters}
@@ -3448,7 +2359,7 @@ export default function App() {
         )}
 
         {/* Position-Based Performance Analysis */}
-        {((mode === 'reference' && viewType === 'aggregated') || 
+        {!deepLinkedCharacter && ((mode === 'reference' && viewType === 'aggregated') || 
           (mode === 'manual' && viewType === 'aggregated' && manualFiles.filter(f => !f.error).length > 0)) && 
           Object.keys(positionData).length > 0 && (
           <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
@@ -3460,7 +2371,7 @@ export default function App() {
                 <div>
                   <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Character Position Analysis</h2>
                   <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Performance breakdown by team position (Lead, Middle, Anchor)
+                    Performance breakdown by team position ({POSITION_NAMES[1]}, {POSITION_NAMES[2]}, {POSITION_NAMES[3]})
                   </p>
                 </div>
               </div>
@@ -3531,7 +2442,7 @@ export default function App() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map(position => {
                 const posData = positionData[position];
-                const positionNames = ['Lead', 'Middle', 'Anchor'];
+                const positionNames = [POSITION_NAMES[1], POSITION_NAMES[2], POSITION_NAMES[3]];
                 const positionColors = [
                   { light: 'text-red-600', dark: 'text-red-400', bg: 'bg-red-50', darkBg: 'bg-red-900/20', border: 'border-red-200', darkBorder: 'border-red-600' },
                   { light: 'text-blue-600', dark: 'text-blue-400', bg: 'bg-blue-50', darkBg: 'bg-blue-900/20', border: 'border-blue-200', darkBorder: 'border-blue-600' },
@@ -4184,11 +3095,6 @@ export default function App() {
                 <div className="space-y-3">
                   {(() => {
                     // Collect all character performance scores from both teams for relative scoring
-                    const allMatchScores = [...p1Team, ...p2Team].map(char => {
-                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, 0, aiStrategies), char);
-                      return calculateMatchPerformanceScore(stats);
-                    });
-                    
                     return p1Team.map((char, i) => {
                       const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
                       const performanceScore = calculateMatchPerformanceScore(stats);
@@ -4207,7 +3113,7 @@ export default function App() {
                                 <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{stats.kills} KOs</span>
                               </div>
                             </div>
-                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} allScores={allMatchScores} />
+                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} />
                           </div>
                           
                           {/* Combat Performance Section */}
@@ -4468,11 +3374,6 @@ export default function App() {
                 <div className="space-y-3">
                   {(() => {
                     // Collect all character performance scores from both teams for relative scoring
-                    const allMatchScores = [...p1Team, ...p2Team].map(char => {
-                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, 0, aiStrategies), char);
-                      return calculateMatchPerformanceScore(stats);
-                    });
-                    
                     return p2Team.map((char, i) => {
                       const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
                       const performanceScore = calculateMatchPerformanceScore(stats);
@@ -4491,7 +3392,7 @@ export default function App() {
                                 <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{stats.kills} KOs</span>
                               </div>
                             </div>
-                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} allScores={allMatchScores} />
+                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} />
                           </div>
                           
                           {/* Combat Performance Section */}
@@ -5086,7 +3987,6 @@ export default function App() {
                               <div className={`p-3 space-y-2 border-t ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
                                 {(() => {
                                   // Collect all performance scores for relative scoring
-                                  const allCharScores = Object.values(team.characterAverages).map(c => c.performanceScore);
                                   
                                   return Object.entries(team.characterAverages)
                                     .sort((a, b) => b[1].performanceScore - a[1].performanceScore)
@@ -5190,7 +4090,7 @@ export default function App() {
                                             {/* Score and Expand Icon - Rightmost */}
                                             <div className="flex items-center gap-3">
                                               <div className="text-right">
-                                                <PerformanceScoreBadge score={charStats.performanceScore} label="Score" size="small" darkMode={darkMode} allScores={allCharScores} />
+                                                <PerformanceScoreBadge score={charStats.performanceScore} label="Score" size="small" darkMode={darkMode} />
                                                 <div className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                   {charStats.activeMatchesPlayed} matches ({charStats.usageRate}%)
                                                 </div>
@@ -5452,7 +4352,6 @@ export default function App() {
                                                       setSelectedBuildIndex={setSelectedBuildIndex}
                                                       selectedBuildSort={selectedBuildSort}
                                                       setSelectedBuildSort={setSelectedBuildSort}
-                                                      allScores={allCharScores}
                                                       activeBuildFilters={activeBuildFilters}
                                                       setActiveBuildFilters={setActiveBuildFilters}
                                                       darkMode={darkMode}
@@ -5800,7 +4699,6 @@ export default function App() {
                                             
                                             {isMatchupExpanded && (() => {
                                               // Use same score pool as character performance section for consistent coloring
-                                              const allCharScores = Object.values(team.characterAverages).map(c => c.performanceScore);
                                               
                                               // Group matchups by position
                                               const positionGroups = matchupStats.reduce((groups, stat) => {
@@ -5812,7 +4710,7 @@ export default function App() {
                                               // Position labels
                                               const getPositionLabel = (pos) => {
                                                 const maxPos = Math.max(...matchupStats.map(s => s.position));
-                                                if (pos === 1) return 'Starter';
+                                                if (pos === 1) return POSITION_NAMES[1];
                                                 if (pos === maxPos) return 'Anchor';
                                                 if (maxPos === 3) return 'Middle';
                                                 // For middle positions in teams with 4+ members
@@ -5907,26 +4805,12 @@ export default function App() {
                                                                             {isBest && <span className={`text-sm ${darkMode ? 'text-amber-400' : 'text-amber-600'}`}>★</span>}
                                                                           </div>
                                                                           <div className="flex flex-col items-end gap-1">
-                                                                            {(() => {
-                                                                              const score = parseFloat(stat.avgPerformanceScore) || 0;
-                                                                              // Use same score pool as character performance section for consistent coloring
-                                                                              const level = getPerformanceLevel(score, allCharScores);
-                                                                              const colorClasses = {
-                                                                                excellent: darkMode ? 'bg-green-900/30 text-green-300 border-green-600' : 'bg-green-100 text-green-700 border-green-300',
-                                                                                good: darkMode ? 'bg-blue-900/30 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-700 border-blue-300',
-                                                                                average: darkMode ? 'bg-yellow-900/30 text-yellow-300 border-yellow-600' : 'bg-yellow-100 text-yellow-700 border-yellow-300',
-                                                                                'below-average': darkMode ? 'bg-orange-900/30 text-orange-300 border-orange-600' : 'bg-orange-100 text-orange-700 border-orange-300',
-                                                                                poor: darkMode ? 'bg-red-900/30 text-red-300 border-red-600' : 'bg-red-100 text-red-700 border-red-300'
-                                                                              };
-                                                                              // Ensure we have a valid score to display
-                                                                              const displayScore = isNaN(score) ? 0 : Math.round(score);
-                                                                              return (
-                                                                                <div className={`inline-flex items-center gap-1.5 rounded-lg border font-bold text-sm px-2 ${colorClasses[level]}`}>
-                                                                                  <Star className="w-3 h-3"/>
-                                                                                  <span>Score: {displayScore}</span>
-                                                                                </div>
-                                                                              );
-                                                                            })()}
+                                                                            <PerformanceScoreBadge
+                                                                              score={parseFloat(stat.avgPerformanceScore) || 0}
+                                                                              label="Score"
+                                                                              size="small"
+                                                                              darkMode={darkMode}
+                                                                            />
                                                                           </div>
                                                                         </div>
                                                                         

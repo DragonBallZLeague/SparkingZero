@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { positionLabel } from '../utils/positions.js';
 import { 
   Download, 
   FileSpreadsheet, 
@@ -60,7 +61,7 @@ const ExportManager = ({
             if (posData?.sortedCharacters) {
               posData.sortedCharacters.forEach(char => {
                 positionExport.push({
-                  'Position': position === 1 ? 'Lead' : position === 2 ? 'Middle' : 'Anchor',
+                  'Position': positionLabel(position),
                   'Character Name': char.name,
                   'Matches': char.matchCount,
                   'Win Rate': `${char.winRate}%`,

@@ -60,6 +60,29 @@ function hasAnyFilter(filters) {
   return Object.values(filters).some(set => set && set.size > 0);
 }
 
+/**
+ * A human-readable summary of the tag filters currently in the query string.
+ *
+ * Read straight off the URL rather than plumbed out of this component's state,
+ * because the URL is what a shared link carries - so a page describing its own
+ * data scope and the link someone pasted cannot disagree. Returns null when
+ * nothing is filtered.
+ *
+ * TAG_DIMS owns the labels and value formatting, which is why this lives here
+ * rather than in a utils module.
+ */
+export function describeTagFilters(searchParams) {
+  const filters = parseFilters(searchParams);
+  const parts = [];
+  for (const dim of TAG_DIMS) {
+    const set = filters[dim.key];
+    if (!set || set.size === 0) continue;
+    const values = [...set].map(v => (dim.format ? dim.format(v) : v));
+    parts.push(dim.label + ' ' + values.join('/'));
+  }
+  return parts.length ? parts.join(' · ') : null;
+}
+
 export default function TagFilterSelector({ onSelect, darkMode = true }) {
   // The router owns the query string now. This used to read window.location and
   // write through history.replaceState, which bypassed react-router entirely -

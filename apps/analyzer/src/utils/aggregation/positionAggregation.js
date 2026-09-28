@@ -3,7 +3,7 @@ import { combatEfficiency } from '../performanceScore.js';
 
 export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMatchTypeFilters = ['2v2', '3v3', '4v4', '5v5']) {
   const positionStats = {
-    1: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 1 (Lead)
+    1: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 1 (Starter)
     2: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }, // Position 2 (Middle)
     3: { totalMatches: 0, uniqueMatches: new Set(), characters: {} }  // Position 3 (Anchor)
   };
@@ -82,7 +82,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
       charData.totalComboDamage += stats.maxComboDamage;
     }
     
-    // Process allies lead (1P key) as Position 1 (Lead)
+    // Process allies starter (1P key) as Position 1 (Starter)
     if (allies1PKey && characterRecord[allies1PKey]) {
       accumulateCharStats(characterRecord[allies1PKey], 1);
     }
@@ -100,7 +100,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
       accumulateCharStats(char, position);
     });
     
-    // Process enemy lead (2P key) as Position 1 (Lead)
+    // Process enemy starter (2P key) as Position 1 (Starter)
     if (enemy2PKey && characterRecord[enemy2PKey]) {
       accumulateCharStats(characterRecord[enemy2PKey], 1);
     }

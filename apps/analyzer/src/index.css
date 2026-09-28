@@ -73,3 +73,22 @@
 }
 .szl-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.5); }
 .szl-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.5); }
+
+/*
+ * Z-tier score pill: the halo slowly breathes (utils/tierPlateSvg.js,
+ * tierPillColors + tierPillClass). Only Z does this - it is the one tier meant
+ * to be spotted at a glance in a long list.
+ *
+ * A CSS animation outranks the inline box-shadow tierPillColors sets, which is
+ * the resting glow used when motion is reduced.
+ */
+.szl-tier-pill-z {
+  animation: szl-z-breathe 2.6s ease-in-out infinite;
+}
+@keyframes szl-z-breathe {
+  0%, 100% { box-shadow: 0 0 4px rgba(224, 40, 74, 0.35); }
+  50%      { box-shadow: 0 0 14px rgba(224, 40, 74, 0.75), 0 0 2px rgba(224, 40, 74, 0.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .szl-tier-pill-z { animation: none; }
+}

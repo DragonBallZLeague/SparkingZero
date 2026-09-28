@@ -30,7 +30,7 @@ Understanding the competitive loop is a prerequisite for designing this app, bec
 
 - **Compare builds on one character** — how the same character performs across different capsule builds and AI strategies, side by side, in order to pick one.
 - **Compare characters head-to-head** — put 2–3 candidates next to each other rather than scanning a table.
-- **Plan lineups by position** — work out who belongs at Lead / Middle / Anchor, given that position drives matchups and that some builds are position-specific.
+- **Plan lineups by position** — work out who belongs at Starter / Middle / Anchor, given that position drives matchups and that some builds are position-specific.
 - **Track their own team over time** — is this character, build, or team trending up or down across a season or a run of tests?
 
 The test corpus is theirs: 2,385 of ~2,500 files are team tests, and that is where build tuning actually happens.
@@ -367,7 +367,7 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 
 **Prerequisite: the 404 dispatcher must ship first.**
 
-**Routing foundation done 2026-09-27**: real `<Route>` entries replace the bare catch-all (a `path="*"` fallback is kept on purpose so stale links still render), `src/routes.js` is imported by `main.jsx` and `App.jsx` and owns the view mapping, `viewType` is derived from the URL instead of state, `TagFilterSelector` has moved from `history.replaceState` to `useSearchParams`, and `/characters/:charParam` resolves a slug or a raw id and canonicalises the id to the slug. `npm run verify-routes` guards the scheme. **Still to do: the Character page itself and `<ShareButton>`.** This is where `utils/characterSlug.js` gets wired up — the route resolves `:charSlug` through `resolveCharacterParam()`, and should **redirect a raw-id URL to its slug** so the canonical, shareable form is what ends up in the address bar. Per-form/fusion tabs surface what `fusionSplit.js` and `formStatsCalculator.js` already compute.
+**Routing foundation done 2026-09-27**: real `<Route>` entries replace the bare catch-all (a `path="*"` fallback is kept on purpose so stale links still render), `src/routes.js` is imported by `main.jsx` and `App.jsx` and owns the view mapping, `viewType` is derived from the URL instead of state, `TagFilterSelector` has moved from `history.replaceState` to `useSearchParams`, and `/characters/:charParam` resolves a slug or a raw id and canonicalises the id to the slug. `npm run verify-routes` guards the scheme. **Character page done 2026-09-27**: `src/pages/CharacterPage.jsx` renders in place of the leaderboard on a character deep link — identity header with the absolute tier plate, headline stats, usage, the position split, the per-form breakdown (via the existing `PerFormStatsDisplayAggregated`), top builds and recent matches that click through to the match view. It is purely presentational; every number already existed in the aggregated row. `<ShareButton>` copies an absolute deep link to the current view. `npm run verify-character-page` guards the page's data contract by scraping the fields it reads out of its own source. **Still to do in this phase: the share-snippet image card, the Advanced-tab build comparison, and the querystring-driven character comparison below.** The page settled on a **tabbed** layout (compared against a dense single column and a sticky rail with real data); its **visual design is deliberately deferred** to a dedicated design conversation with demos, held once the current structural work is finished, and judged against both participants and casual viewers. The known brief so far: nothing leads the eye, and every surface shares one background and text colour.
 
 This is also where the participant workflow starts paying off, and the page should be shaped by principles 1 and 4 rather than by what `App.jsx` currently renders:
 
@@ -383,7 +383,7 @@ Reuse the shared aggregation and `<ShareButton>` proven in step 3. Define and te
 
 Two participant-facing additions belong here, both flowing from principle 4:
 
-- **Lineup planning as a first-class surface on the Team page.** Since a lineup is (character × AI strategy × capsules × position) and position drives matchups, a team member should be able to reason about Lead / Middle / Anchor in one place rather than by filtering a character table. `positionAggregation.js` already provides the math.
+- **Lineup planning as a first-class surface on the Team page.** Since a lineup is (character × AI strategy × capsules × position) and position drives matchups, a team member should be able to reason about Starter / Middle / Anchor in one place rather than by filtering a character table. `positionAggregation.js` already provides the math.
 - **Trend over time** for a team and its characters across a season or test run, using the ordering key added to the index in Phase 1.5.
 
 **Matchup analysis** (how character A actually fares against character B, by position) is a strong candidate here — opponent data already flows through `characterAggregation.js` and `teamAggregation.js`, and principle 6 argues it should be first-class. Scope it once the Character and Team pages are real; don't commit to it before then.
