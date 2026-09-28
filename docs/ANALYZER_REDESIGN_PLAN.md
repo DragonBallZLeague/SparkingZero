@@ -122,11 +122,17 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
   - Eight grids that relied on `App.css` collapsing every 3–5 column grid to two on a phone now say `grid-cols-2 sm:grid-cols-N` themselves.
 - **Next: the league's styling list**, then retire `App.css` rules as their components are restyled. Once it is empty, turn preflight on.
 
+### Visual direction: decided 2026-09-28
+
+The app-wide layout and styling direction is settled. It covers the tab row, the one-line scope bar, one level of flat panels, rows instead of cards, colour roles, density, phone-first for viewing pages, the tier-list view and character portraits. See "Visual direction" below. The page-by-page review is next, followed by a real-data demo of the shell, the table leaderboard and the tier list.
+
 ### Phase 2c — Responsive shell, accessibility, persistence: not started
+
+The shell's design is now decided (see "Visual direction", decisions 1, 2 and 8).
 
 ### Phase 3 — Character page: in progress
 
-Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design, the share-snippet image card, build comparison and character comparison.
+Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design (which follows "Visual direction"), the share-snippet image card, build comparison and character comparison.
 
 ### Phases 4–7: not started
 
@@ -302,7 +308,7 @@ Current calibration: 1,350 matches / 148 characters from Seasons 0+1 Ultra, givi
 
 ```
 /analyzer/                          → Home: stats-only landing (see Phase 5 — NOT standings)
-/analyzer/characters                → Character leaderboard (searchable, sortable)
+/analyzer/characters                → Character leaderboard (searchable, sortable), with a Tier list view
 /analyzer/characters/:charSlug      → Single character deep-dive (name slug, e.g. android-13; raw id also accepted)
 /analyzer/teams                     → Team rankings
 /analyzer/teams/:teamSlug           → Single team deep-dive
@@ -313,6 +319,100 @@ Current calibration: 1,350 matches / 148 characters from Seasons 0+1 Ultra, givi
 ```
 
 Filters become querystring state on these routes, extending what `TagFilterSelector` already proves out — so a filtered view is shareable, not just the base page. `src/routes.js` already defines these paths; it just needs to actually be imported.
+
+---
+
+## Visual direction — decided 2026-09-28
+
+The league asked for the whole analyzer's layout and styling to be rebuilt. The two named complaints were the "panel in panel in panel" look and how bloated and long some pages feel. This section is the app-wide direction every page rebuild follows. It was settled in a design conversation that measured the current app and reviewed a dozen comparable stats sites. **The page-by-page decisions come next** (which pages stay, go or change, and what data each one holds) and build on it.
+
+### The baseline to beat (measured)
+
+A real build in a headless browser at 1280px and 390px, in the default scope (Season 0, Season matches, 105 matches):
+
+| Problem | Measured |
+|---|---|
+| Settings before data | Every view opens with the Analysis Mode panel, the View Type cards and the full tag-filter panel. A view's own content starts ~1,020px down at 1280px, below a 900px screen, and ~1,630px down at 390px. |
+| Cards for comparable items | The character leaderboard shows 62 characters as cards of five tiles: 20,743px tall (23 desktop screens), with ~550 boxed surfaces. |
+| Nesting | Single Match nests four levels: page panel → team panel → character card → a box per Super. Data Tables gives the outer panel and the table panel inside it the same heading. |
+| A sticky filter form | The leaderboard's "Filters & Sorting" is 751px tall and sticky. While scrolling it covers 83% of a desktop screen and 99% of a phone screen, and it overflows sideways at 390px. |
+| Colour without meaning | Match cards give every stat its own colour (damage red, taken blue, efficiency purple, DPS orange), so nothing stands out. |
+
+### What comparable sites do
+
+Reviewed: u.gg, op.gg, Lolalytics, Dotabuff, MetaTFT, tactics.tools, tracker.gg, 17Lands, Statlocker, Pikalytics, Basketball-Reference and Puddle Farm.
+
+- **Scope fits on one line**: a row of dropdown chips (op.gg, Lolalytics, MetaTFT, 17Lands, tracker.gg). u.gg writes it into the page title ("Ahri Build for Mid, Emerald+, Patch 26.19").
+- **Navigation is a row of section tabs** under the global nav, never a settings panel.
+- **One level of surface.** Dotabuff's hero page is flat section panels with a table in each and nothing boxed inside them. Summary numbers sit in one row with hairline dividers (u.gg), not in separate tiles.
+- **Rows for anything homogeneous.** tracker.gg's tier list is one table grouped into tier bands. MetaTFT shows each team comp, the closest analogue to a DBSZL build, as a ~105px row with its pieces inline and aligned stat columns. Dotabuff draws bars inside table cells. Clicking a row opens a page; it does not expand into a large card.
+- **Two views of one dataset**: 17Lands' Grades / Table switch.
+- **Every one of them leads with character portraits.**
+- The usability research agrees. Nielsen Norman Group finds cards harder to scan and compare than lists, finds that disclosure deeper than two levels loses people, and says sticky elements must stay small.
+
+### The decisions
+
+1. **Navigation, not settings.** A slim tab row replaces the Analysis Mode and View Type panels: Home · Characters · Teams · Matches · Meta · Sandbox, one tab per route in `src/routes.js`.
+   - Manual upload becomes the Sandbox tab.
+   - The file tree (`BRDataSelector`) moves to Matches, where choosing files is the task.
+   - Target: data starts ~150px from the top of the page.
+2. **A one-line scope bar, shared by every page.**
+   - Season, match type, difficulty, team and "+ Filter" as dropdown chips, with the match count.
+   - Sticky, and no taller than ~50px.
+   - Page-specific filters (tier, score, AI strategy, map) join the same bar instead of a separate form.
+   - On a phone it becomes a "Filters (n)" button that opens a bottom sheet, with the active chips on one horizontally scrolling line.
+   - Scope stays visible, self-describing and in the query string, for the same reason default scoping is a tag filter.
+3. **One level of flat panels.** The layers are page background, then section panel, then content.
+   - A section may sit on a flat panel. Nothing inside it is another panel.
+   - Inside a section, separate things with spacing, hairline dividers, alignment and type weight.
+   - Popovers and tooltips are the only raised surface.
+   - Corner radii shrink from today's `rounded-xl`/`2xl` (1.125rem / 1.5rem).
+   - No icon on every heading, and no heading repeated by a nested container.
+4. **Rows, not cards, for anything compared**: characters, teams, builds, capsules and AI strategies.
+   - A sortable table with right-aligned tabular figures, bars inside cells and a sticky header row.
+   - A row click opens the detail page, replacing inline expansion.
+   - Builds follow MetaTFT: one row per build, with its capsules inline.
+   - On a phone a row shows portrait, name, score and 2–3 stats. The rest come from a column picker, or from sideways scrolling with the name column frozen.
+   - Target: the leaderboard at ~3 desktop screens instead of 23.
+5. **Colour has jobs; plain numbers are white.** The Character Overview's colour rules apply app-wide:
+   - rank green or red only at the ends (the top and bottom fifth of the pool)
+   - style colours on graphics
+   - the tier palette on plates and pills
+   - the accent orange only on active or interactive elements
+6. **Medium density by default, dense inside tables.** The analyzer serves casual viewers as much as participants, so default views must not read like a spreadsheet. Tables can pack tightly.
+7. **One layout for every detail page**: identity and scope line, then one headline strip, then tabs, then content, with a right-hand column at 1280px and wider.
+   - The Character page already has this shape; the Team and Match pages follow it.
+   - The Overview tab keeps its approved design and loses only the chrome and outer panel around it.
+8. **Phone-first for the pages people view; desktop-first for power tools.** About half the traffic is on phones.
+   - **Phone-first**: Home, the Characters list, and the Character, Team and Match pages.
+   - **Desktop-first**: Data Tables and export, the Meta build analyzer, build and character comparison, and Sandbox. These must still work on a phone, where sideways scrolling is acceptable.
+   - **Accepted tradeoffs:**
+     - Desktop layouts are designed deliberately, not a stretched phone layout.
+     - Nothing important lives only in a hover: tooltips open on tap, and key numbers are inline.
+     - Comparisons fit two side by side on a phone, not three.
+     - Changing filters on a phone takes one extra tap.
+   - Check every page at 390px and 1280px with `npm run shot` (`apps/analyzer/scripts/dev/`).
+9. **A tier-list view, added alongside the leaderboard rather than replacing it.**
+   - It has rows Z, S, A, B and C, each holding the portraits and names of the characters in that tier. Tapping one opens that character's page.
+   - It computes nothing new: it groups the existing absolute tiers, under the same scope bar, at a URL of its own.
+   - It appears in two places:
+     - as a "Table | Tier list" switch on the Characters page
+     - as the first thing on Home: the current-season tier list, a format casual fans already recognise
+   - **Position is a picker, not columns.** An All / Starter / Middle / Anchor picker sits above the list, and a character with few matches at that position is dimmed like any provisional sample.
+     - Columns per position were rejected on the data. In the default scope only 19 characters have 5+ matches as Starter, 47 as Middle and 19 as Anchor, and the typical character has ~5 matches at each position it plays. Across all data, tests included, the counts are 111 / 101 / 102.
+     - Check whether the score needs a position adjustment (Anchors fight longer) before the picker ships.
+10. **Character portraits wherever a character appears**: tables, the tier list, match pages and the Character page header.
+    - **Source: the Calculator's in-game face icons**, `apps/calculator/public/char_thumbnails/T_UI_FaceP1_<id>_00.png` (square, 512×512). The league approved reusing them.
+    - **One file breaks the pattern.** Trunks (Sword) Super Saiyan (`0080_01`) is `T_UI_FaceP1_0080_00_01.png`, so the build step keeps a one-entry override map. With it, every id in `referencedata/characters.csv` has a portrait (241 of 241), and so does every id in the match data.
+    - The other `_01`-suffixed files (`0810_01_01`, `0811_00_01`) are alternate icons that no id uses. Don't use the Calculator's name-keyed `public/data/characterImages.json` for lookup: its names differ from the reference data and it covers only 205 of the 241.
+    - They are too heavy to use directly: 190 KB on average and up to ~345 KB each, so ~12 MB for a 62-character leaderboard. A build step makes small copies for the analyzer, around 96px WebP.
+    - A character without a portrait falls back to a neutral placeholder. New characters reach match data before any asset exists, which is the same reason raw ids stay valid URLs.
+    - This is the analyzer's first dependency on a Calculator asset. The Calculator's own dataset stays independent.
+
+### Still open
+
+- **The page-by-page review**: which pages stay in their current form, which are removed, which change, and what data each one holds.
+- **A real-data demo before the rebuild**, judged side by side at both widths the way the Overview was settled. It covers the shell (tab row and scope bar), the table leaderboard and the tier list.
 
 ---
 
@@ -374,7 +474,10 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 
 ### 2c. Responsive shell, accessibility, persistence
 
-- Rebuild the app shell: replace the wide mode/view-type card row with something that degrades on mobile (segmented control / scrollable tabs); give the sticky filter panel a mobile collapsed/slide-over treatment; give `DataTable` a mobile strategy (horizontal scroll with sticky first column, or card-per-row under a breakpoint).
+- Rebuild the app shell as decided in "Visual direction":
+  - A slim tab row replaces the mode and view-type panels.
+  - A one-line sticky scope bar replaces both the tag panel and the leaderboard's 751px "Filters & Sorting" form. On a phone it becomes a "Filters (n)" button and a bottom sheet.
+  - On a phone, `DataTable` scrolls sideways with a frozen name column or offers a column picker. It does not switch to cards.
 - Consolidate the 13 inline stat primitives out of `App.jsx` into theme-aware, responsive components under `src/components/`.
 - Reuse `packages/ui/NavBar.jsx`'s existing mobile hamburger pattern rather than inventing a new one.
 - Accessibility: contrast, focus states, 44px touch targets, keyboard nav for the tree selector and comboboxes.
@@ -385,7 +488,7 @@ This is the key sequencing change from the original plan: the CSS teardown rides
 
 **Prerequisite: the 404 dispatcher must ship first.**
 
-**Routing foundation done 2026-09-27**: real `<Route>` entries replace the bare catch-all (a `path="*"` fallback is kept on purpose so stale links still render), `src/routes.js` is imported by `main.jsx` and `App.jsx` and owns the view mapping, `viewType` is derived from the URL instead of state, `TagFilterSelector` has moved from `history.replaceState` to `useSearchParams`, and `/characters/:charParam` resolves a slug or a raw id and canonicalises the id to the slug. `npm run verify-routes` guards the scheme. **Character page done 2026-09-27**: `src/pages/CharacterPage.jsx` renders in place of the leaderboard on a character deep link — identity header with the absolute tier plate, headline stats, usage, the position split, the per-form breakdown (via the existing `PerFormStatsDisplayAggregated`), top builds and recent matches that click through to the match view. It is purely presentational; every number already existed in the aggregated row. `<ShareButton>` copies an absolute deep link to the current view. `npm run verify-character-page` guards the page's data contract by scraping the fields it reads out of its own source. **Still to do in this phase: the share-snippet image card, the Advanced-tab build comparison, and the querystring-driven character comparison below.** The page settled on a **tabbed** layout (compared against a dense single column and a sticky rail with real data); its **visual design is deliberately deferred** to a dedicated design conversation with demos, held once the current structural work is finished, and judged against both participants and casual viewers. The known brief so far: nothing leads the eye, and every surface shares one background and text colour.
+**Routing foundation done 2026-09-27**: real `<Route>` entries replace the bare catch-all (a `path="*"` fallback is kept on purpose so stale links still render), `src/routes.js` is imported by `main.jsx` and `App.jsx` and owns the view mapping, `viewType` is derived from the URL instead of state, `TagFilterSelector` has moved from `history.replaceState` to `useSearchParams`, and `/characters/:charParam` resolves a slug or a raw id and canonicalises the id to the slug. `npm run verify-routes` guards the scheme. **Character page done 2026-09-27**: `src/pages/CharacterPage.jsx` renders in place of the leaderboard on a character deep link — identity header with the absolute tier plate, headline stats, usage, the position split, the per-form breakdown (via the existing `PerFormStatsDisplayAggregated`), top builds and recent matches that click through to the match view. It is purely presentational; every number already existed in the aggregated row. `<ShareButton>` copies an absolute deep link to the current view. `npm run verify-character-page` guards the page's data contract by scraping the fields it reads out of its own source. **Still to do in this phase: the share-snippet image card, the Advanced-tab build comparison, and the querystring-driven character comparison below.** The page settled on a **tabbed** layout (compared against a dense single column and a sticky rail with real data); its **visual design is deliberately deferred** to a dedicated design conversation with demos, held once the current structural work is finished, and judged against both participants and casual viewers. The known brief so far: nothing leads the eye, and every surface shares one background and text colour. **The Overview was designed that way (below). Since 2026-09-28 the app-wide "Visual direction" also applies**, so the remaining tabs follow it: rows rather than cards, one level of flat panels, and portraits.
 
 #### Overview tab: approved design (2026-09-28)
 
@@ -491,7 +594,8 @@ Two participant-facing additions belong here, both flowing from principle 4:
 
 This is the casual viewer's front door, so principle 1 governs it absolutely: **something interesting within seconds, zero configuration.** It is scoped to the current active season by default (principle 2), with the scope stated on the page and changeable.
 
-- **Curated category leaderboard cards** — named, opinionated boards a newcomer grasps instantly: Top Damage Dealer, Best Survivor, Best Lead, Best Anchor, Best Combo, Most Efficient. **Implement these as presets over the single Character leaderboard, not as separate features** — each card is a saved querystring that links into the full table pre-filtered and pre-sorted. One implementation, one source of truth, and a casual viewer who clicks through lands somewhere they can keep exploring.
+- **The current-season tier list leads the page** (see "Visual direction", decision 9). It is the same view as the Characters page's Tier list, and each portrait links to that character's page.
+- **Curated category leaderboard cards** — named, opinionated boards a newcomer grasps instantly: Top Damage Dealer, Best Survivor, Best Starter, Best Anchor, Best Combo, Most Efficient. **Implement these as presets over the single Character leaderboard, not as separate features** — each card is a saved querystring that links into the full table pre-filtered and pre-sorted. One implementation, one source of truth, and a casual viewer who clicks through lands somewhere they can keep exploring.
 - Spotlight character / team stat cards.
 - Meta movers — what has risen or fallen since the last season phase (uses the Phase 1.5 ordering key).
 - Notable recent matches by damage / combo / upset.
@@ -527,3 +631,13 @@ Manual Upload mode gets the new design system and image-card sharing (no deep li
 - **The team-facing half is decision support for the next lineup submission** — AI strategy, capsules, position — not a stats archive. The four participant workflows (build comparison, character comparison, lineup/position planning, trend over time) are all in scope; matchup analysis is a strong candidate to be scoped after Phases 3–4.
 - **Dependency consolidation in scope:** drop `@mui/x-tree-view`, `@mui/lab`, `xlsx`, and the duplicate `@vitejs/plugin-react` devDependency now; drop `@mui/material`/`@mui/icons-material`/`@emotion/*` in Phase 4.
 - **Sandbox** stays fully separate from the public league dataset (no persistence, no deep links to uploaded files), but gets the same image-snippet share button since it's a pure client-side render.
+- **Visual direction** (decided 2026-09-28, see "Visual direction"):
+  - a tab row instead of the mode and view panels
+  - a one-line sticky scope bar
+  - one level of flat panels, with nothing boxed inside a section
+  - rows, not cards, for anything compared
+  - colour only where it means something, with plain numbers white
+  - medium density by default and dense tables, because casual viewers matter as much as participants
+- **Phone-first for viewing pages, desktop-first for power tools.** About half the traffic is on phones. **Decided 2026-09-28.**
+- **The tier list is an addition, not a replacement.** It is a view of the Characters page and the lead of Home, with position as a picker rather than columns. **Decided 2026-09-28.**
+- **Character portraits come from the Calculator's face icons**, resized at build time. **Decided 2026-09-28.**

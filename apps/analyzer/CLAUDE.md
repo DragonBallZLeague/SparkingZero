@@ -16,6 +16,17 @@ This app is mid-rewrite per **`docs/ANALYZER_REDESIGN_PLAN.md`** (audited and re
 - **Phase 2a (Tailwind + tokens + dependency cleanup): ✅ complete.** Real Tailwind v3 runs now; shared tokens live in `packages/ui/src/tokens.js`; `xlsx`, `@mui/x-tree-view`, `@mui/lab` and a duplicate `@vitejs/plugin-react` are gone. See "Styling" below — **read it before touching styles.**
 - **Phase 2b (App.css teardown): in progress.** Since 2026-09-28 Tailwind is authoritative: `App.css` is in the `legacy` cascade layer and today's look lives in the Tailwind theme (see "Styling" below). **The redesign restyles freely**: keeping the old look is not a goal, and the league has a list of styling fixes to bring. What remains is retiring `App.css` rules and the 1,199 `darkMode` ternaries as components are restyled. Then **2c** (responsive shell, accessibility, state persistence).
 - **Phase 3 (Character page): routing and the Character page are done.** In order: the 695-line `filteredAggregatedData` `useMemo` came out of `App.jsx` into `src/utils/aggregation/filterAggregated.js` (body copied **verbatim**, behaviour unchanged, covered by `npm run verify-filters`), with `getPerformanceLevel` moved to `src/utils/performanceLevel.js`; then routing (see "Routing" below); then `src/pages/CharacterPage.jsx`, the first real page — see "The Character page" below. Its **Overview tab shipped 2026-09-28** to the approved design, with the one-build `?build=` filter. **Still to do in this phase:** the other tabs' visual design, the share-snippet image card (`<ShareButton>` copies a deep link today), plus the Advanced-tab build comparison and the querystring-driven character comparison the plan describes.
+- **The app-wide visual direction was decided on 2026-09-28.** Read "Visual direction" in the plan before designing or restyling any page. In short:
+  - a tab row and a one-line sticky scope bar replace the mode and view panels
+  - one level of flat panels, with nothing boxed inside a section
+  - rows, not cards, for anything compared
+  - colour only where it has a job, with plain numbers white
+  - medium density, with dense tables
+  - phone-first for the pages people view, and desktop-first for power tools
+  - a tier-list view beside the leaderboard
+  - character portraits, resized at build time from the Calculator's face icons
+
+  The page-by-page review is next.
 - **Character URLs are name slugs, decided 2026-09-26.** `/characters/android-13`, not `/characters/0620_00` — see "Character URLs are name slugs" below before touching anything that emits a character link.
 - **Deep links now survive a refresh.** `scripts/build-404.js` generates the site-root `dist/404.html` with a dispatcher that redirects sub-app paths into the right app; `restoreDeepLink()` from `@szl/ui` (called at the top of `src/main.jsx`, before the router) puts the original URL back. This was the Phase 3 prerequisite. See the root `CLAUDE.md` for how it works, and note that **no dev server reproduces the Pages 404 rule** — use `node scripts/serve-dist.js` against a build to test deep links.
 - **Phases 4–7 (Team/Match page rebuilds, stats-only Home page, Meta page consolidation, Sandbox polish, share-snippet image export): not started.**
@@ -35,6 +46,8 @@ Reusable, already-decoupled pieces worth knowing about:
 - `src/components/ai-strategy/*` (7 components) and `src/components/capsule-synergy/*` (including `BuildAnalyzerTool`) — the "Meta Analysis" feature set, planned to consolidate into one Meta/Builds page in Phase 6.
 
 ## Styling (read before touching styles)
+
+**What to build towards is "Visual direction" in `docs/ANALYZER_REDESIGN_PLAN.md`.** This section covers the mechanics of styling.
 
 **Tailwind is the styling authority; `App.css` is legacy that always loses.** Since 2026-09-28 everything in `App.css` (apart from the font `@import` at its top) is inside `@layer legacy { … }`. In CSS an unlayered rule beats a layered one whatever the selector's specificity or the load order, and Tailwind (`src/index.css`) is unlayered. So any Tailwind class wins over `App.css`. `App.css` only styles what no Tailwind class on an element touches, and import order no longer matters.
 
