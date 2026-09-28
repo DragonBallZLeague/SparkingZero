@@ -4,6 +4,7 @@ import { getFusionPartnerFamilyForms } from '../fusionSplit.js';
 import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { POSITION_NAMES } from '../positions.js';
+import { styleHits, skillSlotUses } from '../actionCodes.js';
 
 export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiStrategiesMap = {}, mapsMap = {}) {
   const characterStats = {};
@@ -39,6 +40,8 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       charData.totalSpecial += (fc.specialMovesUsed || 0) * mult;
       charData.totalUltimates += (fc.ultimatesUsed || 0) * mult;
       charData.totalSkills += (fc.skillsUsed || 0) * mult;
+      charData.totalEXA1 += (fc.exa1Count || 0) * mult;
+      charData.totalEXA2 += (fc.exa2Count || 0) * mult;
       charData.totalSparking += (fc.sparkingCount || 0) * mult;
       charData.totalCharges += (fc.chargeCount || 0) * mult;
       charData.totalGuards += (fc.guardCount || 0) * mult;
@@ -79,6 +82,11 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       matchEntry.specialMovesUsed = (matchEntry.specialMovesUsed || 0) + (fc.specialMovesUsed || 0) * mult;
       matchEntry.ultimatesUsed = (matchEntry.ultimatesUsed || 0) + (fc.ultimatesUsed || 0) * mult;
       matchEntry.skillsUsed = (matchEntry.skillsUsed || 0) + (fc.skillsUsed || 0) * mult;
+      matchEntry.exa1Count = (matchEntry.exa1Count || 0) + (fc.exa1Count || 0) * mult;
+      matchEntry.exa2Count = (matchEntry.exa2Count || 0) + (fc.exa2Count || 0) * mult;
+      matchEntry.rushHits = (matchEntry.rushHits || 0) + (fc.rushHits || 0) * mult;
+      matchEntry.heavyHits = (matchEntry.heavyHits || 0) + (fc.heavyHits || 0) * mult;
+      matchEntry.kiBlastHits = (matchEntry.kiBlastHits || 0) + (fc.kiBlastHits || 0) * mult;
       matchEntry.sparkingCount = (matchEntry.sparkingCount || 0) + (fc.sparkingCount || 0) * mult;
       matchEntry.chargeCount = (matchEntry.chargeCount || 0) + (fc.chargeCount || 0) * mult;
       matchEntry.guardCount = (matchEntry.guardCount || 0) + (fc.guardCount || 0) * mult;
@@ -440,6 +448,12 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
           const snapNum = snapBattle.battleNumCount || {};
           const totAdd = char.additionalCounts || {};
           const snapAdd = preSnap.additionalCounts || {};
+          const totSkills = skillSlotUses(totBattle.runBlastCount);
+          const snapSkills = skillSlotUses(snapBattle.runBlastCount);
+          const fusionExa1 = totSkills.exa1 - snapSkills.exa1;
+          const fusionExa2 = totSkills.exa2 - snapSkills.exa2;
+          const totHits = totBattle.styleHits || styleHits(totBattle.attackHitCount);
+          const snapHits = snapBattle.styleHits || styleHits(snapBattle.attackHitCount);
           const parseDurLocal = str => {
             if (!str) return 0;
             const m = str.match(/\+\d+\.(\d+):(\d+):(\d+)\./);
@@ -453,7 +467,16 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
             kills: (totBattle.killCount || 0) - (snapBattle.killCount || 0),
             specialMovesUsed: (totNum.sPMCount || 0) - (snapNum.sPMCount || 0),
             ultimatesUsed: (totNum.uLTCount || 0) - (snapNum.uLTCount || 0),
-            skillsUsed: (totNum.eXACount || 0) - (snapNum.eXACount || 0),
+            // Skill 1 + Skill 2 from runBlastCount, like extractStats - eXACount is
+            // broken in Season 1 files (docs/ACTION_CODES.md).
+            skillsUsed: fusionExa1 + fusionExa2,
+            exa1Count: fusionExa1,
+            exa2Count: fusionExa2,
+            // Fighting-style hits move with the fusion's battle time, or the fusion
+            // would get the time without the hits and the trigger the reverse.
+            rushHits: totHits.rush - snapHits.rush,
+            heavyHits: totHits.heavy - snapHits.heavy,
+            kiBlastHits: totHits.kiblast - snapHits.kiblast,
             sparkingCount: (totNum.sparkingCount || 0) - (snapNum.sparkingCount || 0),
             chargeCount: (totNum.chargeCount || 0) - (snapNum.chargeCount || 0),
             guardCount: (totNum.guardCount || 0) - (snapNum.guardCount || 0),

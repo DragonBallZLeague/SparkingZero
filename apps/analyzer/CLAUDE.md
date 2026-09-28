@@ -124,6 +124,15 @@ It is a guard rail, **not** a rebalancing: on S0 in-season data real ratios run 
 
 Phase 3 replaces all of this with **absolute Z/A/B/C/D cutoffs** calibrated from a rolling last-2-seasons, Ultra-only window — see `docs/ANALYZER_REDESIGN_PLAN.md` "Performance tiers". At that point no reference population is needed at all. Note the score formula is still **duplicated across ~15 sites in 8 files**; consolidating it is outstanding.
 
+## The Character page's league reference (`src/config/style-baseline.json`)
+
+Every rank and "League" number on the Character page Overview (`#12/126`, the league median on a tile, a style's rank) is measured against a **frozen** reference, not against whatever is filtered on screen, for the same reason the tier cutoffs are frozen: a rank that moves when a filter changes is not a rank.
+
+- **Built by `scripts/generate-style-baseline.mjs`** (in prebuild, after the tier bands; `npm run build-style-baseline`) over the **same window as the tier cutoffs**, `scripts/calibration-basis.mjs`, which both generators share: last two seasons, Ultra only. The pool is characters with 5+ appearances (126 today). It stores every pooled character's value per figure, sorted (a rank needs the whole distribution), plus the medians and 95th percentiles the page shows. Committed; rewritten only when the reference actually changes.
+- **`src/utils/characterOverview.js` computes a character's figures** from its per-match rows, and the generator runs that **same code** over the whole pool, so a character and the league are measured identically. `overviewFromMatches(matches)` works on all of a character's matches or on one build's (the build filter), and `placeOverview(overview, baseline)` gives `{ pct, rank, pool }`. A single build is ranked against the same reference: where it would place among the characters.
+- **Values are rounded to 4 decimals on both sides** (`round4`) before a rank is taken, so a character is never ranked against a rounded copy of itself that sorts a hair below it.
+- **Fusions**: the aggregation splits a mid-match fusion's stats between the two partners (`characterAggregation.js` Phase 3). That split carries the per-slot skill counts and the fighting-style hits too; before 2026-09-28 it moved battle time without the hits, which skewed both partners' per-minute rates.
+
 ## Routing (read before adding a page)
 
 `src/routes.js` is the **single definition of the URL scheme** and is now load-bearing: `main.jsx` builds its `<Route>` entries from it, and `App.jsx` derives which view to render from the pathname via `viewForPath()`.

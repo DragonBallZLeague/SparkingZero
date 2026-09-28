@@ -46,54 +46,18 @@ import { fileURLToPath } from 'url';
 import { getAggregatedCharacterData } from '../src/utils/aggregation/characterAggregation.js';
 import { parseCharacterCSV } from '../src/utils/statCalculations.js';
 import { TIERS, TIER_PERCENTILES } from '../src/utils/tierScale.js';
+import { loadCalibrationBasis, SEASON_WINDOW, REQUIRED_DIFFICULTY } from './calibration-basis.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appDir = path.resolve(__dirname, '..');
 const refData = path.resolve(appDir, '..', '..', 'referencedata');
 
-/** How many seasons the rolling window keeps. */
-const SEASON_WINDOW = 2;
-/** Matches at any other difficulty are a different ruleset and never calibrate. */
-const REQUIRED_DIFFICULTY = 'Ultra';
-
-const tagsPath = path.join(appDir, 'public', 'br-data-tags.json');
-const aggregatesDir = path.join(appDir, 'public', 'br-aggregates');
 const outPath = path.join(appDir, 'src', 'config', 'performance-bands.json');
-
-if (!fs.existsSync(tagsPath) || !fs.existsSync(aggregatesDir)) {
-  console.error('generate-performance-bands: run the tag and aggregate generators first.');
-  process.exit(1);
-}
-
-const tags = JSON.parse(fs.readFileSync(tagsPath, 'utf8'));
 const charMap = parseCharacterCSV(fs.readFileSync(path.join(refData, 'characters.csv'), 'utf8'));
 
-// Newest SEASON_WINDOW seasons present in the data.
-const seasons = [...new Set(Object.values(tags)
-  .map(v => v && v.seasonNumber)
-  .filter(s => s !== undefined && s !== null && s !== '')
-  .map(String))].sort((a, b) => Number(a) - Number(b));
-const window = new Set(seasons.slice(-SEASON_WINDOW));
-
-const wanted = new Set(Object.entries(tags)
-  .filter(([, v]) => v && window.has(String(v.seasonNumber)) && v.difficulty === REQUIRED_DIFFICULTY)
-  .map(([name]) => name));
-
-// Pull those matches out of the compact corpus.
-const files = [];
-for (const f of fs.readdirSync(aggregatesDir)) {
-  if (f === 'index.json' || !f.endsWith('.json')) continue;
-  const shard = JSON.parse(fs.readFileSync(path.join(aggregatesDir, f), 'utf8'));
-  for (const rec of Object.values(shard.files || {})) {
-    if (wanted.has(rec.name)) files.push({ name: rec.name, content: rec.content });
-  }
-}
-
-if (!files.length) {
-  console.error('generate-performance-bands: no matches matched the basis (seasons ' +
-    [...window].join(', ') + ', difficulty ' + REQUIRED_DIFFICULTY + '). Refusing to write bands.');
-  process.exit(1);
-}
+// The window itself is shared with generate-style-baseline.mjs (calibration-basis.mjs),
+// so a tier and a Character-page rank are judged against the same league.
+const { files, seasons: basisSeasons } = loadCalibrationBasis(appDir, 'generate-performance-bands');
 
 const rows = getAggregatedCharacterData(files, charMap, {}, {}, {});
 const scores = rows.map(r => r.combatPerformanceScore).filter(Number.isFinite).sort((a, b) => a - b);
@@ -130,7 +94,7 @@ const bands = {
     rule: 'rolling last ' + SEASON_WINDOW + ' seasons, ' + REQUIRED_DIFFICULTY +
       ' difficulty only, all match types, no minimum match count',
     seasonWindow: SEASON_WINDOW,
-    seasons: [...window].sort((a, b) => Number(a) - Number(b)),
+    seasons: basisSeasons,
     difficulty: REQUIRED_DIFFICULTY,
     matches: files.length,
     characters: scores.length,

@@ -1,4 +1,12 @@
 import { combatEfficiency } from './performanceScore.js';
+import { skillSlotUses } from './actionCodes.js';
+
+/** Skill 1 + Skill 2 uses recorded in one snapshot's battleCount. */
+function formSkillUses(battleCount) {
+  const { exa1, exa2 } = skillSlotUses(battleCount && battleCount.runBlastCount);
+  return exa1 + exa2;
+}
+
 /**
  * Form Stats Calculator Utility
  * 
@@ -73,7 +81,8 @@ function subtractStats(finalSnapshot, previousSnapshot) {
     // Special abilities from battleNumCount
     specialMovesUsed: ((finalNumCount.sPMCount || 0) - (prevNumCount.sPMCount || 0)),
     ultimatesUsed: ((finalNumCount.uLTCount || 0) - (prevNumCount.uLTCount || 0)),
-    skillsUsed: ((finalNumCount.eXACount || 0) - (prevNumCount.eXACount || 0)),
+    // Skill 1 + Skill 2 from runBlastCount, never eXACount (docs/ACTION_CODES.md).
+    skillsUsed: formSkillUses(finalBattle) - formSkillUses(prevBattle),
     
     // Blast tracking from additionalCounts
     s1Blast: (finalAdditional.s1Blast || 0) - (prevAdditional.s1Blast || 0),
@@ -197,7 +206,7 @@ export function calculatePerFormStats(characterRecord, characterIdRecord, formCh
         hPGaugeValueMax: play.hPGaugeValueMax || 0,
         specialMovesUsed: numCount.sPMCount || 0,
         ultimatesUsed: numCount.uLTCount || 0,
-        skillsUsed: numCount.eXACount || 0,
+        skillsUsed: formSkillUses(battle),
         s1Blast: additional.s1Blast || 0,
         s2Blast: additional.s2Blast || 0,
         ultBlast: additional.ultBlast || 0,

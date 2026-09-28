@@ -1,4 +1,5 @@
 import transformationsData from '../../../../referencedata/transformations.json';
+import { skillSlotUses } from './actionCodes.js';
 
 // Returns all character form IDs connected to startId via the transformsTo graph.
 // fusionOf pairs are (index 0, index 1), (index 2, index 3). The canonical partner is
@@ -90,7 +91,9 @@ export function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
         kills: (totBattle.killCount || 0) - (snapBattle.killCount || 0),
         specialMovesUsed: (totNum.sPMCount || 0) - (snapNum.sPMCount || 0),
         ultimatesUsed: (totNum.uLTCount || 0) - (snapNum.uLTCount || 0),
-        skillsUsed: (totNum.eXACount || 0) - (snapNum.eXACount || 0),
+        // Skill 1 + Skill 2 from runBlastCount, never eXACount (docs/ACTION_CODES.md).
+        skillsUsed: (s => s.exa1 + s.exa2)(skillSlotUses(totBattle.runBlastCount)) -
+          (s => s.exa1 + s.exa2)(skillSlotUses(snapBattle.runBlastCount)),
         sparkingCount: (totNum.sparkingCount || 0) - (snapNum.sparkingCount || 0),
         chargeCount: (totNum.chargeCount || 0) - (snapNum.chargeCount || 0),
         guardCount: (totNum.guardCount || 0) - (snapNum.guardCount || 0),

@@ -58,6 +58,22 @@ export function classifyAction(code) {
   return 'unknown';
 }
 
+/**
+ * Skill uses per slot from `runBlastCount`: `{ exa1, exa2 }`. Count skill uses
+ * from this, NEVER from `battleNumCount.eXACount` - that total inflates ~12x in
+ * Season 1 files and records uses the skill points cannot allow, while the
+ * per-slot counts hold steady and match match footage (docs/ACTION_CODES.md).
+ */
+export function skillSlotUses(runBlastCount) {
+  let exa1 = 0, exa2 = 0;
+  for (const [key, value] of Object.entries(runBlastCount || {})) {
+    if (typeof value !== 'number') continue;
+    if (key.includes('EXA1')) exa1 += value;
+    else if (key.includes('EXA2')) exa2 += value;
+  }
+  return { exa1, exa2 };
+}
+
 /** The hit classes the Character page's fighting-style profile reads. */
 export const STYLE_HIT_CLASSES = ['rush', 'heavy', 'kiblast'];
 

@@ -438,9 +438,10 @@ Settled over a long design conversation with real-data demos. The working demo i
 2. ✅ **`extractStats` fixes** (done 2026-09-28):
    - `skillsUsed` is EXA1 + EXA2. The leaderboard had counted 12,761 skill uses across the data against 8,266 real ones.
    - The `actRI*` speed-impact fallback is gone. It had credited 13,845 phantom speed impacts to 5,207 character entries with none.
-3. **A style-baseline generator**, beside `generate-performance-bands`.
-   - Frozen and committed (e.g. `src/config/style-baseline.json`), holding the sorted per-metric values and medians that ranks need.
-   - Idempotent, with the timestamp carried over, so a rebuild without a recalibration leaves no diff.
+3. ✅ **Style-baseline generator** (done 2026-09-28): `scripts/generate-style-baseline.mjs` → `src/config/style-baseline.json`, in prebuild.
+   - Uses the tier cutoffs' window via the shared `scripts/calibration-basis.mjs`, and the page's own `src/utils/characterOverview.js`, so a character and the league are measured identically.
+   - Idempotent: a rebuild without a recalibration leaves no diff.
+   - Found along the way: the fusion split moved battle time without the new hit totals, and three more places (the per-form stats and both fusion splits) still counted skills from `eXACount`. All now use the per-slot counts via `skillSlotUses()`.
 4. **One shared build-key function**.
    - Today the key is written out three times: `BuildTableView`, `filterAggregated`, `App.jsx`.
    - Add a short-code encoding for `?build=`.
