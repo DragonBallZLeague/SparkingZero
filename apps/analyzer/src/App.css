@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 /*
  * LEGACY LAYER. Everything below is in the `legacy` cascade layer, and in CSS an
  * unlayered style beats a layered one whatever the selector's specificity or the
@@ -13,7 +11,8 @@
  * `hidden sm:inline-flex` never showed. The redesign restyles freely rather than
  * preserving this file's look (docs/ANALYZER_REDESIGN_PLAN.md, Phase 2b).
  *
- * The font @import stays above: an @import must come before every other rule.
+ * The app's font is set in src/index.css (the system UI font); this file no
+ * longer loads Inter.
  */
 @layer legacy {
 
@@ -25,9 +24,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-/* Ensure proper font loading */
 body {
-  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
@@ -44,7 +41,6 @@ body {
 .bg-gradient-to-br { background: linear-gradient(135deg, #f97316 0%, #dc2626 50%, #7c3aed 100%); }
 .p-4 { padding: 1rem; }
 .p-6 { padding: 1.5rem; }
-.max-w-7xl { max-width: 80rem; margin: 0 auto; }
 .max-w-4xl { max-width: 56rem; margin: 0 auto; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 .bg-white { background-color: white; }
@@ -1949,17 +1945,6 @@ table {
   --radius-xl: 1.5rem;
 }
 
-body {
-  font-family: 'Inter', -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-}
-
-/* ---------- Fluid, full-width page shell (fixes empty side gutters) ---------- */
-.max-w-7xl {
-  max-width: min(1760px, 97vw);
-  width: 100%;
-  margin: 0 auto;
-}
-
 .min-h-screen.p-4 {
   padding: clamp(0.75rem, 1.1vw + 0.55rem, 1.75rem);
 }
@@ -2020,7 +2005,6 @@ body {
 /* =================================================================== */
 @media (max-width: 640px) {
   .min-h-screen.p-4 { padding: 0.6rem; }
-  .max-w-7xl { max-width: 100%; }
 
   /* Scale the display type down so headers don't dominate a phone screen */
   .text-4xl { font-size: 1.5rem;  line-height: 1.9rem; }

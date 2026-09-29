@@ -30,6 +30,8 @@ root.render(
       <Route path={ROUTES.characters} element={<App />} />
       <Route path={`${ROUTES.characters}/:charParam`} element={<App />} />
       <Route path={ROUTES.teams} element={<App />} />
+      <Route path={ROUTES.matches} element={<App />} />
+      <Route path={`${ROUTES.sandbox}/*`} element={<App />} />
       <Route path={ROUTES.tables} element={<App />} />
       <Route path={ROUTES.meta} element={<App />} />
       <Route path="*" element={<App />} />

@@ -113,7 +113,7 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 **Decision (2026-09-28): the redesign restyles freely.** Keeping the legacy UI "looking identical" is no longer a goal; new styling must win over `App.css`, and the league has a list of styling fixes of its own to bring. Light mode was removed on purpose (commit `8e816462`, 2026-09-05, because it was harsh and hard to read) and is not planned to return, so dark is the only theme that matters.
 
 - ✅ **Tailwind is authoritative.** `App.css` is wrapped in `@layer legacy { … }` (its font `@import` stays above it). An unlayered style beats a layered one whatever the specificity or order, so every Tailwind class now wins over `App.css`, and `App.css` only styles what no Tailwind class on an element touches. That ended the trap where `App.css`'s base classes beat Tailwind's responsive variants (`grid-cols-2 sm:grid-cols-5` stayed two columns; `hidden sm:inline-flex` never showed), which the Character page Overview hit first.
-- ✅ **Today's look moved into the Tailwind theme.** The end of `App.css` was a "modern redesign layer" that re-skinned the app by redefining Tailwind's own class names. Its values are now in `apps/analyzer/tailwind.config.js`: radii, soft shadows, the navy card surface (`bg-gray-800` `#1e2434`, `bg-gray-700` `#2b3245`), the faint hairline `border-gray-700` (alpha scaled, so `/60` still means fainter), display letter-spacing, and the fluid `max-w-7xl` shell up to 1760px. Its phone pass is an explicit "phone density" block in `src/index.css`. **Restyle there.**
+- ✅ **Today's look moved into the Tailwind theme.** The end of `App.css` was a "modern redesign layer" that re-skinned the app by redefining Tailwind's own class names. Its values are now in `apps/analyzer/tailwind.config.js`: radii, soft shadows, the navy card surface (`bg-gray-800` `#1e2434`, `bg-gray-700` `#2b3245`), the faint hairline `border-gray-700` (alpha scaled, so `/60` still means fainter), display letter-spacing, and the fluid `max-w-7xl` shell up to 1760px (replaced on 2026-09-28 by the demo's 1400px column, `max-w-page`; see Phase 2c). Its phone pass is an explicit "phone density" block in `src/index.css`. **Restyle there.**
 - ✅ **Checked element by element.** Every element's computed style was diffed before and after, across every view at 1280px and 390px. What remains is intended:
   - surfaces unified, a few RGB units apart
   - table dividers now the same hairline as other borders
@@ -134,11 +134,44 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 - **Team names:** the analyzer shows the website's team names through a shared list, while tags and folders keep their names.
 - **Deleted:** the never-shipped Build Analyzer and Synergy Pairs files.
 
-**The real-data demo followed** (`apps/analyzer/design/shell-demo/`) and was reviewed the same day; see "Settled on the demo". **Next: rebuilding the shell and the Characters page in React** to match it (Phase 2c).
+**The real-data demo followed** (`apps/analyzer/design/shell-demo/`) and was reviewed the same day; see "Settled on the demo". The shell and the Characters page were then rebuilt in React to match it (Phase 2c, below).
 
-### Phase 2c — Responsive shell, accessibility, persistence: not started
+### Phase 2c — Responsive shell, accessibility, persistence: shell built (2026-09-28)
 
-The shell's design is now decided (see "Visual direction", decisions 1, 2 and 8).
+**Done**, to the demo and "Settled on the demo" (details in `apps/analyzer/CLAUDE.md`, "The shell" and "The Characters and Home pages"):
+- **The shell** (`src/shell/`):
+  - The section tabs and the sticky one-line scope bar replaced the Analysis Mode and View Type panels, the tag-filter panel and the file tree.
+  - Multi-select chips: OR within a chip, AND between chips. Position is Characters' page chip.
+  - The Excel button downloads the full workbook from any page.
+  - On a phone, "Filters (n)" opens a sheet, and every chip list is a bottom sheet.
+- **Data comes from the scope.**
+  - The URL's tag filter decides what loads, and the old URL format is kept, so links shared before the rebuild still open on the same data.
+  - Readable commas: links say `matchType=Season,Test`, not `%2C`.
+  - Clearing every chip writes `scope=all`, so "everything" survives a reload.
+- **Routes:**
+  - `/` is Home. Its first cut is the tier list.
+  - `/characters` is the table with a tier-list view.
+  - The single-match viewer moved to `/matches` until the Matches list replaces it.
+  - The Sandbox is `/sandbox/...`, the same views over uploads, with no scope and no links to league pages.
+- **Portraits:** 241 files in `public/portraits/`, committed, with `npm run build-portraits` and a warn-only `verify-portraits` in prebuild.
+- **Cleanup:**
+  - `App.jsx` went from 4,973 to ~3,340 lines: the card leaderboard, its 751px filter form and the Character Position Analysis section are gone.
+  - `TagFilterSelector.jsx` is deleted. `BRDataSelector.jsx` is no longer rendered; it retires with MUI in Phase 4.
+- **Matched to the demo's CSS**:
+  - **Width:** the page is now the demo's 1400px column (`max-w-page`, 1352px of content inside a 24px gutter), not the fluid 1760px shell.
+  - **Font:** the system UI font, as the demo and the website render, and buttons inherit it (they had fallen back to Arial).
+  - **Details:** chip and button corners and padding, the segmented control's height, 46px rows, header alignment, and slate text.
+  - Measured element by element against the demo at 1600px and 390px: within 1px, apart from scrollbar width.
+- **Measured on a build**:
+  - Characters is 3.2 desktop screens at 1917px and 3.8 on a phone (23 and 16.5 before).
+  - No script errors on any page at 1280px or 390px.
+  - `verify-routes`, `verify-self-contained`, `verify-character-page`, `smoke-character-page` and `verify-filters` all pass.
+
+**Still open in 2c:**
+- **Accessibility pass:** keyboard order through the chip lists, focus management in the phone sheets, 44px targets.
+- **Old panels in the new shell:** Teams, Matches, Meta and Data Tables still show their old panels until their own rebuilds.
+- **`/tables` has no tab.** It redirects to `/characters` once the workbook gains its Position and Capsules sheets.
+- **The workbook's two new sheets** (Position, Capsules) are still to add.
 
 ### Phase 3 — Character page: in progress
 

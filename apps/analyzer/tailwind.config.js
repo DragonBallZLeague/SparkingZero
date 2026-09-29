@@ -33,6 +33,13 @@ module.exports = {
         // 'dragon-orange' was #f59e0b; it now resolves to the canonical league
         // orange. Nothing in src/ referenced it while Tailwind was inert, so
         // this retune is not a visual change today.
+        // The redesign shell ("Visual direction" in the redesign plan). A section
+        // sits on `shell-panel`, a hair darker than the gray-800 chips; popovers
+        // are the only raised surface, on `shell-pop`.
+        shell: { panel: '#1a2031', pop: '#222a3b' },
+        // Rank colour, used only at the ends of a pool (top and bottom fifth).
+        // The same values as utils/overviewPalette.js RANK_ENDS.dark.
+        rank: { good: '#16e05a', bad: '#ff2b3a' },
         'dragon-orange': brand.orange,
         'dragon-red': brand.red,
         'dragon-purple': brand.purple,
@@ -80,8 +87,13 @@ module.exports = {
         '4xl': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '-0.02em' }],
       },
       maxWidth: {
-        // The page shell: fluid up to 1760px instead of a fixed 1280px.
-        '7xl': 'min(1760px, 97vw)',
+        // The page column, as the approved shell demo drew it: 1400px including
+        // a 24px gutter each side (16px on a phone), so 1352px of content. Use
+        // it as `px-4 sm:px-6` outside and `max-w-page mx-auto` inside - the
+        // tab row, the scope bar and the page all do, so their edges line up.
+        // It replaced a fluid min(1760px, 97vw), which stretched rows too far
+        // to read across on a wide monitor.
+        page: '1352px',
       },
       animation: {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',

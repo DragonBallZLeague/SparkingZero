@@ -1,5 +1,5 @@
 /**
- * Every file under src/components/ and src/pages/ must resolve all of its own
+ * Every file under src/components/, src/pages/ and src/shell/ must resolve all of its own
  * identifiers from its own imports and declarations.
  *
  * WHY THIS EXISTS
@@ -26,7 +26,7 @@ import { parse } from '@babel/parser';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.resolve(__dirname, '..', 'src');
-const ROOTS = ['components', 'pages'];
+const ROOTS = ['components', 'pages', 'shell'];
 
 // Things the runtime provides. Anything genuinely missing shows up as a name
 // that is not here and not imported.

@@ -1,9 +1,16 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import './App.css';
-import BRDataSelector from './components/BRDataSelector.jsx';
-import TagFilterSelector, { describeTagFilters } from './components/TagFilterSelector.jsx';
 import { Combobox } from './components/Combobox.jsx';
-import { MultiSelectCombobox } from './components/MultiSelectCombobox.jsx';
+import TabRow from './shell/TabRow.jsx';
+import ScopeBar from './shell/ScopeBar.jsx';
+import { multiLabel } from './shell/ChipMenu.jsx';
+import { useScope } from './shell/useScope.js';
+import { useScopedMatches } from './shell/useScopedMatches.js';
+import { SCOPE_KEYS, ALL_MARKER, describeScope } from './shell/scopeModel.js';
+import { useQueryUpdate, prettySearch } from './shell/useQueryUpdate.js';
+import CharactersPage from './pages/CharactersPage.jsx';
+import HomePage from './pages/HomePage.jsx';
+import { readPositions, positionCounts } from './pages/characters/characterRows.js';
 import { formatNumber } from './utils/formatters.js';
 import DataTable from './components/DataTable.jsx';
 import { prepareCharacterAveragesData, prepareMatchDetailsData, getCharacterAveragesTableConfig, getMatchDetailsTableConfig, getMetaTableConfig } from './components/TableConfigs.jsx';
@@ -18,17 +25,13 @@ import { getBuildComposition, getBuildTypeColor } from './utils/buildComposition
 import { getFusionPartnerFamilyForms, computeMatchFusionDeltas } from './utils/fusionSplit.js';
 import { getAggregatedCharacterData } from './utils/aggregation/characterAggregation.js';
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
-import { getPositionBasedData, calculatePositionAverage, calculatePositionSurvivalRate } from './utils/aggregation/positionAggregation.js';
+import { getPositionBasedData } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
-import TierPlate from './components/TierPlate.jsx';
-import RangeSlider from './components/RangeSlider.jsx';
-import { TIERS, TIER_LABELS } from './utils/tierScale.js';
-import { tierPillColors, tierPillClass } from './utils/tierPlateSvg.js';
-import { tierBasisSummary, tierForScore } from './utils/performanceTier.js';
+import { TIERS } from './utils/tierScale.js';
 import { NavBar } from '@szl/ui';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CharacterPage from './pages/CharacterPage.jsx';
-import { ROUTES, pathForView, viewForPath } from './routes.js';
+import { ROUTES, pathForView, viewForPath, isSandboxPath } from './routes.js';
 import { POSITION_NAMES } from './utils/positions.js';
 import { buildKeyOf } from './utils/buildKey.js';
 import {
@@ -113,15 +116,10 @@ import { BuildTableView, BuildDisplay } from './components/build/index.js';
 import MetaAnalysisContent from './components/MetaAnalysisContent.jsx';
 
 export default function App() {
-  const [mode, setMode] = useState('reference');
   const [selectedFilePath, setSelectedFilePath] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
   const [fileTags, setFileTags] = useState(null); // Tags for the currently displayed match file
-  // undefined = TagFilterSelector has not reported yet (BRDataSelector waits, so the
-  // first load is already scoped); null = ready with no filter; array = matching paths.
-  const [tagFilterPaths, setTagFilterPaths] = useState(undefined);
-  const fetchGenRef = useRef(0); // Incremented on each new onSelect call; stale batches check this before writing
   // Separate state for the header match-analysis selector so we don't override global fileContent
   const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
   const [analysisFileContent, setAnalysisFileContent] = useState(null);
@@ -136,19 +134,38 @@ export default function App() {
   const { charParam } = useParams();
   const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
+  // The data source comes from the URL too: the Sandbox (/sandbox/...) runs the
+  // same views over uploaded files, everywhere else is the league's corpus.
+  // `mode` keeps its old name and values so the views' existing checks work.
+  const sandbox = isSandboxPath(location.pathname);
+  const mode = sandbox ? 'manual' : 'reference';
   // The query string without the Character page's own `build` param. A selected
   // build belongs to one character's page: it must not ride along to the
   // leaderboard, another view or another character. The data-scope params do.
   const scopeSearch = useMemo(() => {
     const params = new URLSearchParams(location.search);
     params.delete('build');
-    const s = params.toString();
-    return s ? `?${s}` : '';
+    return prettySearch(params);
+  }, [location.search]);
+  // Only the scope params: what the section tabs and character links carry, so
+  // a page's own params (view, sort, pos) stay on that page.
+  const scopeOnlySearch = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const kept = new URLSearchParams();
+    for (const k of [...SCOPE_KEYS, ALL_MARKER]) if (params.has(k)) kept.set(k, params.get(k));
+    return prettySearch(kept);
   }, [location.search]);
   const setViewType = useCallback(
-    (next) => navigate(pathForView(next) + scopeSearch),
-    [navigate, scopeSearch]
+    (next) => navigate(pathForView(next, { sandbox }) + (sandbox ? '' : scopeSearch)),
+    [navigate, scopeSearch, sandbox]
   );
+
+  // ---- data scope and loading ----------------------------------------------
+  // The scope bar's tag filter (in the URL) decides which matches load; the
+  // file tree no longer does. See shell/useScope.js and shell/useScopedMatches.js.
+  const scopeState = useScope(!sandbox);
+  const { matches: scopedMatches, loading: scopedLoading } = useScopedMatches(scopeState.paths, !sandbox);
+  const dataLoading = !sandbox && (!scopeState.ready || scopedMatches === null || scopedLoading);
   const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
   const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
   const [manualFiles, setManualFiles] = useState([]);
@@ -158,16 +175,36 @@ export default function App() {
   const [selectedBuildIndex, setSelectedBuildIndex] = useState({}); // Track selected build index per character
   const [selectedBuildSort, setSelectedBuildSort] = useState({}); // Track sort column+dir per character build table
   const [activeBuildFilters, setActiveBuildFilters] = useState({}); // Track active build filter per character
-  const [sectionCollapsed, setSectionCollapsed] = useState({
-    aggregated: false,
-    position: false
-  }); // Collapsed state for major sections
   const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
-  const [filtersCollapsed, setFiltersCollapsed] = useState(false); // Collapsed state for aggregated character filters panel
-  const [collapsedPositions, setCollapsedPositions] = useState({}); // Collapsed state for each position section (1=Starter, 2=Middle, 3=Anchor)
-  const [positionCharacterFilters, setPositionCharacterFilters] = useState({ 1: [], 2: [], 3: [] }); // Character filters for each position
   const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
+
+  // The league views read `fileContent` (an array of {name, content, tags}) and
+  // `selectedFilePath`, as they did when the file tree filled them; the scope
+  // now does. A single opened match lives in analysisFileContent instead, so
+  // opening one never replaces the scope's data.
+  useEffect(() => {
+    if (sandbox) return;
+    setFileContent(scopedMatches);
+    setSelectedFilePath(scopeState.paths);
+  }, [sandbox, scopedMatches, scopeState.paths]);
+
+  // Moving between the league and the Sandbox swaps the data source: clear the
+  // opened match, and in the Sandbox show the one uploaded file if there is one.
+  const wasSandbox = useRef(sandbox);
+  useEffect(() => {
+    if (wasSandbox.current === sandbox) return;
+    wasSandbox.current = sandbox;
+    setAnalysisFileContent(null);
+    setAnalysisSelectedFilePath(null);
+    setMatchFilterSource(null);
+    setExpandedRows({});
+    if (sandbox) {
+      const valid = manualFiles.filter(f => !f.error);
+      setFileContent(valid.length === 1 ? valid[0].content : null);
+      setSelectedFilePath(valid.length === 1 ? [valid[0].name] : null);
+    }
+  }, [sandbox, manualFiles]);
   
   // Search and filter state for Aggregated Character Performance
   const [selectedCharacters, setSelectedCharacters] = useState([]);
@@ -266,7 +303,7 @@ export default function App() {
 
   // Aggregated data for reference mode (single file only)
   const aggregatedData = useMemo(() => {
-    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && fileContent) {
+    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || viewType === 'tables') && fileContent) {
       // If fileContent is an array, use as is; if single file, wrap in array
       const filesArr = Array.isArray(fileContent)
         ? fileContent
@@ -343,17 +380,6 @@ export default function App() {
   //
   // Phase 3 replaces this with absolute tier cutoffs, at which point no reference
   // population is needed at all.
-  // Ceiling for the score slider. Taken from the data rather than hardcoded to
-  // 100, since scores are unbounded in principle and a fixed ceiling would make
-  // the top of the range unreachable.
-  const scoreBounds = useMemo(() => {
-    const scores = (aggregatedData || [])
-      .map(c => c.combatPerformanceScore)
-      .filter(Number.isFinite);
-    if (!scores.length) return { max: 100 };
-    return { max: Math.max(10, Math.ceil(Math.max(...scores))) };
-  }, [aggregatedData]);
-
   const performanceReference = useMemo(
     () => filterAggregatedData(aggregatedData, {
       selectedTeams,
@@ -385,18 +411,16 @@ export default function App() {
     // "Nothing aggregated yet" is NOT a loading signal - a filter combination
     // that matches no files (S1 + Season is empty today: every S1 file is tagged
     // Test) leaves this empty forever, and treating that as loading spins a
-    // spinner that never resolves. Ask the actual loading signals instead:
-    // tagFilterPaths undefined means the tag selector has not reported, and
-    // files chosen with no content yet means a fetch is in flight.
-    const filesChosen = Array.isArray(selectedFilePath) && selectedFilePath.length > 0;
-    if (tagFilterPaths === undefined || (filesChosen && !fileContent)) {
-      return { label: wanted, character: null, reason: 'loading' };
-    }
-
-    // An empty tag filter is a dead end, not a missing character - say which,
+    // spinner that never resolves. Ask the actual loading signals instead: the
+    // scope is not final yet, or its matches are still arriving.
+    //
+    // An empty scope is a dead end, not a missing character - say which,
     // because "no data for Toppo" sends someone looking for the wrong problem.
-    if (Array.isArray(tagFilterPaths) && tagFilterPaths.length === 0) {
+    if (scopeState.ready && scopeState.paths && scopeState.paths.length === 0) {
       return { label: wanted, character: null, reason: 'empty-scope' };
+    }
+    if (dataLoading) {
+      return { label: wanted, character: null, reason: 'loading' };
     }
 
     const i = performanceReference.findIndex(c => c.name === wanted);
@@ -407,57 +431,64 @@ export default function App() {
       rank: i + 1,
       totalInScope: performanceReference.length,
     };
-  }, [charParam, charSlugIndex, performanceReference, tagFilterPaths, selectedFilePath, fileContent]);
+  }, [charParam, charSlugIndex, performanceReference, scopeState.ready, scopeState.paths, dataLoading]);
 
-  // What the numbers on that page actually cover. Read off the query string so
-  // the page's own description of its scope and the link someone pasted cannot
-  // disagree - they are the same source.
+  // What the numbers on that page actually cover. Built from the scope in the
+  // query string, so the page's own description of its scope and the link
+  // someone pasted cannot disagree - they are the same source.
   const dataScopeLabel = useMemo(() => {
-    const parts = [];
-    const tags = describeTagFilters(searchParams);
-    if (tags) parts.push(tags);
-    if (selectedTeams.length) parts.push('teams ' + selectedTeams.join('/'));
-    if (selectedAIStrategies.length) parts.push('AI ' + selectedAIStrategies.join('/'));
-    if (selectedMaps.length) parts.push('maps ' + selectedMaps.join('/'));
+    const scope = describeScope(scopeState.scope);
     const matchCount = Array.isArray(fileContent) ? fileContent.length : null;
-    const scope = parts.length ? parts.join(' · ') : 'all available match data';
-    return matchCount ? scope + ' (' + matchCount.toLocaleString() + ' matches)' : scope;
-  }, [searchParams, selectedTeams, selectedAIStrategies, selectedMaps, fileContent]);
+    return matchCount ? `${scope} (${matchCount.toLocaleString('en-US')} matches)` : scope;
+  }, [scopeState.scope, fileContent]);
 
-  // Extract unique teams and AI strategies from aggregated data
-  const availableCharacters = useMemo(() => {
-    return aggregatedData.map(char => char.name).sort();
-  }, [aggregatedData]);
-  
-  const availableTeams = useMemo(() => {
-    const teams = new Set();
-    aggregatedData.forEach(char => {
-      if (char.teamsUsed) {
-        char.teamsUsed.forEach(team => teams.add(team));
-      }
-    });
-    return Array.from(teams).sort();
-  }, [aggregatedData]);
+  // ---- what the shell and the list pages need --------------------------------
+  // Character name -> the id its portrait is filed under.
+  const charIdByName = useMemo(() => {
+    const byName = new Map();
+    for (const [id, name] of charSlugIndex.idToName) if (!byName.has(name)) byName.set(name, id);
+    return byName;
+  }, [charSlugIndex]);
+  const charIdFor = useCallback(name => charIdByName.get(name) || null, [charIdByName]);
+  // A character's page, carrying the scope so its numbers match the list's.
+  // None in the Sandbox: a character page shows league data, not the uploads.
+  const characterLinkFor = useCallback(
+    name => (sandbox ? null : ROUTES.character(charUrlKeyByName.get(name) || name) + scopeOnlySearch),
+    [charUrlKeyByName, scopeOnlySearch, sandbox]
+  );
 
-  const availableAIStrategies = useMemo(() => {
-    const strategies = new Set();
-    aggregatedData.forEach(char => {
-      if (char.aiStrategiesUsed) {
-        char.aiStrategiesUsed.forEach(ai => strategies.add(ai));
-      }
-    });
-    return Array.from(strategies).sort();
-  }, [aggregatedData]);
+  // In the Sandbox the scope bar says whose data this is instead of offering a scope.
+  const validUploads = manualFiles.filter(f => !f.error).length;
+  const uploadsLabel = validUploads
+    ? `Your uploaded files (${validUploads}). Not league data, and not saved anywhere.`
+    : 'Sandbox: upload battle-result files below to see them in every view.';
 
-  const availableMaps = useMemo(() => {
-    const maps = new Set();
-    aggregatedData.forEach(char => {
-      if (char.mapsUsed && Array.isArray(char.mapsUsed)) {
-        char.mapsUsed.forEach(map => maps.add(map));
-      }
-    });
-    return Array.from(maps).sort();
-  }, [aggregatedData]);
+  // The page's own chips in the scope bar. Characters has one: Position
+  // (`pos` in the URL), multi-select - "Starter, Middle" pools both positions'
+  // matches.
+  const updateQuery = useQueryUpdate();
+  const positionsSelected = readPositions(searchParams);
+  const posCounts = useMemo(() => positionCounts(aggregatedData), [aggregatedData]);
+  const pageChips = useMemo(() => {
+    if (sandbox || viewType !== 'aggregated' || charParam) return [];
+    return [{
+      id: 'pos',
+      name: 'Position',
+      multi: true,
+      selected: positionsSelected,
+      set: positionsSelected.length > 0,
+      label: multiLabel('Position', positionsSelected, v => POSITION_NAMES[v]),
+      allLabel: 'All positions',
+      note: 'Picking several pools those positions’ matches.',
+      options: ['1', '2', '3'].map(p => ({ v: p, l: POSITION_NAMES[p], cnt: `${posCounts[p]} chars` })),
+      onChange: next => updateQuery(p => {
+        const keep = [...new Set(next)].sort();
+        if (keep.length && keep.length < 3) p.set('pos', keep.join(',')); else p.delete('pos');
+      }),
+    }];
+    // positionsSelected is re-derived each render; its joined form is its identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery]);
 
   // Helper to toggle expanded state
   const toggleRow = (teamType, idx) => {
@@ -558,16 +589,14 @@ export default function App() {
       }
       return;
     }
-    // Reference mode: fetch the file
+    // Reference mode: fetch the full file (one request, full fidelity). It opens
+    // in the match view's own state; the scope's data stays as it is.
     const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
     try {
       const res = await fetch(`${base}BR_Data/${fileName}`);
       if (res.ok) {
         const content = await res.json();
-        setPreNavigationFileContent(fileContent); // save full array so Back to Tables can restore it
-        setFileContent(content);
         setFileTags(extractTagsFromMatchFile(content));
-        setSelectedFilePath([fileName]);
         setAnalysisFileContent(content);
         setAnalysisSelectedFilePath([fileName]);
         setMatchFilterSource(fileName);
@@ -578,18 +607,6 @@ export default function App() {
     } catch (err) {
       console.error('Failed to navigate to match file:', err);
     }
-  };
-
-  const handleModeChange = (newMode) => {
-    setMode(newMode);
-    setSelectedFile(null);
-    setFileContent(null);
-    setFileTags(null);
-    setManualFiles([]);
-    setViewType('single');
-    setMatchFilterSource(null);
-    setPreNavigationFileContent(null);
-    setExpandedRows({});
   };
 
   const handleManualFileSelect = (fileName) => {
@@ -636,11 +653,21 @@ export default function App() {
     }
   };
 
-  // Handler for Excel export
+  // The full workbook, from the scope bar's Excel button on any page. The views
+  // that aggregate have the rows already; elsewhere (Home, Teams, Matches) they
+  // are computed from the same matches on demand.
   const handleExcelExport = async () => {
     try {
-      const characterData = prepareCharacterAveragesData(aggregatedData);
-      const matchData = prepareMatchDetailsData(aggregatedData);
+      let rows = aggregatedData;
+      if (!rows.length) {
+        const files = sandbox
+          ? manualFiles.filter(f => !f.error)
+          : (Array.isArray(fileContent) ? fileContent : []);
+        rows = getAggregatedCharacterData(files, charMap, capsuleMap, aiStrategies, mapsMap);
+      }
+      if (!rows.length) { alert('There is no match data in this scope to export.'); return; }
+      const characterData = prepareCharacterAveragesData(rows);
+      const matchData = prepareMatchDetailsData(rows);
       
       const result = await exportToExcel(characterData, matchData, {
         filename: `DBSZ_Analysis_${new Date().toISOString().split('T')[0]}.xlsx`,
@@ -928,249 +955,18 @@ export default function App() {
         current="analyzer"
         title="Battle Result Analyzer"
       />
-      <div className="p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Mode Selection */}
-        <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
-          darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-        }`}>
-          <div className="flex items-center gap-2 mb-4">
-            <Target className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
-            <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Analysis Mode</h3>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-              mode === 'reference' 
-                ? darkMode
-                  ? 'border-orange-400 bg-orange-900/30 text-orange-300'
-                  : 'border-orange-500 bg-orange-50 text-orange-700'
-                : darkMode
-                  ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                  : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-            }`}>
-              <div className="flex items-center gap-3">
-                <Database className="w-6 h-6" />
-                <div>
-                  <input 
-                    type="radio" 
-                    value="reference" 
-                    checked={mode === 'reference'} 
-                    onChange={(e) => handleModeChange(e.target.value)}
-                    className="sr-only"
-                  />
-                  <span className="font-semibold">Reference Data Files</span>
-                  <p className="text-sm opacity-75">Use built-in test data</p>
-                </div>
-              </div>
-            </label>
-            <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-              mode === 'manual' 
-                ? darkMode
-                  ? 'border-orange-400 bg-orange-900/30 text-orange-300'
-                  : 'border-orange-500 bg-orange-50 text-orange-700'
-                : darkMode
-                  ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                  : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-            }`}>
-              <div className="flex items-center gap-3">
-                <Upload className="w-6 h-6" />
-                <div>
-                  <input 
-                    type="radio" 
-                    value="manual" 
-                    checked={mode === 'manual'} 
-                    onChange={(e) => handleModeChange(e.target.value)}
-                    className="sr-only"
-                  />
-                  <span className="font-semibold">Manual File Upload</span>
-                  <p className="text-sm opacity-75">Upload your own JSON files</p>
-                </div>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        {/* Reference Data Mode */}
-        {mode === 'reference' && (
-          <div className={`rounded-2xl shadow-xl p-6 mb-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>View Type</h3>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-              <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                viewType === 'single' 
-                  ? darkMode
-                    ? 'border-blue-400 bg-blue-900/30 text-blue-300'
-                    : 'border-blue-500 bg-blue-50 text-blue-700'
-                  : darkMode
-                    ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                    : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <FileText className="w-6 h-6" />
-                  <div>
-                    <input 
-                      type="radio" 
-                      value="single" 
-                      checked={viewType === 'single'} 
-                      onChange={(e) => setViewType(e.target.value)}
-                      className="sr-only"
-                    />
-                    <span className="font-semibold">Single Match</span>
-                    <p className="text-sm opacity-75">Detailed view</p>
-                  </div>
-                </div>
-              </label>
-              <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                viewType === 'aggregated' 
-                  ? darkMode
-                    ? 'border-blue-400 bg-blue-900/30 text-blue-300'
-                    : 'border-blue-500 bg-blue-50 text-blue-700'
-                  : darkMode
-                    ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                    : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="w-6 h-6" />
-                  <div>
-                    <input 
-                      type="radio" 
-                      value="aggregated" 
-                      checked={viewType === 'aggregated'} 
-                      onChange={(e) => setViewType(e.target.value)}
-                      className="sr-only"
-                    />
-                    <span className="font-semibold">Aggregated Stats</span>
-                    <p className="text-sm opacity-75">Combined data</p>
-                  </div>
-                </div>
-              </label>
-              <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                viewType === 'teams' 
-                  ? darkMode
-                    ? 'border-yellow-400 bg-yellow-900/30 text-yellow-300'
-                    : 'border-yellow-500 bg-yellow-50 text-yellow-700'
-                  : darkMode
-                    ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                    : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <Users className="w-6 h-6" />
-                  <div>
-                    <input 
-                      type="radio" 
-                      value="teams" 
-                      checked={viewType === 'teams'} 
-                      onChange={(e) => setViewType(e.target.value)}
-                      className="sr-only"
-                    />
-                    <span className="font-semibold">Team Rankings</span>
-                    <p className="text-sm opacity-75">Win/Loss records</p>
-                  </div>
-                </div>
-              </label>
-              <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                viewType === 'tables' 
-                  ? darkMode
-                    ? 'border-green-400 bg-green-900/30 text-green-300'
-                    : 'border-green-500 bg-green-50 text-green-700'
-                  : darkMode
-                    ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                    : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <Table className="w-6 h-6" />
-                  <div>
-                    <input 
-                      type="radio" 
-                      value="tables" 
-                      checked={viewType === 'tables'} 
-                      onChange={(e) => setViewType(e.target.value)}
-                      className="sr-only"
-                    />
-                    <span className="font-semibold">Data Tables</span>
-                    <p className="text-sm opacity-75">Interactive tables</p>
-                  </div>
-                </div>
-              </label>
-              <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                viewType === 'meta' 
-                  ? darkMode
-                    ? 'border-purple-400 bg-purple-900/30 text-purple-300'
-                    : 'border-purple-500 bg-purple-50 text-purple-700'
-                  : darkMode
-                    ? 'border-gray-600 bg-gray-700 hover:border-gray-500 text-gray-300'
-                    : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <Database className="w-6 h-6" />
-                  <div>
-                    <input 
-                      type="radio" 
-                      value="meta" 
-                      checked={viewType === 'meta'} 
-                      onChange={(e) => setViewType(e.target.value)}
-                      className="sr-only"
-                    />
-                    <span className="font-semibold">Meta Analysis</span>
-                    <p className="text-sm opacity-75">Build trends</p>
-                  </div>
-                </div>
-              </label>
-            </div>
-
-            {/* Tag-Filter Panel — filters the BRDataSelector tree below */}
-            <div className="mb-4">
-              <TagFilterSelector
-                darkMode={darkMode}
-                onSelect={(fileIds) => {
-                  // null = no active filters (show everything), array = filtered paths
-                  setTagFilterPaths(fileIds);
-                }}
-              />
-            </div>
-
-            <div className={`rounded-xl p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-              <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {viewType === 'single' ? 'Search categories or matches to analyze:' : 'Search categories or matches to analyze:'}
-              </label>
-              <BRDataSelector
-                allowFolderSelect={viewType !== 'single'}
-                tagFilterPaths={tagFilterPaths}
-                onSelect={async (selectedIds) => {
-                  if (!Array.isArray(selectedIds) || selectedIds.length === 0) return;
-                  setSelectedFilePath(selectedIds);
-                  setFileContent(null);
-
-                  // Only fetch files (ending in .json)
-                  const fileIds = selectedIds.filter(id => id.endsWith('.json'));
-                  if (fileIds.length === 0) return;
-
-                  // Increment generation so any in-progress load knows it is stale
-                  const myGen = ++fetchGenRef.current;
-                  const isStale = () => fetchGenRef.current !== myGen;
-
-                  // Loads from the compact corpus in public/br-aggregates/ (one
-                  // request per season/team folder instead of one per match), with
-                  // a per-file fallback if the corpus is missing or out of date.
-                  // See src/utils/corpusLoader.js.
-                  const loaded = await loadMatches(fileIds, {
-                    isStale,
-                    extractTags: extractTagsFromMatchFile,
-                    // Render progressively so Team Rankings reflects loaded data sooner
-                    onProgress: partial => {
-                      if (!isStale()) setFileContent([...partial]);
-                    },
-                  });
-                  if (isStale()) return;
-                  setFileContent(loaded);
-                }}
-              />
-            </div>
-          </div>
-        )}
-
+      {/* The shell: section tabs, then the one-line scope bar every page shares. */}
+      <TabRow active={sandbox ? 'sandbox' : viewType} search={scopeOnlySearch} />
+      <ScopeBar
+        scope={scopeState}
+        pageChips={pageChips}
+        matchCount={sandbox ? null : (scopeState.paths ? scopeState.paths.length : null)}
+        onExcel={sandbox && !validUploads ? null : handleExcelExport}
+        uploads={sandbox ? uploadsLabel : null}
+      />
+      {/* The page column: the same gutter and max-width as the tab row and scope bar. */}
+      <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-16">
+      <div className="max-w-page mx-auto">
         {/* Manual Upload Mode */}
         {mode === 'manual' && (
           <div className={`rounded-2xl shadow-xl p-6 mb-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
@@ -1468,1441 +1264,15 @@ export default function App() {
           />
         )}
 
-        {/* Aggregated Data Display */}
-        {!deepLinkedCharacter && ((mode === 'reference' && viewType === 'aggregated') || 
-          (mode === 'manual' && viewType === 'aggregated' && manualFiles.filter(f => !f.error).length > 0)) && 
-          aggregatedData.length > 0 && (
-          <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
-            darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-          }`}>
-            <div className="flex items-center justify-between mb-6 cursor-pointer" onClick={() => setSectionCollapsed(prev => ({...prev, aggregated: !prev.aggregated}))}>
-              <div className="flex items-center gap-3">
-                <TrendingUp className={`w-8 h-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                <div>
-                  <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Aggregated Character Performance</h2>
-                </div>
-              </div>
-              <button 
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                  darkMode 
-                    ? 'bg-blue-900 hover:bg-blue-800 text-blue-400' 
-                    : 'bg-blue-100 hover:bg-blue-200 text-blue-600'
-                }`}
-                title={sectionCollapsed.aggregated ? "Expand section" : "Collapse section"}
-              >
-                {sectionCollapsed.aggregated ? '+' : '−'}
-              </button>
-            </div>
-            
-            {!sectionCollapsed.aggregated && (
-            <div className="space-y-4">
-              {/* Search and Filter Controls - Sticky Floating Panel */}
-              <div className={`sticky top-0 z-[100] rounded-xl border shadow-lg transition-all ${
-                darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-              }`}>
-                {/* Collapse/Expand Header */}
-                <div 
-                  className={`flex items-center justify-between px-4 pt-2 pb-4 cursor-pointer ${
-                    filtersCollapsed ? 'rounded-xl' : 'rounded-t-xl border-b ' + (darkMode ? 'border-gray-600' : 'border-gray-200')
-                  }`}
-                  onClick={() => setFiltersCollapsed(!filtersCollapsed)}
-                >
-                  <div className="flex items-center gap-2">
-                    <Filter className={`w-5 h-5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                    <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                      Filters & Sorting
-                    </h3>
-                    {filtersCollapsed && (
-                      <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        ({filteredAggregatedData.length} of {aggregatedData.length} characters shown)
-                      </span>
-                    )}
-                  </div>
-                  <div 
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                      darkMode 
-                        ? 'bg-blue-900 text-blue-400 hover:bg-blue-800' 
-                        : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                    }`}
-                    title={filtersCollapsed ? "Expand filters" : "Collapse filters"}
-                  >
-                    {filtersCollapsed ? '+' : '−'}
-                  </div>
-                </div>
-                
-                {/* Filter Controls - Collapsible Content */}
-                {!filtersCollapsed && (
-                <div className="p-4 pt-0">
-                {/* Search Bar */}
-                {/* Character Filter */}
-                <div className="mb-4">
-                  {/* Selected Characters as Chips */}
-                  {selectedCharacters.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {selectedCharacters.map(character => (
-                        <button
-                          key={character}
-                          onClick={() => {
-                            setSelectedCharacters(prev => prev.filter(c => c !== character));
-                          }}
-                          className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all flex items-center gap-1 ${
-                            darkMode 
-                              ? 'bg-purple-900 border-purple-600 text-purple-300 hover:bg-purple-800' 
-                              : 'bg-purple-100 border-purple-500 text-purple-700 hover:bg-purple-200'
-                          }`}
-                        >
-                          {character}
-                          <X className="w-3 h-3" />
-                        </button>
-                      ))}
-                      <button
-                        onClick={() => setSelectedCharacters([])}
-                        className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          darkMode 
-                            ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        Clear all
-                      </button>
-                    </div>
-                  )}
-                  
-                  {/* Search Input with Dropdown */}
-                  <div className="mb-2">
-                    <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      <Search className="w-5 h-5" />
-                      Characters
-                    </div>
-                    <MultiSelectCombobox
-                      items={availableCharacters.map(char => ({ id: char, name: char }))}
-                      selectedIds={selectedCharacters}
-                      placeholder="Search and select characters..."
-                      onAdd={(id) => setSelectedCharacters(prev => [...prev, id])}
-                      darkMode={darkMode}
-                      focusColor="purple"
-                    />
-                  </div>
-                </div>
-                
-                {/* Tier toggles + score window. These replaced the five
-                    performance-level chips; see filterAggregated.js for why those
-                    were unsound. Cutoff numbers are deliberately not shown - the
-                    tooltip explains the scale instead. */}
-                <div className="mb-4">
-                  <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    <Filter className="w-4 h-4" />
-                    Tier
-                    <span
-                      title={tierBasisSummary() + ' A character with fewer than 5 matches shows a provisional tier.'}
-                      className={`cursor-help text-xs rounded-full border w-4 h-4 inline-flex items-center justify-center ${
-                        darkMode ? 'border-gray-500 text-gray-400' : 'border-gray-400 text-gray-500'
-                      }`}
-                      aria-label="What are tiers?"
-                    >
-                      ?
-                    </span>
-                    {selectedTiers.length !== TIERS.length && (
-                      <button
-                        onClick={() => setSelectedTiers([...TIERS])}
-                        className={`ml-auto text-xs px-2 py-0.5 rounded bg-transparent border-0 cursor-pointer ${
-                          darkMode
-                            ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700'
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        Show all tiers
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 mb-4">
-                    {TIERS.map(tier => {
-                      const active = selectedTiers.includes(tier);
-                      return (
-                        <button
-                          key={tier}
-                          onClick={() => setSelectedTiers(prev => (
-                            prev.includes(tier) ? prev.filter(t => t !== tier) : [...prev, tier]
-                          ))}
-                          aria-pressed={active}
-                          title={`${TIER_LABELS[tier] || tier}${active ? '' : ' (hidden)'}`}
-                          className="p-0.5 rounded bg-transparent border-0 cursor-pointer transition-opacity hover:opacity-80"
-                        >
-                          <TierPlate tier={tier} size="small" showTooltip={false} deselected={!active} />
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <div className={`text-sm font-medium mb-2 ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Score
-                  </div>
-                  <RangeSlider
-                    label="score"
-                    min={0}
-                    max={scoreBounds.max}
-                    value={scoreRange || [0, scoreBounds.max]}
-                    onChange={next => setScoreRange(
-                      next[0] <= 0 && next[1] >= scoreBounds.max ? null : next
-                    )}
-                    darkMode={darkMode}
-                    ariaLabelMin="Minimum combat performance score"
-                    ariaLabelMax="Maximum combat performance score"
-                  />
-                </div>
-                
-                {/* Matches Filter */}
-                <div className="mb-4">
-                  <div className={`text-sm font-medium mb-2 ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Matches Played
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <label className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Min:</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max={maxMatches}
-                        value={minMatches}
-                        onChange={(e) => setMinMatches(Math.max(1, Math.min(parseInt(e.target.value) || 1, maxMatches)))}
-                        className={`w-16 px-2 py-1 rounded border text-sm ${
-                          darkMode 
-                            ? 'bg-gray-800 border-gray-600 text-white' 
-                            : 'bg-white border-gray-300 text-gray-900'
-                        }`}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        type="range"
-                        min="1"
-                        max={aggregatedData.length > 0 ? Math.max(...aggregatedData.map(c => c.matchCount)) : 20}
-                        value={minMatches}
-                        onChange={(e) => setMinMatches(parseInt(e.target.value))}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <label className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max:</label>
-                      <input
-                        type="number"
-                        min={minMatches}
-                        max="999"
-                        value={maxMatches}
-                        onChange={(e) => setMaxMatches(Math.max(minMatches, parseInt(e.target.value) || 999))}
-                        className={`w-16 px-2 py-1 rounded border text-sm ${
-                          darkMode 
-                            ? 'bg-gray-800 border-gray-600 text-white' 
-                            : 'bg-white border-gray-300 text-gray-900'
-                        }`}
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Team Filter */}
-                {availableTeams.length > 0 && (
-                  <div className="mb-4">
-                    {/* Selected Teams as Chips */}
-                    {selectedTeams.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {selectedTeams.map(team => (
-                          <button
-                            key={team}
-                            onClick={() => {
-                              setSelectedTeams(prev => prev.filter(t => t !== team));
-                            }}
-                            className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all flex items-center gap-1 ${
-                              darkMode 
-                                ? 'bg-blue-900 border-blue-600 text-blue-300 hover:bg-blue-800' 
-                                : 'bg-blue-100 border-blue-500 text-blue-700 hover:bg-blue-200'
-                            }`}
-                          >
-                            {team}
-                            <X className="w-3 h-3" />
-                          </button>
-                        ))}
-                        <button
-                          onClick={() => setSelectedTeams([])}
-                          className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                            darkMode 
-                              ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
-                              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          Clear all
-                        </button>
-                      </div>
-                    )}
-                    
-                    {/* Search Input with Dropdown */}
-                    <div className="mb-2">
-                      <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        <Users className="w-5 h-5" />
-                        Teams
-                      </div>
-                      <MultiSelectCombobox
-                        items={availableTeams.map(team => ({ id: team, name: team }))}
-                        selectedIds={selectedTeams}
-                        placeholder="Search and select teams..."
-                        onAdd={(id) => setSelectedTeams(prev => [...prev, id])}
-                        darkMode={darkMode}
-                        focusColor="blue"
-                      />
-                    </div>
-                  </div>
-                )}
-                
-                {/* AI Strategy Filter */}
-                {availableAIStrategies.length > 0 && (
-                  <div className="mb-4">
-                    {/* Selected AI Strategies as Chips */}
-                    {selectedAIStrategies.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {selectedAIStrategies.map(ai => {
-                          const displayName = ai === 'Com' ? 'Computer' : ai === 'Player' ? 'Player' : ai;
-                          return (
-                            <button
-                              key={ai}
-                              onClick={() => {
-                                setSelectedAIStrategies(prev => prev.filter(a => a !== ai));
-                              }}
-                              className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all flex items-center gap-1 ${
-                                darkMode 
-                                  ? 'bg-purple-900 border-purple-600 text-purple-300 hover:bg-purple-800' 
-                                  : 'bg-purple-100 border-purple-500 text-purple-700 hover:bg-purple-200'
-                              }`}
-                            >
-                              {displayName}
-                              <X className="w-3 h-3" />
-                            </button>
-                          );
-                        })}
-                        <button
-                          onClick={() => setSelectedAIStrategies([])}
-                          className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                            darkMode 
-                              ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
-                              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          Clear all
-                        </button>
-                      </div>
-                    )}
-                    
-                    {/* Search Input with Dropdown */}
-                    <div className="mb-2">
-                      <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        <Settings className="w-5 h-5" />
-                        AI Strategies
-                      </div>
-                      <MultiSelectCombobox
-                        items={availableAIStrategies.map(ai => ({ 
-                          id: ai, 
-                          name: ai === 'Com' ? 'Computer' : ai === 'Player' ? 'Player' : ai === 'Default' ? 'Default' : ai 
-                        }))}
-                        selectedIds={selectedAIStrategies}
-                        placeholder="Search and select AI strategies..."
-                        onAdd={(id) => setSelectedAIStrategies(prev => [...prev, id])}
-                        darkMode={darkMode}
-                        focusColor="purple"
-                      />
-                    </div>
-                  </div>
-                )}
-                
-                {/* Map Filter */}
-                {availableMaps.length > 0 && (
-                  <div className="mb-4">
-                    {/* Selected Maps as Chips */}
-                    {selectedMaps.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {selectedMaps.map(map => (
-                          <button
-                            key={map}
-                            onClick={() => {
-                              setSelectedMaps(prev => prev.filter(m => m !== map));
-                            }}
-                            className={`px-3 py-1.5 rounded-lg border text-sm font-medium transition-all flex items-center gap-1 ${
-                              darkMode 
-                                ? 'bg-green-900 border-green-600 text-green-300 hover:bg-green-800' 
-                                : 'bg-green-100 border-green-500 text-green-700 hover:bg-green-200'
-                            }`}
-                          >
-                            {map}
-                            <X className="w-3 h-3" />
-                          </button>
-                        ))}
-                        <button
-                          onClick={() => setSelectedMaps([])}
-                          className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                            darkMode 
-                              ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
-                              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          Clear all
-                        </button>
-                      </div>
-                    )}
-                    
-                    {/* Search Input with Dropdown */}
-                    <div className="mb-2">
-                      <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                      }`}>
-                        <Target className="w-5 h-5" />
-                        Maps
-                      </div>
-                      <MultiSelectCombobox
-                        items={availableMaps.map(map => ({ id: map, name: map }))}
-                        selectedIds={selectedMaps}
-                        placeholder="Search and select maps..."
-                        onAdd={(id) => setSelectedMaps(prev => [...prev, id])}
-                        darkMode={darkMode}
-                        focusColor="green"
-                      />
-                    </div>
-                  </div>
-                )}
-                
-                {/* Sort Controls */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className={`text-sm font-medium mb-2 block ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      Sort By
-                    </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className={`w-full px-3 py-2 rounded-lg border ${
-                        darkMode 
-                          ? 'bg-gray-800 border-gray-600 text-white' 
-                          : 'bg-white border-gray-300 text-gray-900'
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
-                    >
-                      <option value="combatScore">Combat Performance Score</option>
-                      <option value="totalDamage">Total Damage</option>
-                      <option value="avgDamage">Average Damage</option>
-                      <option value="dps">DPS (Damage per Second)</option>
-                      <option value="efficiency">Efficiency (Damage/Taken)</option>
-                      <option value="matches">Matches Played</option>
-                      <option value="name">Character Name</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={`text-sm font-medium mb-2 block ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      Sort Direction
-                    </label>
-                    <button
-                      onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                      className={`w-full px-3 py-2 rounded-lg border flex items-center justify-center gap-2 ${
-                        darkMode 
-                          ? 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700' 
-                          : 'bg-white border-gray-300 text-gray-900 hover:bg-gray-50'
-                      } transition-colors`}
-                    >
-                      <ArrowUpDown className="w-4 h-4" />
-                      {sortDirection === 'asc' ? 'Ascending' : 'Descending'}
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Result Count */}
-                <div className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Showing {filteredAggregatedData.length} of {aggregatedData.length} characters
-                </div>
-                </div>
-                )}
-              </div>
-              
-              {filteredAggregatedData.map((char, i) => {
-                const expanded = expandedRows[`agg_${i}`] || false;
-                // Measured against performanceReference, not the filtered list, so a
-                // character's level and bars do not move when rows are hidden.
-                const allDamageValues = performanceReference.map(c => c.totalDamage);
-                const allDamageTakenValues = performanceReference.map(c => c.totalTaken);
-                const allAvgDamageValues = performanceReference.map(c => c.avgDamage);
-                const allAvgTakenValues = performanceReference.map(c => c.avgTaken);
-                const allAvgHealthValues = performanceReference.map(c => c.avgHealth);
-                const allAvgBattleTimeValues = performanceReference.map(c => c.avgBattleTime);
-                const avgBattleTime = allAvgBattleTimeValues.length
-                  ? allAvgBattleTimeValues.reduce((sum, val) => sum + val, 0) / allAvgBattleTimeValues.length
-                  : 0;
-                
-                
-                return (
-                  <div key={i} className={`rounded-xl p-6 border transition-colors ${
-                    darkMode 
-                      ? 'bg-gray-800 border-gray-600 hover:border-gray-500' 
-                      : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-                  }`}>
-                    <div 
-                      className="space-y-4 cursor-pointer"
-                      onClick={() => toggleRow('agg', i)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {/* The plate leads the row as the rank marker, so it replaces
-                              the old Swords icon rather than sitting beside it. The tier
-                              is absolute - never relative to the rows on screen. */}
-                          <TierPlate score={char.combatPerformanceScore} character={char} size="medium" darkMode={darkMode} />
-                          {/* The name opens the character page. It is a real link, so it can be
-                              middle-clicked, copied or shared, and it carries the current filters
-                              across. stopPropagation keeps a click from also toggling the row. */}
-                          <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                            {charUrlKeyByName.get(char.name) ? (
-                              <Link
-                                to={ROUTES.character(charUrlKeyByName.get(char.name)) + scopeSearch}
-                                onClick={(e) => e.stopPropagation()}
-                                title={`Open ${char.name}'s character page`}
-                                className="group inline-flex items-center gap-1 text-inherit no-underline hover:underline"
-                              >
-                                {char.name}
-                                <ArrowUpRight className={`w-4 h-4 opacity-50 group-hover:opacity-100 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
-                              </Link>
-                            ) : char.name}
-                          </h3>
-                          {/* Familiar score pill, tinted from the same palette as the
-                              plate (tierPillColors) so the two cannot drift apart. */}
-                          <span
-                            className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tierForScore(char.combatPerformanceScore))}`}
-                            style={tierPillColors(tierForScore(char.combatPerformanceScore), darkMode)}
-                          >
-                            <Star className="w-3 h-3" />
-                            Score: {Math.round(char.combatPerformanceScore)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <BarChart3 className="w-4 h-4" />
-                            <span>{char.activeMatchCount || char.matchCount} active match{(char.activeMatchCount || char.matchCount) !== 1 ? 'es' : ''}</span>
-                          </div>
-                          <div 
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                              darkMode 
-                                ? 'bg-blue-900 text-blue-400' 
-                                : 'bg-blue-100 text-blue-600'
-                            }`}
-                            title={expanded ? "Click to collapse" : "Click to expand"}
-                          >
-                            {expanded ? '−' : '+'}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-3">
-                        <div className="flex-1">
-                          <StatBar 
-                            value={char.avgDamage} 
-                            maxValue={Math.max(...allAvgDamageValues)} 
-                            type="damage" 
-                            label="Avg Damage"
-                            icon={Zap}
-                            darkMode={darkMode}
-                          />
-                        </div>
-                        
-                        <div className="flex-1">
-                          <StatBar 
-                            value={char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0} 
-                            maxValue={Math.max(...aggregatedData.map(c => c.totalBattleTime > 0 ? c.totalDamage / c.totalBattleTime : 0))} 
-                            displayValue={Math.round(char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0)}
-                            type="special" 
-                            label="Damage/Sec"
-                            icon={Target}
-                            darkMode={darkMode}
-                          />
-                        </div>
-                        
-                        <div className="flex-1">
-                          <StatBar 
-                            value={char.totalTaken > 0 ? char.totalDamage / char.totalTaken : 0} 
-                            maxValue={Math.max(...aggregatedData.map(c => c.totalTaken > 0 ? c.totalDamage / c.totalTaken : 0))} 
-                            displayValue={(char.totalTaken > 0 ? (char.totalDamage / char.totalTaken).toFixed(2) : '0.00') + 'x'}
-                            type="ultimate" 
-                            label="Efficiency"
-                            icon={TrendingUp}
-                            darkMode={darkMode}
-                          />
-                        </div>
-                        
-                        <div className="flex-1">
-                          <BattleTimeVariance 
-                            value={char.avgBattleTime}
-                            averageValue={avgBattleTime}
-                            darkMode={darkMode}
-                          />
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Trophy className={`w-4 h-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`} />
-                              <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Eliminations</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className={`text-lg font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-500'}`}>{char.totalKills}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {expanded && (
-                      <div className={`mt-6 pt-6 border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <div className="grid grid-cols-1 gap-4">
-                          {/*Character Expanded Stats*/}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-                              {/* Combat Performance - Full Width */}
-                              <div className={`rounded-lg p-3 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <Swords className={`w-5 h-5 ${darkMode ? 'text-red-400' : 'text-red-600'}`} />
-                                  <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Combat Performance</h4>
-                                </div>
-                                <div className="space-y-2 text-sm mb-3">
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Done:</span>
-                                    <div className="flex items-center gap-2">
-                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgDamage.toLocaleString()}</strong>
-                                      <PerformanceIndicatorLabel value={char.avgDamage} allValues={allAvgDamageValues} darkMode={darkMode} />
-                                    </div>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Taken:</span>
-                                    <div className="flex items-center gap-2">
-                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgTaken.toLocaleString()}</strong>
-                                      <PerformanceIndicatorLabel value={char.avgTaken} allValues={allAvgTakenValues} isInverse={true} darkMode={darkMode} />
-                                    </div>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Over Time:</span>
-                                    <div className="flex items-center gap-2">
-                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{Math.round(char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0).toLocaleString()}/sec</strong>
-                                      <PerformanceIndicatorLabel value={char.totalBattleTime > 0 ? char.totalDamage / char.totalBattleTime : 0} allValues={performanceReference.map(c => c.totalBattleTime > 0 ? c.totalDamage / c.totalBattleTime : 0)} darkMode={darkMode} />
-                                    </div>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Efficiency:</span>
-                                    <div className="flex items-center gap-2">
-                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.totalTaken > 0 ? (char.totalDamage / char.totalTaken).toFixed(2) : '0.00')}x</strong>
-                                      <PerformanceIndicatorLabel value={char.totalTaken > 0 ? char.totalDamage / char.totalTaken : 0} allValues={performanceReference.map(c => c.totalTaken > 0 ? c.totalDamage / c.totalTaken : 0)} darkMode={darkMode} />
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t border-gray-600">
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgThrows || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgVanishingAttacks || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgDragonHoming || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgLightningAttacks || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSpeedImpacts || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSpeedImpactWins || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgMaxCombo}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Damage:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgMaxComboDamage.toLocaleString()}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo Hits:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSparkingCombo || 0).toFixed(1)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgKills || 0).toFixed(2)}</strong>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Survival & Health */}
-                              <div className={`rounded-lg p-3 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <Heart className={`w-5 h-5 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                                  <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Survival & Health</h4>
-                                </div>
-                                <div className="space-y-2 text-sm mb-2">
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Health:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgHPGaugeValueMax.toLocaleString()}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Health Remaining:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgHealth.toLocaleString()}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival Rate:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.survivalRate.toFixed(1)}%</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                    <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{(char.avgTags || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
-                                    <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{(char.avgTransformations || 0).toFixed(2)}</strong>
-                                  </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t border-gray-600">
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Guards:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgGuards}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSuperCounters || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgRevengeCounters || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgZCounters || 0).toFixed(2)}</strong>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* Survival & Health and Special Abilities in a nested grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-
-                              {/* Special Abilities */}
-                              <div className={`rounded-lg p-3 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <Zap className={`w-5 h-5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                                  <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Special Abilities</h4>
-                                </div>
-                                {/* DEBUG: Log UI values for Panzy */}
-                                {char.name.toLowerCase().includes('panzy') && (() => {
-                                  console.log('=== AGGREGATED STATS UI - Panzy Display Values ===');
-                                  console.log('char object:', char);
-                                  console.log('avgS1Hit:', char.avgS1Hit);
-                                  console.log('avgS1Blast:', char.avgS1Blast);
-                                  console.log('avgSPM1:', char.avgSPM1);
-                                  console.log('s1HitRateOverall:', char.s1HitRateOverall);
-                                  return null;
-                                })()}
-                                {/* Check if we have hit rate data (new format) or legacy format */}
-                                {char.s1HitRateOverall !== null || char.s2HitRateOverall !== null || char.ultHitRateOverall !== null ? (
-                                  // New format - show hit/thrown/rate
-                                  <div className="space-y-2 text-sm mb-2">
-                                    <div className="flex justify-between">
-                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
-                                      <div className="flex items-center gap-2">
-                                        <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                          {(char.avgS1Hit || 0).toFixed(2)}/{(char.avgS1Blast || char.avgSPM1 || 0).toFixed(2)}
-                                        </strong>
-                                        {char.s1HitRateOverall !== null && char.s1HitRateOverall !== undefined && (
-                                          <span className={`text-xs font-mono ${
-                                            char.s1HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                            char.s1HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                            (darkMode ? 'text-red-400' : 'text-red-600')
-                                          }`}>
-                                            ({char.s1HitRateOverall.toFixed(1)}%)
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
-                                      <div className="flex items-center gap-2">
-                                        <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                          {(char.avgS2Hit || 0).toFixed(2)}/{(char.avgS2Blast || char.avgSPM2 || 0).toFixed(2)}
-                                        </strong>
-                                        {char.s2HitRateOverall !== null && char.s2HitRateOverall !== undefined && (
-                                          <span className={`text-xs font-mono ${
-                                            char.s2HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                            char.s2HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                            (darkMode ? 'text-red-400' : 'text-red-600')
-                                          }`}>
-                                            ({char.s2HitRateOverall.toFixed(1)}%)
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
-                                      <div className="flex items-center gap-2">
-                                        <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                          {(char.avgUltHit || 0).toFixed(2)}/{(char.avgUltBlast || char.avgUltimates || 0).toFixed(2)}
-                                        </strong>
-                                        {char.ultHitRateOverall !== null && char.ultHitRateOverall !== undefined && (
-                                          <span className={`text-xs font-mono ${
-                                            char.ultHitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                            char.ultHitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                            (darkMode ? 'text-red-400' : 'text-red-600')
-                                          }`}>
-                                            ({char.ultHitRateOverall.toFixed(1)}%)
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  // Legacy format - show only thrown count
-                                  <div className="space-y-2 text-sm mb-2">
-                                    <div className="flex justify-between">
-                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
-                                      <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                        {char.avgSPM1}
-                                      </strong>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
-                                      <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                        {(char.avgSPM2 || 0).toFixed(2)}
-                                      </strong>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
-                                      <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                        {(char.avgUltimates || 0).toFixed(2)}
-                                      </strong>
-                                    </div>
-                                  </div>
-                                )}
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t border-gray-600">
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 1 Usage:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgEXA1}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 2 Usage:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgEXA2}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Charges:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgCharges}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(char.avgSparking || 0).toFixed(2)}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgEnergyBlasts}</strong>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Dash Mileage:</span>
-                                    <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{char.avgDragonDashMileage}</strong>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Builds Section */}
-                              {char.topBuilds && char.topBuilds.length > 0 && (
-                                <div className={`rounded-lg p-1 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
-                                  <div className="flex items-center px-3 mb-2">
-                                    <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Builds ({char.topBuilds.length})</h4>
-                                  </div>
-                                  <BuildTableView
-                                    builds={char.topBuilds}
-                                    buildKey={char.name}
-                                    selectedBuildIndex={selectedBuildIndex}
-                                    setSelectedBuildIndex={setSelectedBuildIndex}
-                                    selectedBuildSort={selectedBuildSort}
-                                    setSelectedBuildSort={setSelectedBuildSort}
-                                    primaryTeam={char.primaryTeam}
-                                    activeBuildFilters={activeBuildFilters}
-                                    setActiveBuildFilters={setActiveBuildFilters}
-                                    darkMode={darkMode}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          
-                          {/* Forms & Transformations - Expandable Per-Form Stats */}
-                          {char.hasMultipleForms && char.formStatsArray && char.formStatsArray.length > 0 && (
-                            <PerFormStatsDisplayAggregated
-                              formStatsArray={char.formStatsArray}
-                              formChangeHistoryText={char.formHistory}
-                              darkMode={darkMode}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            )}
-          </div>
+        {/* League pages: Home, and Characters (table or tier list). Both replaced
+            big card layouts - see pages/HomePage.jsx and pages/CharactersPage.jsx. */}
+        {!sandbox && viewType === 'home' && (
+          <HomePage aggregated={aggregatedData} charMap={charMap} idFor={charIdFor} linkFor={characterLinkFor}
+            search={scopeOnlySearch} loading={dataLoading} />
         )}
-
-        {/* Position-Based Performance Analysis */}
-        {!deepLinkedCharacter && ((mode === 'reference' && viewType === 'aggregated') || 
-          (mode === 'manual' && viewType === 'aggregated' && manualFiles.filter(f => !f.error).length > 0)) && 
-          Object.keys(positionData).length > 0 && (
-          <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
-            darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
-          }`}>
-            <div className="flex items-center justify-between mb-6 cursor-pointer" onClick={() => setSectionCollapsed(prev => ({...prev, position: !prev.position}))}>
-              <div className="flex items-center gap-3">
-                <Users className={`w-8 h-8 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                <div>
-                  <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Character Position Analysis</h2>
-                  <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Performance breakdown by team position ({POSITION_NAMES[1]}, {POSITION_NAMES[2]}, {POSITION_NAMES[3]})
-                  </p>
-                </div>
-              </div>
-              <button 
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                  darkMode 
-                    ? 'bg-green-900 hover:bg-green-800 text-green-400' 
-                    : 'bg-green-100 hover:bg-green-200 text-green-600'
-                }`}
-                title={sectionCollapsed.position ? "Expand section" : "Collapse section"}
-              >
-                {sectionCollapsed.position ? '+' : '−'}
-              </button>
-            </div>
-            
-            {!sectionCollapsed.position && (
-            <div>
-              {/* Match Type Filter */}
-              <div className="mb-6">
-                <div className={`text-sm font-medium mb-2 flex items-center gap-2 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  <Filter className="w-4 h-4" />
-                  Match Type
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {/* All button */}
-                  <button
-                    onClick={() => {
-                      const allMatchTypes = ['2v2', '3v3', '4v4', '5v5'];
-                      const allSelected = allMatchTypes.every(type => positionMatchTypeFilters.includes(type));
-                      setPositionMatchTypeFilters(allSelected ? [] : allMatchTypes);
-                    }}
-                    className={`px-3 py-1.5 rounded border-2 text-sm font-medium transition-colors ${
-                      positionMatchTypeFilters.length === 4
-                        ? (darkMode ? 'bg-green-900 border-green-500 text-green-200' : 'bg-green-100 border-green-500 text-green-700')
-                        : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
-                    }`}
-                  >
-                    All
-                  </button>
-                  {['2v2', '3v3', '4v4', '5v5'].map(matchType => {
-                    const isActive = positionMatchTypeFilters.includes(matchType);
-                    
-                    return (
-                      <button
-                        key={matchType}
-                        onClick={() => {
-                          setPositionMatchTypeFilters(prev => 
-                            isActive 
-                              ? prev.filter(f => f !== matchType)
-                              : [...prev, matchType]
-                          );
-                        }}
-                        className={`px-3 py-1.5 rounded border-2 text-sm font-medium transition-colors ${
-                          isActive 
-                            ? (darkMode ? 'bg-blue-900 border-blue-500 text-blue-200' : 'bg-blue-100 border-blue-500 text-blue-700')
-                            : (darkMode ? 'bg-gray-800 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-500')
-                        }`}
-                      >
-                        {matchType}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            
-            <div className="grid grid-cols-1 2xl:grid-cols-3 gap-6">
-              {[1, 2, 3].map(position => {
-                const posData = positionData[position];
-                const positionNames = [POSITION_NAMES[1], POSITION_NAMES[2], POSITION_NAMES[3]];
-                const positionColors = [
-                  { light: 'text-red-600', dark: 'text-red-400', bg: 'bg-red-50', darkBg: 'bg-red-900/20', border: 'border-red-200', darkBorder: 'border-red-600' },
-                  { light: 'text-blue-600', dark: 'text-blue-400', bg: 'bg-blue-50', darkBg: 'bg-blue-900/20', border: 'border-blue-200', darkBorder: 'border-blue-600' },
-                  { light: 'text-purple-600', dark: 'text-purple-400', bg: 'bg-purple-50', darkBg: 'bg-purple-900/20', border: 'border-purple-200', darkBorder: 'border-purple-600' }
-                ];
-                const colors = positionColors[position - 1];
-                
-                // Hide position if it has no matches
-                if (!posData || !posData.sortedCharacters || posData.sortedCharacters.length === 0) {
-                  return null;
-                }
-                
-                return (
-                  <div key={position} className={`rounded-xl border p-4 ${
-                    darkMode 
-                      ? `${colors.darkBg} ${colors.darkBorder}` 
-                      : `${colors.bg} ${colors.border}`
-                  }`}>
-                    <div 
-                      className="flex items-center justify-between mb-4 cursor-pointer"
-                      onClick={() => setCollapsedPositions(prev => ({
-                        ...prev,
-                        [position]: !prev[position]
-                      }))}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Target className={`w-5 h-5 ${darkMode ? colors.dark : colors.light}`} />
-                        <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                          Position {position}: {positionNames[position - 1]}
-                        </h3>
-                      </div>
-                      {collapsedPositions[position] ? 
-                        <ChevronDown className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} /> : 
-                        <ChevronUp className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                      }
-                    </div>
-                    
-                    {!collapsedPositions[position] && (
-                      <>
-                    {/* Character Filter - Above Character Appearances */}
-                    <div className="mb-3 flex justify-end">
-                      <div className="max-w-xs w-full">
-                        {/* Selected Characters Pills */}
-                        {positionCharacterFilters[position]?.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mb-2 justify-end">
-                            {positionCharacterFilters[position].map((character, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => setPositionCharacterFilters(prev => ({
-                                  ...prev,
-                                  [position]: prev[position].filter(c => c !== character)
-                                }))}
-                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                                  darkMode 
-                                    ? position === 1 
-                                      ? 'bg-red-900/30 text-red-300 hover:bg-red-900/50'
-                                      : position === 2
-                                      ? 'bg-blue-900/30 text-blue-300 hover:bg-blue-900/50'
-                                      : 'bg-purple-900/30 text-purple-300 hover:bg-purple-900/50'
-                                    : position === 1
-                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                                    : position === 2
-                                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                                }`}
-                              >
-                                {character}
-                                <X className="w-3 h-3" />
-                              </button>
-                            ))}
-                            <button
-                              onClick={() => setPositionCharacterFilters(prev => ({
-                                ...prev,
-                                [position]: []
-                              }))}
-                              className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
-                                darkMode 
-                                  ? 'text-gray-400 bg-gray-800 hover:text-gray-300 hover:bg-gray-700' 
-                                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                              }`}
-                            >
-                              Clear all
-                            </button>
-                          </div>
-                        )}
-                        
-                        <div className={`text-xs font-medium mb-1 flex items-center gap-1 justify-end ${
-                          darkMode ? 'text-gray-300' : 'text-gray-700'
-                        }`}>
-                          <Search className="w-3 h-3" />
-                          Characters
-                        </div>
-                        <MultiSelectCombobox
-                          items={posData.sortedCharacters.map(char => ({ id: char.name, name: char.name }))}
-                          selectedIds={positionCharacterFilters[position] || []}
-                          placeholder="Search and select characters..."
-                          onAdd={(id) => setPositionCharacterFilters(prev => ({
-                            ...prev,
-                            [position]: [...(prev[position] || []), id]
-                          }))}
-                          darkMode={darkMode}
-                          focusColor={position === 1 ? 'red' : position === 2 ? 'blue' : 'purple'}
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Character Appearances */}
-                    <div className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      <div className="flex items-center gap-2">
-                        <span>Character Appearances: {posData.totalMatches}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded cursor-help ${
-                          darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'
-                        }`} title="Total times any character appeared in this position across all matches (counts both teams)">
-                          ?
-                        </span>
-                      </div>
-                      <div className="text-xs mt-1 opacity-75">
-                        {posData.uniqueMatchCount || Math.round(posData.totalMatches / 2)} unique matches
-                      </div>
-                    </div>
-                    
-                    {/* Position Summary Stats */}
-                    <div className={`mb-4 p-3 rounded-lg border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-                    }`}>
-                      <h4 className={`text-xl text-center font-bold mb-2 mt-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                        {positionNames[position - 1]} Average
-                      </h4>
-                      <div className="flex justify-center mb-3">
-                        <PerformanceIndicator 
-                          value={calculatePositionAverage(posData, 'combatPerformanceScore')} 
-                          allValues={Object.values(positionData).map(pd => calculatePositionAverage(pd, 'combatPerformanceScore'))}
-                          darkMode={darkMode}
-                          size="small"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Avg Damage
-                          </div>
-                          <div className={`font-bold ${darkMode ? colors.dark : colors.light}`}>
-                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgDamage')))}
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Avg Taken
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgTaken')))}
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Battle Time
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                            {calculatePositionAverage(posData, 'avgBattleTime').toFixed(1)}s
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            DPS
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgDPS')))}
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Efficiency
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                            {calculatePositionAverage(posData, 'damageEfficiency').toFixed(1)}x
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Survival
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                            {calculatePositionSurvivalRate(posData)}%
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Avg Health
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                            {formatNumber(Math.round(calculatePositionAverage(posData, 'avgHealth')))}
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Characters
-                          </div>
-                          <div className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                            {posData.sortedCharacters.length}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {posData.sortedCharacters.length > 0 ? (
-                      <>
-                      <div 
-                        className="overflow-y-auto pr-2"
-                        style={{ 
-                          maxHeight: posData.sortedCharacters.filter(char => 
-                            positionCharacterFilters[position]?.length === 0 || 
-                            positionCharacterFilters[position]?.includes(char.name)
-                          ).length > 5 ? '550px' : 'none' 
-                        }}
-                      >
-                        <div className="space-y-3">
-                        {posData.sortedCharacters
-                          .filter(char => 
-                            positionCharacterFilters[position]?.length === 0 || 
-                            positionCharacterFilters[position]?.includes(char.name)
-                          )
-                          .map((char, idx) => (
-                          <div key={idx} className={`p-3 rounded-lg border ${
-                            darkMode 
-                              ? 'bg-gray-700 border-gray-600' 
-                              : 'bg-white border-gray-200'
-                          }`}>
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                  {char.name}
-                                </span>
-                                {/* Performance Badges */}
-                                {char.avgDamage > calculatePositionAverage(posData, 'avgDamage') * 1.5 && (
-                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                    darkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-100 text-amber-800'
-                                  }`} title="Significantly above position average damage">
-                                    🔥 High Output
-                                  </span>
-                                )}
-                                {char.damageEfficiency > 2.0 && (
-                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                    darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-800'
-                                  }`} title="Exceptional damage efficiency (2.0x or higher)">
-                                    ⚡ Efficient
-                                  </span>
-                                )}
-                                {char.avgHealth > (char.totalHealth / (char.activeMatchCount || char.matchCount)) * 0.8 && char.avgHealth > 8000 && (
-                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                    darkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-800'
-                                  }`} title="Consistently survives with high health">
-                                    🛡️ Survivor
-                                  </span>
-                                )}
-                                {(char.activeMatchCount || char.matchCount) < 3 && (
-                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                    darkMode ? 'bg-yellow-900/30 text-yellow-300' : 'bg-yellow-100 text-yellow-700'
-                                  }`} title="Small sample size - stats may not be representative">
-                                    ⚠️ Limited Data
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <PerformanceIndicator 
-                                  value={char.combatPerformanceScore} 
-                                  allValues={posData.sortedCharacters.map(c => c.combatPerformanceScore)}
-                                  darkMode={darkMode}
-                                  size="small"
-                                />
-                                <span className={`text-xs px-2 py-1 rounded cursor-help ${
-                                  darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'
-                                }`} title={`Used ${char.activeMatchCount || char.matchCount} time${(char.activeMatchCount || char.matchCount) !== 1 ? 's' : ''} in this position${char.matchCount > (char.activeMatchCount || 0) ? ` (${char.matchCount - (char.activeMatchCount || 0)} with 0 battle time)` : ''}`}>
-                                  {char.activeMatchCount || char.matchCount} Matches
-                                </span>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Damage</div>
-                                <div className={`font-medium ${darkMode ? colors.dark : colors.light}`}>
-                                  {formatNumber(Math.round(char.avgDamage))}
-                                </div>
-                              </div>
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Taken</div>
-                                <div className={`font-medium ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                                  {formatNumber(Math.round(char.avgTaken))}
-                                </div>
-                              </div>
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Battle Time</div>
-                                <div className={`font-medium ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                  {char.avgBattleTime.toFixed(1)}s
-                                </div>
-                              </div>
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>DPS</div>
-                                <div className={`font-medium ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                  {formatNumber(Math.round(char.avgDPS))}
-                                </div>
-                              </div>
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Efficiency</div>
-                                <div className={`font-medium ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                                  {(char.damageEfficiency).toFixed(1)}x
-                                </div>
-                              </div>
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival</div>
-                                <div className={`font-medium ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                  {Math.round(char.survivalRate * 100)}%
-                                </div>
-                              </div>
-                              <div>
-                                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Health</div>
-                                <div className={`font-medium ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                  {formatNumber(Math.round(char.avgHealth))}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        </div>
-                      </div>
-                      {(() => {
-                        const filteredCount = posData.sortedCharacters.filter(char => 
-                          positionCharacterFilters[position]?.length === 0 || 
-                          positionCharacterFilters[position]?.includes(char.name)
-                        ).length;
-                        return filteredCount > 5 && (
-                          <div className={`text-center text-xs mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            Scroll to see all {filteredCount} characters
-                          </div>
-                        );
-                      })()}
-                      </>
-                    ) : (
-                      <div className={`text-center text-sm py-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                        No data available for this position
-                      </div>
-                    )}
-                    
-                    {/* Show message when filters result in no characters */}
-                    {posData.sortedCharacters.length > 0 && 
-                     posData.sortedCharacters.filter(char => 
-                       positionCharacterFilters[position]?.length === 0 || 
-                       positionCharacterFilters[position]?.includes(char.name)
-                     ).length === 0 && (
-                      <div className={`text-center text-sm py-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                        No characters match the selected filters
-                      </div>
-                    )}
-                    </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            
-            {/* Position Performance Comparison Chart */}
-            <div className={`mt-6 p-4 rounded-xl border ${
-              darkMode 
-                ? 'bg-gray-700 border-gray-600' 
-                : 'bg-gray-50 border-gray-200'
-            }`}>
-              <h4 className={`text-lg font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                Cross-Position Performance Comparison
-              </h4>
-              
-              {/* Average damage by position */}
-              <div className="mb-6">
-                <div className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Average Damage Output by Position
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {[1, 2, 3].map(position => {
-                    const posData = positionData[position];
-                    const avgDamage = posData.sortedCharacters.length > 0 
-                      ? posData.sortedCharacters.reduce((sum, char) => sum + char.avgDamage, 0) / posData.sortedCharacters.length
-                      : 0;
-                    const maxAvgDamage = Math.max(...[1, 2, 3].map(p => {
-                      const pData = positionData[p];
-                      return pData.sortedCharacters.length > 0 
-                        ? pData.sortedCharacters.reduce((sum, char) => sum + char.avgDamage, 0) / pData.sortedCharacters.length
-                        : 0;
-                    }));
-                    const barWidth = maxAvgDamage > 0 ? (avgDamage / maxAvgDamage) * 100 : 0;
-                    
-                    return (
-                      <div key={position} className="text-center">
-                        <div className={`text-sm font-medium mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                          Position {position}
-                        </div>
-                        <div className={`text-xs mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {formatNumber(Math.round(avgDamage))}
-                        </div>
-                        <div className={`w-full h-4 rounded ${darkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
-                          <div 
-                            className={`h-4 rounded transition-all duration-300 ${
-                              position === 1 ? 'bg-red-500' : position === 2 ? 'bg-blue-500' : 'bg-purple-500'
-                            }`}
-                            style={{ width: `${barWidth}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              
-              {/* Character diversity by position */}
-              <div className="mb-6">
-                <div className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Character Pool Diversity by Position
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                  {[1, 2, 3].map(position => {
-                    const posData = positionData[position];
-                    const uniqueChars = posData.sortedCharacters.length;
-                    const maxUniqueChars = Math.max(...[1, 2, 3].map(p => positionData[p].sortedCharacters.length));
-                    const diversityScore = maxUniqueChars > 0 ? (uniqueChars / maxUniqueChars) * 100 : 0;
-                    
-                    return (
-                      <div key={position} className={`p-3 rounded-lg ${
-                        darkMode ? 'bg-gray-600' : 'bg-white'
-                      }`}>
-                        <div className={`text-2xl font-bold ${
-                          position === 1 ? (darkMode ? 'text-red-400' : 'text-red-600') :
-                          position === 2 ? (darkMode ? 'text-blue-400' : 'text-blue-600') :
-                          (darkMode ? 'text-purple-400' : 'text-purple-600')
-                        }`}>
-                          {uniqueChars}
-                        </div>
-                        <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          Unique Characters
-                        </div>
-                        <div className={`text-xs mt-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                          {diversityScore.toFixed(0)}% diversity
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-            </div>
-            )}
-          </div>
+        {!deepLinkedCharacter && viewType === 'aggregated' && (!sandbox || manualFiles.some(f => !f.error)) && (
+          <CharactersPage aggregated={aggregatedData} charMap={charMap} idFor={charIdFor} linkFor={characterLinkFor}
+            loading={dataLoading} />
         )}
 
         {/* Meta Analysis Display */}

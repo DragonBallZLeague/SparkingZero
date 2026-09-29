@@ -11,7 +11,7 @@
  *
  * Usage: node scripts/verify-routes.mjs
  */
-import { ROUTES, VIEW_ROUTES, pathForView, viewForPath } from '../src/routes.js';
+import { ROUTES, VIEW_ROUTES, pathForView, viewForPath, isSandboxPath } from '../src/routes.js';
 
 let failures = 0;
 function check(label, actual, expected) {
@@ -45,21 +45,37 @@ check('teams', viewForPath('/teams'), 'teams');
 check('team deep link', viewForPath('/teams/sentai'), 'teams');
 check('tables', viewForPath('/tables'), 'tables');
 check('meta', viewForPath('/meta'), 'meta');
-check('root', viewForPath('/'), 'single');
+check('root is Home', viewForPath('/'), 'home');
+check('matches (the single-match viewer until the Match page)', viewForPath('/matches'), 'single');
+check('match deep link', viewForPath('/matches/' + encodeURIComponent('Seasons/Season 0/x.json')), 'single');
 
 console.log('\nA prefix must not be mistaken for the section:');
 // '/charactersomething' starts with '/characters' as a STRING but is not inside
 // that section; only an exact match or a '/' boundary counts.
-check('near-miss path', viewForPath('/charactersomething'), 'single');
-check('near-miss with segment', viewForPath('/teamsy/x'), 'single');
+check('near-miss path', viewForPath('/charactersomething'), 'home');
+check('near-miss with segment', viewForPath('/teamsy/x'), 'home');
 
 console.log('\nUnknown and malformed input falls back rather than throwing:');
-check('unknown path', viewForPath('/nope'), 'single');
-check('empty string', viewForPath(''), 'single');
+check('unknown path', viewForPath('/nope'), 'home');
+check('empty string', viewForPath(''), 'home');
 check('no leading slash', viewForPath('meta'), 'meta');
-check('non-string', viewForPath(null), 'single');
-check('undefined', viewForPath(undefined), 'single');
+check('non-string', viewForPath(null), 'home');
+check('undefined', viewForPath(undefined), 'home');
 check('unknown view falls back to home', pathForView('__nope__'), ROUTES.home);
+
+console.log('\nThe Sandbox runs the same views under /sandbox:');
+check('sandbox landing is the single-match view', viewForPath('/sandbox'), 'single');
+check('sandbox characters', viewForPath('/sandbox/characters'), 'aggregated');
+check('sandbox teams, trailing slash', viewForPath('/sandbox/teams/'), 'teams');
+check('sandbox unknown falls back to its landing', viewForPath('/sandbox/nope'), 'single');
+check('is a sandbox path', isSandboxPath('/sandbox/meta'), true);
+check('a prefix is not the sandbox', isSandboxPath('/sandboxes'), false);
+check('a league path is not the sandbox', isSandboxPath('/characters'), false);
+for (const { view } of VIEW_ROUTES) {
+  if (view === 'home') continue; // the Sandbox has no Home
+  const p = pathForView(view, { sandbox: true });
+  check('sandbox ' + view + ' -> ' + p + ' -> ' + viewForPath(p), viewForPath(p), view);
+}
 
 console.log('\nBuilders produce clean, single-segment URLs:');
 check('character', ROUTES.character('android-13'), '/characters/android-13');

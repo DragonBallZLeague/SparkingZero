@@ -22,6 +22,22 @@
 @tailwind utilities;
 
 /*
+ * The app's typeface: the system UI font (Segoe UI on Windows, Roboto on
+ * Android, San Francisco on Apple), as the approved shell demo and the league
+ * website render. It replaced Inter from Google Fonts on 2026-09-28.
+ *
+ * Form controls do not inherit a font without preflight, so buttons drew in
+ * Arial beside system-font text; they inherit the family here (not the size,
+ * which each control sets). Element selectors, so any Tailwind font class wins.
+ */
+body {
+  font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+}
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/*
  * Phone density. Under 640px the common roomy utilities tighten, so cards and
  * headings do not eat a phone screen. Carried over from App.css's "mobile-first
  * responsive pass" when App.css moved into the legacy layer (2026-09-28); it is
@@ -34,7 +50,6 @@
  * sm:grid-cols-N` where they are written.
  */
 @media (max-width: 639.98px) {
-  .max-w-7xl { max-width: 100%; }
   .text-4xl { font-size: 1.5rem;  line-height: 1.9rem; }
   .text-3xl { font-size: 1.35rem; line-height: 1.75rem; }
   .text-2xl { font-size: 1.15rem; line-height: 1.5rem; }
