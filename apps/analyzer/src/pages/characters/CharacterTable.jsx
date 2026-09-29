@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import TierPlate from '../../components/TierPlate.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
-import { isProvisionalTier } from '../../utils/performanceTier.js';
+import { isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
+import { HEAD, SortHead } from '../../shell/tableParts.jsx';
 import { CHAR_STATS, statByKey, placements } from './characterRows.js';
 
 /**
@@ -22,30 +23,20 @@ import { CHAR_STATS, statByKey, placements } from './characterRows.js';
  *
  * `linkFor(name)` returning null (the Sandbox) makes the rows plain.
  */
-/** A header cell's type: small caps, one line-height, so buttons and plain cells share a baseline. */
-const HEAD = 'text-[11px] leading-4 font-semibold uppercase tracking-[.04em] whitespace-nowrap';
-
 export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone, phoneStats, idFor, linkFor }) {
   const stats = isPhone ? phoneStats.map(statByKey).filter(Boolean) : CHAR_STATS;
   const place = useMemo(() => Object.fromEntries(CHAR_STATS.map(s => [s.key, placements(pool, s)])), [pool]);
   const max = useMemo(() => Object.fromEntries(CHAR_STATS.map(s => [s.key, Math.max(0, ...pool.map(s.get))])), [pool]);
+  const fade = useMemo(() => fadesThinSamples(pool), [pool]);
 
   const cols = isPhone
     ? 'minmax(0,1fr) 52px 54px 58px'
     : `28px minmax(230px,2.2fr) 40px 66px repeat(${stats.length}, minmax(64px,1fr))`;
   const grid = { display: 'grid', gridTemplateColumns: cols, alignItems: 'center', columnGap: isPhone ? 8 : 12 };
 
-  const head = (key, label, left = false) => {
-    const on = sort === key;
-    return (
-      <div className={`flex ${left ? 'justify-start' : 'justify-end'}`}>
-        <button type="button" onClick={() => onSort(key)}
-          className={`${HEAD} border-0 bg-transparent p-0 cursor-pointer ${on ? 'text-orange-400' : 'text-slate-400 hover:text-slate-200'}`}>
-          {label}{on ? (dir === 'asc' ? ' ↑' : ' ↓') : ''}
-        </button>
-      </div>
-    );
-  };
+  const head = (key, label, left = false) => (
+    <SortHead label={label} on={sort === key} dir={dir} onClick={() => onSort(key)} left={left} />
+  );
 
   return (
     <div className="rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
@@ -58,7 +49,7 @@ export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone,
         {stats.map(s => <React.Fragment key={s.key}>{head(s.key, isPhone ? s.short : s.label)}</React.Fragment>)}
       </div>
       {rows.map((r, i) => {
-        const prov = isProvisionalTier(r);
+        const prov = fade && isProvisionalTier(r);
         const to = linkFor(r.name);
         const Row = to ? Link : 'div';
         return (
@@ -69,7 +60,7 @@ export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone,
               <Portrait id={idFor(r.name)} name={r.name} size={34} />
               <span className="font-semibold leading-[1.2] text-slate-50 text-[13px] sm:text-[14px]">{r.name}</span>
             </div>
-            {!isPhone && <div className="flex justify-end"><TierPlate score={r.combatPerformanceScore} character={r} size="small" /></div>}
+            {!isPhone && <div className="flex justify-end"><TierPlate score={r.combatPerformanceScore} character={r} fade={fade} size="small" /></div>}
             <div className="text-right"><TierScorePill score={r.combatPerformanceScore} provisional={prov} /></div>
             {stats.map(s => {
               const v = s.get(r);
@@ -79,7 +70,7 @@ export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone,
               return (
                 <div key={s.key} className="flex flex-col items-end gap-1">
                   <span className="text-[14px] leading-5 text-slate-100 tabular-nums">{s.fmt(v)}</span>
-                  <span className="block h-[3px] w-[52px] overflow-hidden rounded-sm bg-[#262e40]">
+                  <span className="block h-[3px] w-[52px] overflow-hidden rounded-sm bg-shell-track">
                     <span className="block h-full rounded-sm"
                       style={{ width: `${width}%`, background: colour || '#56627a', ...(prov && colour ? { filter: 'saturate(.45)', opacity: 0.62 } : null) }} />
                   </span>

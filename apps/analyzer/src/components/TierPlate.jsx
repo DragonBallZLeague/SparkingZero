@@ -28,6 +28,9 @@ export default function TierPlate({
   size = 'medium',
   deselected = false,
   showTooltip = true,
+  // false when the list around it has no settled rows (fadesThinSamples):
+  // the plate is then drawn in full, and only its tooltip mentions the sample.
+  fade = true,
   className = '',
 }) {
   // SVG gradient ids are document-global, so each instance needs its own.
@@ -46,7 +49,7 @@ export default function TierPlate({
       ].filter(Boolean).join(' ')
     : undefined;
 
-  const markup = tierPlateSvg(tier, { size, provisional, deselected, idPrefix: uid });
+  const markup = tierPlateSvg(tier, { size, provisional: provisional && fade, deselected, idPrefix: uid });
 
   return (
     <span

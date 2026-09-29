@@ -17,6 +17,7 @@
     "verify-portraits": "node scripts/verify-portraits.mjs",
     "verify-filters": "node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs",
     "verify-character-page": "node --import ./scripts/json-import-hook.mjs scripts/verify-character-page.mjs",
+    "verify-meta-builds": "node --import ./scripts/json-import-hook.mjs scripts/verify-meta-builds.mjs",
     "verify-self-contained": "node scripts/verify-self-contained.mjs",
     "smoke-character-page": "node scripts/smoke-character-page.mjs",
     "build-bands": "node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs",

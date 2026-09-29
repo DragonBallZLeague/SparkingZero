@@ -3,6 +3,7 @@ import { STYLES, fightingStyles } from '../../../utils/characterOverview.js';
 import { styleColor, capsuleTypeColor, rankColor } from '../../../utils/overviewPalette.js';
 import { fmt, RankText, Tip, TipTable, MedianTrack } from './parts.jsx';
 import BuildPicker, { BuildPill } from './BuildPicker.jsx';
+import Segmented from '../../../shell/Segmented.jsx';
 
 /**
  * The Overview's lower half: what kind of fighter this is. Left, the build picker,
@@ -10,7 +11,7 @@ import BuildPicker, { BuildPill } from './BuildPicker.jsx';
  * radar or as bars, over six styles in the league's order.
  */
 
-const muted = darkMode => (darkMode ? 'text-gray-400' : 'text-gray-500');
+const muted = darkMode => (darkMode ? 'text-slate-400' : 'text-gray-500');
 const kicker = darkMode => `text-[11px] font-semibold uppercase tracking-wider ${muted(darkMode)}`;
 
 /**
@@ -69,7 +70,7 @@ function StyleBars({ o, place, M, darkMode }) {
   const cols = 'grid grid-cols-[76px_1fr_44px_44px_64px] sm:grid-cols-[96px_1fr_56px_56px_72px] gap-x-2 sm:gap-x-3 items-center';
   return (
     <div className="space-y-3">
-      <div className={`${cols} text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+      <div className={`${cols} text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${darkMode ? 'text-slate-500' : 'text-gray-400'}`}>
         <span /><span /><span className="text-right">Per min</span><span className="text-right">League</span><span className="text-right">Rank</span>
       </div>
       {STYLES.map(st => {
@@ -81,11 +82,11 @@ function StyleBars({ o, place, M, darkMode }) {
         return (
           <div key={st.key}>
             <div className={cols}>
-              <span className={`flex items-center gap-2 text-sm font-semibold ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+              <span className={`flex items-center gap-2 text-sm font-semibold ${darkMode ? 'text-slate-100' : 'text-gray-900'}`}>
                 <Swatch color={color} />{st.name}
               </span>
               <MedianTrack p={s.p} color={color} height={12} empty={s.zero} darkMode={darkMode} />
-              <span className={`text-right text-sm font-semibold tabular-nums ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+              <span className={`text-right text-sm font-semibold tabular-nums ${darkMode ? 'text-slate-100' : 'text-gray-900'}`}>
                 {st.rate ? fmt(o.rate[st.rate], dp) : ''}
               </span>
               <span className={`text-right text-sm tabular-nums ${muted(darkMode)}`}>{st.rate ? fmt(M['r_' + st.rate], dp) : ''}</span>
@@ -108,7 +109,7 @@ function StyleBars({ o, place, M, darkMode }) {
                           foot={raw === 0 && !outcome ? null : <>Rank <b>#{place.rank[key]} of {place.pool[key]}</b></>} />}>
                         <span className={muted(darkMode)}>{name}</span>
                         <span className="inline-block w-11"><MedianTrack p={place.pct[key]} color={color} height={5} empty={raw === 0} darkMode={darkMode} /></span>
-                        <b className={`tabular-nums ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>{partText(part)}</b>
+                        <b className={`tabular-nums ${darkMode ? 'text-slate-100' : 'text-gray-900'}`}>{partText(part)}</b>
                       </Tip>
                     );
                   })}
@@ -127,8 +128,8 @@ function StyleRadar({ o, place, M, shapeColor, darkMode }) {
   const R = 125, W = 440, cx = W / 2, cy = R + 44, H = cy + R + 60, N = STYLES.length;
   const pt = (i, r) => { const a = -Math.PI / 2 + i * 2 * Math.PI / N; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
   const poly = f => STYLES.map((_, i) => pt(i, f(i)).map(n => n.toFixed(1)).join(',')).join(' ');
-  const grid = darkMode ? '#374151' : '#d1d5db';
-  const medianStroke = darkMode ? '#9ca3af' : '#6b7280';
+  const grid = darkMode ? '#334155' : '#d1d5db';
+  const medianStroke = darkMode ? '#94a3b8' : '#6b7280';
   // A style never used sits at the centre, not at its tied rank.
   const vals = STYLES.map(st => { const s = shown(o, place, st); return s.zero ? 0 : Math.max(5, s.p ?? 0) / 100 * R; });
   return (
@@ -146,7 +147,7 @@ function StyleRadar({ o, place, M, shapeColor, darkMode }) {
           return (
             <Tip key={st.key} as="g" darkMode={darkMode} content={styleTip(o, place, M, st, darkMode)}>
               <circle cx={x} cy={y} r="14" fill="transparent" />
-              <circle cx={x} cy={y} r="5" fill={styleColor(st.key, darkMode)} stroke={darkMode ? '#1f2937' : '#ffffff'} strokeWidth="1.5" />
+              <circle cx={x} cy={y} r="5" fill={styleColor(st.key, darkMode)} stroke={darkMode ? '#1a2031' : '#ffffff'} strokeWidth="1.5" />
             </Tip>
           );
         })}
@@ -161,7 +162,7 @@ function StyleRadar({ o, place, M, shapeColor, darkMode }) {
         const k = 'style_' + st.key;
         return (
           <Tip key={st.key} darkMode={darkMode} content={styleTip(o, place, M, st, darkMode)}
-            className={`absolute whitespace-nowrap text-xs sm:text-sm font-semibold leading-tight ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
+            className={`absolute whitespace-nowrap text-xs sm:text-sm font-semibold leading-tight ${darkMode ? 'text-slate-100' : 'text-gray-900'}`}
             style={{ left: `${(x / W * 100).toFixed(2)}%`, top: `${(y / H * 100).toFixed(2)}%`, transform: `translate(${tx}, ${ty})`, textAlign: side === 'middle' ? 'center' : side === 'start' ? 'left' : 'right' }}>
             <div><Swatch color={styleColor(st.key, darkMode)} className="mr-1.5 align-[0px]" />{st.name}</div>
             <div className="mt-0.5">
@@ -196,14 +197,14 @@ function BuildBlock({ build, isSelected, totalMatches, darkMode }) {
         </div>
       )}
       {!caps.length && <div className={`text-sm mt-2 ${muted(darkMode)}`}>No capsules equipped</div>}
-      {caps.length > 0 && <div className={`flex h-2 rounded overflow-hidden gap-0.5 my-2.5 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+      {caps.length > 0 && <div className={`flex h-2 rounded overflow-hidden gap-0.5 my-2.5 ${darkMode ? 'bg-shell-track' : 'bg-gray-200'}`}>
         {order.map(t => <span key={t} style={{ flex: byType[t], background: capsuleTypeColor(t, darkMode) }} title={`${t} ${byType[t]}`} />)}
       </div>}
       <ul className="list-none m-0 p-0">
         {caps.map((c, i) => (
           <li key={`${c.name}-${i}`} className={`grid grid-cols-[10px_1fr_auto] gap-2 items-center py-1 text-sm ${
             i ? `border-0 border-t border-solid ${darkMode ? 'border-gray-700' : 'border-gray-200'}` : ''
-          } ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+          } ${darkMode ? 'text-slate-100' : 'text-gray-900'}`}>
             <Swatch color={capsuleTypeColor(c.type, darkMode)} className="w-2 h-2" />
             <span>{c.name}</span>
             <span className={`text-xs tabular-nums ${muted(darkMode)}`}>{c.cost}</span>
@@ -222,7 +223,7 @@ export default function StyleBand({
   const [viz, setViz] = useState(initialView);
   const M = baseline.medians;
   const styles = fightingStyles(place.pct);
-  const primaryColor = styles[0] ? styleColor(styles[0].key, darkMode) : (darkMode ? '#e5e7eb' : '#111827');
+  const primaryColor = styles[0] ? styleColor(styles[0].key, darkMode) : (darkMode ? '#e2e8f0' : '#111827');
   const shownBuild = selected || builds[0] || null;
   const ai = o.ai;
 
@@ -242,7 +243,7 @@ export default function StyleBand({
           {ai && (
             <div className={`mt-4 pt-3 border-0 border-t border-solid ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className={kicker(darkMode)}>{selected ? 'AI' : 'Most used AI'}</div>
-              <div className={`text-sm font-semibold mt-0.5 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+              <div className={`text-sm font-semibold mt-0.5 ${darkMode ? 'text-slate-100' : 'text-gray-900'}`}>
                 {ai.tied
                   ? <>Varied <span className={`font-normal text-xs ${muted(darkMode)}`}>{ai.strategies} strategies</span></>
                   : <>{ai.name} <span className={`font-normal text-xs ${muted(darkMode)}`}>{Math.round(ai.share * 100)}% of matches</span></>}
@@ -254,24 +255,16 @@ export default function StyleBand({
 
       <div className="min-w-0">
         <div className="flex items-center justify-between gap-3 mb-3">
-          <div className={`text-[11px] font-bold uppercase tracking-widest ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>How it fights</div>
+          <div className={`text-[11px] font-bold uppercase tracking-widest ${darkMode ? 'text-slate-500' : 'text-gray-400'}`}>How it fights</div>
           <div className="flex items-center gap-3">
-            <span className={`hidden sm:inline-flex items-center gap-1.5 text-xs whitespace-nowrap ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+            <span className={`hidden sm:inline-flex items-center gap-1.5 text-xs whitespace-nowrap ${darkMode ? 'text-slate-500' : 'text-gray-400'}`}>
               {viz === 'radar'
-                ? <span className={`inline-block w-4 border-0 border-t-2 border-dashed ${darkMode ? 'border-gray-400' : 'border-gray-500'}`} />
-                : <span className={`inline-block w-0.5 h-3 ${darkMode ? 'bg-gray-400' : 'bg-gray-500'}`} />}
+                ? <span className={`inline-block w-4 border-0 border-t-2 border-dashed ${darkMode ? 'border-slate-400' : 'border-gray-500'}`} />
+                : <span className={`inline-block w-0.5 h-3 ${darkMode ? 'bg-slate-400' : 'bg-gray-500'}`} />}
               league median
             </span>
-            <div role="group" aria-label="Chart type" className={`inline-flex rounded-lg overflow-hidden border border-solid ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
-              {[['radar', 'Radar'], ['bars', 'Bars']].map(([id, text]) => (
-                <button key={id} type="button" aria-pressed={viz === id} onClick={() => setViz(id)}
-                  className={`px-2.5 py-1 text-xs border-0 cursor-pointer ${viz === id
-                    ? (darkMode ? 'bg-gray-600 text-white font-semibold' : 'bg-gray-200 text-gray-900 font-semibold')
-                    : (darkMode ? 'bg-transparent text-gray-400 hover:text-gray-200' : 'bg-transparent text-gray-500 hover:text-gray-800')}`}>
-                  {text}
-                </button>
-              ))}
-            </div>
+            <Segmented label="Chart type" value={viz} onChange={setViz}
+              options={[{ value: 'radar', label: 'Radar' }, { value: 'bars', label: 'Bars' }]} />
           </div>
         </div>
         {viz === 'radar'

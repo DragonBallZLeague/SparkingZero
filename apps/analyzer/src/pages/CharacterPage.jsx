@@ -37,21 +37,21 @@ export default function CharacterPage({
   charMap = {},
 }) {
   const notice = (icon, title, body) => (
-    <div className={`rounded-2xl p-6 border border-solid mb-6 ${
-      darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+    <div className={`rounded-[10px] p-6 border border-solid mb-6 ${
+      darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200'
     }`}>
       <div className="flex items-start gap-3">
         {icon}
         <div>
           <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h1>
-          <p className={`text-sm mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{body}</p>
+          <p className={`text-sm mt-2 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>{body}</p>
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              className={`inline-flex items-center gap-2 mt-4 px-3 py-1.5 rounded-lg border border-solid text-sm font-semibold cursor-pointer transition-colors ${
+              className={`inline-flex items-center gap-1.5 mt-4 h-8 px-[11px] rounded-[8px] border border-solid text-[13px] font-medium whitespace-nowrap cursor-pointer transition-colors ${
                 darkMode
-                  ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600'
+                  ? 'bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]'
                   : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -73,10 +73,10 @@ export default function CharacterPage({
   // real signals.
   if (reason === 'loading') {
     return (
-      <div className={`rounded-2xl p-6 border border-solid mb-6 ${
-        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      <div className={`rounded-[10px] p-6 border border-solid mb-6 ${
+        darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200'
       }`}>
-        <div className={`flex items-center gap-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <div className={`flex items-center gap-3 ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
           <Loader2 className="w-5 h-5 animate-spin" />
           <span className="text-sm font-medium">
             Loading match data for {missingLabel || 'this character'}…

@@ -162,6 +162,11 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
   - **Font:** the system UI font, as the demo and the website render, and buttons inherit it (they had fallen back to Arial).
   - **Details:** chip and button corners and padding, the segmented control's height, 46px rows, header alignment, and slate text.
   - Measured element by element against the demo at 1600px and 390px: within 1px, apart from scrollbar width.
+- **One panel colour site-wide:**
+  - The Character page and the old Teams, Matches, Meta, Data Tables and Sandbox panels now sit on `bg-shell-panel` with the hairline border, as the Characters table does. They had been on `bg-gray-800`, the chip colour.
+  - Inside the Character page, greys are slate like the shell's. Its buttons are the scope bar's outline button, its menus and tooltips use the popover surface, bars and rings use the shell's track colour, and the Radar/Bars switch is the shell's segmented control.
+  - Tokens `shell-track` and `shell-fill` joined `shell-panel` and `shell-pop`.
+- **Fading only where it tells something apart** (the league's request). A narrow filter or a few Sandbox uploads can leave every character under 5 matches. Fading all of them only washed the list out, so a list fades thin samples only while it also has settled rows (`fadesThinSamples()`). Otherwise nothing fades, and the legend says why. The same rule covers the Builds table and the Character page's build menu. A single Character page still fades its own plate, since its note gives the match count.
 - **Measured on a build**:
   - Characters is 3.2 desktop screens at 1917px and 3.8 on a phone (23 and 16.5 before).
   - No script errors on any page at 1280px or 390px.
@@ -169,15 +174,30 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 
 **Still open in 2c:**
 - **Accessibility pass:** keyboard order through the chip lists, focus management in the phone sheets, 44px targets.
-- **Old panels in the new shell:** Teams, Matches, Meta and Data Tables still show their old panels until their own rebuilds.
+- **Old panels in the new shell:** Teams, Matches and Data Tables still show their old panels until their own rebuilds. So do Meta's AI strategies and Capsules tabs.
 - **`/tables` has no tab.** It redirects to `/characters` once the workbook gains its Position and Capsules sheets.
 - **The workbook's two new sheets** (Position, Capsules) are still to add.
+- **Menus and tooltips slide in from the top left the first time they open.** This has been happening since long before the redesign. It affects the scope bar's chip menus, the build picker, the Overview's tooltips and the older build tooltips.
+  - **Cause:** App.css (legacy layer) sets `* { transition: all .2s }`. floating-ui first renders a menu at the top left, then moves it into place, and that rule animates the move. Later opens start from the last position, so they look right.
+  - **Fix:** narrow that rule to colours instead of `all`, or remove it. Also hide each floating element until it is placed, using floating-ui's `isPositioned` (`Combobox.jsx` already does this by hand).
 
 ### Phase 3 — Character page: in progress
 
 Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design (which follows "Visual direction"), the share-snippet image card, build comparison and character comparison.
 
-### Phases 4–7: not started
+### Phases 4–7: not started, apart from Meta's Builds tab
+
+**Phase 6's Builds tab is built (2026-09-28)**, to the demo's layout A (details in `apps/analyzer/CLAUDE.md`, "The Meta page"):
+- `/meta` has tabs Builds · AI strategies · Capsules. The last two show the old analyses unchanged, each behind its own tab instead of stacked in collapsible boxes; flattening them is still to do.
+- **Builds:**
+  - One 46px row per build: character, build type and cost bar, AI strategy, uses, average damage, efficiency, score, and win % last.
+  - The selected build's capsules show as the one-column list in a side panel from 1180px up, and under the row when narrower.
+  - "Best per character | All builds" sits in the page's own row. The Uses floor (default 5), Character, AI strategy and Capsule chips sit in the scope bar.
+  - Everything is in the URL, as readable slugs.
+- **The numbers match the plan's table:** 368 builds in the default scope and 47 at 5+ uses; 2,554 and 492 over everything.
+- **Measured against the demo** at 1600px, 1100px and 390px: within 1px apart from scrollbar width.
+- `npm run verify-meta-builds` checks the filters on the real corpus. It covers the rule that a build must hold every capsule picked, and best per character.
+- The old `MetaAnalysisContent.jsx` is deleted.
 
 ---
 
@@ -798,7 +818,7 @@ Team test data is reachable from here but is not the default lens (principle 3) 
 
 ### 6. Meta/Builds page consolidation
 
-One page with tabs: **Builds** (new, a league-wide build table), **AI strategies** and **Capsules**. See "Page-by-page review" for the Builds table's floor, filters and layout (compact rows with the capsule list beside them, chosen on the demo). The Build Analyzer Tool is no longer part of this: it never shipped and was deleted on 2026-09-28.
+One page with tabs: **Builds** (new, a league-wide build table; **built 2026-09-28**, see "Progress"), **AI strategies** and **Capsules**. See "Page-by-page review" for the Builds table's floor, filters and layout (compact rows with the capsule list beside them, chosen on the demo). The Build Analyzer Tool is no longer part of this: it never shipped and was deleted on 2026-09-28.
 
 ### 7. Sandbox polish
 

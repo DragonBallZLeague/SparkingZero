@@ -6,6 +6,7 @@ import {
 import { ChevronDown } from 'lucide-react';
 import { buildTypeColor } from '../../../utils/overviewPalette.js';
 import { ScorePill } from './parts.jsx';
+import { fadesThinSamples } from '../../../utils/performanceTier.js';
 
 /**
  * Builds sharing a build type AND an AI read identically in the menu's four
@@ -30,8 +31,17 @@ function lookalikeNotes(builds) {
   return notes;
 }
 
-export function BuildPill({ label, darkMode }) {
+/** `compact` is the table-row size (Meta Builds): smaller, lighter, and it truncates. */
+export function BuildPill({ label, darkMode, compact = false, className = '' }) {
   const c = buildTypeColor(label, darkMode);
+  if (compact) {
+    return (
+      <span className={`inline-block max-w-full truncate align-middle text-[11px] font-semibold leading-[1.45] px-[7px] py-px rounded-full border border-solid whitespace-nowrap ${className}`}
+        style={{ color: c, borderColor: `${c}66`, background: `${c}14` }}>
+        {label}
+      </span>
+    );
+  }
   return (
     <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full border border-solid whitespace-nowrap"
       style={{ color: c, borderColor: c, background: `${c}1f` }}>
@@ -61,19 +71,21 @@ export default function BuildPicker({ builds, selected, allRow, onSelect, darkMo
     useClick(context), useDismiss(context), useRole(context, { role: 'listbox' }),
   ]);
   const notes = lookalikeNotes(builds);
-  const muted = darkMode ? 'text-gray-400' : 'text-gray-500';
+  // Every build thin (a narrow scope): fading them all says nothing.
+  const fade = fadesThinSamples(builds, b => b.provisional);
+  const muted = darkMode ? 'text-slate-400' : 'text-gray-500';
 
   const choose = code => { onSelect(code); setOpen(false); };
   const option = (key, isSelected, first, pill, second, uses, note, code) => (
     <button key={key} type="button" role="option" aria-selected={isSelected} onClick={() => choose(code)}
       className={`w-full grid grid-cols-[1fr_auto] gap-x-3 gap-y-0.5 items-center text-left px-2.5 py-2 bg-transparent border-0 border-solid cursor-pointer rounded-md ${
-        darkMode ? 'text-gray-100 hover:bg-gray-800' : 'text-gray-900 hover:bg-gray-50'
-      } ${isSelected ? (darkMode ? 'bg-gray-800 shadow-[inset_3px_0_0_#f97316]' : 'bg-gray-50 shadow-[inset_3px_0_0_#f97316]') : ''}`}>
+        darkMode ? 'text-slate-200 hover:bg-slate-400/10' : 'text-gray-900 hover:bg-gray-50'
+      } ${isSelected ? (darkMode ? 'bg-brand/[.12] shadow-[inset_3px_0_0_#f97316]' : 'bg-gray-50 shadow-[inset_3px_0_0_#f97316]') : ''}`}>
       <span className="min-w-0">{first}</span>
       <span className="justify-self-end">{pill}</span>
       <span className={`text-xs ${muted}`}>{second}</span>
       <span className={`text-xs tabular-nums justify-self-end whitespace-nowrap ${muted}`}>{uses}</span>
-      {note && <span className={`col-span-2 text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{note}</span>}
+      {note && <span className={`col-span-2 text-xs ${darkMode ? 'text-slate-500' : 'text-gray-400'}`}>{note}</span>}
     </button>
   );
 
@@ -81,12 +93,12 @@ export default function BuildPicker({ builds, selected, allRow, onSelect, darkMo
     <div>
       <div className={`text-[11px] font-semibold uppercase tracking-wider mb-1.5 ${muted}`}>Build</div>
       <button ref={refs.setReference} type="button" {...getReferenceProps()}
-        className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg border border-solid text-sm text-left cursor-pointer ${
-          darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
-        } ${selected ? 'border-orange-500 shadow-[inset_0_0_0_1px_#f97316]' : (darkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400')}`}>
+        className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-[8px] border border-solid text-sm text-left cursor-pointer ${
+          darkMode ? 'bg-gray-800 text-slate-100' : 'bg-white text-gray-900'
+        } ${selected ? 'border-orange-500 shadow-[inset_0_0_0_1px_#f97316]' : (darkMode ? 'border-gray-700 hover:border-slate-400/[.35]' : 'border-gray-300 hover:border-gray-400')}`}>
         <span className="flex-1 flex items-center gap-2 min-w-0">
           {selected
-            ? <><BuildPill label={selected.label} darkMode={darkMode} /><ScorePill score={selected.score} provisional={selected.provisional} darkMode={darkMode} /></>
+            ? <><BuildPill label={selected.label} darkMode={darkMode} /><ScorePill score={selected.score} provisional={fade && selected.provisional} darkMode={darkMode} /></>
             : <>All builds <span className={`text-xs ${muted}`}>({builds.length})</span></>}
         </span>
         <ChevronDown className={`w-4 h-4 shrink-0 ${muted}`} />
@@ -94,14 +106,14 @@ export default function BuildPicker({ builds, selected, allRow, onSelect, darkMo
       {open && (
         <FloatingPortal>
           <div ref={refs.setFloating} style={{ ...floatingStyles, width: 'min(390px, calc(100vw - 32px))' }} {...getFloatingProps()}
-            className={`z-50 overflow-auto rounded-xl border border-solid p-1.5 shadow-2xl ${
-              darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
+            className={`z-50 overflow-auto rounded-[10px] border border-solid p-1.5 ${
+              darkMode ? 'bg-shell-pop border-gray-700 shadow-[0_16px_36px_-10px_rgba(0,0,0,.7)]' : 'bg-white border-gray-200 shadow-2xl'
             }`}>
             {option('all', !selected, <b>All builds</b>, <ScorePill score={allRow.combatPerformanceScore} darkMode={darkMode} />,
               `${builds.length} builds`, `${allRow.matchCount} uses`, null, null)}
             {builds.map((b, i) => option(b.code, selected?.code === b.code,
               <BuildPill label={b.label} darkMode={darkMode} />,
-              <ScorePill score={b.score} provisional={b.provisional} darkMode={darkMode} />,
+              <ScorePill score={b.score} provisional={fade && b.provisional} darkMode={darkMode} />,
               b.aiName, `${b.count} use${b.count === 1 ? '' : 's'}`, notes[i], b.code))}
           </div>
         </FloatingPortal>

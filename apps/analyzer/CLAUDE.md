@@ -33,7 +33,7 @@ This app is mid-rewrite per **`docs/ANALYZER_REDESIGN_PLAN.md`** (audited and re
   - The Data Tables page goes, but the full Excel workbook stays in the scope bar.
   - Team names show the website's spelling through a shared list, while tags and `BR_Data` folders keep their names.
 
-  The real-data demo of the shell, the Characters table, the tier list and the Meta Builds table is in `design/shell-demo/`. It is plain HTML generated from the app's own aggregation (see its README). The league reviewed it on 2026-09-28, and the verdict is in the plan under "Settled on the demo". In short: Builds use compact rows with the capsule list beside them, scores are tier pills in every table, filter chips are multi-select, and **win % is a team measure**, so for characters and builds it goes last and is never a default. The demo is a throwaway, like the Overview demo before it. Delete it once the pages ship and match it (the Meta Builds table is the part still to build).
+  The real-data demo of the shell, the Characters table, the tier list and the Meta Builds table is in `design/shell-demo/`. It is plain HTML generated from the app's own aggregation (see its README). The league reviewed it on 2026-09-28, and the verdict is in the plan under "Settled on the demo". In short: Builds use compact rows with the capsule list beside them, scores are tier pills in every table, filter chips are multi-select, and **win % is a team measure**, so for characters and builds it goes last and is never a default. The demo is a throwaway, like the Overview demo before it. Every page it shows is now built to it, the Meta Builds table last. Delete it once the league has signed the real pages off.
 - **Phase 2c's shell and the Characters page are built (2026-09-28)**, to the demo. See "The shell" and "The Characters and Home pages" below:
   - The section tabs and the sticky, multi-select scope bar replaced the Analysis Mode and View Type panels, the tag-filter panel and the file tree.
   - Data now loads from the scope in the URL.
@@ -41,10 +41,11 @@ This app is mid-rewrite per **`docs/ANALYZER_REDESIGN_PLAN.md`** (audited and re
   - `/` is Home, whose first cut is the tier list.
   - The single-match viewer moved to `/matches`, and the Sandbox (uploads) lives at `/sandbox/...`.
   - Portraits are in `public/portraits/`.
-  - Teams, Matches, Meta and the Data Tables view still render their old panels inside the new shell until their rebuilds.
+  - Teams, Matches and the Data Tables view still render their old panels inside the new shell until their rebuilds.
+  - `/meta` is built too: the league-wide Builds table (layout A), with the old AI strategy and capsule analyses behind its other two tabs. See "The Meta page" below.
 - **Character URLs are name slugs, decided 2026-09-26.** `/characters/android-13`, not `/characters/0620_00` — see "Character URLs are name slugs" below before touching anything that emits a character link.
 - **Deep links now survive a refresh.** `scripts/build-404.js` generates the site-root `dist/404.html` with a dispatcher that redirects sub-app paths into the right app; `restoreDeepLink()` from `@szl/ui` (called at the top of `src/main.jsx`, before the router) puts the original URL back. This was the Phase 3 prerequisite. See the root `CLAUDE.md` for how it works, and note that **no dev server reproduces the Pages 404 rule** — use `node scripts/serve-dist.js` against a build to test deep links.
-- **Phases 4–7 (Team/Match page rebuilds, stats-only Home page, Meta page consolidation, Sandbox polish, share-snippet image export): not started**, apart from Home's first cut (the tier list) and the Sandbox moving to `/sandbox`, both done with the shell.
+- **Phases 4–7 (Team/Match page rebuilds, stats-only Home page, Meta page consolidation, Sandbox polish, share-snippet image export): not started**, apart from Home's first cut (the tier list) and the Sandbox moving to `/sandbox`, both done with the shell, and the Meta page's Builds tab.
 
 Do the phases in order. Phase 1.5 precedes the design work so the new pages aren't built on a 67 MB page load; the `App.css` teardown is deliberately *not* a gate on page rebuilds.
 
@@ -54,7 +55,7 @@ Do the phases in order. Phase 1.5 precedes the design work so the new pages aren
 - `viewType` (home / aggregated / teams / single / tables / meta) comes through `viewForPath()`.
 - `mode` is `'manual'` under `/sandbox` and `'reference'` elsewhere (`isSandboxPath()`).
 
-The **13 presentational components that used to live inside it are now in `src/components/`** — see "Shared presentational components" below; do not define new ones in `App.jsx`. The aggregation functions have **all** been extracted to `src/utils/aggregation/` — including `filteredAggregatedData`, which became `filterAggregated.js` in Phase 3, so no aggregation math is inlined in this file any more. `src/pages/` holds `CharacterPage.jsx`, `CharactersPage.jsx` and `HomePage.jsx`, and `src/shell/` the tab row, scope bar and their hooks. `src/api/` exists and is empty. Don't add new features by growing this file further; where practical, follow the redesign plan's target structure for anything new.
+The **13 presentational components that used to live inside it are now in `src/components/`** — see "Shared presentational components" below; do not define new ones in `App.jsx`. The aggregation functions have **all** been extracted to `src/utils/aggregation/` — including `filteredAggregatedData`, which became `filterAggregated.js` in Phase 3, so no aggregation math is inlined in this file any more. `src/pages/` holds `CharacterPage.jsx`, `CharactersPage.jsx`, `HomePage.jsx` and `MetaPage.jsx`, and `src/shell/` the tab row, scope bar and their hooks. `src/api/` exists and is empty. Don't add new features by growing this file further; where practical, follow the redesign plan's target structure for anything new.
 
 Theming is prop-drilled from a single `useState(true)` at `App.jsx:1315` through **1,199 `darkMode ? 'x' : 'y'` ternaries across `src/`** (704 in `App.jsx`). Styling is class-driven (1,125 `className=` vs 23 `style={{`), but **light mode was removed on purpose** (see "Styling"), so collapsing each ternary to its dark branch is the simplest replacement. The new shell and pages are dark-only and take no `darkMode` prop. The one use of `localStorage` is the phone Characters table's two column choices, a per-viewer convenience. Everything a link should carry is in the query string.
 
@@ -62,7 +63,7 @@ Reusable, already-decoupled pieces worth knowing about:
 - `src/components/BRDataSelector.jsx` — the old file picker over `BR_Data/`. **Nothing renders it any more**: the scope bar decides what loads. It retires with the Matches list, together with MUI, which only it uses (the plan's Phase 4). `scripts/generate-br-data-structure.js` and `public/br-data-structure.json` exist only for it.
 - `TagFilterSelector.jsx` was **deleted** on 2026-09-28. Its tag-filter logic, URL format and current-season default live on in `src/shell/scopeModel.js` and `useScope.js` (see "The shell").
 - `src/components/Combobox.jsx` / `MultiSelectCombobox.jsx`, `DataTable.jsx` / `TableConfigs.jsx` / `ExportManager.jsx` (Excel export), `PerFormStatsDisplay.jsx`.
-- `src/components/ai-strategy/*` (7 components) and `src/components/capsule-synergy/IndividualCapsulePerformance.jsx`: the "Meta Analysis" feature set, planned to consolidate into one Meta page with Builds · AI strategies · Capsules tabs in Phase 6.
+- `src/components/ai-strategy/*` (7 components) and `src/components/capsule-synergy/IndividualCapsulePerformance.jsx`: the "Meta Analysis" feature set. `MetaPage.jsx` shows `AIStrategyAnalysis` and `CapsuleSynergyAnalysis` as its AI strategies and Capsules tabs, unchanged; flattening them is still to do.
   - The Build Analyzer and Synergy Pairs views never shipped, and their files were deleted on 2026-09-28.
   - Their logic stays, unused, for a later look at build recommendations: `utils/buildRecommendationEngine.js`, `config/buildRules.js`, `utils/capsuleEffectParser.js`, and the pair-synergy functions in `utils/capsuleSynergyCalculator.js`.
   - `ExportManager.jsx` and `ai-strategy/AIStrategyCard.jsx` are unused too.
@@ -78,6 +79,7 @@ Reusable, already-decoupled pieces worth knowing about:
   - radii (`rounded-lg/xl/2xl` = 0.875/1.125/1.5rem)
   - soft `shadow-lg/xl/2xl`
   - the navy surfaces (`bg-gray-800` `#1e2434`, `bg-gray-700` `#2b3245`)
+  - the shell palette (`shell-panel` `#1a2031`, `shell-pop` `#222a3b`, `shell-track` `#262e40`, `shell-fill` `#56627a`). **Every page's panel is `bg-shell-panel`** with `border-gray-700`, `rounded-[10px]`: the redesigned pages, the Character page and the old pages' outer panels alike, so the site reads as one surface. Menus and tooltips sit on `shell-pop`, bars and rings use `shell-track`, and muted text is slate (`text-slate-400`, `-500`), not gray. `bg-gray-800` is the chip colour, not a panel colour.
   - the faint hairline `border-gray-700` (slate at 18%; its alpha is scaled, so `border-gray-700/60` is still fainter, not brighter)
   - display letter-spacing on `text-2xl`–`4xl`
   - the page column, `max-w-page` (1352px), set as `px-4 sm:px-6` outside and `max-w-page mx-auto` inside by the tab row, the scope bar and App's page wrapper, so all three edges line up. It is the shell demo's 1400px column with its 24px gutter (16px on a phone). It replaced a fluid `max-w-7xl` up to 1760px, which spread a table row too wide to read across on a big monitor.
@@ -194,7 +196,7 @@ Every rank and "League" number on the Character page Overview (`#12/126`, the le
   - `/matches` is the old single-match viewer (view `single`, which used to be the home page) until the Matches list and Match page replace it.
   - `/teams`, `/meta` and `/tables` as before. Tables has no tab and is due to redirect to `/characters`.
   - **`/sandbox/...` is the Sandbox**: the same views over uploaded files. `pathForView(view, { sandbox: true })` and `isSandboxPath()` handle the prefix, and a Sandbox path's fallback is its landing view (`single`).
-- App still renders every view itself, apart from the Character, Characters and Home pages. These routes make that switch addressable; splitting the remaining views into per-route pages happens in Phases 4–6 and **does not change the paths**.
+- App still renders every view itself, apart from the Character, Characters, Home and Meta pages. These routes make that switch addressable; splitting the remaining views into per-route pages happens in Phases 4–6 and **does not change the paths**.
 - **The trailing `path="*"` catch-all is deliberate.** An unknown or stale URL renders the app rather than a blank page, which matters because links to this app get pasted into Discord and outlive whatever scheme was current when they were posted.
 - **`/characters/:charParam` canonicalises.** A raw id is accepted forever, but if that character has a slug the URL is rewritten to it with `replace: true`, so what a viewer copies out of the address bar is the legible form. See "Character URLs are name slugs" below.
 - **`npm run verify-routes`** (`scripts/verify-routes.mjs`, in `prebuild`) asserts every view round-trips through its path, in the league and in the Sandbox. It also checks that a prefix like `/charactersomething` or `/sandboxes` is not mistaken for its section, that malformed input falls back to Home instead of throwing, and that a match id — a file path containing spaces and slashes — encodes to a **single** URL segment. A mistake here does not crash; it quietly shows the wrong view.
@@ -208,7 +210,7 @@ The tab row and scope bar every page sits under ("Visual direction" decisions 1�
 - **`TabRow.jsx`**: Home · Characters · Teams · Matches · Meta · Sandbox, as links carrying the scope params. **It holds the site's sections and nothing else.** A switch that changes only the current page (Table / Tier list) goes in that page's own control row: the league found it in the tab row read as site-wide.
 - **`ScopeBar.jsx`**: one sticky line (`NAV_H` 61 + `SCOPE_H` 52 are exported for sticky table headers).
   - **Chips:** Season, Match type, Difficulty and Team always. Season phase and Match size come through "+ Filter", and show once set. A set chip is tinted orange.
-  - **Page chips** (`pageChips`, same shape) come after a divider. Characters has Position.
+  - **Page chips** (`pageChips`, same shape) come after a divider. Characters has Position; Meta's Builds tab has Uses, Character, AI strategy and Capsule (`pages/meta/buildChips.jsx`).
   - **Right end:** the match count, and the **Excel** button for the full workbook (App's `handleExcelExport`, which aggregates on demand on pages that do not).
   - **On a phone:** a "Filters (n)" button opens a sheet listing every chip. In the Sandbox the chips give way to a note about the uploads.
 - **`ChipMenu.jsx`**: a chip plus its option list, as a floating-ui popover on desktop or a bottom `Sheet` on a phone.
@@ -218,6 +220,7 @@ The tab row and scope bar every page sits under ("Visual direction" decisions 1�
   - **The URL format is TagFilterSelector's** (`?seasonNumber=0&matchType=Season,Test`), so old shared links still open on the same data.
   - **Clearing every chip writes `scope=all`.** A URL with no scope means "the default", so an "everything" link needs the marker to survive.
 - **`useScope.js`** holds the scope in the URL only. It writes the default into a scope-less league URL (not in the Sandbox), and is `ready` once that is done. **`useScopedMatches.js`** loads the scope's matches, with a generation counter so a stale batch never lands.
+- **`tableParts.jsx`**: the list tables' header type (`HEAD`) and sortable header cell (`SortHead`), shared by the Characters and Builds tables.
 - **`useQueryUpdate.js`**: every query-string write goes through it (replace, no Back stop). `prettySearch()` keeps commas readable, because `URLSearchParams` writes `%2C` and these links get pasted into Discord.
 - **App's side:**
   - `fileContent` / `selectedFilePath` are fed from the scope, so the old views work unchanged.
@@ -233,6 +236,7 @@ The tab row and scope bar every page sits under ("Visual direction" decisions 1�
 - **`characters/CharacterTable.jsx`**: the table and its colour rules.
   - **Layout:** a CSS-grid table with a sticky header, and each row a link to the character's page (plain in the Sandbox).
   - **Numbers are white;** each stat cell's thin bar turns green or red only for the top or bottom fifth of the pool (`placements()`). A thin sample keeps its colour, faded.
+  - **Fading needs settled rows to contrast with.** `fadesThinSamples()` (`utils/performanceTier.js`) is false when every row is under 5 matches, as after a narrow filter or with a few Sandbox uploads. Then nothing fades (plates, pills, bars, tier-list portraits, the Builds table and the build menu), and `fadeLegend()` says so under the list. `TierPlate` takes `fade={false}` for this; its tooltip still states the sample.
   - **Tier:** a plate on desktop, and the score as a `TierScorePill` everywhere.
   - **Phone:** the score and two stats picked with two pickers, kept in `localStorage`.
 - **`characters/TierList.jsx`**: rows Z to C of portraits. Each row is tinted in its tier pill's ring colour (13% behind the plate, 5% behind the portraits); not the plate colour, since Z and B share a blue plate.
@@ -243,13 +247,24 @@ The tab row and scope bar every page sits under ("Visual direction" decisions 1�
   - **Naming:** every icon is `T_UI_FaceP1_<id>_00.png` except `0080_01` (`0080_00_01`).
   - **Lookup:** App's `charIdFor(name)` gives the id.
 
+## The Meta page
+
+- **`pages/MetaPage.jsx`** (`/meta`): tabs Builds · AI strategies · Capsules (`tab=ai|capsules`). The tabs, the count and the "Best per character | All builds" switch share one row on a desktop and stack on a phone.
+- **Builds** is the league-wide build table, the answer to "what should I submit?", built to the shell demo's layout A.
+  - **A build** is a character's exact capsules plus AI strategy. Each row comes from `characterBuilds()`, the Character page's build picker, so its score is the one that character's page shows under `?build=`. `meta/buildRows.js` `leagueBuilds()` flattens them for the scope. App computes that once (~240ms over the whole corpus) because the chips need it too.
+  - **Filters live in the URL** as readable slugs: `uses` (the floor, default 5, 1 in the Sandbox), `char`, `ai`, `cap`, `group=best`, `sort`/`dir`. OR within character and AI strategy; **a build must contain every capsule picked**. The floor is a visible chip that starts set, never a hidden rule.
+  - **`meta/BuildsTable.jsx`**: 46px rows (portrait, character, the compact build-type pill and a capsule-type cost bar, AI strategy, uses, average damage, efficiency, score pill, win % last). 25 rows, then "Show more".
+  - **The selected row's capsules** show as the one-column list (grouped by type, AI strategy last) in a sticky side panel from 1180px up. Narrower, a row opens its list underneath. The panel and the phone leave win % out.
+  - **Type:** its text inherits the demo's 14px / 1.45 line height from the page's wrapper, not from `body`, so the older pages do not change. Buttons and `text-[10px]`/`text-[11px]` (which App.css gives a 1.4 line height) state `leading-[1.45]` themselves.
+  - **`npm run verify-meta-builds`** checks the rules on the real corpus: uses add up to matches, every filter including the all-capsules rule, best per character, sorting, the URL defaults, and that no two names share a slug. Not in prebuild.
+
 ## Shared presentational components (read before building any page)
 
 `StatBar`, `PerformanceIndicator`, `PerformanceScoreBadge`, `StatGroup`, `MetricDisplay`, `BlastMetricDisplay`, `BattleTimeVariance`, `BuildYamlButtons`, `BuildTypeTooltipWrapper`, `BuildTableView`, `BuildDisplay` and `MetaAnalysisContent` were all defined **inside `App.jsx`**, which meant they were unreachable from anywhere else. The first Character page reinvented the build display as a result, and shipped a worse version of something that already existed. They now live in:
 
 - **`src/components/stats/`** (barrel: `index.js`) — the stat primitives.
 - **`src/components/build/`** (barrel: `index.js`) — the build-display family, plus `buildYaml.js` (`generateBuildYaml`, `useCopyFeedback`).
-- **`src/components/MetaAnalysisContent.jsx`** — the Meta Analysis block, which becomes the Meta page in Phase 6.
+- `MetaAnalysisContent` was deleted on 2026-09-28, when `pages/MetaPage.jsx` put its two analyses behind tabs.
 
 **`BuildTypeTooltipWrapper` is the canonical way to show a build**: a colour-coded build-type pill (`getBuildTypeColor`) with the cost breakdown on hover. Use it rather than writing another one. Note `buildComposition` is an object — `.label` is the display string.
 

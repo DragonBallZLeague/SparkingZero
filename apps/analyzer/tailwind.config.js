@@ -35,8 +35,10 @@ module.exports = {
         // this retune is not a visual change today.
         // The redesign shell ("Visual direction" in the redesign plan). A section
         // sits on `shell-panel`, a hair darker than the gray-800 chips; popovers
-        // are the only raised surface, on `shell-pop`.
-        shell: { panel: '#1a2031', pop: '#222a3b' },
+        // are the only raised surface, on `shell-pop`. Every page's panel uses
+        // it, so the site reads as one surface. `track` is the empty part of a
+        // bar or ring and `fill` a bar's neutral (mid-pool) fill.
+        shell: { panel: '#1a2031', pop: '#222a3b', track: '#262e40', fill: '#56627a' },
         // Rank colour, used only at the ends of a pool (top and bottom fifth).
         // The same values as utils/overviewPalette.js RANK_ENDS.dark.
         rank: { good: '#16e05a', bad: '#ff2b3a' },

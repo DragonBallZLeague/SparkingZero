@@ -4,12 +4,12 @@ import Segmented from '../shell/Segmented.jsx';
 import ChipMenu from '../shell/ChipMenu.jsx';
 import { useQueryUpdate } from '../shell/useQueryUpdate.js';
 import { useIsPhone } from '../shell/useMediaQuery.js';
-import { isProvisionalTier, tierBasisSummary } from '../utils/performanceTier.js';
+import { tierBasisSummary } from '../utils/performanceTier.js';
 import CharacterTable from './characters/CharacterTable.jsx';
 import TierList from './characters/TierList.jsx';
 import {
   CHAR_STATS, DEFAULT_PHONE_STATS, statByKey,
-  readView, readSort, readPositions, rowsForPositions, sortRows,
+  readView, readSort, readPositions, rowsForPositions, sortRows, fadeLegend,
 } from './characters/characterRows.js';
 
 const PHONE_COLS_KEY = 'szl.analyzer.characters.phoneCols';
@@ -62,7 +62,6 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [aggregated, posKey, charMap]);
   const rows = useMemo(() => sortRows(pool, { sort, dir }), [pool, sort, dir]);
-  const provisional = useMemo(() => pool.filter(isProvisionalTier).length, [pool]);
 
   const update = updateQuery;
   const setView = v => update(p => (v === 'tiers' ? p.set('view', 'tiers') : p.delete('view')));
@@ -117,7 +116,7 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
 
       <p className="mt-2.5 mb-0 text-xs text-slate-500">
         {view === 'tiers' ? `${tierBasisSummary()} ` : ''}
-        Faded = fewer than 5 matches{provisional ? ` (${provisional} here)` : ''}.
+        {fadeLegend(pool)}
       </p>
     </div>
   );

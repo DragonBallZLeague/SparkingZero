@@ -36,8 +36,10 @@ export const pct = (n, digits = 1) =>
 
 export const secs = (n) => {
   if (!n && n !== 0) return '—';
-  const m = Math.floor(n / 60);
-  const s = Math.round(n % 60);
+  // Rounded before splitting, so 119.6 reads 2m 00s rather than 1m 60s.
+  const t = Math.round(n);
+  const m = Math.floor(t / 60);
+  const s = t % 60;
   return m > 0 ? `${m}m ${String(s).padStart(2, '0')}s` : `${s}s`;
 };
 
@@ -57,12 +59,12 @@ export function Section({ icon: Icon, title, hint = null, children, darkMode, cl
       <div className={`flex items-baseline gap-2 pb-1.5 mb-3 border-0 border-b border-solid ${
         darkMode ? 'border-gray-700' : 'border-gray-200'
       }`}>
-        {Icon && <Icon className={`w-4 h-4 self-center ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />}
-        <h2 className={`text-sm font-bold uppercase tracking-wide ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+        {Icon && <Icon className={`w-4 h-4 self-center ${darkMode ? 'text-slate-500' : 'text-gray-400'}`} />}
+        <h2 className={`text-sm font-bold uppercase tracking-wide ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
           {title}
         </h2>
         {hint && (
-          <span className={`text-xs font-normal ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{hint}</span>
+          <span className={`text-xs font-normal ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>{hint}</span>
         )}
       </div>
       {children}
@@ -75,7 +77,7 @@ export function Stat({ label, value, sub = null, darkMode, align = 'left' }) {
   return (
     <div className={align === 'right' ? 'text-right' : ''}>
       <div className={`text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap ${
-        darkMode ? 'text-gray-500' : 'text-gray-500'
+        darkMode ? 'text-slate-500' : 'text-gray-500'
       }`}>
         {label}
       </div>
@@ -83,7 +85,7 @@ export function Stat({ label, value, sub = null, darkMode, align = 'left' }) {
         {value}
       </div>
       {sub && (
-        <div className={`text-[11px] leading-tight ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{sub}</div>
+        <div className={`text-[11px] leading-tight ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>{sub}</div>
       )}
     </div>
   );
@@ -93,10 +95,10 @@ export function Stat({ label, value, sub = null, darkMode, align = 'left' }) {
 export function Fact({ label, value, darkMode }) {
   return (
     <div className="min-w-0">
-      <div className={`text-[10px] font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+      <div className={`text-[10px] font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>
         {label}
       </div>
-      <div className={`text-sm font-medium truncate ${darkMode ? 'text-gray-200' : 'text-gray-800'}`} title={value || ''}>
+      <div className={`text-sm font-medium truncate ${darkMode ? 'text-slate-200' : 'text-gray-800'}`} title={value || ''}>
         {value || '—'}
       </div>
     </div>
@@ -163,7 +165,7 @@ export function IdentityBlock({
               {rank != null && (
                 <span
                   className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border border-solid ${
-                    darkMode ? 'bg-gray-700/60 border-gray-600 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-600'
+                    darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
                   }`}
                   title="Position on the leaderboard as currently filtered. Unlike the tier, this moves with the filters."
                 >
@@ -172,7 +174,7 @@ export function IdentityBlock({
                 </span>
               )}
               <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border border-solid ${
-                darkMode ? 'bg-gray-700/60 border-gray-600 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-600'
+                darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
               }`}>
                 <BarChart3 className="w-3 h-3" />
                 {nf(matches)} match{matches === 1 ? '' : 'es'}
@@ -187,9 +189,9 @@ export function IdentityBlock({
             <button
               type="button"
               onClick={onBack}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-solid text-sm font-semibold cursor-pointer transition-colors ${
+              className={`inline-flex items-center gap-1.5 h-8 px-[11px] rounded-[8px] border border-solid text-[13px] font-medium whitespace-nowrap cursor-pointer transition-colors ${
                 darkMode
-                  ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600'
+                  ? 'bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]'
                   : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -210,7 +212,7 @@ export function IdentityBlock({
       {/* Whoever opened this from a pasted link never chose the filters, and
           would otherwise read these numbers as covering everything. */}
       {scopeLabel && (
-        <p className={`text-xs mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+        <p className={`text-xs mt-2 ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>
           From <span className="font-semibold">{scopeLabel}</span>
         </p>
       )}
@@ -255,7 +257,7 @@ export function UsageBlock({ character, darkMode, columns = 4 }) {
         <div className="flex flex-wrap gap-1 mt-3">
           {teams.map(t => (
             <span key={t} className={`text-[11px] px-1.5 py-0.5 rounded border border-solid ${
-              darkMode ? 'bg-gray-700/50 border-gray-600 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-600'
+              darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
             }`}>{t}</span>
           ))}
         </div>
@@ -267,8 +269,8 @@ export function UsageBlock({ character, darkMode, columns = 4 }) {
 /** Positions as a table. Three cards for three rows was never worth the space. */
 export function PositionBlock({ byPosition, darkMode }) {
   if (!byPosition.length) return null;
-  const th = `text-left text-[10px] font-semibold uppercase tracking-wider pb-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`;
-  const td = `py-1.5 text-sm tabular-nums ${darkMode ? 'text-gray-200' : 'text-gray-800'}`;
+  const th = `text-left text-[10px] font-semibold uppercase tracking-wider pb-1 ${darkMode ? 'text-slate-500' : 'text-gray-500'}`;
+  const td = `py-1.5 text-sm tabular-nums ${darkMode ? 'text-slate-200' : 'text-gray-800'}`;
   return (
     <Section icon={Layers} title="By position" hint={`${POSITION_NAMES[1]}, Middle and Anchor face different matchups`} darkMode={darkMode}>
       <table className="w-full">
@@ -283,7 +285,7 @@ export function PositionBlock({ byPosition, darkMode }) {
         </thead>
         <tbody>
           {byPosition.map(p => (
-            <tr key={p.slot ?? p.position} className={`border-0 border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'}`}>
+            <tr key={p.slot ?? p.position} className={`border-0 border-t border-solid ${darkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
               <td className={td + ' font-semibold'}>{p.position}</td>
               <td className={td + ' text-right'}>{nf(p.played)}</td>
               <td className={td + ' text-right'}>{pct((p.won / p.played) * 100)}</td>
@@ -329,7 +331,7 @@ export function BuildsBlock({ character, darkMode, limit = 3 }) {
           <div
             key={i}
             className={`flex items-start justify-between gap-3 py-2 ${
-              i > 0 ? 'border-0 border-t border-solid ' + (darkMode ? 'border-gray-700/60' : 'border-gray-100') : ''
+              i > 0 ? 'border-0 border-t border-solid ' + (darkMode ? 'border-gray-700/50' : 'border-gray-100') : ''
             }`}
           >
             <div className="min-w-0 flex-1">
@@ -346,7 +348,7 @@ export function BuildsBlock({ character, darkMode, limit = 3 }) {
             </div>
             <div className="flex items-center gap-1.5 shrink-0 pt-0.5">
               <span className={`text-[11px] px-1.5 py-0.5 rounded border border-solid whitespace-nowrap ${
-                darkMode ? 'bg-gray-700/50 border-gray-600 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-600'
+                darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
               }`}>
                 {nf(b.count)}×
               </span>
@@ -368,7 +370,7 @@ export function BuildsBlock({ character, darkMode, limit = 3 }) {
 
 export function MatchesBlock({ character, recentMatches, darkMode, onOpenMatch }) {
   if (!recentMatches.length) return null;
-  const th = `text-left text-[10px] font-semibold uppercase tracking-wider pb-1 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`;
+  const th = `text-left text-[10px] font-semibold uppercase tracking-wider pb-1 ${darkMode ? 'text-slate-500' : 'text-gray-500'}`;
   return (
     <Section
       icon={Clock}
@@ -395,8 +397,8 @@ export function MatchesBlock({ character, recentMatches, darkMode, onOpenMatch }
               return (
                 <tr
                   key={i}
-                  className={`border-0 border-t border-solid ${darkMode ? 'border-gray-700/60' : 'border-gray-100'} ${
-                    clickable ? 'cursor-pointer ' + (darkMode ? 'hover:bg-gray-700/40' : 'hover:bg-gray-50') : ''
+                  className={`border-0 border-t border-solid ${darkMode ? 'border-gray-700/50' : 'border-gray-100'} ${
+                    clickable ? 'cursor-pointer ' + (darkMode ? 'hover:bg-slate-400/5' : 'hover:bg-gray-50') : ''
                   }`}
                   onClick={clickable ? () => onOpenMatch(m.fileName) : undefined}
                   title={clickable ? 'Open this match' : undefined}
@@ -410,12 +412,12 @@ export function MatchesBlock({ character, recentMatches, darkMode, onOpenMatch }
                       {m.won ? 'W' : 'L'}
                     </span>
                   </td>
-                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{m.team || '—'}</td>
-                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{m.opponentTeam || '—'}</td>
-                  <td className={`py-1.5 pr-3 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{positionLabel(m.position)}</td>
-                  <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{nf(m.damageDone)}</td>
-                  <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{nf(m.damageTaken)}</td>
-                  <td className={`py-1.5 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{m.team || '—'}</td>
+                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{m.opponentTeam || '—'}</td>
+                  <td className={`py-1.5 pr-3 text-xs ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>{positionLabel(m.position)}</td>
+                  <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-slate-200' : 'text-gray-800'}`}>{nf(m.damageDone)}</td>
+                  <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-slate-200' : 'text-gray-800'}`}>{nf(m.damageTaken)}</td>
+                  <td className={`py-1.5 text-xs ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       <MapIcon className="w-3 h-3" />
                       {m.map || m.mapId || '—'}

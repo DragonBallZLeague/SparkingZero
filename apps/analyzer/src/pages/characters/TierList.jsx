@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import TierPlate from '../../components/TierPlate.jsx';
 import { TIERS, TIER_LABELS } from '../../utils/tierScale.js';
-import { tierForScore, isProvisionalTier } from '../../utils/performanceTier.js';
+import { tierForScore, isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { tierPillColors } from '../../utils/tierPlateSvg.js';
 
 /** '#rrggbb' + alpha -> rgba(). */
@@ -24,6 +24,7 @@ const tint = (hex, a) => {
  */
 export default function TierList({ rows, isPhone, idFor, linkFor }) {
   const sorted = [...rows].sort((a, b) => (b.combatPerformanceScore || 0) - (a.combatPerformanceScore || 0));
+  const fade = fadesThinSamples(rows);
   return (
     <div className="overflow-hidden rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
       {TIERS.map(t => {
@@ -42,12 +43,13 @@ export default function TierList({ rows, isPhone, idFor, linkFor }) {
             </div>
             <div className={`flex flex-wrap content-start ${isPhone ? 'gap-0.5 px-1 pb-2.5 pt-1.5' : 'gap-1 p-2.5'}`}>
               {inTier.map(r => {
-                const prov = isProvisionalTier(r);
+                const thin = isProvisionalTier(r);
+                const prov = fade && thin;
                 const to = linkFor(r.name);
                 const Tile = to ? Link : 'div';
                 return (
                   <Tile key={r.name} to={to || undefined}
-                    title={`${r.name}: score ${(r.combatPerformanceScore || 0).toFixed(1)}${prov ? ', fewer than 5 matches' : ''}`}
+                    title={`${r.name}: score ${(r.combatPerformanceScore || 0).toFixed(1)}${thin ? ', fewer than 5 matches' : ''}`}
                     className={`flex flex-col items-center gap-1 rounded-[8px] px-0.5 py-[5px] no-underline hover:bg-slate-400/[.08] ${isPhone ? 'w-[calc((100%-8px)/5)]' : 'w-[78px]'}`}>
                     <Portrait id={idFor(r.name)} name={r.name} size={isPhone ? 50 : 54} rounded={isPhone ? 9 : 10} dim={prov} />
                     <span className={`line-clamp-2 text-center leading-[1.2] ${isPhone ? 'text-[10.5px]' : 'text-[11px]'} ${prov ? 'text-slate-500' : 'text-slate-300'}`}>

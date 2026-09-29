@@ -15,14 +15,14 @@ function Ring({ rate, color, median, dim, darkMode }) {
   const full = v >= 0.995;
   return (
     <svg width="56" height="56" viewBox="0 0 42 42" style={{ overflow: 'visible' }} className="shrink-0" aria-hidden="true">
-      <circle cx="21" cy="21" r={r} fill="none" stroke={darkMode ? '#374151' : '#e5e7eb'} strokeWidth="5" />
+      <circle cx="21" cy="21" r={r} fill="none" stroke={darkMode ? '#262e40' : '#e5e7eb'} strokeWidth="5" />
       <circle cx="21" cy="21" r={r} fill="none" stroke={color} strokeOpacity={dim ? 0.4 : 1} strokeWidth="5"
         strokeLinecap="round" strokeDasharray={`${C * v} ${C}`} transform="rotate(-90 21 21)" />
       {median !== null && median !== undefined && (
         <line x1={21 + Math.cos(a) * 15.5} y1={21 + Math.sin(a) * 15.5} x2={21 + Math.cos(a) * 22} y2={21 + Math.sin(a) * 22}
-          stroke={darkMode ? '#9ca3af' : '#6b7280'} strokeOpacity=".7" strokeWidth="2" strokeLinecap="round" />
+          stroke={darkMode ? '#94a3b8' : '#6b7280'} strokeOpacity=".7" strokeWidth="2" strokeLinecap="round" />
       )}
-      <text x="21" y={full ? 24.5 : 25} textAnchor="middle" fill={darkMode ? '#f3f4f6' : '#111827'}
+      <text x="21" y={full ? 24.5 : 25} textAnchor="middle" fill={darkMode ? '#f1f5f9' : '#111827'}
         style={{ font: `700 ${full ? 9 : 10.5}px system-ui, sans-serif` }}>
         {rate === null ? '-' : `${Math.round(v * 100)}%`}
       </text>
@@ -40,15 +40,15 @@ function VolumeCircle({ value, median, top, color, darkMode }) {
   const fillR = value > 0 ? Math.max(2.5, rad(value)) : 0;
   return (
     <svg width="56" height="56" viewBox="0 0 42 42" className="shrink-0" aria-hidden="true">
-      <circle cx="21" cy="21" r={R} fill="none" stroke={darkMode ? '#374151' : '#e5e7eb'} strokeWidth="1.5" />
+      <circle cx="21" cy="21" r={R} fill="none" stroke={darkMode ? '#262e40' : '#e5e7eb'} strokeWidth="1.5" />
       {fillR > 0 && <circle cx="21" cy="21" r={fillR.toFixed(1)} fill={color} fillOpacity=".85" />}
       <circle cx="21" cy="21" r={Math.max(2, rad(median)).toFixed(1)} fill="none"
-        stroke={darkMode ? '#9ca3af' : '#6b7280'} strokeOpacity=".9" strokeWidth="1.3" strokeDasharray="2.5 2" />
+        stroke={darkMode ? '#94a3b8' : '#6b7280'} strokeOpacity=".9" strokeWidth="1.3" strokeDasharray="2.5 2" />
     </svg>
   );
 }
 
-const label = darkMode => `text-[11px] font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`;
+const label = darkMode => `text-[11px] font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`;
 
 export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
   const M = baseline.medians;
@@ -64,17 +64,17 @@ export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
     ['Battle time', mmss(o.avgTime), 'avg', place.pct.avgTime, 'avgTime', mmss(M.avgTime)],
   ];
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-5 gap-px rounded-xl overflow-hidden border border-solid ${
-      darkMode ? 'bg-gray-700 border-gray-700' : 'bg-gray-200 border-gray-200'
+    <div className={`grid grid-cols-2 sm:grid-cols-5 gap-px rounded-[10px] overflow-hidden border border-solid ${
+      darkMode ? 'bg-slate-400/[.16] border-gray-700' : 'bg-gray-200 border-gray-200'
     }`}>
       {tiles.map(([lbl, val, unit, good, key, league], i) => {
         const color = rankColor(good, darkMode);
         return (
-          <div key={key} className={`p-3.5 min-w-0 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''} ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div key={key} className={`p-3.5 min-w-0 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''} ${darkMode ? 'bg-shell-panel' : 'bg-white'}`}>
             <div className={label(darkMode)}>{lbl}</div>
             <div className={`text-2xl font-extrabold tracking-tight tabular-nums whitespace-nowrap mt-0.5 mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               {val}
-              {unit && <span className={`text-xs font-medium ml-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{unit}</span>}
+              {unit && <span className={`text-xs font-medium ml-1 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>{unit}</span>}
             </div>
             <MedianTrack p={good} color={color || NEUTRAL[darkMode ? 'dark' : 'light']} fade={!color} dot darkMode={darkMode} />
             {/* The league median sits on the rank's line: these are the headline
@@ -82,7 +82,7 @@ export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
             {/* Wraps on a phone, where a half-width tile cannot fit both. */}
             <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 mt-2 text-xs">
               <RankText rank={place.rank[key]} pool={place.pool[key]} color={color} darkMode={darkMode} />
-              <span className={`whitespace-nowrap ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>League {league}</span>
+              <span className={`whitespace-nowrap ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>League {league}</span>
             </div>
           </div>
         );
@@ -96,12 +96,12 @@ export const MIN_THROWS = 10;
 
 export function MoveCards({ overview: o, place, baseline, darkMode }) {
   const M = baseline.medians;
-  const faint = darkMode ? '#6b7280' : '#9ca3af';
-  const cardClass = `flex items-center gap-2.5 rounded-xl border border-solid px-3 py-2.5 min-w-0 h-full ${
-    darkMode ? 'bg-gray-900/40 border-gray-700' : 'bg-gray-50 border-gray-200'
+  const faint = darkMode ? '#64748b' : '#9ca3af';
+  const cardClass = `flex items-center gap-2.5 rounded-[10px] border border-solid px-3 py-2.5 min-w-0 h-full ${
+    darkMode ? 'bg-transparent border-gray-700' : 'bg-gray-50 border-gray-200'
   }`;
   const value = `text-base font-bold tabular-nums whitespace-nowrap ${darkMode ? 'text-white' : 'text-gray-900'}`;
-  const small = `text-xs font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`;
+  const small = `text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-gray-500'}`;
   const caption = 'text-xs font-semibold whitespace-nowrap';
 
   // Supers and the ultimate: hit / thrown per match, a donut of the hit rate.

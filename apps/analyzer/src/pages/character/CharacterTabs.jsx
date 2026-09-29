@@ -53,14 +53,14 @@ const TABS = [
 /** "Showing one build", with the way back to all of them. */
 function BuildStrip({ build, darkMode, onClear }) {
   return (
-    <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 mt-4 px-3 py-2 rounded-lg border border-solid text-sm ${
-      darkMode ? 'bg-orange-500/10 border-orange-500/40 text-gray-200' : 'bg-orange-50 border-orange-200 text-gray-800'
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 mt-4 px-3 py-2 rounded-[8px] border border-solid text-sm ${
+      darkMode ? 'bg-brand/[.12] border-brand/[.55] text-slate-200' : 'bg-orange-50 border-orange-200 text-gray-800'
     }`}>
       <Filter className={`w-4 h-4 shrink-0 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
       <span className="font-semibold">Showing one build</span>
       <BuildPill label={build.label} darkMode={darkMode} />
-      <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{build.aiName}</span>
-      <span className={`tabular-nums ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+      <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>{build.aiName}</span>
+      <span className={`tabular-nums ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
         {build.count} use{build.count === 1 ? '' : 's'}
       </span>
       <button
@@ -107,8 +107,9 @@ export default function CharacterTabs(props) {
   const active = tabs.some(t => t.id === tab) ? tab : (tabs[0]?.id || 'overview');
 
   return (
-    <div className={`rounded-2xl p-5 sm:p-6 border border-solid mb-6 ${
-      darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+    // bg-shell-panel, as the Characters table: one panel colour site-wide.
+    <div className={`rounded-[10px] p-5 sm:p-6 border border-solid mb-6 ${
+      darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200'
     }`}>
       {/* The score and tier are the build's when one is selected. Its leaderboard
           rank is not: the leaderboard ranks characters, not builds. */}
@@ -135,7 +136,7 @@ export default function CharacterTabs(props) {
               active === t.id
                 ? (darkMode ? 'border-orange-500 text-white' : 'border-orange-500 text-gray-900')
                 : (darkMode
-                    ? 'border-transparent text-gray-400 hover:text-gray-200'
+                    ? 'border-transparent text-slate-400 hover:text-slate-200'
                     : 'border-transparent text-gray-500 hover:text-gray-800')
             }`}
           >

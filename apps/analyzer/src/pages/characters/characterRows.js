@@ -1,5 +1,5 @@
 import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.js';
-import { tierMatchCount } from '../../utils/performanceTier.js';
+import { tierMatchCount, isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { POSITION_NAMES } from '../../utils/positions.js';
 
 /**
@@ -68,6 +68,16 @@ export function rowsForPositions(aggregated, positions, charMap) {
     .map(r => ({ ...r, matches: (r.matches || []).filter(m => want.has(Number(m.position))) }))
     .filter(r => r.matches.length);
   return filterAggregatedData(cut, { charMap });
+}
+
+/**
+ * The legend line under a list of character rows. When every row is a thin
+ * sample nothing is faded (fadesThinSamples), and the line says so instead.
+ */
+export function fadeLegend(rows) {
+  if (rows.length && !fadesThinSamples(rows)) return 'Every character here has fewer than 5 matches, so none is faded.';
+  const thin = rows.filter(isProvisionalTier).length;
+  return `Faded = fewer than 5 matches${thin ? ` (${thin} here)` : ''}.`;
 }
 
 /** How many characters played each position at least once, for the chip's counts. */

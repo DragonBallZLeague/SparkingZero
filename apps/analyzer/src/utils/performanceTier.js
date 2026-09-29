@@ -61,6 +61,19 @@ export function isProvisionalTier(charOrCount) {
 }
 
 /**
+ * Whether a list should fade its thin samples. Fading sets the rows whose tier
+ * rests on too few matches apart from the settled ones, so it only means
+ * something while the list has settled rows. A narrow filter or a few Sandbox
+ * uploads can leave every row under the threshold; fading them all would only
+ * wash the list out, so then nothing is faded and the legend says why.
+ *
+ * `isThin` defaults to the character rule; the Builds table passes its own.
+ */
+export function fadesThinSamples(rows, isThin = isProvisionalTier) {
+  return (rows || []).some(r => !isThin(r));
+}
+
+/**
  * One line for a tooltip. Deliberately short: the match and character counts and
  * the difficulty rule are calibration detail that belongs in the committed bands
  * file, not in front of a reader who just wants to know what a tier means.

@@ -89,7 +89,7 @@ export default function ShareButton({
     : failed
       ? (darkMode ? 'bg-red-900/60 border-red-700 text-red-300' : 'bg-red-50 border-red-300 text-red-700')
       : (darkMode
-          ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600'
+          ? 'bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]'
           : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50');
 
   return (
@@ -99,7 +99,7 @@ export default function ShareButton({
       // Tailwind preflight is off in this app, so a <button> keeps the UA's
       // default background and border unless they are stated. Hence border-solid
       // and an explicit background in every branch above.
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-solid text-sm font-semibold
+      className={`inline-flex items-center gap-1.5 h-8 px-[11px] rounded-[8px] border border-solid text-[13px] font-medium whitespace-nowrap
         cursor-pointer transition-colors ${tone} ${className}`}
       title={failed ? 'Could not copy - the link is in the address bar' : title}
       aria-live="polite"

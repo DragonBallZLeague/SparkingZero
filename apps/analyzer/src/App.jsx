@@ -11,6 +11,9 @@ import { useQueryUpdate, prettySearch } from './shell/useQueryUpdate.js';
 import CharactersPage from './pages/CharactersPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import { readPositions, positionCounts } from './pages/characters/characterRows.js';
+import MetaPage from './pages/MetaPage.jsx';
+import { leagueBuilds, readMetaTab, readBuildFilters, DEFAULT_FLOOR } from './pages/meta/buildRows.js';
+import { buildChips } from './pages/meta/buildChips.jsx';
 import { formatNumber } from './utils/formatters.js';
 import DataTable from './components/DataTable.jsx';
 import { prepareCharacterAveragesData, prepareMatchDetailsData, getCharacterAveragesTableConfig, getMatchDetailsTableConfig, getMetaTableConfig } from './components/TableConfigs.jsx';
@@ -113,7 +116,6 @@ function naturalSort(a, b) {
 // page did exactly that and drifted visually as a result.
 import { StatBar, PerformanceIndicator, PerformanceIndicatorLabel, PerformanceScoreBadge, StatGroup, MetricDisplay, BlastMetricDisplay, BattleTimeVariance } from './components/stats/index.js';
 import { BuildTableView, BuildDisplay } from './components/build/index.js';
-import MetaAnalysisContent from './components/MetaAnalysisContent.jsx';
 
 export default function App() {
   const [selectedFilePath, setSelectedFilePath] = useState(null);
@@ -469,8 +471,30 @@ export default function App() {
   const updateQuery = useQueryUpdate();
   const positionsSelected = readPositions(searchParams);
   const posCounts = useMemo(() => positionCounts(aggregatedData), [aggregatedData]);
+
+  // Meta's Builds tab: every build in scope, computed once for its table and
+  // its chips (Uses floor, Character, AI strategy, Capsule). ~240ms over the
+  // whole corpus, so only on /meta. The Sandbox's few uploads rarely reuse a
+  // build five times, so its floor starts at "any number".
+  const metaBuilds = useMemo(
+    () => (viewType === 'meta' ? leagueBuilds(aggregatedData, charMap) : []),
+    [viewType, aggregatedData, charMap]
+  );
+  const buildFloor = sandbox ? 1 : DEFAULT_FLOOR;
+  const buildLinkFor = useCallback(b => {
+    const to = characterLinkFor(b.name);
+    return to ? `${to}${to.includes('?') ? '&' : '?'}build=${b.code}` : null;
+  }, [characterLinkFor]);
+  const metaChipKey = viewType === 'meta' ? searchParams.toString() : '';
+
   const pageChips = useMemo(() => {
-    if (sandbox || viewType !== 'aggregated' || charParam) return [];
+    if (sandbox) return [];
+    if (viewType === 'meta') {
+      return readMetaTab(searchParams) === 'builds'
+        ? buildChips({ builds: metaBuilds, filters: readBuildFilters(searchParams, buildFloor), update: updateQuery, idFor: charIdFor, defaultFloor: buildFloor })
+        : [];
+    }
+    if (viewType !== 'aggregated' || charParam) return [];
     return [{
       id: 'pos',
       name: 'Position',
@@ -488,7 +512,7 @@ export default function App() {
     }];
     // positionsSelected is re-derived each render; its joined form is its identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery]);
+  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery, metaBuilds, metaChipKey, buildFloor, charIdFor]);
 
   // Helper to toggle expanded state
   const toggleRow = (teamType, idx) => {
@@ -969,7 +993,7 @@ export default function App() {
       <div className="max-w-page mx-auto">
         {/* Manual Upload Mode */}
         {mode === 'manual' && (
-          <div className={`rounded-2xl shadow-xl p-6 mb-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`rounded-[10px] border border-solid p-6 mb-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
             <div className="flex items-center gap-2 mb-4">
               <Upload className={`w-6 h-6 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
               <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Upload JSON Battle Result Files</h3>
@@ -1275,28 +1299,16 @@ export default function App() {
             loading={dataLoading} />
         )}
 
-        {/* Meta Analysis Display */}
-        {((mode === 'reference' && viewType === 'meta') || 
-          (mode === 'manual' && viewType === 'meta' && manualFiles.filter(f => !f.error).length > 0)) && (
-          <div className={`rounded-2xl shadow-xl p-6 mb-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <div className="flex items-center gap-3 mb-6">
-              <Database className={`w-8 h-8 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-              <div>
-                <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Build Meta Analysis</h2>
-                <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Capsule effectiveness and build archetype trends across all matches
-                </p>
-              </div>
-            </div>
-            
-            <MetaAnalysisContent aggregatedData={aggregatedData} capsuleMap={capsuleMap} aiStrategies={aiStrategies} charMap={charMap} darkMode={darkMode} />
-          </div>
+        {/* Meta: Builds, AI strategies and Capsules (pages/MetaPage.jsx). */}
+        {viewType === 'meta' && (!sandbox || manualFiles.some(f => !f.error)) && (
+          <MetaPage builds={metaBuilds} aggregated={aggregatedData} charMap={charMap} idFor={charIdFor}
+            buildLinkFor={buildLinkFor} defaultFloor={buildFloor} loading={dataLoading} darkMode={darkMode} />
         )}
 
         {/* Single File Analysis Results */}
         {((mode === 'reference' && (analysisSelectedFilePath || selectedFilePath) && viewType === 'single') || 
           (mode === 'manual' && viewType === 'single' && (analysisFileContent || fileContent))) && (
-          <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
             {/* Match filter banner — shown when navigated from Data Tables */}
             {matchFilterSource && (
               <div className={`flex items-center justify-between gap-3 mb-4 px-4 py-3 rounded-xl border ${
@@ -1984,7 +1996,7 @@ export default function App() {
             {aggregatedData && Object.keys(aggregatedData).length > 0 && (
               <>
                 {/* Excel Export Button */}
-                <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -2009,7 +2021,7 @@ export default function App() {
                 </div>
 
                 {/* Character Averages Table */}
-                <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
                   <div className="mb-4">
                     <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       Character Performance Averages
@@ -2033,7 +2045,7 @@ export default function App() {
                 </div>
 
                 {/* Match Details Table */}
-                <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
                   <div className="mb-4">
                     <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                       Individual Match Performance Details
@@ -2060,7 +2072,7 @@ export default function App() {
 
             {/* Position Analysis Table - DISABLED FOR NOW */}
             {/* {positionData && Object.keys(positionData).length > 0 && (
-              <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
                 <DataTable
                   data={preparePositionData(positionData)}
                   columns={getPositionTableConfig(darkMode).columns}
@@ -2080,7 +2092,7 @@ export default function App() {
 
             {/* Meta Analysis Table - DISABLED FOR NOW */}
             {/* {aggregatedData && Object.keys(aggregatedData).length > 0 && (
-              <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
                 <DataTable
                   data={(() => {
                     // Create meta data from aggregated character data
@@ -2132,8 +2144,8 @@ export default function App() {
         {/* Team Rankings Display */}
         {((mode === 'reference' && viewType === 'teams') || 
           (mode === 'manual' && viewType === 'teams' && manualFiles.filter(f => !f.error).length > 0)) && (
-          <div className={`rounded-2xl shadow-xl p-6 mb-6 ${
-            darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'
+          <div className={`rounded-[10px] border border-solid p-6 mb-6 ${
+            darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'
           }`}>
             <div className="flex items-center gap-3 mb-6">
               <Users className={`w-8 h-8 ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`} />
@@ -3311,7 +3323,7 @@ export default function App() {
 
         {/* Error Display */}
         {fileContent?.error && (
-          <div className={`rounded-2xl shadow-xl p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
             <div className={`flex items-center gap-3 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
               <Shield className="w-8 h-8" />
               <div>
