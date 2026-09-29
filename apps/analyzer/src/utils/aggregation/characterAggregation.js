@@ -31,6 +31,12 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       }
       return null;
     }
+    // "…の１Ｐの開始地点" is the Starter; AlliesTeamMember1..n follow it in order.
+    function getSlotFromKey(k) {
+      if (k.includes('１Ｐ') || k.includes('２Ｐ')) return 1;
+      const m = k.match(/Member(\d+)/);
+      return m ? parseInt(m[1], 10) + 1 : null;
+    }
 
     // Fusion split helpers — apply a fractional fusion contribution to charData aggregates
     function applyFusionToCharData(charData, fc, mult, includeTrackable) {
@@ -142,14 +148,16 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       let teamName = null;
       let opponentTeam = null;
       let isTeam1 = false;
-      if (teams && Array.isArray(teams) && teams.length >= 2) {
+      // A test file can name only its own team (["Malevolent Souls"]): its
+      // side still belongs to that team, as getTeamAggregatedData counts it.
+      if (teams && Array.isArray(teams) && teams.length >= 1) {
         if (key.includes('AlliesTeamMember') || key.includes('１Ｐ')) {
-          teamName = teams[0];
-          opponentTeam = teams[1];
+          teamName = teams[0] || null;
+          opponentTeam = teams[1] || null;
           isTeam1 = true;
         } else if (key.includes('EnemyTeamMember') || key.includes('２Ｐ')) {
-          teamName = teams[1];
-          opponentTeam = teams[0];
+          teamName = teams[1] || null;
+          opponentTeam = teams[0] || null;
           isTeam1 = false;
         }
       }
@@ -507,6 +515,7 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
           pendingFusionAdjustments.push({
             triggerAggKey: aggregationKey,
             partnerAggKey: sameTeamMap.get(partnerOriginalId),
+            side: isTeam1 ? 1 : 2,
             fusionFormId,
             fusionContribution,
             hasAdditionalCounts: char.additionalCounts !== undefined,
@@ -577,6 +586,12 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         formChangeCount: formChangeCount,
         perFormStats: perFormStatsForMatch, // Store per-form stats with each match
         position: charPosition,
+        // The exact lineup order (1 = Starter, then each member in turn), which
+        // `position` collapses to Starter / Middle / Anchor, and which side of
+        // the file (1 or 2) the character was on - the only way to tell a
+        // team's two lineups apart in a mirror test.
+        slot: getSlotFromKey(key),
+        side: isTeam1 ? 1 : 2,
         won: won,
         fileName: fileName
       });
@@ -690,15 +705,26 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       }
     });
 
-    // Phase 3: Apply fusion stat splits — reduce trigger char by half, credit half to partner
+    // Phase 3: Apply fusion stat splits — reduce trigger char by half, credit half to partner.
+    // The match rows adjusted are this file's rows on the fusion's own side: the
+    // same character can be on both teams (a test against itself), and the
+    // last row pushed would then be the other team's.
+    const rowOf = (data, side) => {
+      for (let i = data.matches.length - 1; i >= 0; i--) {
+        const m = data.matches[i];
+        if (m.fileName !== fileName) break;
+        if (m.side === side) return m;
+      }
+      return null;
+    };
     for (const adj of pendingFusionAdjustments) {
-      const { triggerAggKey, partnerAggKey, fusionFormId, fusionContribution: fc, hasAdditionalCounts } = adj;
+      const { triggerAggKey, partnerAggKey, side, fusionFormId, fusionContribution: fc, hasAdditionalCounts } = adj;
       const half = 0.5;
 
       const triggerData = characterStats[triggerAggKey];
       if (triggerData) {
         applyFusionToCharData(triggerData, fc, -half, hasAdditionalCounts);
-        const tm = triggerData.matches[triggerData.matches.length - 1];
+        const tm = rowOf(triggerData, side);
         if (tm) applyFusionToMatchEntry(tm, fc, -half);
         triggerData.hasFusionStats = true;
         triggerData.fusionFormsInvolved.add(fusionFormId);
@@ -706,7 +732,7 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
 
       const partnerData = characterStats[partnerAggKey];
       if (partnerData) {
-        const partnerLastMatch = partnerData.matches[partnerData.matches.length - 1];
+        const partnerLastMatch = rowOf(partnerData, side);
         const partnerWasInactive = !partnerLastMatch || (partnerLastMatch.battleTime || 0) === 0;
         applyFusionToCharData(partnerData, fc, half, hasAdditionalCounts);
         if ((fc.battleTime || 0) > 0 && partnerWasInactive) {

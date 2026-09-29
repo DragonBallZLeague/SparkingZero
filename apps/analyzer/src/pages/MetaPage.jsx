@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import Segmented from '../shell/Segmented.jsx';
 import { useQueryUpdate } from '../shell/useQueryUpdate.js';
 import { useIsPhone, useMediaQuery } from '../shell/useMediaQuery.js';
+import { PAGE } from '../shell/tableParts.jsx';
 import AIStrategyAnalysis from '../components/ai-strategy/AIStrategyAnalysis.jsx';
 import CapsuleSynergyAnalysis from '../components/CapsuleSynergyAnalysis.jsx';
 import BuildsTable from './meta/BuildsTable.jsx';
@@ -10,7 +11,6 @@ import { META_TABS, readMetaTab, readBuildFilters, filterBuilds } from './meta/b
 
 /** Where the capsule list moves from under a row to a side panel. */
 const WIDE_QUERY = '(min-width: 1180px)';
-const PAGE = 25;
 
 /**
  * /meta: three tabs - Builds, AI strategies, Capsules ("Page-by-page review" in

@@ -32,6 +32,11 @@ export default function CharacterPage({
   scopeLabel = null,
   darkMode = false,
   onBack = null,
+  // Where the back button goes, when the page knows (shell/useCameFrom.js):
+  // "Budokai", "Meta". Without it the button offers the character list.
+  backLabel = null,
+  // The id its portrait is filed under (public/portraits/<id>.webp).
+  portraitId = null,
   onOpenMatch = null,
   // id -> name, for form names on a build-filtered row (filterAggregatedData).
   charMap = {},
@@ -56,7 +61,7 @@ export default function CharacterPage({
               }`}
             >
               <ArrowLeft className="w-4 h-4" />
-              All characters
+              {backLabel || 'All characters'}
             </button>
           )}
         </div>
@@ -121,6 +126,8 @@ export default function CharacterPage({
       scopeLabel={scopeLabel}
       darkMode={darkMode}
       onBack={onBack}
+      backLabel={backLabel}
+      portraitId={portraitId}
       onOpenMatch={onOpenMatch}
       charMap={charMap}
     />

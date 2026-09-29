@@ -8,10 +8,16 @@ import { useScope } from './shell/useScope.js';
 import { useScopedMatches } from './shell/useScopedMatches.js';
 import { SCOPE_KEYS, ALL_MARKER, describeScope } from './shell/scopeModel.js';
 import { useQueryUpdate, prettySearch } from './shell/useQueryUpdate.js';
+import { useCameFrom } from './shell/useCameFrom.js';
+import TeamLogo from './components/TeamLogo.jsx';
 import CharactersPage from './pages/CharactersPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import { readPositions, positionCounts } from './pages/characters/characterRows.js';
 import MetaPage from './pages/MetaPage.jsx';
+import TeamsPage from './pages/TeamsPage.jsx';
+import TeamPage from './pages/TeamPage.jsx';
+import { teamRows, readVs } from './pages/teams/teamRows.js';
+import { teamByTag, teamBySlug } from './utils/teams.js';
 import { leagueBuilds, readMetaTab, readBuildFilters, DEFAULT_FLOOR } from './pages/meta/buildRows.js';
 import { buildChips } from './pages/meta/buildChips.jsx';
 import { formatNumber } from './utils/formatters.js';
@@ -25,7 +31,7 @@ import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
 import { loadMatches } from './utils/corpusLoader.js';
 import { calculateMatchPerformanceScore, parseCharacterCSV, getTeams, extractStats, parseBattleTime, formatBattleTime } from './utils/statCalculations.js';
 import { getBuildComposition, getBuildTypeColor } from './utils/buildComposition.js';
-import { getFusionPartnerFamilyForms, computeMatchFusionDeltas } from './utils/fusionSplit.js';
+import { getFusionPartnerFamilyForms, computeMatchFusionDeltas, applyFusionSplit } from './utils/fusionSplit.js';
 import { getAggregatedCharacterData } from './utils/aggregation/characterAggregation.js';
 import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
 import { getPositionBasedData } from './utils/aggregation/positionAggregation.js';
@@ -133,7 +139,7 @@ export default function App() {
   // becomes linkable, refreshable and shareable for free.
   const location = useLocation();
   const navigate = useNavigate();
-  const { charParam } = useParams();
+  const { charParam, teamParam } = useParams();
   const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
   // The data source comes from the URL too: the Sandbox (/sandbox/...) runs the
@@ -141,12 +147,15 @@ export default function App() {
   // `mode` keeps its old name and values so the views' existing checks work.
   const sandbox = isSandboxPath(location.pathname);
   const mode = sandbox ? 'manual' : 'reference';
-  // The query string without the Character page's own `build` param. A selected
-  // build belongs to one character's page: it must not ride along to the
-  // leaderboard, another view or another character. The data-scope params do.
+  // The query string without the detail pages' own params: the Character page's
+  // `build` and `for`, the Team page's `vs`. They belong to one character's or
+  // team's page: they must not ride along to the leaderboard, another view or
+  // another character. The data-scope params do.
   const scopeSearch = useMemo(() => {
     const params = new URLSearchParams(location.search);
     params.delete('build');
+    params.delete('for');
+    params.delete('vs');
     return prettySearch(params);
   }, [location.search]);
   // Only the scope params: what the section tabs and character links carry, so
@@ -171,9 +180,7 @@ export default function App() {
   const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
   const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
   const [manualFiles, setManualFiles] = useState([]);
-  const [expandedRows, setExpandedRows] = useState({}); // Expanded state for character rows
   const [expandedPositions, setExpandedPositions] = useState({}); // Expanded state for position accordions in matchups
-  const [expandedCharacters, setExpandedCharacters] = useState({}); // Expanded state for individual character cards in matchups
   const [selectedBuildIndex, setSelectedBuildIndex] = useState({}); // Track selected build index per character
   const [selectedBuildSort, setSelectedBuildSort] = useState({}); // Track sort column+dir per character build table
   const [activeBuildFilters, setActiveBuildFilters] = useState({}); // Track active build filter per character
@@ -200,7 +207,6 @@ export default function App() {
     setAnalysisFileContent(null);
     setAnalysisSelectedFilePath(null);
     setMatchFilterSource(null);
-    setExpandedRows({});
     if (sandbox) {
       const valid = manualFiles.filter(f => !f.error);
       setFileContent(valid.length === 1 ? valid[0].content : null);
@@ -305,7 +311,7 @@ export default function App() {
 
   // Aggregated data for reference mode (single file only)
   const aggregatedData = useMemo(() => {
-    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || viewType === 'tables') && fileContent) {
+    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || viewType === 'tables' || (viewType === 'teams' && teamParam)) && fileContent) {
       // If fileContent is an array, use as is; if single file, wrap in array
       const filesArr = Array.isArray(fileContent)
         ? fileContent
@@ -315,7 +321,7 @@ export default function App() {
       return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies, mapsMap);
     }
     return [];
-  }, [mode, viewType, charMap, capsuleMap, aiStrategies, manualFiles, fileContent, selectedFilePath]);
+  }, [mode, viewType, teamParam, charMap, capsuleMap, aiStrategies, manualFiles, fileContent, selectedFilePath]);
 
   // Position-based data for advanced analysis (single file only)
   const positionData = useMemo(() => {
@@ -382,15 +388,22 @@ export default function App() {
   //
   // Phase 3 replaces this with absolute tier cutoffs, at which point no reference
   // population is needed at all.
+  // The Character page's "Played for" (`for=<team slug>`): only the matches the
+  // character played for that team. A Team page's roster links set it, so the
+  // page opens on the numbers the roster row showed.
+  const forTeam = useMemo(
+    () => (charParam ? teamBySlug(searchParams.get('for'), []) : null),
+    [charParam, searchParams]
+  );
   const performanceReference = useMemo(
     () => filterAggregatedData(aggregatedData, {
-      selectedTeams,
+      selectedTeams: forTeam ? [forTeam.tag] : selectedTeams,
       selectedAIStrategies,
       selectedMaps,
       activeBuildFilters,
       charMap,
     }),
-    [aggregatedData, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters, charMap]
+    [aggregatedData, forTeam, selectedTeams, selectedAIStrategies, selectedMaps, activeBuildFilters, charMap]
   );
 
   // ---- /characters/<name-slug> ---------------------------------------------
@@ -429,6 +442,7 @@ export default function App() {
     if (i === -1) return { label: wanted, character: null, reason: 'not-found' };
     return {
       label: wanted,
+      id,
       character: performanceReference[i],
       rank: i + 1,
       totalInScope: performanceReference.length,
@@ -458,6 +472,73 @@ export default function App() {
     name => (sandbox ? null : ROUTES.character(charUrlKeyByName.get(name) || name) + scopeOnlySearch),
     [charUrlKeyByName, scopeOnlySearch, sandbox]
   );
+
+  // ---- /teams and /teams/<slug> ---------------------------------------------
+  // Whole-team rows for the Teams table and the Team page's ranks. A team's link
+  // carries only the scope, like a character's; none in the Sandbox.
+  const allTeamRows = useMemo(() => teamRows(teamAggregatedData), [teamAggregatedData]);
+  const teamLinkFor = useCallback(
+    tag => (sandbox || !tag ? null : ROUTES.team(teamByTag(tag).slug) + scopeOnlySearch),
+    [scopeOnlySearch, sandbox]
+  );
+  // The same three ways to have no team as a character page has: still loading,
+  // an empty scope, or a name that played no matches in scope.
+  const deepLinkedTeam = useMemo(() => {
+    if (!teamParam) return {};
+    const team = teamBySlug(teamParam, allTeamRows.map(r => r.tag));
+    const label = team ? team.name : teamParam;
+    if (scopeState.ready && scopeState.paths && scopeState.paths.length === 0) return { team, label, reason: 'empty-scope' };
+    if (dataLoading) return { team, label, reason: 'loading' };
+    const row = team ? allTeamRows.find(r => r.tag === team.tag) : null;
+    return row ? { team, label, row } : { team, label, reason: 'not-found' };
+  }, [teamParam, allTeamRows, scopeState.ready, scopeState.paths, dataLoading]);
+  // A tag or an old slug in the URL is rewritten to the team's slug (replace:
+  // not a Back stop), so what a viewer copies is the legible form.
+  useEffect(() => {
+    const t = deepLinkedTeam.team;
+    if (teamParam && t && t.slug !== teamParam) {
+      navigate({ pathname: ROUTES.team(t.slug), search: location.search }, { replace: true });
+    }
+  }, [teamParam, deepLinkedTeam.team, navigate, location.search]);
+
+  // The Team page's head-to-heads: the same aggregation over the matches
+  // between two teams only.
+  const aggregateTeams = useCallback(
+    fs => getTeamAggregatedData(fs, charMap, capsuleMap, aiStrategies),
+    [charMap, capsuleMap, aiStrategies]
+  );
+  // The opponents it can be cut to (`vs`), for the scope bar's Opponent chip -
+  // not itself: a team's tests against itself say nothing about it.
+  const teamOpponents = useMemo(() => {
+    const r = deepLinkedTeam.row;
+    if (!r) return [];
+    return Object.entries(r.source.opponentRecords || {})
+      .filter(([opp]) => opp && opp !== r.tag)
+      .map(([opp, rec]) => ({ tag: opp, wins: rec.wins || 0, losses: rec.losses || 0 }))
+      .sort((a, b) => b.wins + b.losses - (a.wins + a.losses) || teamByTag(a.tag).name.localeCompare(teamByTag(b.tag).name));
+  }, [deepLinkedTeam.row]);
+  const teamVs = teamParam ? readVs(searchParams, teamOpponents.map(o => o.tag)) : null;
+
+  // ---- back buttons ------------------------------------------------------------
+  // A detail page goes back where it was opened from (shell/useCameFrom.js),
+  // named: "Budokai", "Meta", "Goku (Super)". Opened from a pasted link, it has
+  // nowhere to go back to and offers its list instead.
+  const cameFrom = useCameFrom();
+  const backLabel = useMemo(() => {
+    if (!cameFrom) return null;
+    const { pathname } = cameFrom;
+    if (isSandboxPath(pathname)) return 'Sandbox';
+    const seg = decodeURIComponent(pathname.split('/').filter(Boolean)[1] || '');
+    switch (viewForPath(pathname)) {
+      case 'teams': return seg ? (teamBySlug(seg, [])?.name || seg) : 'Teams';
+      case 'aggregated': return seg ? (charSlugIndex.idToName.get(resolveCharacterParam(seg, charSlugIndex)) || seg) : 'Characters';
+      case 'meta': return 'Meta';
+      case 'single': return 'Matches';
+      case 'tables': return 'Tables';
+      default: return 'Home';
+    }
+  }, [cameFrom, charSlugIndex]);
+  const goBack = useCallback(fallback => (cameFrom ? navigate(-1) : navigate(fallback)), [cameFrom, navigate]);
 
   // In the Sandbox the scope bar says whose data this is instead of offering a scope.
   const validUploads = manualFiles.filter(f => !f.error).length;
@@ -494,7 +575,53 @@ export default function App() {
         ? buildChips({ builds: metaBuilds, filters: readBuildFilters(searchParams, buildFloor), update: updateQuery, idFor: charIdFor, defaultFloor: buildFloor })
         : [];
     }
-    if (viewType !== 'aggregated' || charParam) return [];
+    if (viewType === 'teams' && teamParam) {
+      if (!teamOpponents.length) return [];
+      const vsName = teamVs ? teamByTag(teamVs).name : null;
+      return [{
+        id: 'vs',
+        name: 'Opponent',
+        multi: false,
+        selected: teamVs ? teamByTag(teamVs).slug : '',
+        set: !!teamVs,
+        label: vsName ? `vs ${vsName}` : 'Opponent',
+        search: teamOpponents.length > 8,
+        options: [
+          { v: '', l: 'All opponents' },
+          ...teamOpponents.map(o => ({
+            v: teamByTag(o.tag).slug, l: teamByTag(o.tag).name, cnt: `${o.wins}–${o.losses}`,
+            img: <TeamLogo tag={o.tag} size={18} rounded={4} />,
+          })),
+        ],
+        onChange: v => updateQuery(p => { if (v) p.set('vs', v); else p.delete('vs'); }),
+      }];
+    }
+    if (viewType !== 'aggregated') return [];
+    if (charParam) {
+      const name = deepLinkedCharacter && deepLinkedCharacter.label;
+      const raw = name ? aggregatedData.find(c => c.name === name) : null;
+      if (!raw) return [];
+      const played = new Map();
+      for (const m of raw.matches || []) if (m.team) played.set(m.team, (played.get(m.team) || 0) + 1);
+      if (!played.size) return [];
+      return [{
+        id: 'for',
+        name: 'Played for',
+        multi: false,
+        selected: forTeam ? forTeam.slug : '',
+        set: !!forTeam,
+        label: forTeam ? `Played for ${forTeam.name}` : 'Played for',
+        search: played.size > 8,
+        options: [
+          { v: '', l: 'Any team' },
+          ...[...played].sort((a, b) => b[1] - a[1]).map(([tag, n]) => ({
+            v: teamByTag(tag).slug, l: teamByTag(tag).name, cnt: `${n} match${n === 1 ? '' : 'es'}`,
+            img: <TeamLogo tag={tag} size={18} rounded={4} />,
+          })),
+        ],
+        onChange: v => updateQuery(p => { if (v) p.set('for', v); else p.delete('for'); }),
+      }];
+    }
     return [{
       id: 'pos',
       name: 'Position',
@@ -512,12 +639,8 @@ export default function App() {
     }];
     // positionsSelected is re-derived each render; its joined form is its identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery, metaBuilds, metaChipKey, buildFloor, charIdFor]);
-
-  // Helper to toggle expanded state
-  const toggleRow = (teamType, idx) => {
-    setExpandedRows(prev => ({ ...prev, [`${teamType}_${idx}`]: !prev[`${teamType}_${idx}`] }));
-  };
+  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery, metaBuilds, metaChipKey, buildFloor, charIdFor,
+    teamParam, teamOpponents, teamVs, deepLinkedCharacter, aggregatedData, forTeam]);
 
   const handleSelect = (fileName) => {
     setSelectedFile(fileName);
@@ -532,7 +655,6 @@ export default function App() {
       setFileContent({ error: 'File not found.' });
       setFileTags(null);
     }
-    setExpandedRows({}); // Reset expanded state on file change
   };
 
 
@@ -572,7 +694,6 @@ export default function App() {
       } else {
         setFileContent(null);
       }
-      setExpandedRows({});
     });
   };
 
@@ -608,7 +729,6 @@ export default function App() {
         setAnalysisSelectedFilePath([file.name]);
         setMatchFilterSource(fileName);
         setViewType('single');
-        setExpandedRows({});
         setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
       }
       return;
@@ -625,7 +745,6 @@ export default function App() {
         setAnalysisSelectedFilePath([fileName]);
         setMatchFilterSource(fileName);
         setViewType('single');
-        setExpandedRows({});
         setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
       }
     } catch (err) {
@@ -646,7 +765,6 @@ export default function App() {
       // Automatically switch to single view when manually selecting a file
       setViewType('single');
     }
-    setExpandedRows({});
   };
 
   // Handler used by the Match Analysis header combobox to switch which file is being shown
@@ -659,7 +777,6 @@ export default function App() {
         // Only apply to the analysis area
         setAnalysisFileContent(file.content);
         setAnalysisSelectedFilePath([file.name]);
-        setExpandedRows({});
       }
       return;
     }
@@ -672,7 +789,6 @@ export default function App() {
         // Only apply to the analysis area
         setAnalysisFileContent(f.content || f);
         setAnalysisSelectedFilePath([f.name]);
-        setExpandedRows({});
       }
     }
   };
@@ -930,44 +1046,7 @@ export default function App() {
 
   // Fusion split for Match Analysis view: compute per-character stat deltas
   const fusionDeltas = computeMatchFusionDeltas(characterRecord, characterIdRecord);
-  const applyFusionDelta = (stats, char) => {
-    const origForm = char.battlePlayCharacter?.originalCharacter?.key;
-    const delta = origForm ? fusionDeltas.get(origForm) : null;
-    if (!delta) return stats;
-    return {
-      ...stats,
-      damageDone: Math.max(0, (stats.damageDone || 0) + (delta.damageDone || 0)),
-      damageTaken: Math.max(0, (stats.damageTaken || 0) + (delta.damageTaken || 0)),
-      battleTime: Math.max(0, (stats.battleTime || 0) + (delta.battleTime || 0)),
-      kills: Math.max(0, (stats.kills || 0) + (delta.kills || 0)),
-      specialMovesUsed: Math.max(0, (stats.specialMovesUsed || 0) + (delta.specialMovesUsed || 0)),
-      ultimatesUsed: Math.max(0, (stats.ultimatesUsed || 0) + (delta.ultimatesUsed || 0)),
-      skillsUsed: Math.max(0, (stats.skillsUsed || 0) + (delta.skillsUsed || 0)),
-      sparkingCount: Math.max(0, (stats.sparkingCount || 0) + (delta.sparkingCount || 0)),
-      chargeCount: Math.max(0, (stats.chargeCount || 0) + (delta.chargeCount || 0)),
-      guardCount: Math.max(0, (stats.guardCount || 0) + (delta.guardCount || 0)),
-      shotEnergyBulletCount: Math.max(0, (stats.shotEnergyBulletCount || 0) + (delta.shotEnergyBulletCount || 0)),
-      zCounterCount: Math.max(0, (stats.zCounterCount || 0) + (delta.zCounterCount || 0)),
-      superCounterCount: Math.max(0, (stats.superCounterCount || 0) + (delta.superCounterCount || 0)),
-      revengeCounterCount: Math.max(0, (stats.revengeCounterCount || 0) + (delta.revengeCounterCount || 0)),
-      s1Blast: Math.max(0, (stats.s1Blast || 0) + (delta.s1Blast || 0)),
-      s2Blast: Math.max(0, (stats.s2Blast || 0) + (delta.s2Blast || 0)),
-      ultBlast: Math.max(0, (stats.ultBlast || 0) + (delta.ultBlast || 0)),
-      s1HitBlast: Math.max(0, (stats.s1HitBlast || 0) + (delta.s1HitBlast || 0)),
-      s2HitBlast: Math.max(0, (stats.s2HitBlast || 0) + (delta.s2HitBlast || 0)),
-      uLTHitBlast: Math.max(0, (stats.uLTHitBlast || 0) + (delta.uLTHitBlast || 0)),
-      tags: Math.max(0, (stats.tags || 0) + (delta.tags || 0)),
-      dragonDashMileage: Math.max(0, (stats.dragonDashMileage || 0) + (delta.dragonDashMileage || 0)),
-      throwCount: Math.max(0, (stats.throwCount || 0) + (delta.throwCount || 0)),
-      lightningAttackCount: Math.max(0, (stats.lightningAttackCount || 0) + (delta.lightningAttackCount || 0)),
-      vanishingAttackCount: Math.max(0, (stats.vanishingAttackCount || 0) + (delta.vanishingAttackCount || 0)),
-      dragonHomingCount: Math.max(0, (stats.dragonHomingCount || 0) + (delta.dragonHomingCount || 0)),
-      speedImpactCount: Math.max(0, (stats.speedImpactCount || 0) + (delta.speedImpactCount || 0)),
-      speedImpactWins: Math.max(0, (stats.speedImpactWins || 0) + (delta.speedImpactWins || 0)),
-      sparkingComboCount: Math.max(0, (stats.sparkingComboCount || 0) + (delta.sparkingComboCount || 0)),
-      hasFusionStats: true,
-    };
-  };
+  const applyFusionDelta = (stats, char) => applyFusionSplit(stats, char, fusionDeltas);
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -1280,9 +1359,11 @@ export default function App() {
             reason={deepLinkedCharacter.reason}
             rank={deepLinkedCharacter.rank}
             totalInScope={deepLinkedCharacter.totalInScope}
-            scopeLabel={dataScopeLabel}
+            scopeLabel={forTeam ? `${dataScopeLabel}, playing for ${forTeam.name}` : dataScopeLabel}
             darkMode={darkMode}
-            onBack={() => navigate(ROUTES.characters + scopeSearch)}
+            onBack={() => goBack(ROUTES.characters + scopeSearch)}
+            backLabel={backLabel}
+            portraitId={deepLinkedCharacter.id || charIdFor(deepLinkedCharacter.label)}
             onOpenMatch={handleNavigateToMatch}
             charMap={charMap}
           />
@@ -2141,1184 +2222,16 @@ export default function App() {
           </div>
         )}
 
-        {/* Team Rankings Display */}
-        {((mode === 'reference' && viewType === 'teams') || 
-          (mode === 'manual' && viewType === 'teams' && manualFiles.filter(f => !f.error).length > 0)) && (
-          <div className={`rounded-[10px] border border-solid p-6 mb-6 ${
-            darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <Users className={`w-8 h-8 ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`} />
-              <div>
-                <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Team Rankings</h2>
-                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Teams ranked by win rate from {mode === 'reference' ? (Array.isArray(fileContent) ? fileContent.length : 0) : manualFiles.filter(f => !f.error).length} battle file{(mode === 'reference' ? (Array.isArray(fileContent) ? fileContent.length : 0) : manualFiles.filter(f => !f.error).length) !== 1 ? 's' : ''}
-                </p>
-                <p className={`text-sm ${darkMode ? 'text-amber-400' : 'text-amber-600'} mt-1`}>
-                  Team stats calculated from top 5 characters by combat performance score
-                </p>
-              </div>
-            </div>
-            
-            {teamAggregatedData.length === 0 ? (
-              <div className={`text-center py-12 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">No Team Data Available</h3>
-                <p className="text-sm">
-                  The uploaded files don't contain team information in the expected format.
-                  <br />
-                  Make sure your battle result files include team names in the 'teams' array.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-              {teamAggregatedData.map((team, i) => {
-                const expanded = expandedRows[`team_${i}`] || false;
-                
-                return (
-                  <div key={team.teamName} className={`p-1 rounded-xl border transition-all ${
-                    darkMode 
-                      ? 'bg-gray-700 border-gray-600 hover:border-gray-500' 
-                      : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-                  }`}>
-                    <div 
-                      className="p-3 cursor-pointer"
-                      onClick={() => toggleRow('team', i)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`text-2xl font-bold ${
-                            i === 0 ? 'text-yellow-500' : 
-                            i === 1 ? 'text-gray-400' : 
-                            i === 2 ? 'text-orange-600' :
-                            darkMode ? 'text-gray-300' : 'text-gray-600'
-                          }`}>
-                            #{i + 1}
-                          </div>
-                          <div>
-                            <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                              {team.teamName}
-                            </h3>
-                            <div className="flex items-center gap-4 text-sm">
-                              <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                {team.matches} matches
-                              </span>
-                              <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                {team.wins}W - {team.losses}L
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-6">
-                          <div className="text-center">
-                            <div className={`text-2xl font-bold ${
-                              team.winRate >= 75 ? 'text-green-600' :
-                              team.winRate >= 50 ? 'text-yellow-400' :
-                              'text-red-600'
-                            }`}>
-                              {team.winRate.toFixed(1)}%
-                            </div>
-                            <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              Win Rate
-                            </div>
-                          </div>
-                          
-                          <div className="text-center">
-                            <div className={`text-lg font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                              {team.top5Efficiency ? team.top5Efficiency.toFixed(2) : '0.00'}×
-                            </div>
-                            <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              Damage Efficiency
-                            </div>
-                          </div>
-                          
-                          <div className="text-center">
-                            <div className={`text-lg font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                              {team.avgHealthRetention.toFixed(1)}%
-                            </div>
-                            <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              HP Retention
-                            </div>
-                          </div>
-                          
-                          <div className="text-center">
-                            <div className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                              {team.uniqueCharactersUsed}
-                            </div>
-                            <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              Characters Used
-                            </div>
-                          </div>
-                          
-                          {expanded ? (
-                            <ChevronUp className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                          ) : (
-                            <ChevronDown className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {expanded && (
-                      <div className={`px-6 pb-6 border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                        {/* Top 5 Performance Stats - Compact Grid */}
-                        <div className="mt-4">
-                          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg mb-2 ${
-                            darkMode ? 'bg-amber-900/30 border border-amber-700/50' : 'bg-amber-50 border border-amber-200'
-                          }`}>
-                            <Users className={`w-4 h-4 ${darkMode ? 'text-amber-400' : 'text-amber-600'}`} />
-                            <span className={`text-sm font-semibold ${darkMode ? 'text-amber-300' : 'text-amber-700'}`}>
-                              Top 5 Character Stats
-                            </span>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-2">
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Avg Damage Dealt
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                                {formatNumber(team.avgDamagePerMatch)}
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Avg Damage Taken
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                {formatNumber(team.avgDamageTakenPerMatch)}
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Efficiency
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                                {team.top5Efficiency ? team.top5Efficiency.toFixed(2) : '0.00'}×
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                DPS
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                                {Math.round(team.top5DPS || 0).toLocaleString()}
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Avg Match Duration
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                {Math.floor((team.top5AvgMatchDuration || 0) / 60)}:{String((team.top5AvgMatchDuration || 0) % 60).padStart(2, '0')}
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                HP Retention
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                {team.avgHealthRetention.toFixed(1)}%
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Avg HP Remaining
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                                {formatNumber(team.top5AvgHPRemaining || 0)}
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Avg Tags
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>
-                                {(team.top5AvgTags || 0).toFixed(2)}
-                              </div>
-                            </div>
-                            
-                            <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-200'}`}>
-                              <div className={`text-xs font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                Total Tags
-                              </div>
-                              <div className={`text-base font-bold ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>
-                                {team.top5TotalTags || 0}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mt-2">
-                          {/* Character Performance - Expandable */}
-                          <div className={`rounded-lg border-2 ${darkMode ? 'bg-gray-600 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
-                            <div 
-                              className={`rounded-lg px-4 flex items-center justify-between cursor-pointer transition-colors ${
-                                darkMode ? 'hover:bg-gray-500' : 'hover:bg-gray-100'
-                              }`}
-                              onClick={() => toggleRow('character_performance', i)}
-                            >
-                              <h4 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                Character Performances
-                              </h4>
-                              {expandedRows[`character_performance_${i}`] ? (
-                                <ChevronUp className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                              ) : (
-                                <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                              )}
-                            </div>
-                            
-                            {expandedRows[`character_performance_${i}`] && (
-                              <div className={`p-3 space-y-2 border-t ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
-                                {(() => {
-                                  // Collect all performance scores for relative scoring
-                                  
-                                  return Object.entries(team.characterAverages)
-                                    .sort((a, b) => b[1].performanceScore - a[1].performanceScore)
-                                    .slice(0, 8)
-                                    .map(([charName, _charStats], charIndex) => {
-                                      const charKey = `team_${i}_char_${charName}`;
-                                      // Apply build filter if active for this character in the teams view
-                                      let charStats = _charStats;
-                                      const teamActiveBuildFilterKey = activeBuildFilters[charKey];
-                                      if (teamActiveBuildFilterKey && _charStats.rawMatches) {
-                                        const filteredRawMatches = _charStats.rawMatches.filter(m => buildKeyOf(m) === teamActiveBuildFilterKey);
-                                        if (filteredRawMatches.length > 0) {
-                                          charStats = recomputeTeamCharStats(filteredRawMatches, _charStats);
-                                        }
-                                      }
-                                      const avgDamageTaken = charStats.avgDamageTaken || 1;
-                                      const dps = charStats.avgDamagePerSecond || 0;
-                                      const isCharExpanded = expandedRows[charKey];
-                                      const isTop5 = team.top5CharacterNames && team.top5CharacterNames.includes(charName);
-                                    
-                                    return (
-                                      <div key={charName} className={`rounded-lg border-2 ${
-                                        isTop5 
-                                          ? (darkMode ? 'bg-gray-700 border-yellow-600' : 'bg-white border-yellow-600')
-                                          : (darkMode ? 'bg-gray-700 border-gray-500' : 'bg-white border-gray-300')
-                                      } transition-all`}>
-                                        {/* Header: Name, Primary Stats, Score */}
-                                        <div 
-                                          className={`p-3 cursor-pointer transition-colors rounded-lg `}
-                                          onClick={() => setExpandedRows(prev => ({ ...prev, [charKey]: !prev[charKey] }))}
-                                        >
-                                          <div className="flex items-center justify-between gap-4">
-                                            {/* Character Name with Position Badge */}
-                                            <div className="flex items-center gap-2 min-w-[120px]">
-                                              <div className={`font-medium ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                                {charName}
-                                              </div>
-                                              {charStats.primaryPosition && (() => {
-                                                const posColorMap = {
-                                                  Starter: darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700',
-                                                  Middle: darkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700',
-                                                  Anchor: darkMode ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700',
-                                                };
-                                                return (
-                                                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${posColorMap[charStats.primaryPosition] || ''}`}>
-                                                    {charStats.primaryPosition}
-                                                  </span>
-                                                );
-                                              })()}
-                                            </div>
-                                            
-                                            {/* Spacer to push stats to the right */}
-                                            <div className="flex-1"></div>
-                                            
-                                            {/* Stat Panels - Right Justified */}
-                                            <div className="flex items-center gap-2">
-                                              {/* Avg Damage */}
-                                              <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                                                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} whitespace-nowrap`}>Avg Damage</div>
-                                                <div className={`text-sm font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                                                  {formatNumber(charStats.avgDamageDealt)}
-                                                </div>
-                                              </div>
-                                              
-                                              {/* Damage/Sec */}
-                                              <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                                                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} whitespace-nowrap`}>Damage/Sec</div>
-                                                <div className={`text-sm font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                                                  {Math.round(dps).toLocaleString()}
-                                                </div>
-                                              </div>
-                                              
-                                              {/* Efficiency */}
-                                              <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                                                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Efficiency</div>
-                                                <div className={`text-sm font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                                                  {charStats.avgDamageEfficiency.toFixed(2)}x
-                                                </div>
-                                              </div>
-                                              
-                                              {/* Battle Time */}
-                                              <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                                                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} whitespace-nowrap`}>Battle Time</div>
-                                                <div className={`text-sm font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                                  {Math.floor(charStats.avgBattleDuration / 60)}:{String(charStats.avgBattleDuration % 60).padStart(2, '0')}
-                                                </div>
-                                              </div>
-                                              
-                                              {/* Eliminations */}
-                                              <div className={`px-3 py-1.5 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                                                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Eliminations</div>
-                                                <div className={`text-sm font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                  {(charStats.avgKills || 0).toFixed(2)}
-                                                </div>
-                                              </div>
-                                            </div>
-                                            
-                                            {/* Score and Expand Icon - Rightmost */}
-                                            <div className="flex items-center gap-3">
-                                              <div className="text-right">
-                                                <PerformanceScoreBadge score={charStats.performanceScore} label="Score" size="small" darkMode={darkMode} />
-                                                <div className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                  {charStats.activeMatchesPlayed} matches ({charStats.usageRate}%)
-                                                </div>
-                                              </div>
-                                              {isCharExpanded ? (
-                                                <ChevronUp className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                              ) : (
-                                                <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-                                        
-                                        {/* Expanded Details - Match Aggregated Stats */}
-                                        {isCharExpanded && (
-                                          <div className={`px-3 pb-3 grid grid-cols-1 sm:grid-cols-1 gap-3 ${darkMode ? 'border-gray-600' : 'border-gray-200'} pt-3`}>
-                                            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
-                                              <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
-                                                {/* Combat Performance Section */}
-                                                <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                  <div className="flex items-center gap-2 mb-3">
-                                                    <Swords className={`w-5 h-5 ${darkMode ? 'text-red-400' : 'text-red-600'}`} />
-                                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Combat Performance</h4>
-                                                  </div>
-                                                  <div className="space-y-2 text-sm mb-3">
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Done:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgDamageDealt)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage Taken:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgDamageTaken)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Damage/Sec:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{Math.round(dps).toLocaleString()}/sec</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Efficiency:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDamageEfficiency.toFixed(2)}×</strong>
-                                                    </div>
-                                                  </div>
-                                                  <div className={`grid grid-cols-2 gap-x-4 gap-y-2 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Throws:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgThrows || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Vanishing Attacks:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgVanishingAttacks || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Homings:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgDragonHoming || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Lightning Attacks:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgLightningAttacks || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impacts:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSpeedImpacts || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Speed Impact Wins:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSpeedImpactWins || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Hits:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgMaxComboNum || 0}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Combo Damage:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{formatNumber(charStats.avgMaxComboDamage || 0)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparking Combo:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSparkingCombo || 0).toFixed(1)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Avg Kills:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgKills || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Survival & Health Section */}
-                                                <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                  <div className="flex items-center gap-2 mb-3">
-                                                    <Heart className={`w-5 h-5 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Survival & Health</h4>
-                                                  </div>
-                                                  <div className="space-y-2 text-sm mb-2">
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Max Health:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                        {formatNumber(charStats.avgHealthMax || 0)}
-                                                      </strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Health Remaining:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                        {formatNumber(charStats.avgHealthRemaining || 0)}
-                                                      </strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Survival Rate:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                        {(charStats.avgHealthRetention * 100).toFixed(1)}%
-                                                      </strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Swaps (Tags):</span>
-                                                      <strong className={`${darkMode ? 'text-teal-400' : 'text-teal-600'}`}>{(charStats.avgTags || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Transformations:</span>
-                                                      <strong className={`${darkMode ? 'text-violet-400' : 'text-violet-600'}`}>{(charStats.avgTransformations || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                  </div>
-                                                  <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Guards:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgGuards || 0}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSuperCounters || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenge Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgRevengeCounters || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Z-Counters:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgZCounters || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
-                                                {/* Special Abilities Section */}
-                                                <div className={`rounded-lg p-3 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                  <div className="flex items-center gap-2 mb-3">
-                                                    <Zap className={`w-5 h-5 ${darkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                                                    <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Special Abilities</h4>
-                                                  </div>
-                                                  {/* Display each blast type individually - show hit/thrown format if that specific type has hit rate data, otherwise show legacy format */}
-                                                  <div className="space-y-2 text-sm mb-2">
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 1 Blasts:</span>
-                                                      <div className="flex items-center gap-2">
-                                                        {charStats.s1HitRateOverall !== null && charStats.s1HitRateOverall !== undefined ? (
-                                                          <>
-                                                            <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                              {(charStats.avgS1Hit || 0).toFixed(2)}/{(charStats.avgS1Blast || charStats.avgSPM1 || 0).toFixed(2)}
-                                                            </strong>
-                                                            <span className={`text-xs font-mono ${
-                                                              charStats.s1HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                              charStats.s1HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                                              (darkMode ? 'text-red-400' : 'text-red-600')
-                                                            }`}>
-                                                              ({charStats.s1HitRateOverall.toFixed(1)}%)
-                                                            </span>
-                                                          </>
-                                                        ) : (
-                                                          <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgSPM1 || 0).toFixed(2)}
-                                                          </strong>
-                                                        )}
-                                                      </div>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Super 2 Blasts:</span>
-                                                      <div className="flex items-center gap-2">
-                                                        {charStats.s2HitRateOverall !== null && charStats.s2HitRateOverall !== undefined ? (
-                                                          <>
-                                                            <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                              {(charStats.avgS2Hit || 0).toFixed(2)}/{(charStats.avgS2Blast || charStats.avgSPM2 || 0).toFixed(2)}
-                                                            </strong>
-                                                            <span className={`text-xs font-mono ${
-                                                              charStats.s2HitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                              charStats.s2HitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                                              (darkMode ? 'text-red-400' : 'text-red-600')
-                                                            }`}>
-                                                              ({charStats.s2HitRateOverall.toFixed(1)}%)
-                                                            </span>
-                                                          </>
-                                                        ) : (
-                                                          <strong className={`${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                                                            {(charStats.avgSPM2 || 0).toFixed(2)}
-                                                          </strong>
-                                                        )}
-                                                      </div>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ultimate Blasts:</span>
-                                                      <div className="flex items-center gap-2">
-                                                        {charStats.ultHitRateOverall !== null && charStats.ultHitRateOverall !== undefined ? (
-                                                          <>
-                                                            <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                              {(charStats.avgUltHit || 0).toFixed(2)}/{(charStats.avgUltBlast || charStats.avgUltimates || 0).toFixed(2)}
-                                                            </strong>
-                                                            <span className={`text-xs font-mono ${
-                                                              charStats.ultHitRateOverall >= 70 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                              charStats.ultHitRateOverall >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-600') :
-                                                              (darkMode ? 'text-red-400' : 'text-red-600')
-                                                            }`}>
-                                                              ({charStats.ultHitRateOverall.toFixed(1)}%)
-                                                            </span>
-                                                          </>
-                                                        ) : (
-                                                          <strong className={`${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                            {(charStats.avgUltimates || 0).toFixed(2)}
-                                                          </strong>
-                                                        )}
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                  <div className={`grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs pt-2 border-t ${darkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 1 Usage:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEXA1 || 0}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Skill 2 Usage:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEXA2 || 0}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Charges:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgCharges || 0}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sparkings:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{(charStats.avgSparking || 0).toFixed(2)}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Ki Blasts:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgEnergyBlasts || 0}</strong>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                      <span className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dragon Dash Mileage:</span>
-                                                      <strong className={`${darkMode ? 'text-white' : 'text-gray-900'}`}>{charStats.avgDragonDashMileage || 0}</strong>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Builds Section */}
-                                                {charStats.topBuilds && charStats.topBuilds.length > 0 && (
-                                                  <div className={`rounded-lg p-1 border-2 ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-500'}`}>
-                                                    <div className="flex items-center px-3 mb-2">
-                                                      <Package className={`w-5 h-5 mr-2 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                                                      <h4 className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Builds ({charStats.topBuilds.length})</h4>
-                                                    </div>
-                                                    <BuildTableView
-                                                      builds={_charStats.topBuilds}
-                                                      buildKey={charKey}
-                                                      selectedBuildIndex={selectedBuildIndex}
-                                                      setSelectedBuildIndex={setSelectedBuildIndex}
-                                                      selectedBuildSort={selectedBuildSort}
-                                                      setSelectedBuildSort={setSelectedBuildSort}
-                                                      activeBuildFilters={activeBuildFilters}
-                                                      setActiveBuildFilters={setActiveBuildFilters}
-                                                      darkMode={darkMode}
-                                                    />
-                                                  </div>
-                                                )}
-                                              </div>
-                                            </div>
-                                            {/* Per-Form Stats - Aggregated */}
-                                            {charStats.formStats && charStats.formStats.length > 0 && (
-                                              <div className="col-span-1 sm:col-span-1">
-                                                <PerFormStatsDisplayAggregated
-                                                  formStatsArray={charStats.formStats}
-                                                  formChangeHistoryText={charStats.formChangeHistoryText}
-                                                  darkMode={darkMode}
-                                                />
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
-                                      </div>
-                                    );
-                                  });
-                                })()}
-                              </div>
-                            )}
-                          </div>
-                          
-                          {/* Head-to-Head Records - Expandable */}
-                          <div className={`rounded-lg border-2 ${darkMode ? 'bg-gray-600 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
-                            <div 
-                              className={`rounded-lg px-4 flex items-center justify-between cursor-pointer transition-colors ${
-                                darkMode ? 'hover:bg-gray-500' : 'hover:bg-gray-100'
-                              }`}
-                              onClick={() => toggleRow('head_to_head', i)}
-                            >
-                              <h4 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                Head-to-Head Records
-                              </h4>
-                              {expandedRows[`head_to_head_${i}`] ? (
-                                <ChevronUp className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                              ) : (
-                                <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                              )}
-                            </div>
-                            
-                            {expandedRows[`head_to_head_${i}`] && (
-                              <div className="p-3 space-y-2">
-                                {Object.entries(team.opponentRecords).map(([opponent, record]) => {
-                                  // Calculate head-to-head stats
-                                  const h2hMatches = team.matchHistory.filter(match => match.opponent === opponent);
-                                  const h2hTotalDamageDealt = h2hMatches.reduce((sum, match) => sum + match.damageDealt, 0);
-                                  const h2hTotalDamageTaken = h2hMatches.reduce((sum, match) => sum + match.damageTaken, 0);
-                                  const h2hTotalHealthRemaining = h2hMatches.reduce((sum, match) => sum + match.healthRemaining, 0);
-                                  const h2hTotalHealthMax = h2hMatches.reduce((sum, match) => sum + match.healthMax, 0);
-                                  const h2hAvgDamageDealt = h2hMatches.length > 0 ? Math.round(h2hTotalDamageDealt / h2hMatches.length) : 0;
-                                  const h2hAvgDamageTaken = h2hMatches.length > 0 ? Math.round(h2hTotalDamageTaken / h2hMatches.length) : 0;
-                                  const h2hDamageEfficiency = h2hTotalDamageTaken > 0 ? (h2hTotalDamageDealt / h2hTotalDamageTaken).toFixed(2) : '∞';
-                                  const h2hHealthRetention = h2hTotalHealthMax > 0 ? ((h2hTotalHealthRemaining / h2hTotalHealthMax) * 100).toFixed(1) : '0.0';
-                                  const h2hWinRate = h2hMatches.length > 0 ? ((record.wins / h2hMatches.length) * 100).toFixed(1) : '0.0';
-                                  const h2hTotalBattleTime = h2hMatches.reduce((sum, match) => sum + (match.battleDuration || 0), 0);
-                                  const h2hDPS = h2hTotalBattleTime > 0 ? Math.round(h2hTotalDamageDealt / h2hTotalBattleTime) : 0;
-                                  
-                                  const matchupKey = `matchups_${team.teamName}_vs_${opponent}`;
-                                  const isMatchupExpanded = expandedRows[matchupKey] || false;
-                                  
-                                  // Calculate character matchup stats
-                                  const characterMatchups = record.characterMatchups || {};
-                                  const matchupStats = Object.values(characterMatchups).map(matchup => {
-                                    // Filter for active matches only (battleTime > 0)
-                                    const activeMatches = matchup.matches.filter(m => (m.battleTime || 0) > 0);
-                                    const matchCount = activeMatches.length;
-                                    
-                                    const totalDamageDealt = activeMatches.reduce((sum, m) => sum + (m.damageDealt || 0), 0);
-                                    const totalDamageTaken = activeMatches.reduce((sum, m) => sum + (m.damageTaken || 0), 0);
-                                    const totalBattleTime = activeMatches.reduce((sum, m) => sum + (m.battleTime || 0), 0);
-                                    const totalHealthRemaining = activeMatches.reduce((sum, m) => sum + (m.healthRemaining || 0), 0);
-                                    const totalHealthMax = activeMatches.reduce((sum, m) => sum + (m.healthMax || 0), 0);
-                                    
-                                    const avgDamageDealt = matchCount > 0 ? Math.round(totalDamageDealt / matchCount) : 0;
-                                    const avgDamageTaken = matchCount > 0 ? Math.round(totalDamageTaken / matchCount) : 0;
-                                    const avgBattleTime = matchCount > 0 ? Math.round(totalBattleTime / matchCount) : 0;
-                                    // Use total-based efficiency calculation (aggregate then calculate)
-                                    const damageEfficiencyNum = totalDamageTaken > 0 ? totalDamageDealt / totalDamageTaken : totalDamageDealt;
-                                    const damageEfficiency = damageEfficiencyNum.toFixed(2);
-                                    const dps = totalBattleTime > 0 ? Math.round(totalDamageDealt / totalBattleTime) : 0;
-                                    const damagePerSecond = avgBattleTime > 0 ? avgDamageDealt / avgBattleTime : 0;
-                                    const healthRetention = totalHealthMax > 0 ? totalHealthRemaining / totalHealthMax : 0;
-                                    
-                                    const baseScore = (
-                                      (avgDamageDealt / 100000) * 35 +
-                                      (damageEfficiencyNum) * 25 +
-                                      (damagePerSecond / 1000) * 25 +
-                                      (healthRetention) * 15
-                                    );
-                                    
-                                    // Experience multiplier based on matches played
-                                    const experienceMultiplier = Math.min(1.25, 1.0 + (matchCount - 1) * (0.25 / 11));
-                                    const avgPerformanceScore = (baseScore * experienceMultiplier).toFixed(2);
-                                    
-                                    // Get most common build
-                                    const mostCommonBuild = Object.entries(matchup.buildUsage || {})
-                                      .sort((a, b) => b[1] - a[1])[0];
-                                    
-                                    // Get build composition data for the most common build
-                                    const mostCommonBuildData = mostCommonBuild && matchup.buildCompositionData 
-                                      ? matchup.buildCompositionData[mostCommonBuild[0]] 
-                                      : null;
-                                    
-                                    return {
-                                      ...matchup,
-                                      avgDamageDealt,
-                                      avgDamageTaken,
-                                      avgBattleTime,
-                                      avgPerformanceScore,
-                                      damageEfficiency,
-                                      dps,
-                                      healthRetention: (healthRetention * 100).toFixed(1),
-                                      mostCommonBuild: mostCommonBuild ? mostCommonBuild[0] : 'Unknown',
-                                      mostCommonBuildData: mostCommonBuildData,
-                                      mostCommonBuildCount: mostCommonBuild ? mostCommonBuild[1] : 0,
-                                      matchCount
-                                    };
-                                  }).sort((a, b) => a.position - b.position);
-                                  
-                                  return (
-                                    <div key={opponent} className={`rounded-xl border-2 transition-all ${
-                                      darkMode ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'
-                                    }`}>
-                                      <div className="px-4 mb-2">
-                                        {/* Header Section with Stats */}
-                                        <div className="flex items-center justify-between">
-                                          <div>
-                                            <h4 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                              vs {opponent}
-                                            </h4>
-                                            <div className="flex items-center gap-4 text-sm mt-1">
-                                              <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                                {h2hMatches.length} match{h2hMatches.length !== 1 ? 'es' : ''}
-                                              </span>
-                                              <span className={`font-medium ${
-                                                parseFloat(h2hWinRate) >= 75 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                parseFloat(h2hWinRate) >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-500') :
-                                                (darkMode ? 'text-red-400' : 'text-red-600')
-                                              }`}>
-                                                {record.wins}W - {record.losses}L
-                                              </span>
-                                            </div>
-                                          </div>
-                                          
-                                          {/* Stats Row */}
-                                          <div className="flex items-center gap-6">
-                                            {/* Win Rate */}
-                                            <div className="text-center">
-                                              <div className={`text-2xl font-bold ${
-                                                parseFloat(h2hWinRate) >= 75 ? (darkMode ? 'text-green-400' : 'text-green-600') :
-                                                parseFloat(h2hWinRate) >= 50 ? (darkMode ? 'text-yellow-400' : 'text-yellow-500') :
-                                                (darkMode ? 'text-red-400' : 'text-red-600')
-                                              }`}>
-                                                {h2hWinRate}%
-                                              </div>
-                                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Win Rate
-                                              </div>
-                                            </div>
-                                            
-                                            {/* Damage Efficiency */}
-                                            <div className="text-center">
-                                              <div className={`text-2xl font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                                                {h2hDamageEfficiency}×
-                                              </div>
-                                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Damage Efficiency
-                                              </div>
-                                            </div>
-                                            
-                                            {/* HP Retention */}
-                                            <div className="text-center">
-                                              <div className={`text-2xl font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                                {h2hHealthRetention}%
-                                              </div>
-                                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                HP Retention
-                                              </div>
-                                            </div>
-                                            
-                                            {/* Characters Used */}
-                                            <div className="text-center">
-                                              <div className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                                {matchupStats.length}
-                                              </div>
-                                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Characters Used
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        
-                                        {/* Team Stats Expandable */}
-                                        <div className={`mt-2 pt-2 border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                                          <button
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              const teamStatsKey = `team_stats_${team.teamName}_vs_${opponent}`;
-                                              setExpandedRows(prev => ({ ...prev, [teamStatsKey]: !prev[teamStatsKey] }));
-                                            }}
-                                            className={`w-full flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${
-                                              darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-300 hover:bg-gray-100'
-                                            }`}
-                                          >
-                                            <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                              Team Stats
-                                            </span>
-                                            {expandedRows[`team_stats_${team.teamName}_vs_${opponent}`] ? (
-                                              <ChevronUp className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                            ) : (
-                                              <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                            )}
-                                          </button>
-                                          
-                                          {expandedRows[`team_stats_${team.teamName}_vs_${opponent}`] && (
-                                            <div className="mt-1">
-                                              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
-                                                {/* Avg Damage Dealt */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Avg Damage Dealt
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                                                    {formatNumber(h2hAvgDamageDealt)}
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Avg Damage Taken */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Avg Damage Taken
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                                    {formatNumber(h2hAvgDamageTaken)}
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Efficiency */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Efficiency
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                                                    {h2hDamageEfficiency}×
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* DPS */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    DPS
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                                                    {h2hDPS}
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Avg Match Duration */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Avg Match Duration
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                                    {(() => {
-                                                      const avgDuration = h2hTotalBattleTime > 0 ? Math.round(h2hTotalBattleTime / h2hMatches.length) : 0;
-                                                      return `${Math.floor(avgDuration / 60)}:${String(avgDuration % 60).padStart(2, '0')}`;
-                                                    })()}
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* HP Retention */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    HP Retention
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                                    {h2hHealthRetention}%
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Avg HP Remaining */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Avg HP Remaining
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                                    {formatNumber(Math.round(h2hTotalHealthRemaining / h2hMatches.length))}
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Avg Tags */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Avg Tags
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                    {(() => {
-                                                      const totalTags = h2hMatches.reduce((sum, match) => sum + (match.tags || 0), 0);
-                                                      return (totalTags / h2hMatches.length).toFixed(1);
-                                                    })()}
-                                                  </div>
-                                                </div>
-                                                
-                                                {/* Total Tags */}
-                                                <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
-                                                  <div className={`text-sm mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                    Total Tags
-                                                  </div>
-                                                  <div className={`text-xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                                    {h2hMatches.reduce((sum, match) => sum + (match.tags || 0), 0)}
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          )}
-                                        </div>
-                                        
-                                        {/* Character Matchups Expandable */}
-                                        {matchupStats.length > 0 && (
-                                          <div className={`pt-2 ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                                            <button
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                setExpandedRows(prev => ({ ...prev, [matchupKey]: !prev[matchupKey] }));
-                                              }}
-                                              className={`w-full flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${
-                                                darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-300 hover:bg-gray-100'
-                                              }`}
-                                            >
-                                              <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                                Character Matchups ({matchupStats.length})
-                                              </span>
-                                              {isMatchupExpanded ? (
-                                                <ChevronUp className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                              ) : (
-                                                <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                              )}
-                                            </button>
-                                            
-                                            {isMatchupExpanded && (() => {
-                                              // Use same score pool as character performance section for consistent coloring
-                                              
-                                              // Group matchups by position
-                                              const positionGroups = matchupStats.reduce((groups, stat) => {
-                                                if (!groups[stat.position]) groups[stat.position] = [];
-                                                groups[stat.position].push(stat);
-                                                return groups;
-                                              }, {});
-                                              
-                                              // Position labels
-                                              const getPositionLabel = (pos) => {
-                                                const maxPos = Math.max(...matchupStats.map(s => s.position));
-                                                if (pos === 1) return POSITION_NAMES[1];
-                                                if (pos === maxPos) return 'Anchor';
-                                                if (maxPos === 3) return 'Middle';
-                                                // For middle positions in teams with 4+ members
-                                                const positionNames = ['', 'Starter', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth'];
-                                                return `${positionNames[pos] || `Position ${pos}`} (Middle)`;
-                                              };
-                                              
-                                              return (
-                                                <div className="mt-1">
-                                                  {Object.entries(positionGroups).sort((a, b) => Number(a[0]) - Number(b[0])).map(([position, stats]) => {
-                                                    const posNum = Number(position);
-                                                    const isPositionExpanded = expandedPositions?.[opponent]?.[posNum];
-                                                    
-                                                    // Find best character for this position
-                                                    const bestCharacter = stats.reduce((best, current) => {
-                                                      const currentScore = parseFloat(current.avgPerformanceScore) || 0;
-                                                      const bestScore = parseFloat(best.avgPerformanceScore) || 0;
-                                                      return currentScore > bestScore ? current : best;
-                                                    }, stats[0]);
-                                                    
-                                                    return (
-                                                      <div key={position} className={`rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-gray-50 border-gray-300'}`}>
-                                                        <div className="w-full p-3 flex items-center justify-between">
-                                                          <div className="flex items-center gap-3">
-                                                            <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                                              {getPositionLabel(posNum)}
-                                                            </span>
-                                                            <span className={`text-xs px-2 py-0.5 rounded-full ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-                                                              {stats.length} character{stats.length !== 1 ? 's' : ''}
-                                                            </span>
-                                                          </div>
-                                                        </div>
-                                                        
-                                                        {(
-                                                          <div className="px-3 pb-3">
-                                                            <div 
-                                                              className="flex gap-2 overflow-x-auto pb-2 cursor-grab active:cursor-grabbing select-none"
-                                                              style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
-                                                              onMouseDown={(e) => {
-                                                                const container = e.currentTarget;
-                                                                const startX = e.pageX - container.offsetLeft;
-                                                                const scrollLeft = container.scrollLeft;
-                                                                let isDown = true;
-                                                                
-                                                                const handleMouseMove = (e) => {
-                                                                  if (!isDown) return;
-                                                                  e.preventDefault();
-                                                                  const x = e.pageX - container.offsetLeft;
-                                                                  const walk = (x - startX) * 2; // Scroll speed multiplier
-                                                                  container.scrollLeft = scrollLeft - walk;
-                                                                };
-                                                                
-                                                                const handleMouseUp = () => {
-                                                                  isDown = false;
-                                                                  document.removeEventListener('mousemove', handleMouseMove);
-                                                                  document.removeEventListener('mouseup', handleMouseUp);
-                                                                };
-                                                                
-                                                                document.addEventListener('mousemove', handleMouseMove);
-                                                                document.addEventListener('mouseup', handleMouseUp);
-                                                              }}
-                                                            >
-                                                              {stats
-                                                                .sort((a, b) => parseFloat(b.avgPerformanceScore) - parseFloat(a.avgPerformanceScore))
-                                                                .map((stat) => {
-                                                                const isBest = stat.characterName === bestCharacter.characterName;
-                                                                const charKey = `${opponent}-${position}-${stat.characterName}`;
-                                                                const isCharExpanded = expandedCharacters[charKey];
-                                                                
-                                                                return (
-                                                                  <div key={stat.characterName} className="flex-shrink-0">
-                                                                    <div className={`rounded-lg border-2 ${
-                                                                      isBest 
-                                                                        ? `${darkMode ? 'border-amber-500 bg-gray-800' : 'border-amber-600 bg-white'}`
-                                                                        : `${darkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}`
-                                                                    }`} style={{minWidth: '400px', maxWidth: '450px'}}>
-                                                                      {/* Collapsed Header - Always Visible */}
-                                                                      <div 
-                                                                        onClick={() => {
-                                                                          setExpandedCharacters(prev => ({
-                                                                            ...prev,
-                                                                            [charKey]: !isCharExpanded
-                                                                          }));
-                                                                        }}
-                                                                        className="px-3 py-2 cursor-pointer hover:bg-opacity-80 transition-colors"
-                                                                      >
-                                                                        <div className="flex items-center justify-between mb-2">
-                                                                          <div className="flex items-center gap-2">
-                                                                            <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                                                              {stat.characterName}
-                                                                            </span>
-                                                                            {isBest && <span className={`text-sm ${darkMode ? 'text-amber-400' : 'text-amber-600'}`}>★</span>}
-                                                                          </div>
-                                                                          <div className="flex flex-col items-end gap-1">
-                                                                            <PerformanceScoreBadge
-                                                                              score={parseFloat(stat.avgPerformanceScore) || 0}
-                                                                              label="Score"
-                                                                              size="small"
-                                                                              darkMode={darkMode}
-                                                                            />
-                                                                          </div>
-                                                                        </div>
-                                                                        
-                                                                        <div className="flex items-center justify-between">
-                                                                          <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                                            vs {stat.opponentName}
-                                                                          </div>
-                                                                          <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                                            {stat.matchCount} match{stat.matchCount !== 1 ? 'es' : ''}
-                                                                          </div>
-                                                                        </div>
-                                                                        
-                                                                        {/* Expand/Collapse Indicator */}
-                                                                        <div className="flex justify-center">
-                                                                          {isCharExpanded ? (
-                                                                            <ChevronUp className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                                                          ) : (
-                                                                            <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                                                                          )}
-                                                                        </div>
-                                                                      </div>
-                                                                      
-                                                                      {/* Expanded Details */}
-                                                                      {isCharExpanded && (
-                                                                        <div className="px-3 pb-3">
-                                                                          <div className="grid grid-cols-2 gap-2 mb-2">
-                                                                            <div className={`px-2 py-1.5 rounded ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                                                                              <div className={`text-xs mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Avg Dealt</div>
-                                                                              <div className={`text-sm font-bold ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-                                                                                {formatNumber(stat.avgDamageDealt)}
-                                                                              </div>
-                                                                            </div>
-                                                                            <div className={`px-2 py-1.5 rounded ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                                                                              <div className={`text-xs mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Avg Taken</div>
-                                                                              <div className={`text-sm font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                                                                                {formatNumber(stat.avgDamageTaken)}
-                                                                              </div>
-                                                                            </div>
-                                                                            <div className={`px-2 py-1.5 rounded ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                                                                              <div className={`text-xs mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Efficiency</div>
-                                                                              <div className={`text-sm font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
-                                                                                {stat.damageEfficiency}×
-                                                                              </div>
-                                                                            </div>
-                                                                            <div className={`px-2 py-1.5 rounded ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                                                                              <div className={`text-xs mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>DPS</div>
-                                                                              <div className={`text-sm font-bold ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                                                                                {stat.dps.toLocaleString()}
-                                                                              </div>
-                                                                            </div>
-                                                                            <div className={`px-2 py-1.5 rounded ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                                                                              <div className={`text-xs mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Battle Time</div>
-                                                                              <div className={`text-sm font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                                                                                {Math.floor(stat.avgBattleTime / 60)}:{String(stat.avgBattleTime % 60).padStart(2, '0')}
-                                                                              </div>
-                                                                            </div>
-                                                                            <div className={`px-2 py-1.5 rounded ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                                                                              <div className={`text-xs mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>HP Retention</div>
-                                                                              <div className={`text-sm font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                                                                                {stat.healthRetention}%
-                                                                              </div>
-                                                                            </div>
-                                                                          </div>
-                                                                          
-                                                                          {/* Most Common Build with Tooltip */}
-                                                                          {stat.mostCommonBuildData ? (
-                                                                            <div className={`pt-2 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                                                              <BuildTypeTooltipWrapper
-                                                                                buildComposition={stat.mostCommonBuildData.buildComposition}
-                                                                                aiStrategy={stat.mostCommonBuildData.aiStrategy}
-                                                                                count={stat.mostCommonBuildCount}
-                                                                                equippedCapsules={stat.mostCommonBuildData.equippedCapsules}
-                                                                                totalCapsuleCost={stat.mostCommonBuildData.totalCapsuleCost}
-                                                                                darkMode={darkMode}
-                                                                                tooltipKey={`${opponent}-${position}-${stat.characterName}-build`}
-                                                                                characterName={stat.characterName}
-                                                                              />
-                                                                            </div>
-                                                                          ) : (
-                                                                            <div className={`pt-2 border-t text-xs ${darkMode ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
-                                                                              <span>Most Common Build: </span>
-                                                                              <span className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{stat.mostCommonBuild}</span>
-                                                                            </div>
-                                                                          )}
-                                                                        </div>
-                                                                      )}
-                                                                    </div>
-                                                                  </div>
-                                                                );
-                                                              })}
-
-                                                            </div>
-                                                          </div>
-                                                        )}
-                                                      </div>
-                                                    );
-                                                  })}
-                                                </div>
-                                              );
-                                            })()}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              </div>
-            )}
-          </div>
+        {/* Teams (pages/TeamsPage.jsx) and one team (pages/TeamPage.jsx). */}
+        {viewType === 'teams' && !teamParam && (!sandbox || manualFiles.some(f => !f.error)) && (
+          <TeamsPage rows={allTeamRows} linkFor={teamLinkFor} loading={dataLoading} />
+        )}
+        {viewType === 'teams' && teamParam && !sandbox && (
+          <TeamPage team={deepLinkedTeam.team} row={deepLinkedTeam.row} reason={deepLinkedTeam.reason} label={deepLinkedTeam.label}
+            allRows={allTeamRows} characters={aggregatedData} scopeLabel={dataScopeLabel}
+            files={Array.isArray(fileContent) ? fileContent : []} aggregate={aggregateTeams}
+            idFor={charIdFor} linkFor={characterLinkFor} teamLinkFor={teamLinkFor}
+            onOpenMatch={handleNavigateToMatch} onBack={() => goBack(ROUTES.teams + scopeOnlySearch)} backLabel={backLabel} />
         )}
 
         {/* Error Display */}

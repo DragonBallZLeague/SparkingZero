@@ -153,7 +153,7 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
   - `/characters` is the table with a tier-list view.
   - The single-match viewer moved to `/matches` until the Matches list replaces it.
   - The Sandbox is `/sandbox/...`, the same views over uploads, with no scope and no links to league pages.
-- **Portraits:** 241 files in `public/portraits/`, committed, with `npm run build-portraits` and a warn-only `verify-portraits` in prebuild.
+- **Portraits:** 241 files in `public/portraits/`, committed, with `npm run build-portraits` and a warn-only `verify-portraits` in prebuild. Since 2026-09-29 there is also a sharper 192px set in `public/portraits/192/`, which `<Portrait>` offers for any portrait drawn above 48px (the Character page header, the tier list).
 - **Cleanup:**
   - `App.jsx` went from 4,973 to ~3,340 lines: the card leaderboard, its 751px filter form and the Character Position Analysis section are gone.
   - `TagFilterSelector.jsx` is deleted. `BRDataSelector.jsx` is no longer rendered; it retires with MUI in Phase 4.
@@ -185,7 +185,35 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 
 Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design (which follows "Visual direction"), the share-snippet image card, build comparison and character comparison.
 
-### Phases 4–7: not started, apart from Meta's Builds tab
+### Phases 4–7: not started, apart from Meta's Builds tab and Phase 4's team pages
+
+**Phase 4 began (2026-09-28) with the team side** (details in `apps/analyzer/CLAUDE.md`, "The Teams and Team pages"):
+- **The shared team list is in** (`referencedata/teams.json`): tag, website name, slug, website slug, logo and colour for all 13 teams. The analyzer shows the website's names everywhere, including the scope bar's Team chip. Links keep the tags, so old ones still work.
+  - Logos are 96px copies in `public/team-logos/` (`npm run build-team-logos`, 47 KB for all 13). Outlaw Stars uses the website's `image.png`, which its Season 1 page already shows.
+  - `verify-teams` (in prebuild) fails on duplicate tags or slugs, and warns about unknown tags or missing logos.
+- **`/teams` is a table**, as the review settled: logo, name, record, win %, damage dealt and taken, efficiency, DPS, HP kept, match time, tags, characters used. Win % leads and is the default sort, ties going to damage.
+  - **A team's figures are its top 5 characters' by score**, as the old cards had them. The league asked for them back after a brief switch to whole-team figures: it is the view members expect, and **the league breaks in-season ties on the top 5's average damage**.
+  - A "League standings" link goes to the website's `/season` page.
+- **`/teams/<slug>` is the new Team page:**
+  - A header with eight headline figures ranked against the other teams (Avg taken, DPS, match time and tags joined; HP kept shows the HP left, tags the total).
+  - Then **Roster · Lineups · Opponents · Matches**, with the open tab in the URL:
+    - Roster: from the same team figures, so the top 5 are marked (orange) and add up. A row opens the Character page "Played for" that team (`for=`), on the same numbers.
+    - Lineups: each match's lineup and the opponent's under it, slot by slot, so each column is a matchup. Each side is its own band headed by its team's logo and name, with the opponent's shaded, so the two never read as one team of six. The exact slot order is in the data now, and a test against itself splits into its two sides.
+    - Opponents: the team's figures against each team it played. Picking one cuts the whole page to that head-to-head (`vs=`, also an Opponent chip in the scope bar): the tiles show the matchup against the team's overall figures.
+    - Matches: the matches, newest first.
+    - Lineups and Matches have a search and show 25 at a time.
+  - "Team info" links to the team's profile on the website: description, roster and master list.
+  - The back button goes back where you came from ("Budokai", "Meta"), on the Character page too.
+- **Matches now list in chronological order** (`utils/matchOrder.js`). File names carry no date, and plain name order put Week 10 before Week 2 and the playoffs first.
+- The old team cards, about 1,100 lines of `App.jsx`, are gone.
+- Fixed on the way: a test file naming only one team (`["Malevolent Souls"]`) lost its team in the character data, so its lineup and results went missing; its side now counts for that team, as the team figures always had it.
+- **The fusion split is now the rule everywhere (2026-09-29, the league's call).** Once a character fuses with a teammate, what it does from then on is split half and half between the two. The leaderboard always did this; the team figures, positions and the match viewer did not, so a fusion partner's numbers differed between a Team page's roster and its own page. All of them now share `utils/fusionSplit.js`, and the split stays on its own side of the match, which a team's test against itself needs. `verify-team-page` checks every match row against the rule.
+- The Character page header was redone (2026-09-29): an 80px portrait, the name, and under it four equal figures, Tier · Score · Rank · Matches, each a small label over its value. The score keeps its tier pill, so a Z score still breathes. It was chosen on real pages over a badge row and a plate docked on the portrait.
+- Still to do in Phase 4:
+  - the Matches list and the Match page
+  - retiring MUI
+  - trends over time
+  - deeper matchup analysis (per-slot results beyond the side-by-side lineups)
 
 **Phase 6's Builds tab is built (2026-09-28)**, to the demo's layout A (details in `apps/analyzer/CLAUDE.md`, "The Meta page"):
 - `/meta` has tabs Builds · AI strategies · Capsules. The last two show the old analyses unchanged, each behind its own tab instead of stacked in collapsible boxes; flattening them is still to do.
@@ -621,6 +649,7 @@ The analyzer's team tags and `BR_Data/Tests/` folders say "Master and Student" a
 - **In a path it survives but gets ugly.** `ROUTES.team()` encodes it, giving `/analyzer/teams/master-%26-student` in a Discord link. The analyzer's team slug is `master-and-student`.
 - **Renaming the tags or folders would be expensive and gains nothing** once names are display data. It changes the path of every file in the team's test folder (paths become match ids in URLs), the tags of every match the team played (464 for Master and Student), `scripts/tagConfig.js`, the Submit app's value, and filter links already shared. If it is ever done, do it before match pages ship.
 - **YAML is fine.** `&` only means something at the start of a value, so `name: Master & Student` is safe.
+- **The shared list shipped** (2026-09-28): `referencedata/teams.json`, used by the analyzer for names, slugs and logos.
 - **The website link is fixed** (2026-09-28): `HomePage.jsx` now encodes the slug. Every other team link on the website puts the slug in the path, where `&` is harmless. Still worth considering on the website side, outside this plan: `master-and-student` as its slug, keeping the old one working.
 
 ---

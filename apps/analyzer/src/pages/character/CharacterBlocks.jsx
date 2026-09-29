@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import {
-  ArrowLeft, BarChart3, Clock, Layers, Map as MapIcon, Star, Target, Trophy, Users,
+  ArrowLeft, Clock, Layers, Map as MapIcon, Target, Users,
 } from 'lucide-react';
 import TierPlate from '../../components/TierPlate.jsx';
+import Portrait from '../../components/Portrait.jsx';
+import { useIsPhone } from '../../shell/useMediaQuery.js';
 import ShareButton from '../../components/ShareButton.jsx';
 import { PerFormStatsDisplayAggregated } from '../../components/PerFormStatsDisplay.jsx';
 import { BuildTypeTooltipWrapper } from '../../components/build/index.js';
@@ -11,6 +13,7 @@ import {
 } from '../../utils/performanceTier.js';
 import { tierPillColors, tierPillClass } from '../../utils/tierPlateSvg.js';
 import { POSITION_NAMES, positionSlot, positionLabel } from '../../utils/positions.js';
+import { teamName } from '../../utils/teams.js';
 
 /**
  * The character page's CONTENT, with no opinion about arrangement.
@@ -135,53 +138,75 @@ export function useCharacterView(character) {
 
 // ---- blocks -----------------------------------------------------------------
 
+/** One of the header's figures: a small label over its value. */
+function HeaderFigure({ label, title, children }) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1" title={title}>
+      <span className="text-[10px] font-semibold uppercase leading-none tracking-wider text-slate-500">{label}</span>
+      <span className="flex h-[26px] items-center whitespace-nowrap text-lg font-bold leading-none tabular-nums text-slate-100">{children}</span>
+    </div>
+  );
+}
+
 export function IdentityBlock({
-  character, rank, totalInScope, scopeLabel, darkMode, onBack, compact = false,
+  character, rank, totalInScope, scopeLabel, darkMode, onBack, backLabel = null, portraitId = null, compact = false,
 }) {
+  const isPhone = useIsPhone();
   const matches = character.activeMatchCount || character.matchCount || 0;
   const tier = tierForScore(character.combatPerformanceScore);
   const provisional = isProvisionalTier(character);
   const tierMatches = tierMatchCount(character);
 
+  const score = Math.round(character.combatPerformanceScore);
+  const name = (
+    <h1 className={`m-0 min-w-0 ${compact ? 'text-xl' : 'text-2xl sm:text-3xl'} font-bold leading-tight break-words ${
+      darkMode ? 'text-white' : 'text-gray-900'}`}>
+      {character.name}
+    </h1>
+  );
+  // Tier, score, rank and matches as four equal figures, each a small label
+  // over its value, as the Overview tiles below have them. The score keeps its
+  // tier pill (Z's breathes).
+  const figures = (
+    <div className={isPhone ? 'mt-3 grid grid-cols-4 gap-2' : 'mt-2.5 flex flex-wrap items-end gap-x-6 gap-y-2'}>
+      <HeaderFigure label="Tier">
+        <TierPlate score={character.combatPerformanceScore} character={character} size="small" />
+      </HeaderFigure>
+      <HeaderFigure label="Score">
+        <span className={`inline-flex h-[26px] items-center rounded-full border border-solid px-2.5 text-base font-bold ${tierPillClass(tier)}`}
+          style={tierPillColors(tier, darkMode)}>
+          {score}
+        </span>
+      </HeaderFigure>
+      {rank != null && (
+        <HeaderFigure label="Rank" title="Position on the leaderboard as currently filtered. Unlike the tier, this moves with the filters.">
+          #{rank}
+          {totalInScope ? <span className={`ml-1 font-medium text-slate-500 ${isPhone ? 'text-xs' : 'text-sm'}`}>/ {totalInScope}</span> : null}
+        </HeaderFigure>
+      )}
+      <HeaderFigure label="Matches">{nf(matches)}</HeaderFigure>
+    </div>
+  );
+
   return (
     <div>
       <div className={`flex flex-wrap items-start justify-between gap-3 ${compact ? '' : 'mb-2'}`}>
-        <div className="flex items-center gap-3 min-w-0">
-          <TierPlate score={character.combatPerformanceScore} character={character} size={compact ? 'medium' : 'large'} />
-          <div className="min-w-0">
-            <h1 className={`${compact ? 'text-xl' : 'text-2xl sm:text-3xl'} font-bold leading-tight break-words ${
-              darkMode ? 'text-white' : 'text-gray-900'
-            }`}>
-              {character.name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-              <span
-                className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border border-solid whitespace-nowrap ${tierPillClass(tier)}`}
-                style={tierPillColors(tier, darkMode)}
-              >
-                <Star className="w-3 h-3" />
-                Score: {Math.round(character.combatPerformanceScore)}
-              </span>
-              {rank != null && (
-                <span
-                  className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border border-solid ${
-                    darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
-                  }`}
-                  title="Position on the leaderboard as currently filtered. Unlike the tier, this moves with the filters."
-                >
-                  <Trophy className="w-3 h-3" />
-                  #{rank}{totalInScope ? ` / ${totalInScope}` : ''}
-                </span>
-              )}
-              <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border border-solid ${
-                darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
-              }`}>
-                <BarChart3 className="w-3 h-3" />
-                {nf(matches)} match{matches === 1 ? '' : 'es'}
-              </span>
+        {/* The portrait leads, as the logo does on a Team page. On a phone the
+            name shares its row and the figures run under both, full width. */}
+        {isPhone ? (
+          <div className="min-w-0 w-full">
+            <div className="flex items-center gap-3.5">
+              <Portrait id={portraitId} name={character.name} size={56} rounded={12} />
+              {name}
             </div>
+            {figures}
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-4 min-w-0">
+            <Portrait id={portraitId} name={character.name} size={compact ? 56 : 80} rounded={12} />
+            <div className="min-w-0">{name}{figures}</div>
+          </div>
+        )}
 
         <div className="flex items-center gap-2 shrink-0">
           <ShareButton darkMode={darkMode} />
@@ -196,7 +221,7 @@ export function IdentityBlock({
               }`}
             >
               <ArrowLeft className="w-4 h-4" />
-              All characters
+              {backLabel || 'All characters'}
             </button>
           )}
         </div>
@@ -248,7 +273,7 @@ export function UsageBlock({ character, darkMode, columns = 4 }) {
   return (
     <Section icon={Users} title="Usage" hint="how it was fielded" darkMode={darkMode}>
       <div className={`grid ${cols} gap-x-4 gap-y-3`}>
-        <Fact label="Most used by" value={character.primaryTeam} darkMode={darkMode} />
+        <Fact label="Most used by" value={teamName(character.primaryTeam)} darkMode={darkMode} />
         <Fact label="Usual position" value={positionLabel(character.primaryPosition)} darkMode={darkMode} />
         <Fact label="Usual AI" value={character.primaryAIStrategy} darkMode={darkMode} />
         <Fact label="Top map" value={character.primaryMap} darkMode={darkMode} />
@@ -258,7 +283,7 @@ export function UsageBlock({ character, darkMode, columns = 4 }) {
           {teams.map(t => (
             <span key={t} className={`text-[11px] px-1.5 py-0.5 rounded border border-solid ${
               darkMode ? 'bg-gray-800 border-gray-700 text-slate-300' : 'bg-gray-50 border-gray-200 text-gray-600'
-            }`}>{t}</span>
+            }`}>{teamName(t)}</span>
           ))}
         </div>
       )}
@@ -412,8 +437,8 @@ export function MatchesBlock({ character, recentMatches, darkMode, onOpenMatch }
                       {m.won ? 'W' : 'L'}
                     </span>
                   </td>
-                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{m.team || '—'}</td>
-                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{m.opponentTeam || '—'}</td>
+                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{teamName(m.team) || '—'}</td>
+                  <td className={`py-1.5 pr-3 text-sm truncate max-w-[10rem] ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>{teamName(m.opponentTeam) || '—'}</td>
                   <td className={`py-1.5 pr-3 text-xs ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>{positionLabel(m.position)}</td>
                   <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-slate-200' : 'text-gray-800'}`}>{nf(m.damageDone)}</td>
                   <td className={`py-1.5 pr-3 text-sm text-right tabular-nums ${darkMode ? 'text-slate-200' : 'text-gray-800'}`}>{nf(m.damageTaken)}</td>

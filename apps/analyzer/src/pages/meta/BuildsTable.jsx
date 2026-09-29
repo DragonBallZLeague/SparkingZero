@@ -5,7 +5,7 @@ import TierScorePill from '../../components/TierScorePill.jsx';
 import { BuildPill } from '../character/overview/BuildPicker.jsx';
 import { capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
-import { HEAD, SortHead } from '../../shell/tableParts.jsx';
+import { HEAD, SortHead, ShowMore } from '../../shell/tableParts.jsx';
 import { capsuleBreakdown } from './buildRows.js';
 import { fadesThinSamples } from '../../utils/performanceTier.js';
 
@@ -200,12 +200,7 @@ export default function BuildsTable({
         {!list.length && <div className="p-7 text-center text-slate-400">No builds match.</div>}
       </div>
 
-      {rows.length > list.length && (
-        <button type="button" onClick={onMore}
-          className="block w-full cursor-pointer rounded-b-[10px] border-0 border-t border-solid border-gray-700 bg-transparent p-3 text-[14px] leading-[1.45] font-semibold text-orange-400 hover:bg-orange-500/[.06]">
-          Show more ({rows.length - list.length})
-        </button>
-      )}
+      <ShowMore left={rows.length - list.length} onClick={onMore} />
     </div>
   );
 

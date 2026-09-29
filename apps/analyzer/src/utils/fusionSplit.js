@@ -1,5 +1,28 @@
 import transformationsData from '../../../../referencedata/transformations.json';
-import { skillSlotUses } from './actionCodes.js';
+import { skillSlotUses, styleHits } from './actionCodes.js';
+
+/**
+ * THE FUSION RULE, for every per-character figure in the analyzer: when a
+ * character fuses with a teammate (Goku Black -> Fused Zamasu with Zamasu),
+ * everything it does from the fusion on is split half and half between it and
+ * that partner. characterAggregation.js applies it inline (its totals and match
+ * rows); every other aggregation - the team figures, positions, the match
+ * viewer, the workbook's team matrix - calls computeMatchFusionDeltas() once
+ * per match and applyFusionSplit() to each character's extractStats().
+ *
+ * A split stays on its side of the match: the same character can be on both
+ * teams (both field Goku (Super); a team's test against itself), so deltas are
+ * keyed by side and character.
+ */
+
+/** 1 for the first team's record keys, 2 for the second's, 0 otherwise. */
+export function sideOfRecordKey(key) {
+  const k = String(key || '');
+  if (k.includes('AlliesTeamMember') || k.includes('１Ｐ')) return 1;
+  if (k.includes('EnemyTeamMember') || k.includes('２Ｐ')) return 2;
+  return 0;
+}
+const deltaKey = (side, originalFormId) => `${side}:${originalFormId}`;
 
 // Returns all character form IDs connected to startId via the transformsTo graph.
 // fusionOf pairs are (index 0, index 1), (index 2, index 3). The canonical partner is
@@ -23,8 +46,9 @@ export function getFusionPartnerFamilyForms(startId, data) {
 }
 
 // Computes per-character stat deltas for a single match due to fusion splits.
-// Returns Map<originalFormId, statDelta> where trigger character gets negative deltas
+// Returns Map<"side:originalFormId", statDelta> where trigger character gets negative deltas
 // (fusion contribution subtracted × 0.5) and partner gets positive deltas (× 0.5).
+// Read it through applyFusionSplit().
 export function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
   const deltas = new Map();
   if (!characterRecord || !characterIdRecord) return deltas;
@@ -55,6 +79,7 @@ export function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
     const isTeam2 = key.includes('EnemyTeamMember') || key.includes('２Ｐ');
     if (!isTeam1 && !isTeam2) return;
     const sameTeamSet = isTeam1 ? allyOriginalIds : enemyOriginalIds;
+    const side = isTeam1 ? 1 : 2;
 
     const formChain = [originalForm, ...char.formChangeHistory.map(f => f.key)];
     for (let i = 1; i < formChain.length; i++) {
@@ -83,7 +108,12 @@ export function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
       const snapNum = snapBattle.battleNumCount || {};
       const totAdd = char.additionalCounts || {};
       const snapAdd = preSnap.additionalCounts || {};
+      const totSkills = skillSlotUses(totBattle.runBlastCount);
+      const snapSkills = skillSlotUses(snapBattle.runBlastCount);
+      const totHits = totBattle.styleHits || styleHits(totBattle.attackHitCount);
+      const snapHits = snapBattle.styleHits || styleHits(snapBattle.attackHitCount);
 
+      // The same contribution characterAggregation.js computes inline.
       const fc = {
         damageDone: (totBattle.givenDamage || 0) - (snapBattle.givenDamage || 0),
         damageTaken: (totBattle.takenDamage || 0) - (snapBattle.takenDamage || 0),
@@ -92,8 +122,12 @@ export function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
         specialMovesUsed: (totNum.sPMCount || 0) - (snapNum.sPMCount || 0),
         ultimatesUsed: (totNum.uLTCount || 0) - (snapNum.uLTCount || 0),
         // Skill 1 + Skill 2 from runBlastCount, never eXACount (docs/ACTION_CODES.md).
-        skillsUsed: (s => s.exa1 + s.exa2)(skillSlotUses(totBattle.runBlastCount)) -
-          (s => s.exa1 + s.exa2)(skillSlotUses(snapBattle.runBlastCount)),
+        skillsUsed: (totSkills.exa1 + totSkills.exa2) - (snapSkills.exa1 + snapSkills.exa2),
+        exa1Count: totSkills.exa1 - snapSkills.exa1,
+        exa2Count: totSkills.exa2 - snapSkills.exa2,
+        rushHits: totHits.rush - snapHits.rush,
+        heavyHits: totHits.heavy - snapHits.heavy,
+        kiBlastHits: totHits.kiblast - snapHits.kiblast,
         sparkingCount: (totNum.sparkingCount || 0) - (snapNum.sparkingCount || 0),
         chargeCount: (totNum.chargeCount || 0) - (snapNum.chargeCount || 0),
         guardCount: (totNum.guardCount || 0) - (snapNum.guardCount || 0),
@@ -126,10 +160,35 @@ export function computeMatchFusionDeltas(characterRecord, characterIdRecord) {
         }
         return result;
       };
-      deltas.set(originalForm, accumulate(deltas.get(originalForm), -0.5));
-      deltas.set(partnerOriginalId, accumulate(deltas.get(partnerOriginalId), 0.5));
+      const triggerKey = deltaKey(side, originalForm);
+      const partnerKey = deltaKey(side, partnerOriginalId);
+      deltas.set(triggerKey, accumulate(deltas.get(triggerKey), -0.5));
+      deltas.set(partnerKey, accumulate(deltas.get(partnerKey), 0.5));
       break;
     }
   });
   return deltas;
+}
+
+/**
+ * One character's extractStats() with its share of any fusion in the match.
+ * `char` is its characterRecord entry and `recordKey` its key there (getTeams()
+ * puts it on `_key`); `deltas` is computeMatchFusionDeltas() for the match.
+ * Unchanged when the character took no part in a fusion. A hit count the file
+ * does not track (null) stays null, so hit rates still skip it.
+ */
+export function applyFusionSplit(stats, char, deltas, recordKey = char && char._key) {
+  const original = char && char.battlePlayCharacter && char.battlePlayCharacter.originalCharacter
+    ? char.battlePlayCharacter.originalCharacter.key : null;
+  const delta = original && deltas ? deltas.get(deltaKey(sideOfRecordKey(recordKey), original)) : null;
+  if (!delta) return stats;
+  const out = { ...stats, hasFusionStats: true };
+  for (const [k, d] of Object.entries(delta)) {
+    if (out[k] == null && !d) continue;
+    out[k] = Math.max(0, (out[k] || 0) + d);
+  }
+  // The legacy names for the two supers' throws.
+  if ('spm1Count' in out) out.spm1Count = out.s1Blast;
+  if ('spm2Count' in out) out.spm2Count = out.s2Blast;
+  return out;
 }

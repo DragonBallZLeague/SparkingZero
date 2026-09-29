@@ -11,8 +11,10 @@
  * (a match's two teams) matches when any of its values is chosen. A dimension
  * with nothing chosen does not filter.
  *
- * Pure and dependency-free, so build scripts and verifiers can import it.
+ * Pure, so build scripts and verifiers can import it (with
+ * scripts/json-import-hook.mjs, for the team list).
  */
+import { teamName } from '../utils/teams.js';
 
 const TYPE_LABELS = { Season: 'Season matches', Test: 'Tests', Event: 'Events' };
 
@@ -24,7 +26,9 @@ export const SCOPE_DIMS = [
   { key: 'seasonNumber', name: 'Season', all: 'All seasons', primary: true, format: v => `Season ${v}` },
   { key: 'matchType', name: 'Match type', all: 'All match types', primary: true, format: v => TYPE_LABELS[v] || v, order: ['Season', 'Test', 'Event'] },
   { key: 'difficulty', name: 'Difficulty', all: 'Any difficulty', primary: true },
-  { key: 'team', name: 'Team', all: 'All teams', primary: true },
+  // The URL keeps the team's tag ("Master and Student"); the chip shows its
+  // name ("Master & Student"), from referencedata/teams.json.
+  { key: 'team', name: 'Team', all: 'All teams', primary: true, format: teamName },
   { key: 'seasonPhase', name: 'Season phase', all: 'All phases', primary: false },
   { key: 'matchSize', name: 'Match size', all: 'All sizes', primary: false },
 ];

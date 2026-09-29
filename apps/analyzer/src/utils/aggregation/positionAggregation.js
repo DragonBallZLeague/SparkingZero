@@ -1,4 +1,5 @@
 import { extractStats } from '../statCalculations.js';
+import { computeMatchFusionDeltas, applyFusionSplit } from '../fusionSplit.js';
 import { combatEfficiency } from '../performanceScore.js';
 
 export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMatchTypeFilters = ['2v2', '3v3', '4v4', '5v5']) {
@@ -9,8 +10,10 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
   };
   
   // Helper function to process a characterRecord
-  function processCharacterRecord(characterRecord, fileIndex = 0, recordIndex = 0) {
+  function processCharacterRecord(characterRecord, fileIndex = 0, recordIndex = 0, characterIdRecord = null) {
     if (!characterRecord) return;
+    // Each character's share of any fusion (utils/fusionSplit.js), as everywhere.
+    const fusionDeltas = computeMatchFusionDeltas(characterRecord, characterIdRecord);
     
     // Create a unique match ID based on file and record indices
     const matchId = `${fileIndex}-${recordIndex}`;
@@ -29,8 +32,8 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
     }
     
     // Helper to accumulate stats into a position
-    function accumulateCharStats(char, position) {
-      const stats = extractStats(char, charMap, capsuleMap, position);
+    function accumulateCharStats(char, position, recordKey) {
+      const stats = applyFusionSplit(extractStats(char, charMap, capsuleMap, position), char, fusionDeltas, recordKey);
       if (!stats.name || stats.name === '-') return;
       
       const characterName = stats.name;
@@ -84,7 +87,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
     
     // Process allies starter (1P key) as Position 1 (Starter)
     if (allies1PKey && characterRecord[allies1PKey]) {
-      accumulateCharStats(characterRecord[allies1PKey], 1);
+      accumulateCharStats(characterRecord[allies1PKey], 1, allies1PKey);
     }
     
     // Process allies team members: last AlliesTeamMember = Anchor (3), rest = Middle (2)
@@ -97,12 +100,12 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
       
       // Last AlliesTeamMember slot is the Anchor; all others are Middle
       const position = slotNumber === alliesKeys.length ? 3 : 2;
-      accumulateCharStats(char, position);
+      accumulateCharStats(char, position, key);
     });
     
     // Process enemy starter (2P key) as Position 1 (Starter)
     if (enemy2PKey && characterRecord[enemy2PKey]) {
-      accumulateCharStats(characterRecord[enemy2PKey], 1);
+      accumulateCharStats(characterRecord[enemy2PKey], 1, enemy2PKey);
     }
     
     // Process enemy team members: last EnemyTeamMember = Anchor (3), rest = Middle (2)
@@ -114,7 +117,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
       if (!slotNumber) return;
       
       const position = slotNumber === enemyKeys.length ? 3 : 2;
-      accumulateCharStats(char, position);
+      accumulateCharStats(char, position, key);
     });
   }
   
@@ -123,6 +126,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
     
     const fileContent = file.content;
     let characterRecord;
+    let characterIdRecord = null;
     let recordIndex = 0;
     
     // Handle TeamBattleResults format (current BR_Data structure)
@@ -130,14 +134,17 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
       // Check for battleResult (lowercase r)
       if (fileContent.TeamBattleResults.battleResult) {
         characterRecord = fileContent.TeamBattleResults.battleResult.characterRecord;
+        characterIdRecord = fileContent.TeamBattleResults.battleResult.characterIdRecord;
       }
       // Check for BattleResults (capital R) - Cinema files format
       else if (fileContent.TeamBattleResults.BattleResults) {
         characterRecord = fileContent.TeamBattleResults.BattleResults.characterRecord;
+        characterIdRecord = fileContent.TeamBattleResults.BattleResults.characterIdRecord;
       }
       // Check if data is directly in TeamBattleResults (new wrapper format)
       else if (fileContent.TeamBattleResults.characterRecord) {
         characterRecord = fileContent.TeamBattleResults.characterRecord;
+        characterIdRecord = fileContent.TeamBattleResults.characterIdRecord;
       }
     }
     // Handle new format with teams array at the top
@@ -153,7 +160,7 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
         }
         
         if (teamCharRecord) {
-          processCharacterRecord(teamCharRecord, fileIndex, teamIndex);
+          processCharacterRecord(teamCharRecord, fileIndex, teamIndex, (team.BattleResults || team).characterIdRecord);
         }
       });
       return; // Already processed all teams
@@ -161,13 +168,15 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
     // Handle standard format with BattleResults at root
     else if (fileContent.BattleResults) {
       characterRecord = fileContent.BattleResults.characterRecord;
+      characterIdRecord = fileContent.BattleResults.characterIdRecord;
     } 
     // Handle legacy format with direct properties
     else {
       characterRecord = fileContent.characterRecord;
+      characterIdRecord = fileContent.characterIdRecord;
     }
     
-    processCharacterRecord(characterRecord, fileIndex, recordIndex);
+    processCharacterRecord(characterRecord, fileIndex, recordIndex, characterIdRecord);
   });
   
   // Calculate averages and format data

@@ -5,7 +5,7 @@ import TierPlate from '../../components/TierPlate.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
 import { isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
-import { HEAD, SortHead } from '../../shell/tableParts.jsx';
+import { HEAD, SortHead, StatCell } from '../../shell/tableParts.jsx';
 import { CHAR_STATS, statByKey, placements } from './characterRows.js';
 
 /**
@@ -64,18 +64,7 @@ export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone,
             <div className="text-right"><TierScorePill score={r.combatPerformanceScore} provisional={prov} /></div>
             {stats.map(s => {
               const v = s.get(r);
-              const p = place[s.key](v);
-              const colour = p === null ? null : p >= 0.8 ? '#16e05a' : p < 0.2 ? '#ff2b3a' : null;
-              const width = max[s.key] > 0 ? Math.max(2, Math.round((v / max[s.key]) * 100)) : 0;
-              return (
-                <div key={s.key} className="flex flex-col items-end gap-1">
-                  <span className="text-[14px] leading-5 text-slate-100 tabular-nums">{s.fmt(v)}</span>
-                  <span className="block h-[3px] w-[52px] overflow-hidden rounded-sm bg-shell-track">
-                    <span className="block h-full rounded-sm"
-                      style={{ width: `${width}%`, background: colour || '#56627a', ...(prov && colour ? { filter: 'saturate(.45)', opacity: 0.62 } : null) }} />
-                  </span>
-                </div>
-              );
+              return <StatCell key={s.key} text={s.fmt(v)} value={v} max={max[s.key]} p={place[s.key](v)} faded={prov} />;
             })}
           </Row>
         );

@@ -2,6 +2,7 @@ import { getTeams, extractStats } from '../statCalculations.js';
 import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { buildKeyOf } from '../buildKey.js';
+import { computeMatchFusionDeltas, applyFusionSplit } from '../fusionSplit.js';
 
 // Recompute team character averages from a filtered subset of raw match data.
 // Used by the build filter feature in the teams view to re-scope stats without full re-aggregation
@@ -255,8 +256,12 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
       }
     }
     
-    // Process character data for both teams
+    // Process character data for both teams. Each character's stats carry its
+    // share of any fusion (utils/fusionSplit.js), as the leaderboard's do; the
+    // team totals are the same either way, since a split stays on its side.
     const teams_data = getTeams(characterRecord);
+    const fusionDeltas = computeMatchFusionDeltas(characterRecord, characterIdRecord);
+    const statsOf = char => applyFusionSplit(extractStats(char, charMap, capsuleMap, null, aiStrategiesMap), char, fusionDeltas);
     const p1TeamStats = getTeamStats(teams_data.p1, charMap, capsuleMap);
     const p2TeamStats = getTeamStats(teams_data.p2, charMap, capsuleMap);
     
@@ -290,7 +295,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
     // Track character usage for team 1 only if valid
     if (isTeam1Valid) {
       teams_data.p1.forEach(char => {
-      const stats = extractStats(char, charMap, capsuleMap, null, aiStrategiesMap);
+      const stats = statsOf(char);
       if (stats.name && stats.name !== '-') {
         teamStats[team1Name].charactersUsed.add(stats.name);
         teamStats[team1Name].characterUsageCount[stats.name] = 
@@ -326,6 +331,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
           healthMax: stats.hPGaugeValueMax || 0,
           battleDuration: stats.battleTime || 0,
           position: charPosition1,
+          won: team1Won, // the Team page's roster win %
           // Build and AI Strategy
           buildComposition: stats.buildComposition,
           aiStrategy: stats.aiStrategy,
@@ -395,7 +401,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
     // Track character usage for team 2 only if valid
     if (isTeam2Valid) {
       teams_data.p2.forEach(char => {
-      const stats = extractStats(char, charMap, capsuleMap, null, aiStrategiesMap);
+      const stats = statsOf(char);
       if (stats.name && stats.name !== '-') {
         teamStats[team2Name].charactersUsed.add(stats.name);
         teamStats[team2Name].characterUsageCount[stats.name] = 
@@ -431,6 +437,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
           healthMax: stats.hPGaugeValueMax || 0,
           battleDuration: stats.battleTime || 0,
           position: charPosition2,
+          won: team2Won, // the Team page's roster win %
           // Build and AI Strategy
           buildComposition: stats.buildComposition,
           aiStrategy: stats.aiStrategy,
@@ -503,8 +510,8 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
         const p2Char = teams_data.p2[index];
         if (!p2Char) return; // No opposing character at this position
         
-        const p1Stats = extractStats(p1Char, charMap, capsuleMap, null, aiStrategiesMap);
-        const p2Stats = extractStats(p2Char, charMap, capsuleMap, null, aiStrategiesMap);
+        const p1Stats = statsOf(p1Char);
+        const p2Stats = statsOf(p2Char);
         
         if (p1Stats.name && p1Stats.name !== '-' && p2Stats.name && p2Stats.name !== '-') {
           const position = index + 1; // 1-indexed position
