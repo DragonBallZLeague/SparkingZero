@@ -8,13 +8,13 @@ import { fmt, perMatch, mmss, percent, RankText, Tip, TipTable, MedianTrack } fr
  * colour appears only for the top and bottom fifth of the league.
  */
 
-/** A hit-rate donut with a light tick where the league median sits. */
-function Ring({ rate, color, median, dim, darkMode }) {
+/** A hit-rate donut with a light tick where the league median sits. The Match page's move figures draw it too. */
+export function Ring({ rate, color, median, dim, darkMode, size = 56 }) {
   const r = 16, C = 2 * Math.PI * r, v = rate === null ? 0 : Math.min(1, rate);
   const a = -Math.PI / 2 + 2 * Math.PI * (median ?? 0);
   const full = v >= 0.995;
   return (
-    <svg width="56" height="56" viewBox="0 0 42 42" style={{ overflow: 'visible' }} className="shrink-0" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 42 42" style={{ overflow: 'visible' }} className="shrink-0" aria-hidden="true">
       <circle cx="21" cy="21" r={r} fill="none" stroke={darkMode ? '#262e40' : '#e5e7eb'} strokeWidth="5" />
       <circle cx="21" cy="21" r={r} fill="none" stroke={color} strokeOpacity={dim ? 0.4 : 1} strokeWidth="5"
         strokeLinecap="round" strokeDasharray={`${C * v} ${C}`} transform="rotate(-90 21 21)" />
@@ -32,18 +32,21 @@ function Ring({ rate, color, median, dim, darkMode }) {
 
 /**
  * A volume circle: fills with the style colour as use grows (by area, capped at
- * the league's 95th percentile), with a dashed ring at the league median.
+ * the league's 95th percentile), with a dashed ring at the league median. With
+ * no median (a share of a whole, not a place in the league) there is no ring.
  */
-function VolumeCircle({ value, median, top, color, darkMode }) {
+export function VolumeCircle({ value, median, top, color, darkMode, size = 56 }) {
   const R = 19;
   const rad = x => R * Math.sqrt(Math.min(1, Math.max(0, (x || 0) / (top || 1))));
   const fillR = value > 0 ? Math.max(2.5, rad(value)) : 0;
   return (
-    <svg width="56" height="56" viewBox="0 0 42 42" className="shrink-0" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 42 42" className="shrink-0" aria-hidden="true">
       <circle cx="21" cy="21" r={R} fill="none" stroke={darkMode ? '#262e40' : '#e5e7eb'} strokeWidth="1.5" />
       {fillR > 0 && <circle cx="21" cy="21" r={fillR.toFixed(1)} fill={color} fillOpacity=".85" />}
-      <circle cx="21" cy="21" r={Math.max(2, rad(median)).toFixed(1)} fill="none"
-        stroke={darkMode ? '#94a3b8' : '#6b7280'} strokeOpacity=".9" strokeWidth="1.3" strokeDasharray="2.5 2" />
+      {median !== null && median !== undefined && (
+        <circle cx="21" cy="21" r={Math.max(2, rad(median)).toFixed(1)} fill="none"
+          stroke={darkMode ? '#94a3b8' : '#6b7280'} strokeOpacity=".9" strokeWidth="1.3" strokeDasharray="2.5 2" />
+      )}
     </svg>
   );
 }

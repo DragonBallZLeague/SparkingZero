@@ -137,8 +137,11 @@ export function TipTable({ title, rows, foot = null, darkMode }) {
   );
 }
 
-/** A thin track with a league-median tick at 50%, filled to `p`% in `color`. */
-export function MedianTrack({ p, color, height = 6, empty = false, darkMode, dot = false, fade = false }) {
+/**
+ * A thin track with a league-median tick at 50%, filled to `p`% in `color`.
+ * `tick={false}` drops the tick, for a track that is a share, not a place.
+ */
+export function MedianTrack({ p, color, height = 6, empty = false, darkMode, dot = false, fade = false, tick = true }) {
   const pos = Math.max(0, Math.min(100, p ?? 0));
   return (
     <div className={`relative rounded-full ${darkMode ? 'bg-shell-track' : 'bg-gray-200'}`} style={{ height }}>
@@ -146,8 +149,10 @@ export function MedianTrack({ p, color, height = 6, empty = false, darkMode, dot
         <div className="absolute left-0 top-0 bottom-0 rounded-full"
           style={{ width: `${Math.max(2, pos)}%`, background: color, opacity: fade ? 0.45 : 0.9 }} />
       )}
-      <div className={`absolute ${darkMode ? 'bg-slate-400' : 'bg-gray-500'}`}
-        style={{ left: '50%', top: -3, bottom: -3, width: 2, opacity: 0.8 }} />
+      {tick && (
+        <div className={`absolute ${darkMode ? 'bg-slate-400' : 'bg-gray-500'}`}
+          style={{ left: '50%', top: -3, bottom: -3, width: 2, opacity: 0.8 }} />
+      )}
       {dot && !empty && (
         <div className={`absolute rounded-full border-2 border-solid ${darkMode ? 'border-shell-panel' : 'border-white'}`}
           style={{ left: `${pos}%`, top: '50%', width: 11, height: 11, transform: 'translate(-50%, -50%)', background: color }} />

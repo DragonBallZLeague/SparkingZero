@@ -5,12 +5,7 @@ import TierPlate from '../../components/TierPlate.jsx';
 import { TIERS, TIER_LABELS } from '../../utils/tierScale.js';
 import { tierForScore, isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { tierPillColors } from '../../utils/tierPlateSvg.js';
-
-/** '#rrggbb' + alpha -> rgba(). */
-const tint = (hex, a) => {
-  const n = parseInt(String(hex).replace('#', ''), 16);
-  return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
-};
+import { tint } from '../../utils/overviewPalette.js';
 
 /**
  * The tier list ("Visual direction", decision 9): a row per tier, Z to C, each

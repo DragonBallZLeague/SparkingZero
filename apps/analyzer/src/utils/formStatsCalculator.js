@@ -48,6 +48,11 @@ function getSnapshot(characterIdRecord, charId) {
   return key ? characterIdRecord[key] : null;
 }
 
+// battleNumCount's own key names (zCounter, lightningAttack, vanishingAttack,
+// dragonHoming, speedImpactWinCount), as extractStats() reads them. Until
+// 2026-09-29 this file read zCounterCount, lightningAttackCount and so on,
+// which no match file has, so those per-form counts were always 0.
+
 /**
  * Subtract stats between two snapshot objects
  * @param {Object} finalSnapshot - The later/final snapshot object (from characterIdRecord or characterRecord)
@@ -98,7 +103,7 @@ function subtractStats(finalSnapshot, previousSnapshot) {
     chargeCount: (finalNumCount.chargeCount || 0) - (prevNumCount.chargeCount || 0),
     guardCount: (finalNumCount.guardCount || 0) - (prevNumCount.guardCount || 0),
     shotEnergyBulletCount: (finalNumCount.shotEnergyBulletCount || 0) - (prevNumCount.shotEnergyBulletCount || 0),
-    zCounterCount: (finalNumCount.zCounterCount || 0) - (prevNumCount.zCounterCount || 0),
+    zCounterCount: (finalNumCount.zCounter || 0) - (prevNumCount.zCounter || 0),
     superCounterCount: (finalNumCount.superCounterCount || 0) - (prevNumCount.superCounterCount || 0),
     revengeCounterCount: (finalNumCount.revengeCounter || 0) - (prevNumCount.revengeCounter || 0),
     
@@ -106,11 +111,11 @@ function subtractStats(finalSnapshot, previousSnapshot) {
     maxComboNum: (finalBattle.maxComboNum || 0) - (prevBattle.maxComboNum || 0),
     maxComboDamage: (finalBattle.maxComboDamage || 0) - (prevBattle.maxComboDamage || 0),
     throwCount: (finalNumCount.throwCount || 0) - (prevNumCount.throwCount || 0),
-    lightningAttackCount: (finalNumCount.lightningAttackCount || 0) - (prevNumCount.lightningAttackCount || 0),
-    vanishingAttackCount: (finalNumCount.vanishingAttackCount || 0) - (prevNumCount.vanishingAttackCount || 0),
-    dragonHomingCount: (finalNumCount.dragonHomingCount || 0) - (prevNumCount.dragonHomingCount || 0),
+    lightningAttackCount: (finalNumCount.lightningAttack || 0) - (prevNumCount.lightningAttack || 0),
+    vanishingAttackCount: (finalNumCount.vanishingAttack || 0) - (prevNumCount.vanishingAttack || 0),
+    dragonHomingCount: (finalNumCount.dragonHoming || 0) - (prevNumCount.dragonHoming || 0),
     speedImpactCount: (finalNumCount.speedImpactCount || 0) - (prevNumCount.speedImpactCount || 0),
-    speedImpactWins: (finalNumCount.speedImpactWins || 0) - (prevNumCount.speedImpactWins || 0),
+    speedImpactWins: (finalNumCount.speedImpactWinCount || 0) - (prevNumCount.speedImpactWinCount || 0),
     sparkingComboCount: (finalNumCount.sparkingComboCount || 0) - (prevNumCount.sparkingComboCount || 0),
     dragonDashMileage: (finalBattle.dragonDashMileage || 0) - (prevBattle.dragonDashMileage || 0),
     
@@ -218,17 +223,17 @@ export function calculatePerFormStats(characterRecord, characterIdRecord, formCh
         chargeCount: numCount.chargeCount || 0,
         guardCount: numCount.guardCount || 0,
         shotEnergyBulletCount: numCount.shotEnergyBulletCount || 0,
-        zCounterCount: numCount.zCounterCount || 0,
+        zCounterCount: numCount.zCounter || 0,
         superCounterCount: numCount.superCounterCount || 0,
         revengeCounterCount: numCount.revengeCounter || 0,
         maxComboNum: battle.maxComboNum || 0,
         maxComboDamage: battle.maxComboDamage || 0,
         throwCount: numCount.throwCount || 0,
-        lightningAttackCount: numCount.lightningAttackCount || 0,
-        vanishingAttackCount: numCount.vanishingAttackCount || 0,
-        dragonHomingCount: numCount.dragonHomingCount || 0,
+        lightningAttackCount: numCount.lightningAttack || 0,
+        vanishingAttackCount: numCount.vanishingAttack || 0,
+        dragonHomingCount: numCount.dragonHoming || 0,
         speedImpactCount: numCount.speedImpactCount || 0,
-        speedImpactWins: numCount.speedImpactWins || 0,
+        speedImpactWins: numCount.speedImpactWinCount || 0,
         sparkingComboCount: numCount.sparkingComboCount || 0,
         dragonDashMileage: battle.dragonDashMileage || 0,
         kills: battle.killCount || 0,

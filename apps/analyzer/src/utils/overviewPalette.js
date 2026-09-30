@@ -37,6 +37,15 @@ const RANK_ENDS = { dark: { bad: '#ff2b3a', good: '#16e05a' }, light: { bad: '#c
 
 const theme = darkMode => (darkMode ? 'dark' : 'light');
 
+/** '#rrggbb' at alpha `a`, as rgba(): a tint of a colour, as the tier list's rows and the Match page's team headers take. */
+export const tint = (hex, a) => {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
+};
+
+/** The win and loss colours: the rank ends, as the W and L badges draw them. */
+export const RESULT_COLORS = { won: RANK_ENDS.dark.good, lost: RANK_ENDS.dark.bad };
+
 export const styleColor = (key, darkMode) => STYLE_COLORS[theme(darkMode)][key] || NEUTRAL[theme(darkMode)];
 
 export const capsuleTypeColor = (type, darkMode) =>

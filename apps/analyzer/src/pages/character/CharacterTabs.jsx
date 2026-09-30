@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Filter, X } from 'lucide-react';
 import {
   IdentityBlock, UsageBlock, PositionBlock, FormsBlock, BuildsBlock, MatchesBlock,
   useCharacterView,
 } from './CharacterBlocks.jsx';
 import OverviewTab from './overview/OverviewTab.jsx';
+import FilterStrip from '../../components/FilterStrip.jsx';
 import { BuildPill } from './overview/BuildPicker.jsx';
 import { characterBuilds } from './overview/characterBuilds.js';
 import { findBuildByCode } from '../../utils/buildKey.js';
@@ -53,27 +53,13 @@ const TABS = [
 /** "Showing one build", with the way back to all of them. */
 function BuildStrip({ build, darkMode, onClear }) {
   return (
-    <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 mt-4 px-3 py-2 rounded-[8px] border border-solid text-sm ${
-      darkMode ? 'bg-brand/[.12] border-brand/[.55] text-slate-200' : 'bg-orange-50 border-orange-200 text-gray-800'
-    }`}>
-      <Filter className={`w-4 h-4 shrink-0 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
-      <span className="font-semibold">Showing one build</span>
+    <FilterStrip label="Showing one build" clearLabel="Show all builds" onClear={onClear} className="mt-4">
       <BuildPill label={build.label} darkMode={darkMode} />
-      <span className={darkMode ? 'text-slate-400' : 'text-gray-500'}>{build.aiName}</span>
-      <span className={`tabular-nums ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+      <span className="text-slate-400">{build.aiName}</span>
+      <span className="tabular-nums text-slate-400">
         {build.count} use{build.count === 1 ? '' : 's'}
       </span>
-      <button
-        type="button"
-        onClick={onClear}
-        className={`ml-auto inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-transparent border-0 cursor-pointer ${
-          darkMode ? 'text-orange-300 hover:bg-orange-500/20' : 'text-orange-700 hover:bg-orange-100'
-        }`}
-      >
-        <X className="w-3.5 h-3.5" />
-        Show all builds
-      </button>
-    </div>
+    </FilterStrip>
   );
 }
 

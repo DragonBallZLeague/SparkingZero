@@ -25,6 +25,12 @@
  * Values are computed by src/utils/characterOverview.js - the page's own code - so
  * a character and the league are measured identically.
  *
+ * `perMatch` is the Match page's reference: every single performance in the
+ * same window (any character, any number of appearances, battle time > 0), as
+ * 21 quantiles per figure, computed by src/utils/matchReference.js - again the
+ * page's own code. One match is placed among single matches, not among
+ * characters' averages, which are far less spread out.
+ *
  * Committed, and only rewritten when the reference actually changes, so a
  * recalibration shows up as a reviewable diff rather than as churn.
  *
@@ -39,6 +45,7 @@ import { parseCharacterCSV } from '../src/utils/statCalculations.js';
 import {
   overviewFromMatches, OVERVIEW_METRICS, DEFENSE_WEIGHTS, round4, percentileIn, defenseRaw,
 } from '../src/utils/characterOverview.js';
+import { MATCH_METRICS, quantilesOf } from '../src/utils/matchReference.js';
 import { loadCalibrationBasis, SEASON_WINDOW, REQUIRED_DIFFICULTY } from './calibration-basis.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -82,6 +89,14 @@ const at = (arr, q) => (arr.length ? arr[Math.floor(q * (arr.length - 1))] : nul
 const medians = Object.fromEntries(Object.entries(metrics).map(([k, arr]) => [k, arr.length ? arr[Math.floor(arr.length / 2)] : null]));
 const p95 = Object.fromEntries(['skill1', 'skill2', 'kiFired'].map(k => [k, at(metrics[k], 0.95)]));
 
+// Single performances, for the Match page.
+const performances = rows.flatMap(r => (r.matches || []).filter(m => (m.battleTime || 0) > 0));
+const perMatch = {
+  performances: performances.length,
+  quantiles: Object.fromEntries(Object.entries(MATCH_METRICS).map(([k, get]) => [k,
+    quantilesOf(performances.map(m => round4(get(m))).filter(v => v !== null).sort((a, b) => a - b))])),
+};
+
 const baseline = {
   version: 1,
   generated: new Date().toISOString(),
@@ -99,6 +114,7 @@ const baseline = {
   p95,
   metrics,
   defense,
+  perMatch,
 };
 
 // Only rewrite when the REFERENCE changed (the timestamp is compared out), so a
@@ -113,10 +129,12 @@ if (unchanged) {
   console.log(`${LABEL}: reference unchanged, file left alone`);
 } else {
   // One line per metric keeps the committed diff readable when it does change.
-  const body = JSON.stringify({ ...baseline, metrics: '__METRICS__' }, null, 2)
+  const body = JSON.stringify({ ...baseline, metrics: '__METRICS__', perMatch: { ...perMatch, quantiles: '__QUANTILES__' } }, null, 2)
     .replace('"__METRICS__"', '{\n' + Object.entries(metrics).map(([k, arr]) => `    "${k}": ${JSON.stringify(arr)}`).join(',\n') + '\n  }')
-    .replace(/"defense": \[[\s\S]*?\]/, `"defense": ${JSON.stringify(defense)}`);
+    .replace(/"defense": \[[\s\S]*?\]/, `"defense": ${JSON.stringify(defense)}`)
+    .replace('"__QUANTILES__"', '{\n' + Object.entries(perMatch.quantiles).map(([k, arr]) => `      "${k}": ${JSON.stringify(arr)}`).join(',\n') + '\n    }');
   fs.writeFileSync(outPath, body + '\n');
 }
 console.log(`${LABEL}: seasons ${seasons.join('+')}, ${REQUIRED_DIFFICULTY} only -> ${files.length} matches, ${pool.length} characters (${POOL_MIN}+ appearances)`);
+console.log(`  per match: ${perMatch.performances} performances, median damage ${Math.round(perMatch.quantiles.damageDone[10])}`);
 console.log(`  medians  damage ${Math.round(medians.avgDealt)}  melee ${medians.r_melee}/min  ki blasts ${medians.kiFired}/match  super 1 hit ${Math.round(medians.s1Rate * 100)}%`);

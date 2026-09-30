@@ -7,7 +7,7 @@ export const TABS = [
   { id: 'home', label: 'Home', to: ROUTES.home },
   { id: 'aggregated', label: 'Characters', to: ROUTES.characters },
   { id: 'teams', label: 'Teams', to: ROUTES.teams },
-  { id: 'single', label: 'Matches', to: ROUTES.matches },
+  { id: 'matches', label: 'Matches', to: ROUTES.matches },
   { id: 'meta', label: 'Meta', to: ROUTES.meta },
   { id: 'sandbox', label: 'Sandbox', to: ROUTES.sandbox },
 ];

@@ -22,7 +22,10 @@ export const ROUTES = {
   teams: '/teams',
   team: (teamSlug) => `/teams/${encodeURIComponent(teamSlug)}`,
   matches: '/matches',
-  match: (matchId) => `/matches/${encodeURIComponent(matchId)}`,
+  // Takes the URL KEY: the match file's name as a slug ('s0-week-3-match-5'),
+  // which matchUrlKey(path, index) in utils/matchSlug.js produces. The file's
+  // path is still accepted when resolving.
+  match: (matchKey) => `/matches/${encodeURIComponent(matchKey)}`,
   tables: '/tables',
   meta: '/meta',
   sandbox: '/sandbox',
@@ -36,9 +39,9 @@ export const ROUTES = {
  * shared instead of living only in component state. When the views become real
  * pages, the mapping is what they replace.
  *
- * Since the shell rebuild (2026-09-28) Home is its own view, and the
- * single-match viewer - which used to BE the home page - lives at /matches until
- * the Matches list and Match page replace it.
+ * Since the shell rebuild (2026-09-28) Home is its own view. /matches is the
+ * Matches list and /matches/<slug> one match (2026-09-29); they replaced the
+ * single-match viewer, which used to BE the home page.
  *
  * Order matters: viewForPath takes the FIRST prefix match, so more specific
  * paths must come before less specific ones. '/' matches everything, so it is
@@ -47,7 +50,7 @@ export const ROUTES = {
 export const VIEW_ROUTES = [
   { view: 'aggregated', path: ROUTES.characters },
   { view: 'teams', path: ROUTES.teams },
-  { view: 'single', path: ROUTES.matches },
+  { view: 'matches', path: ROUTES.matches },
   { view: 'tables', path: ROUTES.tables },
   { view: 'meta', path: ROUTES.meta },
   { view: 'home', path: ROUTES.home },
@@ -68,13 +71,14 @@ export function isSandboxPath(pathname) {
 
 /**
  * The canonical path for one of App's view types. In the Sandbox the same view
- * sits under /sandbox; the Sandbox's own landing is the single-match view.
+ * sits under /sandbox; the Sandbox's own landing is the Matches list, of the
+ * uploads.
  */
 export function pathForView(view, { sandbox = false } = {}) {
   const entry = VIEW_ROUTES.find(r => r.view === view);
   const path = entry ? entry.path : ROUTES.home;
   if (!sandbox) return path;
-  return path === ROUTES.home || view === 'single' ? ROUTES.sandbox : ROUTES.sandbox + path;
+  return path === ROUTES.home || view === 'matches' ? ROUTES.sandbox : ROUTES.sandbox + path;
 }
 
 /**
@@ -83,7 +87,7 @@ export function pathForView(view, { sandbox = false } = {}) {
  *
  * Unknown paths fall back to the home view rather than throwing, so a stale or
  * mistyped link still renders something. Inside the Sandbox the fallback is its
- * landing view, 'single'.
+ * landing view, 'matches'.
  */
 export function viewForPath(pathname) {
   if (typeof pathname !== 'string') return 'home';
@@ -94,5 +98,5 @@ export function viewForPath(pathname) {
     if (path === ROUTES.home) continue; // the fallback, handled below
     if (clean === path || clean.startsWith(path + '/')) return view;
   }
-  return sandbox ? 'single' : 'home';
+  return sandbox ? 'matches' : 'home';
 }

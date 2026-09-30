@@ -151,12 +151,12 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 - **Routes:**
   - `/` is Home. Its first cut is the tier list.
   - `/characters` is the table with a tier-list view.
-  - The single-match viewer moved to `/matches` until the Matches list replaces it.
+  - The single-match viewer moved to `/matches` until the Matches list replaced it (Phase 4, 2026-09-29).
   - The Sandbox is `/sandbox/...`, the same views over uploads, with no scope and no links to league pages.
 - **Portraits:** 241 files in `public/portraits/`, committed, with `npm run build-portraits` and a warn-only `verify-portraits` in prebuild. Since 2026-09-29 there is also a sharper 192px set in `public/portraits/192/`, which `<Portrait>` offers for any portrait drawn above 48px (the Character page header, the tier list).
 - **Cleanup:**
   - `App.jsx` went from 4,973 to ~3,340 lines: the card leaderboard, its 751px filter form and the Character Position Analysis section are gone.
-  - `TagFilterSelector.jsx` is deleted. `BRDataSelector.jsx` is no longer rendered; it retires with MUI in Phase 4.
+  - `TagFilterSelector.jsx` is deleted. `BRDataSelector.jsx` went with MUI in Phase 4 (2026-09-29).
 - **Matched to the demo's CSS**:
   - **Width:** the page is now the demo's 1400px column (`max-w-page`, 1352px of content inside a 24px gutter), not the fluid 1760px shell.
   - **Font:** the system UI font, as the demo and the website render, and buttons inherit it (they had fallen back to Arial).
@@ -174,7 +174,7 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 
 **Still open in 2c:**
 - **Accessibility pass:** keyboard order through the chip lists, focus management in the phone sheets, 44px targets.
-- **Old panels in the new shell:** Teams, Matches and Data Tables still show their old panels until their own rebuilds. So do Meta's AI strategies and Capsules tabs.
+- **Old panels in the new shell:** Data Tables still shows its old panels, and so do Meta's AI strategies and Capsules tabs and the Sandbox's upload panel. Teams and Matches are rebuilt.
 - **`/tables` has no tab.** It redirects to `/characters` once the workbook gains its Position and Capsules sheets.
 - **The workbook's two new sheets** (Position, Capsules) are still to add.
 - **Menus and tooltips slide in from the top left the first time they open.** This has been happening since long before the redesign. It affects the scope bar's chip menus, the build picker, the Overview's tooltips and the older build tooltips.
@@ -185,7 +185,7 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 
 Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design (which follows "Visual direction"), the share-snippet image card, build comparison and character comparison.
 
-### Phases 4–7: not started, apart from Meta's Builds tab and Phase 4's team pages
+### Phases 4–7: not started, apart from Meta's Builds tab and Phase 4's team and match pages
 
 **Phase 4 began (2026-09-28) with the team side** (details in `apps/analyzer/CLAUDE.md`, "The Teams and Team pages"):
 - **The shared team list is in** (`referencedata/teams.json`): tag, website name, slug, website slug, logo and colour for all 13 teams. The analyzer shows the website's names everywhere, including the scope bar's Team chip. Links keep the tags, so old ones still work.
@@ -209,11 +209,25 @@ Routing, the Character page itself, `<ShareButton>`, the shared presentational c
 - Fixed on the way: a test file naming only one team (`["Malevolent Souls"]`) lost its team in the character data, so its lineup and results went missing; its side now counts for that team, as the team figures always had it.
 - **The fusion split is now the rule everywhere (2026-09-29, the league's call).** Once a character fuses with a teammate, what it does from then on is split half and half between the two. The leaderboard always did this; the team figures, positions and the match viewer did not, so a fusion partner's numbers differed between a Team page's roster and its own page. All of them now share `utils/fusionSplit.js`, and the split stays on its own side of the match, which a team's test against itself needs. `verify-team-page` checks every match row against the rule.
 - The Character page header was redone (2026-09-29): an 80px portrait, the name, and under it four equal figures, Tier · Score · Rank · Matches, each a small label over its value. The score keeps its tier pill, so a Z score still breathes. It was chosen on real pages over a badge row and a plate docked on the portrait.
+- **The Matches list and the Match page are built (2026-09-29)** (details in `apps/analyzer/CLAUDE.md`, "The Matches list and the Match page"):
+  - **Match URLs are the file name as a slug**: `/matches/s0-week-3-match-5`. All 2,505 are unique, `verify-match-slugs` (in prebuild) fails the build on a collision, and the file's path stays a permanent alias. This is the match-ID scheme step 4 asked for. A slug resolves against every match, not the scope, so a link works whatever the scope bar says.
+  - **`/matches`**: one row per match in scope, newest first. Each side has its own line (result, team, lineup Starter first, slots aligned), then size, difficulty and map. Search, 25 at a time, and the **Matches | Performances** switch, whose second view is the old one-row-per-character-per-match table.
+  - **`/matches/<slug>`**: the teams and result, then season, phase, type, size, map and difficulty as label-over-value figures, then a table per team in lineup order: position, character, build, damage, taken, HP left and the score as a tier pill. A row opens the rest of the character's numbers under it, flat, with its build as the one-column list and a flat forms table. This replaced the four levels of nested cards.
+  - Every "open match" (Team page lineups and matches, a character's recent matches, the Performances table) now goes to the match's page, with a back button to where you came from. The Sandbox has both pages over the uploads.
+  - The Match page applies the fusion rule, and `verify-match-page` checks it against the character aggregation for all 11,028 character rows: same characters in the same slots, same results, same damage, taken and HP.
+  - **MUI and Emotion are gone from the analyzer**, with the file tree (`BRDataSelector.jsx`), the last thing that used them. `App.jsx` is down to ~1,250 lines.
+  - **Settled: a fused form's per-form figures are the fusion's whole output** (the league's call, 2026-09-29: "a better indication of how the match actually went"). The character's own totals follow the fusion rule.
+- **Match page follow-ups (2026-09-29, the league's review):**
+  - Each team's header is tinted green or red for its result, as the tier list tints its rows. The Matches list's Teams column no longer lets the lineups spill over Size and Difficulty at in-between widths.
+  - **The opened character row was redesigned** from the Character page Overview's pieces: the five headline figures on league tracks (coloured only in the top or bottom fifth), the move rings and circles, Attack / Defense / Mechanics lists beside the build, then the forms. A match is placed among **single matches**, a new `perMatch` block in `style-baseline.json`, not among characters' averages.
+  - **Forms are now one column per form** (`components/FormBreakdown.jsx`), under a timeline of time spent in each, replacing a ten-column row-per-form table. It is written to take the Character page Forms tab's averages next.
+  - Fixed on the way: five per-form counters (Z-counters, lightning, vanishing, dragon homing, speed-impact wins) were read under key names no file has, so they were always 0.
+  - Second review: the detail's parts got the Character page's borders back (tile grid, move cards, a box per list), the forms' figures start closed behind "Show figures", and **picking a form filters the detail to it**, with an orange "Showing one form" strip and swatch (the build filter's look, now a shared `FilterStrip`). A form's rates keep the league comparison; its amounts show as a share of all its forms.
+  - Found by the new checks: when both sides field the same transforming character (a team's test against itself), the file keeps one set of form snapshots for the two, so one side's forms were the other fighter's. The Match page now leaves those figures out (16 records, all tests).
 - Still to do in Phase 4:
-  - the Matches list and the Match page
-  - retiring MUI
   - trends over time
   - deeper matchup analysis (per-slot results beyond the side-by-side lineups)
+  - the Character page's Forms tab onto `FormBreakdown` (averages per form, how often each is reached), leaving out the shared-snapshot records as the Match page does
 
 **Phase 6's Builds tab is built (2026-09-28)**, to the demo's layout A (details in `apps/analyzer/CLAUDE.md`, "The Meta page"):
 - `/meta` has tabs Builds · AI strategies · Capsules. The last two show the old analyses unchanged, each behind its own tab instead of stacked in collapsible boxes; flattening them is still to do.

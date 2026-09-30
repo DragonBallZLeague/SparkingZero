@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import TierPlate from '../../components/TierPlate.jsx';
 import Portrait from '../../components/Portrait.jsx';
+import HeaderFigure from '../../components/HeaderFigure.jsx';
 import { useIsPhone } from '../../shell/useMediaQuery.js';
 import ShareButton from '../../components/ShareButton.jsx';
 import { PerFormStatsDisplayAggregated } from '../../components/PerFormStatsDisplay.jsx';
@@ -138,15 +139,6 @@ export function useCharacterView(character) {
 
 // ---- blocks -----------------------------------------------------------------
 
-/** One of the header's figures: a small label over its value. */
-function HeaderFigure({ label, title, children }) {
-  return (
-    <div className="flex min-w-0 flex-col gap-1" title={title}>
-      <span className="text-[10px] font-semibold uppercase leading-none tracking-wider text-slate-500">{label}</span>
-      <span className="flex h-[26px] items-center whitespace-nowrap text-lg font-bold leading-none tabular-nums text-slate-100">{children}</span>
-    </div>
-  );
-}
 
 export function IdentityBlock({
   character, rank, totalInScope, scopeLabel, darkMode, onBack, backLabel = null, portraitId = null, compact = false,

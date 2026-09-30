@@ -46,8 +46,9 @@ check('team deep link', viewForPath('/teams/sentai'), 'teams');
 check('tables', viewForPath('/tables'), 'tables');
 check('meta', viewForPath('/meta'), 'meta');
 check('root is Home', viewForPath('/'), 'home');
-check('matches (the single-match viewer until the Match page)', viewForPath('/matches'), 'single');
-check('match deep link', viewForPath('/matches/' + encodeURIComponent('Seasons/Season 0/x.json')), 'single');
+check('matches (the list)', viewForPath('/matches'), 'matches');
+check('match slug deep link', viewForPath('/matches/s0-week-3-match-5'), 'matches');
+check('match path deep link (the alias)', viewForPath('/matches/' + encodeURIComponent('Seasons/Season 0/x.json')), 'matches');
 
 console.log('\nA prefix must not be mistaken for the section:');
 // '/charactersomething' starts with '/characters' as a STRING but is not inside
@@ -64,10 +65,11 @@ check('undefined', viewForPath(undefined), 'home');
 check('unknown view falls back to home', pathForView('__nope__'), ROUTES.home);
 
 console.log('\nThe Sandbox runs the same views under /sandbox:');
-check('sandbox landing is the single-match view', viewForPath('/sandbox'), 'single');
+check('sandbox landing is the Matches list', viewForPath('/sandbox'), 'matches');
+check('sandbox match', viewForPath('/sandbox/matches/os0-budokai-test-1'), 'matches');
 check('sandbox characters', viewForPath('/sandbox/characters'), 'aggregated');
 check('sandbox teams, trailing slash', viewForPath('/sandbox/teams/'), 'teams');
-check('sandbox unknown falls back to its landing', viewForPath('/sandbox/nope'), 'single');
+check('sandbox unknown falls back to its landing', viewForPath('/sandbox/nope'), 'matches');
 check('is a sandbox path', isSandboxPath('/sandbox/meta'), true);
 check('a prefix is not the sandbox', isSandboxPath('/sandboxes'), false);
 check('a league path is not the sandbox', isSandboxPath('/characters'), false);
@@ -81,8 +83,9 @@ console.log('\nBuilders produce clean, single-segment URLs:');
 check('character', ROUTES.character('android-13'), '/characters/android-13');
 check('character with an id', ROUTES.character('0620_00'), '/characters/0620_00');
 check('team slug', ROUTES.team('master-and-student'), '/teams/master-and-student');
-// A match id is a relative file path with spaces and slashes, so it MUST encode
-// to a single segment or the router would read it as nested routes.
+check('match slug', ROUTES.match('s0-week-3-match-5'), '/matches/s0-week-3-match-5');
+// The path alias has spaces and slashes, so it MUST encode to a single segment
+// or the router would read it as nested routes.
 const matchPath = ROUTES.match('Seasons/Season 0/S0 Week 1 Match 1.json');
 check('match id encodes to one segment', matchPath.split('/').length, 3);
 check('match id has no raw spaces', matchPath.includes(' '), false);

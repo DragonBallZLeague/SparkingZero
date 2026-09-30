@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import './App.css';
-import { Combobox } from './components/Combobox.jsx';
 import TabRow from './shell/TabRow.jsx';
 import ScopeBar from './shell/ScopeBar.jsx';
 import { multiLabel } from './shell/ChipMenu.jsx';
@@ -16,80 +15,42 @@ import { readPositions, positionCounts } from './pages/characters/characterRows.
 import MetaPage from './pages/MetaPage.jsx';
 import TeamsPage from './pages/TeamsPage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
+import MatchesPage from './pages/MatchesPage.jsx';
+import MatchPage from './pages/MatchPage.jsx';
+import { matchRows, matchName, readMatchesView } from './pages/matches/matchRows.js';
+import { buildMatchSlugIndex, matchUrlKey, resolveMatchParam, matchSlug } from './utils/matchSlug.js';
+import { readMatch } from './utils/matchRecord.js';
 import { teamRows, readVs } from './pages/teams/teamRows.js';
 import { teamByTag, teamBySlug } from './utils/teams.js';
 import { leagueBuilds, readMetaTab, readBuildFilters, DEFAULT_FLOOR } from './pages/meta/buildRows.js';
 import { buildChips } from './pages/meta/buildChips.jsx';
-import { formatNumber } from './utils/formatters.js';
 import DataTable from './components/DataTable.jsx';
 import { prepareCharacterAveragesData, prepareMatchDetailsData, getCharacterAveragesTableConfig, getMatchDetailsTableConfig, getMetaTableConfig } from './components/TableConfigs.jsx';
 import { exportToExcel } from './utils/excelExport.js';
-import { PerFormStatsDisplay, PerFormStatsDisplayAggregated } from './components/PerFormStatsDisplay.jsx';
-import { calculatePerFormStats } from './utils/formStatsCalculator.js';
-import transformationsData from '../../../referencedata/transformations.json';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
-import { loadMatches } from './utils/corpusLoader.js';
-import { calculateMatchPerformanceScore, parseCharacterCSV, getTeams, extractStats, parseBattleTime, formatBattleTime } from './utils/statCalculations.js';
-import { getBuildComposition, getBuildTypeColor } from './utils/buildComposition.js';
-import { getFusionPartnerFamilyForms, computeMatchFusionDeltas, applyFusionSplit } from './utils/fusionSplit.js';
+import { parseCharacterCSV } from './utils/statCalculations.js';
 import { getAggregatedCharacterData } from './utils/aggregation/characterAggregation.js';
-import { getTeamAggregatedData, getTeamStats, recomputeTeamCharStats } from './utils/aggregation/teamAggregation.js';
+import { getTeamAggregatedData } from './utils/aggregation/teamAggregation.js';
 import { getPositionBasedData } from './utils/aggregation/positionAggregation.js';
 import { filterAggregatedData } from './utils/aggregation/filterAggregated.js';
 import { TIERS } from './utils/tierScale.js';
 import { NavBar } from '@szl/ui';
-import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CharacterPage from './pages/CharacterPage.jsx';
 import { ROUTES, pathForView, viewForPath, isSandboxPath } from './routes.js';
 import { POSITION_NAMES } from './utils/positions.js';
-import { buildKeyOf } from './utils/buildKey.js';
 import {
   buildCharacterSlugIndex,
   resolveCharacterParam,
   characterUrlKey,
 } from './utils/characterSlug.js';
-import { 
-  Trophy, 
-  Swords, 
-  Target, 
-  Zap, 
-  Clock, 
-  Heart, 
-  Shield, 
-  Upload,
-  BarChart3,
-  Users,
-  FileText,
-  Database,
-  TrendingUp,
-  Eye,
-  Star,
-  Settings,
-  Package,
-  Table,
-  ChevronDown,
-  ChevronUp,
-  ChevronLeft,
-  ChevronRight,
-  Info,
-  Search,
-  X,
-  ArrowUpDown,
-  Filter,
-  Download,
-  Brain,
-  Minus,
-  Copy,
-  Check,
-  ArrowUpRight
+import {
+  Target, Shield, Upload, Users, FileText, Database, TrendingUp, Table, ChevronDown, ChevronUp, Download,
 } from 'lucide-react';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
 import capsulesCSV from '../../../referencedata/capsules.csv?raw';
 import mapsCSV from '../../../referencedata/maps.csv?raw';
-// Preload reference JSON files shipped with the analyzer (Vite import.meta.glob)
-// Each entry may be a module object; code uses module.default || module
-const dataFiles = import.meta.glob('../BR_Data/*.json', { eager: true });
 // Utility to extract tags from a match file object (returns null if not present)
 function extractTagsFromMatchFile(content) {
   if (!content || typeof content !== 'object') return null;
@@ -101,45 +62,18 @@ function extractTagsFromMatchFile(content) {
   return null;
 }
 
-/**
- * Natural sort comparator for files and folders
- * Handles numeric parts correctly so "Test 10" comes after "Test 9"
- */
-function naturalSort(a, b) {
-  const aName = a.name || a;
-  const bName = b.name || b;
-  
-  return aName.localeCompare(bName, undefined, {
-    numeric: true,
-    sensitivity: 'base'
-  });
-}
-
-
-// The presentational components that used to live here are now in
-// src/components/stats/ and src/components/build/. They were only ever local
-// to this file, which meant any new page had to reinvent them; the Character
-// page did exactly that and drifted visually as a result.
-import { StatBar, PerformanceIndicator, PerformanceIndicatorLabel, PerformanceScoreBadge, StatGroup, MetricDisplay, BlastMetricDisplay, BattleTimeVariance } from './components/stats/index.js';
-import { BuildTableView, BuildDisplay } from './components/build/index.js';
-
 export default function App() {
   const [selectedFilePath, setSelectedFilePath] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
-  const [fileTags, setFileTags] = useState(null); // Tags for the currently displayed match file
-  // Separate state for the header match-analysis selector so we don't override global fileContent
-  const [analysisSelectedFilePath, setAnalysisSelectedFilePath] = useState(null);
-  const [analysisFileContent, setAnalysisFileContent] = useState(null);
   // viewType lives in the URL, not in state.
   //
   // Keeping the setter's name and signature means the ~10 existing
-  // setViewType('single') call sites and the view dropdowns keep working
+  // setViewType() call sites and the view dropdowns keep working
   // untouched - they now navigate instead of setting state, and the view
   // becomes linkable, refreshable and shareable for free.
   const location = useLocation();
   const navigate = useNavigate();
-  const { charParam, teamParam } = useParams();
+  const { charParam, teamParam, matchParam: leagueMatchParam, '*': sandboxRest } = useParams();
   const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
   // The data source comes from the URL too: the Sandbox (/sandbox/...) runs the
@@ -177,8 +111,6 @@ export default function App() {
   const scopeState = useScope(!sandbox);
   const { matches: scopedMatches, loading: scopedLoading } = useScopedMatches(scopeState.paths, !sandbox);
   const dataLoading = !sandbox && (!scopeState.ready || scopedMatches === null || scopedLoading);
-  const [matchFilterSource, setMatchFilterSource] = useState(null); // fileName when navigated from table
-  const [preNavigationFileContent, setPreNavigationFileContent] = useState(null); // saved fileContent array before single-match navigation
   const [manualFiles, setManualFiles] = useState([]);
   const [expandedPositions, setExpandedPositions] = useState({}); // Expanded state for position accordions in matchups
   const [selectedBuildIndex, setSelectedBuildIndex] = useState({}); // Track selected build index per character
@@ -190,29 +122,25 @@ export default function App() {
 
   // The league views read `fileContent` (an array of {name, content, tags}) and
   // `selectedFilePath`, as they did when the file tree filled them; the scope
-  // now does. A single opened match lives in analysisFileContent instead, so
-  // opening one never replaces the scope's data.
+  // now does. An opened match (/matches/<slug>) lives in openedMatch instead,
+  // so opening one never replaces the scope's data.
   useEffect(() => {
     if (sandbox) return;
     setFileContent(scopedMatches);
     setSelectedFilePath(scopeState.paths);
   }, [sandbox, scopedMatches, scopeState.paths]);
 
-  // Moving between the league and the Sandbox swaps the data source: clear the
-  // opened match, and in the Sandbox show the one uploaded file if there is one.
+  // Moving into the Sandbox swaps the data source for the uploads, which its
+  // views read from manualFiles.
   const wasSandbox = useRef(sandbox);
   useEffect(() => {
     if (wasSandbox.current === sandbox) return;
     wasSandbox.current = sandbox;
-    setAnalysisFileContent(null);
-    setAnalysisSelectedFilePath(null);
-    setMatchFilterSource(null);
     if (sandbox) {
-      const valid = manualFiles.filter(f => !f.error);
-      setFileContent(valid.length === 1 ? valid[0].content : null);
-      setSelectedFilePath(valid.length === 1 ? [valid[0].name] : null);
+      setFileContent(null);
+      setSelectedFilePath(null);
     }
-  }, [sandbox, manualFiles]);
+  }, [sandbox]);
   
   // Search and filter state for Aggregated Character Performance
   const [selectedCharacters, setSelectedCharacters] = useState([]);
@@ -310,18 +238,20 @@ export default function App() {
 
 
   // Aggregated data for reference mode (single file only)
+  // The Matches page's Performances table is one row per character per match.
+  const performancesView = viewType === 'matches' && readMatchesView(searchParams) === 'performances';
   const aggregatedData = useMemo(() => {
-    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || viewType === 'tables' || (viewType === 'teams' && teamParam)) && fileContent) {
+    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || viewType === 'tables' || (viewType === 'teams' && teamParam) || performancesView) && fileContent) {
       // If fileContent is an array, use as is; if single file, wrap in array
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
       return getAggregatedCharacterData(filesArr, charMap, capsuleMap, aiStrategies, mapsMap);
-    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && manualFiles.length > 0) {
+    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables' || performancesView) && manualFiles.length > 0) {
       return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies, mapsMap);
     }
     return [];
-  }, [mode, viewType, teamParam, charMap, capsuleMap, aiStrategies, manualFiles, fileContent, selectedFilePath]);
+  }, [mode, viewType, teamParam, performancesView, charMap, capsuleMap, aiStrategies, manualFiles, fileContent, selectedFilePath]);
 
   // Position-based data for advanced analysis (single file only)
   const positionData = useMemo(() => {
@@ -519,6 +449,66 @@ export default function App() {
   }, [deepLinkedTeam.row]);
   const teamVs = teamParam ? readVs(searchParams, teamOpponents.map(o => o.tag)) : null;
 
+  // ---- /matches and /matches/<slug> ------------------------------------------
+  // A match is addressed by its file name as a slug (utils/matchSlug.js),
+  // resolved against every match path the scope knows, or in the Sandbox
+  // against the uploads, so a match link works whatever the scope.
+  const matchParam = sandbox
+    ? (/^matches\/./.test(sandboxRest || '') ? sandboxRest.slice('matches/'.length) : null)
+    : (leagueMatchParam || null);
+  const validUploadFiles = useMemo(() => manualFiles.filter(f => !f.error), [manualFiles]);
+  const matchSlugIndex = useMemo(() => {
+    if (sandbox) return buildMatchSlugIndex(validUploadFiles.map(f => f.name));
+    return scopeState.tagsIndex ? buildMatchSlugIndex(Object.keys(scopeState.tagsIndex)) : null;
+  }, [sandbox, validUploadFiles, scopeState.tagsIndex]);
+  // A match's page, carrying the scope, so Back and the tabs keep it.
+  const matchLinkFor = useCallback(path => {
+    const key = encodeURIComponent(matchUrlKey(path, matchSlugIndex));
+    return sandbox ? `${ROUTES.sandbox}${ROUTES.matches}/${key}` : `${ROUTES.matches}/${key}${scopeOnlySearch}`;
+  }, [matchSlugIndex, sandbox, scopeOnlySearch]);
+
+  // The opened match: the full file (the corpus shards are trimmed), fetched
+  // once per match, or the upload itself in the Sandbox.
+  const [openedMatch, setOpenedMatch] = useState(null);
+  useEffect(() => {
+    if (!matchParam) { setOpenedMatch(null); return undefined; }
+    if (!matchSlugIndex) { setOpenedMatch({ status: 'loading', label: matchParam }); return undefined; }
+    const path = resolveMatchParam(matchParam, matchSlugIndex);
+    if (!path) { setOpenedMatch({ status: 'missing', label: matchParam }); return undefined; }
+    const name = matchName(path);
+    if (sandbox) {
+      const f = validUploadFiles.find(x => x.name === path);
+      setOpenedMatch(f ? { status: 'ready', label: matchParam, path, name, tags: f.tags || {}, content: f.content } : { status: 'missing', label: matchParam });
+      return undefined;
+    }
+    let alive = true;
+    setOpenedMatch(prev => (prev && prev.path === path && prev.status === 'ready' ? prev : { status: 'loading', label: matchParam, path, name }));
+    fetch(`${import.meta.env.BASE_URL}BR_Data/${path.split('/').map(encodeURIComponent).join('/')}`)
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(content => { if (alive) setOpenedMatch({ status: 'ready', label: matchParam, path, name, tags: scopeState.tagsIndex[path] || {}, content }); })
+      .catch(() => { if (alive) setOpenedMatch({ status: 'error', label: matchParam, path, name }); });
+    return () => { alive = false; };
+  }, [matchParam, matchSlugIndex, sandbox, validUploadFiles, scopeState.tagsIndex]);
+  const matchState = useMemo(() => (openedMatch && openedMatch.status === 'ready'
+    ? { ...openedMatch, match: readMatch(openedMatch.content, { charMap, capsuleMap, aiStrategies, mapsMap }) }
+    : openedMatch), [openedMatch, charMap, capsuleMap, aiStrategies, mapsMap]);
+  // A path or an old spelling in the URL becomes the slug (replace: not a Back stop).
+  useEffect(() => {
+    if (!matchParam || !matchSlugIndex) return;
+    const path = resolveMatchParam(matchParam, matchSlugIndex);
+    const key = path && matchUrlKey(path, matchSlugIndex);
+    if (key && key !== matchParam) {
+      navigate({ pathname: `${sandbox ? ROUTES.sandbox : ''}${ROUTES.match(key)}`, search: location.search }, { replace: true });
+    }
+  }, [matchParam, matchSlugIndex, sandbox, navigate, location.search]);
+
+  // The list: every match in scope (or every upload), newest first.
+  const listRows = useMemo(() => {
+    if (viewType !== 'matches' || matchParam) return [];
+    const files = sandbox ? validUploadFiles : (Array.isArray(fileContent) ? fileContent : []);
+    return matchRows(files, { charMap, mapsMap, urlKeyFor: p => matchUrlKey(p, matchSlugIndex) });
+  }, [viewType, matchParam, sandbox, validUploadFiles, fileContent, charMap, mapsMap, matchSlugIndex]);
+
   // ---- back buttons ------------------------------------------------------------
   // A detail page goes back where it was opened from (shell/useCameFrom.js),
   // named: "Budokai", "Meta", "Goku (Super)". Opened from a pasted link, it has
@@ -533,11 +523,15 @@ export default function App() {
       case 'teams': return seg ? (teamBySlug(seg, [])?.name || seg) : 'Teams';
       case 'aggregated': return seg ? (charSlugIndex.idToName.get(resolveCharacterParam(seg, charSlugIndex)) || seg) : 'Characters';
       case 'meta': return 'Meta';
-      case 'single': return 'Matches';
+      case 'matches': {
+        if (!seg) return 'Matches';
+        const path = matchSlugIndex && resolveMatchParam(seg, matchSlugIndex);
+        return path ? matchName(path) : seg;
+      }
       case 'tables': return 'Tables';
       default: return 'Home';
     }
-  }, [cameFrom, charSlugIndex]);
+  }, [cameFrom, charSlugIndex, matchSlugIndex]);
   const goBack = useCallback(fallback => (cameFrom ? navigate(-1) : navigate(fallback)), [cameFrom, navigate]);
 
   // In the Sandbox the scope bar says whose data this is instead of offering a scope.
@@ -642,23 +636,6 @@ export default function App() {
   }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery, metaBuilds, metaChipKey, buildFloor, charIdFor,
     teamParam, teamOpponents, teamVs, deepLinkedCharacter, aggregatedData, forTeam]);
 
-  const handleSelect = (fileName) => {
-    setSelectedFile(fileName);
-    const fullPath = Object.keys(dataFiles).find((p) => p.endsWith(fileName));
-    if (fullPath) {
-      // Access the default export from Vite's import.meta.glob
-      const moduleContent = dataFiles[fullPath];
-      const actualContent = moduleContent.default || moduleContent;
-      setFileContent(actualContent);
-      setFileTags(extractTagsFromMatchFile(actualContent));
-    } else {
-      setFileContent({ error: 'File not found.' });
-      setFileTags(null);
-    }
-  };
-
-
-
   const processFiles = (files) => {
     Promise.all(files.map(file => {
       return new Promise((resolve) => {
@@ -675,25 +652,10 @@ export default function App() {
       });
     })).then(results => {
       setManualFiles(results);
-      // Automatically select the first valid file if only one file was uploaded
-      const validFiles = results.filter(f => !f.error);
-      if (validFiles.length === 1) {
-        setFileContent(validFiles[0].content);
-        setFileTags(validFiles[0].tags ?? null);
-        setAnalysisFileContent(validFiles[0].content);
-        setAnalysisSelectedFilePath([validFiles[0].name]);
-        setSelectedFilePath([validFiles[0].name]);
-        setViewType('single');
-      } else if (validFiles.length > 1) {
-        // For multiple files, keep fileContent as null initially
-        // Users can select a view type (aggregated, teams, etc.) or select a specific file
-        setFileContent(null);
-        setAnalysisFileContent(null);
-        setAnalysisSelectedFilePath(null);
-        setSelectedFilePath(null);
-      } else {
-        setFileContent(null);
-      }
+      // One file opens as its match; several stay on the view in hand, whose
+      // list or figures now cover them.
+      const valid = results.filter(f => !f.error);
+      if (valid.length === 1) navigate(`${ROUTES.sandbox}${ROUTES.match(matchSlug(valid[0].name))}`);
     });
   };
 
@@ -718,80 +680,11 @@ export default function App() {
     event.stopPropagation();
   };
 
-  const handleNavigateToMatch = async (fileName) => {
-    if (!fileName) return;
-    if (mode === 'manual') {
-      const file = manualFiles.find(f => f.name === fileName);
-      if (file && !file.error) {
-        setFileContent(file.content);
-        setSelectedFilePath([file.name]);
-        setAnalysisFileContent(file.content);
-        setAnalysisSelectedFilePath([file.name]);
-        setMatchFilterSource(fileName);
-        setViewType('single');
-        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
-      }
-      return;
-    }
-    // Reference mode: fetch the full file (one request, full fidelity). It opens
-    // in the match view's own state; the scope's data stays as it is.
-    const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '';
-    try {
-      const res = await fetch(`${base}BR_Data/${fileName}`);
-      if (res.ok) {
-        const content = await res.json();
-        setFileTags(extractTagsFromMatchFile(content));
-        setAnalysisFileContent(content);
-        setAnalysisSelectedFilePath([fileName]);
-        setMatchFilterSource(fileName);
-        setViewType('single');
-        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
-      }
-    } catch (err) {
-      console.error('Failed to navigate to match file:', err);
-    }
-  };
-
-  const handleManualFileSelect = (fileName) => {
-    const file = manualFiles.find(f => f.name === fileName);
-    if (file && !file.error) {
-      // Set the single file content for single match view
-      setFileContent(file.content);
-      // keep global selected path in sync for compatibility
-      setSelectedFilePath([file.name]);
-      // Also set analysis-specific state so the header/search-driven analysis area shows this file
-      setAnalysisFileContent(file.content);
-      setAnalysisSelectedFilePath([file.name]);
-      // Automatically switch to single view when manually selecting a file
-      setViewType('single');
-    }
-  };
-
-  // Handler used by the Match Analysis header combobox to switch which file is being shown
-  const handleHeaderFileSelect = (fileName) => {
-    if (!fileName) return;
-    // Manual mode: pick from uploaded files
-    if (mode === 'manual') {
-      const file = manualFiles.find(f => f.name === fileName);
-      if (file && !file.error) {
-        // Only apply to the analysis area
-        setAnalysisFileContent(file.content);
-        setAnalysisSelectedFilePath([file.name]);
-      }
-      return;
-    }
-
-    // Reference mode: fileContent may be an array of {name, content}
-    if (Array.isArray(fileContent)) {
-      const f = fileContent.find(x => x.name === fileName);
-      if (f) {
-        // In reference mode other parts of the app expect a plain file content for single view
-        // Only apply to the analysis area
-        setAnalysisFileContent(f.content || f);
-        setAnalysisSelectedFilePath([f.name]);
-      }
-    }
-  };
+  // Opening a match (a Team page's lineups and matches, a character's recent
+  // matches, the Performances table) goes to its Match page.
+  const handleNavigateToMatch = useCallback(fileName => {
+    if (fileName) navigate(matchLinkFor(fileName));
+  }, [navigate, matchLinkFor]);
 
   // The full workbook, from the scope bar's Excel button on any page. The views
   // that aggregate have the rows already; elsewhere (Home, Teams, Matches) they
@@ -875,178 +768,6 @@ export default function App() {
       alert(`Export failed: ${error.message}`);
     }
   };
-
-  // Helper function to recursively search for BattleResults, TeamBattleResults, or battleWinLose in nested JSON
-  const findBattleData = (obj, maxDepth = 5, currentDepth = 0) => {
-    if (!obj || typeof obj !== 'object' || currentDepth >= maxDepth) {
-      return null;
-    }
-
-    // Check if current object has TeamBattleResults (current BR_Data format)
-    if (obj.TeamBattleResults && typeof obj.TeamBattleResults === 'object') {
-      const teamBattleResults = obj.TeamBattleResults;
-      if (teamBattleResults.battleResult) {
-        return teamBattleResults.battleResult;
-      }
-      if (teamBattleResults.BattleResults) {
-        return teamBattleResults.BattleResults;
-      }
-      // Check if data is directly in TeamBattleResults
-      if (teamBattleResults.battleWinLose && teamBattleResults.characterRecord) {
-        return teamBattleResults;
-      }
-    }
-
-    // Check if current object has BattleResults
-    if (obj.BattleResults && typeof obj.BattleResults === 'object') {
-      return obj.BattleResults;
-    }
-
-    // Check if current object directly has battleWinLose (legacy format)
-    if (obj.battleWinLose && obj.characterRecord) {
-      return obj;
-    }
-
-    // Recursively search in nested objects
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key) && typeof obj[key] === 'object' && obj[key] !== null) {
-        const result = findBattleData(obj[key], maxDepth, currentDepth + 1);
-        if (result) {
-          return result;
-        }
-      }
-    }
-
-    return null;
-  };
-
-  // Find correct root for battleWinLose and characterRecord
-  let battleWinLose, characterRecord;
-  // analysisContent is the file used for the Match Analysis header selector; fall back to global fileContent
-  const analysisContent = analysisFileContent || fileContent;
-  const analysisSelectedPath = analysisSelectedFilePath || selectedFilePath;
-
-  // Also need characterIdRecord for per-form stats
-  let characterIdRecord = null;
-
-  if (analysisContent && typeof analysisContent === 'object') {
-    // Handle TeamBattleResults format (current BR_Data structure)
-    if (analysisContent.TeamBattleResults && typeof analysisContent.TeamBattleResults === 'object') {
-      const teamBattleResults = analysisContent.TeamBattleResults;
-      // Check for both battleResult (lowercase) and BattleResults (capital)
-      if (teamBattleResults.battleResult) {
-        battleWinLose = teamBattleResults.battleResult.battleWinLose;
-        characterRecord = teamBattleResults.battleResult.characterRecord;
-        characterIdRecord = teamBattleResults.battleResult.characterIdRecord;
-      } else if (teamBattleResults.BattleResults) {
-        battleWinLose = teamBattleResults.BattleResults.battleWinLose;
-        characterRecord = teamBattleResults.BattleResults.characterRecord;
-        characterIdRecord = teamBattleResults.BattleResults.characterIdRecord;
-      } else if (teamBattleResults.battleWinLose && teamBattleResults.characterRecord) {
-        // Direct properties in TeamBattleResults (new wrapper format)
-        battleWinLose = teamBattleResults.battleWinLose;
-        characterRecord = teamBattleResults.characterRecord;
-        characterIdRecord = teamBattleResults.characterIdRecord;
-      }
-    }
-    // Handle new format with teams array at the top
-    else if (analysisContent.teams && Array.isArray(analysisContent.teams) && analysisContent.teams.length > 0) {
-      const firstTeam = analysisContent.teams[0];
-      if (firstTeam.BattleResults) {
-        battleWinLose = firstTeam.BattleResults.battleWinLose;
-        characterRecord = firstTeam.BattleResults.characterRecord;
-        characterIdRecord = firstTeam.BattleResults.characterIdRecord;
-      } else if (firstTeam.battleWinLose) {
-        battleWinLose = firstTeam.battleWinLose;
-        characterRecord = firstTeam.characterRecord;
-        characterIdRecord = firstTeam.characterIdRecord;
-      }
-    } 
-    // Handle standard format with BattleResults at root
-    else if (analysisContent.BattleResults) {
-      battleWinLose = analysisContent.BattleResults.battleWinLose;
-      characterRecord = analysisContent.BattleResults.characterRecord;
-      characterIdRecord = analysisContent.BattleResults.characterIdRecord;
-    } 
-    // Handle legacy format with direct properties
-    else if (analysisContent.battleWinLose && analysisContent.characterRecord) {
-      battleWinLose = analysisContent.battleWinLose;
-      characterRecord = analysisContent.characterRecord;
-      characterIdRecord = analysisContent.characterIdRecord;
-    }
-    // Fallback: recursively search for BattleResults in nested structure
-    else {
-      const battleData = findBattleData(analysisContent);
-      if (battleData) {
-        battleWinLose = battleData.battleWinLose;
-        characterRecord = battleData.characterRecord;
-      }
-    }
-  }
-
-  // Extract team names from teams array (multiple format support)
-  let p1TeamName = "Team 1";
-  let p2TeamName = "Team 2";
-  if (analysisContent && typeof analysisContent === 'object') {
-    let teamsArray = null;
-    
-    // Check for TeamBattleResults format first
-    if (analysisContent.TeamBattleResults && Array.isArray(analysisContent.TeamBattleResults.teams)) {
-      teamsArray = analysisContent.TeamBattleResults.teams;
-    }
-    // Check for direct teams array
-    else if (Array.isArray(analysisContent.teams)) {
-      teamsArray = analysisContent.teams;
-    }
-    // Check for nested teams in BattleResults
-    else if (analysisContent.BattleResults && Array.isArray(analysisContent.BattleResults.teams)) {
-      teamsArray = analysisContent.BattleResults.teams;
-    }
-    
-    if (teamsArray && teamsArray.length >= 2) {
-      // Handle both string and object formats
-      const team1 = teamsArray[0];
-      const team2 = teamsArray[1];
-      
-      // If team1 is a string, use it directly; if it's an object, look for a teamName property
-      if (typeof team1 === 'string') {
-        p1TeamName = team1 || "Team 1";
-      } else if (team1 && typeof team1 === 'object' && team1.teamName) {
-        p1TeamName = team1.teamName || "Team 1";
-      }
-      
-      // Same for team2
-      if (typeof team2 === 'string') {
-        p2TeamName = team2 || "Team 2";
-      } else if (team2 && typeof team2 === 'object' && team2.teamName) {
-        p2TeamName = team2.teamName || "Team 2";
-      }
-    } else if (teamsArray && teamsArray.length === 1) {
-      const team1 = teamsArray[0];
-      
-      // If team1 is a string, use it directly; if it's an object, look for a teamName property
-      if (typeof team1 === 'string') {
-        p1TeamName = team1 || "Team 1";
-      } else if (team1 && typeof team1 === 'object' && team1.teamName) {
-        p1TeamName = team1.teamName || "Team 1";
-      }
-    }
-  }
-
-  // Extract teams for single file view
-  let p1Team = [], p2Team = [];
-  if (characterRecord) {
-    const teams = getTeams(characterRecord);
-    p1Team = teams.p1;
-    p2Team = teams.p2;
-  }
-
-  const p1Summary = getTeamStats(p1Team, charMap, capsuleMap);
-  const p2Summary = getTeamStats(p2Team, charMap, capsuleMap);
-
-  // Fusion split for Match Analysis view: compute per-character stat deltas
-  const fusionDeltas = computeMatchFusionDeltas(characterRecord, characterIdRecord);
-  const applyFusionDelta = (stats, char) => applyFusionSplit(stats, char, fusionDeltas);
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -1152,7 +873,7 @@ export default function App() {
                   }`}>View Type</h4>
                   <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-3">
                     <label className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      viewType === 'single' 
+                      viewType === 'matches' 
                         ? darkMode
                           ? 'border-blue-400 bg-blue-900/30 text-blue-300'
                           : 'border-blue-500 bg-blue-50 text-blue-700'
@@ -1165,13 +886,13 @@ export default function App() {
                         <div>
                           <input 
                             type="radio" 
-                            value="single" 
-                            checked={viewType === 'single'} 
+                            value="matches" 
+                            checked={viewType === 'matches'} 
                             onChange={(e) => setViewType(e.target.value)}
                             className="sr-only"
                           />
-                          <span className="font-semibold text-sm">Single Match</span>
-                          <p className="text-xs opacity-75">Detailed view</p>
+                          <span className="font-semibold text-sm">Matches</span>
+                          <p className="text-xs opacity-75">Each upload</p>
                         </div>
                       </div>
                     </label>
@@ -1273,79 +994,8 @@ export default function App() {
                     </label>
                   </div>
                   
-                  {/* Helpful hint for single file uploads */}
-                  {manualFiles.filter(f => !f.error).length === 1 && viewType !== 'single' && (
-                    <div className={`mt-3 p-3 rounded-lg border flex items-start gap-2 ${
-                      darkMode 
-                        ? 'bg-blue-900/20 border-blue-700 text-blue-300' 
-                        : 'bg-blue-50 border-blue-200 text-blue-700'
-                    }`}>
-                      <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <p className="text-xs">
-                        <strong>Tip:</strong> Upload multiple files for richer insights and better trend analysis!
-                      </p>
-                    </div>
-                  )}
-                  
-                  {/* Helpful hint for multiple file uploads in single view mode */}
-                  {manualFiles.filter(f => !f.error).length > 1 && viewType === 'single' && (
-                    <div className={`mt-3 p-3 rounded-lg border flex items-start gap-2 ${
-                      darkMode 
-                        ? 'bg-yellow-900/20 border-yellow-700 text-yellow-300' 
-                        : 'bg-yellow-50 border-yellow-200 text-yellow-700'
-                    }`}>
-                      <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <p className="text-xs">
-                        <strong>Note:</strong> {manualFiles.filter(f => !f.error).length} files uploaded. Select a specific file below to view single match details, or switch to Aggregated Stats/Team Rankings to analyze all files together.
-                      </p>
-                    </div>
-                  )}
                 </div>
                 
-                {/* File Selection Dropdown for Single View */}
-                {viewType === 'single' && manualFiles.filter(f => !f.error).length > 1 && (
-                  <div className={`mt-4 p-4 rounded-xl border ${
-                    darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-                  }`}>
-                    <label className={`block text-sm font-medium mb-2 ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      Select a match to analyze:
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {manualFiles.filter(f => !f.error).sort(naturalSort).map((file) => (
-                        <button
-                          key={file.name}
-                          onClick={() => handleManualFileSelect(file.name)}
-                          className={`p-3 rounded-lg border-2 text-left transition-all ${
-                            analysisSelectedFilePath && analysisSelectedFilePath[0] === file.name
-                              ? darkMode
-                                ? 'border-blue-500 bg-blue-900/30 text-blue-300'
-                                : 'border-blue-500 bg-blue-50 text-blue-700'
-                              : darkMode
-                                ? 'border-gray-600 bg-gray-800 hover:border-gray-500 text-gray-300'
-                                : 'border-gray-200 bg-white hover:border-gray-300 text-gray-700'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
-                            <span className="text-sm font-medium truncate">{file.name.replace(/\.json$/i, '')}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {viewType === 'single' && manualFiles.length === 1 && !manualFiles[0].error ? (
-                  <button 
-                    onClick={() => handleManualFileSelect(manualFiles[0].name)}
-                    className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors font-semibold flex items-center justify-center gap-2"
-                  >
-                    <Eye className="w-5 h-5" />
-                    Analyze {manualFiles[0].name}
-                  </button>
-                ) : null}
               </div>
             )}
           </div>
@@ -1386,687 +1036,23 @@ export default function App() {
             buildLinkFor={buildLinkFor} defaultFloor={buildFloor} loading={dataLoading} darkMode={darkMode} />
         )}
 
-        {/* Single File Analysis Results */}
-        {((mode === 'reference' && (analysisSelectedFilePath || selectedFilePath) && viewType === 'single') || 
-          (mode === 'manual' && viewType === 'single' && (analysisFileContent || fileContent))) && (
-          <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-            {/* Match filter banner — shown when navigated from Data Tables */}
-            {matchFilterSource && (
-              <div className={`flex items-center justify-between gap-3 mb-4 px-4 py-3 rounded-xl border ${
-                darkMode
-                  ? 'bg-blue-900/30 border-blue-600 text-blue-200'
-                  : 'bg-blue-50 border-blue-300 text-blue-800'
-              }`}>
-                <div className="flex items-center gap-2 min-w-0">
-                  <FileText className="w-4 h-4 shrink-0" />
-                  <span className="text-sm font-medium shrink-0">Viewing match:</span>
-                  <span className={`text-sm font-mono truncate ${
-                    darkMode ? 'text-blue-300' : 'text-blue-700'
-                  }`}>{getFileNameFromPath(matchFilterSource)}</span>
-                </div>
-                <button
-                  onClick={() => {
-                    setMatchFilterSource(null);
-                    setViewType('tables');
-                    if (preNavigationFileContent !== null) {
-                      setFileContent(preNavigationFileContent);
-                      setPreNavigationFileContent(null);
-                    }
-                  }}
-                  className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                    darkMode
-                      ? 'bg-blue-800 hover:bg-blue-700 text-blue-200 border border-blue-600'
-                      : 'bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300'
-                  }`}
-                  title="Return to Data Tables"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  Back to Tables
-                </button>
-              </div>
-            )}
-            <div className="mb-2">  
-              <div className={`flex items-center text-sm font-medium mb-2 gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
-                <Search className="w-4 h-4" /> Match Selection
-              </div>
-              <Combobox
-                valueId={analysisSelectedFilePath?.[0] || ''}
-                items={mode === 'manual' 
-                  ? manualFiles.filter(f => !f.error).map(f => ({ id: f.name, name: f.name })).sort(naturalSort)
-                  : Array.isArray(fileContent) 
-                    ? fileContent.filter(fc => fc.name).map(fc => ({ id: fc.name, name: fc.name })).sort(naturalSort)
-                    : []
-                }
-                placeholder="Search match to analyze..."
-                onSelect={(id, name) => handleHeaderFileSelect(id)}
-                getName={(item) => getFileNameFromPath(item.name)}
+        {/* Matches (pages/MatchesPage.jsx) and one match (pages/MatchPage.jsx). */}
+        {viewType === 'matches' && !matchParam && (!sandbox || validUploadFiles.length > 0) && (
+          <MatchesPage rows={listRows} linkFor={r => matchLinkFor(r.path)} loading={dataLoading}
+            performances={(
+              <DataTable
+                data={prepareMatchDetailsData(aggregatedData)}
+                columns={getMatchDetailsTableConfig(darkMode, handleNavigateToMatch).columns}
+                title="Performances"
+                exportFileName={`performances_${new Date().toISOString().split('T')[0]}`}
+                onExport={handleMatchDetailsExport}
                 darkMode={darkMode}
-                focusColor="blue"
-                showTooltip={false}
               />
-            </div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <FileText className={`w-8 h-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                <div>
-                  <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Match Analysis</h2>
-                  <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Detailed breakdown of this battle</p>
-                </div>
-              </div>
-            </div>
-            {/* Match Tag Badges */}
-            {analysisContent && analysisContent.tags && (() => {
-              const t = analysisContent.tags;
-              const tagDefs = [
-                { key: 'seasonNumber', label: t.seasonNumber != null ? `S${t.seasonNumber}` : null, color: darkMode ? 'bg-violet-900/40 text-violet-300 border-violet-600' : 'bg-violet-100 text-violet-700 border-violet-300' },
-                { key: 'seasonPhase',  label: t.seasonPhase,  color: darkMode ? 'bg-indigo-900/40 text-indigo-300 border-indigo-600' : 'bg-indigo-100 text-indigo-700 border-indigo-300' },
-                // Team tag is an array — render one badge per team
-                ...(Array.isArray(t.team) ? t.team : (t.team ? [t.team] : [])).map(name => (
-                  { key: `team-${name}`, label: name, color: darkMode ? 'bg-blue-900/40 text-blue-300 border-blue-600' : 'bg-blue-100 text-blue-700 border-blue-300' }
-                )),
-                { key: 'matchType', label: t.matchType, color: darkMode ? 'bg-orange-900/40 text-orange-300 border-orange-600' : 'bg-orange-100 text-orange-700 border-orange-300' },
-                { key: 'difficulty',label: t.difficulty,color: darkMode ? 'bg-red-900/40 text-red-300 border-red-600'         : 'bg-red-100 text-red-700 border-red-300' },
-                { key: 'matchSize', label: t.matchSize, color: darkMode ? 'bg-green-900/40 text-green-300 border-green-600'   : 'bg-green-100 text-green-700 border-green-300' },
-              ].filter(d => d.label);
-              if (tagDefs.length === 0) return null;
-              return (
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {tagDefs.map(d => (
-                    <span key={d.key} className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${d.color}`}>
-                      {d.label}
-                    </span>
-                  ))}
-                </div>
-              );
-            })()}
-            
-            {/* Match Outcome Summary */}
-
-            {battleWinLose && (
-              <div className={`mb-6 p-4 rounded-xl border text-center ${
-                battleWinLose === 'Win'
-                  ? (darkMode 
-                      ? 'bg-green-900/20 border-green-600 text-green-400' 
-                      : 'bg-green-50 border-green-200 text-green-800')
-                  : (darkMode 
-                      ? 'bg-red-900/20 border-red-600 text-red-400' 
-                      : 'bg-red-50 border-red-200 text-red-800')
-              }`}>
-                <div className="flex items-center justify-center gap-3">
-                  <div>
-                    <div className="text-lg font-bold">
-                      {battleWinLose === 'Win' ? `${p1TeamName} Victory!` : `${p2TeamName} Victory!`}
-                    </div>
-                    <div className="text-sm opacity-80">
-                      {battleWinLose === 'Win' 
-                        ? `${p1TeamName} emerged victorious in this battle` 
-                        : `${p2TeamName} emerged victorious in this battle`}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* P1 Team */}
-              <div className={`rounded-xl p-6 border ${
-                darkMode 
-                  ? battleWinLose === 'Win' 
-                    ? 'border-green-600 bg-green-900/10' 
-                    : 'border-red-600 bg-red-900/10'
-                  : battleWinLose === 'Win'
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-red-300 bg-red-50'
-              }`}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Users className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                    <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{p1TeamName}</h3>
-                    {battleWinLose && (
-                      <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                        battleWinLose === 'Win' 
-                          ? (darkMode ? 'bg-green-900/50 text-green-400 border border-green-600' : 'bg-green-100 text-green-800 border border-green-200')
-                          : (darkMode ? 'bg-red-900/50 text-red-400 border border-red-600' : 'bg-red-100 text-red-800 border border-red-200')
-                      }`}>
-                        {battleWinLose === 'Win' ? 'VICTORY' : 'DEFEAT'}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-                  <StatBar 
-                    value={p1Summary.totalDamage} 
-                    maxValue={Math.max(p1Summary.totalDamage, p2Summary.totalDamage)} 
-                    type="damage" 
-                    label="Total Damage"
-                    icon={Target}
-                    darkMode={darkMode}
-                  />
-                  <StatBar 
-                    value={(p1Summary.totalHealth / p1Summary.totalHPGaugeValueMax) * 100} 
-                    maxValue={100} 
-                    displayValue={p1Summary.totalHealth}
-                    type="health" 
-                    label="HP Remaining"
-                    icon={Heart}
-                    darkMode={darkMode}
-                  />
-                  <StatBar 
-                    value={p1Summary.totalUltimates} 
-                    maxValue={Math.max(p1Summary.totalUltimates, p2Summary.totalUltimates)} 
-                    type="ultimate" 
-                    label="Ultimates Used"
-                    icon={Zap}
-                    darkMode={darkMode}
-                  />
-                </div>
-
-                <h4 className={`font-bold mb-3 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                  <Swords className="w-5 h-5" />
-                  Characters
-                </h4>
-                <div className="space-y-3">
-                  {(() => {
-                    // Collect all character performance scores from both teams for relative scoring
-                    return p1Team.map((char, i) => {
-                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
-                      const performanceScore = calculateMatchPerformanceScore(stats);
-                      const efficiency = stats.damageTaken > 0 ? (stats.damageDone / stats.damageTaken).toFixed(2) : '∞';
-                      const dps = stats.battleTime > 0 ? Math.round(stats.damageDone / stats.battleTime) : 0;
-                      const play = char.battlePlayCharacter || {};
-                      
-                      return (
-                        <div key={i} className={`rounded-lg p-4 border ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
-                          {/* Header: Name with KOs, Performance Score */}
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex-1">
-                              <h5 className={`font-semibold text-lg ${darkMode ? 'text-white' : 'text-gray-800'}`}>{stats.name}</h5>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Trophy className={`w-4 h-4 ${darkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
-                                <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{stats.kills} KOs</span>
-                              </div>
-                            </div>
-                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} />
-                          </div>
-                          
-                          {/* Combat Performance Section */}
-                        <StatGroup title="Combat Performance" icon={Target} darkMode={darkMode} iconColor="red">
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-red-400' : 'text-red-600'}`}>{formatNumber(stats.damageDone)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Damage Done</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{formatNumber(stats.damageTaken)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Damage Taken</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>{efficiency}×</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Efficiency</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>{formatNumber(dps)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>DPS</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{formatBattleTime(stats.battleTime)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Battle Time</div>
-                            </div>
-                          </div>
-                        </StatGroup>
-                        
-                        {/* Survival & Health Section */}
-                        <StatGroup title="Survival & Health" icon={Heart} darkMode={darkMode} iconColor="green" collapsible={true} defaultCollapsed={false}>
-                          <div className="mb-2">
-                            <div className="flex items-center justify-between text-xs mb-1">
-                              <span className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>HP Remaining</span>
-                              <span className={`font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                {formatNumber(stats.hPGaugeValue)} / {formatNumber(stats.hPGaugeValueMax)} ({Math.round((stats.hPGaugeValue / stats.hPGaugeValueMax) * 100)}%)
-                              </span>
-                            </div>
-                            <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
-                              <div 
-                                className="h-2 rounded-full bg-green-500"
-                                style={{ width: `${(stats.hPGaugeValue / stats.hPGaugeValueMax) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <MetricDisplay label="Guards" value={stats.guardCount} icon={Shield} color="green" darkMode={darkMode} size="small" />
-                            {stats.zCounterCount > 0 && (
-                              <MetricDisplay label="Z-Counters" value={stats.zCounterCount} color="blue" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.superCounterCount > 0 && (
-                              <MetricDisplay label="Super Counters" value={stats.superCounterCount} color="purple" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.revengeCounterCount > 0 && (
-                              <MetricDisplay label="Revenge Counters" value={stats.revengeCounterCount} color="orange" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.tags > 0 && (
-                              <MetricDisplay label="Tags" value={stats.tags} color="teal" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.formChangeCount > 0 && (
-                              <MetricDisplay label="Transformations" value={stats.formChangeCount} color="violet" darkMode={darkMode} size="small" />
-                            )}
-                          </div>
-                        </StatGroup>
-                        
-                        {/* Special Abilities Section */}
-                        <StatGroup title="Special Abilities" icon={Zap} darkMode={darkMode} iconColor="yellow" collapsible={true} defaultCollapsed={false}>
-                          {stats.hasAdditionalCounts ? (
-                            // New format - show hit/thrown/rate for all blast types
-                            <div className="space-y-3">
-                              <BlastMetricDisplay 
-                                label="Super 1 Blast" 
-                                thrown={stats.s1Blast || 0}
-                                hit={stats.s1HitBlast || 0}
-                                hitRate={stats.s1HitRate ?? null}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={false}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Super 2 Blast" 
-                                thrown={stats.s2Blast || 0}
-                                hit={stats.s2HitBlast || 0}
-                                hitRate={stats.s2HitRate ?? null}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={false}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Ultimate Blast" 
-                                thrown={stats.ultBlast || 0}
-                                hit={stats.uLTHitBlast || 0}
-                                hitRate={stats.ultHitRate ?? null}
-                                color="cyan"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={false}
-                              />
-                              
-                              {/* Other Abilities (always shown) */}
-                              <div className={`grid grid-cols-2 gap-2 pt-3 ${
-                                darkMode ? 'border-t border-gray-600' : 'border-t border-gray-300'
-                              }`}>
-                                <MetricDisplay label="Skill 1" value={stats.exa1Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Skill 2" value={stats.exa2Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Charges" value={stats.chargeCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Blasts" value={stats.shotEnergyBulletCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Sparking Mode" value={stats.sparkingCount} color="yellow" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Dragon Dash Mileage" value={stats.dragonDashMileage} color="gray" darkMode={darkMode} size="small" />
-                              </div>
-                            </div>
-                          ) : (
-                            // Old format - show only thrown count for blast types
-                            <div className="space-y-3">
-                              <BlastMetricDisplay 
-                                label="Super 1 Blast" 
-                                thrown={stats.spm1Count || 0}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={true}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Super 2 Blast" 
-                                thrown={stats.spm2Count || 0}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={true}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Ultimate Blast" 
-                                thrown={stats.ultimatesUsed || 0}
-                                color="cyan"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={true}
-                              />
-                              
-                              {/* Other Abilities (always shown) */}
-                              <div className={`grid grid-cols-2 gap-2 pt-3 ${
-                                darkMode ? 'border-t border-gray-600' : 'border-t border-gray-300'
-                              }`}>
-                                <MetricDisplay label="Skill 1" value={stats.exa1Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Skill 2" value={stats.exa2Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Charges" value={stats.chargeCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Blasts" value={stats.shotEnergyBulletCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Sparking Mode" value={stats.sparkingCount} color="yellow" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Dragon Dash Mileage" value={stats.dragonDashMileage} color="gray" darkMode={darkMode} size="small" />
-                              </div>
-                            </div>
-                          )}
-                        </StatGroup>
-
-                        {/* Combat Mechanics Section (Collapsible) */}
-                        <StatGroup title="Combat Mechanics" icon={Swords} darkMode={darkMode} collapsible={true} defaultCollapsed={true}>
-                          <div className="space-y-1">
-                            <MetricDisplay label="Max Combo" value={stats.maxComboNum} color="purple" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Max Combo Damage" value={formatNumber(stats.maxComboDamage)} color="red" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Throws" value={stats.throwCount} color="gray" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Lightning Attacks" value={stats.lightningAttackCount} color="yellow" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Vanishing Attacks" value={stats.vanishingAttackCount} color="blue" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Dragon Homing" value={stats.dragonHomingCount} color="purple" darkMode={darkMode} size="small" />
-                            {stats.speedImpactCount > 0 && (
-                              <>
-                                <MetricDisplay label="Speed Impacts" value={stats.speedImpactCount} color="red" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Speed Impact Wins" value={stats.speedImpactWins} color="green" darkMode={darkMode} size="small" />
-                              </>
-                            )}
-                          </div>
-                        </StatGroup>
-                        
-                        {/* Build Section (Collapsible) */}
-                        <StatGroup title="Build" icon={Star} darkMode={darkMode} collapsible={true} defaultCollapsed={true}>
-                          <BuildDisplay stats={stats} showDetailed={true} darkMode={darkMode} />
-                        </StatGroup>
-                        
-                        {/* Forms Used Display - Expandable Per-Form Stats */}
-                        <PerFormStatsDisplay
-                          characterRecord={char}
-                          characterIdRecord={characterIdRecord}
-                          formChangeHistory={char.formChangeHistory}
-                          formChangeHistoryText={stats.formChangeHistory}
-                          originalCharacterId={play.originalCharacter?.key}
-                          charMap={charMap}
-                          darkMode={darkMode}
-                        />
-                      </div>
-                    );
-                  });
-                })()}
-                </div>
-              </div>
-
-              {/* P2 Team */}
-              <div className={`rounded-xl p-6 border ${
-                darkMode 
-                  ? battleWinLose === 'Lose' 
-                    ? 'border-green-600 bg-green-900/10' 
-                    : 'border-red-600 bg-red-900/10'
-                  : battleWinLose === 'Lose'
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-red-300 bg-red-50'
-              }`}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Users className={`w-6 h-6 ${darkMode ? 'text-red-400' : 'text-red-600'}`} />
-                    <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{p2TeamName}</h3>
-                    {battleWinLose && (
-                      <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                        battleWinLose === 'Lose' 
-                          ? (darkMode ? 'bg-green-900/50 text-green-400 border border-green-600' : 'bg-green-100 text-green-800 border border-green-200')
-                          : (darkMode ? 'bg-red-900/50 text-red-400 border border-red-600' : 'bg-red-100 text-red-800 border border-red-200')
-                      }`}>
-                        {battleWinLose === 'Lose' ? 'VICTORY' : 'DEFEAT'}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-                  <StatBar 
-                    value={p2Summary.totalDamage} 
-                    maxValue={Math.max(p1Summary.totalDamage, p2Summary.totalDamage)} 
-                    type="damage" 
-                    label="Total Damage"
-                    icon={Target}
-                    darkMode={darkMode}
-                  />
-                  <StatBar 
-                    value={(p2Summary.totalHealth / p2Summary.totalHPGaugeValueMax) * 100} 
-                    maxValue={100} 
-                    displayValue={p2Summary.totalHealth}
-                    type="health" 
-                    label="HP Remaining"
-                    icon={Heart}
-                    darkMode={darkMode}
-                  />
-                  <StatBar 
-                    value={p2Summary.totalUltimates} 
-                    maxValue={Math.max(p1Summary.totalUltimates, p2Summary.totalUltimates)} 
-                    type="ultimate" 
-                    label="Ultimates Used"
-                    icon={Zap}
-                    darkMode={darkMode}
-                  />
-                </div>
-
-                <h4 className={`font-bold mb-3 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                  <Swords className="w-5 h-5" />
-                  Characters
-                </h4>
-                <div className="space-y-3">
-                  {(() => {
-                    // Collect all character performance scores from both teams for relative scoring
-                    return p2Team.map((char, i) => {
-                      const stats = applyFusionDelta(extractStats(char, charMap, capsuleMap, i + 1, aiStrategies), char);
-                      const performanceScore = calculateMatchPerformanceScore(stats);
-                      const efficiency = stats.damageTaken > 0 ? (stats.damageDone / stats.damageTaken).toFixed(2) : '∞';
-                      const dps = stats.battleTime > 0 ? Math.round(stats.damageDone / stats.battleTime) : 0;
-                      const play = char.battlePlayCharacter || {};
-                      
-                      return (
-                        <div key={i} className={`rounded-lg p-4 border ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'}`}>
-                          {/* Header: Name with KOs, Performance Score */}
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex-1">
-                              <h5 className={`font-semibold text-lg ${darkMode ? 'text-white' : 'text-gray-800'}`}>{stats.name}</h5>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Trophy className={`w-4 h-4 ${darkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
-                                <span className={`text-sm font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{stats.kills} KOs</span>
-                              </div>
-                            </div>
-                            <PerformanceScoreBadge score={performanceScore} label="Score" size="small" darkMode={darkMode} />
-                          </div>
-                          
-                          {/* Combat Performance Section */}
-                        <StatGroup title="Combat Performance" icon={Target} darkMode={darkMode} iconColor="red">
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-red-400' : 'text-red-600'}`}>{formatNumber(stats.damageDone)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Damage Done</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{formatNumber(stats.damageTaken)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Damage Taken</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>{efficiency}×</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Efficiency</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>{formatNumber(dps)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>DPS</div>
-                            </div>
-                            <div className="text-center">
-                              <div className={`font-bold text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{formatBattleTime(stats.battleTime)}</div>
-                              <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Battle Time</div>
-                            </div>
-                          </div>
-                        </StatGroup>
-                        
-                        {/* Survival & Health Section */}
-                        <StatGroup title="Survival & Health" icon={Heart} darkMode={darkMode} iconColor="green" collapsible={true} defaultCollapsed={false}>
-                          <div className="mb-2">
-                            <div className="flex items-center justify-between text-xs mb-1">
-                              <span className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>HP Remaining</span>
-                              <span className={`font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                {formatNumber(stats.hPGaugeValue)} / {formatNumber(stats.hPGaugeValueMax)} ({Math.round((stats.hPGaugeValue / stats.hPGaugeValueMax) * 100)}%)
-                              </span>
-                            </div>
-                            <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
-                              <div 
-                                className="h-2 rounded-full bg-green-500"
-                                style={{ width: `${(stats.hPGaugeValue / stats.hPGaugeValueMax) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <MetricDisplay label="Guards" value={stats.guardCount} icon={Shield} color="green" darkMode={darkMode} size="small" />
-                            {stats.zCounterCount > 0 && (
-                              <MetricDisplay label="Z-Counters" value={stats.zCounterCount} color="blue" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.superCounterCount > 0 && (
-                              <MetricDisplay label="Super Counters" value={stats.superCounterCount} color="purple" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.revengeCounterCount > 0 && (
-                              <MetricDisplay label="Revenge Counters" value={stats.revengeCounterCount} color="orange" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.tags > 0 && (
-                              <MetricDisplay label="Tags" value={stats.tags} color="teal" darkMode={darkMode} size="small" />
-                            )}
-                            {stats.formChangeCount > 0 && (
-                              <MetricDisplay label="Transformations" value={stats.formChangeCount} color="violet" darkMode={darkMode} size="small" />
-                            )}
-                          </div>
-                        </StatGroup>
-                        
-                        {/* Special Abilities Section */}
-                        <StatGroup title="Special Abilities" icon={Zap} darkMode={darkMode} iconColor="yellow" collapsible={true} defaultCollapsed={false}>
-                          {stats.hasAdditionalCounts ? (
-                            // New format - show hit/thrown/rate for all blast types
-                            <div className="space-y-3">
-                              <BlastMetricDisplay 
-                                label="Super 1 Blast" 
-                                thrown={stats.s1Blast || 0}
-                                hit={stats.s1HitBlast || 0}
-                                hitRate={stats.s1HitRate ?? null}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={false}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Super 2 Blast" 
-                                thrown={stats.s2Blast || 0}
-                                hit={stats.s2HitBlast || 0}
-                                hitRate={stats.s2HitRate ?? null}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={false}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Ultimate Blast" 
-                                thrown={stats.ultBlast || 0}
-                                hit={stats.uLTHitBlast || 0}
-                                hitRate={stats.ultHitRate ?? null}
-                                color="cyan"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={false}
-                              />
-                              
-                              {/* Other Abilities (always shown) */}
-                              <div className={`grid grid-cols-2 gap-2 pt-3 ${
-                                darkMode ? 'border-t border-gray-600' : 'border-t border-gray-300'
-                              }`}>
-                                <MetricDisplay label="Skill 1" value={stats.exa1Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Skill 2" value={stats.exa2Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Charges" value={stats.chargeCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Blasts" value={stats.shotEnergyBulletCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Sparking Mode" value={stats.sparkingCount} color="yellow" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Dragon Dash Mileage" value={stats.dragonDashMileage} color="gray" darkMode={darkMode} size="small" />
-                              </div>
-                            </div>
-                          ) : (
-                            // Old format - show only thrown count for blast types
-                            <div className="space-y-3">
-                              <BlastMetricDisplay 
-                                label="Super 1 Blast" 
-                                thrown={stats.spm1Count || 0}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={true}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Super 2 Blast" 
-                                thrown={stats.spm2Count || 0}
-                                color="yellow"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={true}
-                              />
-                              
-                              <BlastMetricDisplay 
-                                label="Ultimate Blast" 
-                                thrown={stats.ultimatesUsed || 0}
-                                color="cyan"
-                                darkMode={darkMode}
-                                size="small"
-                                legacyMode={true}
-                              />
-                              
-                              {/* Other Abilities (always shown) */}
-                              <div className={`grid grid-cols-2 gap-2 pt-3 ${
-                                darkMode ? 'border-t border-gray-600' : 'border-t border-gray-300'
-                              }`}>
-                                <MetricDisplay label="Skill 1" value={stats.exa1Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Skill 2" value={stats.exa2Count} color="purple" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Charges" value={stats.chargeCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Ki Blasts" value={stats.shotEnergyBulletCount} color="blue" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Sparking Mode" value={stats.sparkingCount} color="yellow" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Dragon Dash Mileage" value={stats.dragonDashMileage} color="gray" darkMode={darkMode} size="small" />
-                              </div>
-                            </div>
-                          )}
-                        </StatGroup>
-
-                        {/* Combat Mechanics Section (Collapsible) */}
-                        <StatGroup title="Combat Mechanics" icon={Swords} darkMode={darkMode} collapsible={true} defaultCollapsed={true}>
-                          <div className="space-y-1">
-                            <MetricDisplay label="Max Combo" value={stats.maxComboNum} color="purple" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Max Combo Damage" value={formatNumber(stats.maxComboDamage)} color="red" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Throws" value={stats.throwCount} color="gray" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Lightning Attacks" value={stats.lightningAttackCount} color="yellow" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Vanishing Attacks" value={stats.vanishingAttackCount} color="blue" darkMode={darkMode} size="small" />
-                            <MetricDisplay label="Dragon Homing" value={stats.dragonHomingCount} color="purple" darkMode={darkMode} size="small" />
-                            {stats.speedImpactCount > 0 && (
-                              <>
-                                <MetricDisplay label="Speed Impacts" value={stats.speedImpactCount} color="red" darkMode={darkMode} size="small" />
-                                <MetricDisplay label="Speed Impact Wins" value={stats.speedImpactWins} color="green" darkMode={darkMode} size="small" />
-                              </>
-                            )}
-                          </div>
-                        </StatGroup>
-                        
-                        {/* Build Section (Collapsible) */}
-                        <StatGroup title="Build" icon={Star} darkMode={darkMode} collapsible={true} defaultCollapsed={true}>
-                          <BuildDisplay stats={stats} showDetailed={true} darkMode={darkMode} />
-                        </StatGroup>
-                        
-                        {/* Forms Used Display - Expandable Per-Form Stats */}
-                        <PerFormStatsDisplay
-                          characterRecord={char}
-                          characterIdRecord={characterIdRecord}
-                          formChangeHistory={char.formChangeHistory}
-                          formChangeHistoryText={stats.formChangeHistory}
-                          originalCharacterId={play.originalCharacter?.key}
-                          charMap={charMap}
-                          darkMode={darkMode}
-                        />
-                      </div>
-                    );
-                  });
-                })()}
-                </div>
-              </div>
-            </div>
-          </div>
+            )} />
+        )}
+        {viewType === 'matches' && matchParam && (
+          <MatchPage state={matchState} charMap={charMap} characterLinkFor={characterLinkFor} teamLinkFor={teamLinkFor} shareable={!sandbox}
+            onBack={() => goBack(sandbox ? ROUTES.sandbox : ROUTES.matches + scopeOnlySearch)} backLabel={backLabel} />
         )}
 
         {/* Data Tables View */}
@@ -2258,11 +1244,3 @@ export default function App() {
 }
 
 
-// Extract filename (without path or .json extension) from a given path or name
-function getFileNameFromPath(pathOrName) {
-  if (!pathOrName) return '';
-  // If it's a full path, split by both / and \\ for windows paths
-  const parts = pathOrName.split(/\\|\//g);
-  const last = parts[parts.length - 1] || pathOrName;
-  return last.replace(/\.json$/i, '');
-}
