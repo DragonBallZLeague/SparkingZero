@@ -38,6 +38,8 @@ const WIDE_QUERY = '(min-width: 1400px)';
  *   phone       with { key, defaults, byKey } for a phone's two picked ones
  *   below       the detail always opens under its row, full width (AI
  *               strategies: its detail is too wide for a side panel)
+ *   score       whether the Score column shows (Capsules has none: a
+ *               capsule's pooled score is mostly its builds')
  */
 export default function PooledTab({
   rows, sort, dir, onSort, nameLabel, noun, nameCell, title, detail, controls = null, resetKey = '', empty, footnote = null,
@@ -45,6 +47,7 @@ export default function PooledTab({
   stats: allStats = CHAR_STATS,
   phone = { key: PHONE_COLS_KEY, defaults: DEFAULT_PHONE_STATS, byKey: statByKey },
   below = false,
+  score = true,
 }) {
   const isPhone = useIsPhone();
   const compact = useMediaQuery(COMPACT_QUERY);
@@ -68,10 +71,10 @@ export default function PooledTab({
       cell: r => nameCell(r, compact),
     },
     ...(compact ? [] : afterName),
-    {
+    ...(score ? [{
       key: 'score', label: 'Score', width: compact ? '56px' : '66px', sort: true,
       cell: r => <div className="flex justify-end"><TierScorePill score={r.combatPerformanceScore} provisional={fade && isProvisionalTier(r)} /></div>,
-    },
+    }] : []),
     ...stats.map(s => ({ ...s, ...uses(s), width: compact ? '58px' : 'minmax(56px,1fr)' })),
   ];
   const sel = isWide ? (rows.find(r => r.id === selected) || rows[0] || null) : null;

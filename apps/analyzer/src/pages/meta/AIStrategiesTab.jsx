@@ -3,143 +3,45 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import HeaderFigure from '../../components/HeaderFigure.jsx';
 import { useQueryUpdate } from '../../shell/useQueryUpdate.js';
-import { tierMatchCount } from '../../utils/performanceTier.js';
-import { styleColor, capsuleTypeColor, rankColor } from '../../utils/overviewPalette.js';
-import { RankText } from '../character/overview/parts.jsx';
+import { styleColor, capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { BuildPill } from '../character/overview/BuildPicker.jsx';
-import TierScorePill from '../../components/TierScorePill.jsx';
-import { statByKey } from '../characters/characterRows.js';
-import PooledTab, { KICKER } from './PooledTab.jsx';
+import PooledTab from './PooledTab.jsx';
+import {
+  Box, DataSignal, PooledTiles, POOLED_FIGURES, UsedMostBy, tone, fmtInt, pct, pts,
+} from './detailParts.jsx';
 import {
   aiStrategyRows, readAiFilters, readAiSort, sortAiRows, AI_COLUMNS, aiStatByKey, AI_PHONE_DEFAULTS,
 } from './aiRows.js';
-import { aiShift, QUALITY, MIN_OTHER, LEAN_PLACES } from './aiShift.js';
+import { aiShift, MIN_OTHER, LEAN_PLACES } from './aiShift.js';
 
-const fmtInt = v => Math.round(v || 0).toLocaleString('en-US');
 const characters = r => `${r.characters} character${r.characters === 1 ? '' : 's'}`;
-const pct = v => (v === null || v === undefined ? '–' : `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}%`);
-const pts = v => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}`;
 const places = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v))}`;
 const count = v => (v >= 10 ? Math.round(v).toLocaleString('en-US') : v.toFixed(1));
 
-/**
- * A change's colour: green up (or better), red down (or worse), neutral when
- * it is smaller than `min`, so colour marks only the changes that matter (the
- * league asked for green / red on the changes, 2026-09-30; the site colours
- * only what stands out). `better` is -1 where less is better (damage taken).
- */
-const tone = (v, min, better = 1) => (v === null || v === undefined || Math.abs(v) < min ? 'text-slate-200'
-  : v * better > 0 ? 'text-rank-good' : 'text-rank-bad');
 /** Style shifts of this many places are coloured, and named in the headline. */
 const TONE_PLACES = LEAN_PLACES;
 /** A single action's change is coloured from this ratio up (+15% or -15%). */
 const TONE_RATIO = 0.15;
 
-/**
- * The characters that ran a strategy (or equipped a capsule) most, each
- * linking to its page. Shared by both pooled Meta tabs.
- */
-export function UsedMostBy({ byCharacter, idFor, linkFor, title = true }) {
-  return (
-    <>
-      {title && <div className={`${KICKER} mb-1`}>Used most by</div>}
-      <ul className="m-0 list-none p-0">
-        {byCharacter.slice(0, 5).map(c => {
-          const to = linkFor ? linkFor(c.name) : null;
-          const Name = to ? Link : 'span';
-          return (
-            <li key={c.name} className="flex items-center gap-2 border-0 border-t border-solid border-gray-700/50 py-1 first:border-t-0">
-              <Portrait id={idFor(c.name)} name={c.name} size={22} rounded={5} />
-              <Name to={to || undefined} className="min-w-0 flex-1 truncate text-[13px] text-slate-100 no-underline hover:underline">{c.name}</Name>
-              <span className="text-[12px] tabular-nums text-slate-400">{c.uses}×</span>
-            </li>
-          );
-        })}
-      </ul>
-      {byCharacter.length > 5 && <div className="mt-1 text-[12px] text-slate-500">and {byCharacter.length - 5} more</div>}
-    </>
-  );
-}
-
-/**
- * Low / Medium / High as one, two or three rising bars, lit red, yellow or
- * green (the rank colours, with yellow between) so the level reads at a glance.
- */
-const SIGNAL = ['bg-rank-bad', 'bg-yellow-400', 'bg-rank-good'];
-export function DataSignal({ level, title }) {
-  const on = QUALITY.indexOf(level) + 1;
-  return (
-    <span className="inline-flex items-end gap-[2px]" title={title} aria-label={`${level} data`}>
-      {[5, 8, 11].map((h, i) => (
-        <span key={h} className={`block w-[3px] rounded-[1px] ${i < on ? SIGNAL[on - 1] : 'bg-gray-700'}`} style={{ height: h }} />
-      ))}
-    </span>
-  );
-}
 const qualityTitle = r => `${r.quality} data: ${fmtInt(r.matches.length)} uses over ${characters(r)}, `
   + `${fmtInt(r.comparable)} comparable with the same characters on other AI strategies`;
 
-/** One part of the detail: a light border and a small heading, as the Overview's cards have. */
-function Box({ title, aside = null, children, className = '' }) {
-  return (
-    <section className={`min-w-0 rounded-[10px] border border-solid border-gray-700 p-3.5 ${className}`}>
-      <div className="mb-2 flex items-baseline justify-between gap-2">
-        <span className={KICKER}>{title}</span>
-        {aside && <span className="text-[11px] text-slate-500">{aside}</span>}
-      </div>
-      {children}
-    </section>
-  );
-}
-
 /**
  * The pooled figures the table used to carry (with the score), each ranked
- * among the strategies in view. Four also say how the same characters did on
- * their other AIs (`changes`, aiShift.js results): the part of the old "Same
- * characters, other AIs" box that the tiles did not already show. Its totals
- * were dropped: averaged per compared character, they disagreed with the
- * tiles' pooled ones (the league's review, 2026-09-30).
+ * among the strategies in view (detailParts.jsx PooledTiles). Four also say
+ * how the same characters did on their other AIs (`changes`, aiShift.js
+ * results): the part of the old "Same characters, other AIs" box that the
+ * tiles did not already show. Its totals were dropped: averaged per compared
+ * character, they disagreed with the tiles' pooled ones (the league's review,
+ * 2026-09-30).
  */
 const POOLED = [
   { key: 'score', label: 'Score', get: r => r.combatPerformanceScore || 0, fmt: v => v.toFixed(1), dir: 1 },
-  ...['dmg', 'dps', 'eff', 'surv', 'taken', 'time', 'win'].map(statByKey),
+  ...POOLED_FIGURES,
 ];
-function PooledTiles({ row, pool, changes = {}, whose }) {
-  const place = s => {
-    const v = s.get(row);
-    const better = pool.filter(r => (s.dir === -1 ? s.get(r) < v : s.get(r) > v)).length;
-    const rank = better + 1;
-    const pctl = pool.length >= 5 && s.dir !== 0 ? ((pool.length - rank) / (pool.length - 1)) * 100 : null;
-    return { rank, color: rankColor(pctl, true) };
-  };
-  return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-solid border-gray-700 bg-slate-400/[.16] sm:grid-cols-4 lg:grid-cols-8">
-      {POOLED.map(s => {
-        const { rank, color } = place(s);
-        const c = changes[s.key];
-        return (
-          <div key={s.key} className="min-w-0 bg-shell-panel px-3 py-2.5 sm:px-3.5 sm:py-3">
-            <div className="truncate text-[11px] font-semibold uppercase tracking-wider text-slate-400">{s.label}</div>
-            <div className="mt-0.5 text-lg font-extrabold tabular-nums text-white">
-              {s.key === 'score' ? <TierScorePill score={row.combatPerformanceScore} /> : s.fmt(s.get(row))}
-            </div>
-            <div className="text-xs"><RankText rank={rank} pool={pool.length} color={color} darkMode /></div>
-            {c && (
-              <div className="mt-1 whitespace-nowrap text-[11px] tabular-nums"
-                title={`${whose(c.fmt(c.with), c.fmt(c.usual))}`}>
-                <b className={`font-semibold ${tone(c.shift, c.min, c.better)}`}>{c.diff(c.shift)}</b>
-                <span className="ml-1 text-slate-500">vs other AIs</span>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 /** The style shift's two markers: a hollow dot for the rank on other AIs, a filled one for this AI's. The legend draws the same. */
-const USUAL_DOT = 'h-2 w-2 rounded-full border border-solid border-slate-400 bg-shell-panel';
+const USUAL_DOT = 'h-2 w-2 rounded-full border border-solid border-slate-400 bg-[var(--surface)]';
 const THIS_DOT = 'h-2.5 w-2.5 rounded-full';
 function Legend({ color = '#e2e8f0' }) {
   return (
@@ -247,7 +149,7 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
   return (
     <div className="pb-1 pt-1">
       <div className="mb-3 flex flex-wrap gap-x-7 gap-y-2">
-        <HeaderFigure label="Uses">{fmtInt(tierMatchCount(row))}</HeaderFigure>
+        <HeaderFigure label="Uses">{fmtInt(row.matches.length)}</HeaderFigure>
         <HeaderFigure label="Characters">{fmtInt(row.characters)}</HeaderFigure>
         <HeaderFigure label="Data" title={qualityTitle(row)}>
           <span className="inline-flex items-center gap-1.5"><DataSignal level={row.quality} />{row.quality}</span>
@@ -257,7 +159,8 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
         </HeaderFigure>
       </div>
 
-      <PooledTiles row={row} pool={pool} changes={changes} whose={whose} />
+      <PooledTiles row={row} pool={pool} stats={POOLED} changes={changes} whose={whose} vs="vs other AIs"
+        grid="grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" />
 
       {s.compared === 0 ? (
         <Box title="Style shift" className="mt-2">

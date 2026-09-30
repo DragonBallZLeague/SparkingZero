@@ -99,7 +99,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
 
   if (!c.played) {
     return (
-      <div className={`bg-slate-400/[.035] ${isPhone ? 'px-3' : 'px-3.5'} pb-4 pt-3`}>
+      <div className={`surface-inset ${isPhone ? 'px-3' : 'px-3.5'} pb-4 pt-3`}>
         {/* A desktop row already says so; a phone's shows the position there. */}
         {isPhone && <div className="mb-3 text-[13px] text-slate-400">Did not fight.</div>}
         <div className="max-w-[320px]">{buildBlock}</div>
@@ -187,7 +187,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
   ];
 
   return (
-    <div ref={top} className={`bg-slate-400/[.035] ${isPhone ? 'px-3 pb-4 pt-3' : 'px-3.5 pb-5 pt-4'}`}>
+    <div ref={top} className={`surface-inset ${isPhone ? 'px-3 pb-4 pt-3' : 'px-3.5 pb-5 pt-4'}`}>
       {form && (
         <FilterStrip label="Showing one form" clearLabel="Show all forms" onClear={() => pick(null)} className="mb-3">
           <span className="inline-flex min-w-0 items-center gap-2">
@@ -205,7 +205,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
         {tiles.map(([label, value, unit, pl, league, part], i) => {
           const color = rankColor(pl.good, true);
           return (
-            <div key={label} className={`min-w-0 bg-shell-panel p-3.5 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''}`}>
+            <div key={label} className={`min-w-0 bg-[var(--surface)] p-3.5 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''}`}>
               <div className={`${LABEL} truncate`}>{label}</div>
               <div className="mb-2 mt-0.5 whitespace-nowrap text-2xl font-extrabold tabular-nums tracking-tight text-white">
                 {value}

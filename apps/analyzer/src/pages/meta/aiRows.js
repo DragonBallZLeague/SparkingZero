@@ -95,8 +95,14 @@ export const AI_STYLE_STATS = STYLES.map(st => ({
   title: `Places it moves its characters in the league's ${st.name.toLowerCase()} ranking, against their other AI strategies`,
   get: r => { const x = styleOf(r, st.key); return x && x.gain !== null ? x.gain : null; },
 }));
+/**
+ * Uses: every build run with it, fought or not, as the Builds tab counts and
+ * the detail's counts are (the Characters table's Matches counts only matches
+ * fought, which disagreed with the detail by a few). Shared by the Capsules tab.
+ */
+export const USES_STAT = { ...statByKey('matches'), label: 'Uses', short: 'Uses', get: r => r.matches.length, title: 'Builds run with it in scope' };
 /** The table's stat columns: Uses, then the six styles. */
-export const AI_COLUMNS = [{ ...statByKey('matches'), label: 'Uses', short: 'Uses' }, ...AI_STYLE_STATS];
+export const AI_COLUMNS = [USES_STAT, ...AI_STYLE_STATS];
 export const aiStatByKey = key => AI_COLUMNS.find(c => c.key === key) || null;
 /** A phone's two columns before anyone picks. */
 export const AI_PHONE_DEFAULTS = ['style_melee', 'style_blast'];
@@ -104,7 +110,8 @@ export const AI_PHONE_DEFAULTS = ['style_melee', 'style_blast'];
 // ---- URL params (on /meta?tab=ai) --------------------------------------------------
 // type=Attack,Defense, char=<character slugs> (shared with the Builds tab),
 // sort=<a column key | score | chars | name>, dir=asc | desc. The Capsules tab
-// uses the same two readers with its own columns (CHAR_STATS, the default).
+// uses the same two readers with its own columns (capsuleRows.js
+// CAPSULE_COLUMNS) and no score column (`{ score: false }`).
 
 const list = (params, key) => [...new Set((params.get(key) || '').split(',').map(s => s.trim()).filter(Boolean))];
 
@@ -113,9 +120,9 @@ export function readAiFilters(params) {
   return { chars: list(params, 'char'), types: types.length === AI_TYPES.length ? [] : types };
 }
 
-export function readAiSort(params, statFor = statByKey) {
+export function readAiSort(params, statFor = statByKey, { score = true } = {}) {
   const key = params.get('sort');
-  const valid = key === 'score' || key === 'chars' || key === 'name' || !!statFor(key);
+  const valid = (score && key === 'score') || key === 'chars' || key === 'name' || !!statFor(key);
   const sort = valid ? key : 'matches';
   const byDefault = sort === 'name' ? 'asc' : 'desc';
   const dir = params.get('dir') === 'asc' ? 'asc' : params.get('dir') === 'desc' ? 'desc' : byDefault;

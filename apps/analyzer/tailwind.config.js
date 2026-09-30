@@ -37,8 +37,11 @@ module.exports = {
         // sits on `shell-panel`, a hair darker than the gray-800 chips; popovers
         // are the only raised surface, on `shell-pop`. Every page's panel uses
         // it, so the site reads as one surface. `track` is the empty part of a
-        // bar or ring and `fill` a bar's neutral (mid-pool) fill.
-        shell: { panel: '#1a2031', pop: '#222a3b', track: '#262e40', fill: '#56627a' },
+        // bar or ring and `fill` a bar's neutral (mid-pool) fill. `inset` is a
+        // row's opened detail, a shade darker than the panel so its start and
+        // end show (the league, 2026-09-30); darker, as popovers are the only
+        // raised surface. Use it through index.css's `.surface-inset`.
+        shell: { panel: '#1a2031', pop: '#222a3b', track: '#262e40', fill: '#56627a', inset: '#121725' },
         // Rank colour, used only at the ends of a pool (top and bottom fifth).
         // The same values as utils/overviewPalette.js RANK_ENDS.dark.
         rank: { good: '#16e05a', bad: '#ff2b3a' },

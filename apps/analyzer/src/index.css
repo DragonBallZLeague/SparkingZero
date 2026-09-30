@@ -22,6 +22,17 @@
 @tailwind utilities;
 
 /*
+ * The surface a part sits on. A table row's opened detail is `.surface-inset`,
+ * a shade darker than the panel, so where it starts and ends shows (the
+ * league, 2026-09-30). Parts that must blend into what is behind them (a tile
+ * grid's cells, a hollow dot, a cut-out border) paint `var(--surface)`
+ * (`bg-[var(--surface)]`, `border-[color:var(--surface)]`), so they match
+ * the panel and the inset alike.
+ */
+:root { --surface: theme('colors.shell.panel'); }
+.surface-inset { --surface: theme('colors.shell.inset'); background-color: var(--surface); }
+
+/*
  * The app's typeface: the system UI font (Segoe UI on Windows, Roboto on
  * Android, San Francisco on Apple), as the approved shell demo and the league
  * website render. It replaced Inter from Google Fonts on 2026-09-28.

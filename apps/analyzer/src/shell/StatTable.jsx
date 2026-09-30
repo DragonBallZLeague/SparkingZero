@@ -28,7 +28,9 @@ import { placements } from '../pages/characters/characterRows.js';
  *   A stat column gives `get(row)` (a number, or null for "does not have it",
  *   shown "–") with `fmt(value)` or `text(row)`, and `dir`: 1 when higher is
  *   better, -1 lower, 0 neither (no colour). `diverge: true` draws a signed
- *   figure's bar either way from a centre line (Meta's style shifts).
+ *   figure's bar either way from a centre line (Meta's style shifts);
+ *   `tint` gives a `dir: 0` column's bars a colour of its own (Meta
+ *   Capsules' build types).
  *   Any other column gives `cell(row, index)`.
  *
  * `rows` are already filtered and sorted; `pool` is what the bars and colours
@@ -40,7 +42,7 @@ import { placements } from '../pages/characters/characterRows.js';
  * For a table with a detail (Meta's layout A: the detail beside the table on a
  * wide screen, under its row when narrower), `selected` is the picked row's
  * key, drawn as the Builds table draws it, and `expanded` a row's key whose
- * `renderExpanded(row)` shows under it.
+ * `renderExpanded(row)` shows under it, on the darker `.surface-inset`.
  */
 export default function StatTable({
   columns, rows, pool = rows, rowKey = r => r.id, sort = null, dir = 'desc', onSort = null,
@@ -84,7 +86,7 @@ export default function StatTable({
     const v = c.get(r);
     const text = c.text ? c.text(r) : v === null || v === undefined ? '–' : c.fmt(v);
     return <StatCell key={c.key} text={text} value={v || 0} max={max[c.key]} p={v === null || v === undefined ? null : place[c.key](v)}
-      faded={!!(faded && faded(r))} diverge={!!c.diverge} />;
+      faded={!!(faded && faded(r))} diverge={!!c.diverge} tint={c.tint || null} />;
   };
 
   return (
@@ -120,7 +122,7 @@ export default function StatTable({
           return (
             <React.Fragment key={key}>
               {row}
-              <div className={`border-0 border-b border-solid border-gray-700/50 ${isPhone ? 'px-2.5 pb-3 pt-1' : 'px-3.5 pb-3.5 pt-1'}`}>
+              <div className={`surface-inset border-0 border-b border-solid border-gray-700/50 last:rounded-b-[10px] ${isPhone ? 'px-2.5 pb-3 pt-2.5' : 'px-3.5 pb-3.5 pt-3'}`}>
                 {renderExpanded(r)}
               </div>
             </React.Fragment>

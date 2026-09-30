@@ -2,7 +2,7 @@ import { filterAggregatedData } from './aggregation/filterAggregated.js';
 import { tierMatchCount } from './performanceTier.js';
 import { POSITION_NAMES } from './positions.js';
 import { aiStrategyRows } from '../pages/meta/aiRows.js';
-import { capsuleRows } from '../pages/meta/capsuleRows.js';
+import { capsuleRows, BUILD_TYPES } from '../pages/meta/capsuleRows.js';
 
 /**
  * The workbook's plainer sheets (utils/excelExport.js `extraSheets`), made
@@ -69,6 +69,11 @@ export function aiStrategySheet(aggregated, charMap = {}) {
   };
 }
 
+/**
+ * The Capsules tab's columns (the share of each build type's builds that run
+ * it), then the pooled figures its detail shows, without the score the page
+ * dropped (mostly its builds', not the capsule's).
+ */
 export function capsuleSheet(aggregated, charMap = {}) {
   return {
     name: 'Capsules',
@@ -77,7 +82,8 @@ export function capsuleSheet(aggregated, charMap = {}) {
       { header: 'Type', width: 14, get: r => r.type },
       { header: 'Cost', width: 6, get: r => r.cost },
       { header: 'Characters', width: 11, get: r => r.characters },
-      ...FIGURES,
+      ...BUILD_TYPES.map(t => ({ header: `${t} builds`, width: Math.max(10, t.length + 8), numFmt: '0%', get: r => (r.fit[t] ? round(r.fit[t].share, 3) : null) })),
+      ...FIGURES.filter(f => f.header !== 'Score'),
       { header: 'Effect', width: 60, get: r => r.effect },
     ],
     rows: capsuleRows(aggregated, { chars: [], types: [], ais: [] }, charMap),

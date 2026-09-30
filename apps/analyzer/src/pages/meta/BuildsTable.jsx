@@ -214,7 +214,7 @@ export default function BuildsTable({
                 )}
               </div>
               {open && (
-                <div className={`border-0 border-b border-solid border-gray-700/50 ${isPhone ? 'px-2.5 pb-3 pt-1' : 'pb-3.5 pl-[58px] pr-3.5 pt-1'}`}>
+                <div className={`surface-inset border-0 border-b border-solid border-gray-700/50 ${isPhone ? 'px-2.5 pb-3 pt-2.5' : 'pb-3.5 pl-[58px] pr-3.5 pt-3'}`}>
                   {isPhone && showCharacter && <div className="mb-2 mt-0.5"><BuildPill label={b.label} darkMode compact /></div>}
                   <CapsuleList build={b} highlight={highlight} />
                   <BuildActions build={b} buildLinkFor={buildLinkFor} openLabel={openLabel} />

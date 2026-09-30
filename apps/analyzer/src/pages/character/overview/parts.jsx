@@ -154,7 +154,7 @@ export function MedianTrack({ p, color, height = 6, empty = false, darkMode, dot
           style={{ left: '50%', top: -3, bottom: -3, width: 2, opacity: 0.8 }} />
       )}
       {dot && !empty && (
-        <div className={`absolute rounded-full border-2 border-solid ${darkMode ? 'border-shell-panel' : 'border-white'}`}
+        <div className={`absolute rounded-full border-2 border-solid ${darkMode ? 'border-[color:var(--surface)]' : 'border-white'}`}
           style={{ left: `${pos}%`, top: '50%', width: 11, height: 11, transform: 'translate(-50%, -50%)', background: color }} />
       )}
     </div>

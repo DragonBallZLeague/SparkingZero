@@ -131,7 +131,7 @@ export default function FormBreakdown({
                   pickable ? 'cursor-pointer' : ''}`}>
                 <span className="relative flex-none">
                   <Portrait id={f.id} name={f.name} size={isPhone ? 28 : 34} />
-                  <i className="absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-[3px] border-2 border-solid border-shell-panel"
+                  <i className="absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-[3px] border-2 border-solid border-[color:var(--surface)]"
                     style={{ background: colour(i) }} />
                 </span>
                 <span className="min-w-0">

@@ -122,8 +122,12 @@ export function strategyPairs(aggregated, strategy, f = { chars: [] }) {
   return { all, paired: all.filter(p => p.without.length >= MIN_OTHER) };
 }
 
-/** Weighted (by uses of the strategy) mean of `get` with and without; null when either side has none. */
-function weighted(pairs, get) {
+/**
+ * Weighted (by uses of the strategy) mean of `get` with and without; null when
+ * either side has none. The Capsules tab's comparison uses it too
+ * (capsuleRows.js capsuleChange), with a capsule's builds as `with`.
+ */
+export function weighted(pairs, get) {
   let a = 0, b = 0, w = 0;
   for (const p of pairs) {
     const x = get(p.with), y = get(p.without);

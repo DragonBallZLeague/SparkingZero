@@ -84,7 +84,7 @@ export function HeadlineTiles({ overview: o, place, baseline, darkMode, shares =
       {tiles.map(([lbl, val, unit, good, key, league], i) => {
         const color = rankColor(good, darkMode);
         return (
-          <div key={key} className={`p-3.5 min-w-0 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''} ${darkMode ? 'bg-shell-panel' : 'bg-white'}`}>
+          <div key={key} className={`p-3.5 min-w-0 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''} ${darkMode ? 'bg-[var(--surface)]' : 'bg-white'}`}>
             <div className={label(darkMode)}>{lbl}</div>
             <div className={`text-2xl font-extrabold tracking-tight tabular-nums whitespace-nowrap mt-0.5 mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               {val}

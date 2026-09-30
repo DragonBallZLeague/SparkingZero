@@ -7,6 +7,7 @@ import { CostBar } from '../meta/BuildsTable.jsx';
 import { ShowMore } from '../../shell/tableParts.jsx';
 import { teamName } from '../../utils/teams.js';
 import { POSITION_NAMES, positionSlot } from '../../utils/positions.js';
+import { tint, RESULT_COLORS } from '../../utils/overviewPalette.js';
 
 const fmtInt = v => Math.round(v || 0).toLocaleString('en-US');
 const fmtK = v => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(Math.round(v || 0)));
@@ -28,8 +29,10 @@ export function ResultBadge({ won }) {
  * damage dealt; a phone, five across, shows the capsule cost bar.
  *
  * Each side is its own band, headed by its team's logo and name (a label
- * column on a desktop, a line above on a phone), with the opponent's band
- * shaded, so the two lineups never read as one team of six.
+ * column on a desktop, a line above on a phone). The team's own band is
+ * tinted green or red by its result (the league, 2026-09-30), as the Match
+ * page tints a team's header, and the opponent's is left plain, so the two
+ * lineups never read as one team of six and the team's own reads first.
  *
  * `lineups` are teamLineups(), already searched; the first `shown` are drawn,
  * and "Show more" adds the next page. A match opens in the match viewer via
@@ -55,7 +58,7 @@ export default function LineupList({ lineups, shown, onMore, tag, isPhone, idFor
               className={`border-0 border-b border-solid border-gray-700/50 ${isPhone ? 'px-2 py-2.5' : 'grid grid-cols-[150px_1fr] items-center gap-3 px-3.5 py-3'}`}>
               <div className={`flex min-w-0 gap-2 ${isPhone ? 'mb-1.5 items-center px-0.5' : 'items-start'}`}><ResultBadge won={l.won} />{name}</div>
               <div className="flex flex-col gap-1">
-                <Side tag={tag} slots={l.us} n={n} isPhone={isPhone} idFor={idFor} />
+                <Side tag={tag} slots={l.us} n={n} isPhone={isPhone} idFor={idFor} result={RESULT_COLORS[l.won ? 'won' : 'lost']} />
                 <Side tag={l.opponent} to={to} slots={l.them} n={n} isPhone={isPhone} idFor={idFor} opponent />
               </div>
             </div>
@@ -67,8 +70,12 @@ export default function LineupList({ lineups, shown, onMore, tag, isPhone, idFor
   );
 }
 
-/** One side's lineup, Starter first, in a band headed by its team. */
-function Side({ tag, to = null, slots, n, isPhone, idFor, opponent = false }) {
+/**
+ * One side's lineup, Starter first, in a band headed by its team. The page's
+ * own team's band is tinted in its result's colour (`result`), so the eye
+ * lands on it first and reads the result without the badge.
+ */
+function Side({ tag, to = null, slots, n, isPhone, idFor, opponent = false, result = null }) {
   const Name = to ? Link : 'span';
   const label = (
     <div className="flex min-w-0 items-center gap-2">
@@ -80,19 +87,21 @@ function Side({ tag, to = null, slots, n, isPhone, idFor, opponent = false }) {
         : <span className={`text-slate-500 ${isPhone ? 'text-[11px]' : 'text-xs'}`}>No team name</span>}
     </div>
   );
-  const band = `rounded-[8px] ${opponent ? 'bg-slate-400/[.07]' : ''}`;
+  const band = 'rounded-[8px] border border-solid border-transparent';
+  const bandStyle = result ? { background: tint(result, 0.09), borderColor: tint(result, 0.28) } : undefined;
   const cells = slots.map((s, i) => <Slot key={`${s.name}-${i}`} s={s} tag={tag} isPhone={isPhone} idFor={idFor} opponent={opponent} />);
   if (isPhone) {
     return (
-      <div className={`px-1.5 py-1.5 ${band}`}>
+      <div className={`px-1.5 py-1.5 ${band}`} style={bandStyle}>
         <div className="mb-1.5">{label}</div>
         <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${n}, minmax(0,1fr))` }}>{cells}</div>
       </div>
     );
   }
   return (
-    <div className={`grid items-center gap-3 px-2 py-1.5 ${band}`} style={{ gridTemplateColumns: `128px repeat(${n}, minmax(0,1fr))` }}>
-      <div className="flex self-stretch items-center border-0 border-r border-solid border-gray-700 pr-2.5">{label}</div>
+    <div className={`grid items-center gap-3 px-2 py-1.5 ${band}`} style={{ gridTemplateColumns: `128px repeat(${n}, minmax(0,1fr))`, ...bandStyle }}>
+      <div className="flex self-stretch items-center border-0 border-r border-solid border-gray-700 pr-2.5"
+        style={{ borderColor: result ? tint(result, 0.28) : undefined }}>{label}</div>
       {cells}
     </div>
   );

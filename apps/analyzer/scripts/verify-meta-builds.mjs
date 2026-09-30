@@ -37,7 +37,10 @@ import { overviewFromMatches, placeOverview } from '../src/utils/characterOvervi
 import {
   aiShift, strategyPairs, dataQuality, MIN_OTHER, SUIT_MIN, ACTION_FLOOR,
 } from '../src/pages/meta/aiShift.js';
-import { capsuleRows, capsuleMatchesQuery, readCapsuleFilters } from '../src/pages/meta/capsuleRows.js';
+import {
+  capsuleRows, capsuleChange, capsuleMatchesQuery, readCapsuleFilters, capsuleStatByKey, familyOf,
+  BUILD_TYPES, FIT_STATS, PAIR_MIN, PAIR_SHARE,
+} from '../src/pages/meta/capsuleRows.js';
 import baseline from '../src/config/style-baseline.json' with { type: 'json' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -281,6 +284,89 @@ for (const [label, { rows }] of [['default', def], ['everything', everything]]) 
   const found = caps.find(c => c.effect);
   check('the search finds a capsule by its name and its effect',
     !!found && capsuleMatchesQuery(found, found.name.toLowerCase()) && capsuleMatchesQuery(found, found.effect.slice(0, 12).toLowerCase()));
+
+  // Fit: the share of each build type's builds that run it, counted directly.
+  const allBuilds = rows.flatMap(r => (r.matches || []).filter(m => (m.equippedCapsules || []).length));
+  const typeOfBuild = m => (m.buildComposition && m.buildComposition.primary) || 'No Build';
+  const has = (m, id) => (m.equippedCapsules || []).some(x => x.id === id);
+  const fitOff = [];
+  for (const c of caps.slice(0, 12)) {
+    for (const t of BUILD_TYPES) {
+      const of = allBuilds.filter(m => typeOfBuild(m) === t);
+      const n = of.filter(m => has(m, c.capsuleId)).length;
+      const want = of.length ? n / of.length : null;
+      const got = c.fit[t] ? c.fit[t].share : null;
+      if (want === null ? got !== null : Math.abs(got - want) > 1e-9) fitOff.push(`${c.name} ${t}`);
+    }
+  }
+  check('a build type column is the share of that type\'s builds that run it', !fitOff.length, fitOff.slice(0, 3).join(', '));
+  const defenseFit = defense.find(c => c.name === (caps.find(x => x.type === 'Defense') || {}).name);
+  const plainFit = caps.find(c => defenseFit && c.name === defenseFit.name);
+  check('the capsule type and cost chips pick rows, not the builds shares are of',
+    !!defenseFit && BUILD_TYPES.every(t => (defenseFit.fit[t] || {}).of === (plainFit.fit[t] || {}).of));
+  const aiTop = byAi.find(c => c.name === top.name);
+  const aiBuilds = allBuilds.filter(m => m.aiStrategy === topAi);
+  check('with an AI strategy picked, the shares are of that AI\'s builds',
+    !!aiTop && BUILD_TYPES.every(t => !aiTop.fit[t] || aiTop.fit[t].of === aiBuilds.filter(m => typeOfBuild(m) === t).length));
+
+  // AI strategies and lineup position: shares of its uses, against all builds.
+  check('its AI strategies add up to its uses',
+    caps.every(c => c.ais.reduce((n, a) => n + a.n, 0) === c.matches.length));
+  const usualBarrage = top.ais[0].usual;
+  check('an AI\'s usual share is its share of every build',
+    Math.abs(usualBarrage - allBuilds.filter(m => (m.aiStrategy || 'Default') === top.ais[0].name).length / allBuilds.length) < 1e-9);
+  const sum = xs => xs.reduce((n, x) => n + x, 0);
+  check('its lineup positions and the usual ones each add up to 100%',
+    caps.filter(c => c.positions.some(p => p.n)).every(c => Math.abs(sum(c.positions.map(p => p.share)) - 1) < 1e-9
+      && Math.abs(sum(c.positions.map(p => p.usual)) - 1) < 1e-9));
+  const savior = caps.find(c => c.name === 'Savior');
+  if (savior && savior.matches.length >= 30) {
+    log(`  Savior by position: ${savior.positions.map(p => `${p.pos}: ${Math.round(p.share * 100)}%`).join(', ')}`);
+    check('Savior (it fires on the first switch-in) is almost never on a Starter', savior.positions[0].share < 0.05);
+  }
+
+  // Goes with: lift is together × builds / (its uses × theirs); floors hold.
+  const usesOf = new Map(caps.map(c => [c.capsuleId, c.matches.length]));
+  const liftOff = caps.slice(0, 12).flatMap(c => c.pairs.slice(0, 5)
+    .filter(p => Math.abs(p.lift - (p.n * allBuilds.length) / (c.matches.length * usesOf.get(p.id))) > 1e-9));
+  check('a pair\'s lift is how many times as often as chance', !liftOff.length);
+  check('a pair\'s usual share is its share of all builds, and lift is share over usual',
+    caps.slice(0, 12).every(c => c.pairs.slice(0, 5).every(p => Math.abs(p.usual - usesOf.get(p.id) / allBuilds.length) < 1e-9
+      && Math.abs(p.lift - p.share / p.usual) < 1e-9)));
+  check('Goes with keeps pairs past its floors, by lift',
+    caps.every(c => c.goesWith.every((p, i) => p.n >= PAIR_MIN && p.share >= PAIR_SHARE && (i === 0 || c.goesWith[i - 1].lift >= p.lift))));
+
+  // Tiers: a family's tiers in order, sharing its name.
+  const tiered = caps.find(c => c.tiers);
+  check('a capsule family lists its tiers in order, itself included', !!tiered
+    && tiered.tiers.some(t => t.capsuleId === tiered.capsuleId)
+    && tiered.tiers.every((t, i) => familyOf(t.name).base === familyOf(tiered.name).base && (i === 0 || tiered.tiers[i - 1].tier < t.tier)));
+  if (tiered) log(`  tiers, e.g. ${tiered.tiers.map(t => `${t.name} (${t.cost} cost, ${t.uses})`).join(' / ')}`);
+
+  // What it changes: same character, same build type, builds without it.
+  const cmp = caps.find(c => c.comparable >= 30) || caps[0];
+  const ch = capsuleChange(rows, cmp.capsuleId, { chars: [], ais: [] });
+  check('the row\'s comparable uses are what capsuleChange compares', ch.compared === cmp.comparable, `${ch.compared} vs ${cmp.comparable}`);
+  // One character, done by hand.
+  const heavy = rows.find(r => {
+    const bs = (r.matches || []).filter(m => (m.equippedCapsules || []).length);
+    return bs.some(m => has(m, cmp.capsuleId)) && bs.filter(m => !has(m, cmp.capsuleId)).length >= MIN_OTHER;
+  });
+  if (heavy) {
+    const one = capsuleChange(rows, cmp.capsuleId, { chars: [aiSlug(heavy.name)], ais: [] });
+    const bs = heavy.matches.filter(m => (m.equippedCapsules || []).length);
+    let a = 0, b = 0, w = 0;
+    for (const t of new Set(bs.map(typeOfBuild))) {
+      const wi = bs.filter(m => typeOfBuild(m) === t && has(m, cmp.capsuleId));
+      const wo = bs.filter(m => typeOfBuild(m) === t && !has(m, cmp.capsuleId));
+      if (!wi.length || wo.length < MIN_OTHER) continue;
+      a += wi.length * overviewFromMatches(wi).avgDealt; b += wi.length * overviewFromMatches(wo).avgDealt; w += wi.length;
+    }
+    check(`one character's change is its own builds with it against the same type without (${heavy.name}, ${cmp.name})`,
+      w ? !!one.dmg && Math.abs(one.dmg.with - a / w) < 1e-6 && Math.abs(one.dmg.usual - b / w) < 1e-6 : one.compared === 0);
+  }
+  log(`  ${cmp.name}: ${ch.compared} of ${cmp.matches.length} compared (${ch.quality}), damage ${ch.dmg ? `${Math.round(ch.dmg.shift * 100)}%` : '–'}`);
+  log(`  quality: ${['Low', 'Medium', 'High'].map(q => `${q} ${caps.filter(c => c.quality === q).length}`).join(', ')}`);
 }
 {
   const P = s => new URLSearchParams(s);
@@ -292,6 +378,14 @@ for (const [label, { rows }] of [['default', def], ['everything', everything]]) 
   check('the AI sort defaults to uses and ignores a Builds-only key', readAiSort(P('sort=uses')).sort === 'matches');
   check('the AI tab sorts by a style column, and not by a column it no longer has',
     readAiSort(P('sort=style_ult'), aiStatByKey).sort === 'style_ult' && readAiSort(P('sort=dmg'), aiStatByKey).sort === 'matches');
+  const capSort = q => readAiSort(P(q), capsuleStatByKey, { score: false }).sort;
+  check('the Capsules tab sorts by a build type, and not by the score it dropped',
+    capSort('sort=fit_blast') === 'fit_blast' && capSort('sort=score') === 'matches' && capSort('sort=dmg') === 'matches');
+  const caps = capsuleRows(def.rows, { chars: [], types: [], ais: [] }, charMap);
+  const byBlast = sortAiRows(caps, { sort: 'fit_blast', dir: 'desc' }, capsuleStatByKey);
+  const blast = FIT_STATS.find(s => s.key === 'fit_blast');
+  check('sorting by a build type orders by that share',
+    byBlast.every((r, i) => i === 0 || blast.get(byBlast[i - 1]) >= blast.get(r)));
 }
 
 console.log = log;
