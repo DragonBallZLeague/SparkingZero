@@ -43,7 +43,7 @@ import { fileURLToPath } from 'url';
 import { getAggregatedCharacterData } from '../src/utils/aggregation/characterAggregation.js';
 import { parseCharacterCSV } from '../src/utils/statCalculations.js';
 import {
-  overviewFromMatches, OVERVIEW_METRICS, DEFENSE_WEIGHTS, round4, percentileIn, defenseRaw,
+  overviewFromMatches, OVERVIEW_METRICS, DEFENSE_WEIGHTS, round4, percentileIn, blendRaw,
 } from '../src/utils/characterOverview.js';
 import { MATCH_METRICS, quantilesOf } from '../src/utils/matchReference.js';
 import { loadCalibrationBasis, SEASON_WINDOW, REQUIRED_DIFFICULTY } from './calibration-basis.mjs';
@@ -79,11 +79,12 @@ for (const [key, get] of Object.entries(OVERVIEW_METRICS)) {
 
 // Defensive Fighter is a blend of percentiles, so it is placed and blended per
 // character, then that blend gets its own distribution.
-const defense = overviews.map(o => {
+const blendOf = weights => overviews.map(o => {
   const pct = {};
-  for (const k of Object.keys(DEFENSE_WEIGHTS)) pct[k] = percentileIn(metrics[k], round4(OVERVIEW_METRICS[k](o)));
-  return round4(defenseRaw(pct));
+  for (const k of Object.keys(weights)) pct[k] = percentileIn(metrics[k], round4(OVERVIEW_METRICS[k](o)));
+  return round4(blendRaw(pct, weights));
 }).sort((a, b) => a - b);
+const defense = blendOf(DEFENSE_WEIGHTS);
 
 const at = (arr, q) => (arr.length ? arr[Math.floor(q * (arr.length - 1))] : null);
 const medians = Object.fromEntries(Object.entries(metrics).map(([k, arr]) => [k, arr.length ? arr[Math.floor(arr.length / 2)] : null]));

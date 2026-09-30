@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PAGE } from '../../shell/tableParts.jsx';
-import { useIsPhone, useMediaQuery } from '../../shell/useMediaQuery.js';
+import { useMediaQuery } from '../../shell/useMediaQuery.js';
 import BuildsTable from '../meta/BuildsTable.jsx';
 import { leagueBuilds, filterBuilds } from '../meta/buildRows.js';
 
@@ -23,7 +23,6 @@ const WIDE_QUERY = '(min-width: 1180px)';
  * but the build: this is the list of builds.
  */
 export default function CharacterBuilds({ character, charMap = {}, portraitId = null, current = null, onToggle }) {
-  const isPhone = useIsPhone();
   const isWide = useMediaQuery(WIDE_QUERY);
   const [{ sort, dir }, setSortState] = useState({ sort: 'uses', dir: 'desc' });
   const builds = useMemo(() => leagueBuilds([character], charMap), [character, charMap]);
@@ -48,7 +47,7 @@ export default function CharacterBuilds({ character, charMap = {}, portraitId = 
         <b className="font-semibold text-white">{rows.length}</b> build{rows.length === 1 ? '' : 's'}
       </div>
       <BuildsTable rows={rows} shown={shown} onMore={() => setShown(n => n + PAGE)}
-        sort={sort} dir={dir} onSort={onSort} isPhone={isPhone} isWide={isWide}
+        sort={sort} dir={dir} onSort={onSort} isWide={isWide}
         selected={picked} expanded={picked} onPick={onPick} idFor={() => portraitId}
         highlight={[]} showCharacter={false} pickFirst={false}
         emptyPanel="Pick a build to show only it, with its capsules." />

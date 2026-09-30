@@ -4,7 +4,7 @@ import Segmented from '../../shell/Segmented.jsx';
 import ChipMenu from '../../shell/ChipMenu.jsx';
 import StatTable from '../../shell/StatTable.jsx';
 import { PAGE } from '../../shell/tableParts.jsx';
-import { useIsPhone, useMediaQuery } from '../../shell/useMediaQuery.js';
+import { useIsPhone, useMediaQuery, useTableSize, PICKED_COLUMNS } from '../../shell/useMediaQuery.js';
 import { usePickedColumns, pickerChip } from '../../shell/usePickedColumns.js';
 import { performanceColumns } from '../matches/performanceColumns.jsx';
 import {
@@ -15,7 +15,8 @@ import {
 const PHONE_COLS_KEY = 'szl.analyzer.performances.phoneCols';
 /** Inside the page's padded panel, the full layout needs a wider screen than /matches does. */
 const WIDE_QUERY = '(min-width: 1300px)';
-const COMPACT_QUERY = '(max-width: 899px)';
+/** From here the switch shows; narrower, picked columns (two on a phone, four on a tablet). */
+const FULL_FROM = 900;
 
 /**
  * The Character page's Matches tab: the character's every match in scope, as
@@ -35,7 +36,9 @@ const COMPACT_QUERY = '(max-width: 899px)';
 export default function CharacterMatches({ character, linkFor = null, performancesLink = null }) {
   const isPhone = useIsPhone();
   const wide = useMediaQuery(WIDE_QUERY);
-  const compact = useMediaQuery(COMPACT_QUERY);
+  const size = useTableSize(FULL_FROM);
+  const compact = size !== 'full';
+  const n = PICKED_COLUMNS[size] || 0;
   const layout = wide ? 'wide' : compact ? 'compact' : 'mid';
   const [picked, setPicked] = usePickedColumns(PHONE_COLS_KEY, DEFAULT_PHONE_STATS, perfStatByKey);
   const [pickerOpen, setPickerOpen] = useState(null);
@@ -71,9 +74,9 @@ export default function CharacterMatches({ character, linkFor = null, performanc
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         {compact ? (
           <div className="flex items-center gap-1.5">
-            {[0, 1].map(slot => (
+            {[...Array(n).keys()].map(slot => (
               <ChipMenu key={slot} isPhone={isPhone} open={pickerOpen === slot} onOpenChange={o => setPickerOpen(o ? slot : null)}
-                chip={pickerChip({ slot, cols: picked, stats: PERF_STATS, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
+                chip={pickerChip({ slot, shown: n, cols: picked, stats: PERF_STATS, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
             ))}
           </div>
         ) : (
@@ -90,7 +93,7 @@ export default function CharacterMatches({ character, linkFor = null, performanc
         </div>
       </div>
 
-      <StatTable columns={performanceColumns({ layout, group, picked, count: rows.length, withCharacter: false, multiTeam: new Set(pool.map(r => r.team)).size > 1 })}
+      <StatTable columns={performanceColumns({ layout, group, picked: picked.slice(0, n), count: rows.length, withCharacter: false, multiTeam: new Set(pool.map(r => r.team)).size > 1 })}
         rows={rows} pool={pool} sort={sort} dir={dir} onSort={onSort} linkFor={linkFor}
         shown={shown} onMore={() => setShown(n => n + PAGE)} isPhone={compact} />
     </div>

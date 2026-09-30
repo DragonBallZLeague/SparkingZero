@@ -4,14 +4,15 @@ import ChipMenu from '../../shell/ChipMenu.jsx';
 import StatTable from '../../shell/StatTable.jsx';
 import { PAGE } from '../../shell/tableParts.jsx';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
-import { useIsPhone, useMediaQuery } from '../../shell/useMediaQuery.js';
+import { useIsPhone, useMediaQuery, useTableSize, PICKED_COLUMNS, pickedWidth } from '../../shell/useMediaQuery.js';
 import { usePickedColumns, pickerChip } from '../../shell/usePickedColumns.js';
 import { isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { CHAR_STATS, DEFAULT_PHONE_STATS, statByKey } from '../characters/characterRows.js';
 
 /** The same picks as the Characters table: its columns, one choice per viewer. */
 const PHONE_COLS_KEY = 'szl.analyzer.characters.phoneCols';
-const COMPACT_QUERY = '(max-width: 899px)';
+/** From here every column fits; narrower, picked columns (two on a phone, four on a tablet). */
+const FULL_FROM = 900;
 /** Room for all eight columns and the detail beside them; narrower, a row opens its detail under it. */
 const WIDE_QUERY = '(min-width: 1400px)';
 
@@ -50,7 +51,9 @@ export default function PooledTab({
   score = true,
 }) {
   const isPhone = useIsPhone();
-  const compact = useMediaQuery(COMPACT_QUERY);
+  const size = useTableSize(FULL_FROM);
+  const compact = size !== 'full';
+  const n = PICKED_COLUMNS[size] || 0;
   const isWide = useMediaQuery(WIDE_QUERY) && !below;
   const [picked, setPicked] = usePickedColumns(phone.key, phone.defaults, phone.byKey);
   const [pickerOpen, setPickerOpen] = useState(null);
@@ -61,7 +64,7 @@ export default function PooledTab({
   const onPick = r => (isWide ? setSelected(r.id) : setExpanded(cur => (cur === r.id ? null : r.id)));
 
   const fade = fadesThinSamples(rows);
-  const stats = compact ? picked.map(phone.byKey).filter(Boolean) : allStats;
+  const stats = compact ? picked.slice(0, n).map(phone.byKey).filter(Boolean) : allStats;
   const uses = s => (s.key === 'matches' ? { label: 'Uses', short: 'Uses' } : null);
   const columns = [
     {
@@ -75,7 +78,7 @@ export default function PooledTab({
       key: 'score', label: 'Score', width: compact ? '56px' : '66px', sort: true,
       cell: r => <div className="flex justify-end"><TierScorePill score={r.combatPerformanceScore} provisional={fade && isProvisionalTier(r)} /></div>,
     }] : []),
-    ...stats.map(s => ({ ...s, ...uses(s), width: compact ? '58px' : 'minmax(56px,1fr)' })),
+    ...stats.map(s => ({ ...s, ...uses(s), width: compact ? pickedWidth(size) : 'minmax(56px,1fr)' })),
   ];
   const sel = isWide ? (rows.find(r => r.id === selected) || rows[0] || null) : null;
 
@@ -93,9 +96,9 @@ export default function PooledTab({
           <div className={compact ? 'w-full' : ''}>{controls}</div>
           {compact && (
             <div className="ml-auto flex gap-1.5">
-              {[0, 1].map(slot => (
+              {[...Array(n).keys()].map(slot => (
                 <ChipMenu key={slot} isPhone={isPhone} open={pickerOpen === slot} onOpenChange={o => setPickerOpen(o ? slot : null)}
-                  chip={pickerChip({ slot, cols: picked, stats: allStats, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
+                  chip={pickerChip({ slot, shown: n, cols: picked, stats: allStats, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
               ))}
             </div>
           )}

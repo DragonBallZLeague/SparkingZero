@@ -4,7 +4,14 @@ import TierPlate from '../../components/TierPlate.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
 import { isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import StatTable from '../../shell/StatTable.jsx';
+import { pickedWidth } from '../../shell/useMediaQuery.js';
 import { CHAR_STATS, statByKey } from './characterRows.js';
+import { STYLE_STATS } from './styleRows.js';
+import StyleValue from './StyleValue.jsx';
+
+/** The Styles view's columns: each style's figure over a bar for its place in this list (its league rank in the tooltip). */
+const STYLE_COLUMNS = STYLE_STATS.map(s => ({ ...s, text: r => <StyleValue f={r.styles && r.styles[s.key]} stat={s} /> }));
+const styleColumnByKey = key => STYLE_COLUMNS.find(s => s.key === key) || null;
 
 /**
  * The character leaderboard as one table ("Visual direction", decision 4): a
@@ -16,8 +23,12 @@ import { CHAR_STATS, statByKey } from './characterRows.js';
  * fifth, and stays grey between, so colour only marks what stands out. A thin
  * sample (under 5 matches) keeps its colours, faded.
  *
- * A desktop shows every column and the tier plate; a phone shows the score as a
- * tier pill and the two stats in `phoneStats`.
+ * A desktop (`size` 'full') shows every column and the tier plate; a phone or
+ * a tablet shows the score as a tier pill and the stats in `phoneStats` (two
+ * on a phone, four on a tablet: shell/useMediaQuery.js useTableSize).
+ *
+ * `styles` draws the Styles view instead: the same rows (with their `styles`,
+ * characters/styleRows.js) and each fighting style's figure for columns.
  *
  * `linkFor(name)` returning null makes the rows plain (nothing does today: in the Sandbox a row opens the Sandbox's own character page).
  *
@@ -25,11 +36,13 @@ import { CHAR_STATS, statByKey } from './characterRows.js';
  * the model for.
  */
 export default function CharacterTable({
-  rows, pool, sort, dir, onSort, isPhone, phoneStats, idFor, linkFor,
+  rows, pool, sort, dir, onSort, size = 'full', phoneStats, idFor, linkFor, styles = false,
   // A searched table keeps each character's place in the whole sorted list.
   rankOf = null, empty = 'No characters.',
 }) {
-  const stats = isPhone ? phoneStats.map(statByKey).filter(Boolean) : CHAR_STATS;
+  const isPhone = size !== 'full'; // the phone layout, on a tablet too
+  const [all, byKey] = styles ? [STYLE_COLUMNS, styleColumnByKey] : [CHAR_STATS, statByKey];
+  const stats = isPhone ? phoneStats.map(byKey).filter(Boolean) : all;
   const fade = useMemo(() => fadesThinSamples(pool), [pool]);
   const prov = r => fade && isProvisionalTier(r);
 
@@ -57,7 +70,7 @@ export default function CharacterTable({
       key: 'score', label: 'Score', width: isPhone ? '52px' : '66px', sort: true,
       cell: r => <div className="text-right"><TierScorePill score={r.combatPerformanceScore} provisional={prov(r)} /></div>,
     },
-    ...stats.map((s, i) => ({ ...s, width: isPhone ? ['54px', '58px'][i] || '58px' : 'minmax(64px,1fr)' })),
+    ...stats.map((s, i) => ({ ...s, width: isPhone ? pickedWidth(size, i) : 'minmax(64px,1fr)' })),
   ];
 
   return (

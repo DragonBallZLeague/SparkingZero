@@ -90,6 +90,9 @@ export function overviewFromMatches(matches) {
       s1: perMin(sum(all, m => m.s1Blast)),
       s2: perMin(sum(all, m => m.s2Blast)),
       ult: perMin(sum(all, m => m.ultimatesUsed)),
+      // Spammer (the league's word): blasts and ultimates thrown, each once.
+      // `specialMovesUsed` is Super 1 and 2 only, so nothing counts twice.
+      spam: perMin(sum(all, m => (m.specialMovesUsed || 0) + (m.ultimatesUsed || 0))),
       skill: perMin(exa1 + exa2),
       sk1: perMin(exa1),
       sk2: perMin(exa2),
@@ -132,7 +135,7 @@ export const OVERVIEW_METRICS = {
   skill2: o => o.skills.s2,
   survival: o => o.survival,
   tags: o => o.tagsPerMatch,
-  ...Object.fromEntries(['melee', 'rush', 'heavy', 'ki', 'blast', 's1', 's2', 'ult', 'skill', 'sk1', 'sk2', 'guard', 'counter']
+  ...Object.fromEntries(['melee', 'rush', 'heavy', 'ki', 'blast', 's1', 's2', 'ult', 'spam', 'skill', 'sk1', 'sk2', 'guard', 'counter']
     .map(k => ['r_' + k, o => o.rate[k]])),
 };
 
@@ -146,6 +149,16 @@ export const LOWER_IS_BETTER = new Set(['avgTaken']);
  * power) rather than defensive play.
  */
 export const DEFENSE_WEIGHTS = { r_guard: 0.40, r_counter: 0.30, avgTime: 0.15, tags: 0.10, survival: 0.05 };
+
+/**
+ * Spammer, the league's word for a character that throws blasts and ultimates
+ * out a lot (Home's "Top Spammers"), is a rate like Melee: blasts and
+ * ultimates thrown a minute, each throw counting once (`rate.spam`). The
+ * league's rule (2026-09-30): volume makes the spammer, so 10 blasts and no
+ * ultimate out-spam 5 blasts and 2 ultimates. A first cut blended the two
+ * styles' ranks half and half, which let a few rare ultimates outweigh twice
+ * the blasts. Not one of the six STYLES (no Overview label).
+ */
 
 /** The six fighting styles, in display order, with their rate and label. */
 export const STYLES = [
@@ -180,16 +193,19 @@ export function rankIn(sorted, v, lowerIsBetter = false) {
   return better + 1;
 }
 
+/** A weighted blend of an already-placed figure set (a missing place counts as the middle). */
+export const blendRaw = (pct, weights) => Object.entries(weights).reduce((s, [k, w]) => s + w * (pct[k] ?? 50), 0);
+
 /** The Defensive Fighter blend of an already-placed figure set. */
-export function defenseRaw(pct) {
-  return Object.entries(DEFENSE_WEIGHTS).reduce((s, [k, w]) => s + w * (pct[k] ?? 50), 0);
-}
+export const defenseRaw = pct => blendRaw(pct, DEFENSE_WEIGHTS);
+
 
 /**
  * Places an overviewFromMatches() result against the baseline:
  * { pct, rank, pool } keyed like OVERVIEW_METRICS plus style_<key> for the six
- * styles. pct is 0-100 where higher is more (not better - see LOWER_IS_BETTER);
- * rank is 1-based with #1 best; pool is how many the rank is out of.
+ * styles, and style_spam (Spammer: blasts and ultimates a minute). pct is
+ * 0-100 where higher is more (not better - see LOWER_IS_BETTER); rank is
+ * 1-based with #1 best; pool is how many the rank is out of.
  */
 export function placeOverview(overview, baseline) {
   const pct = {}, rank = {}, pool = {};
@@ -204,6 +220,9 @@ export function placeOverview(overview, baseline) {
   pct.style_defense = percentileIn(baseline.defense, d);
   rank.style_defense = rankIn(baseline.defense, d);
   pool.style_defense = baseline.defense.length;
+  pct.style_spam = pct.r_spam;
+  rank.style_spam = rank.r_spam;
+  pool.style_spam = pool.r_spam;
   for (const s of STYLES) {
     if (!s.rate) continue;
     pct['style_' + s.key] = pct['r_' + s.rate];

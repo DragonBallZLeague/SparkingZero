@@ -3,6 +3,7 @@ import Portrait from '../../components/Portrait.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
 import { isProvisionalTier, tierMatchCount, fadesThinSamples } from '../../utils/performanceTier.js';
 import StatTable from '../../shell/StatTable.jsx';
+import { useTableSize } from '../../shell/useMediaQuery.js';
 
 const fmtInt = v => Math.round(v || 0).toLocaleString('en-US');
 
@@ -32,7 +33,12 @@ const COLS = [
 const col = key => COLS.find(c => c.key === key);
 const byScore = (a, b) => (b.combatPerformanceScore || 0) - (a.combatPerformanceScore || 0);
 
-export default function RosterTable({ rows, top5 = [], isPhone, idFor, linkFor }) {
+/** From here every column fits; narrower, the phone layout, with more figures on a tablet. */
+const FULL_FROM = 940;
+
+export default function RosterTable({ rows, top5 = [], idFor, linkFor }) {
+  const size = useTableSize(FULL_FROM);
+  const isPhone = size !== 'full'; // the phone layout, on a tablet too
   const [sort, setSort] = useState({ key: 'score', dir: 'desc' });
   const sorted = useMemo(() => {
     const sign = sort.dir === 'asc' ? 1 : -1;
@@ -56,10 +62,11 @@ export default function RosterTable({ rows, top5 = [], isPhone, idFor, linkFor }
     eff: r => <div className={num}>{(r.efficiency || 0).toFixed(2)}×</div>,
     win: r => <div className="text-right text-[14px] text-slate-400 tabular-nums">{Math.round(r.winRate || 0)}%</div>,
   };
-  const widths = isPhone
+  const widths = size === 'phone'
     ? { score: '58px', matches: '48px', eff: '50px' }
     : { score: '66px', matches: '64px', p1: '60px', p2: '60px', p3: '60px', dmg: '92px', eff: '80px', win: '56px' };
-  const shown = isPhone ? ['score', 'matches', 'eff'].map(col) : COLS;
+  const shown = size === 'phone' ? ['score', 'matches', 'eff'].map(col)
+    : size === 'tablet' ? ['score', 'matches', 'dmg', 'eff'].map(col) : COLS;
   const columns = [
     {
       key: '#', label: '#', title: 'Place on the team, by score', width: isPhone ? '16px' : '22px', sort: false,

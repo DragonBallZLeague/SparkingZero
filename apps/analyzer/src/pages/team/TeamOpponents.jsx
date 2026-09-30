@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import TeamLogo from '../../components/TeamLogo.jsx';
 import StatTable from '../../shell/StatTable.jsx';
+import { useTableSize, pickedWidth } from '../../shell/useMediaQuery.js';
 import { teamName } from '../../utils/teams.js';
 import { teamStatByKey } from '../teams/teamRows.js';
 
-/** The figures each opponent row shows, in order; a phone shows two. */
+/** The figures each opponent row shows, in order; a phone shows two, a tablet four (below FULL_FROM). */
 const STATS = ['win', 'dmg', 'taken', 'eff', 'dps', 'hp', 'time'].map(teamStatByKey);
 const PHONE_STATS = ['win', 'eff'].map(teamStatByKey);
+const TABLET_STATS = ['win', 'dmg', 'eff', 'hp'].map(teamStatByKey);
+const FULL_FROM = 940;
 const PLAYED = { key: 'played', get: r => r.matches };
 
 /**
@@ -19,7 +22,9 @@ const PLAYED = { key: 'played', get: r => r.matches };
  * in the URL, and the Opponent chip in the scope bar); picking it again clears
  * it. `rows` are opponentRows(); `vs` the picked opponent's tag.
  */
-export default function TeamOpponents({ rows, vs, onPick, isPhone }) {
+export default function TeamOpponents({ rows, vs, onPick }) {
+  const size = useTableSize(FULL_FROM);
+  const isPhone = size !== 'full'; // the phone layout, on a tablet too
   const [sort, setSort] = useState({ key: 'played', dir: 'desc' });
   const stat = sort.key === 'played' ? PLAYED : teamStatByKey(sort.key);
   const sorted = useMemo(() => {
@@ -32,7 +37,7 @@ export default function TeamOpponents({ rows, vs, onPick, isPhone }) {
     return <div className="rounded-[10px] border border-solid border-gray-700 bg-shell-panel p-7 text-center text-slate-400">No opponents in this scope.</div>;
   }
 
-  const stats = isPhone ? PHONE_STATS : STATS;
+  const stats = size === 'phone' ? PHONE_STATS : size === 'tablet' ? TABLET_STATS : STATS;
   const num = 'text-right text-[14px] text-slate-100 tabular-nums';
   const columns = [
     {
@@ -52,7 +57,7 @@ export default function TeamOpponents({ rows, vs, onPick, isPhone }) {
       { key: 'played', label: 'Played', width: '56px', sort: true, cell: r => <div className={num}>{r.matches}</div> },
       { key: 'record', label: 'Record', width: '64px', sort: false, cell: r => <div className={num}>{r.wins}–{r.losses}</div> },
     ]),
-    ...stats.map((s, i) => ({ ...s, width: isPhone ? ['54px', '58px'][i] || '58px' : 'minmax(64px,1fr)' })),
+    ...stats.map((s, i) => ({ ...s, width: isPhone ? pickedWidth(size, i) : 'minmax(64px,1fr)' })),
   ];
 
   return (

@@ -5,7 +5,7 @@ import ChipMenu from '../../shell/ChipMenu.jsx';
 import StatTable from '../../shell/StatTable.jsx';
 import { PAGE, SearchBox } from '../../shell/tableParts.jsx';
 import { useQueryUpdate } from '../../shell/useQueryUpdate.js';
-import { useIsPhone, useMediaQuery } from '../../shell/useMediaQuery.js';
+import { useIsPhone, useMediaQuery, useTableSize, PICKED_COLUMNS } from '../../shell/useMediaQuery.js';
 import { usePickedColumns, pickerChip } from '../../shell/usePickedColumns.js';
 import { performanceColumns } from './performanceColumns.jsx';
 import {
@@ -16,8 +16,8 @@ import {
 const PHONE_COLS_KEY = 'szl.analyzer.performances.phoneCols';
 /** Where the table has room for the whole column group and a Match column of its own. */
 const WIDE_QUERY = '(min-width: 1180px)';
-/** Below this, two picked columns, as a phone has. */
-const COMPACT_QUERY = '(max-width: 899px)';
+/** Below this, picked columns: two on a phone, four on a tablet. */
+const FULL_FROM = 900;
 
 /**
  * The Performances view of /matches (`view=performances`): one row per
@@ -47,7 +47,9 @@ export default function Performances({ rows: all, linkFor, idFor, loading, viewS
   const update = useQueryUpdate();
   const isPhone = useIsPhone();
   const wide = useMediaQuery(WIDE_QUERY);
-  const compact = useMediaQuery(COMPACT_QUERY);
+  const size = useTableSize(FULL_FROM);
+  const compact = size !== 'full';
+  const n = PICKED_COLUMNS[size] || 0;
   const [picked, setPicked] = usePickedColumns(PHONE_COLS_KEY, DEFAULT_PHONE_STATS, perfStatByKey);
   const [pickerOpen, setPickerOpen] = useState(null);
 
@@ -108,9 +110,9 @@ export default function Performances({ rows: all, linkFor, idFor, loading, viewS
           <div className="mb-2.5 flex flex-wrap items-center justify-between gap-3">
             {viewSwitch}
             <div className="flex items-center gap-1.5">
-              {[0, 1].map(slot => (
+              {[...Array(n).keys()].map(slot => (
                 <ChipMenu key={slot} isPhone={isPhone} open={pickerOpen === slot} onOpenChange={o => setPickerOpen(o ? slot : null)}
-                  chip={pickerChip({ slot, cols: picked, stats: PERF_STATS, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
+                  chip={pickerChip({ slot, shown: n, cols: picked, stats: PERF_STATS, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
               ))}
             </div>
           </div>
@@ -127,7 +129,7 @@ export default function Performances({ rows: all, linkFor, idFor, loading, viewS
         </div>
       )}
 
-      <StatTable columns={performanceColumns({ layout, group, picked, idFor, count: rows.length })}
+      <StatTable columns={performanceColumns({ layout, group, picked: picked.slice(0, n), idFor, count: rows.length })}
         rows={rows} pool={pool} sort={sort} dir={dir} onSort={onSort} linkFor={linkFor}
         shown={shown} onMore={() => setShown(n => n + PAGE)} isPhone={compact}
         empty={q ? `No performance in this scope matches “${query.trim()}”.` : 'No performance matches these filters.'} />

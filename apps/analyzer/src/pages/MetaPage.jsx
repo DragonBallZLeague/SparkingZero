@@ -120,7 +120,7 @@ export default function MetaPage({
       {tab === 'builds' && (
         <BuildsTable rows={rows} shown={shown} onMore={() => setShown(n => n + PAGE)}
           sort={filters.sort} dir={filters.dir} onSort={onSort}
-          isPhone={isPhone} isWide={isWide} selected={selected} expanded={expanded} onPick={onPick}
+          isWide={isWide} selected={selected} expanded={expanded} onPick={onPick}
           idFor={idFor} buildLinkFor={buildLinkFor} highlight={filters.caps} />
       )}
       {tab === 'ai' && <AIStrategiesTab aggregated={aggregated} charMap={charMap} idFor={idFor} linkFor={characterLinkFor} />}

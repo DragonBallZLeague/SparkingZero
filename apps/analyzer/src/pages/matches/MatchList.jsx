@@ -25,8 +25,10 @@ const NARROW_QUERY = '(max-width: 1023px)';
  * cannot shrink, so a column that did would push it over the next one.
  *
  * `rows` are matchRows(), already searched; the first `shown` are drawn.
+ * `groupOf(row)`, when given, heads each run of rows sharing a label with it
+ * (Home's test uploads, by the day they came in).
  */
-export default function MatchList({ rows, shown, onMore, isPhone, linkFor, empty }) {
+export default function MatchList({ rows, shown, onMore, isPhone, linkFor, empty, groupOf = null }) {
   const narrow = useMediaQuery(NARROW_QUERY);
   if (!rows.length) {
     return <div className="rounded-[10px] border border-solid border-gray-700 bg-shell-panel p-7 text-center text-slate-400">{empty}</div>;
@@ -51,10 +53,19 @@ export default function MatchList({ rows, shown, onMore, isPhone, linkFor, empty
         </div>
       )}
       <div className="[&>*:last-child]:border-b-0">
-        {list.map(r => {
+        {list.map((r, i) => {
           const n = Math.max(...r.sides.map(s => s.lineup.length));
+          const group = groupOf ? groupOf(r) : null;
+          const heading = group && (i === 0 || groupOf(list[i - 1]) !== group) ? (
+            <div key={`g-${group}-${i}`}
+              className="border-0 border-b border-solid border-gray-700/50 bg-slate-400/[.04] px-3.5 py-1.5 text-[11px] font-bold uppercase leading-[1.45] tracking-wider text-slate-400">
+              {group}
+            </div>
+          ) : null;
           return (
-          <Link key={r.path} to={linkFor(r)} style={isPhone ? undefined : template}
+          <React.Fragment key={r.path}>
+          {heading}
+          <Link to={linkFor(r)} style={isPhone ? undefined : template}
             className={`block border-0 border-b border-solid border-gray-700/50 text-inherit no-underline hover:bg-slate-400/[.05] ${
               isPhone ? 'px-3 py-2.5' : `${cols} px-3.5 py-2.5`}`}>
             {isPhone ? (
@@ -96,6 +107,7 @@ export default function MatchList({ rows, shown, onMore, isPhone, linkFor, empty
               </>
             )}
           </Link>
+          </React.Fragment>
           );
         })}
       </div>

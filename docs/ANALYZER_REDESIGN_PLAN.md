@@ -70,7 +70,9 @@ The league's call, after going through what was left of the plan: the restyle (t
 - **The Bars view has a phone layout of its own**: beside four figure columns the bars shrank to stubs and the sub-figures ran off the right edge. Now each style is a block, its name, rate and rank on one line over a full-width bar, and its sub-figures two to a line under it, each over a half-width bar.
 - **Decided with the league:** the Home page (Phase 5: the six curated boards and the latest week's results beside the tier list) is the **immediate next step**; the small export on each table is **dropped** (the scope bar's full workbook covers it); the accessibility pass moves to the next phase (only the Bars view's phone layout was done now).
 
-**Next phase** (after Home), from the plan's remaining work:
+**Home (Phase 5) followed the same day** (see "Phases 4–7" below), with the Characters page's Styles view and a tablet layout for every wide table. **That closed the restyle work**: the league approved it, and the local `analyzer-restyle` branch was merged into the local `dev-branch` (2026-09-30). Pushing it is the league's call.
+
+**Next phase**, from the plan's remaining work:
 - the share-snippet image card (Phase 3 and 7)
 - build comparison and the querystring-driven character comparison (Phase 3)
 - trends over time, and deeper matchup analysis (Phase 4)
@@ -199,7 +201,19 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
 
 Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. The other tabs followed "Visual direction" on the table template (2026-09-29), and the open tab went into the URL (2026-09-30). The share-snippet image card, build comparison and character comparison are next-phase features.
 
-### Phases 4–7: Phase 4's pages and Phase 6 built; Home (Phase 5) is next
+### Phases 4–7: Phase 4's pages, Home (Phase 5) and Phase 6 built
+
+**Home (Phase 5) is built (2026-09-30)**, to "Page by page" and "5. Home dashboard", then **reworked after the league's first look** the same day (details in `apps/analyzer/CLAUDE.md`, "The Characters and Home pages"). The league's changes: the tier list took most of the page and hid the rest; the latest results make a better lead (what visitors come for: how did the match I watched go?); participants need to find the test they just uploaded; and the boards should show the league's three core fighting styles and the three positions.
+- **Latest results lead**, with a **Season | Tests | Events** switch (`latest=tests|events`):
+  - Season: the newest week of season matches in scope, in play order, as the Matches list's rows (Season 0: the Playoffs Semi-finals, Week 1). A scope without season matches says so.
+  - Tests and Events: the newest uploads of each from every team, whatever the scope, grouped by upload day (in play order within a day), 6 then "Show more". **Match files carry no date**, so a build step (`generate-recent-uploads.mjs`) dates each by the commit that added it (for a submission, its upload), which needs the git history: **the deploy workflow now checks out the full history, blobless**. Without it the step falls back to name order and shows no dates. Events were added at the league's ask, which it said covers everything.
+- **Leaderboards: six curated boards**, top 5 each. **Top Brawlers** (Melee), **Top Spammers** (blasts and ultimates: the league's "spammer") and **Top Tanks** (Defense), each showing the figure it ranks by: melee hits and blasts-plus-ultimates a minute, and Defense's 0-100 rating ("37.3/min", "5.47/min", "77/100"). A first cut showed the league rank ("#7/126"); beside the board's own 1-5 it read as a second ranking in another scope, so it moved to the tooltip, and the Styles view shows the figures too; then **Best Starters, Best Middles, Best Anchors** by score in that position. **Each is still a preset over the Characters table** ("Curated leaderboards are presets"), checked by `npm run verify-home`:
+  - **The style boards needed a table to open into**, so the Characters page gained a **Styles** view (Stats | Styles | Tier list): each style's league rank per character, sortable.
+  - **Spam is volume**: blasts and ultimates thrown a minute, each throw counting once, so 10 blasts and no ultimate out-spam 5 blasts and 2 ultimates (the league's rule). A first cut blended the two ranks half and half, which let a few rare ultimates outweigh twice the blasts.
+  - **5+ matches** (the league's rule): a board shows only characters the table does not fade, unless fewer than five have that many; then the best of the rest fill it, faded. A desktop shows all six boards, three to a line; a phone one at a time from a two-line switch.
+  - The first cut's boards (Top damage, Best survivor, Best combo, Most efficient) and the "Best combo" column they added to the Characters table are gone.
+- **Top tier** comes last: the tier list's top row only, linking to the full list on the Characters page (the league's pick over dropping it; the whole list was two phone screens). Home is now 1.4 desktop screens and 1.5 phone screens.
+- **Tablets fixed with it** (the league's ask): between 640px and about 1,100px the Characters, Teams and Team page tables were wider than the screen. Every wide table now has a tablet size, the phone layout with four stat columns instead of two, until its full layout fits (`useTableSize`; see "Tablets" in `apps/analyzer/CLAUDE.md`).
 
 **Phase 4 began (2026-09-28) with the team side** (details in `apps/analyzer/CLAUDE.md`, "The Teams and Team pages"):
 - **The shared team list is in** (`referencedata/teams.json`): tag, website name, slug, website slug, logo and colour for all 13 teams. The analyzer shows the website's names everywhere, including the scope bar's Team chip. Links keep the tags, so old ones still work.
@@ -907,7 +921,7 @@ Two participant-facing additions belong here, both flowing from principle 4:
 
 **Matchup analysis** (how character A actually fares against character B, by position) is a strong candidate here — opponent data already flows through `characterAggregation.js` and `teamAggregation.js`, and principle 6 argues it should be first-class. Scope it once the Character and Team pages are real; don't commit to it before then.
 
-### 5. Home dashboard — **rescoped**
+### 5. Home dashboard — **rescoped**; ✅ v1 built 2026-09-30 (see "Progress", Phases 4–7)
 
 **Stats-only. No standings.** The website app already owns standings, teams and events as its core content; duplicating them here creates two sources of truth and a sync obligation. Link across to the website for standings via `@szl/ui`'s `APPS` constants.
 

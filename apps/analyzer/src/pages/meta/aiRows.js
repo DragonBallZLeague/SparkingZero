@@ -104,8 +104,8 @@ export const USES_STAT = { ...statByKey('matches'), label: 'Uses', short: 'Uses'
 /** The table's stat columns: Uses, then the six styles. */
 export const AI_COLUMNS = [USES_STAT, ...AI_STYLE_STATS];
 export const aiStatByKey = key => AI_COLUMNS.find(c => c.key === key) || null;
-/** A phone's two columns before anyone picks. */
-export const AI_PHONE_DEFAULTS = ['style_melee', 'style_blast'];
+/** A compact table's columns before anyone picks (a phone the first two, a tablet all four). */
+export const AI_PHONE_DEFAULTS = ['style_melee', 'style_blast', 'style_ult', 'style_defense'];
 
 // ---- URL params (on /meta?tab=ai) --------------------------------------------------
 // type=Attack,Defense, char=<character slugs> (shared with the Builds tab),

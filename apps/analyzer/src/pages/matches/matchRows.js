@@ -20,20 +20,28 @@ export function matchRows(files, { charMap = {}, mapsMap = {}, urlKeyFor = p => 
   for (const f of files || []) {
     if (!f || f.error || !f.content) continue;
     const s = matchSummary(f.content, { charMap, mapsMap });
-    if (!s) continue;
-    const tags = f.tags || {};
-    rows.push({
-      path: f.name,
-      key: urlKeyFor(f.name),
-      name: matchName(f.name),
-      ...s,
-      size: tags.matchSize || `${s.size}v${s.size}`,
-      difficulty: tags.difficulty || null,
-      matchType: tags.matchType || null,
-      seasonPhase: tags.seasonPhase || null,
-    });
+    if (s) rows.push(matchRow(f.name, s, f.tags, urlKeyFor));
   }
   return rows.sort((a, b) => compareMatchTime(b.path, a.path));
+}
+
+/**
+ * One row from a match's matchSummary() and tags. Home's newest uploads
+ * (public/br-recent-uploads.json) ship summaries made at build time,
+ * so its rows come through here too.
+ */
+export function matchRow(path, summary, tags = {}, urlKeyFor = p => p) {
+  const t = tags || {};
+  return {
+    path,
+    key: urlKeyFor(path),
+    name: matchName(path),
+    ...summary,
+    size: t.matchSize || `${summary.size}v${summary.size}`,
+    difficulty: t.difficulty || null,
+    matchType: t.matchType || null,
+    seasonPhase: t.seasonPhase || null,
+  };
 }
 
 /** The view switch: `view=performances` in the URL; the match list is the default. */

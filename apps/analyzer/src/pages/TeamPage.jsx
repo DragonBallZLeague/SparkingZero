@@ -222,12 +222,12 @@ export default function TeamPage({
       </div>
       {isPhone && search}
 
-      {tab === 'roster' && <RosterTable rows={roster} top5={cur.top5} isPhone={isPhone} idFor={idFor} linkFor={rosterLink} />}
+      {tab === 'roster' && <RosterTable rows={roster} top5={cur.top5} idFor={idFor} linkFor={rosterLink} />}
       {tab === 'lineups' && (
         <LineupList lineups={lineupHits} shown={shown} onMore={() => setShown(n => n + PAGE)} tag={row.tag} empty={empty}
           isPhone={isPhone} idFor={idFor} onOpenMatch={onOpenMatch} teamLinkFor={teamLinkFor} />
       )}
-      {tab === 'opponents' && <TeamOpponents rows={oppRows} vs={vs} onPick={setVs} isPhone={isPhone} />}
+      {tab === 'opponents' && <TeamOpponents rows={oppRows} vs={vs} onPick={setVs} />}
       {tab === 'matches' && (
         <TeamMatches matches={matchHits} shown={shown} onMore={() => setShown(n => n + PAGE)} empty={empty}
           isPhone={isPhone} teamLinkFor={teamLinkFor} onOpenMatch={onOpenMatch} />

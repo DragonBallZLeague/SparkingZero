@@ -16,14 +16,16 @@ import { tint } from '../../utils/overviewPalette.js';
  * Each row is tinted in its tier's colour (13% behind the plate, 5% behind the
  * portraits). The colour is the tier pill's ring, not the plate: Z and B share
  * a blue plate, and Z is told apart by its crimson.
+ *
+ * `tiers` picks the rows drawn (Home shows only its top one).
  */
-export default function TierList({ rows, pool = rows, isPhone, idFor, linkFor }) {
+export default function TierList({ rows, pool = rows, isPhone, idFor, linkFor, tiers = TIERS }) {
   const sorted = [...rows].sort((a, b) => (b.combatPerformanceScore || 0) - (a.combatPerformanceScore || 0));
   // Faded against the whole list, so a search does not change who fades.
   const fade = fadesThinSamples(pool);
   return (
     <div className="overflow-hidden rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
-      {TIERS.map(t => {
+      {tiers.map(t => {
         const inTier = sorted.filter(r => tierForScore(r.combatPerformanceScore) === t);
         const ring = tierPillColors(t).borderColor;
         return (

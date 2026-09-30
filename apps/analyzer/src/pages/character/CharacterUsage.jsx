@@ -4,7 +4,7 @@ import TeamLogo from '../../components/TeamLogo.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
 import ChipMenu from '../../shell/ChipMenu.jsx';
 import StatTable from '../../shell/StatTable.jsx';
-import { useIsPhone, useMediaQuery } from '../../shell/useMediaQuery.js';
+import { useIsPhone, useTableSize, PICKED_COLUMNS, pickedWidth } from '../../shell/useMediaQuery.js';
 import { usePickedColumns, pickerChip } from '../../shell/usePickedColumns.js';
 import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.js';
 import { isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
@@ -14,7 +14,8 @@ import { CHAR_STATS, DEFAULT_PHONE_STATS, statByKey } from '../characters/charac
 
 /** The same picks as the Characters table: one choice per viewer. */
 const PHONE_COLS_KEY = 'szl.analyzer.characters.phoneCols';
-const COMPACT_QUERY = '(max-width: 899px)';
+/** From here every column fits; narrower, picked columns (two on a phone, four on a tablet). */
+const FULL_FROM = 900;
 
 const TITLE = 'mb-2 text-[11px] font-semibold uppercase leading-4 tracking-wider text-slate-400';
 
@@ -39,7 +40,9 @@ export default function CharacterUsage({
   pos = null, onPos = null, team = null, onTeam = null,
 }) {
   const isPhone = useIsPhone();
-  const compact = useMediaQuery(COMPACT_QUERY);
+  const size = useTableSize(FULL_FROM);
+  const compact = size !== 'full';
+  const n = PICKED_COLUMNS[size] || 0;
   const [picked, setPicked] = usePickedColumns(PHONE_COLS_KEY, DEFAULT_PHONE_STATS, statByKey);
   const [pickerOpen, setPickerOpen] = useState(null);
 
@@ -60,7 +63,7 @@ export default function CharacterUsage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamsRow, charMap]);
 
-  const stats = compact ? picked.map(statByKey).filter(Boolean) : CHAR_STATS;
+  const stats = compact ? picked.slice(0, n).map(statByKey).filter(Boolean) : CHAR_STATS;
   const columns = (first, cell) => {
     const fade = rows => fadesThinSamples(rows);
     return rows => [
@@ -68,7 +71,7 @@ export default function CharacterUsage({
         width: compact ? 'minmax(0,1fr)' : 'minmax(150px,1.6fr)', cell },
       { key: 'score', label: 'Score', width: compact ? '56px' : '66px', sort: false,
         cell: r => <div className="flex justify-end"><TierScorePill score={r.combatPerformanceScore} provisional={fade(rows) && isProvisionalTier(r)} /></div> },
-      ...stats.map(s => ({ ...s, sort: false, width: compact ? '58px' : 'minmax(56px,1fr)' })),
+      ...stats.map(s => ({ ...s, sort: false, width: compact ? pickedWidth(size) : 'minmax(56px,1fr)' })),
     ];
   };
   const posColumns = columns('pos', r => <div className="text-[14px] font-semibold text-slate-50">{r.label}</div>);
@@ -99,9 +102,9 @@ export default function CharacterUsage({
 
       {compact && (
         <div className="mb-3 flex justify-end gap-1.5">
-          {[0, 1].map(slot => (
+          {[...Array(n).keys()].map(slot => (
             <ChipMenu key={slot} isPhone={isPhone} open={pickerOpen === slot} onOpenChange={o => setPickerOpen(o ? slot : null)}
-              chip={pickerChip({ slot, cols: picked, stats: CHAR_STATS, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
+              chip={pickerChip({ slot, shown: n, cols: picked, stats: CHAR_STATS, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
           ))}
         </div>
       )}

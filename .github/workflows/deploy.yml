@@ -22,6 +22,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        # Full history, without file contents (blobless): the analyzer's
+        # generate-recent-uploads.mjs dates each test and event by the commit that added it.
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - name: Setup Node
         uses: actions/setup-node@v4

@@ -248,8 +248,8 @@ export const FIT_STATS = BUILD_TYPES.map(t => ({
 /** The table's stat columns: Uses, then the build types. */
 export const CAPSULE_COLUMNS = [USES_STAT, ...FIT_STATS];
 export const capsuleStatByKey = key => CAPSULE_COLUMNS.find(c => c.key === key) || null;
-/** A phone's two columns before anyone picks. */
-export const CAPSULE_PHONE_DEFAULTS = ['fit_blast', 'fit_melee'];
+/** A compact table's columns before anyone picks (a phone the first two, a tablet all four). */
+export const CAPSULE_PHONE_DEFAULTS = ['fit_blast', 'fit_melee', 'fit_ki-blast', 'fit_defense'];
 
 // ---- URL params (on /meta?tab=capsules) --------------------------------------------
 // ctype=<type slugs>, cost=<costs>, and the Builds tab's char= and ai= (slugs); the sort

@@ -7,6 +7,10 @@ import { BuildYamlButtons } from '../../components/build/BuildYamlButtons.jsx';
 import { capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
 import StatTable from '../../shell/StatTable.jsx';
+import { useTableSize } from '../../shell/useMediaQuery.js';
+
+/** From here the row layout fits; narrower (a phone, a small tablet), the phone's. */
+const FULL_FROM = 820;
 import { capsuleBreakdown } from './buildRows.js';
 import { fadesThinSamples } from '../../utils/performanceTier.js';
 
@@ -17,7 +21,8 @@ import { fadesThinSamples } from '../../utils/performanceTier.js';
  *
  * From 1180px up the list sits in a sticky side panel for the selected row
  * (the first row until one is picked). Narrower, including on a phone, a row
- * opens its list underneath instead.
+ * opens its list underneath instead. Below 820px (FULL_FROM) the rows take the
+ * phone's layout, which the table picks for itself.
  *
  * Win % is the last column and is left out on a phone and in the side panel:
  * for one character's build it mostly reflects the team around it.
@@ -118,12 +123,13 @@ function SidePanel({ build, idFor, buildLinkFor, openLabel, highlight, empty = '
 }
 
 export default function BuildsTable({
-  rows, shown, onMore, sort, dir, onSort, isPhone, isWide, selected, onPick, expanded, idFor, buildLinkFor, highlight,
+  rows, shown, onMore, sort, dir, onSort, isWide, selected, onPick, expanded, idFor, buildLinkFor, highlight,
   showCharacter = true, openLabel = null,
   // Whether the side panel shows the first row while none is picked (Meta), or
   // `emptyPanel` (the Character page, where a picked row is a filter).
   pickFirst = true, emptyPanel = undefined,
 }) {
+  const isPhone = useTableSize(FULL_FROM) !== 'full'; // the phone layout, on a small tablet too
   const list = rows.slice(0, shown);
   const sel = isWide ? (list.find(b => b.id === selected) || (pickFirst ? list[0] : null) || null) : null;
   const fade = fadesThinSamples(rows, b => b.provisional);

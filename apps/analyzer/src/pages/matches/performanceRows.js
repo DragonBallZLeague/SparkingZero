@@ -105,8 +105,8 @@ export const PERF_STATS = [
 export const perfStatByKey = key => PERF_STATS.find(s => s.key === key) || null;
 export const statsOfGroup = group => PERF_STATS.filter(s => s.group === group);
 
-/** The two stats a phone shows before anyone picks. */
-export const DEFAULT_PHONE_STATS = ['dmg', 'eff'];
+/** The stats a compact table shows before anyone picks (a phone the first two, a tablet all four). */
+export const DEFAULT_PHONE_STATS = ['dmg', 'eff', 'dps', 'hp'];
 
 /**
  * Every performance in scope. `aggregated` is the character aggregation

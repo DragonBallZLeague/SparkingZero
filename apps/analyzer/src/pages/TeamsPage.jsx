@@ -4,12 +4,15 @@ import { ExternalLink } from 'lucide-react';
 import { APPS } from '@szl/ui';
 import TeamLogo from '../components/TeamLogo.jsx';
 import { useQueryUpdate } from '../shell/useQueryUpdate.js';
-import { useIsPhone } from '../shell/useMediaQuery.js';
+import { useTableSize, pickedWidth } from '../shell/useMediaQuery.js';
 import StatTable from '../shell/StatTable.jsx';
 import { TEAM_STATS, teamStatByKey, readTeamSort, sortTeams } from './teams/teamRows.js';
 
 /** The two stats a phone shows beside the team. */
+/** A phone's two figures, and a tablet's four (below FULL_FROM, where every column fits). */
 const PHONE_STATS = ['win', 'eff'];
+const TABLET_STATS = ['win', 'dmg', 'eff', 'hp'];
+const FULL_FROM = 1080;
 
 /**
  * /teams: one row per team in the scope - logo, name, record, then win %,
@@ -27,7 +30,8 @@ const PHONE_STATS = ['win', 'eff'];
 export default function TeamsPage({ rows: allRows, linkFor, loading }) {
   const [params] = useSearchParams();
   const update = useQueryUpdate();
-  const isPhone = useIsPhone();
+  const size = useTableSize(FULL_FROM);
+  const isPhone = size !== 'full'; // the phone layout, on a tablet too
   const { sort, dir } = readTeamSort(params);
   const rows = useMemo(() => sortTeams(allRows, { sort, dir }), [allRows, sort, dir]);
 
@@ -47,7 +51,7 @@ export default function TeamsPage({ rows: allRows, linkFor, loading }) {
     );
   }
 
-  const stats = isPhone ? PHONE_STATS.map(teamStatByKey) : TEAM_STATS;
+  const stats = size === 'phone' ? PHONE_STATS.map(teamStatByKey) : size === 'tablet' ? TABLET_STATS.map(teamStatByKey) : TEAM_STATS;
   const record = r => `${r.wins}–${r.losses}`;
   const columns = [
     ...(isPhone ? [] : [{
@@ -72,7 +76,7 @@ export default function TeamsPage({ rows: allRows, linkFor, loading }) {
       key: 'record', label: 'Record', width: '64px', sort: false,
       cell: r => <div className="text-right text-[14px] text-slate-100 tabular-nums">{record(r)}</div>,
     }]),
-    ...stats.map((s, i) => ({ ...s, width: isPhone ? ['54px', '58px'][i] || '58px' : 'minmax(64px,1fr)' })),
+    ...stats.map((s, i) => ({ ...s, width: isPhone ? pickedWidth(size, i) : 'minmax(64px,1fr)' })),
   ];
 
   return (

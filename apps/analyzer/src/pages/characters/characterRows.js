@@ -34,16 +34,19 @@ export const CHAR_STATS = [
 ];
 export const statByKey = key => CHAR_STATS.find(s => s.key === key) || null;
 
-/** The two stats a phone shows before anyone picks: never win %. */
-export const DEFAULT_PHONE_STATS = ['dmg', 'eff'];
+/** The stats a compact table shows before anyone picks (a phone the first two, a tablet all four): never win %. */
+export const DEFAULT_PHONE_STATS = ['dmg', 'eff', 'dps', 'surv'];
 
 // ---- URL params ----------------------------------------------------------------
-// view=tiers | (table), sort=<stat key | score | name>, dir=asc | (desc), pos=1,3
+// view=styles | tiers | (table), sort=<stat key | score | name>, dir=asc | (desc), pos=1,3
+// The Styles view's sort keys are its own (characters/styleRows.js STYLE_STATS).
 
-export const readView = params => (params.get('view') === 'tiers' ? 'tiers' : 'table');
-export function readSort(params) {
+const VIEWS = ['styles', 'tiers'];
+export const readView = params => (VIEWS.includes(params.get('view')) ? params.get('view') : 'table');
+/** The sort in the URL, if it is one of `stats`' keys (the view's columns), the score or the name. */
+export function readSort(params, stats = CHAR_STATS) {
   const key = params.get('sort');
-  const valid = key === 'name' || key === 'score' || !!statByKey(key);
+  const valid = key === 'name' || key === 'score' || stats.some(s => s.key === key);
   const sort = valid ? key : 'score';
   const dir = params.get('dir') === 'asc' ? 'asc' : params.get('dir') === 'desc' ? 'desc' : (sort === 'name' ? 'asc' : 'desc');
   return { sort, dir };
@@ -104,9 +107,10 @@ export function positionCounts(aggregated) {
   return counts;
 }
 
-export function sortRows(rows, { sort, dir }) {
+/** Rows in the table's order: `sort` is a key of `stats` (the view's columns), the score or the name; ties go to the score. */
+export function sortRows(rows, { sort, dir }, stats = CHAR_STATS) {
   const sign = dir === 'asc' ? 1 : -1;
-  const stat = statByKey(sort);
+  const stat = stats.find(s => s.key === sort) || null;
   const val = sort === 'score' ? r => r.combatPerformanceScore || 0 : stat ? stat.get : null;
   return [...rows].sort((a, b) => {
     if (sort === 'name') return sign * a.name.localeCompare(b.name);

@@ -524,9 +524,10 @@ export default function App() {
     }
   }, [matchParam, matchSlugIndex, sandbox, navigate, location.search]);
 
-  // The list: every match in scope (or every upload), newest first.
+  // The list: every match in scope (or every upload), newest first. Home
+  // shows the latest week of it.
   const listRows = useMemo(() => {
-    if (viewType !== 'matches' || matchParam) return [];
+    if ((viewType !== 'matches' && viewType !== 'home') || matchParam) return [];
     const files = sandbox ? validUploadFiles : (Array.isArray(fileContent) ? fileContent : []);
     return matchRows(files, { charMap, mapsMap, urlKeyFor: p => matchUrlKey(p, matchSlugIndex) });
   }, [viewType, matchParam, sandbox, validUploadFiles, fileContent, charMap, mapsMap, matchSlugIndex]);
@@ -799,11 +800,11 @@ export default function App() {
           />
         )}
 
-        {/* League pages: Home, and Characters (table or tier list). Both replaced
-            big card layouts - see pages/HomePage.jsx and pages/CharactersPage.jsx. */}
+        {/* League pages: Home (the tier list, the boards, the latest results) and
+            Characters (table or tier list) - pages/HomePage.jsx, pages/CharactersPage.jsx. */}
         {!sandbox && viewType === 'home' && (
           <HomePage aggregated={aggregatedData} charMap={charMap} idFor={charIdFor} linkFor={characterLinkFor}
-            search={scopeOnlySearch} loading={dataLoading} />
+            search={scopeOnlySearch} matches={listRows} matchLinkFor={r => matchLinkFor(r.path)} loading={dataLoading} />
         )}
         {!deepLinkedCharacter && viewType === 'aggregated' && (!sandbox || manualFiles.some(f => !f.error)) && (
           <CharactersPage aggregated={aggregatedData} charMap={charMap} idFor={charIdFor} linkFor={characterLinkFor}
