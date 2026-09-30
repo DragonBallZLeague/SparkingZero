@@ -6,7 +6,9 @@
  * and professional presentation.
  * 
  * Features:
- * - Two data sheets: Character Performance Averages & Individual Match Details
+ * - Two data sheets: Character Performance Averages & Individual Match Details,
+ *   then the Team Performance Matrix, then `options.extraSheets` (Position, AI
+ *   Strategies, Capsules: utils/workbookSheets.js)
  * - Full formatting support (colors, fonts, borders, alignment)
  * - Header row styling (bold, colored background)
  * - Auto-fit column widths
@@ -56,6 +58,11 @@ export async function exportToExcel(characterData, matchData, options = {}) {
       await generateTeamPerformanceMatrix(workbook, characterData, includeFormatting);
     }
 
+    // The plainer sheets made from the pages' own rows (utils/workbookSheets.js).
+    for (const spec of options.extraSheets || []) {
+      if (spec.rows.length) generateSimpleSheet(workbook, spec);
+    }
+
     // Generate Excel file buffer
     const buffer = await workbook.xlsx.writeBuffer();
 
@@ -70,6 +77,29 @@ export async function exportToExcel(characterData, matchData, options = {}) {
     console.error('Excel export error:', error);
     return { success: false, error: error.message };
   }
+}
+
+/**
+ * A plain sheet from a { name, columns: [{ header, width, numFmt, get }], rows }
+ * spec (utils/workbookSheets.js): a bold, filled header row frozen at the top,
+ * a filter on every column, and each column's number format.
+ */
+function generateSimpleSheet(workbook, { name, columns, rows }) {
+  const sheet = workbook.addWorksheet(name, { views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }] });
+  columns.forEach((c, i) => {
+    const col = sheet.getColumn(i + 1);
+    col.width = c.width || 12;
+    if (c.numFmt) col.numFmt = c.numFmt;
+  });
+  const header = sheet.addRow(columns.map(c => c.header));
+  header.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  header.eachCell(cell => {
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+    cell.alignment = { vertical: 'middle' };
+  });
+  for (const r of rows) sheet.addRow(columns.map(c => c.get(r)));
+  sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: columns.length } };
+  return sheet;
 }
 
 /**

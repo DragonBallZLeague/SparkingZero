@@ -27,6 +27,10 @@
  *      the character detail shows for one form add up to the whole.
  *   7. The per-match league reference the character detail places a match in
  *      (utils/matchReference.js, style-baseline.json `perMatch`).
+ *   8. The Performances view (pages/matches/performanceRows.js): one row per
+ *      character per match, each the Match page's character (name, position,
+ *      result, score, damage), each link opening exactly that row there,
+ *      and its chips, sort and search.
  *
  * Deliberately NOT in prebuild: it aggregates real corpus shards, like
  * verify-team-page. Run it when you change the match pages or match reading.
@@ -43,6 +47,11 @@ import { compareMatchTime } from '../src/utils/matchOrder.js';
 import { readMatch, battleDataOf } from '../src/utils/matchRecord.js';
 import { buildMatchSlugIndex, matchUrlKey, resolveMatchParam } from '../src/utils/matchSlug.js';
 import { matchRows, matchRowMatchesQuery } from '../src/pages/matches/matchRows.js';
+import {
+  performanceRows, filterPerformances, sortPerformances, performanceMatchesQuery, readPerfFilters, readPerfSort,
+} from '../src/pages/matches/performanceRows.js';
+import { slugifyCharacterName } from '../src/utils/characterSlug.js';
+import { teamByTag } from '../src/utils/teams.js';
 import { matchForms, sharedFormSnapshots } from '../src/utils/formBreakdown.js';
 import { calculatePerFormStats } from '../src/utils/formStatsCalculator.js';
 import { MATCH_METRICS, placeInQuantiles, placeMatch } from '../src/utils/matchReference.js';
@@ -88,6 +97,7 @@ const scopes = [
   ['Everything', all],
 ];
 
+let lastPerf = [];
 for (const [label, files] of scopes) {
   const rows = matchRows(files, { charMap, mapsMap, urlKeyFor });
   const characters = getAggregatedCharacterData(files, charMap, capsuleInfo.capsuleMap, aiStrategies, mapsMap);
@@ -107,8 +117,10 @@ for (const [label, files] of scopes) {
   const lineupBad = [], resultBad = [], numbersBad = [], totalsBad = [];
   let compared = 0;
   const byPath = new Map(files.map(f => [f.name, f]));
+  const pages = new Map();
   for (const r of rows) {
     const m = readMatch(byPath.get(r.path).content, { charMap, capsuleMap: capsuleInfo.capsuleMap, aiStrategies, mapsMap });
+    pages.set(r.path, m);
     for (const s of m.sides) {
       const slots = s.characters.map(c => c.slot);
       if (!slots.every((v, i) => v === i + 1)) lineupBad.push(`${r.name} side ${s.side}: slots ${slots.join(',')}`);
@@ -139,6 +151,35 @@ for (const [label, files] of scopes) {
   // 4. Links.
   const lost = rows.filter(r => resolveMatchParam(r.key, slugs) !== r.path);
   check('every row\'s link resolves back to its match', !lost.length, lines(lost.map(r => r.path)));
+
+  // 8. The Performances view: a row per character per match, each the Match
+  // page's figures for it, and each opening that character's row there.
+  const perf = performanceRows(characters);
+  lastPerf = perf;
+  const slotsInScope = characters.reduce((n, c) => n + (c.matches || []).length, 0);
+  check(`Performances has one row per character per match (${perf.length})`,
+    perf.length === slotsInScope && new Set(perf.map(p => p.id)).size === perf.length, `${perf.length} rows, ${slotsInScope} match rows`);
+  const perfBad = [], openBad = [];
+  for (const p of perf) {
+    const m = pages.get(p.path);
+    const side = m && m.sides.find(s => s.side === p.side);
+    const c = side && side.characters.find(x => x.slot === p.slot);
+    if (!c) { perfBad.push(`${p.match} side ${p.side} slot ${p.slot}: not on the Match page`); continue; }
+    const apart = [
+      c.name !== p.name && `name ${p.name} vs ${c.name}`,
+      c.position !== p.position && `position ${p.position} vs ${c.position}`,
+      side.won != null && side.won !== p.won && 'result',
+      Math.abs(c.score - p.score) > 0.05 && `score ${p.score.toFixed(2)} vs ${c.score.toFixed(2)}`,
+      Math.abs((c.stats.damageDone || 0) - (p.m.damageDone || 0)) > 1 && 'damage',
+    ].filter(Boolean);
+    if (apart.length) perfBad.push(`${p.match} ${p.name}: ${apart.join(', ')}`);
+    // What ?open= (and &side=, for a character on both sides) picks on the Match page.
+    const picks = m.sides.filter(s => !p.mirrored || s.side === p.side)
+      .flatMap(s => s.characters.filter(x => slugifyCharacterName(x.name) === p.charSlug).map(x => `${s.side}|${x.slot}`));
+    if (picks.length !== 1 || picks[0] !== `${p.side}|${p.slot}`) openBad.push(`${p.match} ${p.name}: opens ${picks.join(', ') || 'nothing'}`);
+  }
+  check('each performance is the Match page\'s character: name, position, result, score and damage', !perfBad.length, lines(perfBad));
+  check('each performance\'s link opens exactly its own row on the Match page', !openBad.length, lines(openBad));
 }
 
 // 6. Forms (utils/formBreakdown.js over formStatsCalculator.js), from the raw
@@ -234,6 +275,41 @@ const row = { name: 'S0 Week 3 Match 5', map: 'Hyperbolic Time Chamber',
   sides: [{ tag: 'Sentai', lineup: [{ name: 'Jeice' }] }, { tag: 'Master and Student', lineup: [{ name: 'Piccolo' }] }] };
 check('a search finds the match, either team by either name, a character and the map',
   ['week 3', 'sentai squad', 'master & student', 'jeice', 'piccolo', 'hyperbolic'].every(q => matchRowMatchesQuery(row, q)) && !matchRowMatchesQuery(row, 'goku'));
+
+// 8, continued: the Performances chips, sort and search, over everything.
+log('\n[performances: chips, sort, search]');
+{
+  const perf = lastPerf;
+  const params = q => new URLSearchParams(q);
+  const one = perf.find(p => p.name === 'Goku (Z - Early)') || perf[0];
+  const byChar = filterPerformances(perf, readPerfFilters(params(`char=${one.charSlug}`)));
+  check(`Character keeps that character's every match (${byChar.length})`,
+    byChar.length === perf.filter(p => p.name === one.name).length && byChar.every(p => p.name === one.name));
+  const teamSlug = teamByTag(one.team).slug;
+  const byTeam = filterPerformances(perf, readPerfFilters(params(`for=${teamSlug}`)));
+  check(`Played for keeps only that team's side (${byTeam.length})`, byTeam.length > 0 && byTeam.every(p => p.team === one.team));
+  const anchors = filterPerformances(perf, readPerfFilters(params('pos=3')));
+  const wins = filterPerformances(perf, readPerfFilters(params('res=won')));
+  const losses = filterPerformances(perf, readPerfFilters(params('res=lost')));
+  check('Position and Result keep what they say, and wins and losses make up the whole',
+    anchors.length > 0 && anchors.every(p => p.position === 3) && wins.every(p => p.won) && wins.length + losses.length === perf.length);
+  const both = filterPerformances(perf, readPerfFilters(params(`char=${one.charSlug}&res=won`)));
+  check('chips combine (AND between chips)', both.length === byChar.filter(p => p.won).length);
+  check('all three positions picked is no filter', filterPerformances(perf, readPerfFilters(params('pos=1,2,3'))).length === perf.length);
+
+  const byDmg = sortPerformances(perf, readPerfSort(params('sort=dmg')));
+  check('sorted by damage, highest first', byDmg.every((p, i) => !i || (byDmg[i - 1].m.damageDone || 0) >= (p.m.damageDone || 0)));
+  const byS1 = sortPerformances(perf, readPerfSort(params('sort=s1&dir=asc')));
+  const firstNull = byS1.findIndex(p => !p.m.hasAdditionalCounts || !p.m.s1Blast);
+  check('a move sorts by hit rate, and a match that never threw it goes last either way',
+    firstNull > 0 && byS1.slice(firstNull).every(p => !p.m.hasAdditionalCounts || !p.m.s1Blast));
+  const newest = sortPerformances(perf, readPerfSort(params('')));
+  check('by default, newest match first', newest.every((p, i) => !i || compareMatchTime(newest[i - 1].path, p.path) >= 0));
+
+  const s = perf.find(p => p.map && p.opponent) || perf[0];
+  check('a search finds a performance by character, match, map and the opponent\'s name',
+    [s.name, s.match, s.map, teamByTag(s.opponent).name].every(q => performanceMatchesQuery(s, String(q).toLowerCase())));
+}
 
 console.log = log;
 if (failures) {

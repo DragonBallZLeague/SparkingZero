@@ -26,6 +26,7 @@ export const ROUTES = {
   // which matchUrlKey(path, index) in utils/matchSlug.js produces. The file's
   // path is still accepted when resolving.
   match: (matchKey) => `/matches/${encodeURIComponent(matchKey)}`,
+  // No page any more: it redirects (REDIRECTS below).
   tables: '/tables',
   meta: '/meta',
   sandbox: '/sandbox',
@@ -51,9 +52,19 @@ export const VIEW_ROUTES = [
   { view: 'aggregated', path: ROUTES.characters },
   { view: 'teams', path: ROUTES.teams },
   { view: 'matches', path: ROUTES.matches },
-  { view: 'tables', path: ROUTES.tables },
   { view: 'meta', path: ROUTES.meta },
   { view: 'home', path: ROUTES.home },
+];
+
+/**
+ * Old paths that now land somewhere else, keeping the query string (the
+ * scope). The Data Tables page was removed on 2026-09-29: its two tables are
+ * the Characters table and the Performances view, and the scope bar's workbook
+ * holds everything it had (with its Position, AI Strategies and Capsules
+ * sheets). Links to it land on the Characters table.
+ */
+export const REDIRECTS = [
+  { from: ROUTES.tables, to: ROUTES.characters },
 ];
 
 const cleanPath = pathname => ('/' + pathname.replace(/^\/+|\/+$/g, '')).toLowerCase();

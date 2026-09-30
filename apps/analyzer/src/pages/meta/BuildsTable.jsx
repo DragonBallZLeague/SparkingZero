@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
 import { BuildPill } from '../character/overview/BuildPicker.jsx';
+import { BuildYamlButtons } from '../../components/build/BuildYamlButtons.jsx';
 import { capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
 import { HEAD, SortHead, ShowMore } from '../../shell/tableParts.jsx';
@@ -20,6 +21,11 @@ import { fadesThinSamples } from '../../utils/performanceTier.js';
  *
  * Win % is the last column and is left out on a phone and in the side panel:
  * for one character's build it mostly reflects the team around it.
+ *
+ * The Character page's Builds tab draws one character's builds with it
+ * (`showCharacter` false: no Character column, and a phone row leads with the
+ * build instead). Wherever a build's capsules show, Copy YAML / Download give
+ * it in the Match Builder's format.
  */
 
 const fmtInt = v => Math.round(v || 0).toLocaleString('en-US');
@@ -58,19 +64,24 @@ export function CapsuleList({ build, highlight = [] }) {
   );
 }
 
-function OpenLink({ build, buildLinkFor }) {
-  const to = buildLinkFor(build);
-  if (!to) return null;
+/** Under a build's capsules: the YAML buttons, and the link `buildLinkFor` gives (`openLabel` names it). */
+function BuildActions({ build, buildLinkFor, openLabel }) {
+  const to = buildLinkFor ? buildLinkFor(build) : null;
   return (
-    <Link to={to} className="mt-3 inline-block text-[13px] font-semibold text-orange-400 no-underline hover:underline">
-      Open on {build.name}’s page ↗
-    </Link>
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+      <BuildYamlButtons characterName={build.name} capsules={build.capsules} aiStrategy={build.aiName} />
+      {to && (
+        <Link to={to} className="text-[13px] font-semibold text-orange-400 no-underline hover:underline">
+          {openLabel ? openLabel(build) : `Open on ${build.name}’s page ↗`}
+        </Link>
+      )}
+    </div>
   );
 }
 
-function SidePanel({ build, idFor, buildLinkFor, highlight }) {
+function SidePanel({ build, idFor, buildLinkFor, openLabel, highlight, empty = 'Select a build' }) {
   const box = 'self-start sticky rounded-[10px] border border-solid border-gray-700 bg-shell-panel p-4';
-  if (!build) return <div className={`${box} text-center text-slate-400`} style={{ top: NAV_H + SCOPE_H + 16 }}>Select a build</div>;
+  if (!build) return <div className={`${box} text-center text-[13px] text-slate-400`} style={{ top: NAV_H + SCOPE_H + 16 }}>{empty}</div>;
   const { cost } = capsuleBreakdown(build.capsules);
   const stat = (label, value) => (
     <div className="flex flex-col gap-0.5">
@@ -98,21 +109,27 @@ function SidePanel({ build, idFor, buildLinkFor, highlight }) {
       </div>
       <CostBar capsules={build.capsules} className="mb-2 w-full max-w-[150px]" />
       <CapsuleList build={build} highlight={highlight} />
-      <OpenLink build={build} buildLinkFor={buildLinkFor} />
+      <BuildActions build={build} buildLinkFor={buildLinkFor} openLabel={openLabel} />
     </div>
   );
 }
 
 export default function BuildsTable({
   rows, shown, onMore, sort, dir, onSort, isPhone, isWide, selected, onPick, expanded, idFor, buildLinkFor, highlight,
+  showCharacter = true, openLabel = null,
+  // Whether the side panel shows the first row while none is picked (Meta), or
+  // `emptyPanel` (the Character page, where a picked row is a filter).
+  pickFirst = true, emptyPanel = undefined,
 }) {
   const list = rows.slice(0, shown);
   const cols = isPhone
     ? 'minmax(0,1fr) 40px 50px 56px'
-    : '28px minmax(150px,1fr) minmax(210px,1.6fr) 44px 70px 52px 66px 48px';
+    : showCharacter
+      ? '28px minmax(150px,1fr) minmax(210px,1.6fr) 44px 70px 52px 66px 48px'
+      : '28px minmax(210px,1.6fr) 44px 70px 52px 66px 48px';
   const grid = { display: 'grid', gridTemplateColumns: cols, alignItems: 'center', columnGap: isPhone ? 8 : 12 };
   const head = (key, label) => <SortHead label={label} on={sort === key} dir={dir} onClick={() => onSort(key)} />;
-  const sel = isWide ? (list.find(b => b.id === selected) || list[0] || null) : null;
+  const sel = isWide ? (list.find(b => b.id === selected) || (pickFirst ? list[0] : null) || null) : null;
   const fade = fadesThinSamples(rows, b => b.provisional);
 
   const table = (
@@ -127,7 +144,7 @@ export default function BuildsTable({
         ) : (
           <>
             <div className={`${HEAD} text-right text-slate-400`}>#</div>
-            <div className={`${HEAD} text-slate-400`}>Character</div>
+            {showCharacter && <div className={`${HEAD} text-slate-400`}>Character</div>}
             <div className={`${HEAD} text-slate-400`}>Build</div>
             {head('uses', 'Uses')}{head('dmg', 'Avg dmg')}{head('eff', 'Eff')}{head('score', 'Score')}{head('win', 'Win %')}
           </>
@@ -139,7 +156,16 @@ export default function BuildsTable({
         {list.map((b, i) => {
           const on = sel && sel.id === b.id;
           const open = !isWide && expanded === b.id;
-          const who = (
+          const who = !showCharacter ? (
+            // One character's builds: the build leads, its AI strategy under it.
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
+                <BuildPill label={b.label} darkMode compact className="flex-none" />
+                <CostBar capsules={b.capsules} className="min-w-[30px] max-w-[90px] flex-auto" />
+              </div>
+              <div className="mt-[3px] truncate text-[12px] text-slate-400">{b.aiName}</div>
+            </div>
+          ) : (
             <div className="flex min-w-0 items-center gap-2.5">
               <Portrait id={idFor(b.name)} name={b.name} size={34} />
               {isPhone ? (
@@ -171,7 +197,7 @@ export default function BuildsTable({
                 ) : (
                   <>
                     <div className="text-right text-[12px] text-slate-500 tabular-nums">{i + 1}</div>
-                    {who}
+                    {showCharacter && who}
                     <div className="min-w-0">
                       <div className="flex min-w-0 items-center gap-2">
                         <BuildPill label={b.label} darkMode compact className="flex-none" />
@@ -189,9 +215,9 @@ export default function BuildsTable({
               </div>
               {open && (
                 <div className={`border-0 border-b border-solid border-gray-700/50 ${isPhone ? 'px-2.5 pb-3 pt-1' : 'pb-3.5 pl-[58px] pr-3.5 pt-1'}`}>
-                  {isPhone && <div className="mb-2 mt-0.5"><BuildPill label={b.label} darkMode compact /></div>}
+                  {isPhone && showCharacter && <div className="mb-2 mt-0.5"><BuildPill label={b.label} darkMode compact /></div>}
                   <CapsuleList build={b} highlight={highlight} />
-                  <OpenLink build={b} buildLinkFor={buildLinkFor} />
+                  <BuildActions build={b} buildLinkFor={buildLinkFor} openLabel={openLabel} />
                 </div>
               )}
             </React.Fragment>
@@ -208,7 +234,7 @@ export default function BuildsTable({
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_330px] items-start gap-4">
       {table}
-      <SidePanel build={sel} idFor={idFor} buildLinkFor={buildLinkFor} highlight={highlight} />
+      <SidePanel build={sel} idFor={idFor} buildLinkFor={buildLinkFor} openLabel={openLabel} highlight={highlight} empty={emptyPanel} />
     </div>
   );
 }

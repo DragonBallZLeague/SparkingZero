@@ -25,8 +25,12 @@ import Portrait from './Portrait.jsx';
  * from the core figures. A fused form's figures are the fusion's whole output,
  * which its column says under the name.
  *
- * Written for one match, and shaped so the Character page's Forms tab can pass
- * averages into the same fields.
+ * Written for one match; the Character page's Forms tab passes averages over
+ * many matches into the same fields (utils/formBreakdown.js averageForms()),
+ * with `of` (how many matches it transformed in, with figures) so a "Reached"
+ * row can say how often each form was ("Starting form" for the one it began
+ * in: that one is not reached), and `defaultOpen`: there the figures
+ * are the point. Averaged counts show one decimal.
  */
 
 // Form colours: neutral steps, since colour here only ties a form to its
@@ -35,11 +39,13 @@ const SHADES = ['#cbd5e1', '#7c8aa3', '#4a5568', '#a3b0c4'];
 export const PICKED = '#f97316';
 
 const int = v => Math.round(v || 0).toLocaleString('en-US');
+// A count, or an average of counts (one decimal unless it is whole).
+const num = v => (Math.abs((v || 0) - Math.round(v || 0)) < 1e-9 ? int(v) : v.toFixed(1));
 const mmss = s => {
   const t = Math.round(s || 0);
   return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
 };
-const pair = ([hit, thrown]) => (!thrown ? '–' : hit === null ? `${int(thrown)} thrown` : `${int(hit)}/${int(thrown)}`);
+const pair = ([hit, thrown]) => (!thrown ? '–' : hit === null ? `${num(thrown)} thrown` : `${num(hit)}/${num(thrown)}`);
 
 /** [label, text, value for the bar or null, core (always shown), zero test, phone label] */
 const ROWS = [
@@ -51,14 +57,16 @@ const ROWS = [
   ['Super 1', f => pair(f.s1), null, false, f => !f.s1[1]],
   ['Super 2', f => pair(f.s2), null, false, f => !f.s2[1]],
   ['Ultimate', f => pair(f.ult), null, false, f => !f.ult[1]],
-  ['Ki blasts', f => int(f.kiFired), null, false, f => !f.kiFired],
-  ['Skills', f => int(f.skills), null, false, f => !f.skills],
-  ['KOs', f => int(f.kills), null, true],
+  ['Ki blasts', f => num(f.kiFired), null, false, f => !f.kiFired],
+  ['Skills', f => num(f.skills), null, false, f => !f.skills],
+  ['KOs', f => num(f.kills), null, true],
   ['HP left', f => (f.hpLeft === null ? '–' : int(f.hpLeft)), null, true],
 ];
 
-export default function FormBreakdown({ forms, complete = true, reason = null, isPhone = false, selected = null, onSelect = null }) {
-  const [open, setOpen] = useState(false);
+export default function FormBreakdown({
+  forms, complete = true, reason = null, isPhone = false, selected = null, onSelect = null, of = null, defaultOpen = false,
+}) {
+  const [open, setOpen] = useState(defaultOpen);
   if (!forms || !forms.length) return null;
   const total = forms.reduce((s, f) => s + (f.seconds || 0), 0);
   // A phone shares its width between the forms (three fit; a fourth scrolls),
@@ -68,7 +76,8 @@ export default function FormBreakdown({ forms, complete = true, reason = null, i
   const colW = isPhone ? 'minmax(72px,1fr)' : '210px';
   const grid = { gridTemplateColumns: `${labelW}px repeat(${forms.length}, ${colW})` };
   const width = isPhone ? undefined : labelW + forms.length * (210 + 16);
-  const rows = complete && open ? ROWS.filter(([, , , core, zero]) => core || forms.some(f => !zero(f))) : [];
+  const shownRows = of ? [['Reached', f => (f.start ? 'Starting form' : `${f.reached} of ${of}`), null, true], ...ROWS] : ROWS;
+  const rows = complete && open ? shownRows.filter(([, , , core, zero]) => core || forms.some(f => !zero(f))) : [];
   const pickable = complete && !!onSelect;
   const colour = i => (selected === i ? PICKED : SHADES[i % SHADES.length]);
 

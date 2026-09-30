@@ -18,14 +18,20 @@ import TeamPage from './pages/TeamPage.jsx';
 import MatchesPage from './pages/MatchesPage.jsx';
 import MatchPage from './pages/MatchPage.jsx';
 import { matchRows, matchName, readMatchesView } from './pages/matches/matchRows.js';
+import { performanceRows, openParams, readPerfFilters } from './pages/matches/performanceRows.js';
+import { performanceChips } from './pages/matches/performanceChips.jsx';
 import { buildMatchSlugIndex, matchUrlKey, resolveMatchParam, matchSlug } from './utils/matchSlug.js';
 import { readMatch } from './utils/matchRecord.js';
 import { teamRows, readVs } from './pages/teams/teamRows.js';
 import { teamByTag, teamBySlug } from './utils/teams.js';
 import { leagueBuilds, readMetaTab, readBuildFilters, DEFAULT_FLOOR } from './pages/meta/buildRows.js';
 import { buildChips } from './pages/meta/buildChips.jsx';
-import DataTable from './components/DataTable.jsx';
-import { prepareCharacterAveragesData, prepareMatchDetailsData, getCharacterAveragesTableConfig, getMatchDetailsTableConfig, getMetaTableConfig } from './components/TableConfigs.jsx';
+import { aiChips } from './pages/meta/aiChips.jsx';
+import { readAiFilters } from './pages/meta/aiRows.js';
+import { capsuleChips } from './pages/meta/capsuleChips.jsx';
+import { readCapsuleFilters } from './pages/meta/capsuleRows.js';
+import { prepareCharacterAveragesData, prepareMatchDetailsData } from './components/TableConfigs.jsx';
+import { workbookSheets } from './utils/workbookSheets.js';
 import { exportToExcel } from './utils/excelExport.js';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
 import { parseCharacterCSV } from './utils/statCalculations.js';
@@ -43,10 +49,10 @@ import {
   buildCharacterSlugIndex,
   resolveCharacterParam,
   characterUrlKey,
+  slugifyCharacterName,
 } from './utils/characterSlug.js';
-import {
-  Target, Shield, Upload, Users, FileText, Database, TrendingUp, Table, ChevronDown, ChevronUp, Download,
-} from 'lucide-react';
+import { Shield } from 'lucide-react';
+import SandboxPanel from './pages/sandbox/SandboxPanel.jsx';
 // Reference data CSVs (raw imports) - now using shared referencedata folder
 import charactersCSV from '../../../referencedata/characters.csv?raw';
 import capsulesCSV from '../../../referencedata/capsules.csv?raw';
@@ -73,7 +79,7 @@ export default function App() {
   // becomes linkable, refreshable and shareable for free.
   const location = useLocation();
   const navigate = useNavigate();
-  const { charParam, teamParam, matchParam: leagueMatchParam, '*': sandboxRest } = useParams();
+  const { charParam: leagueCharParam, teamParam, matchParam: leagueMatchParam, '*': sandboxRest } = useParams();
   const [searchParams] = useSearchParams();
   const viewType = viewForPath(location.pathname);
   // The data source comes from the URL too: the Sandbox (/sandbox/...) runs the
@@ -81,17 +87,27 @@ export default function App() {
   // `mode` keeps its old name and values so the views' existing checks work.
   const sandbox = isSandboxPath(location.pathname);
   const mode = sandbox ? 'manual' : 'reference';
+  // A character's page: /characters/<slug>, or /sandbox/characters/<slug> over
+  // the uploads (read from the Sandbox's splat).
+  const charParam = sandbox
+    ? (/^characters\/[^/]+$/.test(sandboxRest || '') ? decodeURIComponent(sandboxRest.slice('characters/'.length)) : null)
+    : leagueCharParam;
+  // Where a character's page lives: the league's, or the Sandbox's.
+  const charPath = useCallback(key => (sandbox ? ROUTES.sandbox : '') + ROUTES.character(key), [sandbox]);
   // The query string without the detail pages' own params: the Character page's
-  // `build` and `for`, the Team page's `vs`. They belong to one character's or
-  // team's page: they must not ride along to the leaderboard, another view or
-  // another character. The data-scope params do.
+  // `build`, `for`, `form` and `pos`, the Team page's `vs`. They belong to one
+  // character's or team's page: they must not ride along to the leaderboard,
+  // another view or another character. The data-scope params do. (`pos` is also
+  // the Characters table's own chip, so it is only dropped from a character's page.)
   const scopeSearch = useMemo(() => {
     const params = new URLSearchParams(location.search);
     params.delete('build');
     params.delete('for');
     params.delete('vs');
+    params.delete('form');
+    if (/\/characters\/[^/]+/.test(location.pathname)) params.delete('pos');
     return prettySearch(params);
-  }, [location.search]);
+  }, [location.search, location.pathname]);
   // Only the scope params: what the section tabs and character links carry, so
   // a page's own params (view, sort, pos) stay on that page.
   const scopeOnlySearch = useMemo(() => {
@@ -116,7 +132,6 @@ export default function App() {
   const [selectedBuildIndex, setSelectedBuildIndex] = useState({}); // Track selected build index per character
   const [selectedBuildSort, setSelectedBuildSort] = useState({}); // Track sort column+dir per character build table
   const [activeBuildFilters, setActiveBuildFilters] = useState({}); // Track active build filter per character
-  const [uploadedFilesCollapsed, setUploadedFilesCollapsed] = useState(false); // Collapsed state for uploaded files list
   const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
   const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
 
@@ -199,9 +214,9 @@ export default function App() {
     if (!id) return; // unknown character - the page renders a not-found notice
     const canonical = characterUrlKey(id, charSlugIndex);
     if (canonical && canonical !== charParam) {
-      navigate(ROUTES.character(canonical) + location.search, { replace: true });
+      navigate(charPath(canonical) + location.search, { replace: true });
     }
-  }, [charParam, charSlugIndex, navigate, location.search]);
+  }, [charParam, charSlugIndex, navigate, location.search, charPath]);
   const capsuleInfo = useMemo(() => loadCapsuleData(capsulesCSV), []);
   const capsuleMap = capsuleInfo.capsuleMap;
   
@@ -241,13 +256,13 @@ export default function App() {
   // The Matches page's Performances table is one row per character per match.
   const performancesView = viewType === 'matches' && readMatchesView(searchParams) === 'performances';
   const aggregatedData = useMemo(() => {
-    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || viewType === 'tables' || (viewType === 'teams' && teamParam) || performancesView) && fileContent) {
+    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'home' || viewType === 'meta' || (viewType === 'teams' && teamParam) || performancesView) && fileContent) {
       // If fileContent is an array, use as is; if single file, wrap in array
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
       return getAggregatedCharacterData(filesArr, charMap, capsuleMap, aiStrategies, mapsMap);
-    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables' || performancesView) && manualFiles.length > 0) {
+    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || performancesView) && manualFiles.length > 0) {
       return getAggregatedCharacterData(manualFiles, charMap, capsuleMap, aiStrategies, mapsMap);
     }
     return [];
@@ -255,12 +270,12 @@ export default function App() {
 
   // Position-based data for advanced analysis (single file only)
   const positionData = useMemo(() => {
-    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && fileContent) {
+    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'meta') && fileContent) {
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
       return getPositionBasedData(filesArr, charMap, capsuleMap, positionMatchTypeFilters);
-    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables') && manualFiles.length > 0) {
+    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta') && manualFiles.length > 0) {
       return getPositionBasedData(manualFiles, charMap, capsuleMap, positionMatchTypeFilters);
     }
     return {};
@@ -268,12 +283,12 @@ export default function App() {
 
   // Team aggregated data for team rankings
   const teamAggregatedData = useMemo(() => {
-    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables' || viewType === 'teams') && fileContent) {
+    if (mode === 'reference' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'teams') && fileContent) {
       const filesArr = Array.isArray(fileContent)
         ? fileContent
         : fileContent.error ? [] : [{ name: selectedFilePath ? selectedFilePath.join(' / ') : 'Selected File', content: fileContent }];
       return getTeamAggregatedData(filesArr, charMap, capsuleMap, aiStrategies);
-    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'tables' || viewType === 'teams') && manualFiles.length > 0) {
+    } else if (mode === 'manual' && (viewType === 'aggregated' || viewType === 'meta' || viewType === 'teams') && manualFiles.length > 0) {
       return getTeamAggregatedData(manualFiles, charMap, capsuleMap, aiStrategies);
     }
     return [];
@@ -361,7 +376,7 @@ export default function App() {
     //
     // An empty scope is a dead end, not a missing character - say which,
     // because "no data for Toppo" sends someone looking for the wrong problem.
-    if (scopeState.ready && scopeState.paths && scopeState.paths.length === 0) {
+    if (!sandbox && scopeState.ready && scopeState.paths && scopeState.paths.length === 0) {
       return { label: wanted, character: null, reason: 'empty-scope' };
     }
     if (dataLoading) {
@@ -376,17 +391,24 @@ export default function App() {
       character: performanceReference[i],
       rank: i + 1,
       totalInScope: performanceReference.length,
+      // Played for one team: the same character over every team, so its Usage
+      // tab can still list them all and switch between them.
+      teamsRow: forTeam ? aggregatedData.find(c => c.name === wanted) || null : null,
     };
-  }, [charParam, charSlugIndex, performanceReference, scopeState.ready, scopeState.paths, dataLoading]);
+  }, [charParam, charSlugIndex, performanceReference, scopeState.ready, scopeState.paths, dataLoading, forTeam, aggregatedData, sandbox]);
 
   // What the numbers on that page actually cover. Built from the scope in the
   // query string, so the page's own description of its scope and the link
   // someone pasted cannot disagree - they are the same source.
   const dataScopeLabel = useMemo(() => {
+    if (sandbox) {
+      const n = manualFiles.filter(f => !f.error).length;
+      return `your uploads (${n} match${n === 1 ? '' : 'es'})`;
+    }
     const scope = describeScope(scopeState.scope);
     const matchCount = Array.isArray(fileContent) ? fileContent.length : null;
     return matchCount ? `${scope} (${matchCount.toLocaleString('en-US')} matches)` : scope;
-  }, [scopeState.scope, fileContent]);
+  }, [sandbox, manualFiles, scopeState.scope, fileContent]);
 
   // ---- what the shell and the list pages need --------------------------------
   // Character name -> the id its portrait is filed under.
@@ -397,10 +419,10 @@ export default function App() {
   }, [charSlugIndex]);
   const charIdFor = useCallback(name => charIdByName.get(name) || null, [charIdByName]);
   // A character's page, carrying the scope so its numbers match the list's.
-  // None in the Sandbox: a character page shows league data, not the uploads.
+  // In the Sandbox it is the Sandbox's page over the uploads (2026-09-30).
   const characterLinkFor = useCallback(
-    name => (sandbox ? null : ROUTES.character(charUrlKeyByName.get(name) || name) + scopeOnlySearch),
-    [charUrlKeyByName, scopeOnlySearch, sandbox]
+    name => charPath(charUrlKeyByName.get(name) || name) + (sandbox ? '' : scopeOnlySearch),
+    [charUrlKeyByName, scopeOnlySearch, sandbox, charPath]
   );
 
   // ---- /teams and /teams/<slug> ---------------------------------------------
@@ -509,6 +531,26 @@ export default function App() {
     return matchRows(files, { charMap, mapsMap, urlKeyFor: p => matchUrlKey(p, matchSlugIndex) });
   }, [viewType, matchParam, sandbox, validUploadFiles, fileContent, charMap, mapsMap, matchSlugIndex]);
 
+  // The Performances view: every character's every match in scope, one row
+  // each. A row opens its Match page with that character's row open.
+  const perfRows = useMemo(
+    () => (performancesView && !matchParam ? performanceRows(aggregatedData) : []),
+    [performancesView, matchParam, aggregatedData]
+  );
+  const perfLinkFor = useCallback(r => {
+    const to = matchLinkFor(r.path);
+    return `${to}${to.includes('?') ? '&' : '?'}${openParams(r)}`;
+  }, [matchLinkFor]);
+  // One character's matches in the Performances view: the Character page's
+  // Matches tab links there, keeping its "Played for".
+  const performancesLinkFor = useCallback(name => {
+    const p = new URLSearchParams(scopeOnlySearch);
+    p.set('view', 'performances');
+    p.set('char', slugifyCharacterName(name));
+    if (forTeam) p.set('for', forTeam.slug);
+    return `${ROUTES.matches}?${p.toString()}`;
+  }, [scopeOnlySearch, forTeam]);
+
   // ---- back buttons ------------------------------------------------------------
   // A detail page goes back where it was opened from (shell/useCameFrom.js),
   // named: "Budokai", "Meta", "Goku (Super)". Opened from a pasted link, it has
@@ -528,7 +570,6 @@ export default function App() {
         const path = matchSlugIndex && resolveMatchParam(seg, matchSlugIndex);
         return path ? matchName(path) : seg;
       }
-      case 'tables': return 'Tables';
       default: return 'Home';
     }
   }, [cameFrom, charSlugIndex, matchSlugIndex]);
@@ -560,13 +601,20 @@ export default function App() {
     const to = characterLinkFor(b.name);
     return to ? `${to}${to.includes('?') ? '&' : '?'}build=${b.code}` : null;
   }, [characterLinkFor]);
-  const metaChipKey = viewType === 'meta' ? searchParams.toString() : '';
+  // The chips that read the query string rebuild when it changes.
+  const chipParamKey = viewType === 'meta' || viewType === 'matches' ? searchParams.toString() : '';
 
   const pageChips = useMemo(() => {
     if (sandbox) return [];
     if (viewType === 'meta') {
-      return readMetaTab(searchParams) === 'builds'
-        ? buildChips({ builds: metaBuilds, filters: readBuildFilters(searchParams, buildFloor), update: updateQuery, idFor: charIdFor, defaultFloor: buildFloor })
+      const tab = readMetaTab(searchParams);
+      if (tab === 'builds') return buildChips({ builds: metaBuilds, filters: readBuildFilters(searchParams, buildFloor), update: updateQuery, idFor: charIdFor, defaultFloor: buildFloor });
+      if (tab === 'ai') return aiChips({ aggregated: aggregatedData, filters: readAiFilters(searchParams), update: updateQuery, idFor: charIdFor });
+      return capsuleChips({ aggregated: aggregatedData, filters: readCapsuleFilters(searchParams), update: updateQuery, idFor: charIdFor });
+    }
+    if (viewType === 'matches') {
+      return perfRows.length
+        ? performanceChips({ rows: perfRows, filters: readPerfFilters(searchParams), update: updateQuery, idFor: charIdFor })
         : [];
     }
     if (viewType === 'teams' && teamParam) {
@@ -633,9 +681,10 @@ export default function App() {
     }];
     // positionsSelected is re-derived each render; its joined form is its identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery, metaBuilds, metaChipKey, buildFloor, charIdFor,
-    teamParam, teamOpponents, teamVs, deepLinkedCharacter, aggregatedData, forTeam]);
+  }, [sandbox, viewType, charParam, positionsSelected.join(','), posCounts, updateQuery, metaBuilds, chipParamKey, buildFloor, charIdFor,
+    teamParam, teamOpponents, teamVs, deepLinkedCharacter, aggregatedData, forTeam, perfRows]);
 
+  // New uploads join the set; a file of the same name replaces its old copy.
   const processFiles = (files) => {
     Promise.all(files.map(file => {
       return new Promise((resolve) => {
@@ -651,33 +700,14 @@ export default function App() {
         reader.readAsText(file);
       });
     })).then(results => {
-      setManualFiles(results);
-      // One file opens as its match; several stay on the view in hand, whose
-      // list or figures now cover them.
-      const valid = results.filter(f => !f.error);
+      const names = new Set(results.map(f => f.name));
+      const merged = [...manualFiles.filter(f => !names.has(f.name)), ...results];
+      setManualFiles(merged);
+      // A first single file opens as its match; more stay on the view in hand,
+      // whose list or figures now cover them.
+      const valid = merged.filter(f => !f.error);
       if (valid.length === 1) navigate(`${ROUTES.sandbox}${ROUTES.match(matchSlug(valid[0].name))}`);
     });
-  };
-
-  const handleManualFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    processFiles(files);
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const files = Array.from(event.dataTransfer.files).filter(file => 
-      file.name.endsWith('.json')
-    );
-    if (files.length > 0) {
-      processFiles(files);
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
   };
 
   // Opening a match (a Team page's lineups and matches, a character's recent
@@ -706,61 +736,14 @@ export default function App() {
         filename: `DBSZ_Analysis_${new Date().toISOString().split('T')[0]}.xlsx`,
         includeCharacterAverages: true,
         includeMatchDetails: true,
-        includeFormatting: true
+        includeFormatting: true,
+        extraSheets: workbookSheets(rows, charMap),
       });
       
       if (result.success) {
         console.log('Excel export successful:', result.filename);
       } else {
         console.error('Excel export failed:', result.error);
-        alert(`Export failed: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Export error:', error);
-      alert(`Export failed: ${error.message}`);
-    }
-  };
-
-  // Handler for Character Averages export only
-  const handleCharacterAveragesExport = async () => {
-    try {
-      const characterData = prepareCharacterAveragesData(aggregatedData);
-      
-      const result = await exportToExcel(characterData, [], {
-        filename: `Character_Averages_${new Date().toISOString().split('T')[0]}.xlsx`,
-        includeCharacterAverages: true,
-        includeMatchDetails: false,
-        includeFormatting: true
-      });
-      
-      if (result.success) {
-        console.log('Character Averages export successful:', result.filename);
-      } else {
-        console.error('Export failed:', result.error);
-        alert(`Export failed: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Export error:', error);
-      alert(`Export failed: ${error.message}`);
-    }
-  };
-
-  // Handler for Match Details export only
-  const handleMatchDetailsExport = async () => {
-    try {
-      const matchData = prepareMatchDetailsData(aggregatedData);
-      
-      const result = await exportToExcel([], matchData, {
-        filename: `Match_Details_${new Date().toISOString().split('T')[0]}.xlsx`,
-        includeCharacterAverages: false,
-        includeMatchDetails: true,
-        includeFormatting: true
-      });
-      
-      if (result.success) {
-        console.log('Match Details export successful:', result.filename);
-      } else {
-        console.error('Export failed:', result.error);
         alert(`Export failed: ${result.error}`);
       }
     } catch (error) {
@@ -791,214 +774,11 @@ export default function App() {
       {/* The page column: the same gutter and max-width as the tab row and scope bar. */}
       <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-16">
       <div className="max-w-page mx-auto">
-        {/* Manual Upload Mode */}
+        {/* The Sandbox's uploads and its views over them. */}
         {mode === 'manual' && (
-          <div className={`rounded-[10px] border border-solid p-6 mb-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-            <div className="flex items-center gap-2 mb-4">
-              <Upload className={`w-6 h-6 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Upload JSON Battle Result Files</h3>
-            </div>
-            
-            <label 
-              className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
-                darkMode 
-                  ? 'border-gray-600 bg-gray-700 hover:bg-gray-600' 
-                  : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
-              }`}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-            >
-              <Upload className={`w-8 h-8 mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-              <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Click to upload JSON files or drag and drop</span>
-              <input
-                type="file"
-                multiple
-                accept=".json"
-                onChange={handleManualFileUpload}
-                className="hidden"
-              />
-            </label>
-            
-            {manualFiles.length > 0 && (
-              <div className="mt-6">
-                <button
-                  onClick={() => setUploadedFilesCollapsed(!uploadedFilesCollapsed)}
-                  className={`w-full text-sm font-semibold mb-2 flex items-center justify-between gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    darkMode 
-                      ? 'text-gray-300 bg-gray-700 hover:bg-gray-600' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    Uploaded Files ({manualFiles.length})
-                  </div>
-                  {uploadedFilesCollapsed ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronUp className="w-4 h-4" />
-                  )}
-                </button>
-                
-                {!uploadedFilesCollapsed && (
-                  <div className="space-y-1 mb-4">
-                    {manualFiles.map((file, i) => (
-                      <div key={i} className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm ${
-                        file.error 
-                          ? darkMode 
-                            ? 'bg-red-900/30 border border-red-700 text-red-300' 
-                            : 'bg-red-50 border border-red-200 text-red-700'
-                          : darkMode
-                            ? 'bg-green-900/30 border border-green-700 text-green-300'
-                            : 'bg-green-50 border border-green-200 text-green-700'
-                      }`}>
-                        {file.error ? (
-                          <Shield className="w-3.5 h-3.5 flex-shrink-0" />
-                        ) : (
-                          <Target className="w-3.5 h-3.5 flex-shrink-0" />
-                        )}
-                        <span className="flex-1 truncate">{file.name}</span>
-                        {file.error && <span className="text-xs opacity-75">Error: {file.error}</span>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                {/* View Type Selector for Manual Mode */}
-                <div className={`mb-4 p-4 rounded-xl border ${
-                  darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <h4 className={`text-sm font-semibold mb-3 ${
-                    darkMode ? 'text-white' : 'text-gray-800'
-                  }`}>View Type</h4>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-3">
-                    <label className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      viewType === 'matches' 
-                        ? darkMode
-                          ? 'border-blue-400 bg-blue-900/30 text-blue-300'
-                          : 'border-blue-500 bg-blue-50 text-blue-700'
-                        : darkMode
-                          ? 'border-gray-600 bg-gray-800 hover:border-gray-500 text-gray-300'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5" />
-                        <div>
-                          <input 
-                            type="radio" 
-                            value="matches" 
-                            checked={viewType === 'matches'} 
-                            onChange={(e) => setViewType(e.target.value)}
-                            className="sr-only"
-                          />
-                          <span className="font-semibold text-sm">Matches</span>
-                          <p className="text-xs opacity-75">Each upload</p>
-                        </div>
-                      </div>
-                    </label>
-                    <label className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      viewType === 'aggregated' 
-                        ? darkMode
-                          ? 'border-blue-400 bg-blue-900/30 text-blue-300'
-                          : 'border-blue-500 bg-blue-50 text-blue-700'
-                        : darkMode
-                          ? 'border-gray-600 bg-gray-800 hover:border-gray-500 text-gray-300'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5" />
-                        <div>
-                          <input 
-                            type="radio" 
-                            value="aggregated" 
-                            checked={viewType === 'aggregated'} 
-                            onChange={(e) => setViewType(e.target.value)}
-                            className="sr-only"
-                          />
-                          <span className="font-semibold text-sm">Aggregated Stats</span>
-                          <p className="text-xs opacity-75">Combined data</p>
-                        </div>
-                      </div>
-                    </label>
-                    <label className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      viewType === 'teams' 
-                        ? darkMode
-                          ? 'border-yellow-400 bg-yellow-900/30 text-yellow-300'
-                          : 'border-yellow-500 bg-yellow-50 text-yellow-700'
-                        : darkMode
-                          ? 'border-gray-600 bg-gray-800 hover:border-gray-500 text-gray-300'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-5 h-5" />
-                        <div>
-                          <input 
-                            type="radio" 
-                            value="teams" 
-                            checked={viewType === 'teams'} 
-                            onChange={(e) => setViewType(e.target.value)}
-                            className="sr-only"
-                          />
-                          <span className="font-semibold text-sm">Team Rankings</span>
-                          <p className="text-xs opacity-75">Win/Loss records</p>
-                        </div>
-                      </div>
-                    </label>
-                    <label className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      viewType === 'tables' 
-                        ? darkMode
-                          ? 'border-green-400 bg-green-900/30 text-green-300'
-                          : 'border-green-500 bg-green-50 text-green-700'
-                        : darkMode
-                          ? 'border-gray-600 bg-gray-800 hover:border-gray-500 text-gray-300'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center gap-2">
-                        <Table className="w-5 h-5" />
-                        <div>
-                          <input 
-                            type="radio" 
-                            value="tables" 
-                            checked={viewType === 'tables'} 
-                            onChange={(e) => setViewType(e.target.value)}
-                            className="sr-only"
-                          />
-                          <span className="font-semibold text-sm">Data Tables</span>
-                          <p className="text-xs opacity-75">Interactive tables</p>
-                        </div>
-                      </div>
-                    </label>
-                    <label className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                      viewType === 'meta' 
-                        ? darkMode
-                          ? 'border-purple-400 bg-purple-900/30 text-purple-300'
-                          : 'border-purple-500 bg-purple-50 text-purple-700'
-                        : darkMode
-                          ? 'border-gray-600 bg-gray-800 hover:border-gray-500 text-gray-300'
-                          : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center gap-2">
-                        <Database className="w-5 h-5" />
-                        <div>
-                          <input 
-                            type="radio" 
-                            value="meta" 
-                            checked={viewType === 'meta'} 
-                            onChange={(e) => setViewType(e.target.value)}
-                            className="sr-only"
-                          />
-                          <span className="font-semibold text-sm">Meta Analysis</span>
-                          <p className="text-xs opacity-75">Build trends</p>
-                        </div>
-                      </div>
-                    </label>
-                  </div>
-                  
-                </div>
-                
-              </div>
-            )}
-          </div>
+          <SandboxPanel files={manualFiles} onAdd={processFiles} view={viewType} matchLinkFor={matchLinkFor}
+            onRemove={name => setManualFiles(prev => prev.filter(f => f.name !== name))}
+            onClear={() => setManualFiles([])} />
         )}
 
         {/* Character detail page - /characters/<name-slug> */}
@@ -1011,11 +791,16 @@ export default function App() {
             totalInScope={deepLinkedCharacter.totalInScope}
             scopeLabel={forTeam ? `${dataScopeLabel}, playing for ${forTeam.name}` : dataScopeLabel}
             darkMode={darkMode}
-            onBack={() => goBack(ROUTES.characters + scopeSearch)}
+            onBack={() => goBack(sandbox ? `${ROUTES.sandbox}${ROUTES.characters}` : ROUTES.characters + scopeSearch)}
             backLabel={backLabel}
             portraitId={deepLinkedCharacter.id || charIdFor(deepLinkedCharacter.label)}
-            onOpenMatch={handleNavigateToMatch}
+            matchLinkFor={perfLinkFor}
+            // Not in the Sandbox: its Performances chips are hidden, so the
+            // character filter would be invisible there.
+            performancesLink={sandbox || !deepLinkedCharacter.character ? null : performancesLinkFor(deepLinkedCharacter.character.name)}
+            shareable={!sandbox}
             charMap={charMap}
+            teamsRow={deepLinkedCharacter.teamsRow || null}
           />
         )}
 
@@ -1033,179 +818,17 @@ export default function App() {
         {/* Meta: Builds, AI strategies and Capsules (pages/MetaPage.jsx). */}
         {viewType === 'meta' && (!sandbox || manualFiles.some(f => !f.error)) && (
           <MetaPage builds={metaBuilds} aggregated={aggregatedData} charMap={charMap} idFor={charIdFor}
-            buildLinkFor={buildLinkFor} defaultFloor={buildFloor} loading={dataLoading} darkMode={darkMode} />
+            buildLinkFor={buildLinkFor} characterLinkFor={characterLinkFor} defaultFloor={buildFloor} loading={dataLoading} />
         )}
 
         {/* Matches (pages/MatchesPage.jsx) and one match (pages/MatchPage.jsx). */}
         {viewType === 'matches' && !matchParam && (!sandbox || validUploadFiles.length > 0) && (
           <MatchesPage rows={listRows} linkFor={r => matchLinkFor(r.path)} loading={dataLoading}
-            performances={(
-              <DataTable
-                data={prepareMatchDetailsData(aggregatedData)}
-                columns={getMatchDetailsTableConfig(darkMode, handleNavigateToMatch).columns}
-                title="Performances"
-                exportFileName={`performances_${new Date().toISOString().split('T')[0]}`}
-                onExport={handleMatchDetailsExport}
-                darkMode={darkMode}
-              />
-            )} />
+            perf={{ rows: perfRows, linkFor: perfLinkFor, idFor: charIdFor }} />
         )}
         {viewType === 'matches' && matchParam && (
           <MatchPage state={matchState} charMap={charMap} characterLinkFor={characterLinkFor} teamLinkFor={teamLinkFor} shareable={!sandbox}
             onBack={() => goBack(sandbox ? ROUTES.sandbox : ROUTES.matches + scopeOnlySearch)} backLabel={backLabel} />
-        )}
-
-        {/* Data Tables View */}
-        {((mode === 'reference' && viewType === 'tables') || 
-          (mode === 'manual' && viewType === 'tables' && manualFiles.filter(f => !f.error).length > 0)) && (
-          <div className="space-y-6">
-            {/* Character Statistics Table */}
-            {aggregatedData && Object.keys(aggregatedData).length > 0 && (
-              <>
-                {/* Excel Export Button */}
-                <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        Export Data Tables
-                      </h3>
-                      <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Download all data tables to Excel (.xlsx) with full formatting
-                      </p>
-                    </div>
-                    <button
-                      onClick={handleExcelExport}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl ${
-                        darkMode 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'bg-blue-500 hover:bg-blue-600 text-white'
-                      }`}
-                    >
-                      <Download size={20} />
-                      Export to Excel
-                    </button>
-                  </div>
-                </div>
-
-                {/* Character Averages Table */}
-                <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-                  <div className="mb-4">
-                    <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                      Character Performance Averages
-                    </h3>
-                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Aggregated statistics showing overall performance across all matches
-                    </p>
-                  </div>
-                  <DataTable
-                    data={prepareCharacterAveragesData(aggregatedData)}
-                    columns={getCharacterAveragesTableConfig(darkMode).columns}
-                    title="Character Performance Averages"
-                    exportFileName={`character_averages_${new Date().toISOString().split('T')[0]}`}
-                    onExport={handleCharacterAveragesExport}
-                    darkMode={darkMode}
-                    selectable={true}
-                    onSelectionChange={(selectedRows) => {
-                      console.log('Selected characters (averages):', selectedRows);
-                    }}
-                  />
-                </div>
-
-                {/* Match Details Table */}
-                <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-                  <div className="mb-4">
-                    <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                      Individual Match Performance Details
-                    </h3>
-                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Per-match statistics for detailed analysis and trend identification
-                    </p>
-                  </div>
-                  <DataTable
-                    data={prepareMatchDetailsData(aggregatedData)}
-                    columns={getMatchDetailsTableConfig(darkMode, handleNavigateToMatch).columns}
-                    title="Individual Match Performance Details"
-                    exportFileName={`match_details_${new Date().toISOString().split('T')[0]}`}
-                    onExport={handleMatchDetailsExport}
-                    darkMode={darkMode}
-                    selectable={true}
-                    onSelectionChange={(selectedRows) => {
-                      console.log('Selected match details:', selectedRows);
-                    }}
-                  />
-                </div>
-              </>
-            )}
-
-            {/* Position Analysis Table - DISABLED FOR NOW */}
-            {/* {positionData && Object.keys(positionData).length > 0 && (
-              <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-                <DataTable
-                  data={preparePositionData(positionData)}
-                  columns={getPositionTableConfig(darkMode).columns}
-                  title="Position-Based Performance Analysis"
-                  exportFileName={`position_analysis_${new Date().toISOString().split('T')[0]}`}
-                  onExport={(exportData, filename) => {
-                    console.log('Position data export requested:', { exportData, filename });
-                  }}
-                  darkMode={darkMode}
-                  selectable={true}
-                  onSelectionChange={(selectedRows) => {
-                    console.log('Selected position data:', selectedRows);
-                  }}
-                />
-              </div>
-            )} */}
-
-            {/* Meta Analysis Table - DISABLED FOR NOW */}
-            {/* {aggregatedData && Object.keys(aggregatedData).length > 0 && (
-              <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-                <DataTable
-                  data={(() => {
-                    // Create meta data from aggregated character data
-                    const capsuleUsage = {};
-                    Object.values(aggregatedData).forEach(char => {
-                      if (char.equippedCapsules) {
-                        char.equippedCapsules.forEach(capsule => {
-                          if (!capsuleUsage[capsule.id]) {
-                            capsuleUsage[capsule.id] = {
-                              name: capsule.name,
-                              usage: 0,
-                              winRate: 0,
-                              characterCount: 0,
-                              type: capsule.type || 'Capsule'
-                            };
-                          }
-                          capsuleUsage[capsule.id].usage++;
-                          capsuleUsage[capsule.id].winRate += char.winRate || 0;
-                          capsuleUsage[capsule.id].characterCount++;
-                        });
-                      }
-                    });
-                    
-                    return Object.values(capsuleUsage)
-                      .map(capsule => ({
-                        ...capsule,
-                        winRate: Math.round(capsule.winRate / capsule.characterCount)
-                      }))
-                      .sort((a, b) => b.usage - a.usage)
-                      .slice(0, 50); // Top 50 capsules
-                  })()}
-                  columns={getMetaTableConfig(darkMode).columns}
-                  title="Capsule Meta Analysis"
-                  exportFileName={`meta_analysis_${new Date().toISOString().split('T')[0]}`}
-                  onExport={(exportData, filename) => {
-                    console.log('Meta data export requested:', { exportData, filename });
-                  }}
-                  darkMode={darkMode}
-                  selectable={true}
-                  onSelectionChange={(selectedRows) => {
-                    console.log('Selected meta data:', selectedRows);
-                  }}
-                />
-              </div>
-            )} */}
-          </div>
         )}
 
         {/* Teams (pages/TeamsPage.jsx) and one team (pages/TeamPage.jsx). */}

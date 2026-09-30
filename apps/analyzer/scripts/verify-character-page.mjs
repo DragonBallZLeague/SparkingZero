@@ -37,6 +37,7 @@ import { buildCharacterSlugIndex, characterUrlKey, resolveCharacterParam } from 
 import { tierForScore } from '../src/utils/performanceTier.js';
 import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
 import { buildKeyOf, buildCode, findBuildByCode } from '../src/utils/buildKey.js';
+import { averageForms } from '../src/utils/formBreakdown.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -120,8 +121,12 @@ const readFields = [...new Set(
 )].sort();
 
 console.log('Fields CharacterPage reads off a character row (' + readFields.length + ', scraped from source):');
+// Since the tabs moved onto the table template (2026-09-29) the page reads
+// few fields directly: Usage, Builds, Forms and Matches work from the row's
+// match rows (through filterAggregatedData, leagueBuilds, averageForms and
+// performanceRows, each checked by its own verifier), so 9 is the real count.
 check('the scrape found a plausible number of fields',
-  readFields.length >= 15,
+  readFields.length >= 8,
   'only found ' + readFields.length + ' - if the page moved, this verifier is checking nothing');
 const missingEverywhere = [];
 for (const field of readFields) {
@@ -228,12 +233,29 @@ const badBuildScore = withBuilds.find(r =>
 check('topBuilds scores are finite when present', !badBuildScore,
   badBuildScore ? 'e.g. ' + badBuildScore.name : '');
 
-// PerFormStatsDisplayAggregated sorts on formNumber, so it must be numeric.
-const withForms = rows.filter(r => r.hasMultipleForms && Array.isArray(r.formStatsArray) && r.formStatsArray.length);
-check('multi-form rows carry formStatsArray', withForms.length > 0, withForms.length + ' rows');
-const badFormNum = withForms.find(r => !r.formStatsArray.every(f => Number.isFinite(f.formNumber)));
-check('every form entry has a numeric formNumber', !badFormNum,
-  badFormNum ? 'e.g. ' + badFormNum.name : '');
+// The Forms tab averages each match's forms (averageForms over the match
+// rows' `forms`, matchForms() as the Match page reads them).
+const withForms = rows.filter(r => (r.matches || []).some(m => (m.formChangeCount || 0) > 0));
+let usableAll = 0, transformedAll = 0;
+const formBad = [];
+for (const r of withForms) {
+  const { forms, transformed, usable } = averageForms(r.matches);
+  usableAll += usable;
+  transformedAll += transformed;
+  if (!usable) continue;
+  if (forms[0].reached !== usable) formBad.push(`${r.name}: its first form is reached in ${forms[0].reached} of ${usable}`);
+  if (forms.some(f => f.reached > usable)) formBad.push(`${r.name}: a form reached more often than it transformed`);
+  // The form every match began in is the starting form, not a reached one.
+  if (!forms[0].start || forms.filter(f => f.start).length !== 1) formBad.push(`${r.name}: its first form is not its one starting form`);
+  for (const f of forms) {
+    const sum = r.matches.reduce((n, m) => n + ((m.forms || []).find(x => x.id === f.id)?.damageDone || 0), 0);
+    if (Math.abs(f.damageDone * f.reached - sum) > 1) formBad.push(`${r.name} ${f.name}: average damage ${f.damageDone} x ${f.reached} is not ${sum}`);
+  }
+}
+check(`transformed matches carry their forms (${usableAll} of ${transformedAll}; the rest have no per-form figures)`,
+  withForms.length > 0 && usableAll > 0 && transformedAll - usableAll <= 25, `${transformedAll - usableAll} left out`);
+check('the Forms tab\'s averages: the first form in every match and marked as the start, none reached more often, averages that add back up',
+  !formBad.length, formBad.slice(0, 3).join('\n         '));
 
 // ---- 3. A slug actually reaches a row --------------------------------------
 console.log('\nThe slug -> name -> row join the deep link depends on:');
@@ -342,6 +364,69 @@ console.log('\nThe build picker lists every build once, with the leaderboard\'s 
   check(`${total} builds: each build's filtered row has the build's match count`, countOff.length === 0, countOff.slice(0, 3).join('; '));
   check('the builds of each character cover all of its matches', coverOff.length === 0, coverOff.slice(0, 3).join('; '));
   check('all six fighting styles place for every character', unplaced.length === 0, unplaced.slice(0, 3).join('; '));
+}
+
+// The page's cuts (`pos=`, `build=`, and `for=`'s team) go through one helper,
+// which must agree with the leaderboard's own build filter and split a
+// character's matches exactly across its positions.
+console.log('\nThe page cuts (position, build, team) agree with the leaderboard:');
+{
+  const { characterBuilds } = await import('../src/pages/character/overview/characterBuilds.js');
+  const { cutCharacter, readCharacterCuts } = await import('../src/pages/character/characterCuts.js');
+  const buildOff = [], posOff = [], bothOff = [];
+  for (const r of rows.slice(0, 60)) {
+    for (const b of characterBuilds(r, charMap).slice(0, 3)) {
+      const c = cutCharacter(r, { build: b.code }, charMap);
+      if (!c || c.matchCount !== b.count || Math.abs(c.combatPerformanceScore - b.row.combatPerformanceScore) > 1e-9) buildOff.push(`${r.name} ${b.code}`);
+    }
+    const byPos = [1, 2, 3].map(p => cutCharacter(r, { pos: p }, charMap));
+    const n = byPos.reduce((s, c) => s + (c ? c.matchCount : 0), 0);
+    const placed = (r.matches || []).filter(m => [1, 2, 3].includes(Number(m.position))).length;
+    if (n !== placed) posOff.push(`${r.name}: ${n} of ${placed}`);
+    const tag = (r.matches || [])[0] && r.matches[0].team;
+    const pos = (r.matches || [])[0] && Number(r.matches[0].position);
+    const both = cutCharacter(r, { pos, team: tag }, charMap);
+    const want = (r.matches || []).filter(m => Number(m.position) === pos && m.team === tag).length;
+    if (!both || both.matchCount !== want) bothOff.push(r.name);
+  }
+  check('a build cut is the leaderboard build filter\'s row', buildOff.length === 0, buildOff.slice(0, 3).join('; '));
+  check('the position cuts split each character\'s matches exactly', posOff.length === 0, posOff.slice(0, 3).join('; '));
+  check('cuts combine (position and team together)', bothOff.length === 0, bothOff.slice(0, 3).join('; '));
+  const P = q => readCharacterCuts(new URLSearchParams(q));
+  check('pos= reads back 1-3 only', P('pos=2').pos === 2 && P('pos=4').pos === null && P('pos=1,2').pos === null && P('').pos === null);
+  check('no cuts gives the row itself', cutCharacter(rows[0], {}, charMap) === rows[0]);
+
+  // A form cut: the matches that reached the form, and formSlices() each as
+  // the form alone (the Match page's rule), its amounts a share of all forms.
+  const { formSlices, formSlug, reachedForm } = await import('../src/pages/character/characterCuts.js');
+  const transformedRows = rows.filter(r => (r.matches || []).some(m => Array.isArray(m.forms) && m.forms.length > 1));
+  const reachOff = [], shareOff = [], sliceOff = [], hitOff = [];
+  for (const r of transformedRows.slice(0, 40)) {
+    const slugs = [...new Set(r.matches.flatMap(m => (m.forms || []).map(f => formSlug(f.name))))];
+    for (const slug of slugs) {
+      const cut = cutCharacter(r, { form: slug }, charMap);
+      const want = r.matches.filter(m => reachedForm(m, slug)).length;
+      if (!cut || cut.matchCount !== want) reachOff.push(`${r.name} ${slug}`);
+    }
+    // One match: its forms' shares add up to the whole.
+    const m = r.matches.find(x => Array.isArray(x.forms) && new Set(x.forms.map(f => formSlug(f.name))).size > 1);
+    if (m) {
+      const own = [...new Set(m.forms.map(f => formSlug(f.name)))];
+      const sum = own.reduce((s, slug) => s + (formSlices([m], slug).shares.damageDone || 0), 0);
+      const total = m.forms.reduce((s, f) => s + (f.stats.damageDone || 0), 0);
+      if (total > 0 && Math.abs(sum - 1) > 1e-9) shareOff.push(`${r.name}: ${sum}`);
+      const { slices } = formSlices([m], own[0]);
+      const f0 = m.forms.filter(f => formSlug(f.name) === own[0]);
+      const dmg = f0.reduce((s, f) => s + (f.stats.damageDone || 0), 0);
+      if (slices.length !== 1 || slices[0].damageDone !== dmg || slices[0].team !== m.team || slices[0].position !== m.position || slices[0].name !== m.name) sliceOff.push(r.name);
+      if (!m.forms[0].stats.hasAdditionalCounts && slices[0] && slices[0].s1HitBlast !== undefined) hitOff.push(r.name);
+    }
+  }
+  check(`a form cut keeps the matches that reached it (${transformedRows.length} characters change form)`, reachOff.length === 0, reachOff.slice(0, 3).join('; '));
+  check('a match\'s forms\' shares add up to the whole', shareOff.length === 0, shareOff.slice(0, 3).join('; '));
+  check('a slice is the form\'s own figures in the match\'s place', sliceOff.length === 0, sliceOff.slice(0, 3).join('; '));
+  check('a slice from a file without hit counts has no hit rate', hitOff.length === 0, hitOff.slice(0, 3).join('; '));
+  check('form= reads back', readCharacterCuts(new URLSearchParams('form=super-saiyan-3')).form === 'super-saiyan-3');
 }
 
 console.log();

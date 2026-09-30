@@ -74,6 +74,20 @@ export function rowsForPositions(aggregated, positions, charMap) {
  * The legend line under a list of character rows. When every row is a thin
  * sample nothing is faded (fadesThinSamples), and the line says so instead.
  */
+/** A name as plain lowercase words: "Goku (Z - End)" is "goku z end". */
+const words = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, ' ').trim();
+
+/**
+ * The Characters page's search: every word typed is somewhere in the name,
+ * punctuation ignored, so "goku end" finds "Goku (Z - End) Super Saiyan".
+ */
+export function characterMatchesQuery(row, q) {
+  const want = words(q);
+  if (!want) return true;
+  const name = ` ${words(row.name)}`;
+  return want.split(' ').every(w => name.includes(w));
+}
+
 export function fadeLegend(rows) {
   if (rows.length && !fadesThinSamples(rows)) return 'Every character here has fewer than 5 matches, so none is faded.';
   const thin = rows.filter(isProvisionalTier).length;
@@ -104,15 +118,28 @@ export function sortRows(rows, { sort, dir }) {
  * Where each value sits in its column, as the share of the pool it beats
  * (0..1) in the column's "better" direction. Ranks are coloured only at the
  * ends - the top and bottom fifth - so a pool under 5 gets no colour.
+ *
+ * A value the stat does not have for a row (null) is left out of the pool and
+ * gets no place. Binary searches, since the Performances table's pool is every
+ * character's every match (thousands of rows).
  */
 export function placements(rows, stat) {
-  if (!stat.dir || rows.length < 5) return () => null;
-  const vals = rows.map(stat.get).sort((a, b) => a - b);
+  if (!stat.dir) return () => null;
+  const vals = rows.map(stat.get).filter(v => v !== null && v !== undefined).sort((a, b) => a - b);
   const n = vals.length;
+  if (n < 5) return () => null;
+  // The first index whose value is above v (orEqual) or at least v.
+  const bound = (v, orEqual) => {
+    let lo = 0, hi = n;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (vals[mid] < v || (orEqual && vals[mid] === v)) lo = mid + 1; else hi = mid;
+    }
+    return lo;
+  };
   return v => {
-    let lo = 0; while (lo < n && vals[lo] < v) lo++;
-    let hi = lo; while (hi < n && vals[hi] === v) hi++;
-    const p = (lo + hi - 1) / 2 / (n - 1);
+    if (v === null || v === undefined) return null;
+    const p = (bound(v, false) + bound(v, true) - 1) / 2 / (n - 1);
     return stat.dir > 0 ? p : 1 - p;
   };
 }

@@ -42,8 +42,8 @@ import { skillSlotUses, styleHits } from './actionCodes.js';
  *     Pass `{ shared: true }` for such a record; sharedFormSnapshots() finds
  *     them.
  *
- * Shaped so an average over many matches (the Character page's Forms tab)
- * can fill the same fields.
+ * averageForms() below fills the same fields with averages over many matches,
+ * for the Character page's Forms tab.
  */
 export function matchForms(record, characterIdRecord, charMap = {}, { shared = false } = {}) {
   const history = record && record.formChangeHistory;
@@ -131,6 +131,9 @@ export function matchForms(record, characterIdRecord, charMap = {}, { shared = f
           exa1Count: at.skills.exa1 - (i ? before.skills.exa1 : 0),
           exa2Count: at.skills.exa2 - (i ? before.skills.exa2 : 0),
           shotEnergyBulletCount: f.shotEnergyBulletCount || 0,
+          // The Overview's Blasts and Ultimates style rates (utils/characterOverview.js).
+          specialMovesUsed: f.specialMovesUsed || 0,
+          ultimatesUsed: f.ultimatesUsed || 0,
           rushHits: at.hits.rush - (i ? before.hits.rush : 0),
           heavyHits: at.hits.heavy - (i ? before.hits.heavy : 0),
           maxComboNum: best(i, 'combo'),
@@ -153,6 +156,85 @@ export function matchForms(record, characterIdRecord, charMap = {}, { shared = f
       };
     }),
   };
+}
+
+/**
+ * A character's forms over many matches, for the Character page's Forms tab:
+ * each match's matchForms() (the aggregation keeps them on its match rows as
+ * `forms`), averaged per form over the matches that reached it, in the order
+ * the forms are usually taken. Only matches it transformed in count: a form's
+ * figures are what it did in that form when the character changed form, as
+ * the Match page shows one match. Matches whose file gives no per-form figures
+ * (matchForms()'s 'missing' and 'shared') are left out, and counted.
+ *
+ *   { forms, transformed, usable }
+ *
+ * Each form has matchForms()'s fields, as averages per match that reached it,
+ * plus `reached` (how many of the `usable` matches reached it) and `start`
+ * (true for the form every one of them began in: it is not reached, it is
+ * where the character starts, the league's point on 2026-09-30). Rates are
+ * worked from the sums (efficiency from total dealt over total taken, damage
+ * per second from total damage over total time). A move's hit/thrown averages
+ * over the matches that record hits, when any do. HP left averages over the
+ * matches where the form has its own (not one that ended in a fusion).
+ */
+export function averageForms(matches) {
+  const transformed = (matches || []).filter(m => (m.formChangeCount || 0) > 0);
+  const usable = transformed.filter(m => Array.isArray(m.forms) && m.forms.length);
+  const by = new Map();
+  const MOVES = ['s1', 's2', 'ult'];
+  for (const m of usable) {
+    m.forms.forEach((f, i) => {
+      let a = by.get(f.id);
+      if (!a) {
+        a = { id: f.id, name: f.name, fusion: null, n: 0, at: 0, first: 0, seconds: 0, damageDone: 0, damageTaken: 0,
+          kiFired: 0, skills: 0, kills: 0, hp: 0, hpN: 0, hpMax: 0 };
+        for (const k of MOVES) Object.assign(a, { [`${k}Hit`]: 0, [`${k}KnownThrown`]: 0, [`${k}Known`]: 0, [`${k}Thrown`]: 0 });
+        by.set(f.id, a);
+      }
+      a.n++;
+      a.at += i;
+      if (i === 0) a.first++;
+      if (f.fusion && !a.fusion) a.fusion = f.fusion;
+      for (const k of ['seconds', 'damageDone', 'damageTaken', 'kiFired', 'skills', 'kills']) a[k] += f[k] || 0;
+      for (const k of MOVES) {
+        const [hit, thrown] = f[k];
+        a[`${k}Thrown`] += thrown || 0;
+        if (hit !== null) { a[`${k}Hit`] += hit; a[`${k}KnownThrown`] += thrown || 0; a[`${k}Known`]++; }
+      }
+      if (f.hpLeft !== null && f.hpLeft !== undefined) { a.hp += f.hpLeft; a.hpN++; }
+      a.hpMax = Math.max(a.hpMax, f.hpMax || 0);
+    });
+  }
+  const forms = [...by.values()]
+    .sort((x, y) => x.at / x.n - y.at / y.n || y.n - x.n)
+    .map(a => {
+      const avg = k => a[k] / a.n;
+      const move = k => (a[`${k}Known`]
+        ? [a[`${k}Hit`] / a[`${k}Known`], a[`${k}KnownThrown`] / a[`${k}Known`]]
+        : [null, a[`${k}Thrown`] / a.n]);
+      return {
+        id: a.id,
+        name: a.name,
+        fusion: a.fusion,
+        reached: a.n,
+        start: a.first > 0 && a.first === usable.length,
+        seconds: avg('seconds'),
+        damageDone: avg('damageDone'),
+        damageTaken: avg('damageTaken'),
+        efficiency: combatEfficiency(a.damageDone, a.damageTaken),
+        dps: a.seconds > 0 ? a.damageDone / a.seconds : 0,
+        s1: move('s1'),
+        s2: move('s2'),
+        ult: move('ult'),
+        kiFired: avg('kiFired'),
+        skills: avg('skills'),
+        kills: avg('kills'),
+        hpLeft: a.hpN ? a.hp / a.hpN : null,
+        hpMax: a.hpMax,
+      };
+    });
+  return { forms, transformed: transformed.length, usable: usable.length };
 }
 
 /** A transformed record's forms before its last: the ids its snapshots are keyed by. */

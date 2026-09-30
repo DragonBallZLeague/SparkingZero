@@ -1,12 +1,20 @@
 import React from 'react';
 import { rankColor, provisionalColor, styleColor, NEUTRAL } from '../../../utils/overviewPalette.js';
+import { PICKED } from '../../../components/FormBreakdown.jsx';
 import { fmt, perMatch, mmss, percent, RankText, Tip, TipTable, MedianTrack } from './parts.jsx';
 
 /**
  * The Overview's top half: five headline tiles, then six move cards.
  * Everything is ranked against the frozen league reference (style-baseline.json);
  * colour appears only for the top and bottom fifth of the league.
+ *
+ * With one form picked (`shares`, pages/character/characterCuts.js formSlices),
+ * the figures are the form's own. Rates (efficiency, damage per second, hit
+ * rates) keep the league comparison; amounts (damage, time, ki blasts, skills)
+ * are only part of a match, so they show as a share of all its forms instead,
+ * as the Match page shows a picked form.
  */
+const sharePct = v => (v === null || v === undefined ? null : Math.round(v * 100));
 
 /** A hit-rate donut with a light tick where the league median sits. The Match page's move figures draw it too. */
 export function Ring({ rate, color, median, dim, darkMode, size = 56 }) {
@@ -53,7 +61,7 @@ export function VolumeCircle({ value, median, top, color, darkMode, size = 56 })
 
 const label = darkMode => `text-[11px] font-semibold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-gray-500'}`;
 
-export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
+export function HeadlineTiles({ overview: o, place, baseline, darkMode, shares = null }) {
   const M = baseline.medians;
   // [label, value, unit, goodness %, rank key, league value]
   // Damage taken: less is better, so its goodness is the inverse of "more".
@@ -66,6 +74,9 @@ export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
     ['Damage / sec', fmt(o.dps), '', place.pct.dps, 'dps', fmt(M.dps)],
     ['Battle time', mmss(o.avgTime), 'avg', place.pct.avgTime, 'avgTime', mmss(M.avgTime)],
   ];
+  // One form: its amounts as a share of all its forms.
+  const partOf = { avgDealt: 'damageDone', avgTaken: 'damageTaken', avgTime: 'battleTime' };
+  const part = key => (shares && partOf[key] ? sharePct(shares[partOf[key]]) : null);
   return (
     <div className={`grid grid-cols-2 sm:grid-cols-5 gap-px rounded-[10px] overflow-hidden border border-solid ${
       darkMode ? 'bg-slate-400/[.16] border-gray-700' : 'bg-gray-200 border-gray-200'
@@ -79,14 +90,23 @@ export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
               {val}
               {unit && <span className={`text-xs font-medium ml-1 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>{unit}</span>}
             </div>
-            <MedianTrack p={good} color={color || NEUTRAL[darkMode ? 'dark' : 'light']} fade={!color} dot darkMode={darkMode} />
-            {/* The league median sits on the rank's line: these are the headline
-                comparisons, the tiles have room, and a phone cannot hover. */}
-            {/* Wraps on a phone, where a half-width tile cannot fit both. */}
-            <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 mt-2 text-xs">
-              <RankText rank={place.rank[key]} pool={place.pool[key]} color={color} darkMode={darkMode} />
-              <span className={`whitespace-nowrap ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>League {league}</span>
-            </div>
+            {part(key) !== null ? (
+              <>
+                <MedianTrack p={part(key)} color={PICKED} tick={false} darkMode={darkMode} />
+                <div className="mt-2 text-xs whitespace-nowrap text-slate-400">{part(key)}% of all its forms</div>
+              </>
+            ) : (
+              <>
+                <MedianTrack p={good} color={color || NEUTRAL[darkMode ? 'dark' : 'light']} fade={!color} dot darkMode={darkMode} />
+                {/* The league median sits on the rank's line: these are the headline
+                    comparisons, the tiles have room, and a phone cannot hover. */}
+                {/* Wraps on a phone, where a half-width tile cannot fit both. */}
+                <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 mt-2 text-xs">
+                  <RankText rank={place.rank[key]} pool={place.pool[key]} color={color} darkMode={darkMode} />
+                  <span className={`whitespace-nowrap ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>League {league}</span>
+                </div>
+              </>
+            )}
           </div>
         );
       })}
@@ -97,7 +117,7 @@ export function HeadlineTiles({ overview: o, place, baseline, darkMode }) {
 /** A hit rate is only ranked from this many throws up (6/6 is 100% by luck). */
 export const MIN_THROWS = 10;
 
-export function MoveCards({ overview: o, place, baseline, darkMode }) {
+export function MoveCards({ overview: o, place, baseline, darkMode, shares = null }) {
   const M = baseline.medians;
   const faint = darkMode ? '#64748b' : '#9ca3af';
   const cardClass = `flex items-center gap-2.5 rounded-[10px] border border-solid px-3 py-2.5 min-w-0 h-full ${
@@ -147,7 +167,21 @@ export function MoveCards({ overview: o, place, baseline, darkMode }) {
   // Ki blasts and skills are VOLUME: how much, not how well - #1 is the heaviest
   // user, and the rank takes the end colours like every other. Ki blasts have no hit rate at all - a deflected enemy blast that lands
   // is credited as the deflector's hit (docs/ACTION_CODES.md).
-  const volumeCard = (name, per, key, styleKey, unit, rowLabel, digits) => {
+  const volumeCard = (name, per, key, styleKey, unit, rowLabel, digits, shareKey) => {
+    const part = shares ? sharePct(shares[shareKey]) : null;
+    if (shares) {
+      // One form: how much of all its forms' use fell in this one.
+      return (
+        <div className={cardClass}>
+          <VolumeCircle value={part || 0} median={null} top={100} color={styleColor(styleKey, darkMode)} darkMode={darkMode} />
+          <div className="min-w-0">
+            <div className={label(darkMode)}>{name}</div>
+            <div className={value}>{fmt(per, digits)}<span className={`${small} ml-1`}>{unit}</span></div>
+            <div className={caption} style={{ color: faint }}>{per ? `${part ?? 0}% of all its forms` : 'Never used'}</div>
+          </div>
+        </div>
+      );
+    }
     const tip = (
       <TipTable darkMode={darkMode} title={name}
         rows={[[rowLabel, fmt(per, digits), fmt(M[key], digits)]]}
@@ -175,9 +209,9 @@ export function MoveCards({ overview: o, place, baseline, darkMode }) {
       {hitCard('Super 1', o.blasts.s1, o.blastTotals.s1, 's1Rate', 's1Thrown', 'blast')}
       {hitCard('Super 2', o.blasts.s2, o.blastTotals.s2, 's2Rate', 's2Thrown', 'blast')}
       {hitCard('Ultimate', o.blasts.ult, o.blastTotals.ult, 'ultRate', 'ultThrown', 'ult')}
-      {volumeCard('Ki blasts', o.kiFired, 'kiFired', 'ki', 'fired', 'Fired per match', 1)}
-      {volumeCard('Skill 1', o.skills.s1, 'skill1', 'skill', 'uses', 'Uses per match', 2)}
-      {volumeCard('Skill 2', o.skills.s2, 'skill2', 'skill', 'uses', 'Uses per match', 2)}
+      {volumeCard('Ki blasts', o.kiFired, 'kiFired', 'ki', 'fired', 'Fired per match', 1, 'shotEnergyBulletCount')}
+      {volumeCard('Skill 1', o.skills.s1, 'skill1', 'skill', 'uses', 'Uses per match', 2, 'exa1Count')}
+      {volumeCard('Skill 2', o.skills.s2, 'skill2', 'skill', 'uses', 'Uses per match', 2, 'exa2Count')}
     </div>
   );
 }

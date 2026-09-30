@@ -18,10 +18,12 @@
 
 /* Enhanced Dragon Ball Sparking Zero Analyzer */
 
-/* Smooth transitions for all interactive elements */
+/* No global transition here: `transition: all` on every element made anything
+   positioned as it opens (tooltips, the scope bar's menus) slide in from its
+   starting corner. Elements that want one say so with Tailwind's
+   transition-colors. Removed 2026-09-29. */
 * {
   box-sizing: border-box;
-  transition: all 0.2s ease-in-out;
 }
 
 body {
@@ -438,13 +440,6 @@ body {
   display: none;
 }
 
-/* Focus ring improvements */
-input:focus,
-select:focus,
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
 
 /* Card hover effects */
 .hover-lift:hover {

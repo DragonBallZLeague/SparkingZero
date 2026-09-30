@@ -21,9 +21,13 @@ import { CHAR_STATS, statByKey, placements } from './characterRows.js';
  * A desktop shows every column and the tier plate; a phone shows the score as a
  * tier pill and the two stats in `phoneStats`.
  *
- * `linkFor(name)` returning null (the Sandbox) makes the rows plain.
+ * `linkFor(name)` returning null makes the rows plain (nothing does today: in the Sandbox a row opens the Sandbox's own character page).
  */
-export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone, phoneStats, idFor, linkFor }) {
+export default function CharacterTable({
+  rows, pool, sort, dir, onSort, isPhone, phoneStats, idFor, linkFor,
+  // A searched table keeps each character's place in the whole sorted list.
+  rankOf = null, empty = 'No characters.',
+}) {
   const stats = isPhone ? phoneStats.map(statByKey).filter(Boolean) : CHAR_STATS;
   const place = useMemo(() => Object.fromEntries(CHAR_STATS.map(s => [s.key, placements(pool, s)])), [pool]);
   const max = useMemo(() => Object.fromEntries(CHAR_STATS.map(s => [s.key, Math.max(0, ...pool.map(s.get))])), [pool]);
@@ -55,7 +59,7 @@ export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone,
         return (
           <Row key={r.name} to={to || undefined} style={grid}
             className="min-h-[46px] px-2.5 sm:px-3.5 no-underline text-inherit border-0 border-b border-solid border-gray-700/50 last:border-b-0 hover:bg-slate-400/5">
-            {!isPhone && <div className="text-right text-xs text-slate-500 tabular-nums">{i + 1}</div>}
+            {!isPhone && <div className="text-right text-xs text-slate-500 tabular-nums">{rankOf ? rankOf(r) : i + 1}</div>}
             <div className="flex min-w-0 items-center gap-2.5">
               <Portrait id={idFor(r.name)} name={r.name} size={34} />
               <span className="font-semibold leading-[1.2] text-slate-50 text-[13px] sm:text-[14px]">{r.name}</span>
@@ -69,6 +73,7 @@ export default function CharacterTable({ rows, pool, sort, dir, onSort, isPhone,
           </Row>
         );
       })}
+      {!rows.length && <div className="p-7 text-center text-slate-400">{empty}</div>}
     </div>
   );
 }

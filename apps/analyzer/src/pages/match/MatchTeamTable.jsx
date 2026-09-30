@@ -25,10 +25,11 @@ const pctOf = (a, b) => (b > 0 ? Math.round((a / b) * 100) : 0);
  * The header is tinted in its result's colour, green for the winner and red
  * for the loser, as the tier list tints each tier's row.
  *
- * `side` is one of readMatch()'s sides.
+ * `side` is one of readMatch()'s sides; `opened` are the keys of characters
+ * whose rows start open (the Match page's `?open=`), marked for its scroll.
  */
-export default function MatchTeamTable({ side, isPhone, characterLinkFor, teamLinkFor, characterIdRecord, charMap }) {
-  const [open, setOpen] = useState(() => new Set());
+export default function MatchTeamTable({ side, isPhone, characterLinkFor, teamLinkFor, characterIdRecord, charMap, opened = [] }) {
+  const [open, setOpen] = useState(() => new Set(opened));
   const toggle = key => setOpen(prev => {
     const next = new Set(prev);
     if (next.has(key)) next.delete(key); else next.add(key);
@@ -87,7 +88,7 @@ export default function MatchTeamTable({ side, isPhone, characterLinkFor, teamLi
           const build = s.buildComposition && s.buildComposition.label ? s.buildComposition.label : 'No Build';
           const pos = POSITION_NAMES[c.position];
           return (
-            <div key={c.key} className="border-0 border-b border-solid border-gray-700/50">
+            <div key={c.key} data-opened={opened.includes(c.key) ? '' : undefined} className="border-0 border-b border-solid border-gray-700/50">
               <div role="button" tabIndex={0} aria-expanded={isOpen}
                 onClick={() => toggle(c.key)}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(c.key); } }}

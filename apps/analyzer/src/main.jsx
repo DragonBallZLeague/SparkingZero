@@ -1,11 +1,11 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { restoreDeepLink } from '@szl/ui';
 // Tailwind utilities must load BEFORE App.css - see src/index.css for why.
 import './index.css';
 import App from './App';
-import { ROUTES } from './routes.js';
+import { ROUTES, REDIRECTS } from './routes.js';
 
 // Must run BEFORE BrowserRouter reads the location. GitHub Pages serves the
 // site-root 404.html for any path that is not a real file, so a shared link
@@ -22,6 +22,12 @@ restoreDeepLink(import.meta.env.BASE_URL);
 // The trailing catch-all is deliberate. An unknown or stale URL renders the app
 // rather than a blank page, which matters because links to this app get pasted
 // into Discord and outlive whatever scheme was current when they were posted.
+/** An old path's new home, keeping the query string (the scope). */
+function Redirect({ to }) {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: to, search }} replace />;
+}
+
 const root = createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter basename={import.meta.env.BASE_URL}>
@@ -34,7 +40,7 @@ root.render(
       <Route path={ROUTES.matches} element={<App />} />
       <Route path={`${ROUTES.matches}/:matchParam`} element={<App />} />
       <Route path={`${ROUTES.sandbox}/*`} element={<App />} />
-      <Route path={ROUTES.tables} element={<App />} />
+      {REDIRECTS.map(r => <Route key={r.from} path={r.from} element={<Redirect to={r.to} />} />)}
       <Route path={ROUTES.meta} element={<App />} />
       <Route path="*" element={<App />} />
     </Routes>

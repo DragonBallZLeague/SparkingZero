@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton.jsx';
 import TeamLogo from '../components/TeamLogo.jsx';
@@ -8,6 +8,8 @@ import { useIsPhone } from '../shell/useMediaQuery.js';
 import { ResultBadge } from './team/LineupList.jsx';
 import MatchTeamTable from './match/MatchTeamTable.jsx';
 import { teamName } from '../utils/teams.js';
+import { slugifyCharacterName } from '../utils/characterSlug.js';
+import { NAV_H, SCOPE_H } from '../shell/ScopeBar.jsx';
 
 const BTN = 'inline-flex h-8 items-center gap-1.5 whitespace-nowrap rounded-[8px] border border-solid border-gray-700 bg-transparent px-[11px] text-[13px] font-medium text-slate-200 no-underline cursor-pointer hover:border-slate-400/[.35]';
 const PANEL = 'rounded-[10px] border border-solid border-gray-700 bg-shell-panel';
@@ -26,9 +28,33 @@ const TYPE = { Season: 'Season match', Test: 'Test', Event: 'Event' };
  * `state` is App's: { status: 'loading' | 'ready' | 'missing' | 'error',
  * label, name, tags, match (utils/matchRecord.js readMatch()) }. In the
  * Sandbox there is no Share (`shareable`): uploads are not stored anywhere.
+ *
+ * `?open=<character slug>` opens that character's row and scrolls to it (the
+ * Performances table's rows link here so); `&side=1|2` picks one side when
+ * both teams fielded the character.
  */
 export default function MatchPage({ state, onBack, backLabel = null, characterLinkFor, teamLinkFor, charMap, shareable = true }) {
   const isPhone = useIsPhone();
+  const [params] = useSearchParams();
+  const openSlug = params.get('open');
+  const openSide = Number(params.get('side')) || null;
+  const ready = !!(state && state.status === 'ready' && state.match);
+  const opened = useMemo(() => {
+    if (!ready || !openSlug) return [];
+    const keys = [];
+    for (const s of state.match.sides) {
+      if (openSide && s.side !== openSide) continue;
+      for (const c of s.characters) if (slugifyCharacterName(c.name) === openSlug) keys.push(`${s.side}|${c.key}`);
+    }
+    return keys;
+  }, [ready, state, openSlug, openSide]);
+  const openedKey = opened.join(',');
+  useEffect(() => {
+    if (!openedKey) return;
+    const el = document.querySelector('[data-opened]');
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - (NAV_H + SCOPE_H + 12) });
+  }, [openedKey]);
+
   const back = onBack && (
     <button type="button" onClick={onBack} className={BTN}><ArrowLeft className="h-4 w-4" />{backLabel || 'All matches'}</button>
   );
@@ -105,8 +131,9 @@ export default function MatchPage({ state, onBack, backLabel = null, characterLi
 
       <div className="flex flex-col gap-4">
         {match.sides.map(s => (
-          <MatchTeamTable key={s.side} side={s} isPhone={isPhone} characterLinkFor={characterLinkFor}
-            teamLinkFor={teamLinkFor} characterIdRecord={match.characterIdRecord} charMap={charMap} />
+          <MatchTeamTable key={`${state.path}|${s.side}|${openedKey}`} side={s} isPhone={isPhone} characterLinkFor={characterLinkFor}
+            teamLinkFor={teamLinkFor} characterIdRecord={match.characterIdRecord} charMap={charMap}
+            opened={opened.filter(k => k.startsWith(`${s.side}|`)).map(k => k.slice(k.indexOf('|') + 1))} />
         ))}
       </div>
     </div>

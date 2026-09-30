@@ -37,9 +37,18 @@ export default function CharacterPage({
   backLabel = null,
   // The id its portrait is filed under (public/portraits/<id>.webp).
   portraitId = null,
-  onOpenMatch = null,
+  // A match row's Match page link, opening this character's row there
+  // (matches/performanceRows.js openParams), and this character's matches in
+  // the Performances view of /matches. Both null in the Sandbox.
+  matchLinkFor = null,
+  performancesLink = null,
   // id -> name, for form names on a build-filtered row (filterAggregatedData).
   charMap = {},
+  // With a team picked (`for=`): the character over every team, for the Usage
+  // tab's team list. Null otherwise.
+  teamsRow = null,
+  // No Share in the Sandbox: uploads are not stored, so a link would open empty.
+  shareable = true,
 }) {
   const notice = (icon, title, body) => (
     <div className={`rounded-[10px] p-6 border border-solid mb-6 ${
@@ -128,8 +137,11 @@ export default function CharacterPage({
       onBack={onBack}
       backLabel={backLabel}
       portraitId={portraitId}
-      onOpenMatch={onOpenMatch}
+      matchLinkFor={matchLinkFor}
+      performancesLink={performancesLink}
       charMap={charMap}
+      teamsRow={teamsRow}
+      shareable={shareable}
     />
   );
 }

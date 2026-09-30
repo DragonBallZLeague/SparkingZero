@@ -11,7 +11,7 @@
  *
  * Usage: node scripts/verify-routes.mjs
  */
-import { ROUTES, VIEW_ROUTES, pathForView, viewForPath, isSandboxPath } from '../src/routes.js';
+import { ROUTES, VIEW_ROUTES, REDIRECTS, pathForView, viewForPath, isSandboxPath } from '../src/routes.js';
 
 let failures = 0;
 function check(label, actual, expected) {
@@ -43,7 +43,8 @@ check('mixed case', viewForPath('/Characters/Android-13'), 'aggregated');
 console.log('\nOther sections:');
 check('teams', viewForPath('/teams'), 'teams');
 check('team deep link', viewForPath('/teams/sentai'), 'teams');
-check('tables', viewForPath('/tables'), 'tables');
+check('/tables is no view (the page was removed)', VIEW_ROUTES.some(r => r.path === '/tables'), false);
+check('/tables redirects to the Characters table', (REDIRECTS.find(r => r.from === ROUTES.tables) || {}).to, ROUTES.characters);
 check('meta', viewForPath('/meta'), 'meta');
 check('root is Home', viewForPath('/'), 'home');
 check('matches (the list)', viewForPath('/matches'), 'matches');

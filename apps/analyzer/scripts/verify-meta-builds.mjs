@@ -30,6 +30,15 @@ import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
 import {
   leagueBuilds, readBuildFilters, filterBuilds, capsuleBreakdown, FLOORS, DEFAULT_FLOOR,
 } from '../src/pages/meta/buildRows.js';
+import {
+  aiStrategyRows, aiType, readAiFilters, readAiSort, sortAiRows, slug as aiSlug, aiStatByKey, AI_STYLE_STATS,
+} from '../src/pages/meta/aiRows.js';
+import { overviewFromMatches, placeOverview } from '../src/utils/characterOverview.js';
+import {
+  aiShift, strategyPairs, dataQuality, MIN_OTHER, SUIT_MIN, ACTION_FLOOR,
+} from '../src/pages/meta/aiShift.js';
+import { capsuleRows, capsuleMatchesQuery, readCapsuleFilters } from '../src/pages/meta/capsuleRows.js';
+import baseline from '../src/config/style-baseline.json' with { type: 'json' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -175,9 +184,119 @@ check('params read back', r.floor === 3 && r.chars.join() === 'goku,vegeta' && r
 const bad = readBuildFilters(P('uses=4&sort=name&group=x&dir=up'));
 check('unknown values fall back to the defaults', bad.floor === 5 && bad.sort === 'score' && bad.group === 'all' && bad.dir === 'desc');
 
+// ---- The AI strategies tab (pages/meta/aiRows.js) ------------------------------
+for (const [label, { rows }] of [['default', def], ['everything', everything]]) {
+  log(`\n[AI strategies, ${label}]`);
+  const none = { chars: [], types: [] };
+  const ais = aiStrategyRows(rows, none, charMap);
+  const matches = rows.reduce((n, r) => n + (r.matches || []).length, 0);
+  check(`every match counts toward exactly one strategy (${ais.length} strategies)`,
+    ais.reduce((n, a) => n + a.matches.length, 0) === matches);
+  // The pooled figures are the leaderboard's, recomputed here from the matches.
+  const off = ais.filter(a => {
+    const fought = a.matches.filter(m => (m.battleTime || 0) > 0);
+    const want = fought.reduce((n, m) => n + (m.damageDone || 0), 0) / Math.max(1, fought.length);
+    return Math.abs(want - a.avgDamage) > 1 || !Number.isFinite(a.combatPerformanceScore);
+  });
+  check('each strategy\'s average damage is its matches\' (those fought), and it has a score', !off.length,
+    off.slice(0, 3).map(a => a.name).join(', '));
+  check('each strategy\'s characters add up to its matches',
+    ais.every(a => a.byCharacter.reduce((n, c) => n + c.uses, 0) === a.matches.length && a.byCharacter.length === a.characters));
+  const top = rows.slice().sort((a, b) => b.matches.length - a.matches.length)[0];
+  const byChar = aiStrategyRows(rows, { chars: [aiSlug(top.name)], types: [] }, charMap);
+  check('Character counts only that character\'s matches',
+    byChar.reduce((n, a) => n + a.matches.length, 0) === top.matches.length && byChar.every(a => a.byCharacter.every(c => c.name === top.name)));
+  const def2 = aiStrategyRows(rows, { chars: [], types: ['Defense'] }, charMap);
+  check('Type keeps that family only', def2.length > 0 && def2.every(a => a.type === 'Defense' && aiType(a.name) === 'Defense'));
+  // The detail's shift (pages/meta/aiShift.js): the same characters with the
+  // strategy against their other strategies.
+  const lead = ais[0];
+  const t0 = Date.now();
+  const sh = aiShift(rows, lead.name, { chars: [] }, charMap);
+  log(`  aiShift(${lead.name}) took ${Date.now() - t0}ms over ${sh.characters} characters`);
+  check('the shift covers every use, and compares the ones the table says', sh.total === lead.matches.length && sh.compared === lead.comparable,
+    `${sh.total}/${lead.matches.length}, ${sh.compared}/${lead.comparable}`);
+  const { paired } = strategyPairs(rows, lead.name);
+  check('its characters are weighted by their uses (the weights add up)', paired.reduce((n, p) => n + p.with.length, 0) === sh.compared
+    && paired.every(p => p.without.length >= MIN_OTHER));
+  check('every strategy\'s comparable count is at most its uses', ais.every(a => a.comparable <= a.matches.length));
+  check('the shift has the Overview\'s six styles, as league ranks within the pool',
+    sh.styles.length === 6 && sh.styles.every(st => st.gain === null
+      || (st.with >= 1 && st.with <= st.pool && st.usual >= 1 && st.usual <= st.pool && Math.abs(st.gain - (st.usual - st.with)) < 1e-9)));
+  const change = a => Math.abs(Math.log((a.with + 0.1) / (a.usual + 0.1)));
+  check('listed actions clear the floor on one side, biggest change first', sh.actions.every(a => Math.max(a.with, a.usual) >= ACTION_FLOOR)
+    && sh.actions.every((a, i) => i === 0 || change(sh.actions[i - 1]) >= change(a)));
+  check('the table\'s style columns are the rows\' style shifts', ais.every(a => AI_STYLE_STATS.every(c => {
+    const st = a.styles.find(x => `style_${x.key}` === c.key);
+    return c.get(a) === (st.gain === null ? null : st.gain);
+  })) && ais.find(a => a.name === lead.name).styles.every((st, i) => st.gain === sh.styles[i].gain));
+  const byBlast = sortAiRows(ais, { sort: 'style_blast', dir: 'desc' }, aiStatByKey);
+  const blastVals = byBlast.map(a => aiStatByKey('style_blast').get(a));
+  check('sorting by a style puts the biggest shift first and strategies without one last',
+    blastVals.every((v, i) => i === 0 || v === null || (blastVals[i - 1] !== null && blastVals[i - 1] >= v)));
+  check('suits best gain score and suits worst lose it, with enough matches each way',
+    sh.suits.best.every(d => d.delta > 0 && d.uses >= SUIT_MIN) && sh.suits.worst.every(d => d.delta < 0 && d.uses >= SUIT_MIN)
+    && sh.suits.best.every((d, i) => i === 0 || sh.suits.best[i - 1].delta >= d.delta));
+  // With the Character chip on one character, the shift is that character's own.
+  const one = paired.slice().sort((a, b) => b.with.length - a.with.length)[0];
+  if (one) {
+    const mine = aiShift(rows, lead.name, { chars: [aiSlug(one.name)] }, charMap);
+    const rank = ms => placeOverview(overviewFromMatches(ms), baseline).rank.style_melee;
+    const direct = rank(one.without) - rank(one.with);
+    const got = mine.styles.find(x => x.key === 'melee').gain;
+    check(`one character's shift is its own league places (${one.name}, melee)`, Math.abs(got - direct) < 1e-9, `${got} vs ${direct}`);
+    check('one character compares all its uses', mine.compared === one.with.length && mine.characters === 1);
+  }
+  const shares = sh.builds.types.reduce((n, x) => n + x.share, 0);
+  check('build types are shares of its uses', shares > 0 && shares <= 1 + 1e-9);
+  check('data quality: Low / Medium / High at the set bounds',
+    dataQuality(29, 20) === 'Low' && dataQuality(200, 4) === 'Low' && dataQuality(30, 5) === 'Medium'
+    && dataQuality(99, 20) === 'Medium' && dataQuality(100, 15) === 'High' && ais.every(a => a.quality === dataQuality(a.matches.length, a.characters)));
+  log(`  quality: ${['Low', 'Medium', 'High'].map(q => `${q} ${ais.filter(a => a.quality === q).length}`).join(', ')}`);
+}
+// ---- The Capsules tab (pages/meta/capsuleRows.js) ------------------------------
+for (const [label, { rows }] of [['default', def], ['everything', everything]]) {
+  log(`\n[Capsules, ${label}]`);
+  const caps = capsuleRows(rows, { chars: [], types: [], ais: [] }, charMap);
+  const equipped = rows.reduce((n, r) => n + (r.matches || []).reduce((k, m) => k + (m.equippedCapsules || []).length, 0), 0);
+  check(`every equipped capsule counts once, toward its own row (${caps.length} capsules)`,
+    caps.reduce((n, c) => n + c.matches.length, 0) === equipped);
+  const off = caps.filter(c => {
+    const fought = c.matches.filter(m => (m.battleTime || 0) > 0);
+    const want = fought.reduce((n, m) => n + (m.damageDone || 0), 0) / Math.max(1, fought.length);
+    return fought.length && (Math.abs(want - c.avgDamage) > 1 || !Number.isFinite(c.combatPerformanceScore));
+  });
+  check('each capsule\'s average damage is its matches\' (those fought), and it has a score', !off.length, off.slice(0, 3).map(c => c.name).join(', '));
+  check('a capsule is never paired with itself, nor more often than it was used',
+    caps.every(c => c.pairs.every(p => p.name !== c.name && p.n <= c.matches.length)));
+  const defense = capsuleRows(rows, { chars: [], types: ['defense'], ais: [] }, charMap);
+  check('Capsule type keeps that type only', defense.length > 0 && defense.every(c => c.type === 'Defense'));
+  const top = caps[0];
+  const topAi = rows.flatMap(r => r.matches).find(m => (m.equippedCapsules || []).some(x => x.name === top.name)).aiStrategy;
+  const byAi = capsuleRows(rows, { chars: [], types: [], ais: [aiSlug(topAi)] }, charMap);
+  check('AI strategy counts only matches run with it', byAi.every(c => c.matches.every(m => m.aiStrategy === topAi)));
+  const cheap = capsuleRows(rows, { chars: [], types: [], ais: [], costs: ['1', '2'] }, charMap);
+  check('Cost keeps those costs only', cheap.length > 0 && cheap.every(c => c.cost === 1 || c.cost === 2)
+    && cheap.length === caps.filter(c => c.cost === 1 || c.cost === 2).length);
+  const found = caps.find(c => c.effect);
+  check('the search finds a capsule by its name and its effect',
+    !!found && capsuleMatchesQuery(found, found.name.toLowerCase()) && capsuleMatchesQuery(found, found.effect.slice(0, 12).toLowerCase()));
+}
+{
+  const P = s => new URLSearchParams(s);
+  const cf = readCapsuleFilters(P('ctype=defense,nope&ai=attack-strategy-barrage&char=jiren&cost=3,x,1'));
+  check('Capsules params read back, unknown types and costs dropped', cf.types.join() === 'defense' && cf.ais.join() === 'attack-strategy-barrage' && cf.chars.join() === 'jiren' && cf.costs.join() === '3,1');
+  const f = readAiFilters(P('type=Attack,Nope&char=goku,goku'));
+  check('AI params read back, unknown types dropped', f.types.join() === 'Attack' && f.chars.join() === 'goku');
+  check('every type picked is no filter', !readAiFilters(P('type=Attack,Defense,Balanced,Other')).types.length);
+  check('the AI sort defaults to uses and ignores a Builds-only key', readAiSort(P('sort=uses')).sort === 'matches');
+  check('the AI tab sorts by a style column, and not by a column it no longer has',
+    readAiSort(P('sort=style_ult'), aiStatByKey).sort === 'style_ult' && readAiSort(P('sort=dmg'), aiStatByKey).sort === 'matches');
+}
+
 console.log = log;
 if (failures) {
   console.error(`\n${failures} check(s) FAILED`);
   process.exit(1);
 }
-console.log('\nAll Meta Builds checks passed.');
+console.log('\nAll Meta Builds, AI strategies and Capsules checks passed.');

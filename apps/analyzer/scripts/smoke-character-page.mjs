@@ -82,7 +82,7 @@ try {
     ? [{ label: wanted, row: rows.find(r => r.name.toLowerCase() === wanted.toLowerCase()) }]
     : [
         pick('first row', () => true),
-        pick('multi-form', r => r.hasMultipleForms && (r.formStatsArray || []).length),
+        pick('multi-form', r => (r.matches || []).some(m => Array.isArray(m.forms) && m.forms.length)),
         pick('with builds', r => (r.topBuilds || []).some(b => (b.equippedCapsules || []).length)),
         pick('no builds', r => !(r.topBuilds || []).length),
         pick('single match', r => r.matchCount === 1),
@@ -94,10 +94,13 @@ try {
   }
 
   // The page is tabbed, and tab state is internal - a server render only ever
-  // produces the Overview panel. So the other tabs' blocks are rendered
-  // DIRECTLY below, or Builds, Forms and Matches would silently lose coverage
-  // the moment the layout stopped showing everything at once.
-  const blocks = await vite.ssrLoadModule('/src/pages/character/CharacterBlocks.jsx');
+  // produces the Overview panel. So the other tabs are rendered DIRECTLY
+  // below, or Usage, Builds, Forms and Matches would silently lose coverage.
+  const tab = async name => (await vite.ssrLoadModule(`/src/pages/character/${name}.jsx`)).default;
+  const CharacterUsage = await tab('CharacterUsage');
+  const CharacterBuilds = await tab('CharacterBuilds');
+  const CharacterForms = await tab('CharacterForms');
+  const CharacterMatches = await tab('CharacterMatches');
   const { POSITION_NAMES, positionLabel } = await vite.ssrLoadModule('/src/utils/positions.js');
 
   // The position vocabulary itself. Slot 1 is the Starter in league terms, and
@@ -126,19 +129,17 @@ try {
         onSelectBuild: () => {}, darkMode, initialView: 'bars',
       });
     }],
-    ['Usage', (c, darkMode) => React.createElement(blocks.UsageBlock, { character: c, darkMode })],
-    ['Usage:positions', (c, darkMode, view) => React.createElement(blocks.PositionBlock, { byPosition: view.byPosition, darkMode })],
-    ['Builds', (c, darkMode) => React.createElement(blocks.BuildsBlock, { character: c, darkMode, limit: 6 })],
-    ['Forms', (c, darkMode) => React.createElement(blocks.FormsBlock, { character: c, darkMode })],
-    ['Matches', (c, darkMode, view) => React.createElement(blocks.MatchesBlock, {
-      character: c, recentMatches: view.recentMatches, darkMode, onOpenMatch: () => {},
+    ['Usage', c => React.createElement(CharacterUsage, { character: c, charMap })],
+    ['Builds', c => React.createElement(CharacterBuilds, { character: c, charMap })],
+    ['Forms', c => React.createElement(CharacterForms, { character: c })],
+    ['Matches', c => React.createElement(CharacterMatches, {
+      character: c, linkFor: () => '/matches/x?open=y', performancesLink: '/matches?view=performances',
     })],
   ];
 
-  // useCharacterView is a hook, so the blocks need a host component.
+  // The tabs link and read the URL, so they render inside a router.
   function PanelHost({ character, darkMode, build }) {
-    const view = blocks.useCharacterView(character);
-    return build(character, darkMode, view);
+    return React.createElement(MemoryRouter, { initialEntries: ['/characters/x'] }, build(character, darkMode));
   }
 
   console.log(`\nRendering ${subjects.length} character(s) x 2 themes, page + ${PANELS.length} panels\n`);
@@ -165,7 +166,7 @@ try {
             scopeLabel: 'Season S0 · Type Season (105 matches)',
             darkMode,
             onBack: () => {},
-            onOpenMatch: () => {},
+            matchLinkFor: () => "/matches/x?open=y",
             charMap,
           }),
         })
@@ -223,21 +224,13 @@ try {
           const what = `${label} (${row.name}) / ${panel} / ${darkMode ? 'dark' : 'light'}`;
           try {
             const html = renderToString(React.createElement(PanelHost, { character: row, darkMode, build }));
-            // An empty string is legitimate here: BuildsBlock and FormsBlock
-            // return null when a character has nothing to show.
             // matches[].position is NUMERIC in the data, so a table that forgets
-            // to translate it shows "1 / 2 / 3" as row labels - which shipped
-            // once. Check the ROW LABELS specifically: the section's own hint
-            // text says "Lead, Middle and Anchor", so searching the whole panel
-            // for those words passes no matter what the rows contain. (It did,
-            // on the first attempt at this check.)
-            const rowLabels = [...(/<tbody>([\s\S]*?)<\/tbody>/.exec(html)?.[1] || '')
-              .matchAll(/<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/g)]
-              .map(m => m[1].replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '').trim());
-            // And the names must be the LEAGUE'S names. "Lead" is not one - the
-            // league calls slot 1 the Starter, and the app used to mix both.
-            const LEAGUE_NAMES = new Set(Object.values(POSITION_NAMES));
-            const namesSlots = rowLabels.length > 0 && rowLabels.every(l => LEAGUE_NAMES.has(l));
+            // to translate it shows "1 / 2 / 3" as its rows - which shipped
+            // once. The Usage tab's By position rows must be the LEAGUE'S
+            // names: "Lead" is not one (the league calls slot 1 the Starter,
+            // and the app used to mix both).
+            const usageText = visibleText(html);
+            const namesSlots = Object.values(POSITION_NAMES).some(n => usageText.includes(n)) && !/\bLead\b/.test(usageText);
             if (html.includes('[object Object]')) {
               console.error('  FAIL ' + what + '\n         rendered a literal "[object Object]"');
               failed = true;
@@ -247,8 +240,8 @@ try {
             } else if (panel === 'Overview:bars' && !visibleText(html).includes('Per min')) {
               console.error('  FAIL ' + what + '\n         the bars view has no "Per min" column');
               failed = true;
-            } else if (panel === 'Usage:positions' && html && !namesSlots) {
-              console.error('  FAIL ' + what + '\n         position row labels are ' + JSON.stringify(rowLabels) + ' - raw slot numbers?');
+            } else if (panel === 'Usage' && !namesSlots) {
+              console.error('  FAIL ' + what + '\n         the By position rows are not named Starter / Middle / Anchor - raw slot numbers?');
               failed = true;
             } else {
               console.log('  ok   ' + what + '  (' + html.length + ' chars)');
@@ -309,13 +302,16 @@ try {
 
   // ---- the score pill -------------------------------------------------------
   //
-  // One component behind every "Score: 105" in the app. Its colour used to be
-  // RELATIVE - callers passed the other scores on screen - so the same score
-  // rendered green in one panel and orange in another. It is absolute now, from
-  // the score's tier, which is only worth anything if the tiers actually produce
-  // different colours.
+  // TierScorePill: one component behind every score in every table. A score's
+  // colour used to be RELATIVE - callers passed the other scores on screen - so
+  // the same score rendered green in one panel and orange in another. It is
+  // absolute, from the score's tier, which is only worth anything if the tiers
+  // actually produce different colours. (These checks tested the old
+  // PerformanceScoreBadge until 2026-09-29, when it was found unused and
+  // deleted.)
   console.log('\nThe score pill colours by tier, and every tier is reachable:');
-  const { PerformanceScoreBadge } = await vite.ssrLoadModule('/src/components/stats/PerformanceScoreBadge.jsx');
+  const TierScorePill = (await vite.ssrLoadModule('/src/components/TierScorePill.jsx')).default;
+  const PerformanceScoreBadge = ({ score }) => React.createElement(TierScorePill, { score });
   const { TIERS } = await vite.ssrLoadModule('/src/utils/tierScale.js');
   const { TIER_CUTOFFS, tierForScore } = await vite.ssrLoadModule('/src/utils/performanceTier.js');
 
@@ -383,7 +379,8 @@ try {
     };
     const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
 
-    for (const theme of ['dark', 'light']) {
+    // Dark only: the app has no light theme (the pill always takes the dark palette).
+    for (const theme of ['dark']) {
       const results = [];
       for (const tier of TIERS) {
         const probe = TIER_CUTOFFS[tier] === undefined ? 0 : TIER_CUTOFFS[tier] + 1;
@@ -401,15 +398,15 @@ try {
     }
   }
 
-  // The pill must survive whatever a score turns out to be.
+  // The pill must survive whatever a score turns out to be: a number to one
+  // decimal, or a dash when there is none.
   for (const junk of [0, -5, NaN, undefined, null, 1e6]) {
     try {
-      // React's SSR splits adjacent text nodes with <!-- --> markers, so
-      // "Score: 0" arrives as "Score<!-- -->: <!-- -->0". Strip them before
-      // asserting on the visible text.
+      // React's SSR splits adjacent text nodes with <!-- --> markers; strip
+      // them before asserting on the visible text.
       const html = renderToString(React.createElement(PerformanceScoreBadge, { score: junk, darkMode: true }));
       const text = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '');
-      if (!text.includes('Score:')) { console.error('  FAIL score ' + junk + ' rendered no label'); failed = true; }
+      if (!text.trim()) { console.error('  FAIL score ' + junk + ' rendered nothing'); failed = true; }
       else if (/NaN|undefined|null/.test(text)) {
         console.error('  FAIL score ' + junk + ' rendered "' + text.trim() + '"');
         failed = true;

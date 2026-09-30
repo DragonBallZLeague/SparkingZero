@@ -4,8 +4,8 @@ import Segmented from '../shell/Segmented.jsx';
 import { useQueryUpdate } from '../shell/useQueryUpdate.js';
 import { useIsPhone, useMediaQuery } from '../shell/useMediaQuery.js';
 import { PAGE } from '../shell/tableParts.jsx';
-import AIStrategyAnalysis from '../components/ai-strategy/AIStrategyAnalysis.jsx';
-import CapsuleSynergyAnalysis from '../components/CapsuleSynergyAnalysis.jsx';
+import AIStrategiesTab from './meta/AIStrategiesTab.jsx';
+import CapsulesTab from './meta/CapsulesTab.jsx';
 import BuildsTable from './meta/BuildsTable.jsx';
 import { META_TABS, readMetaTab, readBuildFilters, filterBuilds } from './meta/buildRows.js';
 
@@ -22,15 +22,16 @@ const WIDE_QUERY = '(min-width: 1180px)';
  * bar, see meta/buildChips.jsx), `group=best`, `sort` and `dir`. How many rows
  * are shown and which one is open are this visit's only.
  *
- * AI strategies and Capsules are the analyses the old Meta page stacked in two
- * collapsible boxes, each now behind its own tab. They are not rebuilt yet.
+ * AI strategies and Capsules (meta/AIStrategiesTab.jsx, meta/CapsulesTab.jsx)
+ * are a row per strategy or capsule on the pooled Meta table
+ * (meta/PooledTab.jsx), with their own chips in the scope bar.
  *
  * `builds` is leagueBuilds() over the scope (App computes it once, since the
  * chips need it too). `buildLinkFor(build)` opens that build on its character's
  * page, or is null in the Sandbox.
  */
 export default function MetaPage({
-  builds, aggregated, charMap, idFor, buildLinkFor, defaultFloor, loading, darkMode = true,
+  builds, aggregated, charMap, idFor, buildLinkFor, characterLinkFor = () => null, defaultFloor, loading,
 }) {
   const [params] = useSearchParams();
   const update = useQueryUpdate();
@@ -49,7 +50,11 @@ export default function MetaPage({
   const [expanded, setExpanded] = useState(null);
   useEffect(() => { setShown(PAGE); setSelected(null); setExpanded(null); }, [filterKey, builds]);
 
-  const setTab = id => update(p => { if (id === 'builds') p.delete('tab'); else p.set('tab', id); });
+  // A sort belongs to its tab's columns, so a new tab starts on its default.
+  const setTab = id => update(p => {
+    if (id === 'builds') p.delete('tab'); else p.set('tab', id);
+    p.delete('sort'); p.delete('dir');
+  });
   const setGroup = g => update(p => { if (g === 'best') p.set('group', 'best'); else p.delete('group'); });
   const onSort = key => update(p => {
     const nextDir = filters.sort === key && filters.dir === 'desc' ? 'asc' : 'desc';
@@ -108,12 +113,9 @@ export default function MetaPage({
     );
   }
 
-  // The demo's body type (14px, 1.45 line height), which the Builds table's
-  // text inherits. Only here: the older AI strategy and Capsules analyses set
-  // their own.
+  // The demo's body type (14px, 1.45 line height), which the tables' text inherits.
   return (
-    <div>
-      <div className="text-[14px] leading-[1.45] text-slate-100">
+    <div className="text-[14px] leading-[1.45] text-slate-100">
       {head}
       {tab === 'builds' && (
         <BuildsTable rows={rows} shown={shown} onMore={() => setShown(n => n + PAGE)}
@@ -121,17 +123,8 @@ export default function MetaPage({
           isPhone={isPhone} isWide={isWide} selected={selected} expanded={expanded} onPick={onPick}
           idFor={idFor} buildLinkFor={buildLinkFor} highlight={filters.caps} />
       )}
-      </div>
-      {tab === 'ai' && (
-        <div className={`${panel} p-4 sm:p-6`}>
-          <AIStrategyAnalysis aggregatedData={aggregated} charMap={charMap} darkMode={darkMode} />
-        </div>
-      )}
-      {tab === 'capsules' && (
-        <div className={`${panel} p-4 sm:p-6`}>
-          <CapsuleSynergyAnalysis aggregatedData={aggregated} darkMode={darkMode} />
-        </div>
-      )}
+      {tab === 'ai' && <AIStrategiesTab aggregated={aggregated} charMap={charMap} idFor={idFor} linkFor={characterLinkFor} />}
+      {tab === 'capsules' && <CapsulesTab aggregated={aggregated} charMap={charMap} idFor={idFor} linkFor={characterLinkFor} />}
     </div>
   );
 }

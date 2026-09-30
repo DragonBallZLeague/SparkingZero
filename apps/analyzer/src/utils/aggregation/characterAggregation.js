@@ -2,6 +2,7 @@ import transformationsData from '../../../../../referencedata/transformations.js
 import { extractStats } from '../statCalculations.js';
 import { getFusionPartnerFamilyForms } from '../fusionSplit.js';
 import { calculatePerFormStats } from '../formStatsCalculator.js';
+import { matchForms, sharedFormSnapshots } from '../formBreakdown.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { POSITION_NAMES } from '../positions.js';
 import { styleHits, skillSlotUses } from '../actionCodes.js';
@@ -137,6 +138,8 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
 
     // Fusion adjustments collected during main loop and applied in Phase 3
     const pendingFusionAdjustments = [];
+    // Records whose per-form snapshots another fighter shares (utils/formBreakdown.js).
+    const sharedSnapshots = sharedFormSnapshots(characterRecord);
 
     Object.keys(characterRecord).forEach(key => {
       const char = characterRecord[key];
@@ -401,6 +404,18 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         won = stats.hPGaugeValue > 0;
       }
       
+      // The match's forms as the Match page shows them (utils/formBreakdown.js
+      // matchForms(), fused forms whole), for the Character page's Forms tab
+      // and its form filter, which reads each form's own `stats`
+      // (pages/character/characterCuts.js formSlices). Null when it did not
+      // transform, or when the file cannot give per-form figures (no
+      // snapshots, or snapshots both sides share).
+      let forms = null;
+      if (Array.isArray(char.formChangeHistory) && char.formChangeHistory.length > 0) {
+        const read = matchForms(char, characterIdRecord, charMap, { shared: sharedSnapshots.has(key) });
+        if (read.complete) forms = read.forms;
+      }
+
       // Calculate per-form stats for this match if transformations occurred
       let perFormStatsForMatch = null;
       if (characterIdRecord && char.formChangeHistory && char.formChangeHistory.length > 0) {
@@ -563,6 +578,8 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         s1HitRate: stats.s1HitRate,
         s2HitRate: stats.s2HitRate,
         ultHitRate: stats.ultHitRate,
+        // Whether the file records hits at all (older files have throws only).
+        hasAdditionalCounts: stats.hasAdditionalCounts,
         // Legacy blast tracking (for backwards compatibility)
         spm1Count: stats.s1Blast,
         spm2Count: stats.s2Blast,
@@ -585,6 +602,7 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         formChangeHistory: formChangeHistory,
         formChangeCount: formChangeCount,
         perFormStats: perFormStatsForMatch, // Store per-form stats with each match
+        forms,
         position: charPosition,
         // The exact lineup order (1 = Starter, then each member in turn), which
         // `position` collapses to Starter / Middle / Anchor, and which side of

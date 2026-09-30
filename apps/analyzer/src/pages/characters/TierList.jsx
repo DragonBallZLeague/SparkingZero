@@ -17,9 +17,10 @@ import { tint } from '../../utils/overviewPalette.js';
  * portraits). The colour is the tier pill's ring, not the plate: Z and B share
  * a blue plate, and Z is told apart by its crimson.
  */
-export default function TierList({ rows, isPhone, idFor, linkFor }) {
+export default function TierList({ rows, pool = rows, isPhone, idFor, linkFor }) {
   const sorted = [...rows].sort((a, b) => (b.combatPerformanceScore || 0) - (a.combatPerformanceScore || 0));
-  const fade = fadesThinSamples(rows);
+  // Faded against the whole list, so a search does not change who fades.
+  const fade = fadesThinSamples(pool);
   return (
     <div className="overflow-hidden rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
       {TIERS.map(t => {
