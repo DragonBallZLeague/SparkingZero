@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import './App.css';
 import TabRow from './shell/TabRow.jsx';
 import ScopeBar from './shell/ScopeBar.jsx';
 import { multiLabel } from './shell/ChipMenu.jsx';
@@ -30,7 +29,7 @@ import { aiChips } from './pages/meta/aiChips.jsx';
 import { readAiFilters } from './pages/meta/aiRows.js';
 import { capsuleChips } from './pages/meta/capsuleChips.jsx';
 import { readCapsuleFilters } from './pages/meta/capsuleRows.js';
-import { prepareCharacterAveragesData, prepareMatchDetailsData } from './components/TableConfigs.jsx';
+import { prepareCharacterAveragesData, prepareMatchDetailsData } from './utils/workbookColumns.js';
 import { workbookSheets } from './utils/workbookSheets.js';
 import { exportToExcel } from './utils/excelExport.js';
 import { loadCapsuleData } from './utils/capsuleDataProcessor.js';
@@ -95,12 +94,14 @@ export default function App() {
   // Where a character's page lives: the league's, or the Sandbox's.
   const charPath = useCallback(key => (sandbox ? ROUTES.sandbox : '') + ROUTES.character(key), [sandbox]);
   // The query string without the detail pages' own params: the Character page's
-  // `build`, `for`, `form` and `pos`, the Team page's `vs`. They belong to one
-  // character's or team's page: they must not ride along to the leaderboard,
-  // another view or another character. The data-scope params do. (`pos` is also
-  // the Characters table's own chip, so it is only dropped from a character's page.)
+  // `build`, `for`, `form` and `pos`, the Team page's `vs`, and a page's open
+  // `tab`. They belong to one character's or team's page: they must not ride
+  // along to the leaderboard, another view or another character. The data-scope
+  // params do. (`pos` is also the Characters table's own chip, so it is only
+  // dropped from a character's page.)
   const scopeSearch = useMemo(() => {
     const params = new URLSearchParams(location.search);
+    params.delete('tab');
     params.delete('build');
     params.delete('for');
     params.delete('vs');
@@ -133,7 +134,6 @@ export default function App() {
   const [selectedBuildSort, setSelectedBuildSort] = useState({}); // Track sort column+dir per character build table
   const [activeBuildFilters, setActiveBuildFilters] = useState({}); // Track active build filter per character
   const [positionMatchTypeFilters, setPositionMatchTypeFilters] = useState(['2v2', '3v3', '4v4', '5v5']); // Match type filters for position analysis
-  const [darkMode, setDarkMode] = useState(true); // Dark mode state - default to true
 
   // The league views read `fileContent` (an array of {name, content, tags}) and
   // `selectedFilePath`, as they did when the file tree filled them; the scope
@@ -753,11 +753,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      darkMode 
-        ? 'bg-gray-900' 
-        : 'bg-gradient-to-br from-orange-500 via-red-600 to-purple-700'
-    }`}>
+    <div className="min-h-screen bg-gray-900">
       <NavBar
         current="analyzer"
         title="Battle Result Analyzer"
@@ -790,7 +786,6 @@ export default function App() {
             rank={deepLinkedCharacter.rank}
             totalInScope={deepLinkedCharacter.totalInScope}
             scopeLabel={forTeam ? `${dataScopeLabel}, playing for ${forTeam.name}` : dataScopeLabel}
-            darkMode={darkMode}
             onBack={() => goBack(sandbox ? `${ROUTES.sandbox}${ROUTES.characters}` : ROUTES.characters + scopeSearch)}
             backLabel={backLabel}
             portraitId={deepLinkedCharacter.id || charIdFor(deepLinkedCharacter.label)}
@@ -845,12 +840,12 @@ export default function App() {
 
         {/* Error Display */}
         {fileContent?.error && (
-          <div className={`rounded-[10px] border border-solid p-6 ${darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200 shadow-xl'}`}>
-            <div className={`flex items-center gap-3 ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+          <div className="rounded-[10px] border border-solid p-6 bg-shell-panel border-gray-700">
+            <div className="flex items-center gap-3 text-red-400">
               <Shield className="w-8 h-8" />
               <div>
                 <h3 className="text-xl font-bold">Error Loading File</h3>
-                <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{fileContent.error}</p>
+                <p className="text-gray-300">{fileContent.error}</p>
               </div>
             </div>
           </div>
@@ -859,10 +854,6 @@ export default function App() {
       </div>
     </div>
   );
-  // Render Submit Data launcher overlay at the end so it's present across views
-  useEffect(() => {
-    // no-op, placeholder if we need to coordinate darkMode
-  }, [darkMode]);
   return null;
 }
 

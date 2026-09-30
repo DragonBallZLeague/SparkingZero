@@ -1,7 +1,6 @@
 import transformationsData from '../../../../../referencedata/transformations.json';
 import { extractStats } from '../statCalculations.js';
 import { getFusionPartnerFamilyForms } from '../fusionSplit.js';
-import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { matchForms, sharedFormSnapshots } from '../formBreakdown.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { POSITION_NAMES } from '../positions.js';
@@ -254,7 +253,6 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
           buildCompositions: {}, // Track build compositions with counts (new 7-category system)
           capsuleUsage: {}, // Track individual capsules used
           allFormsUsed: new Set(), // Track all forms used across matches
-          formStats: {}, // Track per-form aggregated stats
           matches: [], // Track individual match data for meta analysis
           teamsUsed: {}, // Track which teams this character played on with counts
           aiStrategiesUsed: {}, // Track AI strategies used with counts
@@ -414,17 +412,6 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       if (Array.isArray(char.formChangeHistory) && char.formChangeHistory.length > 0) {
         const read = matchForms(char, characterIdRecord, charMap, { shared: sharedSnapshots.has(key) });
         if (read.complete) forms = read.forms;
-      }
-
-      // Calculate per-form stats for this match if transformations occurred
-      let perFormStatsForMatch = null;
-      if (characterIdRecord && char.formChangeHistory && char.formChangeHistory.length > 0) {
-        perFormStatsForMatch = calculatePerFormStats(
-          char,
-          characterIdRecord,
-          char.formChangeHistory,
-          originalForm
-        );
       }
 
       // Phase 2: Detect fusions by walking the full transformation chain
@@ -601,7 +588,9 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         kiBlastHits: stats.kiBlastHits,
         formChangeHistory: formChangeHistory,
         formChangeCount: formChangeCount,
-        perFormStats: perFormStatsForMatch, // Store per-form stats with each match
+        // The forms it fought in, first to last, for the workbook's form list.
+        formIds: Array.isArray(char.formChangeHistory) && char.formChangeHistory.length > 0
+          ? [originalForm, ...char.formChangeHistory.map(f => f.key)] : null,
         forms,
         position: charPosition,
         // The exact lineup order (1 = Starter, then each member in turn), which
@@ -624,103 +613,6 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         });
       }
       
-      // Aggregate per-form stats from stored per-match form data
-      if (perFormStatsForMatch && Array.isArray(perFormStatsForMatch)) {
-        // Aggregate each form's stats
-        perFormStatsForMatch.forEach(formStat => {
-          const formId = formStat.formId;
-          const formName = charMap[formId] || formId;
-          
-          if (!charData.formStats[formId]) {
-            charData.formStats[formId] = {
-              formId: formId,
-              formNumber: formStat.formNumber,
-              name: formName,
-              isFirstForm: formStat.isFirstForm,
-              isFinalForm: formStat.isFinalForm,
-              // Combat stats
-              totalDamageDone: 0,
-              totalDamageTaken: 0,
-              totalBattleTime: 0,
-              totalBattleCount: 0,
-              // Health
-              totalHPRemaining: 0,
-              totalHPMax: 0,
-              // Special abilities
-              totalSpecialMoves: 0,
-              totalUltimates: 0,
-              totalSkills: 0,
-              // Blast tracking
-              totalS1Blast: 0,
-              totalS2Blast: 0,
-              totalUltBlast: 0,
-              totalS1HitBlast: 0,
-              totalS2HitBlast: 0,
-              totalULTHitBlast: 0,
-              // Survival & Defense
-              totalSparking: 0,
-              totalCharges: 0,
-              totalGuards: 0,
-              totalEnergyBlasts: 0,
-              totalZCounters: 0,
-              totalSuperCounters: 0,
-              totalRevengeCounters: 0,
-              // Combat mechanics
-              totalMaxComboNum: 0,
-              totalMaxComboDamage: 0,
-              totalThrows: 0,
-              totalLightningAttacks: 0,
-              totalVanishingAttacks: 0,
-              totalDragonHoming: 0,
-              totalSpeedImpacts: 0,
-              totalSpeedImpactWins: 0,
-              totalSparkingCombo: 0,
-              totalDragonDashMileage: 0,
-              // Kills
-              totalKills: 0,
-              matchCount: 0
-            };
-          }
-          
-          const formData = charData.formStats[formId];
-          
-          // Accumulate stats for this form
-          formData.totalDamageDone += formStat.damageDone || 0;
-          formData.totalDamageTaken += formStat.damageTaken || 0;
-          formData.totalBattleTime += formStat.battleTime || 0;
-          formData.totalBattleCount += formStat.battleCount || 0;
-          formData.totalHPRemaining += formStat.hPGaugeValue || 0;
-          formData.totalHPMax += formStat.hPGaugeValueMax || 0;
-          formData.totalSpecialMoves += formStat.specialMovesUsed || 0;
-          formData.totalUltimates += formStat.ultimatesUsed || 0;
-          formData.totalSkills += formStat.skillsUsed || 0;
-          formData.totalS1Blast += formStat.s1Blast || 0;
-          formData.totalS2Blast += formStat.s2Blast || 0;
-          formData.totalUltBlast += formStat.ultBlast || 0;
-          formData.totalS1HitBlast += formStat.s1HitBlast || 0;
-          formData.totalS2HitBlast += formStat.s2HitBlast || 0;
-          formData.totalULTHitBlast += formStat.uLTHitBlast || 0;
-          formData.totalSparking += formStat.sparkingCount || 0;
-          formData.totalCharges += formStat.chargeCount || 0;
-          formData.totalGuards += formStat.guardCount || 0;
-          formData.totalEnergyBlasts += formStat.shotEnergyBulletCount || 0;
-          formData.totalZCounters += formStat.zCounterCount || 0;
-          formData.totalSuperCounters += formStat.superCounterCount || 0;
-          formData.totalRevengeCounters += formStat.revengeCounterCount || 0;
-          formData.totalMaxComboNum += formStat.maxComboNum || 0;
-          formData.totalMaxComboDamage += formStat.maxComboDamage || 0;
-          formData.totalThrows += formStat.throwCount || 0;
-          formData.totalLightningAttacks += formStat.lightningAttackCount || 0;
-          formData.totalVanishingAttacks += formStat.vanishingAttackCount || 0;
-          formData.totalDragonHoming += formStat.dragonHomingCount || 0;
-          formData.totalSpeedImpacts += formStat.speedImpactCount || 0;
-          formData.totalSpeedImpactWins += formStat.speedImpactWins || 0;
-          formData.totalSparkingCombo += formStat.sparkingComboCount || 0;
-          formData.totalDragonDashMileage += formStat.dragonDashMileage || 0;
-          formData.totalKills += formStat.kills || 0;
-          formData.matchCount += 1;
-        });
-      }
     });
 
     // Phase 3: Apply fusion stat splits — reduce trigger char by half, credit half to partner.
@@ -878,73 +770,9 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       ? null
       : POSITION_NAMES[primaryPositionNum];
     
-    // Calculate averages for per-form stats
-    const formStatsArray = Object.values(char.formStats).map(formStat => {
-      const matchCount = formStat.matchCount || 1;
-      const damagePerSecond = (formStat.totalBattleTime || 0) > 0 
-        ? (formStat.totalDamageDone || 0) / formStat.totalBattleTime 
-        : 0;
-      const damageEfficiency = combatEfficiency(formStat.totalDamageDone || 0, formStat.totalDamageTaken || 0);
-      
-      return {
-        ...formStat,
-        // Averages
-        avgDamageDone: Math.round((formStat.totalDamageDone || 0) / matchCount),
-        avgDamageTaken: Math.round((formStat.totalDamageTaken || 0) / matchCount),
-        avgBattleTime: Math.round(((formStat.totalBattleTime || 0) / matchCount) * 10) / 10,
-        avgBattleCount: Math.round(((formStat.totalBattleCount || 0) / matchCount) * 10) / 10,
-        avgHPRemaining: Math.round((formStat.totalHPRemaining || 0) / matchCount),
-        avgHPMax: Math.round((formStat.totalHPMax || 0) / matchCount),
-        avgSpecialMoves: Math.round(((formStat.totalSpecialMoves || 0) / matchCount) * 10) / 10,
-        avgUltimates: Math.round(((formStat.totalUltimates || 0) / matchCount) * 100) / 100,
-        avgSkills: Math.round(((formStat.totalSkills || 0) / matchCount) * 10) / 10,
-        avgS1Blast: Math.round(((formStat.totalS1Blast || 0) / matchCount) * 100) / 100,
-        avgS2Blast: Math.round(((formStat.totalS2Blast || 0) / matchCount) * 100) / 100,
-        avgUltBlast: Math.round(((formStat.totalUltBlast || 0) / matchCount) * 100) / 100,
-        avgS1HitBlast: Math.round(((formStat.totalS1HitBlast || 0) / matchCount) * 100) / 100,
-        avgS2HitBlast: Math.round(((formStat.totalS2HitBlast || 0) / matchCount) * 100) / 100,
-        avgULTHitBlast: Math.round(((formStat.totalULTHitBlast || 0) / matchCount) * 100) / 100,
-        avgSparking: Math.round(((formStat.totalSparking || 0) / matchCount) * 100) / 100,
-        avgCharges: Math.round(((formStat.totalCharges || 0) / matchCount) * 10) / 10,
-        avgGuards: Math.round(((formStat.totalGuards || 0) / matchCount) * 10) / 10,
-        avgEnergyBlasts: Math.round(((formStat.totalEnergyBlasts || 0) / matchCount) * 10) / 10,
-        avgZCounters: Math.round(((formStat.totalZCounters || 0) / matchCount) * 100) / 100,
-        avgSuperCounters: Math.round(((formStat.totalSuperCounters || 0) / matchCount) * 100) / 100,
-        avgRevengeCounters: Math.round(((formStat.totalRevengeCounters || 0) / matchCount) * 100) / 100,
-        avgMaxComboNum: Math.round(((formStat.totalMaxComboNum || 0) / matchCount) * 10) / 10,
-        avgMaxComboDamage: Math.round((formStat.totalMaxComboDamage || 0) / matchCount),
-        avgThrows: Math.round(((formStat.totalThrows || 0) / matchCount) * 100) / 100,
-        avgLightningAttacks: Math.round(((formStat.totalLightningAttacks || 0) / matchCount) * 100) / 100,
-        avgVanishingAttacks: Math.round(((formStat.totalVanishingAttacks || 0) / matchCount) * 100) / 100,
-        avgDragonHoming: Math.round(((formStat.totalDragonHoming || 0) / matchCount) * 100) / 100,
-        avgSpeedImpacts: Math.round(((formStat.totalSpeedImpacts || 0) / matchCount) * 100) / 100,
-        avgSpeedImpactWins: Math.round(((formStat.totalSpeedImpactWins || 0) / matchCount) * 100) / 100,
-        avgSparkingCombo: Math.round(((formStat.totalSparkingCombo || 0) / matchCount) * 10) / 10,
-        avgDragonDashMileage: Math.round(((formStat.totalDragonDashMileage || 0) / matchCount) * 10) / 10,
-        avgKills: Math.round(((formStat.totalKills || 0) / matchCount) * 100) / 100,
-        // Derived stats
-        damagePerSecond,
-        damageEfficiency,
-        // Hit rates
-        s1HitRate: (formStat.totalS1Blast || 0) > 0
-          ? Math.round(((formStat.totalS1HitBlast || 0) / formStat.totalS1Blast) * 1000) / 10
-          : null,
-        s2HitRate: (formStat.totalS2Blast || 0) > 0
-          ? Math.round(((formStat.totalS2HitBlast || 0) / formStat.totalS2Blast) * 1000) / 10
-          : null,
-        ultHitRate: (formStat.totalUltBlast || 0) > 0
-          ? Math.round(((formStat.totalULTHitBlast || 0) / formStat.totalUltBlast) * 1000) / 10
-          : null,
-        speedImpactWinRate: (formStat.totalSpeedImpacts || 0) > 0
-          ? Math.round(((formStat.totalSpeedImpactWins || 0) / formStat.totalSpeedImpacts) * 1000) / 10
-          : null,
-      };
-    });
-    
     return {
       ...char,
       formHistory,
-      formStatsArray,
       hasMultipleForms: allForms.length > 1,
       hasFusionStats: char.hasFusionStats || false,
       fusionFormsInvolved: Array.from(char.fusionFormsInvolved || []),

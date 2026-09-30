@@ -162,7 +162,7 @@ export default function TeamPage({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ShareButton darkMode />
+          <ShareButton />
           {/* The website's team profile: its description, roster and master list. */}
           {team && team.websiteSlug && (
             <a href={`${WEBSITE}teams?team=${encodeURIComponent(team.websiteSlug)}`} target="_blank" rel="noopener noreferrer" className={BTN}
@@ -185,7 +185,7 @@ export default function TeamPage({
           const s = teamStatByKey(key);
           const v = s.get(cur);
           const p = placements(pool, s)(v);
-          const color = p === null ? null : rankColor(p * 100, true);
+          const color = p === null ? null : rankColor(p * 100);
           // A stat with no better direction still shows where the team sits,
           // in neutral grey, with no rank.
           const fill = s.dir ? p : placements(pool, { ...s, dir: 1 })(v);
@@ -196,9 +196,9 @@ export default function TeamPage({
                 <span className="whitespace-nowrap text-2xl font-extrabold tabular-nums tracking-tight text-white">{s.fmt(v)}</span>
                 {s.sub && <span className="whitespace-nowrap text-xs text-slate-400 tabular-nums">{s.sub(cur)}</span>}
               </div>
-              <MedianTrack p={(fill ?? 0.5) * 100} color={color || NEUTRAL.dark} fade={!color} dot darkMode />
+              <MedianTrack p={(fill ?? 0.5) * 100} color={color || NEUTRAL} fade={!color} dot />
               <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-xs">
-                {s.dir && pool.length > 1 ? <RankText rank={rankOf(s, pool, cur)} pool={pool.length} color={color} darkMode /> : <span />}
+                {s.dir && pool.length > 1 ? <RankText rank={rankOf(s, pool, cur)} pool={pool.length} color={color} /> : <span />}
                 <span className="whitespace-nowrap text-slate-400">
                   {vsRow ? `Overall ${s.fmt(s.get(row))}` : `League ${s.fmt(median(allRows.map(s.get)))}`}
                 </span>

@@ -235,12 +235,8 @@ export function capsuleMatchesQuery(r, q) {
 // capsule a type seldom runs is not a bad one.
 
 const SHORT = { 'Ki Blast': 'Ki Bl', Defense: 'Def', 'Ki Efficiency': 'Ki Eff' };
-/**
- * A build type's colour: its capsule type's, and a neutral grey for Hybrid
- * (the build pill draws Balanced Hybrid in the skill purple, which beside the
- * Skill column would read as the same type).
- */
-export const fitColor = t => (t === 'Hybrid' ? '#94a3b8' : buildTypeColor(t, true));
+/** A build type's colour, as its build pill draws it (Hybrid a light slate). */
+export const fitColor = t => buildTypeColor(t);
 /** A share as a whole percent; under 1% (but some) reads "<1%". */
 export const share = v => (v === 0 ? '0%' : v < 0.01 ? '<1%' : `${Math.round(v * 100)}%`);
 

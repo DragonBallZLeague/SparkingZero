@@ -58,7 +58,7 @@ function Legend({ color = '#e2e8f0' }) {
  * (does it most) at the right.
  */
 function StyleRow({ st }) {
-  const color = styleColor(st.key, true);
+  const color = styleColor(st.key);
   if (st.gain === null) {
     return (
       <li className="grid grid-cols-[76px_1fr_112px] items-center gap-2 py-[5px] text-[12.5px]">
@@ -171,7 +171,7 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
       ) : (
         <div className="mt-2 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
           <Box title="Style shift" aside={<span className="inline-flex items-center gap-1.5">league rank:<Legend /></span>}>
-            <div className="mb-1 text-[16px] font-extrabold leading-tight" style={{ color: lean ? styleColor(lean.key, true) : '#e2e8f0' }}>
+            <div className="mb-1 text-[16px] font-extrabold leading-tight" style={{ color: lean ? styleColor(lean.key) : '#e2e8f0' }}>
               {headline || 'No clear shift'}
             </div>
             <ul className="m-0 list-none p-0">{s.styles.map(st => <StyleRow key={st.key} st={st} />)}</ul>
@@ -208,14 +208,14 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
           <div className="mb-2 flex flex-wrap gap-1.5">
             {s.builds.types.map(t => (
               <span key={t.label} className="inline-flex items-center gap-1 text-[12px] tabular-nums text-slate-400">
-                <BuildPill label={t.label} darkMode compact />{Math.round(t.share * 100)}%
+                <BuildPill label={t.label} compact />{Math.round(t.share * 100)}%
               </span>
             ))}
           </div>
           <ul className="m-0 list-none p-0">
             {s.builds.capsules.map(c => (
               <li key={c.name} className="flex items-center gap-2 border-0 border-t border-solid border-gray-700/50 py-1 text-[12.5px] first:border-t-0">
-                <span className="h-2 w-2 flex-none rounded-[2px]" style={{ background: capsuleTypeColor(c.type, true) }} />
+                <span className="h-2 w-2 flex-none rounded-[2px]" style={{ background: capsuleTypeColor(c.type) }} />
                 <span className="min-w-0 flex-1 truncate text-slate-200">{c.name}</span>
                 <span className="tabular-nums text-slate-400">{Math.round(c.share * 100)}%</span>
               </li>

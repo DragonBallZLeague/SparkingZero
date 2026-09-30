@@ -27,7 +27,6 @@ export default function ShareButton({
   path = null,
   label = 'Share link',
   title = 'Copy a link to this view',
-  darkMode = false,
   className = '',
 }) {
   const location = useLocation();
@@ -85,12 +84,10 @@ export default function ShareButton({
   const Icon = copied ? Check : failed ? AlertCircle : Link2;
 
   const tone = copied
-    ? (darkMode ? 'bg-green-900/60 border-green-700 text-green-300' : 'bg-green-50 border-green-300 text-green-700')
+    ? ('bg-green-900/60 border-green-700 text-green-300')
     : failed
-      ? (darkMode ? 'bg-red-900/60 border-red-700 text-red-300' : 'bg-red-50 border-red-300 text-red-700')
-      : (darkMode
-          ? 'bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]'
-          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50');
+      ? ('bg-red-900/60 border-red-700 text-red-300')
+      : ('bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]');
 
   return (
     <button

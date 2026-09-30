@@ -130,7 +130,7 @@ check('the scrape found a plausible number of fields',
   'only found ' + readFields.length + ' - if the page moved, this verifier is checking nothing');
 const missingEverywhere = [];
 for (const field of readFields) {
-  // Present on at least one row is the bar, not every row: formStatsArray only
+  // Present on at least one row is the bar, not every row: formHistory only
   // exists for characters that transformed, topCapsules can legitimately be
   // absent. A field on NO row is the real signal - it means a rename.
   const present = rows.some(r => Object.prototype.hasOwnProperty.call(r, field));

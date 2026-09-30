@@ -75,7 +75,7 @@ export function PooledTiles({ row, pool, stats, changes = {}, whose, vs, grid, l
     const better = pool.filter(r => (s.dir === -1 ? s.get(r) < v : s.get(r) > v)).length;
     const rank = better + 1;
     const pctl = pool.length >= 5 && s.dir !== 0 ? ((pool.length - rank) / (pool.length - 1)) * 100 : null;
-    return { rank, color: rankColor(pctl, true) };
+    return { rank, color: rankColor(pctl) };
   };
   return (
     <div className={`grid gap-px overflow-hidden rounded-[10px] border border-solid border-gray-700 bg-slate-400/[.16] ${grid}`}>
@@ -88,7 +88,7 @@ export function PooledTiles({ row, pool, stats, changes = {}, whose, vs, grid, l
             <div className="mt-0.5 text-lg font-extrabold tabular-nums text-white">
               {s.key === 'score' ? <TierScorePill score={row.combatPerformanceScore} /> : s.fmt(s.get(row))}
             </div>
-            <div className="text-xs"><RankText rank={rank} pool={pool.length} color={color} darkMode /></div>
+            <div className="text-xs"><RankText rank={rank} pool={pool.length} color={color} /></div>
             {c && (
               <div className="mt-1 whitespace-nowrap text-[11px] tabular-nums" title={whose(c.fmt(c.with), c.fmt(c.usual))}>
                 <b className={`font-semibold ${tone(c.shift, c.min, c.better)}`}>{c.diff(c.shift)}</b>

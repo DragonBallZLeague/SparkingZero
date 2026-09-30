@@ -6,7 +6,7 @@ import { BuildPill } from '../character/overview/BuildPicker.jsx';
 import { BuildYamlButtons } from '../../components/build/BuildYamlButtons.jsx';
 import { capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
-import { HEAD, SortHead, ShowMore } from '../../shell/tableParts.jsx';
+import StatTable from '../../shell/StatTable.jsx';
 import { capsuleBreakdown } from './buildRows.js';
 import { fadesThinSamples } from '../../utils/performanceTier.js';
 
@@ -26,6 +26,9 @@ import { fadesThinSamples } from '../../utils/performanceTier.js';
  * (`showCharacter` false: no Character column, and a phone row leads with the
  * build instead). Wherever a build's capsules show, Copy YAML / Download give
  * it in the Match Builder's format.
+ *
+ * The table itself is the one template (shell/StatTable.jsx), whose picked
+ * row and opened detail it was the model for.
  */
 
 const fmtInt = v => Math.round(v || 0).toLocaleString('en-US');
@@ -37,7 +40,7 @@ export function CostBar({ capsules, className = '' }) {
   return (
     <span className={`flex h-1.5 gap-0.5 overflow-hidden rounded-[3px] bg-shell-track ${className}`}
       title={order.map(t => `${t} ${byType[t]}`).join(', ')}>
-      {order.map(t => <i key={t} className="block h-full" style={{ flex: byType[t], background: capsuleTypeColor(t, true) }} />)}
+      {order.map(t => <i key={t} className="block h-full" style={{ flex: byType[t], background: capsuleTypeColor(t) }} />)}
     </span>
   );
 }
@@ -51,7 +54,7 @@ export function CapsuleList({ build, highlight = [] }) {
         <li key={`${c.name}-${i}`}
           className={`grid grid-cols-[8px_1fr_auto] items-center gap-2 py-[3px] text-left text-[13px] border-0 border-t border-solid border-gray-700/50 first:border-t-0 ${
             highlight.includes(c.slug) ? 'font-semibold text-white' : 'text-slate-200'}`}>
-          <i className="block h-2 w-2 rounded-[2px]" style={{ background: capsuleTypeColor(c.type, true) }} />
+          <i className="block h-2 w-2 rounded-[2px]" style={{ background: capsuleTypeColor(c.type) }} />
           <span>{c.name}</span>
           <em className="not-italic text-[11px] leading-[1.45] text-slate-400 tabular-nums">{c.cost}</em>
         </li>
@@ -95,7 +98,7 @@ function SidePanel({ build, idFor, buildLinkFor, openLabel, highlight, empty = '
         <Portrait id={idFor(build.name)} name={build.name} size={48} rounded={10} />
         <div className="min-w-0">
           <div className="text-[15px] font-semibold leading-[1.2] text-slate-50">{build.name}</div>
-          <div className="mt-1"><BuildPill label={build.label} darkMode compact /></div>
+          <div className="mt-1"><BuildPill label={build.label} compact /></div>
         </div>
       </div>
       <div className="mb-3 grid grid-cols-4 gap-2 border-0 border-y border-solid border-gray-700/50 pb-3 pt-2.5">
@@ -122,112 +125,71 @@ export default function BuildsTable({
   pickFirst = true, emptyPanel = undefined,
 }) {
   const list = rows.slice(0, shown);
-  const cols = isPhone
-    ? 'minmax(0,1fr) 40px 50px 56px'
-    : showCharacter
-      ? '28px minmax(150px,1fr) minmax(210px,1.6fr) 44px 70px 52px 66px 48px'
-      : '28px minmax(210px,1.6fr) 44px 70px 52px 66px 48px';
-  const grid = { display: 'grid', gridTemplateColumns: cols, alignItems: 'center', columnGap: isPhone ? 8 : 12 };
-  const head = (key, label) => <SortHead label={label} on={sort === key} dir={dir} onClick={() => onSort(key)} />;
   const sel = isWide ? (list.find(b => b.id === selected) || (pickFirst ? list[0] : null) || null) : null;
   const fade = fadesThinSamples(rows, b => b.provisional);
+  const num = 'text-right text-[14px] text-slate-100 tabular-nums';
+
+  // The build: its type and cost bar, its AI strategy under them.
+  const buildCell = (b, bar) => (
+    <div className="min-w-0">
+      <div className="flex min-w-0 items-center gap-2">
+        <BuildPill label={b.label} compact className="flex-none" />
+        <CostBar capsules={b.capsules} className={`${bar} flex-auto`} />
+      </div>
+      <div className="mt-[3px] truncate text-[12px] text-slate-400">{b.aiName}</div>
+    </div>
+  );
+  const character = b => (
+    <div className="flex min-w-0 items-center gap-2.5">
+      <Portrait id={idFor(b.name)} name={b.name} size={34} />
+      {isPhone ? (
+        <div className="min-w-0">
+          <div className="text-[13px] font-semibold leading-[1.2] text-slate-50">{b.name}</div>
+          <CostBar capsules={b.capsules} className="mt-[3px] w-[120px] flex-none" />
+        </div>
+      ) : (
+        <span className="text-[14px] font-semibold leading-[1.2] text-slate-50">{b.name}</span>
+      )}
+    </div>
+  );
+  const figure = (key, label, width, cell) => ({ key, label, width, sort: true, cell });
+  const uses = w => figure('uses', 'Uses', w, b => <div className={num}>{b.uses}</div>);
+  const eff = w => figure('eff', 'Eff', w, b => <div className={num}>{fmtEff(b.eff)}</div>);
+  const score = w => figure('score', 'Score', w,
+    b => <div className="text-right"><TierScorePill score={b.score} provisional={fade && b.provisional} /></div>);
+
+  const columns = isPhone ? [
+    // One character's builds lead with the build; the league's with the character.
+    { key: 'build', label: 'Build', align: 'left', width: 'minmax(0,1fr)', sort: false,
+      cell: b => (showCharacter ? character(b) : buildCell(b, 'min-w-[30px] max-w-[90px]')) },
+    uses('40px'), eff('50px'), score('56px'),
+  ] : [
+    { key: '#', label: '#', width: '28px', sort: false,
+      cell: (b, i) => <div className="text-right text-[12px] text-slate-500 tabular-nums">{i + 1}</div> },
+    ...(showCharacter ? [{ key: 'character', label: 'Character', align: 'left', width: 'minmax(150px,1fr)', sort: false, cell: character }] : []),
+    { key: 'build', label: 'Build', align: 'left', width: 'minmax(210px,1.6fr)', sort: false,
+      cell: b => buildCell(b, 'min-w-[40px] max-w-[120px]') },
+    uses('44px'),
+    figure('dmg', 'Avg dmg', '70px', b => <div className={num}>{fmtInt(b.dmg)}</div>),
+    eff('52px'), score('66px'),
+    figure('win', 'Win %', '48px', b => <div className="text-right text-[14px] text-slate-400 tabular-nums">{Math.round(b.win)}%</div>),
+  ];
+
+  // Narrower than the side panel's width, a row opens its capsules under it,
+  // lined up under the build on a desktop.
+  const detail = b => (
+    <div className={isPhone ? '' : 'pl-[44px]'}>
+      {isPhone && showCharacter && <div className="mb-2 mt-0.5"><BuildPill label={b.label} compact /></div>}
+      <CapsuleList build={b} highlight={highlight} />
+      <BuildActions build={b} buildLinkFor={buildLinkFor} openLabel={openLabel} />
+    </div>
+  );
 
   const table = (
-    <div className="min-w-0 rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
-      <div className="sticky z-10 min-h-[38px] rounded-t-[10px] border-0 border-b border-solid border-gray-700 bg-shell-panel px-2.5 sm:px-3.5"
-        style={{ ...grid, top: NAV_H + SCOPE_H }}>
-        {isPhone ? (
-          <>
-            <div className={`${HEAD} text-slate-400`}>Build</div>
-            {head('uses', 'Uses')}{head('eff', 'Eff')}{head('score', 'Score')}
-          </>
-        ) : (
-          <>
-            <div className={`${HEAD} text-right text-slate-400`}>#</div>
-            {showCharacter && <div className={`${HEAD} text-slate-400`}>Character</div>}
-            <div className={`${HEAD} text-slate-400`}>Build</div>
-            {head('uses', 'Uses')}{head('dmg', 'Avg dmg')}{head('eff', 'Eff')}{head('score', 'Score')}{head('win', 'Win %')}
-          </>
-        )}
-      </div>
-
-      {/* The last row loses its rule: the panel's edge, or "Show more", takes its place. */}
-      <div className="[&>*:last-child]:border-b-0">
-        {list.map((b, i) => {
-          const on = sel && sel.id === b.id;
-          const open = !isWide && expanded === b.id;
-          const who = !showCharacter ? (
-            // One character's builds: the build leads, its AI strategy under it.
-            <div className="min-w-0">
-              <div className="flex min-w-0 items-center gap-2">
-                <BuildPill label={b.label} darkMode compact className="flex-none" />
-                <CostBar capsules={b.capsules} className="min-w-[30px] max-w-[90px] flex-auto" />
-              </div>
-              <div className="mt-[3px] truncate text-[12px] text-slate-400">{b.aiName}</div>
-            </div>
-          ) : (
-            <div className="flex min-w-0 items-center gap-2.5">
-              <Portrait id={idFor(b.name)} name={b.name} size={34} />
-              {isPhone ? (
-                <div className="min-w-0">
-                  <div className="text-[13px] font-semibold leading-[1.2] text-slate-50">{b.name}</div>
-                  <CostBar capsules={b.capsules} className="mt-[3px] w-[120px] flex-none" />
-                </div>
-              ) : (
-                <span className="text-[14px] font-semibold leading-[1.2] text-slate-50">{b.name}</span>
-              )}
-            </div>
-          );
-          const num = 'text-right text-[14px] text-slate-100 tabular-nums';
-          return (
-            <React.Fragment key={b.id}>
-              <div role="button" tabIndex={0} aria-pressed={isWide ? on : undefined} aria-expanded={isWide ? undefined : open}
-                onClick={() => onPick(b.id)}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(b.id); } }}
-                style={grid}
-                className={`min-h-[46px] cursor-pointer px-2.5 sm:px-3.5 border-0 border-b border-solid border-gray-700/50 ${
-                  on ? 'bg-brand/[.12] shadow-[inset_2px_0_0_#f97316]' : 'hover:bg-slate-400/5'}`}>
-                {isPhone ? (
-                  <>
-                    {who}
-                    <div className={num}>{b.uses}</div>
-                    <div className={num}>{fmtEff(b.eff)}</div>
-                    <div className="text-right"><TierScorePill score={b.score} provisional={fade && b.provisional} /></div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-right text-[12px] text-slate-500 tabular-nums">{i + 1}</div>
-                    {showCharacter && who}
-                    <div className="min-w-0">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <BuildPill label={b.label} darkMode compact className="flex-none" />
-                        <CostBar capsules={b.capsules} className="min-w-[40px] max-w-[120px] flex-auto" />
-                      </div>
-                      <div className="mt-[3px] truncate text-[12px] text-slate-400">{b.aiName}</div>
-                    </div>
-                    <div className={num}>{b.uses}</div>
-                    <div className={num}>{fmtInt(b.dmg)}</div>
-                    <div className={num}>{fmtEff(b.eff)}</div>
-                    <div className="text-right"><TierScorePill score={b.score} provisional={fade && b.provisional} /></div>
-                    <div className="text-right text-[14px] text-slate-400 tabular-nums">{Math.round(b.win)}%</div>
-                  </>
-                )}
-              </div>
-              {open && (
-                <div className={`surface-inset border-0 border-b border-solid border-gray-700/50 ${isPhone ? 'px-2.5 pb-3 pt-2.5' : 'pb-3.5 pl-[58px] pr-3.5 pt-3'}`}>
-                  {isPhone && showCharacter && <div className="mb-2 mt-0.5"><BuildPill label={b.label} darkMode compact /></div>}
-                  <CapsuleList build={b} highlight={highlight} />
-                  <BuildActions build={b} buildLinkFor={buildLinkFor} openLabel={openLabel} />
-                </div>
-              )}
-            </React.Fragment>
-          );
-        })}
-        {!list.length && <div className="p-7 text-center text-slate-400">No builds match.</div>}
-      </div>
-
-      <ShowMore left={rows.length - list.length} onClick={onMore} />
-    </div>
+    <StatTable columns={columns} rows={rows} rowKey={b => b.id} sort={sort} dir={dir} onSort={onSort}
+      onPick={b => onPick(b.id)} selected={sel ? sel.id : null}
+      expanded={isWide ? null : expanded} renderExpanded={isWide ? null : detail}
+      shown={shown} onMore={onMore} isPhone={isPhone} empty="No builds match." />
   );
 
   if (!isWide) return table;

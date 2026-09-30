@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import TierPlate from '../../components/TierPlate.jsx';
 import TierScorePill from '../../components/TierScorePill.jsx';
 import { isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
-import { NAV_H, SCOPE_H } from '../../shell/ScopeBar.jsx';
-import { HEAD, SortHead, StatCell } from '../../shell/tableParts.jsx';
-import { CHAR_STATS, statByKey, placements } from './characterRows.js';
+import StatTable from '../../shell/StatTable.jsx';
+import { CHAR_STATS, statByKey } from './characterRows.js';
 
 /**
  * The character leaderboard as one table ("Visual direction", decision 4): a
@@ -22,6 +20,9 @@ import { CHAR_STATS, statByKey, placements } from './characterRows.js';
  * tier pill and the two stats in `phoneStats`.
  *
  * `linkFor(name)` returning null makes the rows plain (nothing does today: in the Sandbox a row opens the Sandbox's own character page).
+ *
+ * Drawn by the one table template (shell/StatTable.jsx), whose look it was
+ * the model for.
  */
 export default function CharacterTable({
   rows, pool, sort, dir, onSort, isPhone, phoneStats, idFor, linkFor,
@@ -29,51 +30,38 @@ export default function CharacterTable({
   rankOf = null, empty = 'No characters.',
 }) {
   const stats = isPhone ? phoneStats.map(statByKey).filter(Boolean) : CHAR_STATS;
-  const place = useMemo(() => Object.fromEntries(CHAR_STATS.map(s => [s.key, placements(pool, s)])), [pool]);
-  const max = useMemo(() => Object.fromEntries(CHAR_STATS.map(s => [s.key, Math.max(0, ...pool.map(s.get))])), [pool]);
   const fade = useMemo(() => fadesThinSamples(pool), [pool]);
+  const prov = r => fade && isProvisionalTier(r);
 
-  const cols = isPhone
-    ? 'minmax(0,1fr) 52px 54px 58px'
-    : `28px minmax(230px,2.2fr) 40px 66px repeat(${stats.length}, minmax(64px,1fr))`;
-  const grid = { display: 'grid', gridTemplateColumns: cols, alignItems: 'center', columnGap: isPhone ? 8 : 12 };
-
-  const head = (key, label, left = false) => (
-    <SortHead label={label} on={sort === key} dir={dir} onClick={() => onSort(key)} left={left} />
-  );
+  const columns = [
+    ...(isPhone ? [] : [{
+      key: '#', label: '#', width: '28px', sort: false,
+      cell: (r, i) => <div className="text-right text-xs text-slate-500 tabular-nums">{rankOf ? rankOf(r) : i + 1}</div>,
+    }]),
+    {
+      // A phone's header carries the count, in place of the control row's.
+      key: 'name', label: 'Character', short: `${rows.length} characters`, align: 'left', sort: true,
+      width: isPhone ? 'minmax(0,1fr)' : 'minmax(230px,2.2fr)',
+      cell: r => (
+        <div className="flex min-w-0 items-center gap-2.5">
+          <Portrait id={idFor(r.name)} name={r.name} size={34} />
+          <span className="font-semibold leading-[1.2] text-slate-50 text-[13px] sm:text-[14px]">{r.name}</span>
+        </div>
+      ),
+    },
+    ...(isPhone ? [] : [{
+      key: 'tier', label: 'Tier', width: '40px', sort: false, title: 'A faded plate means fewer than 5 matches',
+      cell: r => <div className="flex justify-end"><TierPlate score={r.combatPerformanceScore} character={r} fade={fade} size="small" /></div>,
+    }]),
+    {
+      key: 'score', label: 'Score', width: isPhone ? '52px' : '66px', sort: true,
+      cell: r => <div className="text-right"><TierScorePill score={r.combatPerformanceScore} provisional={prov(r)} /></div>,
+    },
+    ...stats.map((s, i) => ({ ...s, width: isPhone ? ['54px', '58px'][i] || '58px' : 'minmax(64px,1fr)' })),
+  ];
 
   return (
-    <div className="rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
-      <div className="sticky z-10 rounded-t-[10px] border-0 border-b border-solid border-gray-700 bg-shell-panel px-2.5 sm:px-3.5 min-h-[38px]"
-        style={{ ...grid, top: NAV_H + SCOPE_H }}>
-        {!isPhone && <div className={`${HEAD} text-right text-slate-400`}>#</div>}
-        {head('name', isPhone ? `${rows.length} characters` : 'Character', true)}
-        {!isPhone && <div className={`${HEAD} text-right text-slate-400`} title="A faded plate means fewer than 5 matches">Tier</div>}
-        {head('score', 'Score')}
-        {stats.map(s => <React.Fragment key={s.key}>{head(s.key, isPhone ? s.short : s.label)}</React.Fragment>)}
-      </div>
-      {rows.map((r, i) => {
-        const prov = fade && isProvisionalTier(r);
-        const to = linkFor(r.name);
-        const Row = to ? Link : 'div';
-        return (
-          <Row key={r.name} to={to || undefined} style={grid}
-            className="min-h-[46px] px-2.5 sm:px-3.5 no-underline text-inherit border-0 border-b border-solid border-gray-700/50 last:border-b-0 hover:bg-slate-400/5">
-            {!isPhone && <div className="text-right text-xs text-slate-500 tabular-nums">{rankOf ? rankOf(r) : i + 1}</div>}
-            <div className="flex min-w-0 items-center gap-2.5">
-              <Portrait id={idFor(r.name)} name={r.name} size={34} />
-              <span className="font-semibold leading-[1.2] text-slate-50 text-[13px] sm:text-[14px]">{r.name}</span>
-            </div>
-            {!isPhone && <div className="flex justify-end"><TierPlate score={r.combatPerformanceScore} character={r} fade={fade} size="small" /></div>}
-            <div className="text-right"><TierScorePill score={r.combatPerformanceScore} provisional={prov} /></div>
-            {stats.map(s => {
-              const v = s.get(r);
-              return <StatCell key={s.key} text={s.fmt(v)} value={v} max={max[s.key]} p={place[s.key](v)} faded={prov} />;
-            })}
-          </Row>
-        );
-      })}
-      {!rows.length && <div className="p-7 text-center text-slate-400">{empty}</div>}
-    </div>
+    <StatTable columns={columns} rows={rows} pool={pool} rowKey={r => r.name} sort={sort} dir={dir} onSort={onSort}
+      linkFor={r => linkFor(r.name)} faded={prov} isPhone={isPhone} empty={empty} />
   );
 }

@@ -91,7 +91,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
         <span className={LABEL}>Build</span>
         <span className="text-xs tabular-nums text-slate-400">{int(s.totalCapsuleCost)} cost</span>
       </div>
-      <div className="mt-1.5"><BuildPill label={build} darkMode compact /></div>
+      <div className="mt-1.5"><BuildPill label={build} compact /></div>
       <CostBar capsules={capsulesOf(s)} className="my-2" />
       <CapsuleList build={{ capsules: capsulesOf(s), aiName: s.aiStrategy || 'Default' }} />
     </div>
@@ -124,7 +124,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
     const rate = used && hits ? hit / thrown : null;
     return (
       <Move key={name} name={name}
-        graphic={<Ring rate={rate} color={used ? styleColor(styleKey, true) : FAINT} median={M[rateKey]} darkMode size={isPhone ? 46 : 52} />}
+        graphic={<Ring rate={rate} color={used ? styleColor(styleKey) : FAINT} median={M[rateKey]} size={isPhone ? 46 : 52} />}
         value={hits ? `${int(hit)}/${int(thrown)}` : int(thrown)}
         muted={!used}
         caption={!used ? 'Not used' : !hits ? 'No hit data' : `League ${percent(M[rateKey])}`} />
@@ -138,7 +138,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
     return (
       <Move key={name} name={name}
         graphic={<VolumeCircle value={pl.value} median={form ? null : pl.median} top={form ? Math.max(whole, 1) : Math.max(pl.p95 || 0, 1)}
-          color={styleColor(styleKey, true)} darkMode size={isPhone ? 46 : 52} />}
+          color={styleColor(styleKey)} size={isPhone ? 46 : 52} />}
         value={<>{int(pl.value)}<span className="ml-1 text-xs font-medium text-slate-400">{unit}</span></>}
         muted={!pl.value}
         caption={!pl.value ? 'Not used' : form ? `of ${int(whole)} ${isPhone ? 'total' : 'in all forms'}` : `League ${int(pl.median)}`} />
@@ -203,7 +203,7 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
 
       <div className={`grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-solid bg-slate-400/[.16] sm:grid-cols-5 ${form ? 'border-brand/[.55]' : 'border-gray-700'}`}>
         {tiles.map(([label, value, unit, pl, league, part], i) => {
-          const color = rankColor(pl.good, true);
+          const color = rankColor(pl.good);
           return (
             <div key={label} className={`min-w-0 bg-[var(--surface)] p-3.5 ${i === 4 ? 'col-span-2 sm:col-span-1' : ''}`}>
               <div className={`${LABEL} truncate`}>{label}</div>
@@ -212,8 +212,8 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
                 {unit && <span className="ml-1 text-xs font-medium text-slate-400">{unit}</span>}
               </div>
               {part === null
-                ? <MedianTrack p={pl.good} color={color || NEUTRAL.dark} fade={!color} dot darkMode />
-                : <MedianTrack p={part} color={PICKED} tick={false} darkMode />}
+                ? <MedianTrack p={pl.good} color={color || NEUTRAL} fade={!color} dot />
+                : <MedianTrack p={part} color={PICKED} tick={false} />}
               <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-xs">
                 <span className="whitespace-nowrap text-slate-400">{part === null ? '' : `${part}% of all forms`}</span>
                 {part === null && <span className="whitespace-nowrap text-slate-400">League {league}</span>}

@@ -61,6 +61,22 @@ These are the tie-breakers. Each one is testable against a proposed change:
 
 ## Progress
 
+### The restyle: ✅ closed 2026-09-30
+
+The league's call, after going through what was left of the plan: the restyle (the shell, every page's redesign, the table template, the league's last review and the removal of the old styling and setup) is done. What closed it, on 2026-09-30:
+- **The old setup is gone.** `App.css` (2,062 lines, in the losing `legacy` layer since 2026-09-28) was deleted once no class the app used depended on it, and Tailwind's preflight turned on, with two of its defaults put back (line height `normal`, borders in the text colour) because the pages were measured against the approved demo without them; a computed-style diff of every view at 1280px and 390px showed nothing else that draws. The light-mode code went (the `darkMode` state and its last 306 mentions, the light palettes), `components/TableConfigs.jsx` became `utils/workbookColumns.js` without the deleted Data Tables page's render functions, the old per-form aggregation (`formStatsArray`, a team's `formStats`) went, and so did the throwaway shell demo, an unused `Test.jsx` prototype and a stale note. The workbook came out identical, cell for cell, on all six sheets.
+- **Every stat table is on the one template** (`shell/StatTable.jsx`): the Characters, Teams, Team page Roster and Opponents and Meta Builds tables moved onto it, looking as they did.
+- **The Character page's open tab is in the URL** (`?tab=`), as the page-by-page review asked, so "look at Goku's builds" is a link.
+- **The Bars view has a phone layout of its own**: beside four figure columns the bars shrank to stubs and the sub-figures ran off the right edge. Now each style is a block, its name, rate and rank on one line over a full-width bar, and its sub-figures two to a line under it, each over a half-width bar.
+- **Decided with the league:** the Home page (Phase 5: the six curated boards and the latest week's results beside the tier list) is the **immediate next step**; the small export on each table is **dropped** (the scope bar's full workbook covers it); the accessibility pass moves to the next phase (only the Bars view's phone layout was done now).
+
+**Next phase** (after Home), from the plan's remaining work:
+- the share-snippet image card (Phase 3 and 7)
+- build comparison and the querystring-driven character comparison (Phase 3)
+- trends over time, and deeper matchup analysis (Phase 4)
+- the accessibility pass (Phase 2c: keyboard order through the chip lists, focus in the phone sheets, 44px targets)
+- consolidating the score formula, still written out in about 15 places ("Performance tiers", "Still open")
+
 ### Phase 1 — Foundation: ✅ Complete (with three loose ends)
 
 - `react-router-dom@^6.28.0` is a real dependency and is wired in `src/main.jsx`:
@@ -101,14 +117,14 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
 
 - **Real Tailwind v3 is running.** `postcss.config.js` added (CommonJS — this package has no `"type": "module"` and its prebuild scripts must stay CJS), `src/index.css` holds the directives, imported by `main.jsx` **before** `App.css`.
 - **That load order was load-bearing** (superseded 2026-09-28, see Phase 2b below: `App.css` now sits in a cascade layer and always loses to Tailwind). An audit found `App.css` defines 713 single-class rules, **123 of which collide with a class Tailwind generates** — and some collisions change rendering, not just colour notation: `.gap-4` is `0.6rem` here vs Tailwind's `1rem`; `.max-w-4xl` and `.max-w-7xl` add `margin: 0 auto`; `.border-b` and `.border-l-2` carry an explicit `border-style`; and several violet/teal shades use genuinely different hex values than Tailwind's palette. Emitting Tailwind first means `App.css` wins every tie at equal specificity, so **turning Tailwind on changed nothing that already rendered** — confirmed by inspecting the built bundle, where the App.css value is last in all three spot-checked cases.
-- **Preflight is deliberately OFF** (`corePlugins.preflight: false`, and `@tailwind base` omitted). It would reset headings, margins and border defaults across a component tree never written against it. It gets enabled in 2b once `App.css` is gone. Until then, border-width utilities need an explicit border-style.
+- **Preflight is deliberately OFF** (`corePlugins.preflight: false`, and `@tailwind base` omitted). It would reset headings, margins and border defaults across a component tree never written against it. It gets enabled in 2b once `App.css` is gone. Until then, border-width utilities need an explicit border-style. (Enabled 2026-09-30.)
 - **All 9 previously-broken responsive classes now generate**, and the `xl:` breakpoint has a media query for the first time.
 - **Shared tokens live in `packages/ui/src/tokens.js`** — CommonJS, so both the CJS configs (analyzer, match builder) and the ESM ones (website, calculator) can load it. All four Tailwind configs now source from it and scan `packages/ui`. Each app keeps its existing token **names** as aliases onto the shared values, so no existing markup changed: the website's `dbz.*`, the calculator's `sz-*`, the analyzer's `dragon-*`. New work should prefer the shared `brand.*` names.
 - **One deliberate visual change**: the analyzer's app background gradient's first stop moved from amber `#f59e0b` to the canonical `#f97316` (`App.css:22`). The `amber-500` utilities at lines 163/491/501 correctly keep `#f59e0b` — that is a real amber, not a brand accent. That line also shadows Tailwind's real `bg-gradient-to-br`; 2b should rename it.
 - **Dependencies**: removed `xlsx` (its two trivial call sites moved onto `exceljs` via the new `src/utils/exportSheet.js`), `@mui/x-tree-view` and `@mui/lab` (zero imports anywhere), and the duplicate `@vitejs/plugin-react` devDependency. **Analyzer JS went 2,267 kB → 1,981 kB (gzip 622 → 526 kB).**
 - Match builder's 47-entry `safelist` was **kept**. It exists because that app assembles class names at runtime where Tailwind's scanner cannot see them, so removing entries needs per-class verification. Noted as future work rather than done blind.
 
-### Phase 2b — App.css teardown: in progress (started 2026-09-28)
+### Phase 2b — App.css teardown: ✅ Complete (2026-09-30)
 
 **Decision (2026-09-28): the redesign restyles freely.** Keeping the legacy UI "looking identical" is no longer a goal; new styling must win over `App.css`, and the league has a list of styling fixes of its own to bring. Light mode was removed on purpose (commit `8e816462`, 2026-09-05, because it was harsh and hard to read) and is not planned to return, so dark is the only theme that matters.
 
@@ -120,7 +136,7 @@ The ~67 MB / ~2,232-request page load is gone. **The default view is now 2 reque
   - the tables' teal/violet now match their names; `App.css` had tinted them, and its dark teal was barely readable
   - responsive classes that never applied now do, including `lg:grid-cols-3` on the three position panels. At 1280px that was cramped, so it became `2xl:grid-cols-3`.
   - Eight grids that relied on `App.css` collapsing every 3–5 column grid to two on a phone now say `grid-cols-2 sm:grid-cols-N` themselves.
-- **Next: the league's styling list**, then retire `App.css` rules as their components are restyled. Once it is empty, turn preflight on.
+- ✅ **The league's styling list** is done (its last review, below), and on 2026-09-30 `App.css` was deleted and preflight turned on (see "The restyle: closed" above).
 
 ### Visual direction: decided 2026-09-28
 
@@ -173,17 +189,17 @@ Every page has a verdict and a content list; see "Page-by-page review" below. In
   - `verify-routes`, `verify-self-contained`, `verify-character-page`, `smoke-character-page` and `verify-filters` all pass.
 
 **Still open in 2c:**
-- **Accessibility pass:** keyboard order through the chip lists, focus management in the phone sheets, 44px targets.
-- **Old panels in the new shell:** only the Sandbox's upload panel is left. Data Tables is gone (`/tables` redirects to `/characters`, and the workbook gained Position, AI Strategies and Capsules sheets), and Meta's AI strategies and Capsules tabs are rebuilt (2026-09-29).
-- **Menus and tooltips slide in from the top left the first time they open.** This has been happening since long before the redesign. It affects the scope bar's chip menus, the build picker, the Overview's tooltips and the older build tooltips.
+- **Accessibility pass:** keyboard order through the chip lists, focus management in the phone sheets, 44px targets. **Moved to the next phase** (the league, 2026-09-30); only the Bars view's phone layout was fixed with the restyle's close.
+- ✅ **Old panels in the new shell:** the Sandbox's upload panel was the last, rebuilt on 2026-09-29. Data Tables is gone (`/tables` redirects to `/characters`, and the workbook gained Position, AI Strategies and Capsules sheets), and Meta's AI strategies and Capsules tabs are rebuilt (2026-09-29).
+- ✅ (fixed 2026-09-29, the rule is deleted) **Menus and tooltips slid in from the top left the first time they opened.** This has been happening since long before the redesign. It affects the scope bar's chip menus, the build picker, the Overview's tooltips and the older build tooltips.
   - **Cause:** App.css (legacy layer) sets `* { transition: all .2s }`. floating-ui first renders a menu at the top left, then moves it into place, and that rule animates the move. Later opens start from the last position, so they look right.
   - **Fix:** narrow that rule to colours instead of `all`, or remove it. Also hide each floating element until it is placed, using floating-ui's `isPositioned` (`Combobox.jsx` already does this by hand).
 
-### Phase 3 — Character page: in progress
+### Phase 3 — Character page: ✅ redesigned; its features move to the next phase
 
-Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. Still open: the other tabs' visual design (which follows "Visual direction"), the share-snippet image card, build comparison and character comparison.
+Routing, the Character page itself, `<ShareButton>`, the shared presentational components and the absolute tier pills have shipped. **The Overview tab's design was approved on 2026-09-28 and shipped the same day**, with the one-build `?build=` filter. See "Overview tab: approved design" under Phase 3 below. The other tabs followed "Visual direction" on the table template (2026-09-29), and the open tab went into the URL (2026-09-30). The share-snippet image card, build comparison and character comparison are next-phase features.
 
-### Phases 4–7: not started, apart from Meta's Builds tab and Phase 4's team and match pages
+### Phases 4–7: Phase 4's pages and Phase 6 built; Home (Phase 5) is next
 
 **Phase 4 began (2026-09-28) with the team side** (details in `apps/analyzer/CLAUDE.md`, "The Teams and Team pages"):
 - **The shared team list is in** (`referencedata/teams.json`): tag, website name, slug, website slug, logo and colour for all 13 teams. The analyzer shows the website's names everywhere, including the scope bar's Team chip. Links keep the tags, so old ones still work.
@@ -236,12 +252,12 @@ Routing, the Character page itself, `<ShareButton>`, the shared presentational c
   6. ✅ **Meta › Capsules**: the same pooled table, a row per capsule (`meta/capsuleRows.js`): type, cost, the Characters columns; Capsule type, AI strategy and Character chips and a search; the detail gives its effect, the capsules it is most often equipped with, and who used it. `CapsuleSynergyAnalysis.jsx` and `capsule-synergy/*` are deleted; `verify-meta-builds` checks both tabs.
   7. ✅ **`/tables`**: the workbook gained Position, AI Strategies and Capsules sheets (`utils/workbookSheets.js`, from the pages' own row builders, checked by downloading it in a headless browser), then the page went and `/tables` redirects to `/characters` with the scope kept. `DataTable.jsx` is deleted; `TableConfigs.jsx` stays as the workbook's column spec, its render functions now dead.
   - **Dead code cleared**: `ExportManager.jsx`, `RangeSlider.jsx`, `Combobox.jsx`, `MultiSelectCombobox.jsx`, `components/stats/*` (the smoke test now checks `TierScorePill`, the pill that ships), `utils/exportSheet.js`, and the old build display family. Kept on purpose: `utils/performanceLevel.js` (`verify-filter-aggregated` uses it), `utils/readDataStructure.js` (`generate-br-data-structure.js`), and, until the league's review later that day, the build-recommendation logic (now deleted, see below).
-- **Legacy still standing after the table transition** (for the "old setup removed entirely" goal):
+- ✅ **Legacy still standing after the table transition** (for the "old setup removed entirely" goal), **all gone by 2026-09-30** (see "The restyle: closed"):
   - The Sandbox's upload panel and its View Type radio switcher, the Sandbox's only way between its views (Phase 7).
   - `TableConfigs.jsx`'s dead render functions, and the old `formStatsArray` per-form aggregation, which only the workbook's columns read (and which, unlike the Forms tab, still counts shared-snapshot records).
   - The Characters, Teams, Team page and Builds tables draw the template's look by hand; they could move onto `StatTable` itself.
   - `App.css` (legacy layer) and the remaining `darkMode` ternaries, in `App.jsx` above all.
-- **The league's last review before calling the restyle done (2026-09-29, in progress).** Nothing from 2026-09-29 is committed yet: the table transition (above) and this review sit uncommitted on the local `analyzer-restyle` branch, awaiting the league's go-ahead (commit only when asked, never push). Status per item; update it as each lands:
+- ✅ **The league's last review before calling the restyle done (2026-09-29 to 30).** Committed on the local `analyzer-restyle` branch (`15e92ef7`, `7a285ce5`). Status per item:
   1. ✅ **Sandbox upload panel and View Type switcher**: now `pages/sandbox/SandboxPanel.jsx`, one flat panel: a drop zone when empty, then the files as rows (a readable one opens its Match page, a broken one says so, each removable), Clear and Add files, and the Sandbox's views (Matches · Characters · Teams · Meta) as underline tabs at its foot, links like the section tabs. Uploads now join the set instead of replacing it (same name replaces). The old card, collapsible list and 4-card radio grid are gone from `App.jsx`.
   2. ✅ **Tooltips and dropdowns slide in from a corner.** Cause: `App.css` (legacy layer) has `* { transition: all 0.2s ease-in-out; }`, so anything positioned when it opens animates from its starting coordinates. Fixed: the rule is deleted.
   3. ✅ **Character page tabs show light grey lines beside the picked tab.** Cause: `App.css`'s `button:focus { box-shadow: 0 0 0 3px … }` leaves a ring on the clicked `<button>`, and the tab row's `overflow-x-auto` clips its top and bottom, leaving the sides. The section tabs (`shell/TabRow.jsx`) are links, so they never had it. Fixed: the legacy rule is deleted, and `index.css` gives buttons and links a `:focus-visible` ring for keyboards. The dead `.szl-range` CSS (the deleted RangeSlider's) went too.
@@ -274,12 +290,12 @@ Routing, the Character page itself, `<ShareButton>`, the shared presentational c
      - Code: a pure `meta/aiShift.js` (per character, `overviewFromMatches` with vs without, weighted by uses), checked in `verify-meta-builds` (a one-character shift equals the direct computation; weights add up).
      - **Also open, item 4–5's form filter:** (a) the Match page's rule, the page shows the form's own figures (needs the per-form stats the character rows strip today; amounts need the Match page's "share of its forms" treatment), or (b) matches that reached the form (simple, but mostly measures match length, and the base form cuts nothing). **The league chose (a) on 2026-09-30.**
   - Also settled (the league left it to Claude): the build-recommendation logic was deleted on 2026-09-29 (`utils/buildRecommendationEngine.js`, `config/buildRules.js`, `utils/capsuleEffectParser.js`, `utils/capsuleSynergyCalculator.js`; `git show 50b72a60:apps/analyzer/src/utils/buildRecommendationEngine.js` has them). It ranked builds on the old capsule composite score, keyword-parsed capsule archetypes and hand-set weights, the scoring the table transition replaced; a recommender should be rebuilt on the league's own score, as the pooled Meta tables are. The idea itself stays on the list (Phase 3's "Build recommendations surfaced here").
-- Still to do in Phase 4:
+- Still to do in Phase 4 (next phase):
   - trends over time
   - deeper matchup analysis (per-slot results beyond the side-by-side lineups)
 
 **Phase 6's Builds tab is built (2026-09-28)**, to the demo's layout A (details in `apps/analyzer/CLAUDE.md`, "The Meta page"):
-- `/meta` has tabs Builds · AI strategies · Capsules. The last two show the old analyses unchanged, each behind its own tab instead of stacked in collapsible boxes; flattening them is still to do.
+- `/meta` has tabs Builds · AI strategies · Capsules. The last two were rebuilt on the pooled table (2026-09-29) and redesigned by the league's review (2026-09-30: items 9, 13 and 15 above).
 - **Builds:**
   - One 46px row per build: character, build type and cost bar, AI strategy, uses, average damage, efficiency, score, and win % last.
   - The selected build's capsules show as the one-column list in a side panel from 1180px up, and under the row when narrower.
@@ -629,7 +645,7 @@ Which pages stay, which go, which change, and what each one holds. It builds on 
   - Overview stays as approved.
   - Usage, Builds, Forms and Matches are restyled to "Visual direction". Builds are one row per build with the capsules as the one-column list (see Meta below).
   - When Usage is restyled, its position table (`PositionBlock`) moves Win rate from the third column to the last (see "Win % is a team measure" below).
-  - The open tab goes into the query string, so "look at Goku's builds" is a link.
+  - The open tab goes into the query string, so "look at Goku's builds" is a link. ✅ 2026-09-30 (`?tab=`).
 - **Teams** (phone first).
   - 13 rows: logo, name, record in the current scope, win rate, damage, efficiency, HP kept, characters used.
   - A row opens the Team page. A link goes to the website's standings, which stay the website's.
@@ -662,7 +678,7 @@ Which pages stay, which go, which change, and what each one holds. It builds on 
   - A drop zone and a file list, then the same Match, Characters, Teams and Meta views run over the uploaded files, labelled clearly as your uploads.
   - No share links, because uploads are not stored. The image card comes with the share-snippet work.
 - **Data export** (replaces the Data Tables page).
-  - Every table has a small export of what it shows.
+  - ~~Every table has a small export of what it shows.~~ Dropped (the league, 2026-09-30): the full workbook covers it.
   - **The full workbook stays for power users** who want to work on all the underlying data by hand. It is today's "Export to Excel": Character Averages, Match Details and the Team Performance Matrix.
     - It becomes a "Download all data (.xlsx)" button at the right end of the scope bar on every page, and in the Filters sheet on a phone.
     - It exports the current scope, so widening the scope to everything exports everything.

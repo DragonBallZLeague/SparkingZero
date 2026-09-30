@@ -18,15 +18,15 @@ import StyleBand from './StyleBand.jsx';
  * one picked form: the figures are that form's own in each match that reached
  * it, and the tiles and cards show its amounts as a share of all its forms.
  */
-export default function OverviewTab({ viewRow, allRow, builds, selected, onSelectBuild, darkMode, formView = null }) {
+export default function OverviewTab({ viewRow, allRow, builds, selected, onSelectBuild, formView = null }) {
   const matches = formView ? formView.slices : viewRow.matches;
   const overview = useMemo(() => overviewFromMatches(matches), [matches]);
   const place = useMemo(() => placeOverview(overview, baseline), [overview]);
   const shares = formView ? formView.shares : null;
   return (
     <div>
-      <HeadlineTiles overview={overview} place={place} baseline={baseline} darkMode={darkMode} shares={shares} />
-      <MoveCards overview={overview} place={place} baseline={baseline} darkMode={darkMode} shares={shares} />
+      <HeadlineTiles overview={overview} place={place} baseline={baseline} shares={shares} />
+      <MoveCards overview={overview} place={place} baseline={baseline} shares={shares} />
       <StyleBand
         overview={overview}
         place={place}
@@ -35,7 +35,6 @@ export default function OverviewTab({ viewRow, allRow, builds, selected, onSelec
         selected={selected}
         allRow={allRow}
         onSelectBuild={onSelectBuild}
-        darkMode={darkMode}
       />
     </div>
   );

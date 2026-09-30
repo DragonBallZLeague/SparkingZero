@@ -6,10 +6,10 @@ import { placements } from '../pages/characters/characterRows.js';
 
 /**
  * THE list table: the one look every table in the analyzer takes, so a new
- * table is a list of columns rather than another hand-made grid. The
- * Performances table is built on it; the older tables move onto it as they
- * are rebuilt (the Characters, Teams and Builds tables draw the same thing by
- * hand, and were its model).
+ * table is a list of columns rather than another hand-made grid. Every stat
+ * table is built on it (since 2026-09-30 the Characters, Teams, Team page
+ * Roster and Opponents and the Builds tables too, which drew it by hand and
+ * were its model).
  *
  * What it draws, as "Visual direction" settled: one panel, a sticky header
  * under the scope bar, 46px rows split by hairlines, right-aligned figures,
@@ -37,7 +37,7 @@ import { placements } from '../pages/characters/characterRows.js';
  * measure against (by default the rows; pass the unsearched list so a search
  * does not recolour the table). A row opens `linkFor(row)` when that gives a
  * path, else calls `onPick(row)` when given; `faded(row)` is a thin sample's
- * look.
+ * look, and `rowTitle(row)` a row's tooltip.
  *
  * For a table with a detail (Meta's layout A: the detail beside the table on a
  * wide screen, under its row when narrower), `selected` is the picked row's
@@ -46,7 +46,7 @@ import { placements } from '../pages/characters/characterRows.js';
  */
 export default function StatTable({
   columns, rows, pool = rows, rowKey = r => r.id, sort = null, dir = 'desc', onSort = null,
-  linkFor = null, onPick = null, faded = null, shown = Infinity, onMore = null,
+  linkFor = null, onPick = null, faded = null, rowTitle = null, shown = Infinity, onMore = null,
   selected = null, expanded = null, renderExpanded = null,
   isPhone = false, empty = 'Nothing matches.', className = '',
 }) {
@@ -106,18 +106,19 @@ export default function StatTable({
           const rowClass = `min-h-[46px] ${pad} no-underline text-inherit border-0 border-b border-solid border-gray-700/50 ${
             on ? 'bg-brand/[.12] shadow-[inset_2px_0_0_#f97316]' : 'hover:bg-slate-400/5'}`;
           const cells = columns.map(c => cellOf(c, r, i));
+          const title = rowTitle ? rowTitle(r) : undefined;
           let row;
-          if (to) row = <Link to={to} style={grid} className={rowClass}>{cells}</Link>;
+          if (to) row = <Link to={to} title={title} style={grid} className={rowClass}>{cells}</Link>;
           else if (onPick) {
             row = (
-              <div role="button" tabIndex={0} style={grid} className={`${rowClass} cursor-pointer`}
+              <div role="button" tabIndex={0} title={title} style={grid} className={`${rowClass} cursor-pointer`}
                 aria-pressed={selected !== null ? on : undefined} aria-expanded={renderExpanded ? !!open : undefined}
                 onClick={() => onPick(r)}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(r); } }}>
                 {cells}
               </div>
             );
-          } else row = <div style={grid} className={rowClass}>{cells}</div>;
+          } else row = <div title={title} style={grid} className={rowClass}>{cells}</div>;
           if (!open) return <React.Fragment key={key}>{row}</React.Fragment>;
           return (
             <React.Fragment key={key}>

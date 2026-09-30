@@ -15,7 +15,7 @@ export default function TierScorePill({ score, provisional = false, className = 
     <span
       title={`Tier ${tier}: ${TIER_LABELS[tier] || ''}${provisional ? ' (fewer than 5 matches)' : ''}`}
       className={`inline-flex h-[22px] items-center rounded-full border border-solid px-2 text-xs font-bold tabular-nums ${tierPillClass(tier)} ${className}`}
-      style={{ ...tierPillColors(tier, true), ...(provisional ? { filter: 'saturate(.45)', opacity: 0.62 } : null) }}
+      style={{ ...tierPillColors(tier), ...(provisional ? { filter: 'saturate(.45)', opacity: 0.62 } : null) }}
     >
       {score.toFixed(1)}
     </span>

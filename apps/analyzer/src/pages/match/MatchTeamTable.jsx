@@ -106,7 +106,7 @@ export default function MatchTeamTable({ side, isPhone, characterLinkFor, teamLi
                 </span>
                 {!isPhone && (
                   <span className="flex min-w-0 flex-col gap-1">
-                    <BuildPill label={build} darkMode compact className="self-start" />
+                    <BuildPill label={build} compact className="self-start" />
                     <CostBar capsules={capsulesOf(s)} className="w-full max-w-[160px]" />
                   </span>
                 )}

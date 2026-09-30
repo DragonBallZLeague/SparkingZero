@@ -1,5 +1,4 @@
 import { getTeams, extractStats } from '../statCalculations.js';
-import { calculatePerFormStats } from '../formStatsCalculator.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { buildKeyOf } from '../buildKey.js';
 import { computeMatchFusionDeltas, applyFusionSplit } from '../fusionSplit.js';
@@ -379,11 +378,9 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
           dragonDashMileage: stats.dragonDashMileage || 0,
           kills: stats.kills || 0,
           fileName: file.name,
-          // Per-form stats tracking
+          // The forms it took
           formChangeHistory: char.formChangeHistory || [],
           originalCharacterId: originalForm,
-          characterIdRecord: characterIdRecord,
-          rawCharacterData: char // Store raw data for per-form calculation
         });
         
         // Track build compositions (new 7-category system)
@@ -485,11 +482,9 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
           dragonDashMileage: stats.dragonDashMileage || 0,
           kills: stats.kills || 0,
           fileName: file.name,
-          // Per-form stats tracking
+          // The forms it took
           formChangeHistory: char.formChangeHistory || [],
           originalCharacterId: originalForm,
-          characterIdRecord: characterIdRecord,
-          rawCharacterData: char // Store raw data for per-form calculation
         });
         
         // Track build compositions (new 7-category system)
@@ -908,115 +903,6 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
         // Pass all builds (no cap) — UI handles selection and display
         team.characterAverages[charName].topBuilds = sortedBuilds;
         
-        // Aggregate per-form stats for characters with transformations
-        const formStatsMap = {};
-        matches.forEach(match => {
-          // Check if this character has form changes AND characterIdRecord data
-          const hasFormChanges = Array.isArray(match.formChangeHistory) && match.formChangeHistory.length > 0;
-          const hasCharacterIdRecord = match.characterIdRecord && typeof match.characterIdRecord === 'object';
-          
-          if (hasFormChanges && hasCharacterIdRecord) {
-            const perFormStats = calculatePerFormStats(
-              match.rawCharacterData,
-              match.characterIdRecord,
-              match.formChangeHistory,
-              match.originalCharacterId
-            );
-
-            
-            perFormStats.forEach(formStat => {
-              const formId = formStat.formId;
-              if (!formStatsMap[formId]) {
-                formStatsMap[formId] = {
-                  formId: formId,
-                  formNumber: formStat.formNumber,
-                  isFirstForm: formStat.isFirstForm,
-                  isFinalForm: formStat.isFinalForm,
-                  totalDamageDone: 0,
-                  totalDamageTaken: 0,
-                  totalBattleTime: 0,
-                  totalBattleCount: 0,
-                  totalHPRemaining: 0,
-                  totalHPMax: 0,
-                  totalSpecialMoves: 0,
-                  totalUltimates: 0,
-                  totalS1Blast: 0,
-                  totalS2Blast: 0,
-                  totalUltBlast: 0,
-                  totalS1HitBlast: 0,
-                  totalS2HitBlast: 0,
-                  totalULTHitBlast: 0,
-                  totalKills: 0,
-                  matches: 0
-                };
-              }
-              
-              formStatsMap[formId].totalDamageDone += formStat.damageDone || 0;
-              formStatsMap[formId].totalDamageTaken += formStat.damageTaken || 0;
-              formStatsMap[formId].totalBattleTime += formStat.battleTime || 0;
-              formStatsMap[formId].totalHPRemaining += formStat.hpRemaining || 0;
-              formStatsMap[formId].totalHPMax += (formStat.hpRemaining || 0);
-              formStatsMap[formId].totalSpecialMoves += formStat.specialMovesUsed || 0;
-              formStatsMap[formId].totalUltimates += formStat.ultimatesUsed || 0;
-              formStatsMap[formId].totalS1Blast += formStat.s1Blast || 0;
-              formStatsMap[formId].totalS2Blast += formStat.s2Blast || 0;
-              formStatsMap[formId].totalUltBlast += formStat.ultBlast || 0;
-              formStatsMap[formId].totalS1HitBlast += (formStat.s1HitBlast || 0);
-              formStatsMap[formId].totalS2HitBlast += (formStat.s2HitBlast || 0);
-              formStatsMap[formId].totalULTHitBlast += (formStat.uLTHitBlast || 0);
-              formStatsMap[formId].totalKills += formStat.kills || 0;
-              formStatsMap[formId].matches += 1;
-            });
-          }
-        });
-        
-        // Calculate averages for each form
-        const aggregatedFormStats = Object.values(formStatsMap).map(formData => {
-          const matchCount = formData.matches;
-          const avgDamageDone = matchCount > 0 ? formData.totalDamageDone / matchCount : 0;
-          const avgDamageTaken = matchCount > 0 ? formData.totalDamageTaken / matchCount : 0;
-          const avgBattleTime = matchCount > 0 ? formData.totalBattleTime / matchCount : 0;
-          
-          // Calculate derived stats using total-based calculations
-          const damageEfficiency = combatEfficiency(formData.totalDamageDone, formData.totalDamageTaken);
-          const damagePerSecond = formData.totalBattleTime > 0 ? formData.totalDamageDone / formData.totalBattleTime : 0;
-          
-          return {
-            formId: formData.formId,
-            formNumber: formData.formNumber,
-            characterName: charMap[formData.formId] || formData.formId,
-            isFirstForm: formData.isFirstForm,
-            isFinalForm: formData.isFinalForm,
-            avgDamageDone: avgDamageDone,
-            avgDamageTaken: avgDamageTaken,
-            avgBattleTime: avgBattleTime,
-            avgHPRemaining: matchCount > 0 ? formData.totalHPRemaining / matchCount : 0,
-            avgSpecialMoves: matchCount > 0 ? formData.totalSpecialMoves / matchCount : 0,
-            avgUltimates: matchCount > 0 ? formData.totalUltimates / matchCount : 0,
-            avgS1Blast: matchCount > 0 ? formData.totalS1Blast / matchCount : 0,
-            avgS2Blast: matchCount > 0 ? formData.totalS2Blast / matchCount : 0,
-            avgUltBlast: matchCount > 0 ? formData.totalUltBlast / matchCount : 0,
-            avgS1HitBlast: matchCount > 0 ? formData.totalS1HitBlast / matchCount : 0,
-            avgS2HitBlast: matchCount > 0 ? formData.totalS2HitBlast / matchCount : 0,
-            avgULTHitBlast: matchCount > 0 ? formData.totalULTHitBlast / matchCount : 0,
-            avgKills: matchCount > 0 ? formData.totalKills / matchCount : 0,
-            damageEfficiency: damageEfficiency,
-            damagePerSecond: damagePerSecond,
-            matchCount: matchCount
-          };
-        }).sort((a, b) => a.formNumber - b.formNumber);
-        
-        // Add form stats to character averages
-        if (aggregatedFormStats.length > 0) {
-          team.characterAverages[charName].formStats = aggregatedFormStats;
-          
-          // Build form change history text
-          const formNames = aggregatedFormStats.map(f => f.characterName);
-          team.characterAverages[charName].formChangeHistoryText = formNames.join(' → ');
-          
-          // Store raw form change history for component
-          team.characterAverages[charName].formChangeHistory = matches[0]?.formChangeHistory || [];
-        }
       }
     });
     

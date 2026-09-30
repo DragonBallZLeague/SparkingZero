@@ -2,7 +2,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { restoreDeepLink } from '@szl/ui';
-// Tailwind utilities must load BEFORE App.css - see src/index.css for why.
 import './index.css';
 import App from './App';
 import { ROUTES, REDIRECTS } from './routes.js';

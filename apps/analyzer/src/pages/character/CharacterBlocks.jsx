@@ -64,7 +64,7 @@ export function IdentityBlock({
       {!hideScore && (
         <HeaderFigure center label="Score">
           <span className={`inline-flex h-[26px] items-center rounded-full border border-solid px-2.5 text-base font-bold ${tierPillClass(tier)}`}
-            style={tierPillColors(tier, true)}>
+            style={tierPillColors(tier)}>
             {score}
           </span>
         </HeaderFigure>
@@ -100,7 +100,7 @@ export function IdentityBlock({
         )}
 
         <div className="flex items-center gap-2 shrink-0">
-          {shareable && <ShareButton darkMode />}
+          {shareable && <ShareButton />}
           {onBack && (
             <button
               type="button"

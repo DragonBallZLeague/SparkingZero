@@ -25,7 +25,7 @@ export default function TierList({ rows, pool = rows, isPhone, idFor, linkFor })
     <div className="overflow-hidden rounded-[10px] border border-solid border-gray-700 bg-shell-panel">
       {TIERS.map(t => {
         const inTier = sorted.filter(r => tierForScore(r.combatPerformanceScore) === t);
-        const ring = tierPillColors(t, true).borderColor;
+        const ring = tierPillColors(t).borderColor;
         return (
           <div key={t} className={`border-0 border-b border-solid border-gray-700/50 last:border-b-0 ${isPhone ? '' : 'grid grid-cols-[128px_1fr]'}`}
             style={{ background: tint(ring, 0.05) }}>

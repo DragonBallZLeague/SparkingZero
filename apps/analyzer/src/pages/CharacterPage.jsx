@@ -30,7 +30,6 @@ export default function CharacterPage({
   rank = null,
   totalInScope = null,
   scopeLabel = null,
-  darkMode = false,
   onBack = null,
   // Where the back button goes, when the page knows (shell/useCameFrom.js):
   // "Budokai", "Meta". Without it the button offers the character list.
@@ -51,23 +50,17 @@ export default function CharacterPage({
   shareable = true,
 }) {
   const notice = (icon, title, body) => (
-    <div className={`rounded-[10px] p-6 border border-solid mb-6 ${
-      darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200'
-    }`}>
+    <div className="rounded-[10px] p-6 border border-solid mb-6 bg-shell-panel border-gray-700">
       <div className="flex items-start gap-3">
         {icon}
         <div>
-          <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h1>
-          <p className={`text-sm mt-2 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>{body}</p>
+          <h1 className="text-xl font-bold text-white">{title}</h1>
+          <p className="text-sm mt-2 text-slate-400">{body}</p>
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              className={`inline-flex items-center gap-1.5 mt-4 h-8 px-[11px] rounded-[8px] border border-solid text-[13px] font-medium whitespace-nowrap cursor-pointer transition-colors ${
-                darkMode
-                  ? 'bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
+              className="inline-flex items-center gap-1.5 mt-4 h-8 px-[11px] rounded-[8px] border border-solid text-[13px] font-medium whitespace-nowrap cursor-pointer transition-colors bg-transparent border-gray-700 text-slate-200 hover:border-slate-400/[.35]"
             >
               <ArrowLeft className="w-4 h-4" />
               {backLabel || 'All characters'}
@@ -87,10 +80,8 @@ export default function CharacterPage({
   // real signals.
   if (reason === 'loading') {
     return (
-      <div className={`rounded-[10px] p-6 border border-solid mb-6 ${
-        darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200'
-      }`}>
-        <div className={`flex items-center gap-3 ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
+      <div className="rounded-[10px] p-6 border border-solid mb-6 bg-shell-panel border-gray-700">
+        <div className="flex items-center gap-3 text-slate-300">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span className="text-sm font-medium">
             Loading match data for {missingLabel || 'this character'}…
@@ -100,7 +91,7 @@ export default function CharacterPage({
     );
   }
 
-  const warn = <AlertCircle className={`w-6 h-6 shrink-0 ${darkMode ? 'text-amber-400' : 'text-amber-600'}`} />;
+  const warn = <AlertCircle className="w-6 h-6 shrink-0 text-amber-400" />;
 
   // The filters match nothing at all. Distinct from a missing character, because
   // the fix is different and the visitor did not choose these filters if they
@@ -133,7 +124,6 @@ export default function CharacterPage({
       rank={rank}
       totalInScope={totalInScope}
       scopeLabel={scopeLabel}
-      darkMode={darkMode}
       onBack={onBack}
       backLabel={backLabel}
       portraitId={portraitId}

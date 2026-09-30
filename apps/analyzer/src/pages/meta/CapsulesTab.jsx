@@ -14,7 +14,7 @@ import {
   BUILD_TYPES, CAPSULE_COLUMNS, CAPSULE_PHONE_DEFAULTS, capsuleStatByKey, share, fitColor,
 } from './capsuleRows.js';
 
-const Dot = ({ type }) => <i className="block h-2 w-2 flex-none rounded-[2px]" style={{ background: capsuleTypeColor(type, true) }} />;
+const Dot = ({ type }) => <i className="block h-2 w-2 flex-none rounded-[2px]" style={{ background: capsuleTypeColor(type) }} />;
 const characters = r => `${r.characters} character${r.characters === 1 ? '' : 's'}`;
 const qualityTitle = r => `${r.quality} data: ${fmtInt(r.matches.length)} uses over ${characters(r)}, `
   + `${fmtInt(r.comparable)} comparable with the same characters' builds of the same type without it`;

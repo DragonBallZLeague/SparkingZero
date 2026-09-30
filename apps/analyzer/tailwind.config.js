@@ -8,14 +8,6 @@ module.exports = {
     // Shared components live outside this app; their classes must be scanned too.
     '../../packages/ui/src/**/*.{js,jsx}',
   ],
-  corePlugins: {
-    // Preflight is OFF until Phase 2b retires App.css. See src/index.css - this
-    // app's 6,600-line component tree was never written against Tailwind's base
-    // reset, and enabling it would restyle headings, margins and borders
-    // wholesale. Consequence: border-width utilities need an explicit
-    // border-style until preflight is on.
-    preflight: false,
-  },
   theme: {
     extend: {
       colors: {
@@ -83,7 +75,10 @@ module.exports = {
       // A faint slate hairline, as App.css drew it. The alpha is scaled, not
       // replaced, so an opacity modifier still means "fainter":
       // border-gray-700 = 18%, border-gray-700/60 = 60% of that.
+      // DEFAULT is the colour preflight gives a border no class colours: the
+      // text colour, as before preflight was on (see src/index.css).
       borderColor: {
+        DEFAULT: 'currentColor',
         gray: { 700: 'rgb(148 163 184 / calc(<alpha-value> * 0.18))' },
       },
       fontSize: {

@@ -114,7 +114,7 @@ export default function MatchPage({ state, onBack, backLabel = null, characterLi
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {shareable && <ShareButton darkMode />}
+          {shareable && <ShareButton />}
           {back}
         </div>
       </div>

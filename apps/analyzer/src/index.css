@@ -1,25 +1,21 @@
 /*
- * Tailwind entry for the analyzer, and the app's styling authority.
+ * Tailwind entry for the analyzer: its only stylesheet. App.css, the pre-redesign
+ * stylesheet, was deleted on 2026-09-30 once nothing used it; the look lives in
+ * tailwind.config.js (theme values) and in the classes on each component, and
+ * the few site-wide rules below. Restyle there.
  *
- * Tailwind here is UNLAYERED, and App.css sits in the `legacy` cascade layer
- * (see the top of App.css). An unlayered rule beats a layered one whatever the
- * specificity or load order, so every Tailwind class wins over App.css - the
- * legacy file only styles what no Tailwind class on the element touches. Import
- * order between the two no longer matters.
- *
- * App.css's "modern redesign layer" re-skinned the app by redefining Tailwind's
- * own class names (rounder corners, softer shadows, a navy card surface, faint
- * hairline borders, a fluid page width). Those values now live in
- * tailwind.config.js, so the app looks as it did while Tailwind is in charge.
- * Restyle there, not by adding rules to App.css.
- *
- * NOTE: "@tailwind base" is deliberately omitted. Preflight would reset margins,
- * heading sizes and border defaults across a component tree that was never
- * written against it. It gets enabled once App.css is gone. Until then,
- * border-width utilities need an explicit border-style.
+ * Tailwind's base reset (preflight) is on since App.css went. Two of its
+ * defaults are put back as they were, because the pages were built and
+ * measured against the approved demo without them: a line height of `normal`
+ * where nothing sets one (preflight says 1.5, which grew every unset line),
+ * and a border in the text colour where no class sets one (the CSS default;
+ * tailwind.config.js sets borderColor.DEFAULT).
  */
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html { line-height: normal; }
 
 /*
  * The surface a part sits on. A table row's opened detail is `.surface-inset`,
@@ -43,7 +39,12 @@
  */
 body {
   font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+*, ::before, ::after { box-sizing: border-box; }
+table { border-collapse: collapse; }
 button, input, select, textarea {
   font-family: inherit;
 }
@@ -101,3 +102,13 @@ button:focus-visible, a:focus-visible, [role="tab"]:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .szl-tier-pill-z { animation: none; }
 }
+
+/*
+ * Scrollbars (Chromium and Safari): thin, and a row that scrolls sideways
+ * (the tab rows, the phone scope bar) hides its bar, as it did under App.css.
+ */
+::-webkit-scrollbar { width: 8px; height: 10px; }
+::-webkit-scrollbar-track { background: #9ca3af; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+.overflow-x-auto::-webkit-scrollbar { display: none; }

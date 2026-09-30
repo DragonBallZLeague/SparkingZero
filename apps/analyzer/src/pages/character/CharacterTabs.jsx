@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { IdentityBlock } from './CharacterBlocks.jsx';
 import CharacterForms from './CharacterForms.jsx';
@@ -42,17 +42,16 @@ const teamByTagSlug = tag => teamByTag(tag).slug;
  * view must never pass for the whole picture (the league, 2026-09-29). All of
  * it is in the URL, so a shared link opens on the same cut.
  *
+ * THE OPEN TAB is in the URL too (`?tab=usage|builds|forms|matches`, none for
+ * Overview; the league, 2026-09-30), so "look at this character's builds" is
+ * a link. A tab the view has nothing for falls back to the first one.
+ *
  * A FORM is the Match page's rule (the league's choice, 2026-09-30): the
  * Overview shows the form's own figures in each match that reached it, rates
  * against the league and amounts as a share of all its forms. The tabs'
  * tables list those matches whole, so their scores stay whole-match scores,
  * and the header drops Tier and Score: a form is part of a match, and the
  * score's damage and HP would read it as a weak whole one.
- *
- * ONE KNOWN COST: a shared link always lands on Overview. These URLs get pasted
- * into Discord at a specific thing, so "look at this character's matches" is not
- * currently linkable. Putting the active tab in the query string would fix it
- * and is the obvious next step if that starts to matter.
  */
 
 /**
@@ -74,13 +73,13 @@ const TABS = [
 const uses = n => `${n} match${n === 1 ? '' : 'es'}`;
 
 /** The strips above the tabs: one per cut, each with the way back. */
-function CutStrips({ build, pos, posCount, form, formCount, team, teamCount, darkMode, set }) {
+function CutStrips({ build, pos, posCount, form, formCount, team, teamCount, set }) {
   if (!build && !pos && !form && !team) return null;
   return (
     <div className="mt-4 flex flex-col gap-1.5">
       {build && (
         <FilterStrip label="Showing one build" clearLabel="Show all builds" onClear={() => set('build', null)}>
-          <BuildPill label={build.label} darkMode={darkMode} />
+          <BuildPill label={build.label} />
           <span className="text-slate-400">{build.aiName}</span>
           <span className="tabular-nums text-slate-400">{build.count} use{build.count === 1 ? '' : 's'}</span>
         </FilterStrip>
@@ -118,9 +117,9 @@ export default function CharacterTabs(props) {
   // `character` comes cut to the team already (App applies `for=`, which also
   // decides what the rank counts among); `teamsRow` is the same character over
   // every team, for the Usage tab's team list, or null when no team is picked.
-  const { character, teamsRow = null, rank, darkMode, matchLinkFor, performancesLink, charMap, portraitId } = props;
-  const [tab, setTab] = useState('overview');
+  const { character, teamsRow = null, rank, matchLinkFor, performancesLink, charMap, portraitId } = props;
   const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get('tab') || 'overview';
   const cuts = readCharacterCuts(searchParams);
   const team = teamsRow ? teamBySlug(searchParams.get('for'), []) : null;
 
@@ -135,6 +134,7 @@ export default function CharacterTabs(props) {
     }, { replace: true });
   }, [setSearchParams]);
   const toggle = (key, value, current) => setCut(key, String(value) === String(current) ? null : value);
+  const setTab = id => setCut('tab', id === 'overview' ? null : id);
 
   // A form of this character's, whatever the other cuts leave (so its strip
   // can still be cleared); a slug none of its matches reached is ignored.
@@ -176,7 +176,7 @@ export default function CharacterTabs(props) {
 
   const count = (row, keep) => (row ? (row.matches || []).filter(keep).length : 0);
   const strips = (
-    <CutStrips build={build} darkMode={darkMode} set={setCut}
+    <CutStrips build={build} set={setCut}
       pos={cuts.pos} posCount={count(buildRow, m => Number(m.position) === cuts.pos)}
       form={form} formCount={viewRow ? viewRow.matches.length : 0}
       team={team} teamCount={team ? count(teamBase, m => m.team === team.tag) : 0} />
@@ -199,9 +199,7 @@ export default function CharacterTabs(props) {
 
   return (
     // bg-shell-panel, as the Characters table: one panel colour site-wide.
-    <div className={`rounded-[10px] p-5 sm:p-6 border border-solid mb-6 ${
-      darkMode ? 'bg-shell-panel border-gray-700' : 'bg-white border-gray-200'
-    }`}>
+    <div className="rounded-[10px] p-5 sm:p-6 border border-solid mb-6 bg-shell-panel border-gray-700">
       {/* The score and tier are the cut's. Its leaderboard rank is not: the
           leaderboard ranks characters, not builds or positions. A team keeps
           it: App ranks among that team's characters. */}
@@ -211,9 +209,7 @@ export default function CharacterTabs(props) {
 
       <div
         role="tablist"
-        className={`flex gap-1 mt-5 mb-5 overflow-x-auto border-0 border-b border-solid ${
-          darkMode ? 'border-gray-700' : 'border-gray-200'
-        }`}
+        className="flex gap-1 mt-5 mb-5 overflow-x-auto border-0 border-b border-solid border-gray-700"
       >
         {tabs.map(t => (
           <button
@@ -226,10 +222,8 @@ export default function CharacterTabs(props) {
             // off here, so a bare <button> keeps the UA's default grey fill.
             className={`px-3 py-2 text-sm font-semibold whitespace-nowrap bg-transparent border-0 border-b-2 border-solid cursor-pointer transition-colors ${
               active === t.id
-                ? (darkMode ? 'border-orange-500 text-white' : 'border-orange-500 text-gray-900')
-                : (darkMode
-                    ? 'border-transparent text-slate-400 hover:text-slate-200'
-                    : 'border-transparent text-gray-500 hover:text-gray-800')
+                ? ('border-orange-500 text-white')
+                : ('border-transparent text-slate-400 hover:text-slate-200')
             }`}
           >
             {t.label}
@@ -245,7 +239,6 @@ export default function CharacterTabs(props) {
             builds={builds}
             selected={selected}
             onSelectBuild={code => setCut('build', code)}
-            darkMode={darkMode}
             formView={formView}
           />
         )}

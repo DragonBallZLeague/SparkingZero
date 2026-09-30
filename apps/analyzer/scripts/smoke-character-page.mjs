@@ -93,8 +93,8 @@ try {
     process.exit(1);
   }
 
-  // The page is tabbed, and tab state is internal - a server render only ever
-  // produces the Overview panel. So the other tabs are rendered DIRECTLY
+  // The page is tabbed, and a server render produces the one tab the URL
+  // opens (Overview without `?tab=`). So the other tabs are rendered DIRECTLY
   // below, or Usage, Builds, Forms and Matches would silently lose coverage.
   const tab = async name => (await vite.ssrLoadModule(`/src/pages/character/${name}.jsx`)).default;
   const CharacterUsage = await tab('CharacterUsage');
@@ -121,12 +121,12 @@ try {
   const baseline = JSON.parse(fs.readFileSync(path.join(appRoot, 'src', 'config', 'style-baseline.json'), 'utf8'));
 
   const PANELS = [
-    ['Overview:bars', (c, darkMode) => {
+    ['Overview:bars', c => {
       const overview = overviewFromMatches(c.matches);
       return React.createElement(StyleBand, {
         overview, place: placeOverview(overview, baseline), baseline,
         builds: characterBuilds(c, charMap), selected: null, allRow: c,
-        onSelectBuild: () => {}, darkMode, initialView: 'bars',
+        onSelectBuild: () => {}, initialView: 'bars',
       });
     }],
     ['Usage', c => React.createElement(CharacterUsage, { character: c, charMap })],
@@ -138,11 +138,11 @@ try {
   ];
 
   // The tabs link and read the URL, so they render inside a router.
-  function PanelHost({ character, darkMode, build }) {
-    return React.createElement(MemoryRouter, { initialEntries: ['/characters/x'] }, build(character, darkMode));
+  function PanelHost({ character, build }) {
+    return React.createElement(MemoryRouter, { initialEntries: ['/characters/x'] }, build(character));
   }
 
-  console.log(`\nRendering ${subjects.length} character(s) x 2 themes, page + ${PANELS.length} panels\n`);
+  console.log(`\nRendering ${subjects.length} character(s), page + ${PANELS.length} panels\n`);
 
   // Visible text only: markup and React's <!-- --> text-node markers stripped.
   const visibleText = html => html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' ');
@@ -150,7 +150,7 @@ try {
   // without complaint.
   const JUNK = /\bNaN\b|\bundefined\b|\bnull\b|Infinity/;
 
-  const render = (row, darkMode, search = '') => {
+  const render = (row, search = '') => {
     const el = React.createElement(
       MemoryRouter,
       { initialEntries: ['/characters/x' + search] },
@@ -164,7 +164,6 @@ try {
             rank: 3,
             totalInScope: 107,
             scopeLabel: 'Season S0 · Type Season (105 matches)',
-            darkMode,
             onBack: () => {},
             matchLinkFor: () => "/matches/x?open=y",
             charMap,
@@ -190,10 +189,10 @@ try {
 
   for (const { label, row } of subjects) {
     {
-      for (const darkMode of [true, false]) {
-        const what = `${label} (${row.name}) / page / ${darkMode ? 'dark' : 'light'}`;
+      {
+        const what = `${label} (${row.name}) / page`;
         try {
-          const html = render(row, darkMode);
+          const html = render(row);
           if (!html || html.length < 200) {
             console.error('  FAIL ' + what + '\n         rendered only ' + (html || '').length + ' chars');
             failed = true;
@@ -220,10 +219,10 @@ try {
 
       // Each tab's panel, rendered on its own.
       for (const [panel, build] of PANELS) {
-        for (const darkMode of [true, false]) {
-          const what = `${label} (${row.name}) / ${panel} / ${darkMode ? 'dark' : 'light'}`;
+        {
+          const what = `${label} (${row.name}) / ${panel}`;
           try {
-            const html = renderToString(React.createElement(PanelHost, { character: row, darkMode, build }));
+            const html = renderToString(React.createElement(PanelHost, { character: row, build }));
             // matches[].position is NUMERIC in the data, so a table that forgets
             // to translate it shows "1 / 2 / 3" as its rows - which shipped
             // once. The Usage tab's By position rows must be the LEAGUE'S
@@ -272,10 +271,10 @@ try {
       ['?build=zzzzzz', false, 'an unknown code'],
     ];
     for (const [search, wantStrip, label] of cases) {
-      for (const darkMode of [true, false]) {
-        const what = `${label} / ${darkMode ? 'dark' : 'light'}`;
+      {
+        const what = label;
         try {
-          const text = visibleText(render(row, darkMode, search));
+          const text = visibleText(render(row, search));
           const strip = text.includes('Showing one build');
           // The identity header's match count is the build's when one is selected.
           const count = wantStrip ? b.row.activeMatchCount || b.row.matchCount : row.activeMatchCount || row.matchCount;
@@ -286,8 +285,8 @@ try {
           } else if (!counted) {
             console.error(`  FAIL ${what}\n         header does not read ${count} matches`);
             failed = true;
-          } else if (overviewProblem(render(row, darkMode, search))) {
-            console.error(`  FAIL ${what}\n         ${overviewProblem(render(row, darkMode, search))}`);
+          } else if (overviewProblem(render(row, search))) {
+            console.error(`  FAIL ${what}\n         ${overviewProblem(render(row, search))}`);
             failed = true;
           } else {
             console.log(`  ok   ${what}`);
@@ -297,6 +296,22 @@ try {
           failed = true;
         }
       }
+    }
+  }
+
+  // ---- a ?tab= link -----------------------------------------------------------
+  //
+  // The open tab is in the URL, so "look at this character's builds" is a
+  // link. A tab the view has nothing for (or a made-up one) falls back to the
+  // first tab rather than an empty panel.
+  console.log('\nA ?tab= link opens on that tab:');
+  {
+    const row = rows.find(r => characterBuilds(r, charMap).length >= 1 && (r.matches || []).length);
+    for (const [search, want] of [['', 'Overview'], ['?tab=builds', 'Builds'], ['?tab=matches', 'Matches'], ['?tab=nonsense', 'Overview']]) {
+      const html = render(row, search);
+      const open = (/aria-selected="true"[^>]*>([^<]+)</.exec(html) || [])[1];
+      if (open === want) console.log(`  ok   ${search || '(no tab)'} -> ${open}`);
+      else { console.error(`  FAIL ${search || '(no tab)'} opened ${open}, want ${want}`); failed = true; }
     }
   }
 
@@ -323,7 +338,7 @@ try {
     const actual = tierForScore(probe);
     try {
       const html = renderToString(React.createElement(PerformanceScoreBadge, {
-        score: probe, label: 'Score', size: 'small', darkMode: true,
+        score: probe, label: 'Score', size: 'small',
       }));
       const bg = /background:\s*([^;"]+)/.exec(html);
       if (!bg) {
@@ -346,23 +361,22 @@ try {
   // animation, so a pill that forgets it would quietly stop breathing.
   {
     const zHtml = renderToString(React.createElement(PerformanceScoreBadge, {
-      score: (TIER_CUTOFFS.Z ?? 0) + 1, darkMode: true }));
+      score: (TIER_CUTOFFS.Z ?? 0) + 1 }));
     const sHtml = renderToString(React.createElement(PerformanceScoreBadge, {
-      score: (TIER_CUTOFFS.S ?? 0) + 1, darkMode: true }));
+      score: (TIER_CUTOFFS.S ?? 0) + 1 }));
     const zOk = zHtml.includes('szl-tier-pill-z') && /background:\s*#2a1418/i.test(zHtml);
     const sOk = !sHtml.includes('szl-tier-pill-z');
     if (zOk && sOk) console.log('  ok   Z pill breathes on its dark fill; S does not');
     else { console.error('  FAIL Z breathing class / fill wrong (Z ok: ' + zOk + ', S clean: ' + sOk + ')'); failed = true; }
   }
 
-  // Readable in BOTH themes. The check above - a distinct colour per tier - passed
-  // while light mode was broken: the pill took no theme and wrote its text in the
-  // tier's light letter colour, which on a white page was close to invisible. So
-  // measure what a reader gets: WCAG contrast of the text against the pill's own
-  // tinted background, composited over the page each theme puts it on (the
-  // lighter dark surface and a light-grey light one, the harsher case in each).
+  // Readable. The check above - a distinct colour per tier - passed while light
+  // mode (since removed) was broken: the pill wrote its text in the tier's light
+  // letter colour, close to invisible on white. So measure what a reader gets:
+  // WCAG contrast of the text against the pill's own tinted background,
+  // composited over the lighter of the dark surfaces, the harsher case.
   {
-    const PAGE = { dark: [31, 41, 55], light: [243, 244, 246] }; // gray-800, gray-100
+    const PAGE = { dark: [31, 41, 55] }; // gray-800
     const MIN = 4.5; // WCAG AA for normal-size text; the pill is text-xs/sm
     const parse = s => {
       const hex = /^#([0-9a-f]{6})$/i.exec(s.trim());
@@ -379,12 +393,11 @@ try {
     };
     const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
 
-    // Dark only: the app has no light theme (the pill always takes the dark palette).
     for (const theme of ['dark']) {
       const results = [];
       for (const tier of TIERS) {
         const probe = TIER_CUTOFFS[tier] === undefined ? 0 : TIER_CUTOFFS[tier] + 1;
-        const html = renderToString(React.createElement(PerformanceScoreBadge, { score: probe, darkMode: theme === 'dark' }));
+        const html = renderToString(React.createElement(PerformanceScoreBadge, { score: probe }));
         const style = (/style="([^"]*)"/.exec(html) || [])[1] || '';
         const bg = parse((/background:\s*([^;]+)/.exec(style) || [])[1] || '');
         const fg = parse((/(?:^|;)\s*color:\s*([^;]+)/.exec(style) || [])[1] || '');
@@ -404,7 +417,7 @@ try {
     try {
       // React's SSR splits adjacent text nodes with <!-- --> markers; strip
       // them before asserting on the visible text.
-      const html = renderToString(React.createElement(PerformanceScoreBadge, { score: junk, darkMode: true }));
+      const html = renderToString(React.createElement(PerformanceScoreBadge, { score: junk }));
       const text = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '');
       if (!text.trim()) { console.error('  FAIL score ' + junk + ' rendered nothing'); failed = true; }
       else if (/NaN|undefined|null/.test(text)) {
@@ -426,7 +439,7 @@ try {
         { initialEntries: ['/characters/nobody'] },
         React.createElement(CharacterPage, {
           character: null, missingLabel: 'Nobody', reason,
-          scopeLabel: 'Season S1 · Type Season', darkMode: true, onBack: () => {},
+          scopeLabel: 'Season S1 · Type Season', onBack: () => {},
         })
       );
       const html = renderToString(el);
@@ -450,4 +463,4 @@ if (failed) {
   console.error('FAILED - the character page throws or renders wrongly.');
   process.exit(1);
 }
-console.log('PASSED - the character page and every tab panel render for each sampled character and theme.');
+console.log('PASSED - the character page and every tab panel render for each sampled character.');

@@ -131,7 +131,7 @@ export function performanceColumns({ layout, group, picked = [], idFor = () => n
         key: 'build', label: 'Build', align: 'left', sort: false, width: 'minmax(140px,1.2fr)',
         cell: r => (
           <div className="flex min-w-0 flex-col gap-1">
-            <BuildPill label={r.build} darkMode compact className="self-start" />
+            <BuildPill label={r.build} compact className="self-start" />
             <CostBar capsules={capsulesOf(r.m)} className="w-full max-w-[140px]" />
           </div>
         ),

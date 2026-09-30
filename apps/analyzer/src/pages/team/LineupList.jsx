@@ -126,7 +126,7 @@ function Slot({ s, tag, isPhone, idFor, opponent }) {
           ? <CostBar capsules={(s.equippedCapsules || []).map(c => ({ name: c.name, cost: c.capsule?.cost || 0, type: String(c.capsule?.buildType || '').toLowerCase() }))} className="mt-1 w-full" />
           : (
             <div className="mt-1 flex min-w-0 items-center gap-1.5">
-              <BuildPill label={label} darkMode compact />
+              <BuildPill label={label} compact />
               <span className="text-[11px] leading-[1.45] text-slate-400 tabular-nums">{fmtK(s.damageDone)}</span>
             </div>
           )}
