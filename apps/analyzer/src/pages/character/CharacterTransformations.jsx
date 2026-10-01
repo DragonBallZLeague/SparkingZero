@@ -45,43 +45,43 @@ function leftOut(left, partners) {
   return parts;
 }
 
-/** One skill gauge capsule: without → with, on the same AI strategies. */
-function GaugeRow({ g }) {
+/**
+ * One skill gauge capsule's card: its name with the rate without → with (on
+ * the same AI strategies) beside it, its effect under them, then the first
+ * transformation's time, or why there is no comparison. Four across on a wide
+ * screen, two on a tablet, one on a phone.
+ */
+function GaugeCard({ g }) {
   const { name, effect } = GAUGE[g.id];
   const solid = g.compared >= THIN;
-  let right;
-  if (!g.uses) right = <span className="text-slate-500">Never run with it</span>;
-  else if (!g.compared) {
-    right = <span className="text-slate-500">{g.without ? 'Too few without it on the same AI' : 'Always run with it'}</span>;
-  } else {
-    const dt = g.seconds ? g.seconds.with - g.seconds.usual : null;
-    const shown = dt === null ? 0 : Math.round(Math.abs(dt));
-    right = (
-      <span className={`flex flex-col items-start tabular-nums sm:items-end ${solid ? '' : 'opacity-60'}`}>
-        <span>
-          <span className="text-slate-400">{pctOf(g.usual)}</span><span className="mx-1.5 text-slate-500">→</span>
-          <b className="font-semibold text-slate-100">{pctOf(g.with)}</b>
-          <b className={`ml-2 inline-block w-8 text-right font-semibold ${solid ? tone(g.gain, TONE_RATE) : 'text-slate-300'}`}>{points(g.gain)}</b>
-        </span>
-        {dt !== null && (
-          <span className={`text-[11px] leading-tight ${solid ? tone(dt, TONE_SECONDS, -1) : 'text-slate-400'}`}
-            title="The median time on the field before the first transformation, without → with. Sooner is better.">
-            first {clock(g.seconds.usual)} → {clock(g.seconds.with)}{shown ? `, ${shown}s ${dt < 0 ? 'sooner' : 'later'}` : ''}
+  const dt = g.compared && g.seconds ? g.seconds.with - g.seconds.usual : null;
+  const shown = dt === null ? 0 : Math.round(Math.abs(dt));
+  const status = !g.uses ? 'Never run with it'
+    : !g.compared ? (g.without ? 'Too few matches without it on the same AI to compare' : 'Always run with it')
+      : null;
+  return (
+    <li className="min-w-0 rounded-[10px] border border-solid border-gray-700 px-3 py-2.5 text-[12.5px]"
+      title={g.compared ? `${matches(g.compared)} with it compared with its matches without it on the same AI strategies${solid ? '' : `: under ${THIN}, too few to colour`}` : undefined}>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+        <span className="min-w-0 font-semibold text-slate-100">{name}</span>
+        {g.compared > 0 && (
+          <span className={`flex-none tabular-nums ${solid ? '' : 'opacity-60'}`}>
+            <span className="text-slate-400">{pctOf(g.usual)}</span><span className="mx-1.5 text-slate-500">→</span>
+            <b className="font-semibold text-slate-100">{pctOf(g.with)}</b>
+            <b className={`ml-2 inline-block w-8 text-right font-semibold ${solid ? tone(g.gain, TONE_RATE) : 'text-slate-300'}`}>{points(g.gain)}</b>
           </span>
         )}
-      </span>
-    );
-  }
-  return (
-    <li className="grid gap-x-3 gap-y-1 border-0 border-t border-solid border-gray-700/50 py-2 text-[12.5px] first:border-t-0 first:pt-0 sm:grid-cols-[minmax(0,1fr)_auto]"
-      title={g.compared ? `${matches(g.compared)} with it compared with its matches without it on the same AI strategies${solid ? '' : `: under ${THIN}, too few to colour`}` : undefined}>
-      <span className="min-w-0">
-        <span className="block font-semibold text-slate-100">{name}</span>
-        <span className="block text-[11.5px] leading-snug text-slate-500">
-          {effect}{g.uses ? ` · ${matches(g.uses)} with it` : ''}
-        </span>
-      </span>
-      <span className="sm:text-right">{right}</span>
+      </div>
+      <div className="text-[11.5px] leading-snug text-slate-500">
+        {effect}{g.uses ? ` · ${matches(g.uses)} with it` : ''}
+      </div>
+      {status && <div className="mt-0.5 text-[11.5px] text-slate-400">{status}</div>}
+      {dt !== null && (
+        <div className={`mt-0.5 text-[11.5px] tabular-nums ${solid ? tone(dt, TONE_SECONDS, -1) : 'text-slate-400 opacity-60'}`}
+          title="The median time on the field before the first transformation, without → with. Sooner is better.">
+          First transformation {clock(g.seconds.usual)} → {clock(g.seconds.with)}{shown ? `, ${shown}s ${dt < 0 ? 'sooner' : 'later'}` : ''}
+        </div>
+      )}
     </li>
   );
 }
@@ -218,33 +218,31 @@ export default function CharacterTransformations({
         {widen}
       </div>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        <div className="min-w-0">
-          <div className={TITLE}>By AI strategy</div>
-          <StatTable columns={columns} rows={rows} sort={sort} dir={dir} onSort={onSort} isPhone={isPhone}
-            linkFor={aiLinkFor ? r => aiLinkFor(r.id) : null}
-            rowTitle={aiLinkFor ? r => `${r.name} on Meta › AI strategies, against this character's other AIs` : null}
-            faded={allThin ? null : r => r.matches < THIN}
-            empty="No counted matches on any AI strategy here." />
-          {tableNotes.length > 0 && <p className="mb-0 mt-2 text-xs text-slate-500">{tableNotes.join(' ')}</p>}
-        </div>
+      {/* Three parts, each full width (the league, 2026-10-01): the AI table,
+          the capsules as a row of cards, then the forms. Side by side, the
+          shorter of the table and the capsules left a gap, and the forms'
+          fixed 210px columns lost their fourth form to a narrower column. */}
+      <div className={TITLE}>By AI strategy</div>
+      <StatTable columns={columns} rows={rows} sort={sort} dir={dir} onSort={onSort} isPhone={isPhone}
+        linkFor={aiLinkFor ? r => aiLinkFor(r.id) : null}
+        rowTitle={aiLinkFor ? r => `${r.name} on Meta › AI strategies, against this character's other AIs` : null}
+        faded={allThin ? null : r => r.matches < THIN}
+        empty="No counted matches on any AI strategy here." />
+      {tableNotes.length > 0 && <p className="mb-0 mt-2 text-xs text-slate-500">{tableNotes.join(' ')}</p>}
 
-        <div className="min-w-0">
-          <div className="flex items-baseline justify-between gap-2">
-            <div className={TITLE}>Skill gauge capsules</div>
-            <span className="mb-2 text-right text-[11px] text-slate-500">same AI: without → with</span>
-          </div>
-          <ul className="m-0 list-none rounded-[10px] border border-solid border-gray-700 p-3.5">
-            {gauge.map(g => <GaugeRow key={g.id} g={g} />)}
-          </ul>
-          <p className="mb-0 mt-2 text-xs text-slate-500">
-            Transformations and fusions spend the skill gauge: 1 count for most, 2 or 3 for some, almost always 3 for a fusion.
-            {ring > 0
-              ? ` Broly's Ring blocks them: carried in ${matches(ring)}, which the figures leave out.`
-              : " Broly's Ring blocks them; it was not carried here."}
-          </p>
-        </div>
+      <div className="mt-6 flex items-baseline justify-between gap-2">
+        <div className={TITLE}>Skill gauge capsules</div>
+        <span className="mb-2 text-right text-[11px] text-slate-500">same AI: without → with</span>
       </div>
+      <ul className="m-0 grid list-none gap-2 p-0 sm:grid-cols-2 xl:grid-cols-4">
+        {gauge.map(g => <GaugeCard key={g.id} g={g} />)}
+      </ul>
+      <p className="mb-0 mt-2 text-xs text-slate-500">
+        Transformations and fusions spend the skill gauge: 1 count for most, 2 or 3 for some, almost always 3 for a fusion.
+        {ring > 0
+          ? ` Broly's Ring blocks them: carried in ${matches(ring)}, which the figures leave out.`
+          : " Broly's Ring blocks them; it was not carried here."}
+      </p>
 
       {/* FormBreakdown carries its own "Forms" heading. */}
       <div className="mt-6">
