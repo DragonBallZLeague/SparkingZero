@@ -28,6 +28,8 @@ const TONE_PLACES = LEAN_PLACES;
 const TONE_RATIO = 0.15;
 /** A change in how often its characters transform is coloured from 5 points. */
 const TONE_TRANSFORM = 0.05;
+/** A first transformation this many seconds sooner (green) or later (red) is coloured; the median is about 55s. */
+const TONE_SECONDS = 5;
 
 const rate = v => `${Math.round(v * 100)}%`;
 const points = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}`;
@@ -172,13 +174,24 @@ function TransformBox({ t, one, idFor, linkFor }) {
         <b className={`text-[14px] font-semibold tabular-nums ${tone(t.gain, TONE_TRANSFORM)}`}>{points(t.gain)}</b>
       </div>
       <div className="mb-2 text-[11.5px] text-slate-500">of matches transformed or fused</div>
-      {t.seconds && (
-        <div className="mb-2 flex items-baseline justify-between gap-2 border-0 border-t border-solid border-gray-700/50 pt-1.5 text-[12.5px]"
-          title={`${whose}: the median time on the field before the first transformation`}>
-          <span className="text-slate-300">First transformation</span>
-          <span className="tabular-nums"><span className="text-slate-400">{clock(t.seconds.usual)}</span><span className="mx-1.5 text-slate-500">→</span><b className="font-semibold text-slate-100">{clock(t.seconds.with)}</b></span>
-        </div>
-      )}
+      {t.seconds && (() => {
+        // Sooner is better: a team picking an AI to get a character to
+        // transform wants it early (the league, 2026-10-01). So a quicker
+        // first transformation is green and a slower one red, said in words.
+        const dt = t.seconds.with - t.seconds.usual;
+        const shown = Math.round(Math.abs(dt));
+        return (
+          <div className="mb-2 flex items-baseline justify-between gap-2 border-0 border-t border-solid border-gray-700/50 pt-1.5 text-[12.5px]"
+            title={`${whose}: the median time on the field before the first transformation. Sooner is better.`}>
+            <span className="text-slate-300">First transformation</span>
+            <span className="tabular-nums">
+              <span className="text-slate-400">{clock(t.seconds.usual)}</span><span className="mx-1.5 text-slate-500">→</span>
+              <b className="font-semibold text-slate-100">{clock(t.seconds.with)}</b>
+              <b className={`ml-2 font-semibold ${tone(dt, TONE_SECONDS, -1)}`}>{shown ? `${shown}s ${dt < 0 ? 'sooner' : 'later'}` : 'same'}</b>
+            </span>
+          </div>
+        );
+      })()}
       {!one && (
         <div className="flex flex-col gap-2.5">
           <TransformList title="Raises most" list={t.byCharacter.filter(d => d.delta > 0).slice(0, 3)} idFor={idFor} linkFor={linkFor} />
