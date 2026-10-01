@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calendar, Trophy, ArrowUpDown, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown } from 'lucide-react';
-import { loadContent } from '../utils/contentLoader';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Calendar, Trophy, ChevronDown, ChevronUp, ExternalLink, Shield, ChevronsUpDown, Users } from 'lucide-react';
+import { useSeasonContext } from '../contexts/SeasonContext';
 import yaml from 'js-yaml';
+import { applyTiebreakers, sortTeamsWithTiebreakers } from '../utils/standings';
+import { LineupPanel } from '../components/LineupPanel';
+import { PlayoffBracket } from '../components/PlayoffBracket';
+import { useLineups } from '../hooks/useLineups';
 
 const PHASE_LABELS = {
   preseason: 'Pre-Season',
@@ -28,41 +32,38 @@ function computeStandingsFromSchedule(schedule) {
   return record;
 }
 
-export default function SeasonPage({ darkMode }) {
-  const navigate = useNavigate();
-  const [data, setData] = useState(null);
-  const [teams, setTeams] = useState(null);
-  const [siteData, setSiteData] = useState(null);
-  const [activeTab, setActiveTab] = useState('standings');
-  const [sortBy, setSortBy] = useState('wins');
-  const [selectedSeason, setSelectedSeason] = useState(null);
-  const [selectedPhase, setSelectedPhase] = useState(null);
-  const [collapsedWeeks, setCollapsedWeeks] = useState({});
 
-  // Load site config to get list of all seasons
-  useEffect(() => {
-    loadContent('site.yaml').then((site) => {
-      setSiteData(site);
-      // Default to current season
-      const currentFile = site.current_season_file || 'season-1.yaml';
-      setSelectedSeason(currentFile);
-    });
-    loadContent('teams.yaml').then(setTeams);
-  }, []);
-
-  // Load selected season data
-  useEffect(() => {
-    if (!selectedSeason) return;
-    // Fetch from seasons/ subfolder
-    fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
-      .then((r) => r.text())
-      .then((text) => {
-        const seasonData = yaml.load(text);
-        setData(seasonData);
-        setSelectedPhase(seasonData.active_phase || 'main_season');
-      });
-  }, [selectedSeason]);
-
+/**
+ * Presentational Season page: standings, schedule and playoff bracket for one
+ * already-loaded season file.
+ *
+ * Pure props in, markup out - no fetching, routing or context - so the site
+ * (container below) and the CMS preview pane (`cms/previews.jsx`) render the
+ * exact same component instead of two copies that drift apart. The standings and
+ * playoff-seed math stays here so a preview gets the real numbers, not a
+ * re-implementation.
+ */
+export function SeasonView({
+  data,
+  teams = null,
+  darkMode = true,
+  allSeasons = [],
+  selectedSeason = null,
+  onSeasonChange = () => {},
+  activeTab = 'standings',
+  onTabChange = () => {},
+  selectedPhase = null,
+  onPhaseChange = () => {},
+  collapsedWeeks = {},
+  setCollapsedWeeks = () => {},
+  onTeamClick = () => {},
+  openLineups = {},
+  lineupCache = {},
+  lineupLoading = {},
+  toggleLineup = () => {},
+  lineupWeek = {},
+  selectLineupWeek = () => {},
+}) {
   // Compute standings from main season schedule
   const mainSeasonStandings = useMemo(() => {
     return computeStandingsFromSchedule(data?.schedule);
@@ -80,24 +81,85 @@ export default function SeasonPage({ darkMode }) {
     return mainSeasonStandings;
   }, [selectedPhase, preseasonStandings, mainSeasonStandings]);
 
+  // Compute overall playoff seeds and clinching status from main season standings
+  const playoffSeeds = useMemo(() => {
+    if (!data?.kais) return new Map();
+    const ms = data.schedule || [];
+    const remaining = {};
+    for (const week of ms) {
+      for (const m of week.matches || []) {
+        if (m.status === 'completed') continue;
+        [m.home, m.away].forEach((t) => { remaining[t] = (remaining[t] || 0) + 1; });
+      }
+    }
+    const sortByRecord = (teamObjs) => {
+      const withRec = teamObjs.map((t) => ({ ...t, ...(mainSeasonStandings[t.team] || { wins: 0, losses: 0 }) }));
+      withRec.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+      const out = [];
+      let i = 0;
+      while (i < withRec.length) {
+        let j = i + 1;
+        while (j < withRec.length && withRec[j].wins === withRec[i].wins && withRec[j].losses === withRec[i].losses) j++;
+        out.push(...applyTiebreakers(withRec.slice(i, j), ms));
+        i = j;
+      }
+      return out;
+    };
+    const divWinners = [];
+    const wildcards = [];
+    const clinched = new Set();
+    for (const kai of data.kais) {
+      const sorted = sortByRecord(kai.teams || []);
+      if (!sorted.length) continue;
+      const leaderWins = mainSeasonStandings[sorted[0].team]?.wins || 0;
+      const leaderRemaining = remaining[sorted[0].team] || 0;
+      const hasClinched = sorted.slice(1).every((t) => {
+        const tWins = mainSeasonStandings[t.team]?.wins || 0;
+        const tRemaining = remaining[t.team] || 0;
+        // Still mathematically possible for t to catch/pass the leader.
+        if (leaderWins + leaderRemaining < tWins) return false;
+        if (leaderWins > tWins + tRemaining) return true;
+        // Tied (or leader could still be caught) but both teams are done
+        // playing — the tiebreaker that sortByRecord already applied is
+        // final, so the leader's spot is locked in.
+        if (leaderRemaining === 0 && tRemaining === 0) return true;
+        return false;
+      });
+      if (hasClinched) clinched.add(sorted[0].team);
+      divWinners.push(sorted[0]);
+      wildcards.push(...sorted.slice(1));
+    }
+    const seeds = new Map();
+    sortByRecord(divWinners).forEach((t, i) => seeds.set(t.team, { seed: i + 1, isDivWinner: true, isClinched: clinched.has(t.team) }));
+    sortByRecord(wildcards).forEach((t, i) => seeds.set(t.team, { seed: i + divWinners.length + 1, isDivWinner: false, isClinched: false }));
+    return seeds;
+  }, [data, mainSeasonStandings]);
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading season...</div>;
   }
 
   const activePhase = data.active_phase || 'main_season';
-  const allSeasons = siteData?.all_seasons || [];
 
-  const sortKaiTeams = (kaiTeams) =>
-    [...kaiTeams].map((s) => ({
+  const sortKaiTeams = (kaiTeams) => {
+    const withRecords = [...kaiTeams].map((s) => ({
       ...s,
       ...(displayedStandings[s.team] || { wins: 0, losses: 0 }),
-    })).sort((a, b) => {
-      if (sortBy === 'wins') return b.wins - a.wins || a.losses - b.losses;
-      if (sortBy === 'losses') return a.losses - b.losses || b.wins - a.wins;
-      const aWr = a.wins / Math.max(a.wins + a.losses, 1);
-      const bWr = b.wins / Math.max(b.wins + b.losses, 1);
-      return bWr - aWr;
-    });
+    }));
+    withRecords.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    const result = [];
+    let i = 0;
+    while (i < withRecords.length) {
+      let j = i + 1;
+      while (
+        j < withRecords.length &&
+        withRecords[j].wins === withRecords[i].wins &&
+        withRecords[j].losses === withRecords[i].losses
+      ) { j++; }
+      result.push(...applyTiebreakers(withRecords.slice(i, j), scheduleForPhase));
+      i = j;
+    }
+    return result;
+  };
 
   const getTeamColor = (name) =>
     teams?.teams?.find((t) => t.name === name)?.color || '#6B7280';
@@ -107,6 +169,9 @@ export default function SeasonPage({ darkMode }) {
 
   const getTeamSlug = (name) =>
     teams?.teams?.find((t) => t.name === name)?.slug || null;
+
+  const getTeamBanner = (name) =>
+    teams?.teams?.find((t) => t.name === name)?.banner || null;
 
   const tabs = [
     { key: 'standings', label: 'Standings', icon: Trophy },
@@ -143,7 +208,7 @@ export default function SeasonPage({ darkMode }) {
             <div className="relative">
               <select
                 value={selectedSeason || ''}
-                onChange={(e) => setSelectedSeason(e.target.value)}
+                onChange={(e) => onSeasonChange(e.target.value)}
                 className={`appearance-none pl-4 pr-10 py-2 rounded-xl border text-sm font-medium cursor-pointer ${
                   darkMode
                     ? 'bg-gray-900 border-gray-700 text-white'
@@ -166,7 +231,7 @@ export default function SeasonPage({ darkMode }) {
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
-            onClick={() => setActiveTab(key)}
+            onClick={() => onTabChange(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === key
                 ? darkMode ? 'bg-orange-500 text-white' : 'bg-blue-600 text-white'
@@ -187,7 +252,7 @@ export default function SeasonPage({ darkMode }) {
             return (
               <button
                 key={phase}
-                onClick={() => setSelectedPhase(phase)}
+                onClick={() => onPhaseChange(phase)}
                 className={`relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-purple-600 text-white'
@@ -208,13 +273,33 @@ export default function SeasonPage({ darkMode }) {
         </div>
       </div>
 
-      {/* Standings — grouped by Kai */}
+      {/* Standings — grouped by Kai, or bracket when in playoffs phase */}
       {activeTab === 'standings' && (
         <div className="space-y-8">
           <h2 className={`text-xl font-bold ${darkMode ? 'text-gray-200' : 'text-stone-800'}`}>
-            {standingsLabel}
+            {selectedPhase === 'playoffs' ? 'Playoff Bracket' : standingsLabel}
           </h2>
-          {(data.kais || []).map((kai) => {
+          {selectedPhase === 'playoffs' ? (
+            <div className={`rounded-xl border p-4 sm:p-6 ${
+              darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
+            }`}>
+              <PlayoffBracket
+                playoffs={data.playoffs}
+                seedingsMap={playoffSeeds}
+                darkMode={darkMode}
+                getTeamIcon={getTeamIcon}
+                getTeamColor={getTeamColor}
+                getTeamBanner={getTeamBanner}
+                openLineups={openLineups}
+                lineupCache={lineupCache}
+                lineupLoading={lineupLoading}
+                toggleLineup={toggleLineup}
+                lineupWeek={lineupWeek}
+                selectLineupWeek={selectLineupWeek}
+              />
+            </div>
+          ) : null}
+          {selectedPhase !== 'playoffs' && (data.kais || []).map((kai) => {
             const sortedTeams = sortKaiTeams(kai.teams || []);
             return (
               <div key={kai.name}>
@@ -228,32 +313,11 @@ export default function SeasonPage({ darkMode }) {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className={`border-b ${darkMode ? 'border-gray-800 bg-gray-900/80' : 'border-stone-200 bg-stone-100'}`}>
-                          <th className="text-left py-3 px-4 font-semibold">#</th>
+                          <th className="text-left py-3 px-4 font-semibold">{selectedPhase === 'preseason' ? '#' : 'Seed'}</th>
                           <th className="text-left py-3 px-4 font-semibold">Team</th>
-                          <th className="text-center py-3 px-4 font-semibold">
-                            <button
-                              onClick={() => setSortBy('wins')}
-                              className={`inline-flex items-center gap-1 ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}
-                            >
-                              W <ArrowUpDown className="w-3 h-3" />
-                            </button>
-                          </th>
-                          <th className="text-center py-3 px-4 font-semibold">
-                            <button
-                              onClick={() => setSortBy('losses')}
-                              className={`inline-flex items-center gap-1 ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}
-                            >
-                              L <ArrowUpDown className="w-3 h-3" />
-                            </button>
-                          </th>
-                          <th className="text-center py-3 px-4 font-semibold">
-                            <button
-                              onClick={() => setSortBy('winrate')}
-                              className={`inline-flex items-center gap-1 ${darkMode ? 'hover:text-orange-400' : 'hover:text-blue-600'}`}
-                            >
-                              Win% <ArrowUpDown className="w-3 h-3" />
-                            </button>
-                          </th>
+                          <th className="text-center py-3 px-4 font-semibold">W</th>
+                          <th className="text-center py-3 px-4 font-semibold">L</th>
+                          <th className="text-center py-3 px-4 font-semibold">Win%</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -261,19 +325,29 @@ export default function SeasonPage({ darkMode }) {
                           const played = s.wins + s.losses;
                           const wr = played > 0 ? ((s.wins / played) * 100).toFixed(0) : '—';
                           const slug = getTeamSlug(s.team);
+                          const ps = selectedPhase !== 'preseason' ? playoffSeeds.get(s.team) : null;
+                          const clinchRow = ps?.isClinched;
                           return (
                             <tr
                               key={s.team}
-                              onClick={() => slug && navigate(`/teams/${slug}/schedule`)}
+                              onClick={() => slug && onTeamClick(slug)}
                               className={`border-b last:border-0 transition-colors ${
                                 slug ? 'cursor-pointer' : ''
                               } ${
-                                darkMode
-                                  ? 'border-gray-800 hover:bg-gray-800/40'
-                                  : 'border-stone-200 hover:bg-stone-100'
+                                clinchRow
+                                  ? darkMode
+                                    ? 'border-yellow-900/40 bg-yellow-500/5 hover:bg-yellow-500/10'
+                                    : 'border-yellow-200 bg-yellow-50/60 hover:bg-yellow-50'
+                                  : darkMode
+                                    ? 'border-gray-800 hover:bg-gray-800/40'
+                                    : 'border-stone-200 hover:bg-stone-100'
                               }`}
                             >
-                              <td className="py-3 px-4 font-medium text-gray-400">{i + 1}</td>
+                              <td className={`py-3 px-4 font-semibold ${
+                                clinchRow ? 'text-yellow-400' : ps ? darkMode ? 'text-gray-300' : 'text-stone-600' : 'text-gray-400'
+                              }`}>
+                                {ps ? ps.seed : i + 1}
+                              </td>
                               <td className="py-3 px-4">
                                 <div className="flex items-center gap-3">
                                   {getTeamIcon(s.team) ? (
@@ -312,50 +386,29 @@ export default function SeasonPage({ darkMode }) {
         <div className="space-y-8">
           {/* Schedule header */}
           <h2 className={`text-xl font-bold ${darkMode ? 'text-gray-200' : 'text-stone-800'}`}>
-            {selectedPhase === 'preseason' ? 'Pre-Season Schedule' : 'Main Season Schedule'}
+            {selectedPhase === 'preseason' ? 'Pre-Season Schedule' : selectedPhase === 'playoffs' ? 'Playoff Bracket' : 'Main Season Schedule'}
           </h2>
 
           {/* Playoffs phase shows the bracket instead of weekly schedule */}
           {selectedPhase === 'playoffs' ? (
-            data.playoffs ? (
-              <div className={`rounded-xl border p-6 ${
-                darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
-              }`}>
-                <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-                  <Trophy className="w-5 h-5 text-yellow-400" />
-                  Playoffs — {data.playoffs.format}
-                </h3>
-                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-                  Status: {data.playoffs.status}
-                </p>
-                {data.playoffs.bracket?.length > 0 ? (
-                  <div className="mt-4 space-y-3">
-                    {data.playoffs.bracket.map((m, i) => (
-                      <div key={i} className={`p-3 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-stone-100'}`}>
-                        <div className="text-xs text-gray-400 mb-1">{m.round} — Match {m.match}</div>
-                        <div className="flex items-center justify-between">
-                          <span className={m.winner === m.team_a ? 'font-bold text-green-400' : ''}>
-                            {m.team_a}
-                          </span>
-                          <span className="font-bold">{m.score_a} - {m.score_b}</span>
-                          <span className={m.winner === m.team_b ? 'font-bold text-green-400' : ''}>
-                            {m.team_b}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className={`mt-2 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Bracket will be displayed once playoffs begin.
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-stone-500'}`}>
-                Playoffs data not available yet.
-              </p>
-            )
+            <div className={`rounded-xl border p-4 sm:p-6 ${
+              darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'
+            }`}>
+              <PlayoffBracket
+                playoffs={data.playoffs}
+                seedingsMap={playoffSeeds}
+                darkMode={darkMode}
+                getTeamIcon={getTeamIcon}
+                getTeamColor={getTeamColor}
+                getTeamBanner={getTeamBanner}
+                openLineups={openLineups}
+                lineupCache={lineupCache}
+                lineupLoading={lineupLoading}
+                toggleLineup={toggleLineup}
+                lineupWeek={lineupWeek}
+                selectLineupWeek={selectLineupWeek}
+              />
+            </div>
           ) : (
             /* Pre-season or Main season weekly schedule */
             <>
@@ -389,6 +442,11 @@ export default function SeasonPage({ darkMode }) {
               >
                 {isCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
                 Week {week.week}
+                {week.stream_date && (
+                  <span className={`text-sm font-normal ml-1 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+                    · {week.stream_date}
+                  </span>
+                )}
               </button>
               {!isCollapsed && <div className="grid gap-3">
                 {(week.matches || []).map((m, i) => {
@@ -396,6 +454,9 @@ export default function SeasonPage({ darkMode }) {
                   const homeWin = isCompleted && m.winner === m.home;
                   const awayWin = isCompleted && m.winner === m.away;
                   const hasVideo = isCompleted && m.video_url;
+                  const hasLineup = !!m.lineup_file;
+                  const matchKey = `${weekKey}-${i}`;
+                  const isLineupOpen = !!openLineups[matchKey];
 
                   const hasGradientBorder = isCompleted && m.winner;
                   const gradientColors = homeWin
@@ -404,7 +465,7 @@ export default function SeasonPage({ darkMode }) {
 
                   const innerCard = (
                     <div
-                      className={`rounded-xl p-4 flex items-center justify-between transition-colors ${
+                      className={`rounded-t-xl p-2 sm:p-4 flex items-center justify-between transition-colors ${
                         hasVideo ? 'cursor-pointer' : ''
                       } ${
                         hasGradientBorder
@@ -417,29 +478,29 @@ export default function SeasonPage({ darkMode }) {
                       }`}
                     >
                       {/* Home Team */}
-                      <div className={`flex items-center gap-3 flex-1 ${
+                      <div className={`flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0 ${
                         homeWin ? 'font-bold text-green-400' : awayWin ? 'text-red-400' : ''
                       }`}>
                         {getTeamIcon(m.home) ? (
                           <img
                             src={getTeamIcon(m.home)}
                             alt={m.home}
-                            className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md object-cover flex-shrink-0"
                           />
                         ) : (
                           <div
-                            className="w-7 h-7 rounded-md flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md flex-shrink-0"
                             style={{ backgroundColor: getTeamColor(m.home) }}
                           />
                         )}
-                        <span className="truncate">{m.home}</span>
+                        <span className="truncate text-sm sm:text-base">{m.home}</span>
                       </div>
 
                       {/* Result */}
-                      <div className="flex items-center gap-2 px-4">
+                      <div className="flex items-center gap-2 px-1.5 sm:px-4 flex-shrink-0">
                         {isCompleted ? (
-                          <div className="flex flex-col items-center gap-1">
-                            <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                          <div className="flex flex-col items-center justify-center gap-1 h-[40px] sm:h-[52px]">
+                            <span className={`text-xs sm:text-sm font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${
                               darkMode ? 'bg-blue-500/20 text-blue-400 ring-1 ring-blue-500/40' : 'bg-blue-100 text-blue-700 ring-1 ring-blue-300'
                             }`}>
                               Final
@@ -458,8 +519,8 @@ export default function SeasonPage({ darkMode }) {
                             )}
                           </div>
                         ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <span className={`text-sm px-3 py-1 rounded-full ${
+                          <div className="flex flex-col items-center justify-center gap-1 h-[40px] sm:h-[52px]">
+                            <span className={`text-xs sm:text-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${
                               darkMode ? 'bg-gray-800 text-gray-400' : 'bg-stone-200 text-stone-500'
                             }`}>
                               Upcoming
@@ -476,19 +537,19 @@ export default function SeasonPage({ darkMode }) {
                       </div>
 
                       {/* Away Team */}
-                      <div className={`flex items-center gap-3 flex-1 justify-end text-right ${
+                      <div className={`flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0 justify-end text-right ${
                         awayWin ? 'font-bold text-green-400' : homeWin ? 'text-red-400' : ''
                       }`}>
-                        <span className="truncate">{m.away}</span>
+                        <span className="truncate text-sm sm:text-base">{m.away}</span>
                         {getTeamIcon(m.away) ? (
                           <img
                             src={getTeamIcon(m.away)}
                             alt={m.away}
-                            className="w-7 h-7 rounded-md object-cover flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md object-cover flex-shrink-0"
                           />
                         ) : (
                           <div
-                            className="w-7 h-7 rounded-md flex-shrink-0"
+                            className="w-5 h-5 sm:w-7 sm:h-7 rounded-md flex-shrink-0"
                             style={{ backgroundColor: getTeamColor(m.away) }}
                           />
                         )}
@@ -496,23 +557,93 @@ export default function SeasonPage({ darkMode }) {
                     </div>
                   );
 
-                  const card = hasGradientBorder ? (
-                    <div
-                      className="rounded-xl p-[1px]"
-                      style={{
-                        background: `linear-gradient(to right, ${gradientColors})`,
-                      }}
-                    >
-                      {innerCard}
-                    </div>
-                  ) : innerCard;
+                  const tabBorder = darkMode
+                    ? 'border-l border-r border-b border-gray-800'
+                    : 'border-l border-r border-b border-stone-200';
 
-                  return hasVideo ? (
-                    <a key={i} href={m.video_url} target="_blank" rel="noopener noreferrer">
-                      {card}
-                    </a>
-                  ) : (
-                    <React.Fragment key={i}>{card}</React.Fragment>
+                  const viewBuildsButton = (
+                    <button
+                      onClick={() => hasLineup && toggleLineup(matchKey, m.lineup_file)}
+                      disabled={!hasLineup}
+                      className={`w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium transition-colors border-t ${
+                        hasGradientBorder ? 'rounded-none' : isLineupOpen ? 'rounded-none' : 'rounded-b-xl'
+                      } ${hasGradientBorder ? '' : tabBorder} ${
+                        !hasLineup
+                          ? darkMode
+                            ? 'bg-gray-900 text-gray-700 cursor-not-allowed border-gray-800'
+                            : 'bg-stone-50 text-stone-300 cursor-not-allowed border-stone-200'
+                          : isLineupOpen
+                            ? darkMode
+                              ? 'bg-gray-800 text-blue-400 border-gray-700 hover:bg-gray-700'
+                              : 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'
+                            : darkMode
+                              ? 'bg-gray-900 text-gray-500 border-gray-800 hover:text-gray-200 hover:bg-gray-800'
+                              : 'bg-stone-50 text-stone-400 border-stone-200 hover:text-stone-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <Users className="w-3 h-3" />
+                      <span>{!hasLineup ? 'Builds Unavailable' : isLineupOpen ? 'Hide Builds' : 'View Builds'}</span>
+                      {hasLineup && (isLineupOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+                    </button>
+                  );
+
+                  if (hasGradientBorder) {
+                    return (
+                      <div key={i}>
+                        <div
+                          className="rounded-xl p-[1px]"
+                          style={{ background: `linear-gradient(to right, ${gradientColors})` }}
+                        >
+                          <div className={`rounded-[11px] overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-stone-50 shadow-sm'}`}>
+                            {hasVideo ? (
+                              <a href={m.video_url} target="_blank" rel="noopener noreferrer">
+                                {innerCard}
+                              </a>
+                            ) : innerCard}
+                            {viewBuildsButton}
+                            {isLineupOpen && (
+                              <LineupPanel
+                                data={lineupCache[m.lineup_file]}
+                                loading={!!lineupLoading[m.lineup_file]}
+                                darkMode={darkMode}
+                                homeTeam={m.home}
+                                awayTeam={m.away}
+                                homeBanner={getTeamBanner(m.home)}
+                                awayBanner={getTeamBanner(m.away)}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={i}>
+                      {hasVideo ? (
+                        <a href={m.video_url} target="_blank" rel="noopener noreferrer">
+                          {innerCard}
+                        </a>
+                      ) : innerCard}
+                      {viewBuildsButton}
+                      {isLineupOpen && (
+                        <div className={`rounded-b-xl overflow-hidden ${
+                          darkMode
+                            ? 'bg-gray-900 border-l border-r border-b border-gray-800'
+                            : 'bg-stone-50 border-l border-r border-b border-stone-200'
+                        }`}>
+                          <LineupPanel
+                            data={lineupCache[m.lineup_file]}
+                            loading={!!lineupLoading[m.lineup_file]}
+                            darkMode={darkMode}
+                            homeTeam={m.home}
+                            awayTeam={m.away}
+                            homeBanner={getTeamBanner(m.home)}
+                            awayBanner={getTeamBanner(m.away)}
+                          />
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>}
@@ -524,5 +655,64 @@ export default function SeasonPage({ darkMode }) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SeasonPage({ darkMode }) {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
+  const [data, setData] = useState(null);
+  const [teams, setTeams] = useState(null);
+  const activeTab = searchParams.get('tab') || 'standings';
+  const selectedPhase = searchParams.get('phase') || null;
+  const [collapsedWeeks, setCollapsedWeeks] = useState({});
+  const { openLineups, lineupCache, lineupLoading, lineupWeek, toggleLineup, selectLineupWeek } = useLineups();
+
+  // Load selected season data and matching teams file
+  useEffect(() => {
+    if (!selectedSeason) return;
+    setData(null);
+    // Fetch from seasons/ subfolder
+    fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => {
+        const seasonData = yaml.load(text);
+        setData(seasonData);
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('phase', seasonData.active_phase || 'main_season');
+          return next;
+        }, { replace: true });
+      });
+    // Load teams for this season
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setTeams(yaml.load(text)))
+      .catch(() => setTeams(null));
+  }, [selectedSeason]);
+
+  return (
+    <SeasonView
+      data={data}
+      teams={teams}
+      darkMode={darkMode}
+      allSeasons={siteData?.all_seasons || []}
+      selectedSeason={selectedSeason}
+      onSeasonChange={setSelectedSeason}
+      activeTab={activeTab}
+      onTabChange={(key) => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('tab', key); return n; })}
+      selectedPhase={selectedPhase}
+      onPhaseChange={(phase) => setSearchParams((prev) => { const n = new URLSearchParams(prev); n.set('phase', phase); return n; })}
+      collapsedWeeks={collapsedWeeks}
+      setCollapsedWeeks={setCollapsedWeeks}
+      onTeamClick={(slug) => navigate(`/teams/${slug}/schedule?season=${selectedSeason}`)}
+      openLineups={openLineups}
+      lineupCache={lineupCache}
+      lineupLoading={lineupLoading}
+      toggleLineup={toggleLineup}
+      lineupWeek={lineupWeek}
+      selectLineupWeek={selectLineupWeek}
+    />
   );
 }

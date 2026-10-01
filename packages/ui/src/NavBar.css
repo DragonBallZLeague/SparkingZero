@@ -1,0 +1,209 @@
+/* Plain CSS (not Tailwind-dependent) so this component renders identically
+   whether the consuming app uses Tailwind (Website, Match Builder, Calculator)
+   or not (Analyzer). */
+
+.szl-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid #1f2937;
+  background: rgba(3, 7, 18, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: inherit;
+}
+
+.szl-navbar__accent {
+  height: 4px;
+  background: linear-gradient(to right, #f97316, #eab308, #ef4444);
+}
+
+.szl-navbar__inner {
+  max-width: 250rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 1rem;
+  height: 3.5rem;
+}
+
+.szl-navbar__brand {
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.szl-navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.szl-navbar__logo img {
+  height: 2rem;
+  width: auto;
+  transition: transform 0.2s ease;
+}
+
+.szl-navbar__logo:hover img {
+  transform: scale(1.02);
+}
+
+.szl-navbar__divider {
+  width: 1px;
+  height: 1.5rem;
+  background: #374151;
+  flex-shrink: 0;
+}
+
+.szl-navbar__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.szl-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+
+.szl-navbar__link {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #d1d5db;
+  text-decoration: none;
+  background: transparent;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.szl-navbar__link:hover {
+  color: #ffffff;
+  background: #1f2937;
+}
+
+.szl-navbar__link--active,
+.szl-navbar__link--active:hover {
+  color: #fb923c;
+  background: rgba(249, 115, 22, 0.2);
+}
+
+.szl-navbar__right {
+  grid-column: 2;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.szl-navbar__nav-group {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.szl-navbar__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.szl-navbar__icon-btn:hover {
+  color: #fbbf24;
+  background: #1f2937;
+}
+
+.szl-navbar__menu {
+  position: relative;
+  display: none;
+}
+
+.szl-navbar__menu-icon,
+.szl-navbar__menu-icon::before,
+.szl-navbar__menu-icon::after {
+  display: block;
+  width: 1.125rem;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.szl-navbar__menu-icon {
+  position: relative;
+}
+
+.szl-navbar__menu-icon::before,
+.szl-navbar__menu-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.szl-navbar__menu-icon::before { top: -5px; }
+.szl-navbar__menu-icon::after { top: 5px; }
+
+.szl-navbar__menu-panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 10rem;
+  padding: 0.375rem;
+  background: #0b1120;
+  border: 1px solid #1f2937;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.szl-navbar__menu-panel .szl-navbar__link {
+  width: 100%;
+}
+
+/* Below 810px: collapse inline links into the hamburger dropdown (title stays
+   visible), so the app-specific `right` slot (functional buttons) keeps its space. */
+@media (max-width: 810px) {
+  .szl-navbar__links {
+    display: none;
+  }
+
+  .szl-navbar__menu {
+    display: block;
+  }
+}
+
+@media (min-width: 640px) {
+  .szl-navbar__inner { padding: 0 1.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .szl-navbar__inner { padding: 0 2rem; }
+}

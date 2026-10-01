@@ -4,6 +4,11 @@ import { copyFileSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@szl/ui': resolve(__dirname, '../../packages/ui/src'),
+    },
+  },
   plugins: [
     react(),
     {

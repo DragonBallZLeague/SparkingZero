@@ -4,6 +4,7 @@ import { useFloating, offset, flip, shift, size, autoUpdate } from '@floating-ui
 import { Plus, Trash2, Copy, Download, Upload, X, Sparkles, Minus, ClipboardPaste } from "lucide-react";
 import yaml from "js-yaml";
 import { YamlPanel } from "./YamlPanel";
+import { NavBar } from "@szl/ui";
 
 // Helper: find AI id from either display name or id (case-insensitive, trimmed)
 const findAiIdFromValue = (val, aiItems) => {
@@ -60,17 +61,30 @@ const getActiveFusions = (team, transformations) => {
   const result = [];
   for (const [id, entry] of Object.entries(transformations)) {
     if (!Array.isArray(entry.fusionOf) || entry.fusionOf.length < 2) continue;
-    // Group fusionOf into consecutive pairs — each pair is one valid fusion combination
+    // Group fusionOf into consecutive pairs — each pair is one valid fusion combination.
+    // At least one of the pair must be an exact team member ID (the initiator); the other
+    // may be any form in that constituent's transformation chain.
     const activePairMembers = new Set();
     for (let i = 0; i + 1 < entry.fusionOf.length; i += 2) {
       const a = entry.fusionOf[i];
       const b = entry.fusionOf[i + 1];
-      // Find team members whose transformation group covers each constituent
-      const aMatch = teamGroups.find(({ group }) => group.has(a));
-      const bMatch = teamGroups.find(({ id: tid, group }) => tid !== (aMatch && aMatch.id) && group.has(b));
-      if (aMatch && bMatch) {
-        activePairMembers.add(aMatch.id);
-        activePairMembers.add(bMatch.id);
+      // Case 1: a is an exact match on the team; b's partner can be any form in b's group
+      const aExact = teamGroups.find(({ id: tid }) => tid === a);
+      if (aExact) {
+        const bPartner = teamGroups.find(({ id: tid, group }) => tid !== aExact.id && group.has(b));
+        if (bPartner) {
+          activePairMembers.add(aExact.id);
+          activePairMembers.add(bPartner.id);
+        }
+      }
+      // Case 2: b is an exact match on the team; a's partner can be any form in a's group
+      const bExact = teamGroups.find(({ id: tid }) => tid === b);
+      if (bExact) {
+        const aPartner = teamGroups.find(({ id: tid, group }) => tid !== bExact.id && group.has(a));
+        if (aPartner) {
+          activePairMembers.add(aPartner.id);
+          activePairMembers.add(bExact.id);
+        }
       }
     }
     if (activePairMembers.size >= 2) {
@@ -1594,12 +1608,13 @@ const MatchBuilder = () => {
             let sparking = "";
             settings.forEach((item) => {
               if (!item.key || item.key === "None") return;
-              if (item.key.startsWith("00_1_")) costume = item.key;
+              if (/^\d\d_1_/.test(item.key)) costume = item.key;
               else if (item.key.startsWith("00_7_")) ai = item.key;
               else if (item.key.startsWith("00_6_")) sparking = item.key;
               else capsules.push(item.key);
             });
-            char.capsules = [...capsules, ...Array(7 - capsules.length).fill("")].slice(0, 7);
+            const padLen = Math.max(0, 7 - capsules.length);
+            char.capsules = [...capsules, ...Array(padLen).fill("")].slice(0, 7);
             char.costume = costume;
             char.ai = ai;
             char.sparking = sparking;
@@ -1709,30 +1724,23 @@ const MatchBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 p-4 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles className="w-12 h-12 text-orange-400 animate-pulse mx-auto mb-4" />
-          <div className="text-white text-2xl font-bold tracking-wider">Loading data...</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700">
+        <NavBar current="matchbuilder" title="Sparking Zero Match Builder" />
+        <div className="p-4 flex items-center justify-center">
+          <div className="text-center">
+            <Sparkles className="w-12 h-12 text-orange-400 animate-pulse mx-auto mb-4" />
+            <div className="text-white text-2xl font-bold tracking-wider">Loading data...</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700">
+      <NavBar current="matchbuilder" title="Match Builder" />
+      <div className="p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 shadow-xl mb-6 border-2 border-orange-400 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-400/10"></div>
-          <div className="relative z-10">
-            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-300 via-orange-400 to-orange-300 text-center mb-1 tracking-tight drop-shadow-lg">
-              DRAGON BALL Z LEAGUE
-            </h1>
-            <p className="text-xl font-bold text-blue-300 text-center tracking-widest drop-shadow">
-              SPARKING! ZERO MATCH BUILDER
-            </p>
-          </div>
-        </div>
-
         {error && (
           <div className={`bg-red-600 border-2 border-red-700 text-white px-4 py-3 rounded-xl mb-4 font-semibold shadow-lg transition-opacity duration-700 ${errorFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             ⚠️ {error}
@@ -2157,6 +2165,7 @@ const MatchBuilder = () => {
           />
         )}
       </div>
+      </div>
     </div>
   );
 };
@@ -2304,7 +2313,7 @@ const Combobox = ({
   const { x, y, strategy, refs, update, floatingStyles } = useFloating({
     placement: 'bottom-start',
     middleware: [
-      offset(6),
+      offset(-4),
       flip(),
       shift(),
       size({
@@ -2864,11 +2873,26 @@ const TeamPanel = ({
     
 const FusionPanel = ({ team, transformations, fusionAISelections, teamName, onUpdateFusionAI }) => {
   const activeFusions = getActiveFusions(team, transformations);
-  if (activeFusions.length === 0) return null;
+
+  // Show only the base (root) form of each fusion transformation group.
+  // Within a connected group of fusion forms, the base is the one with the smallest ID.
+  const seenGroupBases = new Set();
+  const baseFusions = activeFusions.filter(({ fusionId }) => {
+    const group = getTransformationGroup(fusionId, transformations);
+    const fusionIdsInGroup = [...group].filter(gid =>
+      transformations[gid] && Array.isArray(transformations[gid].fusionOf)
+    );
+    const baseId = fusionIdsInGroup.sort()[0] ?? fusionId;
+    if (seenGroupBases.has(baseId)) return false;
+    seenGroupBases.add(baseId);
+    return fusionId === baseId;
+  });
+
+  if (baseFusions.length === 0) return null;
 
   return (
     <div className="mt-3 space-y-2">
-      {activeFusions.map(({ fusionId, fusionName, constituentIdsOnTeam }) => {
+      {baseFusions.map(({ fusionId, fusionName, constituentIdsOnTeam }) => {
         const selectionKey = `${teamName}:${fusionId}`;
         const selectedConstituent = fusionAISelections[selectionKey] || null;
         return (
@@ -2977,11 +3001,16 @@ const CharacterSlot = ({
     const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
     if (maxSamePerTeam) {
       const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
-      const maxCount = maxSamePerTeam.params?.maxCount || 2;
+      const defaultMax = maxSamePerTeam.params?.maxCount || 2;
+      const overrides = maxSamePerTeam.params?.overrides || {};
       const counts = {};
       teamUsed.forEach(id => counts[id] = (counts[id] || 0) + 1);
-      const violations_found = Object.entries(counts).filter(([id, count]) => count > maxCount);
+      const violations_found = Object.entries(counts).filter(([id, count]) => {
+        const maxCount = Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : defaultMax;
+        return count > maxCount;
+      });
       violations_found.forEach(([id, count]) => {
+        const maxCount = Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : defaultMax;
         const cap = capsules.find(c => c.id === id);
         const capsuleName = cap ? (cap['Item Names'] || cap.name || cap.id) : id;
         violations.push({ 
@@ -2990,7 +3019,6 @@ const CharacterSlot = ({
         });
       });
     }
-    
     // Rule 2: max-cost-group-per-character (check in both soft and hard mode)
     const maxCostGroup = (ruleset?.restrictions || []).find(r => r.type === 'max-cost-group-per-character');
     if (maxCostGroup) {
@@ -3174,7 +3202,9 @@ const CharacterSlot = ({
               // Rule 1: max-same-per-team (hard mode only)
               const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
               if (maxSamePerTeam && ruleset?.mode === 'hard') {
-                const maxCount = maxSamePerTeam.params?.maxCount || 2;
+                const defaultMax = maxSamePerTeam.params?.maxCount || 2;
+                const overrides = maxSamePerTeam.params?.overrides || {};
+                const getMax = (id) => Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : defaultMax;
                 // Count how many times each capsule is used in the team (excluding this slot)
                 const teamUsedWithoutCurrent = teamUsed.filter((id, idx) => {
                   // We need to exclude the current character's current slot
@@ -3185,7 +3215,7 @@ const CharacterSlot = ({
                 available = available.filter(c => {
                   if (c.id === capsuleId) return true; // Always allow current selection
                   const count = teamUsedWithoutCurrent.filter(id => id === c.id).length;
-                  return count < maxCount;
+                  return count < getMax(c.id);
                 });
               }
 
@@ -3273,7 +3303,12 @@ const CharacterSlot = ({
                         else if (cost === 2) baseClass = 'bg-amber-200 text-slate-800';
                         else if (cost === 3) baseClass = 'bg-amber-300 text-slate-800';
                         else if (cost === 4) baseClass = 'bg-amber-400 text-slate-800';
-                        else if (cost >= 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 6) baseClass = 'bg-orange-500 text-slate-800';
+                        else if (cost === 7) baseClass = 'bg-orange-600 text-slate-800';
+                        else if (cost === 8) baseClass = 'bg-red-600 text-slate-800';
+                        else if (cost === 9) baseClass = 'bg-red-700 text-slate-800';
+                        else if (cost >= 10) baseClass = 'bg-gradient-to-r from-red-700 to-red-900 text-white';
                         // determine if we should show red: either cost meets expensive threshold OR character is over budget
                         const rulesetActive = !!(ruleset && ruleset.scope && ruleset.scope !== 'none');
                         const showOver = (rulesetActive && over > 0) || (cost >= EXPENSIVE_THRESHOLD);
@@ -3294,7 +3329,12 @@ const CharacterSlot = ({
                         else if (cost === 2) baseClass = 'bg-amber-200 text-slate-800';
                         else if (cost === 3) baseClass = 'bg-amber-300 text-slate-800';
                         else if (cost === 4) baseClass = 'bg-amber-400 text-slate-800';
-                        else if (cost >= 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 5) baseClass = 'bg-amber-500 text-slate-800';
+                        else if (cost === 6) baseClass = 'bg-orange-500 text-slate-800';
+                        else if (cost === 7) baseClass = 'bg-orange-600 text-slate-800';
+                        else if (cost === 8) baseClass = 'bg-red-600 text-slate-800';
+                        else if (cost === 9) baseClass = 'bg-red-700 text-slate-800';
+                        else if (cost >= 10) baseClass = 'bg-gradient-to-r from-red-700 to-red-900 text-white';
                         const rulesetActive = !!(ruleset && ruleset.scope && ruleset.scope !== 'none');
                         const showOver = (rulesetActive && over > 0) || (cost >= EXPENSIVE_THRESHOLD);
                         const badgeClass = showOver ? 'bg-red-900 text-white' : baseClass;

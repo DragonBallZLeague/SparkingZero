@@ -1,9 +1,16 @@
+const defaultColors = require('tailwindcss/colors');
+const { brand, surface, font } = require('../../packages/ui/src/tokens.js');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './index.html',
     './src/**/*.{js,jsx,ts,tsx}',
+    '../../packages/ui/src/**/*.{js,jsx}',
   ],
+  // This app builds some class names dynamically, so Tailwind's scanner cannot
+  // see them in source. Do not remove entries without confirming the class is
+  // no longer assembled at runtime.
   safelist: [
     'from-orange-600', 'to-orange-700', 'from-orange-300', 'from-orange-400', 'via-orange-400',
     'text-orange-300', 'text-orange-400', 'text-orange-600', 'border-orange-400', 'border-orange-500',
@@ -21,7 +28,25 @@ module.exports = {
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
-      colors: require('tailwindcss/colors'),
+      colors: {
+        // Re-exporting the default palette into `extend` is pre-existing and
+        // mostly a no-op; kept so nothing that relies on it changes.
+        ...defaultColors,
+        // Shared palette (packages/ui/src/tokens.js). This app previously had no
+        // brand colours of its own and reached for raw `orange-600` etc.
+        brand: {
+          DEFAULT: brand.orange,
+          orange: brand.orange,
+          'orange-deep': brand.orangeDeep,
+          red: brand.red,
+          purple: brand.purple,
+        },
+        surface,
+      },
+      fontFamily: {
+        heading: font.heading,
+        body: font.body,
+      },
     },
   },
   plugins: [],

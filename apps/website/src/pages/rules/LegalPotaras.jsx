@@ -11,15 +11,17 @@ const COST_COLORS = {
   5: 'bg-red-500',
 };
 
-export default function LegalPotaras({ darkMode }) {
-  const [data, setData] = useState(null);
+/**
+ * Presentational LegalPotaras rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function LegalPotarasView({ data, darkMode = true }) {
   const [search, setSearch] = useState('');
   const [costFilter, setCostFilter] = useState('all');
   const [showBanned, setShowBanned] = useState(true);
 
-  useEffect(() => {
-    loadContent('rules/legal-potaras.yaml').then(setData);
-  }, []);
 
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
@@ -177,4 +179,14 @@ export default function LegalPotaras({ darkMode }) {
       )}
     </div>
   );
+}
+
+export default function LegalPotaras({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/legal-potaras.yaml').then(setData);
+  }, []);
+
+  return <LegalPotarasView data={data} darkMode={darkMode} />;
 }

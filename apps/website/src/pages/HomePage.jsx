@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Users, Calendar, Trophy, ChevronRight, ExternalLink, Eye, Star } from 'lucide-react';
+import { Zap, Users, Calendar, Trophy, ChevronRight, ExternalLink, Eye, Star, ChevronDown } from 'lucide-react';
 import { loadContent } from '../utils/contentLoader';
 import yaml from 'js-yaml';
+import { useSeasonContext } from '../contexts/SeasonContext';
+import { sortTeamsWithTiebreakers } from '../utils/standings';
 
 export default function HomePage({ site, darkMode }) {
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
   const [teams, setTeams] = useState(null);
   const [season, setSeason] = useState(null);
   const [howTo, setHowTo] = useState(null);
   const [howToTab, setHowToTab] = useState('watch');
 
   useEffect(() => {
-    loadContent('teams.yaml').then(setTeams);
     loadContent('rules/how-to-participate.yaml').then(setHowTo);
-    // Load current season from seasons/ folder
-    loadContent('site.yaml').then((siteData) => {
-      const file = siteData.current_season_file || 'season-1.yaml';
-      fetch(`${import.meta.env.BASE_URL}content/seasons/${file}`)
-        .then((r) => r.text())
-        .then((text) => setSeason(yaml.load(text)));
-    });
   }, []);
+
+  // Load season and teams data when selected season changes
+  useEffect(() => {
+    if (!selectedSeason) return;
+    setSeason(null);
+    setTeams(null);
+    fetch(`${import.meta.env.BASE_URL}content/seasons/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setSeason(yaml.load(text)));
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then((r) => r.text())
+      .then((text) => setTeams(yaml.load(text)))
+      .catch(() => {});
+  }, [selectedSeason]);
 
   const topTeams = (() => {
     if (!season?.kais) return [];
@@ -40,13 +49,14 @@ export default function HomePage({ site, darkMode }) {
         });
       }
     }
-    // Get all teams from kais and apply computed records
+    // Get all teams from kais, including avg_damage
     const allTeams = season.kais.flatMap((k) => (k.teams || []).map((t) => ({
       team: t.team,
+      avg_damage: t.avg_damage ?? null,
       wins: record[t.team]?.wins || 0,
       losses: record[t.team]?.losses || 0,
     })));
-    const sorted = allTeams.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
+    const sorted = sortTeamsWithTiebreakers(allTeams, schedule);
     // Assign dense ranks (ties get same rank)
     let rank = 1;
     const ranked = sorted.map((t, i) => {
@@ -65,28 +75,31 @@ export default function HomePage({ site, darkMode }) {
     <div>
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Background gradient */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${darkMode ? 'from-orange-600/20 via-transparent to-red-600/10' : 'from-blue-600/20 via-transparent to-blue-500/10'}`} />
-        <div className={`absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] ${darkMode ? 'from-orange-500/10' : 'from-blue-500/10'} via-transparent to-transparent`} />
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${import.meta.env.BASE_URL}images/SZLSiteBGBanner.png)` }}
+        />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="text-center">
-            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-6 ${darkMode ? 'bg-orange-500/10 border-orange-500/20' : 'bg-blue-500/10 border-blue-500/20'}`}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border bg-black/50 border-white/20 backdrop-blur-sm">
               <Zap className={`w-4 h-4 ${darkMode ? 'text-orange-400' : 'text-blue-600'}`} />
-              <span className={`text-sm font-medium ${darkMode ? 'text-orange-400' : 'text-blue-600'}`}>
+              <span className="text-sm font-semibold text-white drop-shadow">
                 {site?.current_season} — {site?.current_season_status}
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
-              <span className={`bg-gradient-to-r bg-clip-text text-transparent ${darkMode ? 'from-orange-400 via-yellow-300 to-red-400' : 'from-blue-600 via-sky-400 to-blue-500'}`}>
-                {site?.site_name}
-              </span>
-            </h1>
+            <div className="flex justify-center">
+              <img
+                src={`${import.meta.env.BASE_URL}images/league-logo.png`}
+                alt="Dragon Ball Sparking Zero League"
+                className="w-full max-w-2xl sm:max-w-4xl drop-shadow-2xl"
+                draggable={false}
+              />
+            </div>
 
-            <p className={`text-lg sm:text-xl max-w-2xl mx-auto mb-8 ${
-              darkMode ? 'text-gray-300' : 'text-stone-600'
-            }`}>
+            <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-8 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] font-medium">
               {site?.description}
             </p>
 
@@ -104,11 +117,7 @@ export default function HomePage({ site, darkMode }) {
                 href={site?.links?.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-colors border ${
-                  darkMode
-                    ? 'border-gray-700 hover:bg-gray-800 text-gray-200'
-                    : 'border-stone-300 hover:bg-stone-100 text-stone-700'
-                }`}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-colors border border-white/60 bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm"
               >
                 Watch Matches
                 <ExternalLink className="w-4 h-4" />
@@ -199,17 +208,35 @@ export default function HomePage({ site, darkMode }) {
       {/* Current Standings Preview */}
       {topTeams.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Trophy className="w-6 h-6 text-yellow-400" />
               Top Teams
             </h2>
-            <Link
-              to="/season"
-              className={`text-sm inline-flex items-center gap-1 ${darkMode ? 'text-orange-400 hover:text-orange-300' : 'text-blue-600 hover:text-blue-500'}`}
-            >
-              Full Standings <ChevronRight className="w-4 h-4" />
-            </Link>
+            <div className="flex items-center gap-3">
+              {(siteData?.all_seasons?.length ?? 0) > 1 && (
+                <div className="relative">
+                  <select
+                    value={selectedSeason || ''}
+                    onChange={(e) => setSelectedSeason(e.target.value)}
+                    className={`appearance-none pl-3 pr-8 py-1.5 rounded-lg border text-xs font-medium cursor-pointer ${
+                      darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-stone-100 border-stone-300 text-stone-800'
+                    }`}
+                  >
+                    {(siteData?.all_seasons || []).map((s) => (
+                      <option key={s.file} value={s.file}>{s.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                </div>
+              )}
+              <Link
+                to="/season"
+                className={`text-sm inline-flex items-center gap-1 ${darkMode ? 'text-orange-400 hover:text-orange-300' : 'text-blue-600 hover:text-blue-500'}`}
+              >
+                Full Standings <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -300,7 +327,7 @@ export default function HomePage({ site, darkMode }) {
               {teams.teams.map((team) => (
                 <Link
                   key={team.slug}
-                  to={`/teams?team=${team.slug}`}
+                  to={`/teams?team=${encodeURIComponent(team.slug)}`}
                   className={`group rounded-xl p-4 border transition-all hover:scale-[1.02] ${
                     darkMode
                       ? 'bg-gray-900 border-gray-800 hover:border-gray-600'

@@ -17,11 +17,6 @@ const CONFIG = {
     MAX_FILENAME_LENGTH: 255
 };
 
-// ============================================================
-// CURRENT LEAGUE SEASON — Change this when a new season starts
-// ============================================================
-const CURRENT_SEASON = 'OS0';
-
 // Category folder → matchType mapping
 const CATEGORY_MATCH_TYPE = {
     'Tests':   'Test',
@@ -46,6 +41,7 @@ const TEAMS = [
     { value: 'Demons', label: 'Demons' },
     { value: 'Malevolent Souls', label: 'Malevolent Souls' },
     { value: 'Master and Student', label: 'Master & Student' },
+    { value: 'Outlaw Stars', label: 'Outlaw Stars' },
     { value: 'Primal Instincts', label: 'Primal Instincts' },
     { value: 'Sentai', label: 'Sentai' },
     { value: 'Time Patrol', label: 'Time Patrol' },

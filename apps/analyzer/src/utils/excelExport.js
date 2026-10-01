@@ -6,7 +6,9 @@
  * and professional presentation.
  * 
  * Features:
- * - Two data sheets: Character Performance Averages & Individual Match Details
+ * - Two data sheets: Character Performance Averages & Individual Match Details,
+ *   then the Team Performance Matrix, then `options.extraSheets` (Position, AI
+ *   Strategies, Capsules: utils/workbookSheets.js)
  * - Full formatting support (colors, fonts, borders, alignment)
  * - Header row styling (bold, colored background)
  * - Auto-fit column widths
@@ -18,7 +20,7 @@
 
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { getCharacterAveragesTableConfig, getMatchDetailsTableConfig } from '../components/TableConfigs';
+import { characterAveragesColumns, matchDetailsColumns } from './workbookColumns.js';
 import { processTeamGroups } from './teamPerformanceMatrix';
 
 /**
@@ -56,6 +58,11 @@ export async function exportToExcel(characterData, matchData, options = {}) {
       await generateTeamPerformanceMatrix(workbook, characterData, includeFormatting);
     }
 
+    // The plainer sheets made from the pages' own rows (utils/workbookSheets.js).
+    for (const spec of options.extraSheets || []) {
+      if (spec.rows.length) generateSimpleSheet(workbook, spec);
+    }
+
     // Generate Excel file buffer
     const buffer = await workbook.xlsx.writeBuffer();
 
@@ -73,6 +80,29 @@ export async function exportToExcel(characterData, matchData, options = {}) {
 }
 
 /**
+ * A plain sheet from a { name, columns: [{ header, width, numFmt, get }], rows }
+ * spec (utils/workbookSheets.js): a bold, filled header row frozen at the top,
+ * a filter on every column, and each column's number format.
+ */
+function generateSimpleSheet(workbook, { name, columns, rows }) {
+  const sheet = workbook.addWorksheet(name, { views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }] });
+  columns.forEach((c, i) => {
+    const col = sheet.getColumn(i + 1);
+    col.width = c.width || 12;
+    if (c.numFmt) col.numFmt = c.numFmt;
+  });
+  const header = sheet.addRow(columns.map(c => c.header));
+  header.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  header.eachCell(cell => {
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+    cell.alignment = { vertical: 'middle' };
+  });
+  for (const r of rows) sheet.addRow(columns.map(c => c.get(r)));
+  sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: columns.length } };
+  return sheet;
+}
+
+/**
  * Generate Character Performance Averages sheet
  */
 async function generateCharacterAveragesSheet(workbook, data, includeFormatting) {
@@ -81,7 +111,7 @@ async function generateCharacterAveragesSheet(workbook, data, includeFormatting)
   });
 
   // Get column configuration
-  const config = getCharacterAveragesTableConfig();
+  const config = characterAveragesColumns();
   const columns = config.columns;
   const columnGroups = config.columnGroups;
 
@@ -162,7 +192,7 @@ async function generateMatchDetailsSheet(workbook, data, includeFormatting) {
   });
 
   // Get column configuration
-  const config = getMatchDetailsTableConfig();
+  const config = matchDetailsColumns();
   const columns = config.columns;
   const columnGroups = config.columnGroups;
 
@@ -652,7 +682,7 @@ function applyColumnFormatting(cell, column, rowValues, rowNumber, timeColumnAve
     const value = cell.value || 'No Build';
     
     // Map 7-category build types and compositions to colors
-    // Matches getBuildTypeColor() in App.jsx but uses Excel ARGB format
+    // The build types' colours (Melee red, Blast orange, Defense blue...), in Excel ARGB
     const colorMap = {
       // Pure builds
       'Pure Melee': 'FFDC2626',           // red-600
@@ -672,29 +702,21 @@ function applyColumnFormatting(cell, column, rowValues, rowNumber, timeColumnAve
       'Ki Efficiency-Focused': 'FF22C55E', // green-500
       'Utility-Focused': 'FF6B7280',      // gray-500
       
-      // Dual builds (use primary color at lighter shade)
-      'Melee/Blast': 'FFF87171',          // red-400
-      'Melee/Ki Blast': 'FFF87171',
-      'Melee/Defense': 'FFF87171',
-      'Melee/Skill': 'FFF87171',
-      'Melee/Ki Efficiency': 'FFF87171',
-      'Blast/Ki Blast': 'FFFBBF24',
-      'Blast/Defense': 'FFFB923C',
-      'Blast/Skill': 'FFFB923C',
-      'Blast/Ki Efficiency': 'FFFB923C',
-      'Ki Blast/Defense': 'FFFCD34D',
-      'Ki Blast/Skill': 'FFFCD34D',
-      'Ki Blast/Ki Efficiency': 'FFFCD34D',
-      'Defense/Skill': 'FF60A5FA',
-      'Defense/Ki Efficiency': 'FF60A5FA',
-      'Skill/Ki Efficiency': 'FFC084FC',
-      
       // Balanced
-      'Balanced Hybrid': 'FFA855F7',      // purple-500
+      'Balanced Hybrid': 'FF64748B',      // slate-500: no type leads, so no type's colour
       'No Build': 'FF6B7280'              // gray-500
     };
 
-    const buildColor = colorMap[value] || colorMap['No Build'];
+    // A two-type build ("Defense/Blast") takes its main type's colour, the one
+    // before the slash, at a lighter shade. It listed the pairs one by one and
+    // in one order only, so "Defense/Blast" or "Ki Efficiency/Melee" fell
+    // through to grey (2026-09-30).
+    const MAIN_TYPE = {
+      melee: 'FFF87171', blast: 'FFFB923C', 'ki blast': 'FFFCD34D', defense: 'FF60A5FA',
+      skill: 'FFC084FC', 'ki efficiency': 'FF4ADE80', utility: 'FF9CA3AF',
+    };
+    const main = String(value).includes('/') ? MAIN_TYPE[String(value).split('/')[0].toLowerCase()] : null;
+    const buildColor = colorMap[value] || main || colorMap['No Build'];
     
     // Use white color for team rows for better visibility on maroon background
     const textColor = isTeamRow ? 'FFFFFFFF' : buildColor;
@@ -1033,7 +1055,7 @@ async function generateTeamPerformanceMatrix(workbook, data, includeFormatting) 
   });
 
   // Get column configuration (same as Character Averages)
-  const config = getCharacterAveragesTableConfig();
+  const config = characterAveragesColumns();
   const columns = config.columns;
   const columnGroups = config.columnGroups;
 

@@ -1,0 +1,117 @@
+matchName: PS0_W2_M4
+team1Name: Demons
+team2Name: Z-Fighters
+
+# ── Demons ──────────────────────────────
+team1:
+  - character: Dabura
+    costume: Outfit 1
+    capsules:
+      - Ki Blast Attack Boost 3 (5)
+      - Ki Blast Charge 3 (3)
+      - Energy Saver 3 (3)
+      - Blast Attack Boost 2 (3)
+      - The Secret to Z-Burst Dashes (5)
+      - Latent Power Unleashed 1 (1)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Dreadful Villain
+
+  - character: Majin Buu
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Dragon Spirit (3)
+      - Savior (5)
+      - Exquisite Skill (1)
+      - Secret Measures (2)
+    ai: 'Balanced Strategy: Restrain'
+    transformAi: ''
+    sparking: Effortless Delights
+
+  - character: Majin Duu
+    costume: Outfit 1
+    capsules:
+      - The Secret to Counters (5)
+      - Rush Attack Boost 2 (3)
+      - Smash Attack Boost 2 (3)
+      - Finishing Blow (1)
+      - Dragon Rush (3)
+      - Melee Charge 3 (3)
+      - Combo King (2)
+    ai: 'Defense Strategy: Counters'
+    transformAi: ''
+    sparking: Effortless Delights
+
+  - character: Third Eye Gomah
+    costume: Outfit 1
+    capsules:
+      - King Kai Training (3)
+      - Rush Attack Boost 2 (3)
+      - Smash Attack Boost 2 (3)
+      - Latent Power! (5)
+      - Combo King (2)
+      - Indomitable Fighting Spirit (3)
+      - Energy Saver 1 (1)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Absolute Domination
+
+# ── Z-Fighters ──────────────────────────
+team2:
+  - character: Goku (Z - Mid) Super Saiyan
+    costume: Outfit 3
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Latent Power Unleashed 2 (2)
+      - Secret Measures (2)
+      - Dragon Heart (3)
+      - Dragon Spirit (3)
+      - Light Body (4)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: Super Saiyan
+
+  - character: Trunks (Sword) Super Saiyan
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - Combo Master (1)
+      - Combo King (2)
+      - Rising Fighting Spirit (3)
+      - Dragon Spirit (3)
+      - Latent Power! (5)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: ''
+    sparking: Hope for the Future
+
+  - character: Gohan (Teen) Super Saiyan
+    costume: Outfit 2
+    capsules:
+      - Blast Attack Boost 1 (1)
+      - Blast Attack Boost 3 (5)
+      - Savior (5)
+      - Secret Measures (2)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Rising Tension (3)
+    ai: 'Balanced Strategy: Blasts'
+    transformAi: 'Attack Strategy: Evasion'
+    sparking: Hidden Power Unleashed
+
+  - character: Tien
+    costume: Outfit 3
+    capsules:
+      - Blast Attack Boost 1 (1)
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Rising Fighting Spirit (3)
+      - Rising Tension (3)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: ''
+    sparking: Super Earthling

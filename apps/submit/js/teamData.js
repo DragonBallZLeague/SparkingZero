@@ -36,6 +36,31 @@ async function fileToText(file) {
  * @param {string} team2 - Second team name (can be empty)
  * @returns {Promise<string>} Base64 encoded modified content
  */
+// Infers seasonNumber and seasonPhase from a filename prefix.
+// Patterns (case-insensitive):
+//   OS<n>          → Offseason,   season n
+//   PS<n>          → Pre-Season,  season n
+//   MS<n>          → Main Season, season n
+//   S<n>           → Main Season, season n  (bare S, no other prefix)
+//   Playoffs S<n>  → Playoffs,    season n
+//   S<n> Playoffs  → Playoffs,    season n
+function parseSeasonFromFilename(filename) {
+    let m;
+    m = filename.match(/^Playoffs\s+S(\d+)/i);
+    if (m) return { seasonNumber: m[1], seasonPhase: 'Playoffs' };
+    m = filename.match(/^S(\d+)\s+Playoffs/i);
+    if (m) return { seasonNumber: m[1], seasonPhase: 'Playoffs' };
+    m = filename.match(/^OS(\d+)/i);
+    if (m) return { seasonNumber: m[1], seasonPhase: 'Offseason' };
+    m = filename.match(/^PS(\d+)/i);
+    if (m) return { seasonNumber: m[1], seasonPhase: 'Pre-Season' };
+    m = filename.match(/^MS(\d+)/i);
+    if (m) return { seasonNumber: m[1], seasonPhase: 'Main Season' };
+    m = filename.match(/^S(\d+)/i);
+    if (m) return { seasonNumber: m[1], seasonPhase: 'Main Season' };
+    return { seasonNumber: null, seasonPhase: null };
+}
+
 async function modifyFileWithTeamData(file, team1, team2) {
     const text = await fileToText(file);
     const json = JSON.parse(text);
@@ -65,10 +90,14 @@ async function modifyFileWithTeamData(file, team1, team2) {
     const cpuLevel = firstChar?.battlePlayCharacter?.cpuLevel;
     const difficulty = CPU_LEVEL_DIFFICULTY[cpuLevel] || null;
 
+    // Parse season tags from filename
+    const { seasonNumber, seasonPhase } = parseSeasonFromFilename(file.name);
+
     // Build/update the tags object
     const tagsUpdate = {
         team: teams,
-        season: CURRENT_SEASON,
+        seasonNumber: seasonNumber,
+        seasonPhase: seasonPhase,
         matchType: matchType,
         matchSize: matchSize,
     };

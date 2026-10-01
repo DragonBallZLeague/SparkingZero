@@ -51,6 +51,32 @@ function detectAndFixEncoding(filePath) {
   }
 }
 
+// --- SEASON PARSING ---
+// Infers seasonNumber and seasonPhase from the filename prefix.
+// Patterns (case-insensitive):
+//   OS<n>          → Offseason,   season n
+//   PS<n>          → Pre-Season,  season n
+//   MS<n>          → Main Season, season n
+//   S<n>           → Main Season, season n  (bare S, no other prefix)
+//   Playoffs S<n>  → Playoffs,    season n
+//   S<n> Playoffs  → Playoffs,    season n
+function parseSeasonFromFilename(filename) {
+  let m;
+  m = filename.match(/^Playoffs\s+S(\d+)/i);
+  if (m) return { seasonNumber: m[1], seasonPhase: 'Playoffs' };
+  m = filename.match(/^S(\d+)\s+Playoffs/i);
+  if (m) return { seasonNumber: m[1], seasonPhase: 'Playoffs' };
+  m = filename.match(/^OS(\d+)/i);
+  if (m) return { seasonNumber: m[1], seasonPhase: 'Offseason' };
+  m = filename.match(/^PS(\d+)/i);
+  if (m) return { seasonNumber: m[1], seasonPhase: 'Pre-Season' };
+  m = filename.match(/^MS(\d+)/i);
+  if (m) return { seasonNumber: m[1], seasonPhase: 'Main Season' };
+  m = filename.match(/^S(\d+)/i);
+  if (m) return { seasonNumber: m[1], seasonPhase: 'Main Season' };
+  return { seasonNumber: null, seasonPhase: null };
+}
+
 // --- CONFIG ---
 const BR_DATA_ROOT = path.resolve(__dirname, '../BR_Data');
 
@@ -174,17 +200,24 @@ function processMatchFile(filePath, folderTeam, matchType) {
     return;
   }
   const tags = {};
+  const { seasonNumber, seasonPhase } = parseSeasonFromFilename(filename);
   tags.team = getTeamsFromContent(content, folderTeam);
-  tags.season = tagConfig.currentSeason;
+  tags.seasonNumber = seasonNumber;
+  tags.seasonPhase = seasonPhase;
   tags.matchType = matchType;
   tags.difficulty = getDifficultyFromContent(content);
   tags.matchSize = getMatchSizeFromContent(content);
 
-  // Validate scalar tags against allowed values
-  for (const key of ['season', 'matchType', 'difficulty', 'matchSize']) {
+  // Validate scalar tags against allowed values.
+  // seasonNumber is excluded: it's parsed directly from the filename via regex (always a
+  // digit string or null), so a hand-maintained allowlist would need updating every season.
+  for (const key of ['seasonPhase', 'matchType', 'difficulty', 'matchSize']) {
     if (tagConfig[key] && Array.isArray(tagConfig[key].allowed) && !tagConfig[key].allowed.includes(tags[key])) {
       tags[key] = null;
     }
+  }
+  if (tags.seasonNumber !== null && !/^\d+$/.test(tags.seasonNumber)) {
+    tags.seasonNumber = null;
   }
   // Validate team array: keep only allowed team names
   if (Array.isArray(tags.team)) {

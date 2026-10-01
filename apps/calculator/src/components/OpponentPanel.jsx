@@ -150,15 +150,21 @@ export default function OpponentPanel({
     return map;
   }, [skills]);
 
+  const skillIdMap = useMemo(() => {
+    const map = {};
+    skills.forEach(s => { if (s.id != null) map[s.id] = s; });
+    return map;
+  }, [skills]);
+
   const charSkillDetails = useMemo(() => {
     if (!selectedOpponent) return [];
     const details = [];
     if (selectedOpponent.skill1Name) {
-      const detail = skillMap[selectedOpponent.skill1Name.toLowerCase()] ?? null;
+      const detail = (selectedOpponent.skill1Id != null ? skillIdMap[selectedOpponent.skill1Id] : skillMap[selectedOpponent.skill1Name.toLowerCase()]) ?? null;
       if (detail && hasBuff(detail)) details.push({ name: selectedOpponent.skill1Name, detail });
     }
     if (selectedOpponent.skill2Name) {
-      const detail = skillMap[selectedOpponent.skill2Name.toLowerCase()] ?? null;
+      const detail = (selectedOpponent.skill2Id != null ? skillIdMap[selectedOpponent.skill2Id] : skillMap[selectedOpponent.skill2Name.toLowerCase()]) ?? null;
       if (detail && hasBuff(detail)) details.push({ name: selectedOpponent.skill2Name, detail });
     }
     // Add sparking buffs as a pseudo-skill if present

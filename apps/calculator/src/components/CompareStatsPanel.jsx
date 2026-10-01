@@ -730,6 +730,12 @@ export default function CompareStatsPanel({
     return map;
   }, [skills]);
 
+  const skillIdMap = useMemo(() => {
+    const map = {};
+    skills.forEach(s => { if (s.id != null) map[s.id] = s; });
+    return map;
+  }, [skills]);
+
   const aBlastInfo = useMemo(() => getCharBlasts(charA?.name, blasts), [charA, blasts]);
   const bBlastInfo = useMemo(() => getCharBlasts(charB?.name, blasts), [charB, blasts]);
 
@@ -771,8 +777,10 @@ export default function CompareStatsPanel({
   function getSkillInfo(char, slot) {
     if (!char) return null;
     const name = slot === 1 ? char.skill1Name : char.skill2Name;
+    const id   = slot === 1 ? char.skill1Id   : char.skill2Id;
     if (!name) return null;
-    return { name, detail: skillMap[name.toLowerCase()] || null };
+    const detail = (id != null ? skillIdMap[id] : skillMap[name.toLowerCase()]) || null;
+    return { name, detail };
   }
 
   function dmgDelta(aVal, bVal) {

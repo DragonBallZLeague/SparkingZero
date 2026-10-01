@@ -3,13 +3,13 @@ import { XCircle, Star, AlertTriangle } from 'lucide-react';
 import { loadContent } from '../../utils/contentLoader';
 import MarkdownContent from './MarkdownContent';
 
-export default function BuildRules({ darkMode }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    loadContent('rules/build-rules.yaml').then(setData);
-  }, []);
-
+/**
+ * Presentational BuildRules rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function BuildRulesView({ data, darkMode = true }) {
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
   const card = `rounded-xl border p-5 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-stone-50 border-stone-200 shadow-sm'}`;
@@ -134,4 +134,14 @@ export default function BuildRules({ darkMode }) {
       )}
     </div>
   );
+}
+
+export default function BuildRules({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/build-rules.yaml').then(setData);
+  }, []);
+
+  return <BuildRulesView data={data} darkMode={darkMode} />;
 }

@@ -22,11 +22,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        # Full history, without file contents (blobless): the analyzer's
+        # generate-recent-uploads.mjs dates each test and event by the commit that added it.
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies (main app)
@@ -87,9 +92,17 @@ jobs:
         working-directory: apps/website
         run: npm run build -- --outDir=../../dist --emptyOutDir=false
 
+      # Not a plain copy of index.html any more. GitHub Pages serves the
+      # site-root 404.html for every unmatched path, including ones inside a
+      # sub-app, so copying the website's bundle made analyzer/admin deep links
+      # render an empty page. build-404.js keeps the website markup (so website
+      # deep links behave exactly as before) and injects a dispatcher that
+      # redirects sub-app paths into the right app. See scripts/build-404.js.
       - name: Create 404.html for SPA client-side routing
         shell: bash
-        run: cp dist/index.html dist/404.html
+        run: |
+          node scripts/build-404.js
+          node scripts/verify-404.mjs
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

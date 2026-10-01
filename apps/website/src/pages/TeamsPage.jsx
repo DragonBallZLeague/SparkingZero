@@ -1,35 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Users, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
-import { loadContent } from '../utils/contentLoader';
+import { Users, ChevronDown, ChevronUp, Calendar, UserMinus } from 'lucide-react';
+import yaml from 'js-yaml';
+import { useSeasonContext } from '../contexts/SeasonContext';
+import { useCharacterIndex } from '../hooks/useCharacterIndex';
 
 const CALC_BASE = 'https://dragonballzleague.github.io/SparkingZero/calculator/#';
 const NULLS7 = [null, null, null, null, null, null, null];
-const CALC_CHARS_URL = 'https://dragonballzleague.github.io/SparkingZero/calculator/data/characters.json';
-const TRANSFORM_URL = `${import.meta.env.BASE_URL}content/transformations.json`;
 
 function calcLink(charName) {
   const json = JSON.stringify({ c: charName, p: NULLS7, op: NULLS7 });
   return CALC_BASE + btoa(encodeURIComponent(json));
 }
 
-function buildTransformAdj(data) {
-  const idToName = {};
-  for (const [id, entry] of Object.entries(data)) {
-    if (typeof entry === 'object' && entry.name) idToName[id] = entry.name;
-  }
-  const fwd = {};
-  for (const [, entry] of Object.entries(data)) {
-    if (typeof entry !== 'object' || !entry.name) continue;
-    const from = entry.name;
-    if (!fwd[from]) fwd[from] = [];
-    for (const toId of (entry.transformsTo || [])) {
-      if (!toId || !idToName[toId]) continue;
-      fwd[from].push(idToName[toId]);
-    }
-  }
-  return fwd;
+function normalizeRoster(roster = []) {
+  return roster.map(entry =>
+    typeof entry === 'string'
+      ? { character: entry, benched: [] }
+      : { character: entry.character || entry, benched: entry.benched || [] }
+  );
 }
 
 function getFormChain(name, calcNames, transformAdj) {
@@ -73,7 +63,7 @@ function getFormChain(name, calcNames, transformAdj) {
   return ordered;
 }
 
-function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdown }) {
+function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdown, portalTarget }) {
   const [open, setOpen] = useState(false);
   const [dropPos, setDropPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -165,7 +155,7 @@ function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdo
         </a>
       ))}
     </div>,
-    document.body
+    portalTarget || document.body
   );
 
   return (
@@ -182,53 +172,58 @@ function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdo
   );
 }
 
-export default function TeamsPage({ darkMode }) {
-  const [data, setData] = useState(null);
-  const [expandedTeam, setExpandedTeam] = useState(null);
-  const [calcNames, setCalcNames] = useState(null);
-  const [transformAdj, setTransformAdj] = useState(null);
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    fetch(CALC_CHARS_URL)
-      .then(r => r.json())
-      .then(chars => setCalcNames(new Set(chars.map(c => c.name))))
-      .catch(() => setCalcNames(new Set()));
-  }, []);
-
-  useEffect(() => {
-    fetch(TRANSFORM_URL)
-      .then(r => r.json())
-      .then(data => setTransformAdj(buildTransformAdj(data)))
-      .catch(() => setTransformAdj({}));
-  }, []);
-
-  useEffect(() => {
-    loadContent('teams.yaml').then(setData);
-  }, []);
-
-  // Auto-expand team from URL param
-  useEffect(() => {
-    const slug = searchParams.get('team');
-    if (slug && data?.teams) {
-      setExpandedTeam(slug);
-    }
-  }, [searchParams, data]);
-
+/**
+ * Presentational Teams page: renders already-loaded team data.
+ *
+ * Kept free of data fetching, routing and context so the exact same markup can be
+ * rendered by the site (TeamsPage below) and by the CMS preview pane
+ * (`cms/previews.jsx`) - there is no second, hand-maintained copy of this layout.
+ */
+export function TeamsView({
+  data,
+  darkMode = true,
+  calcNames = null,
+  transformAdj = null,
+  expandedTeam = null,
+  onToggleTeam = () => {},
+  allSeasons = [],
+  selectedSeason = null,
+  onSeasonChange = () => {},
+  portalTarget = null,
+}) {
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading teams...</div>;
   }
 
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <Users className="w-8 h-8 text-blue-400" />
-          Teams
-        </h1>
-        <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
-          Click on a team to view their full roster and details.
-        </p>
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <Users className="w-8 h-8 text-blue-400" />
+            Teams
+          </h1>
+          <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-stone-500'}`}>
+            Click on a team to view their full roster and details.
+          </p>
+        </div>
+        {allSeasons.length > 1 && (
+          <div className="relative">
+            <select
+              value={selectedSeason || ''}
+              onChange={(e) => onSeasonChange(e.target.value)}
+              className={`appearance-none pl-3 pr-8 py-2 rounded-lg border text-sm font-medium cursor-pointer ${
+                darkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-stone-100 border-stone-300 text-stone-800'
+              }`}
+            >
+              {allSeasons.map((s) => (
+                <option key={s.file} value={s.file}>{s.label}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -245,7 +240,7 @@ export default function TeamsPage({ darkMode }) {
             >
               {/* Team Header (clickable) */}
               <button
-                onClick={() => setExpandedTeam(isExpanded ? null : team.slug)}
+                onClick={() => onToggleTeam(isExpanded ? null : team.slug)}
                 className={`w-full flex items-center justify-between p-5 text-left transition-colors ${
                   darkMode ? 'hover:bg-gray-800/50' : 'hover:bg-stone-100'
                 }`}
@@ -298,7 +293,7 @@ export default function TeamsPage({ darkMode }) {
                       <img
                         src={team.banner}
                         alt={`${team.name} banner`}
-                        className="w-full h-auto object-cover max-h-48"
+                        className="w-full h-auto"
                       />
                     </div>
                   )}
@@ -315,18 +310,37 @@ export default function TeamsPage({ darkMode }) {
                   </h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                    {(team.roster || []).map((char) => (
-                      <CharLink
-                        key={char}
-                        name={char}
-                        calcNames={calcNames}
-                        transformAdj={transformAdj}
-                        darkMode={darkMode}
-                        noDropdown
-                        className={`px-3 py-2 rounded-lg text-sm text-center ${
-                          darkMode ? 'bg-gray-800/50 text-gray-200' : 'bg-stone-100 text-stone-700'
-                        }`}
-                      />
+                    {normalizeRoster(team.roster).map(({ character, benched }) => (
+                      <div key={character} className="flex flex-col">
+                        <CharLink
+                          name={character}
+                          calcNames={calcNames}
+                          transformAdj={transformAdj}
+                          darkMode={darkMode}
+                          portalTarget={portalTarget}
+                          noDropdown
+                          className={`px-3 py-2 rounded-lg text-sm text-center ${
+                            darkMode ? 'bg-gray-800/50 text-gray-200' : 'bg-stone-100 text-stone-700'
+                          }`}
+                        />
+                        {benched.length > 0 && (
+                          <div className={`mt-1 px-2 py-1.5 rounded-b-lg -mt-1 pt-2 border-t ${
+                            darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-stone-100 border-stone-200'
+                          }`}>
+                            <div className={`flex items-center justify-center gap-1 mb-1`}>
+                              <UserMinus className={`w-3 h-3 ${darkMode ? 'text-rose-400' : 'text-rose-500'}`} />
+                              <span className={`text-[9px] font-bold uppercase tracking-wider ${darkMode ? 'text-rose-400' : 'text-rose-500'}`}>Benched</span>
+                            </div>
+                            <div className="flex flex-wrap gap-1 justify-center">
+                              {benched.slice().sort((a, b) => a - b).map(wk => (
+                                <span key={wk} className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                                  darkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-600'
+                                }`}>Wk {wk}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
 
@@ -345,6 +359,7 @@ export default function TeamsPage({ darkMode }) {
                               calcNames={calcNames}
                               transformAdj={transformAdj}
                               darkMode={darkMode}
+                              portalTarget={portalTarget}
                               className={`block px-2.5 py-1.5 rounded text-xs text-center ${
                                 darkMode ? 'bg-gray-800/50 text-gray-400' : 'bg-stone-100 text-stone-500'
                               }`}
@@ -372,5 +387,45 @@ export default function TeamsPage({ darkMode }) {
         })}
       </div>
     </div>
+  );
+}
+
+export default function TeamsPage({ darkMode }) {
+  const { siteData, selectedSeason, setSelectedSeason } = useSeasonContext();
+  const [data, setData] = useState(null);
+  const [expandedTeam, setExpandedTeam] = useState(null);
+  const [searchParams] = useSearchParams();
+  const { calcNames, transformAdj } = useCharacterIndex();
+
+  // Load teams for the selected season
+  useEffect(() => {
+    if (!selectedSeason) return;
+    setData(null);
+    fetch(`${import.meta.env.BASE_URL}content/teams/${selectedSeason}`)
+      .then(r => r.text())
+      .then(text => setData(yaml.load(text)))
+      .catch(() => setData(null));
+  }, [selectedSeason]);
+
+  // Auto-expand team from URL param
+  useEffect(() => {
+    const slug = searchParams.get('team');
+    if (slug && data?.teams) {
+      setExpandedTeam(slug);
+    }
+  }, [searchParams, data]);
+
+  return (
+    <TeamsView
+      data={data}
+      darkMode={darkMode}
+      calcNames={calcNames}
+      transformAdj={transformAdj}
+      expandedTeam={expandedTeam}
+      onToggleTeam={setExpandedTeam}
+      allSeasons={siteData?.all_seasons || []}
+      selectedSeason={selectedSeason}
+      onSeasonChange={(file) => { setSelectedSeason(file); setExpandedTeam(null); }}
+    />
   );
 }

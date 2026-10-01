@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "generated": "2026-09-27T02:59:32.817Z",
+  "basis": {
+    "rule": "rolling last 2 seasons, Ultra difficulty only, all match types, no minimum match count",
+    "seasonWindow": 2,
+    "seasons": [
+      "0",
+      "1"
+    ],
+    "difficulty": "Ultra",
+    "matches": 1350,
+    "characters": 148
+  },
+  "percentiles": {
+    "Z": 0.9,
+    "S": 0.7,
+    "A": 0.4,
+    "B": 0.2
+  },
+  "cutoffs": {
+    "Z": 75,
+    "S": 65.4,
+    "A": 55.2,
+    "B": 48.4
+  },
+  "distribution": {
+    "Z": 16,
+    "S": 30,
+    "A": 43,
+    "B": 29,
+    "C": 30
+  }
+}

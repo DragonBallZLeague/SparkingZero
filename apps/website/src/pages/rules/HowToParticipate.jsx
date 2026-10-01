@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { loadContent } from '../../utils/contentLoader';
 
-export default function HowToParticipate({ darkMode }) {
-  const [data, setData] = useState(null);
+/**
+ * Presentational HowToParticipate rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function HowToParticipateView({ data, darkMode = true }) {
   const [activeTrack, setActiveTrack] = useState('viewer');
 
-  useEffect(() => {
-    loadContent('rules/how-to-participate.yaml').then(setData);
-  }, []);
 
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
@@ -77,4 +79,14 @@ export default function HowToParticipate({ darkMode }) {
       </div>
     </div>
   );
+}
+
+export default function HowToParticipate({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/how-to-participate.yaml').then(setData);
+  }, []);
+
+  return <HowToParticipateView data={data} darkMode={darkMode} />;
 }

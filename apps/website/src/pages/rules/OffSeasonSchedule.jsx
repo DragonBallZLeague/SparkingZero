@@ -10,13 +10,13 @@ const ICON_MAP = {
   Banknote,
 };
 
-export default function OffSeasonSchedule({ darkMode }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    loadContent('rules/off-season-schedule.yaml').then(setData);
-  }, []);
-
+/**
+ * Presentational OffSeasonSchedule rules section: renders one already-loaded rules YAML file.
+ *
+ * Pure props in, markup out - no fetching - so the site (container below) and the
+ * CMS preview pane (`cms/previews.jsx`) render the exact same section.
+ */
+export function OffSeasonScheduleView({ data, darkMode = true }) {
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
 
   const accentText = darkMode ? 'text-orange-400' : 'text-blue-600';
@@ -67,4 +67,14 @@ export default function OffSeasonSchedule({ darkMode }) {
       )}
     </div>
   );
+}
+
+export default function OffSeasonSchedule({ darkMode }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadContent('rules/off-season-schedule.yaml').then(setData);
+  }, []);
+
+  return <OffSeasonScheduleView data={data} darkMode={darkMode} />;
 }

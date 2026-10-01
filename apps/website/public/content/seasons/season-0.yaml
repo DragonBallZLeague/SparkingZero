@@ -1,479 +1,764 @@
 season: Season 0
 game: "Dragon Ball: Sparking! Zero"
-status: Upcoming
-active_phase: preseason
+status: Active
+active_phase: playoffs
 kais:
   - name: North Kai
     teams:
       - team: Primal Instincts
+        avg_damage: 271
       - team: Z-Fighters
+        avg_damage: 324
       - team: Master & Student
+        avg_damage: 273
   - name: East Kai
     teams:
       - team: Sentai Squad
+        avg_damage: 318
       - team: Tiny Terrors
+        avg_damage: 343
       - team: Malevolent Souls
+        avg_damage: 288
   - name: West Kai
     teams:
       - team: Time Patrol
+        avg_damage: 289
       - team: Budokai
+        avg_damage: 306
       - team: Cinema
+        avg_damage: 287
   - name: South Kai
     teams:
       - team: Creations
+        avg_damage: 316
       - team: Cold Kingdom
+        avg_damage: 311
       - team: Demons
+        avg_damage: 281
 preseason_schedule:
   - week: 1
+    stream_date: 5/16/2026
     matches:
       - home: Cinema
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/17VSBeUHACM
+        winner: Creations
+        lineup_file: PS0_W1_M1.yaml
       - home: Master & Student
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/17VSBeUHACM
+        winner: Master & Student
+        lineup_file: PS0_W1_M2.yaml
       - home: Z-Fighters
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=DP3AaFbid4g
+        winner: Primal Instincts
+        lineup_file: PS0_W1_M3.yaml
       - home: Demons
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=DP3AaFbid4g
+        winner: Cold Kingdom
+        lineup_file: PS0_W1_M4.yaml
       - home: Malevolent Souls
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=2Yb7hG2WE_8
+        winner: Malevolent Souls
+        lineup_file: PS0_W1_M5.yaml
       - home: Sentai Squad
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=2Yb7hG2WE_8
+        winner: Time Patrol
+        lineup_file: PS0_W1_M6.yaml
   - week: 2
+    stream_date: 5/23/2026
     matches:
       - home: Tiny Terrors
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=rBx2MHnIOCg
+        lineup_file: ps0_w2_m1.yaml
+        winner: Creations
       - home: Cinema
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=rBx2MHnIOCg
+        lineup_file: ps0_w2_m2.yaml
+        winner: Cinema
       - home: Cold Kingdom
         away: Sentai Squad
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=59tmyADnKWg
+        lineup_file: ps0_w2_m3.yaml
+        winner: Sentai Squad
       - home: Demons
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=59tmyADnKWg
+        lineup_file: ps0_w2_m4.yaml
+        winner: Z-Fighters
       - home: Malevolent Souls
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=8K10uVrDwNM
+        lineup_file: ps0_w2_m5.yaml
+        winner: Malevolent Souls
       - home: Master & Student
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=8K10uVrDwNM
+        lineup_file: ps0_w2_m6.yaml
+        winner: Time Patrol
   - week: 3
+    stream_date: 5/30/2026
     matches:
       - home: Sentai Squad
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=f4H45gcYuss
+        lineup_file: ps0_w3_m1.yaml
+        winner: Sentai Squad
       - home: Primal Instincts
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=f4H45gcYuss
+        lineup_file: ps0_w3_m2.yaml
+        winner: Tiny Terrors
       - home: Cinema
         away: Demons
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=7JGOEJtXHQQ
+        lineup_file: ps0_w3_m3.yaml
+        winner: Cinema
       - home: Master & Student
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=7JGOEJtXHQQ
+        lineup_file: ps0_w3_m4.yaml
+        winner: Malevolent Souls
       - home: Time Patrol
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=hJ_rMuqaeO8
+        lineup_file: ps0_w3_m5.yaml
+        winner: Time Patrol
       - home: Budokai
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://www.youtube.com/watch?v=hJ_rMuqaeO8
+        lineup_file: ps0_w3_m6.yaml
+        winner: Creations
 schedule:
   - week: 1
+    stream_date: ""
     matches:
       - home: Cinema
         away: Sentai Squad
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/ZIOoIKGZNQ4?is=yPVygDk6c--7oYTf
+        lineup_file: s0w1m1.yaml
+        winner: Sentai Squad
       - home: Time Patrol
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/ZIOoIKGZNQ4?is=yPVygDk6c--7oYTf
+        lineup_file: s0w1m2.yaml
+        winner: Time Patrol
       - home: Creations
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/ZOlY25aQxEY?is=mmPdTdhfipV_9Bv0
+        lineup_file: s0w1m3.yaml
+        winner: Creations
       - home: Tiny Terrors
         away: Demons
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/ZOlY25aQxEY?is=mmPdTdhfipV_9Bv0
+        lineup_file: s0w1m4.yaml
+        winner: Tiny Terrors
       - home: Master & Student
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/z12uKCGZnOE?is=UfqVpIrj17t5qxwN
+        lineup_file: s0w1m5.yaml
+        winner: Cold Kingdom
       - home: Primal Instincts
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/z12uKCGZnOE?is=UfqVpIrj17t5qxwN
+        lineup_file: s0w1m6.yaml
+        winner: Primal Instincts
   - week: 2
+    stream_date: ""
     matches:
       - home: Cinema
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/GnYLkx_Dwyk?is=qiDOIZ3ieIwz8mcx
+        lineup_file: s0_w2_m1.yaml
+        winner: Cinema
       - home: Z-Fighters
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/GnYLkx_Dwyk?is=qiDOIZ3ieIwz8mcx
+        lineup_file: s0_w2_m2.yaml
+        winner: Cold Kingdom
       - home: Malevolent Souls
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/oPJjJZ8mX7g?is=RF4F0D8mNt2oK7Ym
+        lineup_file: s0_w2_m3.yaml
+        winner: Malevolent Souls
       - home: Demons
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/oPJjJZ8mX7g?is=RF4F0D8mNt2oK7Ym
+        lineup_file: s0_w2_m4.yaml
+        winner: Budokai
       - home: Master & Student
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/7xajgyyjRS0?is=KjlOFbQH0Whpx7De
+        lineup_file: s0_w2_m5.yaml
+        winner: Creations
       - home: Sentai Squad
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/7xajgyyjRS0?is=KjlOFbQH0Whpx7De
+        lineup_file: s0_w2_m6.yaml
+        winner: Sentai Squad
   - week: 3
+    stream_date: ""
     matches:
       - home: Tiny Terrors
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/yVXaLKep8Cw?is=ihiPm9D2B-tGy6XN
+        lineup_file: s0_w3_m1.yaml
+        winner: Time Patrol
       - home: Z-Fighters
         away: Master & Student
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/yVXaLKep8Cw?is=ihiPm9D2B-tGy6XN
+        lineup_file: s0_w3_m2.yaml
+        winner: Z-Fighters
       - home: Cold Kingdom
         away: Cinema
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/tDt9tV6f63s?is=NRVW3agPOdY4Team
+        lineup_file: s0_w3_m3.yaml
+        winner: Cinema
       - home: Demons
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/tDt9tV6f63s?is=NRVW3agPOdY4Team
+        lineup_file: s0_w3_m4.yaml
+        winner: Demons
       - home: Budokai
         away: Sentai Squad
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/8AdCbSNYJHw?is=55tKtH_wu6S3U089
+        lineup_file: s0_w3_m5.yaml
+        winner: Sentai Squad
       - home: Primal Instincts
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/8AdCbSNYJHw?is=55tKtH_wu6S3U089
+        lineup_file: s0_w3_m6.yaml
+        winner: Primal Instincts
   - week: 4
+    stream_date: ""
     matches:
       - home: Malevolent Souls
         away: Sentai Squad
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/ZyHBNrN98yw?is=IcUOwqZfh36pQoTK
+        lineup_file: s0_w4_m1.yaml
+        winner: Malevolent Souls
       - home: Demons
         away: Creations
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/ZyHBNrN98yw?is=IcUOwqZfh36pQoTK
+        lineup_file: s0_w4_m2.yaml
+        winner: Demons
       - home: Z-Fighters
         away: Cinema
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/pkDxKuOHGE0?is=riEDjEPHfIiXAScL
+        lineup_file: s0_w4_m3.yaml
+        winner: Z-Fighters
       - home: Time Patrol
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/pkDxKuOHGE0?is=riEDjEPHfIiXAScL
+        lineup_file: s0_w4_m4.yaml
+        winner: Time Patrol
       - home: Master & Student
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/0VtAQv8FprI?is=wikYwR-LZNWDZNUr
+        lineup_file: s0_w4_m5.yaml
+        winner: Master & Student
       - home: Tiny Terrors
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/0VtAQv8FprI?is=wikYwR-LZNWDZNUr
+        lineup_file: s0_w4_m6.yaml
+        winner: Cold Kingdom
   - week: 5
+    stream_date: ""
     matches:
       - home: Cold Kingdom
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/aWsKJI7Z6NI?is=CJZqNLIcGqcCvYnK
+        lineup_file: s0_mw5_m1.yaml
+        winner: Budokai
       - home: Tiny Terrors
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/aWsKJI7Z6NI?is=CJZqNLIcGqcCvYnK
+        lineup_file: s0_mw5_m2.yaml
+        winner: Tiny Terrors
       - home: Malevolent Souls
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/EjQ2HY4KtmU?is=4ggiyImKN5hBPonS
+        lineup_file: s0_mw5_m3.yaml
+        winner: Malevolent Souls
       - home: Primal Instincts
         away: Demons
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/EjQ2HY4KtmU?is=4ggiyImKN5hBPonS
+        lineup_file: s0_mw5_m4.yaml
+        winner: Demons
       - home: Sentai Squad
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/8EEmV-BbJsQ?is=8V4w5BIW3Ak__NcX
+        lineup_file: s0_mw5_m5.yaml
+        winner: Sentai Squad
       - home: Cinema
         away: Master & Student
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/8EEmV-BbJsQ?is=8V4w5BIW3Ak__NcX
+        lineup_file: s0_mw5_m6.yaml
+        winner: Master & Student
   - week: 6
+    stream_date: ""
     matches:
       - home: Sentai Squad
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/k85yGXKxU_s?is=QUzzHJ1vzA2Z2Vcn
+        lineup_file: s0_mw6_m1.yaml
+        winner: Sentai Squad
       - home: Budokai
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/k85yGXKxU_s?is=QUzzHJ1vzA2Z2Vcn
+        lineup_file: s0_mw6_m2.yaml
+        winner: Budokai
       - home: Creations
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/-dhfAUqAWw8?is=iJG_FqnokPePdudb
+        lineup_file: s0_mw6_m3.yaml
+        winner: Creations
       - home: Master & Student
         away: Demons
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/-dhfAUqAWw8?is=iJG_FqnokPePdudb
+        lineup_file: s0_mw6_m4.yaml
+        winner: Demons
       - home: Cinema
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/cmd4A7G783I?is=xTly5vsAfeUctq5e
+        lineup_file: s0_mw6_m5.yaml
+        winner: Tiny Terrors
       - home: Cold Kingdom
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/cmd4A7G783I?is=xTly5vsAfeUctq5e
+        lineup_file: s0_mw6_m6.yaml
+        winner: Malevolent Souls
   - week: 7
+    stream_date: ""
     matches:
       - home: Budokai
         away: Cinema
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/ZQagAgstMM0?is=Vl5rUueeC4czQAQw
+        lineup_file: s0_mw7_m1.yaml
+        winner: Cinema
       - home: Time Patrol
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/ZQagAgstMM0?is=Vl5rUueeC4czQAQw
+        lineup_file: s0_mw7_m2.yaml
+        winner: Primal Instincts
       - home: Cold Kingdom
         away: Creations
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/r0nxDTfxezM?is=CQizArM5hX35rH4N
+        lineup_file: s0_mw7_m3.yaml
+        winner: Cold Kingdom
       - home: Master & Student
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/r0nxDTfxezM?is=CQizArM5hX35rH4N
+        lineup_file: s0_mw7_m4.yaml
+        winner: Master & Student
       - home: Sentai Squad
         away: Demons
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/g6rv0YQ-h1w?is=mMODHNJ8m1P-5tVA
+        lineup_file: s0_mw7_m5.yaml
+        winner: Sentai Squad
       - home: Malevolent Souls
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/g6rv0YQ-h1w?is=mMODHNJ8m1P-5tVA
+        lineup_file: s0_mw7_m6.yaml
+        winner: Z-Fighters
   - week: 8
+    stream_date: ""
     matches:
       - home: Primal Instincts
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/uol5ZKmxAUE?is=XYZuRFvYZOGHzl_m
+        lineup_file: s0_mw8_m1.yaml
+        winner: Cold Kingdom
       - home: Z-Fighters
         away: Creations
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/uol5ZKmxAUE?is=XYZuRFvYZOGHzl_m
+        lineup_file: s0_mw8_m2.yaml
+        winner: Creations
       - home: Sentai Squad
         away: Master & Student
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/duqyD0ajilk?is=Ml9ttLxv9mdXwINK
+        lineup_file: s0_mw8_m3.yaml
+        winner: Master & Student
       - home: Budokai
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/duqyD0ajilk?is=Ml9ttLxv9mdXwINK
+        lineup_file: s0_mw8_m4.yaml
+        winner: Tiny Terrors
       - home: Cinema
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/w-9CAmDcIeI?is=ZhfA-PRuAvkCxJ1-
+        lineup_file: s0_mw8_m5.yaml
+        winner: Cinema
       - home: Demons
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/w-9CAmDcIeI?is=ZhfA-PRuAvkCxJ1-
+        lineup_file: s0_mw8_m6.yaml
+        winner: Time Patrol
   - week: 9
+    stream_date: ""
     matches:
       - home: Creations
         away: Cinema
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/qLoUXLfOAAo?is=iakynJL3vTAAQ8mF
+        lineup_file: s0_mw9_m1.yaml
+        winner: Creations
       - home: Budokai
         away: Master & Student
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/qLoUXLfOAAo?is=iakynJL3vTAAQ8mF
+        lineup_file: s0_mw9_m2.yaml
+        winner: Budokai
       - home: Primal Instincts
         away: Z-Fighters
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/5dw2TtsUgtM?is=aaf2ucda9vcS8WBD
+        lineup_file: s0_mw9_m3.yaml
+        winner: Z-Fighters
       - home: Cold Kingdom
         away: Demons
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/5dw2TtsUgtM?is=aaf2ucda9vcS8WBD
+        lineup_file: s0_mw9_m4.yaml
+        winner: Cold Kingdom
       - home: Tiny Terrors
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: true
-        video_url: ""
+        video_url: https://youtu.be/6VgJJApwLVk?is=ElfqDSIP2Y0M0Wdz
+        lineup_file: s0_mw9_m5.yaml
+        winner: Tiny Terrors
       - home: Time Patrol
         away: Sentai Squad
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/6VgJJApwLVk?is=ElfqDSIP2Y0M0Wdz
+        lineup_file: s0_mw9_m6.yaml
+        winner: Sentai Squad
   - week: 10
+    stream_date: ""
     matches:
       - home: Creations
         away: Tiny Terrors
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/UkuMYAyq6JU?is=lEuBA-e0F9I3AQXS
+        winner: Creations
+        lineup_file: s0_mw10_m1.yaml
       - home: Primal Instincts
         away: Cinema
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/UkuMYAyq6JU?is=lEuBA-e0F9I3AQXS
+        winner: Cinema
+        lineup_file: s0_mw10_m2.yaml
       - home: Sentai Squad
         away: Cold Kingdom
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/_MUIuGdTBnw?is=3ixxC4SMFiL42ASe
+        winner: Sentai Squad
+        lineup_file: s0_mw10_m3.yaml
       - home: Z-Fighters
         away: Demons
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/_MUIuGdTBnw?is=3ixxC4SMFiL42ASe
+        winner: Z-Fighters
+        lineup_file: s0_mw10_m4.yaml
       - home: Budokai
         away: Malevolent Souls
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/GlmafsBI-bo?is=dXgThTpBSbgyy2Q6
+        winner: Budokai
+        lineup_file: s0_mw10_m5.yaml
       - home: Time Patrol
         away: Master & Student
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/GlmafsBI-bo?is=dXgThTpBSbgyy2Q6
+        winner: Master & Student
+        lineup_file: s0_mw10_m6.yaml
   - week: 11
+    stream_date: ""
     matches:
       - home: Z-Fighters
         away: Sentai Squad
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/HLXq9EJ6DAQ?is=FALnZGkpes_Gl4Gc
+        lineup_file: s0_mw11_m1.yaml
+        winner: Sentai Squad
       - home: Tiny Terrors
         away: Primal Instincts
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/HLXq9EJ6DAQ?is=FALnZGkpes_Gl4Gc
+        lineup_file: s0_mw11_m2.yaml
+        winner: Tiny Terrors
       - home: Demons
         away: Cinema
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/hrDWvAPPKkA?is=6m-_iAqDrcumOdDX
+        lineup_file: s0_mw11_m3.yaml
+        winner: Demons
       - home: Malevolent Souls
         away: Master & Student
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/hrDWvAPPKkA?is=6m-_iAqDrcumOdDX
+        lineup_file: s0_mw11_m4.yaml
+        winner: Malevolent Souls
       - home: Cold Kingdom
         away: Time Patrol
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/YrD19ANaOEM?is=kRfcQQzzYA1LWamb
+        lineup_file: s0_mw11_m5.yaml
+        winner: Cold Kingdom
       - home: Creations
         away: Budokai
-        status: upcoming
+        status: completed
         divisional: false
-        video_url: ""
+        video_url: https://youtu.be/YrD19ANaOEM?is=kRfcQQzzYA1LWamb
+        lineup_file: s0_mw11_m6.yaml
+        winner: Creations
 playoffs:
-  status: Not Started
-  format: Single Elimination Bo3
-  bracket: []
+  format: 12-Team Single Elimination
+  status: In Progress
+  seedings: []
+  rounds:
+    - round: Wild Card
+      matches:
+        - status: completed
+          lineup_file_week1: s0_po1_m1.yaml
+          lineup_file_week2: s0_po2_m1r2.yaml
+          score_a: 2
+          score_b: 1
+          video_url_week1: https://youtu.be/h6noPZOJB_E?is=FxZdpGLSTvj9jKVd
+          video_url_week2: https://youtu.be/1agfVyXt6OE?is=SUuKqH10LlpgOqO-
+          winner: Demons
+        - status: completed
+          lineup_file_week1: s0_po1_m2.yaml
+          lineup_file_week2: s0_po2_m2r3.yaml
+          score_a: 1
+          score_b: 2
+          video_url_week1: https://youtu.be/Eh7bloJaZwA?is=peQePJhDhyA3d0i5
+          video_url_week2: https://youtu.be/zESle82zd7s?is=MGem2kMdlp1P_YWO
+          winner: Primal Instincts
+        - status: completed
+          lineup_file_week1: s0_po1_m3.yaml
+          lineup_file_week2: s0_po2_m3r2.yaml
+          score_a: 2
+          score_b: 0
+          video_url_week1: https://youtu.be/JQHVgVV2S-c?is=hftZ5-aV-wSmhPCQ
+          video_url_week2: https://youtu.be/i7bEE7MA_BU?is=Elk8CDtlWFiz2d8R
+          winner: Budokai
+        - status: completed
+          lineup_file_week1: s0_po1_m4.yaml
+          lineup_file_week2: s0_po2_m4r3.yaml
+          score_a: 0
+          score_b: 2
+          video_url_week1: https://youtu.be/AWJcrX4BCDI?is=1ZkLbvcKxQIpZ1FD
+          video_url_week2: https://youtu.be/WGDtl_1nmR0?is=b4D87HB-IRb74ilR
+          winner: Time Patrol
+    - round: Quarterfinals
+      matches:
+        - status: completed
+          lineup_file_week1: s0_qf1_m1r1.yaml
+          score_a: 2
+          video_url_week1: https://youtu.be/6SITuerOiqs?is=pGGiaao_ZQWRORrI
+          lineup_file_week2: s0_qf2_m1r3.yaml
+          score_b: 0
+          winner: Sentai Squad
+          video_url_week2: https://youtu.be/uN4O3sEeNLI?is=tkUjl5YY65uHC-ic
+        - status: completed
+          lineup_file_week1: s0_qf1_m2r1.yaml
+          score_b: 2
+          video_url_week1: https://youtu.be/nTAzoTimhZc?is=KunjR_1iJ6t2hZbE
+          lineup_file_week2: s0_qf2_m2r3.yaml
+          score_a: 1
+          winner: Primal Instincts
+          video_url_week2: https://youtu.be/D34wFNtn-30?is=rwV0s6UKpWw5gRIc
+        - status: completed
+          lineup_file_week1: s0_qf1_m3r1.yaml
+          score_a: 0
+          score_b: 2
+          video_url_week1: https://youtu.be/-pgQc7V-PFI?is=n540ZRwnUkCuff4z
+          lineup_file_week2: so_qf2_m3r3.yaml
+          winner: Budokai
+          video_url_week2: https://youtu.be/WZSCHUjUHrE?is=e0EXAqrx5xOmwICo
+        - status: completed
+          lineup_file_week1: s0_qf1_m4r1.yaml
+          score_a: 2
+          lineup_file_week2: s0_qf2_m4r3.yaml
+          video_url_week1: https://youtu.be/-jE_zc5a0g4?is=CBQ2pVSTEki2JC6q
+          score_b: 0
+          winner: Z-Fighters
+          video_url_week2: https://youtu.be/e5XX2Fkp3y4?is=dhBesCwGByS8Y22Q
+    - round: Semifinals
+      matches:
+        - status: completed
+          lineup_file_week1: s0_sf1_m1r1.yaml
+          score_a: 2
+          video_url_week1: https://youtu.be/k70JuHCFdqE?is=H4-PWX0jeaXgl-20
+          lineup_file_week2: s0_sf2_m1r3.yaml
+          score_b: 1
+          winner: Sentai Squad
+        - status: completed
+          lineup_file_week1: s0_sf1_m2r1.yaml
+          score_a: 2
+          video_url_week1: https://youtu.be/6ne93ctpnFQ?is=LZA-kevaJyJ40xso
+          lineup_file_week2: s0_sf2_m2r3.yaml
+          score_b: 0
+          winner: Budokai
+    - round: Tenkaichi Bowl
+      matches:
+        - status: upcoming
+  third_place_match:
+    matches:
+      - status: upcoming

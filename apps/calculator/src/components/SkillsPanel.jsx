@@ -261,9 +261,15 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
     return map;
   }, [skills]);
 
+  const skillIdMap = React.useMemo(() => {
+    const map = {};
+    skills.forEach(s => { if (s.id != null) map[s.id] = s; });
+    return map;
+  }, [skills]);
+
   const charSkillDetails = [];
-  if (skills1) charSkillDetails.push({ name: skills1, damage: skill1Dmg, detail: skillMap[skills1.toLowerCase()] ?? null });
-  if (skills2) charSkillDetails.push({ name: skills2, damage: skill2Dmg, detail: skillMap[skills2.toLowerCase()] ?? null });
+  if (skills1) charSkillDetails.push({ name: skills1, damage: skill1Dmg, detail: (character.skill1Id != null ? skillIdMap[character.skill1Id] : skillMap[skills1.toLowerCase()]) ?? null });
+  if (skills2) charSkillDetails.push({ name: skills2, damage: skill2Dmg, detail: (character.skill2Id != null ? skillIdMap[character.skill2Id] : skillMap[skills2.toLowerCase()]) ?? null });
 
   const blastRows = sorted.filter(b => b.slot !== 'BlastUltimate');
   const ultimateRows = sorted.filter(b => b.slot === 'BlastUltimate');

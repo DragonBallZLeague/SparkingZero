@@ -5,6 +5,11 @@ import { resolve } from 'path';
 
 export default defineConfig({
   base: '/SparkingZero/analyzer/',
+  resolve: {
+    alias: {
+      '@szl/ui': resolve(__dirname, '../../packages/ui/src'),
+    },
+  },
   server: {
     port: 5173,
     strictPort: true
@@ -24,6 +29,7 @@ export default defineConfig({
         try {
           copyFileSync(`${sharedPath}/characters.csv`, `${localPath}/characters.csv`)
           copyFileSync(`${sharedPath}/capsules.csv`, `${localPath}/capsules.csv`)
+          copyFileSync(`${sharedPath}/transformations.json`, `${localPath}/transformations.json`)
         } catch (err) {
           console.warn('Could not copy shared referencedata files:', err.message)
         }

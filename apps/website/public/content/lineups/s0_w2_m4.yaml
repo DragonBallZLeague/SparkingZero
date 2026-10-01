@@ -1,0 +1,118 @@
+matchName: S0 W2 M4
+team1Name: Demons
+team2Name: 'Budokai '
+
+# ── Demons ──────────────────────────────
+team1:
+  - character: Majin Duu
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Smash Attack Boost 2 (3)
+      - Finishing Blow (1)
+      - Power Unleashed (2)
+      - Indomitable Fighting Spirit (3)
+      - Combo King (2)
+      - Power of Earth (5)
+    ai: 'Attack Strategy: Combos'
+    transformAi: ''
+    sparking: Effortless Delights
+
+  - character: Third Eye Gomah
+    costume: ''
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Blast Attack Boost 1 (1)
+      - Ki Blast Attack Boost 3 (5)
+      - Latent Power! (5)
+      - King Kai Training (3)
+      - Brolys Ring (1)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: ''
+    sparking: Divine Judgment
+
+  - character: Majin Buu
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 2 (3)
+      - Ki Blast Attack Boost 2 (3)
+      - Fury! (4)
+      - Power of Earth (5)
+      - Latent Power! (5)
+    ai: 'Balanced Strategy: Blasts'
+    transformAi: ''
+    sparking: Effortless Delights
+
+  - character: Dabura
+    costume: ''
+    capsules:
+      - Ki Blast Attack Boost 3 (5)
+      - Ki Blast Attack Boost 1 (1)
+      - Rush Attack Boost 1 (1)
+      - Ki Blast Charge 3 (3)
+      - Energy Saver 3 (3)
+      - Melee Charge 2 (2)
+      - The Secret to Z-Burst Dashes (5)
+    ai: 'Balanced Strategy: Ki Blasts'
+    transformAi: 'Balanced Strategy: Blasts'
+    sparking: Dreadful Villain
+
+# ── 'Budokai ' ──────────────────────────
+team2:
+  - character: Piccolo
+    costume: Outfit 3
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Master Strike (3)
+      - King Kai Training (3)
+      - Latent Power! (5)
+      - Melee Charge 3 (3)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Awakened Child
+
+  - character: Kale Super Saiyan
+    costume: Outfit 1
+    capsules:
+      - Savior (5)
+      - Blast Attack Boost 3 (5)
+      - Blast Attack Boost 1 (1)
+      - Fury! (4)
+      - Perfect Guard (5)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: ''
+    sparking: Divine Grudge
+
+  - character: Android 18
+    costume: Outfit 5
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Blast Attack Boost 1 (1)
+      - Rising Fighting Spirit (3)
+      - Indomitable Fighting Spirit (3)
+      - Active Heart (1)
+      - Fury! (4)
+      - Dragon Rush (3)
+    ai: 'Attack Strategy: Ultimate Blasts'
+    transformAi: ''
+    sparking: Slapstick Heroes
+
+  - character: Goku (Z - Early)
+    costume: Outfit 4
+    capsules:
+      - Latent Power! (5)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Mind Breaker (1)
+      - Light Body (4)
+      - Indomitable Fighting Spirit (3)
+      - Active Heart (1)
+    ai: 'Defense Strategy: Skills'
+    transformAi: ''
+    sparking: Ego above All
+
+fusionSelections:
+  team1: {}
+  team2:
+    Fused Zamasu: Goku Black Super Saiyan Rosé

@@ -7,6 +7,7 @@ This directory contains the shared reference data files used by both the **Match
 - **characters.csv** - List of all characters with their IDs
 - **capsules.csv** - List of all capsules, costumes, AI strategies, and Sparking BGM with their IDs, costs, and effects
 - **capsule-rules.yaml** - Ruleset definitions for capsule restrictions in matches
+- **teams.json** - The league's teams: each team's `tag` (the ASCII identifier in match files, `BR_Data` folders, `tagConfig.js` and the Submit app), its display `name` (the website's spelling, e.g. `Master & Student`, `Sentai Squad`), the analyzer's URL `slug`, the website's `websiteSlug`, the `logo` file in `apps/website/public/images/` and the website's team `color`. **Tags never change**: they are identifiers baked into file paths and shared links. Names are display data, so a rename is a one-line edit here. Consumed by the Analyzer (names in every view, logos via `npm run build-team-logos`).
 
 ## Usage
 

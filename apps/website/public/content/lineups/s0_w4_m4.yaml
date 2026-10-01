@@ -1,0 +1,119 @@
+matchName: S0 W4 M4
+team1Name: tp
+team2Name: Budokai
+
+# ── tp ──────────────────────────────────
+team1:
+  - character: Super Trunks
+    costume: Outfit 1
+    capsules:
+      - Latent Power! (5)
+      - Rush Attack Boost 3 (5)
+      - Rush Attack Boost 1 (1)
+      - Melee Charge 3 (3)
+      - King Kai Training (3)
+      - Latent Power Unleashed 2 (2)
+      - Melee Charge 1 (1)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: 'Balanced Strategy: Melee'
+    sparking: PROLOGUE & SUBTITLE 2
+
+  - character: Zamasu
+    costume: ''
+    capsules:
+      - Fury! (4)
+      - Perfect Guard (5)
+      - Blast Attack Boost 3 (5)
+      - Rising Fighting Spirit (3)
+      - Secret Measures (2)
+      - Blast Attack Boost 1 (1)
+    ai: 'Balanced Strategy: Restrain'
+    transformAi: ''
+    sparking: KYOUFUNO GINYUU TOKUSENTAI
+
+  - character: Goku Black Super Saiyan Rosé
+    costume: Outfit 1
+    capsules:
+      - Latent Power! (5)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Light Body (4)
+      - Perfect Guard (5)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: 'Balanced Strategy: Melee'
+    sparking: KYOUFUNO GINYUU TOKUSENTAI
+
+  - character: Gohan (Future)
+    costume: Outfit 1
+    capsules:
+      - Fighting Spirit (5)
+      - Fury! (4)
+      - Blast Attack Boost 3 (5)
+      - Savior (5)
+      - Blast Attack Boost 1 (1)
+      - Brolys Ring (1)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: KYOUFUNO GINYUU TOKUSENTAI
+
+# ── Budokai ─────────────────────────────
+team2:
+  - character: Piccolo
+    costume: Outfit 3
+    capsules:
+      - Rush Attack Boost 3 (5)
+      - Active Heart (1)
+      - Master Strike (3)
+      - King Kai Training (3)
+      - Latent Power! (5)
+      - Melee Charge 3 (3)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: Awakened Child
+
+  - character: Goku (Z - Early)
+    costume: Outfit 4
+    capsules:
+      - Fury! (4)
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Mind Breaker (1)
+      - Light Body (4)
+      - Dragon Spirit (3)
+      - Combo King (2)
+    ai: 'Defense Strategy: Skills'
+    transformAi: ''
+    sparking: Ego above All
+
+  - character: Vegeta (Z - End) Super Saiyan
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Smash Attack Boost 2 (3)
+      - Melee Charge 3 (3)
+      - Latent Power! (5)
+      - Indomitable Fighting Spirit (3)
+      - Combo King (2)
+      - Mind Breaker (1)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: 'Balanced Strategy: Melee'
+    sparking: Ceaseless Terror
+
+  - character: Android 18
+    costume: Outfit 5
+    capsules:
+      - Savior (5)
+      - Rising Tension (3)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Fury! (4)
+      - Blast Attack Boost 2 (3)
+      - Blast Attack Boost 1 (1)
+    ai: 'Attack Strategy: Ultimate Blasts'
+    transformAi: ''
+    sparking: Master
+
+fusionSelections:
+  team1:
+    Fused Zamasu: Goku Black Super Saiyan Rosé
+  team2: {}

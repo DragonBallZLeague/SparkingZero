@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Archive, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { loadContent } from '../utils/contentLoader';
 
-export default function ArchivesPage({ darkMode }) {
-  const [data, setData] = useState(null);
-  const [expandedIndex, setExpandedIndex] = useState(0);
-
-  useEffect(() => {
-    loadContent('archives.yaml').then(setData);
-  }, []);
-
+/**
+ * Presentational ArchivesView: renders already-loaded content.
+ *
+ * Pure props in, markup out - no fetching, routing or context - so the site
+ * (container below) and the CMS preview pane (`cms/previews.jsx`) render the
+ * exact same component instead of two copies that drift apart.
+ */
+export function ArchivesView({ data, darkMode = true, expandedIndex = 0, onToggle = () => {} }) {
   if (!data) {
     return <div className="flex items-center justify-center py-20 text-lg animate-pulse">Loading archives...</div>;
   }
@@ -48,7 +48,7 @@ export default function ArchivesPage({ darkMode }) {
                 </div>
               ) : (
                 <button
-                  onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                  onClick={() => onToggle(isExpanded ? null : i)}
                   className={`w-full flex items-center justify-between p-5 text-left transition-colors ${
                     darkMode ? 'hover:bg-gray-800/50' : 'hover:bg-stone-100'
                   }`}
@@ -147,5 +147,23 @@ export default function ArchivesPage({ darkMode }) {
 
 
     </div>
+  );
+}
+
+export default function ArchivesPage({ darkMode }) {
+  const [data, setData] = useState(null);
+  const [expandedIndex, setExpandedIndex] = useState(0);
+
+  useEffect(() => {
+    loadContent('archives.yaml').then(setData);
+  }, []);
+
+  return (
+    <ArchivesView
+      data={data}
+      darkMode={darkMode}
+      expandedIndex={expandedIndex}
+      onToggle={setExpandedIndex}
+    />
   );
 }

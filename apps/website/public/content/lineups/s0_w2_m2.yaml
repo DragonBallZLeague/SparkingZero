@@ -1,0 +1,118 @@
+matchName: S0 W2 M2
+team1Name: Z-Fighters
+team2Name: Cold Kingdom W2
+
+# ── Z-Fighters ──────────────────────────
+team1:
+  - character: Tien
+    costume: Outfit 3
+    capsules:
+      - Blast Attack Boost 1 (1)
+      - Blast Attack Boost 3 (5)
+      - Fury! (4)
+      - Active Heart (1)
+      - Indomitable Fighting Spirit (3)
+      - Rising Fighting Spirit (3)
+      - Rising Tension (3)
+    ai: 'Attack Strategy: Evasion'
+    transformAi: ''
+    sparking: Super Earthling
+
+  - character: Trunks (Sword) Super Saiyan
+    costume: Outfit 2
+    capsules:
+      - Rush Attack Boost 1 (1)
+      - Rush Attack Boost 3 (5)
+      - Melee Charge 1 (1)
+      - Melee Charge 2 (2)
+      - Melee Charge 3 (3)
+      - The Secret to Z-Burst Dashes (5)
+      - Ki Control (3)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: ''
+    sparking: Hope for the Future
+
+  - character: Goku (Z - Mid) Super Saiyan
+    costume: Outfit 5
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Savior (5)
+      - Light Body (4)
+      - Secret Measures (2)
+      - Dragon Spirit (3)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: ''
+    sparking: Super Saiyan
+
+  - character: Gohan (Teen) Super Saiyan
+    costume: Outfit 1
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Rising Fighting Spirit (3)
+      - Secret Measures (2)
+      - Dragon Spirit (3)
+      - Latent Power! (5)
+      - Master Roshi Training (1)
+    ai: 'Defense Strategy: Blasts'
+    transformAi: 'Defense Strategy: Gauge Recovery'
+    sparking: Hidden Power Unleashed
+
+# ── Cold Kingdom W2 ─────────────────────
+team2:
+  - character: Metal Cooler
+    costume: ''
+    capsules:
+      - The Secret to Dragon Dashes (5)
+      - Power of Earth (5)
+      - Melee Charge 2 (2)
+      - Indomitable Fighting Spirit (3)
+      - Rush Attack Boost 3 (5)
+    ai: 'Balanced Strategy: Melee'
+    transformAi: ''
+    sparking: Malicious Intent
+
+  - character: Frieza (Super)
+    costume: ''
+    capsules:
+      - Blast Attack Boost 2 (3)
+      - Rush Attack Boost 2 (3)
+      - Fury! (4)
+      - Latent Power! (5)
+      - King Kai Training (3)
+      - Latent Power Unleashed 2 (2)
+    ai: 'Defense Strategy: Counters'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: Evolution
+
+  - character: Frost
+    costume: ''
+    capsules:
+      - Blast Attack Boost 3 (5)
+      - Power of Earth (5)
+      - Savior (5)
+      - Rush Attack Boost 1 (1)
+      - Style of the Strong (2)
+      - Secret Measures (2)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: God of Destruction
+
+  - character: King Cold
+    costume: Outfit 1
+    capsules:
+      - Blast Attack Boost 2 (3)
+      - Rush Attack Boost 2 (3)
+      - Light Body (4)
+      - Dragon Spirit (3)
+      - Rising Fighting Spirit (3)
+      - Fury! (4)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: ''
+    sparking: ''
+
+fusionSelections:
+  team1: {}
+  team2:
+    Fused Zamasu: Goku Black Super Saiyan Rosé

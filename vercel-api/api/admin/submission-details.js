@@ -56,18 +56,20 @@ function extractTeamData(jsonContent) {
         hasTeamData: true,
         teams: teams.filter(t => t && t.trim() !== ''),
         event: data.TeamBattleResults.event || null,
-        season: data.TeamBattleResults.season || null
+        seasonNumber: data.tags?.seasonNumber ?? null,
+        seasonPhase: data.tags?.seasonPhase ?? null,
       };
     }
     
     // Check for standard battle result with team metadata
-    if (data.teams || data.team || data.event || data.season) {
+    if (data.teams || data.team || data.event || data.tags?.seasonNumber) {
       const teams = data.teams || (data.team ? [data.team] : []);
       return {
         hasTeamData: true,
         teams: teams.filter(t => t && t.trim() !== ''),
         event: data.event || null,
-        season: data.season || null
+        seasonNumber: data.tags?.seasonNumber ?? null,
+        seasonPhase: data.tags?.seasonPhase ?? null,
       };
     }
     

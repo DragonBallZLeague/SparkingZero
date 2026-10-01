@@ -1,12 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon, Zap, ChevronDown, ExternalLink } from 'lucide-react';
+import { Menu, X, Sun, Moon, ChevronDown, ExternalLink } from 'lucide-react';
+import { APPS } from '@szl/ui';
 
-const toolLinks = [
-  { label: 'Match Analyzer', href: 'https://dragonballzleague.github.io/SparkingZero/analyzer/' },
-  { label: 'Match Builder', href: 'https://dragonballzleague.github.io/SparkingZero/matchbuilder/' },
-  { label: 'Character Calculator', href: 'https://dragonballzleague.github.io/SparkingZero/calculator/' },
-];
+const toolLabels = { analyzer: 'Match Analyzer', matchbuilder: 'Match Builder', calculator: 'Character Calculator' };
+const toolLinks = APPS.filter((app) => app.key !== 'home').map((app) => ({
+  label: toolLabels[app.key] || app.label,
+  href: app.href,
+}));
+
+// A nav item stays highlighted on its sub-routes too (/events/:slug,
+// /teams/:slug/schedule, /rules/:section); Home only matches exactly.
+function isActivePath(pathname, itemPath) {
+  if (itemPath === '/') return pathname === '/';
+  return pathname === itemPath || pathname.startsWith(itemPath + '/');
+}
 
 export default function Navbar({ site, darkMode, setDarkMode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -36,16 +44,18 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}
           <Link to="/" className="flex items-center gap-2 group" onClick={() => setMobileOpen(false)}>
-            <Zap className={`w-7 h-7 transition-colors ${darkMode ? 'text-orange-500 group-hover:text-yellow-400' : 'text-blue-500 group-hover:text-blue-400'}`} />
-            <span className="font-bold text-lg hidden sm:inline">
-              {site?.short_name || 'DBSZL'}
-            </span>
+            <img
+              src={`${import.meta.env.BASE_URL}images/SZLEmblem.png`}
+              alt={site?.short_name || 'DBSZL'}
+              className="h-10 w-auto transition-transform duration-200 group-hover:scale-[1.02]"
+              draggable={false}
+            />
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
             {nav.map((item) => {
-              const active = location.pathname === item.path;
+              const active = isActivePath(location.pathname, item.path);
               return (
                 <Link
                   key={item.path}
@@ -76,15 +86,13 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                 Tools <ChevronDown className={`w-3.5 h-3.5 transition-transform ${toolsOpen ? 'rotate-180' : ''}`} />
               </button>
               {toolsOpen && (
-                <div className={`absolute right-0 mt-1 w-56 rounded-lg border shadow-lg py-1 ${
+                <div className={`absolute right-0 mt-1 w-40 rounded-lg border shadow-lg py-1 ${
                   darkMode ? 'bg-gray-900 border-gray-700' : 'bg-stone-50 border-stone-300'
                 }`}>
                   {toolLinks.map((tool) => (
                     <a
                       key={tool.href}
                       href={tool.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       onClick={() => setToolsOpen(false)}
                       className={`flex items-center justify-between px-4 py-2 text-sm transition-colors ${
                         darkMode
@@ -93,7 +101,6 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                       }`}
                     >
                       {tool.label}
-                      <ExternalLink className="w-3.5 h-3.5 opacity-50" />
                     </a>
                   ))}
                 </div>
@@ -142,7 +149,7 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
           darkMode ? 'border-gray-800 bg-gray-950' : 'border-stone-300 bg-stone-100'
         }`}>
           {nav.map((item) => {
-            const active = location.pathname === item.path;
+            const active = isActivePath(location.pathname, item.path);
             return (
               <Link
                 key={item.path}
@@ -170,8 +177,6 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
               <a
                 key={tool.href}
                 href={tool.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium ${
                   darkMode
@@ -180,7 +185,6 @@ export default function Navbar({ site, darkMode, setDarkMode }) {
                 }`}
               >
                 {tool.label}
-                <ExternalLink className="w-3.5 h-3.5 opacity-50" />
               </a>
             ))}
           </div>
