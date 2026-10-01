@@ -6,11 +6,13 @@ import { useQueryUpdate } from '../../shell/useQueryUpdate.js';
 import { capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { POSITION_NAMES } from '../../utils/positions.js';
 import PooledTab from './PooledTab.jsx';
-import { Box, DataSignal, PooledTiles, POOLED_FIGURES, UsedMostBy, fmtInt, pct } from './detailParts.jsx';
+import { Box, DataSignal, PooledTiles, POOLED_FIGURES, UsedMostBy, fmtInt, pct, tone } from './detailParts.jsx';
 import { readAiSort, sortAiRows } from './aiRows.js';
 import { MIN_OTHER } from './aiShift.js';
+import { CAPSULE_NOISE, lineupIndex } from '../../utils/transformation.js';
+import { clock } from '../character/transformRows.js';
 import {
-  capsuleRows, capsuleChange, capsuleMatchesQuery, readCapsuleFilters,
+  capsuleRows, capsuleChange, capsuleTransform, capsuleMatchesQuery, readCapsuleFilters,
   BUILD_TYPES, CAPSULE_COLUMNS, CAPSULE_PHONE_DEFAULTS, capsuleStatByKey, share, fitColor,
 } from './capsuleRows.js';
 
@@ -19,6 +21,74 @@ const characters = r => `${r.characters} character${r.characters === 1 ? '' : 's
 const qualityTitle = r => `${r.quality} data: ${fmtInt(r.matches.length)} uses over ${characters(r)}, `
   + `${fmtInt(r.comparable)} comparable with the same characters' builds of the same type without it`;
 const ROW = 'border-0 border-t border-solid border-gray-700/50 py-[5px] text-[12.5px] first:border-t-0';
+const rate = v => `${Math.round(v * 100)}%`;
+const points = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}`;
+/** A first transformation this many seconds sooner (green) or later (red) is coloured, as on the AI strategies tab. */
+const TONE_SECONDS = 5;
+
+/**
+ * Transformations, for the capsules that act on them (capsuleRows.js
+ * capsuleTransform()): a skill gauge capsule's rate and first transformation,
+ * the same character on the same AI without it → with it, shown above Low
+ * data only and coloured from CAPSULE_NOISE (10 points; smaller, it is
+ * within what unrelated capsules swing by); Broly's Ring, which blocks them,
+ * as how often characters that can transform carried it.
+ */
+function TransformBox({ t, idFor, linkFor }) {
+  if (t.kind === 'ring') {
+    return (
+      <Box title="Transformations">
+        <p className="m-0 mb-2 text-[12.5px] leading-[1.45] text-slate-300">
+          Blocks transformations and fusions. {t.matches
+            ? `Carried in ${fmtInt(t.matches)} match${t.matches === 1 ? '' : 'es'} by characters that can transform, which their transformation figures leave out:`
+            : 'No character that can transform carried it here.'}
+        </p>
+        {t.byCharacter.length > 0 && <UsedMostBy byCharacter={t.byCharacter} idFor={idFor} linkFor={linkFor} title={false} />}
+      </Box>
+    );
+  }
+  if (t.quality === 'Low' || t.with === null) {
+    return (
+      <Box title="Transformations">
+        <p className="m-0 text-[12.5px] text-slate-400">
+          Too little to compare here: {fmtInt(t.compared)} match{t.compared === 1 ? '' : 'es'} over {t.characters} character{t.characters === 1 ? '' : 's'} whose
+          {' '}same AI strategy also has {MIN_OTHER}+ matches without it.
+        </p>
+      </Box>
+    );
+  }
+  const dt = t.seconds ? t.seconds.with - t.seconds.usual : null;
+  const shown = dt === null ? 0 : Math.round(Math.abs(dt));
+  return (
+    <Box title="Transformations" aside="same character, same AI: without → with">
+      <div className="flex items-baseline gap-2" title="The share of matches transformed or fused in">
+        <span className="text-[13px] tabular-nums text-slate-400">{rate(t.usual)} →</span>
+        <span className="text-[20px] font-extrabold tabular-nums leading-tight text-slate-50">{rate(t.with)}</span>
+        <b className={`text-[14px] font-semibold tabular-nums ${tone(t.gain, CAPSULE_NOISE)}`}>{points(t.gain)}</b>
+      </div>
+      <div className="mb-2 text-[11.5px] text-slate-500">
+        of matches transformed or fused{Math.abs(t.gain) < CAPSULE_NOISE
+          ? `; within the ±${Math.round(CAPSULE_NOISE * 100)} points unrelated capsules move it by` : ''}
+      </div>
+      {dt !== null && (
+        <div className="mb-2 flex items-baseline justify-between gap-2 border-0 border-t border-solid border-gray-700/50 pt-1.5 text-[12.5px]"
+          title="The median time on the field before the first transformation. Sooner is better.">
+          <span className="text-slate-300">First transformation</span>
+          <span className="flex flex-col items-end tabular-nums">
+            <span>
+              <span className="text-slate-400">{clock(t.seconds.usual)}</span><span className="mx-1.5 text-slate-500">→</span>
+              <b className="font-semibold text-slate-100">{clock(t.seconds.with)}</b>
+            </span>
+            <span className={`text-[11px] font-semibold leading-tight ${tone(dt, TONE_SECONDS, -1)}`}>{shown ? `${shown}s ${dt < 0 ? 'sooner' : 'later'}` : 'same time'}</span>
+          </span>
+        </div>
+      )}
+      <div className="text-[11.5px] text-slate-500">
+        {fmtInt(t.compared)} matches with it over {t.characters} character{t.characters === 1 ? '' : 's'} ({t.quality} data)
+      </div>
+    </Box>
+  );
+}
 
 /** A share of its uses as a bar, with a tick where all builds sit (`usual`). */
 function ShareBar({ value, usual = null, color = '#56627a' }) {
@@ -62,10 +132,12 @@ function ShareRows({ items }) {
  * it) once that comparison is above Low; then bordered boxes: Build types
  * (the row's columns as bars), AI strategies, Lineup position and Goes with
  * (its builds against all builds; Goes with ranked by how many times as often,
- * the lift), Tiers (its family), Used most by.
+ * the lift), Tiers (its family), Used most by. The skill gauge capsules and
+ * Broly's Ring lead the boxes with Transformations (TransformBox).
  */
-function CapsuleDetail({ row, pool, aggregated, filters, idFor, linkFor }) {
+function CapsuleDetail({ row, pool, aggregated, filters, ctx, idFor, linkFor }) {
   const s = useMemo(() => capsuleChange(aggregated, row.capsuleId, filters), [aggregated, row.capsuleId, filters]);
+  const tr = useMemo(() => capsuleTransform(aggregated, row.capsuleId, filters, ctx), [aggregated, row.capsuleId, filters, ctx]);
   const shown = s.quality !== 'Low';
   const change = (x, fmt, better = 1) => (x && shown ? { ...x, fmt, diff: pct, min: 0.03, better } : null);
   const changes = {
@@ -99,6 +171,7 @@ function CapsuleDetail({ row, pool, aggregated, filters, idFor, linkFor }) {
         grid="grid-cols-2 sm:grid-cols-4 lg:grid-cols-7" lastSpan="col-span-2 lg:col-span-1" />
 
       <div className="mt-2 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+        {tr && <TransformBox t={tr} idFor={idFor} linkFor={linkFor} />}
         <Box title="Build types" aside="share of each type's builds">
           <ul className="m-0 list-none p-0">
             {fit.map(x => (
@@ -188,6 +261,8 @@ export default function CapsulesTab({ aggregated, charMap, idFor, linkFor }) {
   const stableFilters = useMemo(() => filters, [filterKey]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const pool = useMemo(() => capsuleRows(aggregated, filters, charMap), [aggregated, filterKey, charMap]);
+  // Who was on each side, for the Transformations box's fusion check.
+  const ctx = useMemo(() => ({ idFor, lineups: lineupIndex(aggregated, idFor) }), [aggregated, idFor]);
   const rows = useMemo(() => sortAiRows(pool.filter(r => capsuleMatchesQuery(r, q)), { sort, dir }, capsuleStatByKey), [pool, q, sort, dir]);
   const varied = new Set(pool.map(r => r.quality)).size > 1;
 
@@ -235,7 +310,7 @@ export default function CapsulesTab({ aggregated, charMap, idFor, linkFor }) {
           <div className="mt-1 pl-4 text-[12px] text-slate-400">{r.type} · {r.cost} cost</div>
         </>
       )}
-      detail={r => <CapsuleDetail row={r} pool={pool} aggregated={aggregated} filters={stableFilters} idFor={idFor} linkFor={linkFor} />}
+      detail={r => <CapsuleDetail row={r} pool={pool} aggregated={aggregated} filters={stableFilters} ctx={ctx} idFor={idFor} linkFor={linkFor} />}
       footnote={`Build type columns: the share of that type's builds here that run the capsule.${
         varied ? '' : ` Every capsule here has ${pool[0] ? pool[0].quality : 'the same'} data, so none is marked.`}`} />
   );

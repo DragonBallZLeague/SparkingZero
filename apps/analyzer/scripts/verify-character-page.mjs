@@ -41,7 +41,10 @@ import { averageForms } from '../src/utils/formBreakdown.js';
 import {
   transformationSummary, lineupIndex, fusionPartnerIds, onlyFuses, SKILL_GAUGE_CAPSULES, UNKNOWN_AI,
 } from '../src/utils/transformation.js';
-import { transformByAI, gaugeCapsules } from '../src/pages/character/transformRows.js';
+import { transformByAI, gaugeCapsules, transformByBuild } from '../src/pages/character/transformRows.js';
+import { characterBuilds } from '../src/pages/character/overview/characterBuilds.js';
+import { characterAveragesColumns, prepareCharacterAveragesData } from '../src/utils/workbookColumns.js';
+import { processTeamGroups } from '../src/utils/teamPerformanceMatrix.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -307,6 +310,51 @@ const blackFused = rows.filter(r => r.name === 'Goku Black Super Saiyan Rosé')
 check(`a fusion-only character names its partner: Goku Black Super Saiyan Rosé, Zamasu (fused ${blackFused} times)`,
   onlyFuses(black) && fusionPartnerIds(black).includes(zamasu) && onlyFuses(zamasu) && blackFused > 0,
   `partners ${fusionPartnerIds(black).join(',')}`);
+
+// The Builds tab's Trans % (transformByBuild): each build's figures, which add
+// up to the character's, under the codes its builds are listed by.
+const buildBad = [];
+let buildsChecked = 0;
+for (const r of rows) {
+  const id = idOfName.get(r.name) || null;
+  const all = transformationSummary(r.matches, { id, lineups });
+  if (!all.able) continue;
+  const by = transformByBuild(r.matches, { id, lineups });
+  const sums = [...by.values()].reduce((s, t) => [s[0] + t.matches, s[1] + t.transformed], [0, 0]);
+  if (sums[0] !== all.matches || sums[1] !== all.transformed) buildBad.push(`${r.name}: builds count ${sums[0]}/${sums[1]}, not ${all.matches}/${all.transformed}`);
+  // characterBuilds runs the leaderboard filter per build: a sample is enough.
+  if (buildsChecked < 40 && r.matches.length >= 5) {
+    buildsChecked++;
+    const codes = characterBuilds(r, charMap).map(b => b.code);
+    if (codes.length !== by.size || codes.some(c => !by.has(c))) buildBad.push(`${r.name}: its builds' codes are not the Trans % column's`);
+  }
+}
+check(`the Builds tab's Trans %: each build's counted matches add up to the character's, by its build code (${buildsChecked} characters' codes compared)`,
+  !buildBad.length && buildsChecked > 0, buildBad.slice(0, 3).join('\n         '));
+
+// The workbook's Character Averages Transformations group, from each row's own
+// matches, so the Team Performance Matrix's per-team rows get that team's.
+const wbCtx = { idFor: n => idOfName.get(n) || null, lineups };
+const wb = characterAveragesColumns(wbCtx);
+const wbCol = key => wb.columns.find(c => c.key === key);
+check('the workbook has a Transformations group in place of "Avg Transformations"',
+  !wbCol('avgTransformations') && wb.columnGroups.every(g => g.columns.every(k => wbCol(k) && wbCol(k).group === g.name))
+  && wb.columnGroups.find(g => g.name === 'Transformations').columns.length === wb.columns.filter(c => c.group === 'Transformations').length);
+const wbData = prepareCharacterAveragesData(rows);
+const wbOff = wbData.filter(r => {
+  const t = transformationSummary(r.matches, { id: wbCtx.idFor(r.name), lineups });
+  const rate = wbCol('transformRate').accessor(r), counted = wbCol('transformMatches').accessor(r);
+  return t.able ? rate !== (t.rate === null ? null : Math.round(t.rate * 100)) || counted !== t.matches : rate !== null || counted !== null;
+});
+const teamRows = processTeamGroups(wbData).flatMap(t => t.characters);
+const teamRow = teamRows.find(r => wbCol('transformed').accessor(r) > 1
+  && r.matches.length < (wbData.find(x => x.name === r.name) || { matches: [] }).matches.length);
+const teamWant = teamRow ? transformationSummary(teamRow.matches, { id: wbCtx.idFor(teamRow.name), lineups }) : null;
+check(`its figures are each row's own, a team's row its team's (${teamRow ? `${teamRow.name} for ${teamRow.primaryTeam}: ${teamWant.transformed} of ${teamWant.matches}` : 'none'})`,
+  !wbOff.length && !!teamRow && wbCol('transformMatches').accessor(teamRow) === teamWant.matches,
+  wbOff.slice(0, 3).map(r => r.name).join(', '));
+check('without the transformation context the group is blank, not wrong',
+  characterAveragesColumns().columns.find(c => c.key === 'transformRate').accessor(wbData[0]) === null);
 
 // ---- 3. A slug actually reaches a row --------------------------------------
 console.log('\nThe slug -> name -> row join the deep link depends on:');

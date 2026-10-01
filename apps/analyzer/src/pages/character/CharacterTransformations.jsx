@@ -3,15 +3,18 @@ import HeaderFigure from '../../components/HeaderFigure.jsx';
 import StatTable from '../../shell/StatTable.jsx';
 import { useIsPhone } from '../../shell/useMediaQuery.js';
 import { useWidenLink } from '../../shell/useWidenLink.jsx';
-import { fusionPartnerIds, onlyFuses, fusionPartners, transformationSummary } from '../../utils/transformation.js';
+import { CAPSULE_NOISE, fusionPartnerIds, onlyFuses, fusionPartners, transformationSummary } from '../../utils/transformation.js';
 import { tone } from '../meta/detailParts.jsx';
 import CharacterForms from './CharacterForms.jsx';
 import { THIN, clock, gaugeCapsules, transformByAI } from './transformRows.js';
 
 const TITLE = 'mb-2 text-[11px] font-semibold uppercase leading-4 tracking-wider text-slate-400';
 
-/** A change in the rate is coloured from 5 points, as on Meta's Transformations box. */
-const TONE_RATE = 0.05;
+/**
+ * A capsule's change in the rate is coloured from CAPSULE_NOISE (10 points):
+ * smaller, it is within what unrelated capsules swing by.
+ */
+const TONE_RATE = CAPSULE_NOISE;
 /** A first transformation this many seconds sooner (green) or later (red) is coloured, as on Meta. */
 const TONE_SECONDS = 5;
 /** Fewer counted matches than this offer the wider scope (aiShift.js dataQuality's Low). */

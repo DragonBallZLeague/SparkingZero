@@ -4,6 +4,9 @@ import { overviewFromMatches } from '../../utils/characterOverview.js';
 import { buildTypeColor } from '../../utils/overviewPalette.js';
 import { dataQuality, MIN_OTHER, weighted } from './aiShift.js';
 import { USES_STAT } from './aiRows.js';
+import {
+  BROLYS_RING, SKILL_GAUGE_CAPSULES, UNKNOWN_AI, canTransformOrFuse, heldComparison, matchTransformation,
+} from '../../utils/transformation.js';
 
 /**
  * Meta's Capsules tab: a row per capsule in scope, its URL params and its
@@ -220,6 +223,57 @@ export function capsuleChange(aggregated, capsuleId, f = { chars: [], ais: [] })
     taken: weighted(pairs, ms => overview(ms).avgTaken),
     eff: weighted(pairs, ms => overview(ms).efficiency),
   };
+}
+
+/**
+ * The detail's Transformations box, for the capsules that act on
+ * transforming (the plan's "Transformations" step 4, 2026-10-01). Null for
+ * any other capsule, or without `ctx` = { idFor, lineups } (utils/
+ * transformation.js lineupIndex()).
+ *
+ * A skill gauge capsule (SKILL_GAUGE_CAPSULES): heldComparison() grouped by
+ * character AND AI strategy, the same character on the same AI with it
+ * against without it (MIN_OTHER+ without), pooled over every character that
+ * has both. The AI moves the rate far more than any capsule and teams pair
+ * capsules with particular AIs, so this holds the AI where capsuleChange()
+ * holds the build type (the Character page compares them the same way).
+ *   { kind: 'gauge', compared, characters, quality (dataQuality of those),
+ *     with, usual, gain, seconds }
+ * The detail shows it above Low data only, and colours a change from 5
+ * points, as the tab's other changes.
+ *
+ * Broly's Ring blocks transforming, so its matches are out of every rate:
+ *   { kind: 'ring', matches (fought, by characters that can transform or
+ *     fuse), byCharacter: [{ name, uses }] most first }
+ */
+export function capsuleTransform(aggregated, capsuleId, f = { chars: [], ais: [] }, ctx = null) {
+  if (!ctx || !ctx.idFor) return null;
+  const sub = { chars: f.chars || [], ais: f.ais || [] };
+  if (capsuleId === BROLYS_RING) {
+    const by = new Map();
+    let matches = 0;
+    for (const [c, m] of builds(aggregated, sub)) {
+      if (!has(m, capsuleId) || !(m.battleTime > 0) || m.absorbed || !canTransformOrFuse(ctx.idFor(c.name))) continue;
+      matches++;
+      bump(by, c.name);
+    }
+    return {
+      kind: 'ring',
+      matches,
+      byCharacter: [...by].map(([name, uses]) => ({ name, uses })).sort((x, y) => y.uses - x.uses || x.name.localeCompare(y.name)),
+    };
+  }
+  if (!SKILL_GAUGE_CAPSULES.includes(capsuleId)) return null;
+  const items = [];
+  for (const [c, m] of builds(aggregated, sub)) {
+    const ai = m.aiStrategy || UNKNOWN_AI;
+    if (ai === UNKNOWN_AI) continue;
+    const t = matchTransformation(m, { id: ctx.idFor(c.name), lineups: ctx.lineups });
+    if (t.counted) items.push({ group: `${c.name}|${ai}`, on: has(m, capsuleId), t });
+  }
+  const held = heldComparison(items, MIN_OTHER);
+  const characters = new Set(held.groups.map(g => g.slice(0, g.lastIndexOf('|')))).size;
+  return { kind: 'gauge', ...held, characters, quality: dataQuality(held.compared, characters) };
 }
 
 /** A search over the rows: the capsule's name, type and effect. */

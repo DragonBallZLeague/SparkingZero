@@ -5,6 +5,7 @@ import { slugifyCharacterName } from '../../utils/characterSlug.js';
 import { POSITION_NAMES } from '../../utils/positions.js';
 import { teamName, teamByTag } from '../../utils/teams.js';
 import { matchName } from './matchRows.js';
+import { transformCount } from '../../utils/transformation.js';
 
 /**
  * The Performances table's data: one row per character per match in scope
@@ -101,6 +102,14 @@ export const PERF_STATS = [
   { key: 'dash', group: 'mechanics', label: 'Dash distance', short: 'Dash', dir: 0, get: r => Math.round(r.m.dragonDashMileage || 0), fmt: fmtInt },
 
   { key: 'cost', group: 'build', label: 'Cost', short: 'Cost', dir: 0, get: r => r.m.totalCapsuleCost || 0, fmt: fmtInt },
+  // How many transformations the match holds (utils/transformation.js
+  // transformCount(): its own form changes, a fusion included). The Build
+  // group draws it beside the forms path, sorted by it (performanceColumns.jsx);
+  // a compact table can pick it as a column of its own.
+  {
+    key: 'forms', group: 'build', label: 'Transformations', short: 'Trans', dir: 0, get: r => r.transforms, fmt: fmtInt,
+    title: 'Transformations it made itself, a fusion included (form changes after a fusion are the fusion\'s)',
+  },
 ];
 export const perfStatByKey = key => PERF_STATS.find(s => s.key === key) || null;
 export const statsOfGroup = group => PERF_STATS.filter(s => s.group === group);
@@ -132,6 +141,7 @@ export function performanceRows(aggregated) {
         ai: m.aiStrategy || null,
         build: (m.buildComposition && m.buildComposition.label) || 'No Build',
         forms: m.formChangeCount ? m.formChangeHistory : null,
+        transforms: transformCount(m),
         score: calculateMatchPerformanceScore(m),
         eff: combatEfficiency(m.damageDone || 0, m.damageTaken || 0),
         dps: m.battleTime > 0 ? (m.damageDone || 0) / m.battleTime : 0,

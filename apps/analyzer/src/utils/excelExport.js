@@ -8,7 +8,9 @@
  * Features:
  * - Two data sheets: Character Performance Averages & Individual Match Details,
  *   then the Team Performance Matrix, then `options.extraSheets` (Position, AI
- *   Strategies, Capsules: utils/workbookSheets.js)
+ *   Strategies, Capsules: utils/workbookSheets.js). `options.transformCtx`
+ *   ({ idFor, lineups }, utils/transformation.js) fills the Character
+ *   Averages' and the matrix's Transformations columns.
  * - Full formatting support (colors, fonts, borders, alignment)
  * - Header row styling (bold, colored background)
  * - Auto-fit column widths
@@ -46,7 +48,7 @@ export async function exportToExcel(characterData, matchData, options = {}) {
 
     // Generate sheets
     if (includeCharacterAverages && characterData?.length > 0) {
-      await generateCharacterAveragesSheet(workbook, characterData, includeFormatting);
+      await generateCharacterAveragesSheet(workbook, characterData, includeFormatting, options.transformCtx || null);
     }
 
     if (includeMatchDetails && matchData?.length > 0) {
@@ -55,7 +57,7 @@ export async function exportToExcel(characterData, matchData, options = {}) {
 
     // Generate Team Performance Matrix (Pivot Table)
     if (characterData?.length > 0) {
-      await generateTeamPerformanceMatrix(workbook, characterData, includeFormatting);
+      await generateTeamPerformanceMatrix(workbook, characterData, includeFormatting, options.transformCtx || null);
     }
 
     // The plainer sheets made from the pages' own rows (utils/workbookSheets.js).
@@ -105,13 +107,13 @@ function generateSimpleSheet(workbook, { name, columns, rows }) {
 /**
  * Generate Character Performance Averages sheet
  */
-async function generateCharacterAveragesSheet(workbook, data, includeFormatting) {
+async function generateCharacterAveragesSheet(workbook, data, includeFormatting, transformCtx = null) {
   const sheet = workbook.addWorksheet('Character Averages', {
     views: [{ state: 'frozen', xSplit: 1, ySplit: 2 }] // Freeze first column and first 2 rows (group header + column header)
   });
 
   // Get column configuration
-  const config = characterAveragesColumns();
+  const config = characterAveragesColumns(transformCtx);
   const columns = config.columns;
   const columnGroups = config.columnGroups;
 
@@ -963,6 +965,7 @@ function getGroupColor(groupName) {
     'Special Abilities': 'FF5B21B6',        // Ultra dark purple
     'Combat Mechanics': 'FF92400E',         // Ultra dark amber
     'Build & Equipment': 'FF1E40AF',        // Ultra dark blue
+    'Transformations': 'FF065F46',
     'Form Changes': 'FF065F46'              // Ultra dark forest green (same as Survival & Health)
   };
   
@@ -982,6 +985,7 @@ function getDarkGroupColor(groupName) {
     'Special Abilities': 'FF6D28D9',        // Very dark purple
     'Combat Mechanics': 'FFB45309',         // Very dark amber
     'Build & Equipment': 'FF1D4ED8',        // Very dark blue
+    'Transformations': 'FF047857',
     'Form Changes': 'FF047857'              // Very dark forest green (same as Survival & Health)
   };
   
@@ -1000,6 +1004,7 @@ function getLightGroupColor(groupName) {
     'Special Abilities': 'FFE9D5FF',        // Light purple
     'Combat Mechanics': 'FFFEF3C7',         // Light amber
     'Build & Equipment': 'FFDBEAFE',        // Light blue
+    'Transformations': 'FFFCE7F3',
     'Form Changes': 'FFFCE7F3'              // Light pink
   };
   
@@ -1049,13 +1054,13 @@ function createNamedRange(sheet, columns, dataRowCount, rangeName) {
  * Generate Team Performance Matrix sheet (Pivot Table style)
  * Shows teams with aggregated stats, with characters grouped beneath each team
  */
-async function generateTeamPerformanceMatrix(workbook, data, includeFormatting) {
+async function generateTeamPerformanceMatrix(workbook, data, includeFormatting, transformCtx = null) {
   const sheet = workbook.addWorksheet('Team Performance Matrix', {
     views: [{ state: 'frozen', xSplit: 2, ySplit: 2 }] // Freeze first 2 columns (Team Name + Character Name) and first 2 rows
   });
 
   // Get column configuration (same as Character Averages)
-  const config = characterAveragesColumns();
+  const config = characterAveragesColumns(transformCtx);
   const columns = config.columns;
   const columnGroups = config.columnGroups;
 

@@ -1,7 +1,8 @@
 import { slugifyCharacterName } from '../../utils/characterSlug.js';
 import {
-  SKILL_GAUGE_CAPSULES, UNKNOWN_AI, matchTransformation, transformationSummary,
+  SKILL_GAUGE_CAPSULES, UNKNOWN_AI, heldComparison, matchTransformation, transformationSummary,
 } from '../../utils/transformation.js';
+import { buildCode, buildKeyOf } from '../../utils/buildKey.js';
 import { MIN_OTHER } from '../meta/aiShift.js';
 
 /**
@@ -17,12 +18,6 @@ export const THIN = 5;
 /** Seconds as m:ss, the first transformation's time ("0:54"). */
 export const clock = s => { const t = Math.round(s); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
-const median = values => {
-  if (!values.length) return null;
-  const s = [...values].sort((a, b) => a - b);
-  const mid = s.length >> 1;
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
-};
 
 /**
  * The "By AI strategy" table: a row per AI strategy the character ran with
@@ -52,20 +47,17 @@ export function transformByAI(matches, ctx) {
 
 /**
  * The skill gauge capsules (SKILL_GAUGE_CAPSULES), each with and without for
- * this character, ON THE SAME AI STRATEGY: per AI, its counted matches with
- * the capsule against its counted matches there without it (MIN_OTHER+ of
- * them), weighted by the matches with it. The AI moves the rate far more than
- * any of these capsules (Evasion +42 points league-wide) and teams pair them
- * with particular AIs, so a plain with / without said mostly which AI ran
- * them: measured 2026-10-01 on the last two seasons, Ultra, the two differed
- * by 21 points on average over 40 character-capsule pairs (Broly (Z) Super
- * Saiyan's Super Transformation +11 plain, +45 on the same AI).
+ * this character, ON THE SAME AI STRATEGY (utils/transformation.js
+ * heldComparison(), grouped by AI; MIN_OTHER+ matches without it there). The
+ * AI moves the rate far more than any of these capsules (Evasion +42 points
+ * league-wide) and teams pair them with particular AIs, so a plain with /
+ * without said mostly which AI ran them: measured 2026-10-01 on the last two
+ * seasons, Ultra, the two differed by 21 points on average over 40
+ * character-capsule pairs (Broly (Z) Super Saiyan's Super Transformation +11
+ * plain, +45 on the same AI). "Default" matches are on neither side.
  *
- * Each: { id, uses (counted matches with it), without (counted matches
- * without it), compared (matches with it that have an AI to compare on),
- * with, usual (rates, null when nothing compares), gain (with - usual),
- * seconds: { with, usual } (the first transformation's median time, weighted
- * by matches timed on both sides) or null }.
+ * Each: heldComparison()'s { compared, with, usual, gain, seconds } plus
+ * { id, uses (counted matches with it), without (counted matches without it) }.
  */
 export function gaugeCapsules(matches, ctx) {
   const counted = [];
@@ -74,36 +66,26 @@ export function gaugeCapsules(matches, ctx) {
     if (!t.counted) continue;
     counted.push({ ai: m.aiStrategy || UNKNOWN_AI, caps: new Set((m.equippedCapsules || []).map(c => c && c.id)), t });
   }
-  const rate = xs => xs.filter(x => x.t.transformed).length / xs.length;
-  const time = xs => median(xs.map(x => x.t.seconds).filter(s => s != null));
-  const timed = xs => xs.filter(x => x.t.seconds != null).length;
-
   return SKILL_GAUGE_CAPSULES.map(id => {
-    const byAi = new Map();
-    let uses = 0;
-    for (const x of counted) {
-      const on = x.caps.has(id);
-      if (on) uses++;
-      if (x.ai === UNKNOWN_AI) continue;
-      if (!byAi.has(x.ai)) byAi.set(x.ai, { with: [], without: [] });
-      byAi.get(x.ai)[on ? 'with' : 'without'].push(x);
-    }
-    let n = 0, a = 0, b = 0, tn = 0, ta = 0, tb = 0;
-    for (const p of byAi.values()) {
-      if (!p.with.length || p.without.length < MIN_OTHER) continue;
-      n += p.with.length; a += p.with.length * rate(p.with); b += p.with.length * rate(p.without);
-      const k = Math.min(timed(p.with), timed(p.without));
-      if (k) { tn += k; ta += k * time(p.with); tb += k * time(p.without); }
-    }
-    return {
-      id,
-      uses,
-      without: counted.length - uses,
-      compared: n,
-      with: n ? a / n : null,
-      usual: n ? b / n : null,
-      gain: n ? (a - b) / n : null,
-      seconds: tn ? { with: ta / tn, usual: tb / tn } : null,
-    };
+    const uses = counted.filter(x => x.caps.has(id)).length;
+    const held = heldComparison(
+      counted.filter(x => x.ai !== UNKNOWN_AI).map(x => ({ group: x.ai, on: x.caps.has(id), t: x.t })), MIN_OTHER);
+    return { ...held, id, uses, without: counted.length - uses };
   });
+}
+
+/**
+ * The Builds tab's Transform % column: each build's transformationSummary(),
+ * by its code (utils/buildKey.js, the `?build=` code), over the same matches
+ * characterBuilds() files under it.
+ */
+export function transformByBuild(matches, ctx) {
+  const groups = new Map();
+  for (const m of matches || []) {
+    if (m.unrecorded) continue;
+    const code = buildCode(buildKeyOf(m));
+    if (!groups.has(code)) groups.set(code, []);
+    groups.get(code).push(m);
+  }
+  return new Map([...groups].map(([code, ms]) => [code, transformationSummary(ms, ctx)]));
 }

@@ -62,7 +62,11 @@ export const readMetaTab = params => (META_TABS.some(t => t.id === params.get('t
 export const FLOORS = [1, 2, 3, 5, 10];
 export const DEFAULT_FLOOR = 5;
 
-/** Sortable columns. Win % is last and never the default: it is a team measure. */
+/**
+ * Sortable columns. Win % is last and never the default: it is a team
+ * measure. (The Character page's Builds tab also sorts by `transform`, in
+ * its own local sort: Meta's builds have no such figure.)
+ */
 export const BUILD_SORTS = ['uses', 'dmg', 'eff', 'score', 'win'];
 
 const list = (params, key) => [...new Set((params.get(key) || '').split(',').map(s => s.trim()).filter(Boolean))];

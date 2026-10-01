@@ -260,7 +260,7 @@ export default function CharacterTabs(props) {
             team={team ? team.tag : null} onTeam={tag => toggle('for', teamByTagSlug(tag), team ? team.slug : null)} />
         )}
         {active === 'builds' && (
-          <CharacterBuilds character={posRow || character} charMap={charMap} portraitId={portraitId}
+          <CharacterBuilds character={posRow || character} charMap={charMap} portraitId={portraitId} lineups={lineups}
             current={buildCut} onToggle={code => toggle('build', code, buildCut)} />
         )}
         {active === 'transformations' && (

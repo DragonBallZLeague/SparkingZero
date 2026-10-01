@@ -9,6 +9,8 @@
  * writes its own headers onto them.
  */
 
+import { transformationSummary } from './transformation.js';
+
 // ==============================================================================
 // CHARACTER PERFORMANCE AVERAGES
 // ==============================================================================
@@ -17,18 +19,41 @@
 // Total Columns: ~43 columns across 7 category groups
 // ==============================================================================
 
-export const characterAveragesColumns = () => ({
+const transformCache = new WeakMap();
+/**
+ * A row's transformationSummary() (utils/transformation.js), from its own
+ * matches, so the Team Performance Matrix's per-team character rows get their
+ * team's figures and its team rows (no matches) none. Null without `ctx` =
+ * { idFor, lineups }, or for a character that cannot transform or fuse.
+ */
+function transformOf(row, ctx) {
+  if (!ctx || !ctx.idFor || !Array.isArray(row.matches)) return null;
+  if (!transformCache.has(row.matches)) {
+    const s = transformationSummary(row.matches, { id: ctx.idFor(row.name), lineups: ctx.lineups });
+    transformCache.set(row.matches, s.able ? s : null);
+  }
+  return transformCache.get(row.matches);
+}
+
+/**
+ * `ctx` = { idFor, lineups } for the Transformations group (the plan's
+ * "Transformations" step 4, 2026-10-01): counted by utils/transformation.js's
+ * rules, fusions included, Broly's Ring left out. It replaced "Avg
+ * Transformations", every form change per match, which counted forms that
+ * only move back down and matches with Broly's Ring.
+ */
+export const characterAveragesColumns = (ctx = null) => ({
   title: 'Character Performance Averages',
   description: 'Aggregated statistics showing overall performance across all matches',
   
   columnGroups: [
     { name: 'Identity & Context', columns: ['name', 'primaryTeam', 'primaryMap', 'primaryPosition', 'matchCount', 'wins', 'losses'] },
     { name: 'Combat Performance', columns: ['avgDamage', 'avgTaken', 'efficiency', 'dps', 'combatScore', 'avgBattleTime', 'totalKills', 'avgKills'] },
-    { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags', 'avgTransformations'] },
+    { name: 'Survival & Health', columns: ['avgHPGaugeValueMax', 'avgHealth', 'healthRetention', 'survivalRate', 'avgGuards', 'avgRevengeCounters', 'avgSuperCounters', 'avgZCounters', 'avgTags'] },
     { name: 'Special Abilities', columns: ['avgS1Blast', 'avgS1Hit', 's1HitRate', 'avgS2Blast', 'avgS2Hit', 's2HitRate', 'avgUltBlast', 'avgUltHit', 'ultHitRate', 'avgSkill1', 'avgSkill2', 'avgUltimates', 'avgEnergyBlasts', 'avgCharges', 'avgSparking', 'avgDragonDashMileage'] },
     { name: 'Combat Mechanics', columns: ['avgMaxCombo', 'avgMaxComboDamage', 'avgThrows', 'avgLightningAttacks', 'avgVanishingAttacks', 'avgDragonHoming', 'avgSpeedImpacts', 'speedImpactWinRate', 'avgSparkingCombo'] },
     { name: 'Build & Equipment', columns: ['buildComposition', 'meleeCost', 'blastCost', 'kiBlastCost', 'defenseCost', 'skillCost', 'kiEfficiencyCost', 'utilityCost', 'topCapsules', 'primaryAIStrategy'] },
-    { name: 'Form Changes', columns: ['hasMultipleForms', 'formCount', 'formHistory'] }
+    { name: 'Transformations', columns: ['transformRate', 'transformed', 'transformMatches', 'fused', 'firstTransformation', 'hasMultipleForms', 'formCount', 'formHistory'] }
   ],
   
   columns: [
@@ -185,12 +210,6 @@ export const characterAveragesColumns = () => ({
       key: 'avgTags',
       header: 'Avg Tags',
       accessor: (row) => row.avgTags,
-      group: 'Survival & Health',
-    },
-    {
-      key: 'avgTransformations',
-      header: 'Avg Transformations',
-      accessor: (row) => row.avgTransformations,
       group: 'Survival & Health',
     },
 
@@ -426,25 +445,56 @@ export const characterAveragesColumns = () => ({
     },
 
     // ========================================================================
-    // G. FORM CHANGES (3 columns)
+    // G. TRANSFORMATIONS (8 columns): blank for a character that cannot
+    // transform or fuse
     // ========================================================================
+    {
+      key: 'transformRate',
+      header: 'Transform %',
+      accessor: (row) => { const t = transformOf(row, ctx); return t && t.rate !== null ? Math.round(t.rate * 100) : null; },
+      group: 'Transformations',
+    },
+    {
+      key: 'transformed',
+      header: 'Transformed',
+      accessor: (row) => { const t = transformOf(row, ctx); return t ? t.transformed : null; },
+      group: 'Transformations',
+    },
+    {
+      key: 'transformMatches',
+      header: 'Counted Matches',
+      accessor: (row) => { const t = transformOf(row, ctx); return t ? t.matches : null; },
+      group: 'Transformations',
+    },
+    {
+      key: 'fused',
+      header: 'Fused',
+      accessor: (row) => { const t = transformOf(row, ctx); return t ? t.fused : null; },
+      group: 'Transformations',
+    },
+    {
+      key: 'firstTransformation',
+      header: 'First Transformation (s)',
+      accessor: (row) => { const t = transformOf(row, ctx); return t && t.seconds !== null ? Math.round(t.seconds) : null; },
+      group: 'Transformations',
+    },
     {
       key: 'hasMultipleForms',
       header: 'Multiple Forms',
       accessor: (row) => row.hasMultipleForms ? 'Yes' : 'No',
-      group: 'Form Changes',
+      group: 'Transformations',
     },
     {
       key: 'formCount',
       header: 'Form Count',
       accessor: (row) => row.allFormsUsed?.size || 0,
-      group: 'Form Changes',
+      group: 'Transformations',
     },
     {
       key: 'formHistory',
       header: 'Form History',
       accessor: (row) => row.formHistory || '',
-      group: 'Form Changes',
+      group: 'Transformations',
     }
   ]
 });

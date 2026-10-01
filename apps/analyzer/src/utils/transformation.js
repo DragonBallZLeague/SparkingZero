@@ -50,9 +50,9 @@ export const BROLYS_RING = '00_0_0155';
 /**
  * Capsules that act on the skill gauge transformations spend, shown with and
  * without on the Character page and in Meta's Capsules detail. League-wide none
- * moves the rate past the ±12 points unrelated capsules swing by (measured on
- * the last two seasons, Ultra, 2026-09-30): Super Transformation cannot lower a
- * 1-count transformation, most of them, so its effect is per character.
+ * moves the rate past what unrelated capsules swing by (CAPSULE_NOISE):
+ * Super Transformation cannot lower a 1-count transformation, most of them,
+ * so its effect is per character.
  */
 export const SKILL_GAUGE_CAPSULES = [
   '00_0_0066', // Super Transformation: 1 fewer Skill Count to transform or fuse (minimum 1)
@@ -60,6 +60,18 @@ export const SKILL_GAUGE_CAPSULES = [
   '00_0_0055', // Dragon Spirit: skill gauge recovers 25% faster
   '00_0_0149', // Dragon Heart: recovers 25% of the gauge after dodging a blast with high-speed movement
 ];
+
+/**
+ * A capsule's change in the transform rate smaller than this (10 points) is
+ * within what unrelated capsules swing by, so it is shown uncoloured.
+ * Measured 2026-10-01 on the last two seasons, Ultra, comparing the same
+ * character on the same AI with and without each capsule (heldComparison()):
+ * the 33 capsules with Medium+ data moved the rate by a median 5.8 points,
+ * 80% of them within 10.5, and the largest moves were capsules unrelated to
+ * transforming (Ki Blast Attack Boost 3 −28, Style of the Strong +16). Super
+ * Transformation −4, Secret Measures +6, Dragon Spirit +6.
+ */
+export const CAPSULE_NOISE = 0.10;
 
 /** The AI strategy a match reads as when its file lost it (see above). */
 export const UNKNOWN_AI = 'Default';
@@ -126,6 +138,9 @@ export const fusionPartnerIds = id => [...new Set(pairsOf(id).map(p => p.partner
 /** Whether `id` has no transformation of its own and can only fuse (Goku Black Super Saiyan Rosé, Zamasu). */
 export const onlyFuses = id => !canTransform(id) && pairsOf(id).length > 0;
 
+/** Whether the reference gives `id` a transformation or a fusion. */
+export const canTransformOrFuse = id => canTransform(id) || pairsOf(id).length > 0;
+
 /**
  * Who was on each side of each match, for the fusion check: a Map of
  * "fileName|side" -> Set of starting-form ids. `rows` are aggregated
@@ -183,12 +198,74 @@ export function matchTransformation(m, { id, lineups = null } = {}) {
   return partnerHere ? result(true) : result(false, 'no-partner');
 }
 
+/**
+ * How many transformations one match row holds: the form changes the
+ * character made itself, up to and including a fusion (after it, they are
+ * the fusion's). 0 for a partner fused in from the bench. The Performances
+ * table's count beside the forms path.
+ */
+export function transformCount(m) {
+  if (m.absorbed) return 0;
+  const ids = m.formIds || [];
+  let n = 0;
+  for (let i = 1; i < ids.length; i++) {
+    n++;
+    if (isFusionStep(ids[i - 1], ids[i])) break;
+  }
+  return n;
+}
+
 const median = values => {
   if (!values.length) return null;
   const s = [...values].sort((a, b) => a - b);
   const mid = s.length >> 1;
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 };
+
+/**
+ * The transform rate with something against without it, HELD WITHIN GROUPS:
+ * per group, its counted matches with it against its counted matches there
+ * without it (`minOther`+ of them), weighted by the matches with it. The
+ * skill gauge capsules are compared this way, grouped by AI strategy for one
+ * character (the Character page) or by character and AI strategy (Meta's
+ * Capsules detail): the AI moves the rate far more than any capsule, and
+ * teams pair capsules with particular AIs, so an ungrouped with / without
+ * said mostly which AI ran them (21 points off on average, measured
+ * 2026-10-01).
+ *
+ * `items`: { group, on (with it), t (matchTransformation(), counted only) }.
+ *   { compared (matches with it that have a group to compare in), groups
+ *     (those groups' keys), with, usual (rates, null when nothing compares),
+ *     gain (with - usual), seconds: { with, usual } (the first
+ *     transformation's median, weighted by matches timed on both sides) or null }
+ */
+export function heldComparison(items, minOther) {
+  const byGroup = new Map();
+  for (const x of items) {
+    if (!byGroup.has(x.group)) byGroup.set(x.group, { with: [], without: [] });
+    byGroup.get(x.group)[x.on ? 'with' : 'without'].push(x.t);
+  }
+  const rate = ts => ts.filter(t => t.transformed).length / ts.length;
+  const times = ts => ts.map(t => t.seconds).filter(s => s != null);
+  let n = 0, a = 0, b = 0, tn = 0, ta = 0, tb = 0;
+  const groups = [];
+  for (const [key, p] of byGroup) {
+    if (!p.with.length || p.without.length < minOther) continue;
+    groups.push(key);
+    n += p.with.length; a += p.with.length * rate(p.with); b += p.with.length * rate(p.without);
+    const tw = times(p.with), to = times(p.without);
+    const k = Math.min(tw.length, to.length);
+    if (k) { tn += k; ta += k * median(tw); tb += k * median(to); }
+  }
+  return {
+    compared: n,
+    groups,
+    with: n ? a / n : null,
+    usual: n ? b / n : null,
+    gain: n ? (a - b) / n : null,
+    seconds: tn ? { with: ta / tn, usual: tb / tn } : null,
+  };
+}
 
 /**
  * A set of one character's matches (all of them, one build's, one AI's...):
@@ -214,7 +291,7 @@ export function transformationSummary(matches, { id, lineups = null } = {}) {
     if (t.fused) fused++;
     if (t.seconds != null) times.push(t.seconds);
   }
-  const able = transformed > 0 || canTransform(id) || fusionPartners(id).length > 0;
+  const able = transformed > 0 || canTransformOrFuse(id);
   return {
     able,
     matches: counted,

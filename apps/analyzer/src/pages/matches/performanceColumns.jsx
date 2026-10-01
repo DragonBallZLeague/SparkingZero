@@ -137,8 +137,18 @@ export function performanceColumns({ layout, group, picked = [], idFor = () => n
         ),
       },
       { key: 'ai', label: 'AI strategy', align: 'left', sort: false, width: 'minmax(100px,1fr)', cell: text(r => r.ai) },
-      { key: 'forms', label: 'Forms', align: 'left', sort: false, width: 'minmax(120px,1.3fr)', cell: text(r => (r.forms ? `→ ${r.forms}` : null)) },
-      ...statsOfGroup('build').map(stat),
+      {
+        // The path, with how many transformations it holds (fusions included)
+        // in front, sorted by that count (the plan's "Transformations" step 4).
+        key: 'forms', label: 'Forms', align: 'left', sort: true, width: 'minmax(140px,1.4fr)', title: perfStatByKey('forms').title,
+        cell: r => (r.forms ? (
+          <div className="flex min-w-0 items-baseline gap-1.5 text-[13px]" title={`${r.transforms} transformation${r.transforms === 1 ? '' : 's'}: ${r.forms}`}>
+            <b className="flex-none font-semibold tabular-nums text-slate-100">{r.transforms}</b>
+            <span className="truncate text-slate-300">→ {r.forms}</span>
+          </div>
+        ) : <div className="text-[13px] text-slate-300">–</div>),
+      },
+      ...statsOfGroup('build').filter(s => s.key !== 'forms').map(stat),
     ];
   } else figures = statsOfGroup(group).map(stat);
 

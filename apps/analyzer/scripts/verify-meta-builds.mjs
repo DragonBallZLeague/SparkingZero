@@ -38,11 +38,14 @@ import {
   aiShift, strategyPairs, dataQuality, MIN_OTHER, SUIT_MIN, ACTION_FLOOR,
 } from '../src/pages/meta/aiShift.js';
 import {
-  capsuleRows, capsuleChange, capsuleMatchesQuery, readCapsuleFilters, capsuleStatByKey, familyOf,
+  capsuleRows, capsuleChange, capsuleTransform, capsuleMatchesQuery, readCapsuleFilters, capsuleStatByKey, familyOf,
   BUILD_TYPES, FIT_STATS, PAIR_MIN, PAIR_SHARE,
 } from '../src/pages/meta/capsuleRows.js';
 import baseline from '../src/config/style-baseline.json' with { type: 'json' };
-import { lineupIndex, transformationSummary, UNKNOWN_AI } from '../src/utils/transformation.js';
+import {
+  lineupIndex, transformationSummary, matchTransformation, canTransformOrFuse, UNKNOWN_AI, SKILL_GAUGE_CAPSULES, BROLYS_RING,
+} from '../src/utils/transformation.js';
+import { aiStrategySheet } from '../src/utils/workbookSheets.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -414,6 +417,65 @@ for (const [label, { rows }] of [['default', def], ['everything', everything]]) 
   }
   log(`  ${cmp.name}: ${ch.compared} of ${cmp.matches.length} compared (${ch.quality}), damage ${ch.dmg ? `${Math.round(ch.dmg.shift * 100)}%` : '–'}`);
   log(`  quality: ${['Low', 'Medium', 'High'].map(q => `${q} ${caps.filter(c => c.quality === q).length}`).join(', ')}`);
+}
+// ---- Transformations: the Capsules detail's box, the AI Strategies sheet ------
+{
+  const { rows } = everything;
+  log('\n[Transformations: Capsules detail, AI Strategies sheet]');
+  const ctx = { idFor, lineups: lineupIndex(rows, idFor) };
+  const none = { chars: [], ais: [] };
+  const other = capsuleRows(rows, { chars: [], types: [], ais: [] }, charMap)
+    .find(c => !SKILL_GAUGE_CAPSULES.includes(c.capsuleId) && c.capsuleId !== BROLYS_RING);
+  check('only the skill gauge capsules and Broly\'s Ring have a Transformations box, and only with the lineups',
+    capsuleTransform(rows, other.capsuleId, none, ctx) === null
+    && SKILL_GAUGE_CAPSULES.every(id => capsuleTransform(rows, id, none, ctx).kind === 'gauge')
+    && capsuleTransform(rows, BROLYS_RING, none, ctx).kind === 'ring' && capsuleTransform(rows, SKILL_GAUGE_CAPSULES[0], none, null) === null);
+
+  // Super Transformation, counted by hand: the same character on the same AI,
+  // its counted matches with it against those without (MIN_OTHER+).
+  const ST = SKILL_GAUGE_CAPSULES[0];
+  const st = capsuleTransform(rows, ST, none, ctx);
+  const groups = new Map();
+  for (const r of rows) {
+    for (const m of r.matches) {
+      const ai = m.aiStrategy || UNKNOWN_AI;
+      if (!(m.equippedCapsules || []).length || ai === UNKNOWN_AI) continue;
+      const t = matchTransformation(m, { id: idFor(r.name), lineups: ctx.lineups });
+      if (!t.counted) continue;
+      const k = `${r.name}|${ai}`;
+      if (!groups.has(k)) groups.set(k, { w: [], o: [] });
+      groups.get(k)[m.equippedCapsules.some(c => c.id === ST) ? 'w' : 'o'].push(t);
+    }
+  }
+  const rateOf = ts => ts.filter(t => t.transformed).length / ts.length;
+  let n = 0, a = 0, b = 0;
+  const chars = new Set();
+  for (const [k, g] of groups) {
+    if (!g.w.length || g.o.length < MIN_OTHER) continue;
+    n += g.w.length; a += g.w.length * rateOf(g.w); b += g.w.length * rateOf(g.o);
+    chars.add(k.slice(0, k.lastIndexOf('|')));
+  }
+  check(`Super Transformation is the same character on the same AI with it against without (${n} matches over ${chars.size} characters, ${Math.round((b / n) * 100)}% -> ${Math.round((a / n) * 100)}%, ${st.quality})`,
+    n > 0 && st.compared === n && st.characters === chars.size && Math.abs(st.with - a / n) < 1e-9 && Math.abs(st.usual - b / n) < 1e-9
+    && st.quality === dataQuality(n, chars.size));
+  const ringBy = rows.reduce((k, r) => k + r.matches.filter(m => (m.equippedCapsules || []).some(c => c.id === BROLYS_RING)
+    && m.battleTime > 0 && !m.absorbed && canTransformOrFuse(idFor(r.name))).length, 0);
+  const ring = capsuleTransform(rows, BROLYS_RING, none, ctx);
+  check(`Broly's Ring counts the fought matches of characters that can transform (${ringBy}, most by ${ring.byCharacter[0] ? ring.byCharacter[0].name : '-'})`,
+    ringBy > 0 && ring.matches === ringBy && ring.byCharacter.reduce((k, c) => k + c.uses, 0) === ringBy);
+  const topAi = [...groups.keys()].map(k => k.slice(k.lastIndexOf('|') + 1))[0];
+  const narrowed = capsuleTransform(rows, ST, { chars: [], ais: [aiSlug(topAi)] }, ctx);
+  check('an AI strategy chip narrows it to that AI\'s matches', narrowed.compared <= st.compared
+    && narrowed.groups.every(g => g.endsWith(`|${topAi}`)));
+
+  // The workbook's AI Strategies sheet: the page's Transform comparison.
+  const sheet = aiStrategySheet(rows, charMap, ctx);
+  const plain = aiStrategySheet(rows, charMap);
+  const gainCol = sheet.columns.find(c => c.header === 'Transform +/- (pts)');
+  check('the AI Strategies sheet carries the Transform comparison (blank without the lineups), and no Default row',
+    !!gainCol && !plain.columns.some(c => c.header.startsWith('Transform')) && sheet.rows.every(r => r.name !== UNKNOWN_AI)
+    && sheet.rows.some(r => gainCol.get(r) !== null)
+    && sheet.rows.every(r => gainCol.get(r) === (r.transform && r.transform.gain !== null ? Math.round(r.transform.gain * 100) : null)));
 }
 {
   const P = s => new URLSearchParams(s);

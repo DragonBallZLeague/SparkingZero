@@ -29,8 +29,11 @@ import { fadesThinSamples } from '../../utils/performanceTier.js';
  *
  * The Character page's Builds tab draws one character's builds with it
  * (`showCharacter` false: no Character column, and a phone row leads with the
- * build instead). Wherever a build's capsules show, Copy YAML / Download give
- * it in the Match Builder's format.
+ * build instead), with a Trans % column for a character that can transform
+ * (`transform`: each build's `transform`, the share of its counted matches it
+ * transformed or fused in, and `transformOf`, transformationSummary()'s
+ * figures). Wherever a build's capsules show, Copy YAML / Download give it in
+ * the Match Builder's format.
  *
  * The table itself is the one template (shell/StatTable.jsx), whose picked
  * row and opened detail it was the model for.
@@ -124,7 +127,7 @@ function SidePanel({ build, idFor, buildLinkFor, openLabel, highlight, empty = '
 
 export default function BuildsTable({
   rows, shown, onMore, sort, dir, onSort, isWide, selected, onPick, expanded, idFor, buildLinkFor, highlight,
-  showCharacter = true, openLabel = null,
+  showCharacter = true, openLabel = null, transform = false,
   // Whether the side panel shows the first row while none is picked (Meta), or
   // `emptyPanel` (the Character page, where a picked row is a filter).
   pickFirst = true, emptyPanel = undefined,
@@ -163,12 +166,26 @@ export default function BuildsTable({
   const eff = w => figure('eff', 'Eff', w, b => <div className={num}>{fmtEff(b.eff)}</div>);
   const score = w => figure('score', 'Score', w,
     b => <div className="text-right"><TierScorePill score={b.score} provisional={fade && b.provisional} /></div>);
+  // Over its counted matches (utils/transformation.js), dimmed under 5 of them.
+  const trans = w => (transform ? [{
+    ...figure('transform', 'Trans', w, b => {
+      const t = b.transformOf;
+      return (
+        <div className={`${num} ${t && t.matches < 5 ? '!text-slate-400' : ''}`}
+          title={t && t.matches ? `Transformed${t.fused ? ' or fused' : ''} in ${t.transformed} of its ${t.matches} counted match${t.matches === 1 ? '' : 'es'}` : 'No counted matches'}>
+          {b.transform === null ? '–' : `${Math.round(b.transform)}%`}
+        </div>
+      );
+    }),
+    title: 'Share of its counted matches it transformed or fused in',
+  }] : []);
 
   const columns = isPhone ? [
     // One character's builds lead with the build; the league's with the character.
     { key: 'build', label: 'Build', align: 'left', width: 'minmax(0,1fr)', sort: false,
       cell: b => (showCharacter ? character(b) : buildCell(b, 'min-w-[30px] max-w-[90px]')) },
-    uses('40px'), eff('50px'), score('56px'),
+    // Four figures leave the build too little room on a phone: Trans takes Eff's place.
+    uses('40px'), ...(transform ? [] : [eff('50px')]), score('56px'), ...trans('46px'),
   ] : [
     { key: '#', label: '#', width: '28px', sort: false,
       cell: (b, i) => <div className="text-right text-[12px] text-slate-500 tabular-nums">{i + 1}</div> },
@@ -177,7 +194,7 @@ export default function BuildsTable({
       cell: b => buildCell(b, 'min-w-[40px] max-w-[120px]') },
     uses('44px'),
     figure('dmg', 'Avg dmg', '70px', b => <div className={num}>{fmtInt(b.dmg)}</div>),
-    eff('52px'), score('66px'),
+    eff('52px'), score('66px'), ...trans('52px'),
     figure('win', 'Win %', '48px', b => <div className="text-right text-[14px] text-slate-400 tabular-nums">{Math.round(b.win)}%</div>),
   ];
 

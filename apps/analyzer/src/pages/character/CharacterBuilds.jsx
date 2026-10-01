@@ -3,6 +3,8 @@ import { PAGE } from '../../shell/tableParts.jsx';
 import { useMediaQuery } from '../../shell/useMediaQuery.js';
 import BuildsTable from '../meta/BuildsTable.jsx';
 import { leagueBuilds, filterBuilds } from '../meta/buildRows.js';
+import { transformationSummary } from '../../utils/transformation.js';
+import { transformByBuild } from './transformRows.js';
 
 /** Where the capsule list moves from under a row to a side panel, as on Meta. */
 const WIDE_QUERY = '(min-width: 1180px)';
@@ -21,11 +23,27 @@ const WIDE_QUERY = '(min-width: 1180px)';
  * does, and shows its capsules; a second click removes the cut (`onToggle`).
  * Nothing is picked until then. `character` is the page's row under every cut
  * but the build: this is the list of builds.
+ *
+ * TRANS % (the plan's "Transformations" step 4, 2026-10-01), for a character
+ * that can transform or fuse: the share of each build's counted matches it
+ * transformed or fused in (transformRows.js transformByBuild(), by
+ * utils/transformation.js's rules), sortable. `portraitId` is the
+ * character's id, which the transformation reference is read by, and
+ * `lineups` lineupIndex() over the scope.
  */
-export default function CharacterBuilds({ character, charMap = {}, portraitId = null, current = null, onToggle }) {
+export default function CharacterBuilds({ character, charMap = {}, portraitId = null, lineups = null, current = null, onToggle }) {
   const isWide = useMediaQuery(WIDE_QUERY);
   const [{ sort, dir }, setSortState] = useState({ sort: 'uses', dir: 'desc' });
-  const builds = useMemo(() => leagueBuilds([character], charMap), [character, charMap]);
+  const able = useMemo(() => transformationSummary(character.matches, { id: portraitId }).able, [character, portraitId]);
+  const builds = useMemo(() => {
+    const list = leagueBuilds([character], charMap);
+    if (!able) return list;
+    const byCode = transformByBuild(character.matches, { id: portraitId, lineups });
+    return list.map(b => {
+      const t = byCode.get(b.code) || null;
+      return { ...b, transformOf: t, transform: t && t.matches ? t.rate * 100 : null };
+    });
+  }, [character, charMap, able, portraitId, lineups]);
   const rows = useMemo(
     () => filterBuilds(builds, { floor: 1, chars: [], ais: [], caps: [], group: 'all', sort, dir }),
     [builds, sort, dir]);
@@ -49,7 +67,7 @@ export default function CharacterBuilds({ character, charMap = {}, portraitId = 
       <BuildsTable rows={rows} shown={shown} onMore={() => setShown(n => n + PAGE)}
         sort={sort} dir={dir} onSort={onSort} isWide={isWide}
         selected={picked} expanded={picked} onPick={onPick} idFor={() => portraitId}
-        highlight={[]} showCharacter={false} pickFirst={false}
+        highlight={[]} showCharacter={false} pickFirst={false} transform={able}
         emptyPanel="Pick a build to show only it, with its capsules." />
     </div>
   );

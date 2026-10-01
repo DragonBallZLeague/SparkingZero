@@ -51,6 +51,7 @@ import {
   performanceRows, filterPerformances, sortPerformances, performanceMatchesQuery, readPerfFilters, readPerfSort,
 } from '../src/pages/matches/performanceRows.js';
 import { slugifyCharacterName } from '../src/utils/characterSlug.js';
+import { transformCount, isFusionStep } from '../src/utils/transformation.js';
 import { teamByTag } from '../src/utils/teams.js';
 import { matchForms, sharedFormSnapshots } from '../src/utils/formBreakdown.js';
 import { calculatePerFormStats } from '../src/utils/formStatsCalculator.js';
@@ -307,6 +308,20 @@ log('\n[performances: chips, sort, search]');
     firstNull > 0 && byS1.slice(firstNull).every(p => !p.m.hasAdditionalCounts || !p.m.s1Blast));
   const newest = sortPerformances(perf, readPerfSort(params('')));
   check('by default, newest match first', newest.every((p, i) => !i || compareMatchTime(newest[i - 1].path, p.path) >= 0));
+
+  // The count beside the Build group's forms path (utils/transformation.js
+  // transformCount): its own form changes, a fusion included, none after it.
+  const withForms = perf.filter(p => p.forms);
+  const countOff = perf.filter(p => p.transforms !== transformCount(p.m)
+    || p.transforms > Math.max(0, (p.m.formIds || []).length - 1) || (!p.forms && p.transforms > 0));
+  const fusedOff = withForms.filter(p => (p.m.formIds || []).some((id, i, ids) => i && isFusionStep(ids[i - 1], id))
+    && p.transforms !== (p.m.formIds.findIndex((id, i, ids) => i && isFusionStep(ids[i - 1], id))));
+  check(`a performance's transformation count is its own form changes up to a fusion (${withForms.length} with a forms path)`,
+    withForms.length > 0 && !countOff.length && !fusedOff.length && withForms.some(p => p.transforms > 1),
+    [...countOff, ...fusedOff].slice(0, 3).map(p => `${p.name} ${p.path}: ${p.transforms}`).join('; '));
+  const byForms = sortPerformances(perf, readPerfSort(params('sort=forms')));
+  check('the forms column sorts by that count, most first',
+    readPerfSort(params('sort=forms')).sort === 'forms' && byForms.every((p, i) => !i || byForms[i - 1].transforms >= p.transforms));
 
   const s = perf.find(p => p.map && p.opponent) || perf[0];
   check('a search finds a performance by character, match, map and the opponent\'s name',

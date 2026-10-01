@@ -749,13 +749,16 @@ export default function App() {
       if (!rows.length) { alert('There is no match data in this scope to export.'); return; }
       const characterData = prepareCharacterAveragesData(rows);
       const matchData = prepareMatchDetailsData(rows);
+      // The transformation columns' rules need who was on each side (utils/transformation.js).
+      const transformCtx = { idFor: charIdFor, lineups: lineupIndex(rows, charIdFor) };
       
       const result = await exportToExcel(characterData, matchData, {
         filename: `DBSZ_Analysis_${new Date().toISOString().split('T')[0]}.xlsx`,
         includeCharacterAverages: true,
         includeMatchDetails: true,
         includeFormatting: true,
-        extraSheets: workbookSheets(rows, charMap),
+        transformCtx,
+        extraSheets: workbookSheets(rows, charMap, transformCtx),
       });
       
       if (result.success) {
