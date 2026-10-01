@@ -70,7 +70,7 @@ The league's call, after going through what was left of the plan: the restyle (t
 - **The Bars view has a phone layout of its own**: beside four figure columns the bars shrank to stubs and the sub-figures ran off the right edge. Now each style is a block, its name, rate and rank on one line over a full-width bar, and its sub-figures two to a line under it, each over a half-width bar.
 - **Decided with the league:** the Home page (Phase 5: the six curated boards and the latest week's results beside the tier list) is the **immediate next step**; the small export on each table is **dropped** (the scope bar's full workbook covers it); the accessibility pass moves to the next phase (only the Bars view's phone layout was done now).
 
-**Home (Phase 5) followed the same day** (see "Phases 4–7" below), with the Characters page's Styles view and a tablet layout for every wide table. **That closed the restyle work**: the league approved it, and the local `analyzer-restyle` branch was merged into the local `dev-branch` (2026-09-30). Pushing it is the league's call.
+**Home (Phase 5) followed the same day** (see "Phases 4–7" below), with the Characters page's Styles view and a tablet layout for every wide table. **That closed the restyle work**: the league approved it, the local `analyzer-restyle` branch was merged into `dev-branch`, and the league pulled the remote's data submissions into it and pushed it (2026-09-30).
 
 **Next phase**, from the plan's remaining work:
 - the share-snippet image card (Phase 3 and 7)
@@ -84,9 +84,8 @@ The league's call, after going through what was left of the plan: the restyle (t
 For a fresh start on the next phase: where things stand, how work was checked, and where each item begins. Read "What the Analyzer is for", "Decisions locked in" and `apps/analyzer/CLAUDE.md` first, as before.
 
 **Where the code is.**
-- Everything is on the local **`dev-branch`** (`6b6d1352`, the same commit as the local `analyzer-restyle` branch, kept). **Nothing is pushed**; pushing is the league's call. Start new work on a new local branch off `dev-branch`.
-- At the last fetch, local `dev-branch` was 35 commits ahead of `origin/dev-branch` and 23 behind. The 23 are data submissions (`BR_Data/` JSON) and one website events YAML; nothing overlaps, so pulling before the push should merge cleanly.
-- **The push carries a deploy workflow change**: the checkout takes the full history, blobless (`fetch-depth: 0`, `filter: blob:none`), which Home's upload dates need (`generate-recent-uploads.mjs`).
+- The restyle and Home are on **`dev-branch`, pushed** (2026-09-30: `6b6d1352`, merged with the remote's data submissions in `a0467a21`). The local `analyzer-restyle` branch is kept at `6b6d1352`. Start new work on a new local branch off `dev-branch`, and keep it local until the league approves it (pushing is the league's call).
+- **The deploy workflow now checks out the full history, blobless** (`fetch-depth: 0`, `filter: blob:none`), which Home's upload dates need (`generate-recent-uploads.mjs`). The first deploy with it is the one to check: Home's Tests and Events switches should show upload days.
 
 **How work was checked** (the bar every change in the restyle and Home met):
 - Build: `npx vite build` in `apps/analyzer` for code changes; `npm run build:analyzer` from the root when data or prebuild scripts change (it runs prebuild). Serve with `node scripts/serve-dist.js 8080` from the root (the Pages 404 rule; dev servers do not reproduce deep links).
