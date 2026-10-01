@@ -50,10 +50,11 @@ export default function MetaPage({
   const [expanded, setExpanded] = useState(null);
   useEffect(() => { setShown(PAGE); setSelected(null); setExpanded(null); }, [filterKey, builds]);
 
-  // A sort belongs to its tab's columns, so a new tab starts on its default.
+  // A sort belongs to its tab's columns, so a new tab starts on its default;
+  // the open AI strategy (`open`) is that tab's.
   const setTab = id => update(p => {
     if (id === 'builds') p.delete('tab'); else p.set('tab', id);
-    p.delete('sort'); p.delete('dir');
+    p.delete('sort'); p.delete('dir'); p.delete('open');
   });
   const setGroup = g => update(p => { if (g === 'best') p.set('group', 'best'); else p.delete('group'); });
   const onSort = key => update(p => {

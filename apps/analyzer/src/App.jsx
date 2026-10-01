@@ -21,6 +21,7 @@ import { performanceRows, openParams, readPerfFilters } from './pages/matches/pe
 import { performanceChips } from './pages/matches/performanceChips.jsx';
 import { buildMatchSlugIndex, matchUrlKey, resolveMatchParam, matchSlug } from './utils/matchSlug.js';
 import { readMatch } from './utils/matchRecord.js';
+import { lineupIndex } from './utils/transformation.js';
 import { teamRows, readVs } from './pages/teams/teamRows.js';
 import { teamByTag, teamBySlug } from './utils/teams.js';
 import { leagueBuilds, readMetaTab, readBuildFilters, DEFAULT_FLOOR } from './pages/meta/buildRows.js';
@@ -551,6 +552,22 @@ export default function App() {
     if (forTeam) p.set('for', forTeam.slug);
     return `${ROUTES.matches}?${p.toString()}`;
   }, [scopeOnlySearch, forTeam]);
+  // One character's AI strategies on Meta, sorted by Transform, `ai` open: the
+  // Character page's Transformations tab links its rows there.
+  const aiLinkFor = useCallback((name, ai) => {
+    const p = new URLSearchParams(scopeOnlySearch);
+    p.set('tab', 'ai');
+    p.set('char', slugifyCharacterName(name));
+    p.set('sort', 'transform');
+    if (ai) p.set('open', ai);
+    return `${ROUTES.meta}${prettySearch(p)}`;
+  }, [scopeOnlySearch]);
+  // Who was on each side of each match, for a fusion-only character's
+  // transformation count (utils/transformation.js), on a character's page.
+  const onCharacterPage = !!(deepLinkedCharacter && deepLinkedCharacter.character);
+  const charLineups = useMemo(
+    () => (onCharacterPage ? lineupIndex(aggregatedData, charIdFor) : null),
+    [onCharacterPage, aggregatedData, charIdFor]);
 
   // ---- back buttons ------------------------------------------------------------
   // A detail page goes back where it was opened from (shell/useCameFrom.js),
@@ -794,6 +811,8 @@ export default function App() {
             // Not in the Sandbox: its Performances chips are hidden, so the
             // character filter would be invisible there.
             performancesLink={sandbox || !deepLinkedCharacter.character ? null : performancesLinkFor(deepLinkedCharacter.character.name)}
+            aiLinkFor={sandbox || !deepLinkedCharacter.character ? null : ai => aiLinkFor(deepLinkedCharacter.character.name, ai)}
+            lineups={charLineups}
             shareable={!sandbox}
             charMap={charMap}
             teamsRow={deepLinkedCharacter.teamsRow || null}

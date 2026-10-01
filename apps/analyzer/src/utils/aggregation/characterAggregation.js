@@ -405,7 +405,7 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
       }
       
       // The match's forms as the Match page shows them (utils/formBreakdown.js
-      // matchForms(), fused forms whole), for the Character page's Forms tab
+      // matchForms(), fused forms whole), for the Character page's Transformations tab
       // and its form filter, which reads each form's own `stats`
       // (pages/character/characterCuts.js formSlices). Null when it did not
       // transform, or when the file cannot give per-form figures (no

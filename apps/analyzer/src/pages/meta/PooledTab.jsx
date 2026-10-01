@@ -41,6 +41,10 @@ const WIDE_QUERY = '(min-width: 1400px)';
  *               strategies: its detail is too wide for a side panel)
  *   score       whether the Score column shows (Capsules has none: a
  *               capsule's pooled score is mostly its builds')
+ *   open, onOpen  the picked row kept by the caller (AI strategies keeps it
+ *               in the URL, `open=<slug>`, so a link can open a strategy:
+ *               the Character page's Transformations tab does); without
+ *               `onOpen` the tab keeps it, cleared when the filters change
  */
 export default function PooledTab({
   rows, sort, dir, onSort, nameLabel, noun, nameCell, title, detail, controls = null, resetKey = '', empty, footnote = null,
@@ -49,6 +53,8 @@ export default function PooledTab({
   phone = { key: PHONE_COLS_KEY, defaults: DEFAULT_PHONE_STATS, byKey: statByKey },
   below = false,
   score = true,
+  open = null,
+  onOpen = null,
 }) {
   const isPhone = useIsPhone();
   const size = useTableSize(FULL_FROM);
@@ -61,7 +67,13 @@ export default function PooledTab({
   const [expanded, setExpanded] = useState(null);
   const [shown, setShown] = useState(PAGE);
   useEffect(() => { setSelected(null); setExpanded(null); setShown(PAGE); }, [resetKey]);
-  const onPick = r => (isWide ? setSelected(r.id) : setExpanded(cur => (cur === r.id ? null : r.id)));
+  const onPick = r => {
+    if (onOpen) onOpen(isWide || open !== r.id ? r.id : null);
+    else if (isWide) setSelected(r.id);
+    else setExpanded(cur => (cur === r.id ? null : r.id));
+  };
+  const selectedId = onOpen ? open : selected;
+  const expandedId = onOpen ? open : expanded;
 
   const fade = fadesThinSamples(rows);
   const stats = compact ? picked.slice(0, n).map(phone.byKey).filter(Boolean) : allStats;
@@ -80,12 +92,12 @@ export default function PooledTab({
     }] : []),
     ...stats.map(s => ({ ...s, ...uses(s), width: compact ? pickedWidth(size) : 'minmax(56px,1fr)' })),
   ];
-  const sel = isWide ? (rows.find(r => r.id === selected) || rows[0] || null) : null;
+  const sel = isWide ? (rows.find(r => r.id === selectedId) || rows[0] || null) : null;
 
   const table = (
     <StatTable columns={columns} rows={rows} sort={sort} dir={dir} onSort={onSort} onPick={onPick}
       faded={fade || fadeRow ? r => (fade && isProvisionalTier(r)) || !!(fadeRow && fadeRow(r)) : null} isPhone={compact} empty={empty} shown={shown} onMore={() => setShown(n => n + PAGE)}
-      selected={sel ? sel.id : null} expanded={isWide ? null : expanded}
+      selected={sel ? sel.id : null} expanded={isWide ? null : expandedId}
       renderExpanded={r => (below ? detail(r) : <div className="max-w-[520px]">{detail(r)}</div>)} />
   );
 

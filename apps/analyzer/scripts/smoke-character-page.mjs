@@ -83,6 +83,8 @@ try {
     : [
         pick('first row', () => true),
         pick('multi-form', r => (r.matches || []).some(m => Array.isArray(m.forms) && m.forms.length)),
+        // Can only fuse: the Transformations tab names its partner.
+        pick('fusion only', r => r.name === 'Zamasu'),
         pick('with builds', r => (r.topBuilds || []).some(b => (b.equippedCapsules || []).length)),
         pick('no builds', r => !(r.topBuilds || []).length),
         pick('single match', r => r.matchCount === 1),
@@ -95,11 +97,15 @@ try {
 
   // The page is tabbed, and a server render produces the one tab the URL
   // opens (Overview without `?tab=`). So the other tabs are rendered DIRECTLY
-  // below, or Usage, Builds, Forms and Matches would silently lose coverage.
+  // below, or Usage, Builds, Transformations and Matches would silently lose
+  // coverage.
   const tab = async name => (await vite.ssrLoadModule(`/src/pages/character/${name}.jsx`)).default;
   const CharacterUsage = await tab('CharacterUsage');
   const CharacterBuilds = await tab('CharacterBuilds');
-  const CharacterForms = await tab('CharacterForms');
+  const CharacterTransformations = await tab('CharacterTransformations');
+  const { lineupIndex } = await vite.ssrLoadModule('/src/utils/transformation.js');
+  const idOfName = new Map(Object.entries(charMap).map(([id, n]) => [n, id]).reverse());
+  const lineups = lineupIndex(rows, n => idOfName.get(n) || null);
   const CharacterMatches = await tab('CharacterMatches');
   const { POSITION_NAMES, positionLabel } = await vite.ssrLoadModule('/src/utils/positions.js');
 
@@ -131,7 +137,9 @@ try {
     }],
     ['Usage', c => React.createElement(CharacterUsage, { character: c, charMap })],
     ['Builds', c => React.createElement(CharacterBuilds, { character: c, charMap })],
-    ['Forms', c => React.createElement(CharacterForms, { character: c })],
+    ['Transformations', c => React.createElement(CharacterTransformations, {
+      character: c, id: idOfName.get(c.name) || null, lineups, charMap, aiLinkFor: ai => `/meta?tab=ai&open=${ai}`,
+    })],
     ['Matches', c => React.createElement(CharacterMatches, {
       character: c, linkFor: () => '/matches/x?open=y', performancesLink: '/matches?view=performances',
     })],

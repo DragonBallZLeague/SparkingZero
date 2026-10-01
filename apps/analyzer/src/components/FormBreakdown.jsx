@@ -25,7 +25,7 @@ import Portrait from './Portrait.jsx';
  * from the core figures. A fused form's figures are the fusion's whole output,
  * which its column says under the name.
  *
- * Written for one match; the Character page's Forms tab passes averages over
+ * Written for one match; the Character page's Transformations tab passes averages over
  * many matches into the same fields (utils/formBreakdown.js averageForms()),
  * with `of` (how many matches it transformed in, with figures) so a "Reached"
  * row can say how often each form was ("Starting form" for the one it began

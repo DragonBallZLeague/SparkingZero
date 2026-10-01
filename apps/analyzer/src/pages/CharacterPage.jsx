@@ -41,6 +41,12 @@ export default function CharacterPage({
   // the Performances view of /matches. Both null in the Sandbox.
   matchLinkFor = null,
   performancesLink = null,
+  // An AI strategy's row on Meta › AI strategies, on this character and open
+  // (the Transformations tab's rows), by the strategy's slug; null in the Sandbox.
+  aiLinkFor = null,
+  // utils/transformation.js lineupIndex() over the scope: who was on each side,
+  // for a character that can only fuse.
+  lineups = null,
   // id -> name, for form names on a build-filtered row (filterAggregatedData).
   charMap = {},
   // With a team picked (`for=`): the character over every team, for the Usage
@@ -129,6 +135,8 @@ export default function CharacterPage({
       portraitId={portraitId}
       matchLinkFor={matchLinkFor}
       performancesLink={performancesLink}
+      aiLinkFor={aiLinkFor}
+      lineups={lineups}
       charMap={charMap}
       teamsRow={teamsRow}
       shareable={shareable}

@@ -7,7 +7,7 @@ import { slugifyCharacterName } from '../../utils/characterSlug.js';
  * cleared by clicking it again (or the strip at the top of the page):
  *   pos    `pos=1|2|3`, a Usage tab position row
  *   build  `build=<code>`, a Builds tab row or the Overview's build picker
- *   form   `form=<form name slug>`, a Forms tab form
+ *   form   `form=<form name slug>`, a form on the Transformations tab
  * The team (`for=`, a Usage tab team row or the scope bar's Played for chip)
  * is applied before the page gets its row, by App, since it also changes what
  * the rank is counted among.

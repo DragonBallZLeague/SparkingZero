@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { IdentityBlock } from './CharacterBlocks.jsx';
-import CharacterForms from './CharacterForms.jsx';
+import CharacterTransformations from './CharacterTransformations.jsx';
 import CharacterBuilds from './CharacterBuilds.jsx';
 import OverviewTab from './overview/OverviewTab.jsx';
 import CharacterUsage from './CharacterUsage.jsx';
@@ -15,6 +15,7 @@ import Portrait from '../../components/Portrait.jsx';
 import { findBuildByCode, buildKeyOf, buildCode } from '../../utils/buildKey.js';
 import { POSITION_NAMES } from '../../utils/positions.js';
 import { teamBySlug, teamByTag } from '../../utils/teams.js';
+import { transformationSummary } from '../../utils/transformation.js';
 
 const teamByTagSlug = tag => teamByTag(tag).slug;
 
@@ -30,10 +31,10 @@ const teamByTagSlug = tag => teamByTag(tag).slug;
  * tab list below as a plain registry.
  *
  * CUTS: a build (`?build=<code>`, the Overview's build picker or a Builds tab
- * row), a position (`?pos=`, a Usage position row), a form (`?form=`, a Forms
- * tab form) and a team (`?for=`, a Usage team row or the scope bar's Played
- * for chip) each cut the whole page -
- * identity, Overview, Usage, Forms, Matches - to those matches, recomputed by
+ * row), a position (`?pos=`, a Usage position row), a form (`?form=`, a form
+ * on the Transformations tab) and a team (`?for=`, a Usage team row or the
+ * scope bar's Played for chip) each cut the whole page -
+ * identity, Overview, Usage, Transformations, Matches - to those matches, recomputed by
  * the leaderboard's own filter (character/characterCuts.js). Clicking the same
  * thing again removes it. Each list keeps all of its own options while cut, as
  * the rest of the cuts leave them: the Builds tab lists every build at the
@@ -42,9 +43,10 @@ const teamByTagSlug = tag => teamByTag(tag).slug;
  * view must never pass for the whole picture (the league, 2026-09-29). All of
  * it is in the URL, so a shared link opens on the same cut.
  *
- * THE OPEN TAB is in the URL too (`?tab=usage|builds|forms|matches`, none for
- * Overview; the league, 2026-09-30), so "look at this character's builds" is
- * a link. A tab the view has nothing for falls back to the first one.
+ * THE OPEN TAB is in the URL too (`?tab=usage|builds|transformations|matches`,
+ * none for Overview; the league, 2026-09-30), so "look at this character's
+ * builds" is a link. A tab the view has nothing for falls back to the first
+ * one. `?tab=forms`, the Transformations tab's old name, still opens it.
  *
  * A FORM is the Match page's rule (the league's choice, 2026-09-30): the
  * Overview shows the form's own figures in each match that reached it, rates
@@ -57,7 +59,8 @@ const teamByTagSlug = tag => teamByTag(tag).slug;
 /**
  * The tabs, in order. `available` keeps a tab out of the list when a character
  * has nothing to show under it, rather than presenting an empty panel - not
- * every character transforms. It is asked of the row being shown.
+ * every character transforms. It is asked of the row being shown, the
+ * character's whole row and its id.
  *
  * To add a tab: add a row here and a case in the panel switch below. Nothing
  * else needs to change.
@@ -66,9 +69,14 @@ const TABS = [
   { id: 'overview', label: 'Overview' },
   { id: 'usage', label: 'Usage' },
   { id: 'builds', label: 'Builds', available: (c, all) => (all.topBuilds || []).length > 0 },
-  { id: 'forms', label: 'Forms', available: c => (c.matches || []).some(m => (m.formChangeCount || 0) > 0) },
+  // Every character that can transform or fuse, from the reference or because
+  // it did here (utils/transformation.js), whether or not it did in this scope.
+  { id: 'transformations', label: 'Transformations', available: (c, all, id) => transformationSummary(c.matches, { id }).able },
   { id: 'matches', label: 'Matches', available: c => (c.matches || []).length > 0 },
 ];
+
+/** Old tab names that still open their tab. */
+const TAB_ALIASES = { forms: 'transformations' };
 
 const uses = n => `${n} match${n === 1 ? '' : 'es'}`;
 
@@ -117,9 +125,10 @@ export default function CharacterTabs(props) {
   // `character` comes cut to the team already (App applies `for=`, which also
   // decides what the rank counts among); `teamsRow` is the same character over
   // every team, for the Usage tab's team list, or null when no team is picked.
-  const { character, teamsRow = null, rank, matchLinkFor, performancesLink, charMap, portraitId } = props;
+  const { character, teamsRow = null, rank, matchLinkFor, performancesLink, aiLinkFor = null, lineups = null, charMap, portraitId } = props;
   const [searchParams, setSearchParams] = useSearchParams();
-  const tab = searchParams.get('tab') || 'overview';
+  const rawTab = searchParams.get('tab') || 'overview';
+  const tab = TAB_ALIASES[rawTab] || rawTab;
   const cuts = readCharacterCuts(searchParams);
   const team = teamsRow ? teamBySlug(searchParams.get('for'), []) : null;
 
@@ -161,7 +170,8 @@ export default function CharacterTabs(props) {
     () => (selected ? selected.row : cutCharacter(character, { pos: cuts.pos, build: buildCut, form: formCut }, charMap)),
     [selected, character, cuts.pos, buildCut, formCut, charMap]);
   // The Usage tab's lists: positions under the build and form, teams under
-  // all three; the Forms tab's under the position and build.
+  // all three; the Transformations tab's under the position and build (its
+  // forms are where a form is picked).
   const buildRow = useMemo(() => cutCharacter(character, { build: buildCut, form: formCut }, charMap), [character, buildCut, formCut, charMap]);
   const teamBase = useMemo(
     () => cutCharacter(teamsRow || character, { pos: cuts.pos, build: buildCut, form: formCut }, charMap),
@@ -192,7 +202,9 @@ export default function CharacterTabs(props) {
     );
   }
 
-  const tabs = TABS.filter(t => !t.available || t.available(viewRow, character));
+  // portraitId is the character's id (App's charIdFor), which the
+  // transformation reference is read by.
+  const tabs = TABS.filter(t => !t.available || t.available(viewRow, character, portraitId));
   // A character can lose the tab that is open - a filter change can leave them
   // with no builds - so fall back rather than render an empty panel.
   const active = tabs.some(t => t.id === tab) ? tab : (tabs[0]?.id || 'overview');
@@ -251,8 +263,9 @@ export default function CharacterTabs(props) {
           <CharacterBuilds character={posRow || character} charMap={charMap} portraitId={portraitId}
             current={buildCut} onToggle={code => toggle('build', code, buildCut)} />
         )}
-        {active === 'forms' && (
-          <CharacterForms character={formBase || viewRow} selected={formCut} onPick={slug => toggle('form', slug, formCut)} />
+        {active === 'transformations' && (
+          <CharacterTransformations character={formBase || viewRow} id={portraitId} lineups={lineups} charMap={charMap}
+            aiLinkFor={aiLinkFor} selected={formCut} onPick={slug => toggle('form', slug, formCut)} />
         )}
         {active === 'matches' && (
           <CharacterMatches character={viewRow} linkFor={matchLinkFor} performancesLink={performancesLink} />

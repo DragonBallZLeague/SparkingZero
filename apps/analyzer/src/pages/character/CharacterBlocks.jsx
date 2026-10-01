@@ -16,8 +16,9 @@ import { tierPillColors, tierPillClass } from '../../utils/tierPlateSvg.js';
  * back button.
  *
  * This file held every block of the page's first layout. The tabs' blocks
- * moved onto the one table template (2026-09-29): Usage, Builds, Forms and
- * Matches are CharacterUsage, CharacterBuilds, CharacterForms and
+ * moved onto the one table template (2026-09-29): Usage, Builds,
+ * Transformations (the Forms tab until 2026-10-01) and Matches are
+ * CharacterUsage, CharacterBuilds, CharacterTransformations and
  * CharacterMatches beside it.
  *
  * Everything here is presentational - each number already exists on the

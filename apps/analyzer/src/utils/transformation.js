@@ -95,13 +95,8 @@ export function upwardMoves(id) {
 export const canTransform = id => upwardMoves(id).length > 0;
 
 const partnerCache = new Map();
-/**
- * The partners `id` can fuse with, each as the set of forms that partner can be
- * fielded in, for a lineup check. A fusion's partners are listed in pairs
- * (fusionOf [a, b, c, d] is a + b or c + d), and a character is in a pair when
- * a form it can reach is (Goku Black reaches Super Saiyan Rosé, which fuses).
- */
-export function fusionPartners(id) {
+/** Each fusion pair `id` is in: { partner (the form listed), family (the forms it can be fielded in) }. */
+function pairsOf(id) {
   if (!id) return [];
   if (partnerCache.has(id)) return partnerCache.get(id);
   const mine = getFusionPartnerFamilyForms(id, transformationsData);
@@ -110,12 +105,26 @@ export function fusionPartners(id) {
     if (key === '_comment' || !Array.isArray(e?.fusionOf)) continue;
     e.fusionOf.forEach((part, i) => {
       const partner = e.fusionOf[i ^ 1];
-      if (partner && mine.has(part)) out.push(getFusionPartnerFamilyForms(partner, transformationsData));
+      if (partner && mine.has(part)) out.push({ partner, family: getFusionPartnerFamilyForms(partner, transformationsData) });
     });
   }
   partnerCache.set(id, out);
   return out;
 }
+
+/**
+ * The partners `id` can fuse with, each as the set of forms that partner can be
+ * fielded in, for a lineup check. A fusion's partners are listed in pairs
+ * (fusionOf [a, b, c, d] is a + b or c + d), and a character is in a pair when
+ * a form it can reach is (Goku Black reaches Super Saiyan Rosé, which fuses).
+ */
+export const fusionPartners = id => pairsOf(id).map(p => p.family);
+
+/** The forms `id`'s fusion partners are listed as, once each (Zamasu for Goku Black Super Saiyan Rosé). */
+export const fusionPartnerIds = id => [...new Set(pairsOf(id).map(p => p.partner))];
+
+/** Whether `id` has no transformation of its own and can only fuse (Goku Black Super Saiyan Rosé, Zamasu). */
+export const onlyFuses = id => !canTransform(id) && pairsOf(id).length > 0;
 
 /**
  * Who was on each side of each match, for the fusion check: a Map of

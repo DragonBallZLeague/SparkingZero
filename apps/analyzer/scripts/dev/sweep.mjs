@@ -24,7 +24,9 @@ import { launch, sleep } from './browser.mjs';
 const VIEWS = [
   '/', '/?latest=tests', '/?latest=events',
   '/characters', '/characters?view=styles', '/characters?view=tiers',
-  '/characters/android-13', '/characters/android-13?tab=usage', '/characters/vegeta-super?tab=forms',
+  '/characters/android-13', '/characters/android-13?tab=usage', '/characters/vegeta-super?tab=transformations',
+  // `forms` is the Transformations tab's old name; Goku Black can only fuse.
+  '/characters/goku-black-super-saiyan-rose?tab=forms', '/meta?tab=ai&char=vegeta-super&sort=transform&open=balanced-strategy-blasts',
   '/characters/android-13?tab=builds', '/characters/android-13?tab=matches',
   '/teams', '/teams/sentai-squad', '/teams/sentai-squad?tab=lineups', '/teams/sentai-squad?tab=opponents',
   '/teams/sentai-squad?tab=matches',

@@ -38,6 +38,10 @@ import { tierForScore } from '../src/utils/performanceTier.js';
 import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
 import { buildKeyOf, buildCode, findBuildByCode } from '../src/utils/buildKey.js';
 import { averageForms } from '../src/utils/formBreakdown.js';
+import {
+  transformationSummary, lineupIndex, fusionPartnerIds, onlyFuses, SKILL_GAUGE_CAPSULES, UNKNOWN_AI,
+} from '../src/utils/transformation.js';
+import { transformByAI, gaugeCapsules } from '../src/pages/character/transformRows.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -234,7 +238,7 @@ const badBuildScore = withBuilds.find(r =>
 check('topBuilds scores are finite when present', !badBuildScore,
   badBuildScore ? 'e.g. ' + badBuildScore.name : '');
 
-// The Forms tab averages each match's forms (averageForms over the match
+// The Transformations tab's forms average each match's forms (averageForms over the match
 // rows' `forms`, matchForms() as the Match page reads them).
 const withForms = rows.filter(r => (r.matches || []).some(m => (m.formChangeCount || 0) > 0));
 let usableAll = 0, transformedAll = 0;
@@ -257,6 +261,52 @@ check(`transformed matches carry their forms (${usableAll} of ${transformedAll};
   withForms.length > 0 && usableAll > 0 && transformedAll - usableAll <= 25, `${transformedAll - usableAll} left out`);
 check('the Forms tab\'s averages: the first form in every match and marked as the start, none reached more often, averages that add back up',
   !formBad.length, formBad.slice(0, 3).join('\n         '));
+
+// The Transformations tab (pages/character/transformRows.js), on every
+// character that can transform or fuse, by utils/transformation.js's rules.
+console.log('\nThe Transformations tab:');
+const idOfName = new Map();
+for (const [id, name] of slugIndex.idToName) if (!idOfName.has(name)) idOfName.set(name, id);
+const lineups = lineupIndex(rows, n => idOfName.get(n) || null);
+const trBad = [];
+let able = 0, unable = 0, gaugeCompared = 0;
+for (const r of rows) {
+  const id = idOfName.get(r.name) || null;
+  const ctx = { id, lineups };
+  const all = transformationSummary(r.matches, ctx);
+  if (!all.able) {
+    unable++;
+    // No tab: so it must never have changed form itself.
+    if (r.matches.some(m => (m.formIds || []).length > 1 && !m.absorbed)) trBad.push(`${r.name}: changed form but has no tab`);
+    continue;
+  }
+  able++;
+  const { rows: ais, unknown } = transformByAI(r.matches, ctx);
+  const sum = ais.reduce((n, a) => n + a.matches, 0);
+  if (sum + unknown !== all.matches) trBad.push(`${r.name}: its AI rows count ${sum} + ${unknown} Default, not ${all.matches}`);
+  if (ais.some(a => a.name === UNKNOWN_AI)) trBad.push(`${r.name}: a Default row`);
+  if (ais.some(a => a.rate < 0 || a.rate > 1 || a.transformed > a.matches)) trBad.push(`${r.name}: a rate out of range`);
+  const gauge = gaugeCapsules(r.matches, ctx);
+  if (gauge.map(g => g.id).join() !== SKILL_GAUGE_CAPSULES.join()) trBad.push(`${r.name}: the capsules are not SKILL_GAUGE_CAPSULES`);
+  for (const g of gauge) {
+    gaugeCompared += g.compared;
+    if (g.uses + g.without !== all.matches) trBad.push(`${r.name} ${g.id}: ${g.uses} with + ${g.without} without, not ${all.matches}`);
+    if (g.compared > g.uses) trBad.push(`${r.name} ${g.id}: more compared than run with it`);
+    if (g.compared && (g.with < 0 || g.with > 1 || g.usual < 0 || g.usual > 1 || Math.abs(g.gain - (g.with - g.usual)) > 1e-9)) trBad.push(`${r.name} ${g.id}: rates out of range`);
+    if (!g.compared && g.with !== null) trBad.push(`${r.name} ${g.id}: a rate with nothing compared`);
+  }
+}
+check(`every character that can transform or fuse adds up: AI rows to its counted matches, each capsule's with + without to them (${able} rows with the tab, ${unable} without)`,
+  !trBad.length && able > 0 && unable > 0 && gaugeCompared > 0, trBad.slice(0, 4).join('\n         '));
+// A fusion-only character names its partner, and fuses (Goku Black Super
+// Saiyan Rosé with Zamasu).
+const black = idOfName.get('Goku Black Super Saiyan Rosé');
+const zamasu = idOfName.get('Zamasu');
+const blackFused = rows.filter(r => r.name === 'Goku Black Super Saiyan Rosé')
+  .reduce((n, r) => n + transformationSummary(r.matches, { id: black, lineups }).fused, 0);
+check(`a fusion-only character names its partner: Goku Black Super Saiyan Rosé, Zamasu (fused ${blackFused} times)`,
+  onlyFuses(black) && fusionPartnerIds(black).includes(zamasu) && onlyFuses(zamasu) && blackFused > 0,
+  `partners ${fusionPartnerIds(black).join(',')}`);
 
 // ---- 3. A slug actually reaches a row --------------------------------------
 console.log('\nThe slug -> name -> row join the deep link depends on:');

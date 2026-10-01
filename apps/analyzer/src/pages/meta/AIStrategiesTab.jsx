@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import HeaderFigure from '../../components/HeaderFigure.jsx';
 import { useQueryUpdate } from '../../shell/useQueryUpdate.js';
-import { parseScope, writeScope } from '../../shell/scopeModel.js';
-import { isSandboxPath } from '../../routes.js';
+import { useWidenLink } from '../../shell/useWidenLink.jsx';
 import { styleColor, capsuleTypeColor } from '../../utils/overviewPalette.js';
 import { lineupIndex } from '../../utils/transformation.js';
-import baseline from '../../config/style-baseline.json';
 import { BuildPill } from '../character/overview/BuildPicker.jsx';
 import PooledTab from './PooledTab.jsx';
 import {
@@ -17,6 +15,7 @@ import {
   aiStrategyRows, readAiFilters, readAiSort, sortAiRows, AI_COLUMNS, AI_PHONE_DEFAULTS,
 } from './aiRows.js';
 import { aiShift, MIN_OTHER, LEAN_PLACES, SUIT_MIN } from './aiShift.js';
+import { clock } from '../character/transformRows.js';
 
 const characters = r => `${r.characters} character${r.characters === 1 ? '' : 's'}`;
 const places = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v))}`;
@@ -33,7 +32,6 @@ const TONE_SECONDS = 5;
 
 const rate = v => `${Math.round(v * 100)}%`;
 const points = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}`;
-const clock = s => { const t = Math.round(s); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
 const qualityTitle = r => `${r.quality} data: ${fmtInt(r.matches.length)} uses over ${characters(r)}, `
   + `${fmtInt(r.comparable)} comparable with the same characters on other AI strategies`;
@@ -344,7 +342,8 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
  * open in the detail.
  *
  * Its filters are scope-bar chips (Type, and the Builds tab's Character);
- * the sort is in the URL. `linkFor(name)` opens a character's page.
+ * the sort and the open strategy (`open=<slug>`) are in the URL.
+ * `linkFor(name)` opens a character's page.
  *
  * TRANSFORM, the last column (aiRows.js TRANSFORM_STAT): how much more often
  * the same characters transform or fuse on it than on their other AIs. It
@@ -362,7 +361,6 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
  */
 export default function AIStrategiesTab({ aggregated, charMap, idFor, linkFor }) {
   const [params] = useSearchParams();
-  const { pathname } = useLocation();
   const update = useQueryUpdate();
   const filters = readAiFilters(params);
   const filterKey = JSON.stringify(filters);
@@ -386,23 +384,15 @@ export default function AIStrategiesTab({ aggregated, charMap, idFor, linkFor })
   const rows = useMemo(() => sortAiRows(pool, { sort, dir }, statFor), [pool, sort, dir, transforms]);
   const varied = new Set(pool.map(r => r.quality)).size > 1;
 
-  // Most rows thin, and not already on the reference window: offer it.
-  const basis = baseline.basis;
-  const scope = parseScope(params);
-  const onWindow = !scope.matchType && (scope.difficulty || []).join() === basis.difficulty
-    && [...(scope.seasonNumber || [])].sort().join() === [...basis.seasons].sort().join();
+  // Most rows thin: offer the reference window (shell/useWidenLink.jsx).
   const thin = (pool.length > 0 && pool.filter(r => r.quality === 'Low').length * 2 > pool.length)
     || (figures.length > 0 && thinFigures * 2 > figures.length);
-  const widen = thin && !onWindow && !isSandboxPath(pathname) ? (
-    <span className="text-[12.5px] text-slate-400">
-      Little data here.{' '}
-      <button type="button" className="cursor-pointer bg-transparent p-0 text-[12.5px] text-orange-400 hover:underline"
-        title={`Sets the Season chip to ${basis.seasons.map(s => `Season ${s}`).join(' and ')}, Difficulty to ${basis.difficulty}, and clears Match type`}
-        onClick={() => update(p => writeScope(p, { ...parseScope(p), seasonNumber: basis.seasons, difficulty: [basis.difficulty], matchType: [] }))}>
-        Widen to the last {basis.seasonWindow} seasons, {basis.difficulty} ({fmtInt(basis.matches)} matches)
-      </button>
-    </span>
-  ) : null;
+  const widen = useWidenLink(thin);
+
+  // The open strategy is in the URL (`open=<slug>`), so a link can open one:
+  // a row of the Character page's Transformations tab does, on its character.
+  const open = params.get('open');
+  const onOpen = id => update(p => { if (id) p.set('open', id); else p.delete('open'); });
 
   const onSort = key => update(p => {
     const byDefault = key === 'name' ? 'asc' : 'desc';
@@ -414,7 +404,7 @@ export default function AIStrategiesTab({ aggregated, charMap, idFor, linkFor })
 
   return (
     <PooledTab rows={rows} sort={sort} dir={dir} onSort={onSort} resetKey={filterKey + rows.length}
-      nameLabel="AI strategy" noun="strategies" empty="No AI strategies match these filters." controls={widen}
+      nameLabel="AI strategy" noun="strategies" empty="No AI strategies match these filters." controls={widen} open={open} onOpen={onOpen}
       stats={columns} phone={{ key: 'szl.analyzer.ai.phoneCols', defaults: AI_PHONE_DEFAULTS, byKey: statFor }} below
       afterName={varied ? [{
         key: 'data', label: 'Data', width: '48px', sort: false, title: 'Data quality: uses and characters',

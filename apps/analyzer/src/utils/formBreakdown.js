@@ -43,7 +43,7 @@ import { skillSlotUses, styleHits } from './actionCodes.js';
  *     them.
  *
  * averageForms() below fills the same fields with averages over many matches,
- * for the Character page's Forms tab.
+ * for the Character page's Transformations tab.
  */
 export function matchForms(record, characterIdRecord, charMap = {}, { shared = false } = {}) {
   const history = record && record.formChangeHistory;
@@ -159,7 +159,7 @@ export function matchForms(record, characterIdRecord, charMap = {}, { shared = f
 }
 
 /**
- * A character's forms over many matches, for the Character page's Forms tab:
+ * A character's forms over many matches, for the Character page's Transformations tab:
  * each match's matchForms() (the aggregation keeps them on its match rows as
  * `forms`), averaged per form over the matches that reached it, in the order
  * the forms are usually taken. Only matches it transformed in count: a form's
