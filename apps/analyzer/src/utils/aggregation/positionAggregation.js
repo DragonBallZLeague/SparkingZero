@@ -1,5 +1,5 @@
 import { extractStats } from '../statCalculations.js';
-import { computeMatchFusionDeltas, applyFusionSplit } from '../fusionSplit.js';
+import { computeMatchFusionDeltas, applyFusionSplit, withAbsorbedPartners, isAbsorbedKey } from '../fusionSplit.js';
 import { combatEfficiency } from '../performanceScore.js';
 
 export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMatchTypeFilters = ['2v2', '3v3', '4v4', '5v5']) {
@@ -13,14 +13,17 @@ export function getPositionBasedData(files, charMap, capsuleMap = {}, positionMa
   function processCharacterRecord(characterRecord, fileIndex = 0, recordIndex = 0, characterIdRecord = null) {
     if (!characterRecord) return;
     // Each character's share of any fusion (utils/fusionSplit.js), as everywhere.
+    // A partner the file left out has no slot, so no position: it is not listed
+    // here, but its initiator keeps only its half.
+    characterRecord = withAbsorbedPartners(characterRecord);
     const fusionDeltas = computeMatchFusionDeltas(characterRecord, characterIdRecord);
     
     // Create a unique match ID based on file and record indices
     const matchId = `${fileIndex}-${recordIndex}`;
     
     // Process each team separately to determine team size
-    const alliesKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember'));
-    const enemyKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember'));
+    const alliesKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember') && !isAbsorbedKey(k));
+    const enemyKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember') && !isAbsorbedKey(k));
     const allies1PKey = Object.keys(characterRecord).find(k => k.includes('１Ｐ'));
     const enemy2PKey = Object.keys(characterRecord).find(k => k.includes('２Ｐ'));
     

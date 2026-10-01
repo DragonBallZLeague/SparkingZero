@@ -192,6 +192,8 @@ export function teamLineups(characters, tag, vs = null) {
   for (const r of characters || []) {
     for (const m of r.matches || []) {
       if (!m.fileName || (m.team !== tag && m.opponentTeam !== tag)) continue;
+      // A fusion partner the file left out holds no slot (utils/fusionSplit.js withAbsorbedPartners).
+      if (m.unrecorded) continue;
       const mirror = m.team === tag && m.opponentTeam === tag;
       const opp = m.team === tag ? m.opponentTeam : m.team;
       if (vs && opp !== vs) continue;

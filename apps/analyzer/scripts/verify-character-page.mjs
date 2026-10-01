@@ -207,9 +207,10 @@ const noMap = withMatches.find(r => !r.matches.every(m => m.map != null || m.map
 check('every match entry has map or mapId', !noMap, noMap ? 'e.g. ' + noMap.name : '');
 
 // Position grouping divides by played count, so an empty position label would
-// produce a NaN win rate rather than an error.
+// produce a NaN win rate rather than an error. A fusion partner its file left
+// out holds no slot, so it has none (utils/fusionSplit.js withAbsorbedPartners).
 const positions = new Set();
-withMatches.forEach(r => r.matches.forEach(m => positions.add(m.position)));
+withMatches.forEach(r => r.matches.forEach(m => { if (!m.unrecorded) positions.add(m.position); }));
 check('match positions are non-empty labels',
   ![...positions].some(p => p === '' || p == null),
   'saw: ' + [...positions].map(p => JSON.stringify(p)).join(', '));
@@ -354,7 +355,9 @@ console.log('\nThe build picker lists every build once, with the leaderboard\'s 
     total += builds.length;
     for (const b of builds) if (!b.row || b.row.matchCount !== b.count) countOff.push(`${r.name} ${b.code}: ${b.count} vs ${b.row?.matchCount}`);
     const covered = builds.reduce((s, b) => s + b.count, 0);
-    if (covered !== (r.matches || []).length) coverOff.push(`${r.name}: ${covered} of ${(r.matches || []).length}`);
+    // A fusion partner its file left out has no build to be filed under.
+    const withBuild = (r.matches || []).filter(m => !m.unrecorded).length;
+    if (covered !== withBuild) coverOff.push(`${r.name}: ${covered} of ${withBuild}`);
     // Every style must place for a character that fought at all, or the radar
     // draws a spoke at nothing.
     const place = placeOverview(overviewFromMatches(r.matches), baseline);

@@ -13,6 +13,10 @@ import { skillSlotUses, styleHits } from './actionCodes.js';
  * A split stays on its side of the match: the same character can be on both
  * teams (both field Goku (Super); a team's test against itself), so deltas are
  * keyed by side and character.
+ *
+ * Every one of them reads the match's characterRecord through
+ * withAbsorbedPartners() first: a file can leave the absorbed partner out, and
+ * the partner still takes its half.
  */
 
 /** 1 for the first team's record keys, 2 for the second's, 0 otherwise. */
@@ -43,6 +47,84 @@ export function getFusionPartnerFamilyForms(startId, data) {
     }
   }
   return visited;
+}
+
+/**
+ * A record withAbsorbedPartners() adds is keyed by its side and no lineup slot
+ * ("AlliesTeamMember_Absorbed_0810_00"): every side check finds it, and every
+ * slot count must skip it (isAbsorbedKey), or the last real member stops being
+ * the Anchor.
+ */
+const ABSORBED_TAG = '_Absorbed_';
+export const isAbsorbedKey = key => String(key || '').includes(ABSORBED_TAG);
+
+/**
+ * The match's characterRecord, with a record for every fusion partner the file
+ * leaves out, so THE FUSION RULE can give it its half.
+ *
+ * The AI always fuses with a partner still on the bench, so the partner never
+ * fights as itself. The game writes it a record two times in three: no battle
+ * time, nothing done, knocked out, `bFusionPotara: true` (the 20 records with
+ * that flag are exactly the absorbed partners). The other times it writes none
+ * (12 of the 32 fusions in the corpus, 2026-09-30, 11 of them Goku Black ->
+ * Fused Zamasu), and the split used to be skipped there: the initiator kept the
+ * fusion's whole output and the partner had no appearance.
+ *
+ * The added record is the one the game writes, with what the file cannot say
+ * left out: no capsules and no AI (`unrecorded: true`; the Builds tables skip
+ * it), no lineup slot (ABSORBED_TAG), and half of the fusion's HP left, as the
+ * game records it for most surviving fusions. The partner is the fusion's
+ * listed form (fusionOf), the form it would be fielded in. Returns
+ * `characterRecord` itself when nothing is missing.
+ */
+export function withAbsorbedPartners(characterRecord) {
+  if (!characterRecord || typeof characterRecord !== 'object') return characterRecord;
+  const added = {};
+  const onSide = side => new Set(Object.entries({ ...characterRecord, ...added })
+    .filter(([k]) => sideOfRecordKey(k) === side)
+    .map(([, c]) => c?.battlePlayCharacter?.originalCharacter?.key)
+    .filter(Boolean));
+
+  for (const [key, char] of Object.entries(characterRecord)) {
+    const side = sideOfRecordKey(key);
+    const original = char?.battlePlayCharacter?.originalCharacter?.key;
+    if (!side || !original || !Array.isArray(char.formChangeHistory) || !char.formChangeHistory.length) continue;
+    const chain = [original, ...char.formChangeHistory.map(f => f.key)];
+    for (let i = 1; i < chain.length; i++) {
+      const parts = transformationsData[chain[i]]?.fusionOf;
+      const at = parts ? parts.indexOf(chain[i - 1]) : -1;
+      if (at === -1) continue;
+      const partner = parts[at ^ 1];
+      const family = getFusionPartnerFamilyForms(partner, transformationsData);
+      const team = onSide(side);
+      if (partner && ![...family].some(id => team.has(id))) {
+        const play = char.battlePlayCharacter || {};
+        added[`(Key="${side === 1 ? 'Allies' : 'Enemy'}TeamMember${ABSORBED_TAG}${partner}")`] = {
+          unrecorded: true,
+          battlePlayCharacter: {
+            character: { key: partner },
+            originalCharacter: { key: partner },
+            hPGaugeValue: (play.hPGaugeValue || 0) / 2,
+            hPGaugeValueMax: play.hPGaugeValueMax || 0,
+            bFusionPotara: true,
+            bKnockDown: true,
+            bRingOut: false,
+            equipItem: [],
+          },
+          battleCount: {
+            givenDamage: 0, takenDamage: 0, battleTime: '+00000000.00:00:00.000000000',
+            killCount: 0, maxComboNum: 0, maxComboDamage: 0, dragonDashMileage: 0, battleNumCount: {},
+          },
+          ...(char.additionalCounts !== undefined ? {
+            additionalCounts: { s1Blast: 0, s2Blast: 0, ultBlast: 0, s1HitBlast: 0, s2HitBlast: 0, uLTHitBlast: 0, tags: 0 },
+          } : {}),
+          formChangeHistory: [],
+        };
+      }
+      break; // only the first fusion in the chain is the character's
+    }
+  }
+  return Object.keys(added).length ? { ...characterRecord, ...added } : characterRecord;
 }
 
 // Computes per-character stat deltas for a single match due to fusion splits.

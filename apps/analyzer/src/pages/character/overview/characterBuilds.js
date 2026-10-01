@@ -14,6 +14,8 @@ import { isProvisionalTier } from '../../../utils/performanceTier.js';
 export function characterBuilds(character, charMap = {}) {
   const groups = new Map();
   for (const m of character?.matches || []) {
+    // A fusion partner the file left out has no build to file it under (utils/fusionSplit.js).
+    if (m.unrecorded) continue;
     const key = buildKeyOf(m);
     const g = groups.get(key);
     if (g) g.count++;

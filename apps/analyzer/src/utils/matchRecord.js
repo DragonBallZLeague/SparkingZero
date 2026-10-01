@@ -1,5 +1,5 @@
 import { getTeams, extractStats, calculateMatchPerformanceScore } from './statCalculations.js';
-import { computeMatchFusionDeltas, applyFusionSplit } from './fusionSplit.js';
+import { computeMatchFusionDeltas, applyFusionSplit, withAbsorbedPartners } from './fusionSplit.js';
 import { sharedFormSnapshots } from './formBreakdown.js';
 
 /**
@@ -17,9 +17,11 @@ import { sharedFormSnapshots } from './formBreakdown.js';
  * No React, so a verifier can import it.
  */
 
+// A fusion partner the file leaves out is added, so it takes its half
+// (utils/fusionSplit.js withAbsorbedPartners); it holds no lineup slot.
 const pick = o => (o && o.characterRecord ? {
   battleWinLose: o.battleWinLose || null,
-  characterRecord: o.characterRecord,
+  characterRecord: withAbsorbedPartners(o.characterRecord),
   characterIdRecord: o.characterIdRecord || null,
   mapId: (o.originalMap && o.originalMap.key) || null,
 } : null);
@@ -88,7 +90,7 @@ export function matchSummary(content, { charMap = {}, mapsMap = {} } = {}) {
     side: i + 1,
     tag: teams[i],
     won: winner ? winner === i + 1 : null,
-    lineup: recs.map(r => {
+    lineup: recs.filter(r => !r.unrecorded).map(r => {
       const id = idOf(r);
       return { id, name: charMap[id] || id || '?', slot: slotOfKey(r._key) };
     }).sort((a, b) => a.slot - b.slot),
@@ -118,10 +120,11 @@ export function readMatch(content, { charMap = {}, capsuleMap = {}, aiStrategies
   const shared = sharedFormSnapshots(bd.characterRecord);
   const { p1, p2 } = getTeams(bd.characterRecord);
   const sides = [p1, p2].map((recs, i) => {
-    const size = recs.length;
+    // A partner the file left out holds no slot: last, with no position.
+    const size = recs.filter(rec => !rec.unrecorded).length;
     const characters = recs.map(rec => {
-      const slot = slotOfKey(rec._key);
-      const position = positionOfSlot(slot, size);
+      const slot = rec.unrecorded ? null : slotOfKey(rec._key);
+      const position = rec.unrecorded ? null : positionOfSlot(slot, size);
       const stats = applyFusionSplit(extractStats(rec, charMap, capsuleMap, position, aiStrategies), rec, deltas);
       return {
         key: rec._key,
@@ -135,8 +138,12 @@ export function readMatch(content, { charMap = {}, capsuleMap = {}, aiStrategies
         record: rec,
         // Its per-form snapshots are another fighter's too (utils/formBreakdown.js).
         formSnapshotShared: shared.has(rec._key),
+        // Fused in from the bench (the game's flag); `unrecorded` when the file
+        // left it out and only the fusion says it was there (no build, no slot).
+        absorbed: rec.battlePlayCharacter?.bFusionPotara === true,
+        unrecorded: rec.unrecorded === true,
       };
-    }).sort((a, b) => a.slot - b.slot);
+    }).sort((a, b) => (a.slot ?? 99) - (b.slot ?? 99));
     const sum = k => characters.reduce((s, c) => s + (c.stats[k] || 0), 0);
     return {
       ...summary.sides[i],

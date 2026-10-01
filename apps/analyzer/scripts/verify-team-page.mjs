@@ -37,7 +37,8 @@ import { getTeamAggregatedData } from '../src/utils/aggregation/teamAggregation.
 import { parseCharacterCSV, getTeams, extractStats } from '../src/utils/statCalculations.js';
 import { loadCapsuleData } from '../src/utils/capsuleDataProcessor.js';
 import { filterAggregatedData } from '../src/utils/aggregation/filterAggregated.js';
-import { computeMatchFusionDeltas, applyFusionSplit } from '../src/utils/fusionSplit.js';
+import { computeMatchFusionDeltas, applyFusionSplit, withAbsorbedPartners, isAbsorbedKey } from '../src/utils/fusionSplit.js';
+import { isFusionStep } from '../src/utils/transformation.js';
 import {
   teamRows, sortTeams, opponentRows, readVs, rosterRows, teamLineups, teamMatchList, fileTeams,
   lineupMatchesQuery, matchMatchesQuery,
@@ -79,15 +80,23 @@ for (const sh of index.shards) {
 function fusionRows(characters, files) {
   const rowDmg = new Map();
   for (const c of characters) for (const m of c.matches || []) rowDmg.set(`${m.fileName}|${m.side}|${m.slot}`, m.damageDone || 0);
-  const slotOf = k => (k.includes('１Ｐ') || k.includes('２Ｐ') ? 1 : Number((k.match(/Member(\d+)/) || [])[1]) + 1);
+  // A partner the file left out (withAbsorbedPartners) holds no slot.
+  const slotOf = k => (k.includes('１Ｐ') || k.includes('２Ｐ') ? 1 : isAbsorbedKey(k) ? null : Number((k.match(/Member(\d+)/) || [])[1]) + 1);
   const bad = [];
-  let fused = 0;
+  let fused = 0, fusions = 0, split = 0;
   for (const f of files) {
     const tbr = f.content.TeamBattleResults;
     const br = tbr && (tbr.battleResult || tbr.BattleResults || tbr);
     if (!br || !br.characterRecord) continue;
-    const deltas = computeMatchFusionDeltas(br.characterRecord, br.characterIdRecord);
-    const t = getTeams(br.characterRecord);
+    // Every fusion the file records, whether or not it kept the partner's record.
+    for (const c of Object.values(br.characterRecord)) {
+      const chain = [c.battlePlayCharacter?.originalCharacter?.key, ...(c.formChangeHistory || []).map(x => x.key)];
+      if (chain.some((id, i) => i > 0 && isFusionStep(chain[i - 1], id))) fusions++;
+    }
+    const record = withAbsorbedPartners(br.characterRecord);
+    const deltas = computeMatchFusionDeltas(record, br.characterIdRecord);
+    split += deltas.size / 2;
+    const t = getTeams(record);
     [t.p1, t.p2].forEach((chars, i) => {
       for (const ch of chars) {
         const st = extractStats(ch, charMap, capsuleInfo.capsuleMap);
@@ -99,7 +108,7 @@ function fusionRows(characters, files) {
       }
     });
   }
-  return { bad, fused };
+  return { bad, fused, fusions, split };
 }
 
 const seasons = [...new Set(all.filter(f => f.tags.matchType === 'Season').map(f => Number(f.tags.seasonNumber)))];
@@ -143,6 +152,9 @@ for (const [label, files] of scopes) {
 
   const split = fusionRows(characters, files);
   check(`every match row's damage is what the fusion rule gives it (${split.fused} fusion shares)`, !split.bad.length, split.bad.slice(0, 3).join('\n         '));
+  // A file can leave the absorbed partner out (12 of 32 fusions); the split used
+  // to be skipped there, the initiator keeping the whole fusion.
+  check(`every fusion is split, its partner recorded or not (${split.split} of ${split.fusions})`, split.split === split.fusions && split.fused === 2 * split.fusions);
 
   // 2-4, per team.
   const h2hBad = [], lineupBad = [], vsBad = [];
@@ -174,7 +186,11 @@ for (const [label, files] of scopes) {
     if (!o) continue;
     const cutLineups = teamLineups(characters, tag, o.opp);
     const appearances = rosterRows(o.source).reduce((n, c) => n + c.matchCount, 0);
-    const fielded = cutLineups.reduce((n, l) => n + l.us.length, 0);
+    // A fusion partner its file left out is in the roster but holds no lineup slot.
+    const cutFiles = new Set(cutLineups.map(l => l.fileName));
+    const unslotted = characters.reduce((n, c) => n + (c.matches || []).filter(m => m.unrecorded && cutFiles.has(m.fileName)
+      && m.team === tag && (m.opponentTeam !== tag || m.side !== 2)).length, 0);
+    const fielded = cutLineups.reduce((n, l) => n + l.us.length, 0) + unslotted;
     if (appearances !== fielded) vsBad.push(`${r.name} vs ${o.name}: the roster has ${appearances} appearances, the lineups ${fielded}`);
     if (cutLineups.length !== o.matches || !cutLineups.every(l => l.opponent === o.opp)) vsBad.push(`${r.name} vs ${o.name}: ${cutLineups.length} lineups for ${o.matches} matches`);
     const cutList = teamMatchList(r.source, o.opp);

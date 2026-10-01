@@ -1,7 +1,7 @@
 import { getTeams, extractStats } from '../statCalculations.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { buildKeyOf } from '../buildKey.js';
-import { computeMatchFusionDeltas, applyFusionSplit } from '../fusionSplit.js';
+import { computeMatchFusionDeltas, applyFusionSplit, withAbsorbedPartners, isAbsorbedKey } from '../fusionSplit.js';
 
 // Recompute team character averages from a filtered subset of raw match data.
 // Used by the build filter feature in the teams view to re-scope stats without full re-aggregation
@@ -172,7 +172,9 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
     if (!teams || !Array.isArray(teams) || teams.length < 1 || !battleWinLose || !characterRecord) {
       return;
     }
-    
+    // A fusion partner the file leaves out still takes its half (utils/fusionSplit.js).
+    characterRecord = withAbsorbedPartners(characterRecord);
+
     const team1Name = teams[0];
     const team2Name = teams[1];
     
@@ -309,7 +311,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
         const originalForm = char.battlePlayCharacter?.originalCharacter?.key || char.originalCharacter?.key;
         
         // Derive position from the character's key in the record
-        const p1SlotKeys = teams_data.p1.filter(c => c._key.includes('AlliesTeamMember')).length;
+        const p1SlotKeys = teams_data.p1.filter(c => c._key.includes('AlliesTeamMember') && !isAbsorbedKey(c._key)).length;
         const charKey1 = char._key || '';
         let charPosition1 = null;
         if (charKey1.includes('\uff11\uff30')) {
@@ -413,7 +415,7 @@ export function getTeamAggregatedData(files, charMap, capsuleMap = {}, aiStrateg
         const originalForm = char.battlePlayCharacter?.originalCharacter?.key || char.originalCharacter?.key;
         
         // Derive position from the character's key in the record
-        const p2SlotKeys = teams_data.p2.filter(c => c._key.includes('EnemyTeamMember')).length;
+        const p2SlotKeys = teams_data.p2.filter(c => c._key.includes('EnemyTeamMember') && !isAbsorbedKey(c._key)).length;
         const charKey2 = char._key || '';
         let charPosition2 = null;
         if (charKey2.includes('\uff12\uff30')) {

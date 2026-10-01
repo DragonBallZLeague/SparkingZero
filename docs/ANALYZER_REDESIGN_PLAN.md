@@ -799,7 +799,7 @@ The redesign dropped the transformation figures the old app had: an average coun
 
 **The rules** (`apps/analyzer/src/utils/transformation.js`, guarded by `verify-transformations` in prebuild):
 - **A transformation is any form change the character makes itself, fusions included** (the league: the AI treats the two as one behaviour). A fusion counts for the character that starts it, whose record holds it. Form changes after a fusion are the fusion's.
-- **Counted matches**: it fought, it carried no Broly's Ring, and a character that can only fuse (Goku Black Super Saiyan Rosé, Zamasu, Vegeta (GT) Super Saiyan 4) had its partner on its team. A match it transformed in always counts.
+- **Counted matches**: it fought, it was not fused in from the bench by a teammate, it carried no Broly's Ring, and a character that can only fuse (Goku Black Super Saiyan Rosé, Zamasu, Vegeta (GT) Super Saiyan 4) had its partner on its team. A match it transformed in always counts.
 - **Reverts are not transformations.** A move back to the family's base form is set aside, so a form whose only move is down cannot transform (17 forms; `npm run verify-transformations -- --list`).
 - **The "Default" AI** is a since-fixed file bug that transforming set off (all 30 such matches transformed). Those matches count for the character, never in an AI comparison, and the Default row leaves Meta's AI strategies.
 - **The figures**: the transform rate (transformed / counted matches) and the median time on the field before the first transformation.
@@ -815,7 +815,7 @@ Not doing: a Transform column on the Characters table (the league: too much for 
 
 **Open, for the league:**
 - Each transformation's skill count (1, 2 or 3) is not in the reference. With it, the Transformations tab could show the cost beside each form and say when Super Transformation cannot help. Optional.
-- **Found on the way, not changed:** a partner absorbed into a fusion before it fought has no record in the file (12 of the 32 fusions, 11 of them Goku Black → Fused Zamasu). `utils/fusionSplit.js` then skips THE FUSION RULE (`if (!partnerOriginalId) break;`): the initiator keeps the fusion's whole output, and the partner gets no appearance in that match.
+- ✅ **Found on the way, fixed 2026-09-30 at the league's request:** a partner absorbed into a fusion from the bench had no record in 12 of the 32 fusions' files (11 of them Goku Black → Fused Zamasu), and THE FUSION RULE was skipped there: the initiator kept the whole fusion and the partner had no appearance. `withAbsorbedPartners()` (`utils/fusionSplit.js`) now adds the record the game writes in the other 20, without the build the file does not have; see `apps/analyzer/CLAUDE.md`, "Fusions". Over everything, 260,027 damage moved to the partners: Goku Black Super Saiyan Rosé 43,388 → 41,925 average damage (score 62.2 → 61.6), Zamasu 229 → 240 matches. A partner fused in from the bench is also left out of its own transformation rate: it never fought as itself.
 
 ---
 

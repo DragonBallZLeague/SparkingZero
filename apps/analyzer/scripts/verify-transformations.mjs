@@ -37,7 +37,7 @@ import {
   BROLYS_RING, isFusionStep, isRevert, canTransform, upwardMoves, fusionPartners,
   matchTransformation, transformationSummary,
 } from '../src/utils/transformation.js';
-import { sideOfRecordKey } from '../src/utils/fusionSplit.js';
+import { sideOfRecordKey, withAbsorbedPartners, isAbsorbedKey } from '../src/utils/fusionSplit.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -77,6 +77,21 @@ check('a fused character transforming is not a new fusion', gotenks.transformed 
 check('fusion-only: no partner on the team is left out', t('0082_01', row(null), lineup(['0082_01', '0050_00'])).reason === 'no-partner');
 check('fusion-only: partner in any of its forms counts', t('0082_01', row(null), lineup(['0082_01', '0090_01'])).counted);
 check('fusion-only: the partner must be on the same side', t('0082_01', row(null), new Map([['test.json|2', new Set(['0090_00'])]])).reason === 'no-partner');
+check('a partner fused in from the bench is left out', t('0810_00', row(null, { absorbed: true }), lineup(['0810_00', '0800_01'])).reason === 'absorbed');
+const fusedRecord = rec => ({
+  battlePlayCharacter: { originalCharacter: { key: '0800_01' }, character: { key: '0810_01' }, hPGaugeValue: 9000, hPGaugeValueMax: 40000, equipItem: [] },
+  battleCount: { battleTime: '+00000000.00:01:00.0' }, formChangeHistory: [{ key: '0810_01' }], ...rec,
+});
+const zamasu = { battlePlayCharacter: { originalCharacter: { key: '0810_00' }, bFusionPotara: true }, battleCount: {} };
+const filled = withAbsorbedPartners({ '(Key="１ＶＳ１の１Ｐの開始地点")': fusedRecord(), '(Key="AlliesTeamMember1")': { battlePlayCharacter: { originalCharacter: { key: '0050_00' } } } });
+const added = Object.entries(filled).filter(([k]) => isAbsorbedKey(k));
+check('a partner the file leaves out is added, on the fusion\'s side, with no slot',
+  added.length === 1 && added[0][1].battlePlayCharacter.originalCharacter.key === '0810_00' && sideOfRecordKey(added[0][0]) === 1
+  && !/Member\d/.test(added[0][0]) && added[0][1].unrecorded && added[0][1].battlePlayCharacter.bFusionPotara && added[0][1].battlePlayCharacter.hPGaugeValue === 4500,
+  JSON.stringify(added));
+const kept = { '(Key="１ＶＳ１の１Ｐの開始地点")': fusedRecord(), '(Key="AlliesTeamMember1")': zamasu };
+check('a partner the file has is not added again', withAbsorbedPartners(kept) === kept);
+check('a partner on the other side does not count', Object.keys(withAbsorbedPartners({ '(Key="１ＶＳ１の１Ｐの開始地点")': fusedRecord(), '(Key="EnemyTeamMember1")': zamasu })).some(isAbsorbedKey));
 const timed = t('0000_20', row(['0000_20', '0000_21'], { forms: [{ seconds: 40 }, { seconds: 50 }] }));
 check('time to the first transformation is the first form\'s time', timed.seconds === 40);
 
@@ -126,7 +141,8 @@ for (const f of fs.readdirSync(aggDir)) {
   if (f === 'index.json' || !f.endsWith('.json')) continue;
   const shard = JSON.parse(fs.readFileSync(path.join(aggDir, f), 'utf8'));
   for (const file of Object.values(shard.files || {})) {
-    const record = file.content?.TeamBattleResults?.battleResult?.characterRecord || {};
+    // As every aggregation reads it: with any fusion partner the file left out added.
+    const record = withAbsorbedPartners(file.content?.TeamBattleResults?.battleResult?.characterRecord || {});
     const sides = new Map();
     const rows = Object.entries(record).map(([key, rec]) => {
       const id = rec.battlePlayCharacter?.originalCharacter?.key || null;
@@ -141,6 +157,7 @@ for (const f of fs.readdirSync(aggDir)) {
           equippedCapsules: (rec.battlePlayCharacter?.equipItem || []).map(e => ({ id: e.key })),
           fileName: file.name,
           side,
+          absorbed: rec.battlePlayCharacter?.bFusionPotara === true,
         },
       };
     });

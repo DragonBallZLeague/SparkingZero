@@ -85,7 +85,13 @@ export default function CharacterDetail({ c, isPhone, build, characterIdRecord, 
     if (y < 0) window.scrollBy({ top: y, behavior: 'smooth' });
   };
 
-  const buildBlock = (
+  // A fusion partner the file left out: only the fusion says it was there.
+  const buildBlock = c.unrecorded ? (
+    <div className={`${BOX} min-w-0 self-start p-3`}>
+      <span className={LABEL}>Build</span>
+      <p className="m-0 mt-1.5 text-[13px] text-slate-400">Not recorded: the file leaves out a partner fused in from the bench.</p>
+    </div>
+  ) : (
     <div className={`${BOX} min-w-0 self-start p-3`}>
       <div className="flex items-center justify-between gap-2">
         <span className={LABEL}>Build</span>

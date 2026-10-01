@@ -1,6 +1,6 @@
 import transformationsData from '../../../../../referencedata/transformations.json';
 import { extractStats } from '../statCalculations.js';
-import { getFusionPartnerFamilyForms } from '../fusionSplit.js';
+import { getFusionPartnerFamilyForms, withAbsorbedPartners, isAbsorbedKey } from '../fusionSplit.js';
 import { matchForms, sharedFormSnapshots } from '../formBreakdown.js';
 import { combatEfficiency } from '../performanceScore.js';
 import { POSITION_NAMES } from '../positions.js';
@@ -12,9 +12,11 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
   
   // Helper function to process a characterRecord (extracted to avoid duplication)
   function processCharacterRecord(characterRecord, characterIdRecord, teams = null, fileName = '', battleWinLose = null, mapId = null) {
-    // Pre-compute slot counts to determine Anchor position
-    const alliesSlotKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember'));
-    const enemySlotKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember'));
+    // A fusion partner the file leaves out still takes its half (utils/fusionSplit.js).
+    characterRecord = withAbsorbedPartners(characterRecord);
+    // Pre-compute slot counts to determine Anchor position (an added partner holds no slot)
+    const alliesSlotKeys = Object.keys(characterRecord).filter(k => k.includes('AlliesTeamMember') && !isAbsorbedKey(k));
+    const enemySlotKeys = Object.keys(characterRecord).filter(k => k.includes('EnemyTeamMember') && !isAbsorbedKey(k));
     const totalAlliesSlots = alliesSlotKeys.length;
     const totalEnemySlots = enemySlotKeys.length;
 
@@ -600,7 +602,12 @@ export function getAggregatedCharacterData(files, charMap, capsuleMap = {}, aiSt
         slot: getSlotFromKey(key),
         side: isTeam1 ? 1 : 2,
         won: won,
-        fileName: fileName
+        fileName: fileName,
+        // Fused into a teammate's fusion from the bench, so it never fought as
+        // itself (the game's own flag); `unrecorded` when the file left it out
+        // and withAbsorbedPartners() added it, with no build (utils/fusionSplit.js).
+        absorbed: char.battlePlayCharacter?.bFusionPotara === true,
+        unrecorded: char.unrecorded === true,
       });
       
       // Track all forms used

@@ -122,7 +122,9 @@ for (const [label, files] of scopes) {
     const m = readMatch(byPath.get(r.path).content, { charMap, capsuleMap: capsuleInfo.capsuleMap, aiStrategies, mapsMap });
     pages.set(r.path, m);
     for (const s of m.sides) {
-      const slots = s.characters.map(c => c.slot);
+      // A fusion partner its file left out holds no slot (utils/fusionSplit.js); it comes last.
+      const slots = s.characters.filter(c => !c.unrecorded).map(c => c.slot);
+      if (s.characters.some((c, i) => c.unrecorded && i < slots.length)) lineupBad.push(`${r.name} side ${s.side}: a partner with no slot before the lineup's end`);
       if (!slots.every((v, i) => v === i + 1)) lineupBad.push(`${r.name} side ${s.side}: slots ${slots.join(',')}`);
       for (const c of s.characters) {
         const agg = byRow.get(`${r.path}|${s.side}|${c.slot}`);
@@ -140,7 +142,7 @@ for (const [label, files] of scopes) {
     }
     // The list's summary and the page agree on who played and who won.
     const listLineups = r.sides.map(s => s.lineup.map(c => c.name).join('|')).join(' / ');
-    const pageLineups = m.sides.map(s => s.characters.map(c => c.name).join('|')).join(' / ');
+    const pageLineups = m.sides.map(s => s.characters.filter(c => !c.unrecorded).map(c => c.name).join('|')).join(' / ');
     if (listLineups !== pageLineups || r.winner !== m.winner) lineupBad.push(`${r.name}: the list and the page disagree`);
   }
   check('each lineup is in slot order, with the aggregation\'s character in each slot', !lineupBad.length, lines(lineupBad));

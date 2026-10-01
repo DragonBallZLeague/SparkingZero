@@ -100,16 +100,19 @@ export default function MatchTeamTable({ side, isPhone, characterLinkFor, teamLi
                     <Name to={to || undefined} onClick={e => e.stopPropagation()}
                       className={`block text-[13.5px] font-semibold leading-[1.3] text-slate-100 no-underline hover:underline ${isPhone ? 'line-clamp-2' : 'truncate'}`}>{c.name}</Name>
                     <span className="block truncate text-[11px] leading-[1.4] text-slate-400">
-                      {isPhone ? pos : (c.played ? `${fmtInt(s.kills)} KO${s.kills === 1 ? '' : 's'}` : 'Did not fight')}
+                      {/* A partner fused in from the bench never fought as itself; its figures are its half of the fusion. */}
+                      {c.absorbed ? 'Fused in' : isPhone ? pos : (c.played ? `${fmtInt(s.kills)} KO${s.kills === 1 ? '' : 's'}` : 'Did not fight')}
                     </span>
                   </span>
                 </span>
-                {!isPhone && (
+                {!isPhone && (c.unrecorded ? (
+                  <span className="text-[12px] text-slate-500">Build not recorded</span>
+                ) : (
                   <span className="flex min-w-0 flex-col gap-1">
                     <BuildPill label={build} compact className="self-start" />
                     <CostBar capsules={capsulesOf(s)} className="w-full max-w-[160px]" />
                   </span>
-                )}
+                ))}
                 <span className="text-right text-[14px] tabular-nums text-slate-100">{isPhone ? fmtK(s.damageDone) : fmtInt(s.damageDone)}</span>
                 {!isPhone && <span className="text-right text-[14px] tabular-nums text-slate-300">{fmtInt(s.damageTaken)}</span>}
                 <span className="flex flex-col items-end">

@@ -86,8 +86,9 @@ const everything = scope('Everything', all);
 for (const [label, { rows, builds }] of [['default', def], ['everything', everything]]) {
   log(`\n[${label}]`);
 
-  // 1. Uses add up: every match of every character is in exactly one build.
-  const matches = rows.reduce((n, r) => n + (r.matches || []).length, 0);
+  // 1. Uses add up: every match of every character is in exactly one build,
+  // bar a fusion partner its file left out, which has no build (utils/fusionSplit.js).
+  const matches = rows.reduce((n, r) => n + (r.matches || []).filter(m => !m.unrecorded).length, 0);
   const uses = builds.reduce((n, b) => n + b.uses, 0);
   check('every match is counted in exactly one build', matches === uses, `${matches} matches, ${uses} uses`);
   // A score, yes. Not necessarily a settled one: "provisional" counts the

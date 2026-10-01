@@ -21,15 +21,16 @@ import { getFusionPartnerFamilyForms } from './fusionSplit.js';
  *   are the fusion's (Fused Zamasu -> Half-Corrupted is not Goku Black's).
  *
  * - The rate is over the matches it COULD have transformed in, the counted
- *   matches: it fought (battle time over 0), it did not carry Broly's Ring
- *   (which blocks transforming: 0 of 132 matches with it did), and a
- *   character that can only fuse (Goku Black Super Saiyan Rosé, Zamasu,
- *   Vegeta (GT) Super Saiyan 4) had its partner on its team. A match it did
- *   transform in always counts, so a move transformations.json is missing
- *   still shows (scripts/verify-transformations.mjs reports those). That also
- *   covers a fusion's lineup: a file has no record of a partner absorbed before
- *   it fought (12 of the 32 fusions), while in a match without a fusion every
- *   teammate has one, fought or not.
+ *   matches: it fought (battle time over 0), it was not fused in from the
+ *   bench as a teammate's partner (`absorbed`: it never fought as itself), it
+ *   did not carry Broly's Ring (which blocks transforming: 0 of 132 matches
+ *   with it did), and a character that can only fuse (Goku Black Super Saiyan
+ *   Rosé, Zamasu, Vegeta (GT) Super Saiyan 4) had its partner on its team. A
+ *   match it did transform in always counts, so a move transformations.json is
+ *   missing still shows (scripts/verify-transformations.mjs reports those).
+ *   The lineup check is as good as the file: a teammate that never entered
+ *   often has no record, so a fusion-only character's match whose partner sat
+ *   out the whole match is left out with the ones where it was not fielded.
  *
  * - Reverting is not transforming. transformations.json lists the move back
  *   to a family's base form beside the moves up (Goku (Z - End) Super Saiyan 3
@@ -143,8 +144,9 @@ const capsuleIds = m => (m.equippedCapsules || []).map(c => c && c.id).filter(Bo
  *   { counted, reason, transformed, fused, seconds }
  *
  * `counted` is whether the match is in the rate; when it is not, `reason` says
- * why: 'unfought', 'brolys-ring', 'no-partner' (it can only fuse, and its
- * partner was not on its team) or 'cannot' (no transformation, no fusion).
+ * why: 'unfought', 'absorbed' (fused in from the bench by a teammate),
+ * 'brolys-ring', 'no-partner' (it can only fuse, and its partner was not on
+ * its team) or 'cannot' (no transformation, no fusion).
  * `transformed` is any form change it made itself, a fusion included; `fused`
  * that one of them was a fusion. `seconds` is its time on the field before the
  * first one, when the file gives per-form figures (null otherwise).
@@ -162,6 +164,7 @@ export function matchTransformation(m, { id, lineups = null } = {}) {
   const result = (counted, reason = null) => ({ counted, reason, transformed: counted && transformed, fused: counted && fused, seconds: counted ? seconds : null });
 
   if (!(m.battleTime > 0)) return result(false, 'unfought');
+  if (m.absorbed) return result(false, 'absorbed');
   if (capsuleIds(m).includes(BROLYS_RING)) return result(false, 'brolys-ring');
   if (transformed || canTransform(id)) return result(true);
   const partners = fusionPartners(id);
@@ -191,7 +194,7 @@ const median = values => {
  * matches were not counted, by reason.
  */
 export function transformationSummary(matches, { id, lineups = null } = {}) {
-  const left = { unfought: 0, 'brolys-ring': 0, 'no-partner': 0, cannot: 0 };
+  const left = { unfought: 0, absorbed: 0, 'brolys-ring': 0, 'no-partner': 0, cannot: 0 };
   let counted = 0, transformed = 0, fused = 0;
   const times = [];
   for (const m of matches || []) {
