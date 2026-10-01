@@ -30,7 +30,8 @@
     "build-style-baseline": "node --import ./scripts/json-import-hook.mjs scripts/generate-style-baseline.mjs",
     "verify-routes": "node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs",
     "shot": "node scripts/dev/shot.mjs",
-    "css-diff": "node scripts/dev/css-diff.mjs"
+    "css-diff": "node scripts/dev/css-diff.mjs",
+    "sweep": "node scripts/dev/sweep.mjs"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.16",

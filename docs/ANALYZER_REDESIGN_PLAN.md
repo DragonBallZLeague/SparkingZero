@@ -79,6 +79,34 @@ The league's call, after going through what was left of the plan: the restyle (t
 - the accessibility pass (Phase 2c: keyboard order through the chip lists, focus in the phone sheets, 44px targets)
 - consolidating the score formula, still written out in about 15 places ("Performance tiers", "Still open")
 
+### Handoff for the next phase (written 2026-09-30, when the restyle closed)
+
+For a fresh start on the next phase: where things stand, how work was checked, and where each item begins. Read "What the Analyzer is for", "Decisions locked in" and `apps/analyzer/CLAUDE.md` first, as before.
+
+**Where the code is.**
+- Everything is on the local **`dev-branch`** (`6b6d1352`, the same commit as the local `analyzer-restyle` branch, kept). **Nothing is pushed**; pushing is the league's call. Start new work on a new local branch off `dev-branch`.
+- At the last fetch, local `dev-branch` was 35 commits ahead of `origin/dev-branch` and 23 behind. The 23 are data submissions (`BR_Data/` JSON) and one website events YAML; nothing overlaps, so pulling before the push should merge cleanly.
+- **The push carries a deploy workflow change**: the checkout takes the full history, blobless (`fetch-depth: 0`, `filter: blob:none`), which Home's upload dates need (`generate-recent-uploads.mjs`).
+
+**How work was checked** (the bar every change in the restyle and Home met):
+- Build: `npx vite build` in `apps/analyzer` for code changes; `npm run build:analyzer` from the root when data or prebuild scripts change (it runs prebuild). Serve with `node scripts/serve-dist.js 8080` from the root (the Pages 404 rule; dev servers do not reproduce deep links).
+- `npm run sweep -- 1280,390` (`scripts/dev/sweep.mjs`): every view, no errors, no sideways scroll, nothing blank. Add tablet widths (640 to 1100) for table work. `npm run shot` for screenshots at both widths; `npm run css-diff` before any sweeping style change.
+- The verifiers, all passing on 2026-09-30: `verify-routes`, `verify-self-contained` (both in prebuild), `verify-filters`, `verify-character-page`, `smoke-character-page`, `verify-team-page`, `verify-match-page`, `verify-meta-builds`, `verify-home`. The last six aggregate the real corpus and are not in prebuild: run the ones a change touches. A new page gets a verifier of its own in the same style.
+- Many source files use CRLF line endings: keep a file's endings when editing it. `smoke-character-page` prints `useLayoutEffect` server-render warnings from react-router's `MemoryRouter` and `CharacterTabs`; they are harmless.
+
+**Where each item starts.**
+- **The share image card** ("Share-snippet feature" below): Character, Team and Match pages and the Sandbox, image first, for pasting into Discord. `components/ShareButton.jsx` copies the link today. No image library is installed yet (the plan names canvas or `html-to-image`). What the card shows is undecided: settle it with the league on a real-data demo, as the Overview was.
+- **Build comparison and character comparison** (Phase 3's list): the Character page's Builds tab (`character/CharacterBuilds.jsx` on Meta's `BuildsTable`, with the `?build=` cut) is the raw material for comparing builds. Build recommendations are to be rebuilt on the league's own score (the old engine was deleted). Character comparison is a querystring mode on `/characters`, 2-3 side by side, so a comparison is a link; its design is open.
+- **Trends over time** (Phase 4): match files carry no dates. `utils/matchOrder.js` orders matches by name (season, phase, round, week), the natural axis for season matches; per-file upload dates are available from git, as `generate-recent-uploads.mjs` reads them.
+- **Matchup analysis** (Phase 4): start from item 14's findings in the league's last review above. Who faced whom is exact only in matches where nobody tags (43% of Season 0's league matches); the "Opponent AI" filter built on that was dropped as too narrow.
+- **The accessibility pass** (Phase 2c): keyboard order through the chip lists, focus in the phone sheets, 44px touch targets.
+- **One score formula**: "Performance tiers" › "Still open" (about 15 places in 8 files).
+- **Sandbox polish** (Phase 7): the image card there too, with no deep links.
+
+**Small things left open.**
+- A value below the whole reference pool ranks "#127/126" (the Overview, and the Styles view's tooltips). "Below all 126" was proposed and not yet answered.
+- Many OS1 test matches show no map ("—") in match rows; not investigated (the file's map id, or `referencedata/maps.csv`).
+
 ### Phase 1 — Foundation: ✅ Complete (with three loose ends)
 
 - `react-router-dom@^6.28.0` is a real dependency and is wired in `src/main.jsx`:
