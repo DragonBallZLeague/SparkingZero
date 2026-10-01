@@ -18,7 +18,7 @@ import { ChevronDown, Check } from 'lucide-react';
  *   selected        string[] when multi, a value otherwise
  *   allLabel        the multi list's first row, which clears the chip
  *   onChange        (next) => void; a multi list stays open while ticking
- *   search          a search box, for long lists
+ *   search          a search box, for long lists (`labelMatches`)
  *   note            a line under the list
  *
  * `caret={false}` drops the chip's chevron (the "+ Filter" chip has none).
@@ -98,14 +98,28 @@ export function multiLabel(name, values, labelOf, fmt) {
   return joined.length <= 26 ? joined : `${ls[0]} +${ls.length - 1}`;
 }
 
+/** Text as plain lowercase words: "Goku (Z - End)" is "goku z end". */
+const words = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, ' ').trim();
+
+/**
+ * A list's search: every word typed is somewhere in the label, punctuation
+ * ignored, so "goku end" finds "Goku (Z - End) Super Saiyan".
+ */
+export function labelMatches(label, query) {
+  const want = words(query);
+  if (!want) return true;
+  const text = ` ${words(label)}`;
+  return want.split(' ').every(w => text.includes(w));
+}
+
 function OptionList({ chip, big = false, autoFocusSearch = false }) {
   const [q, setQ] = useState('');
   const searchRef = useRef(null);
   useEffect(() => { if (autoFocusSearch && searchRef.current) searchRef.current.focus(); }, [autoFocusSearch]);
 
   const isOn = o => (chip.multi ? chip.selected.includes(String(o.v)) : String(chip.selected) === String(o.v));
-  const query = q.trim().toLowerCase();
-  let opts = query ? chip.options.filter(o => o.l.toLowerCase().includes(query)) : chip.options;
+  const query = q.trim();
+  let opts = query ? chip.options.filter(o => labelMatches(o.l, query)) : chip.options;
   // In a long list the picked values rise to the top, so they stay in view.
   if (chip.multi && chip.search) opts = [...opts.filter(isOn), ...opts.filter(o => !isOn(o))];
 
@@ -143,7 +157,7 @@ function OptionList({ chip, big = false, autoFocusSearch = false }) {
             )}
             {o.img}
             <span className="min-w-0 truncate">{o.l}</span>
-            {o.cnt !== undefined && <span className="ml-auto pl-3 text-xs tabular-nums text-slate-500">{o.cnt}</span>}
+            {o.cnt !== undefined && <span className="ml-auto whitespace-nowrap pl-3 text-xs tabular-nums text-slate-500">{o.cnt}</span>}
           </button>
         );
       })}

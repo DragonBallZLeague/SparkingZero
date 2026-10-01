@@ -15,8 +15,10 @@
  *   build:<n>     choose option n in the build picker (0 = All builds)
  *   hover:<text>  hover the tooltip target whose text starts with <text>
  *   at:<classes>  scroll to the first <div> whose class attribute is exactly <classes>
+ *   chip:<id>     open the chip or menu whose data-chip is <id> (e.g. chip:char)
+ *   type:<text>   type <text> into the focused input (an open menu's search)
  *
- * With picker, hover: or at:, the shot is the viewport. Otherwise it is the full
+ * With picker, hover:, at: or chip:, the shot is the viewport. Otherwise it is the full
  * page - from the character card down on a character page - up to 2400px tall.
  */
 import fs from 'fs';
@@ -77,6 +79,23 @@ try {
       })()`);
       if (!found) console.error('warning: no <div> with class ' + JSON.stringify(a.slice(3)));
       viewportShot = true;
+    } else if (a.startsWith('chip:')) {
+      const found = await evaluate(`(() => {
+        const b = document.querySelector('button[data-chip=${JSON.stringify(a.slice(5))}]');
+        if (b) b.click();
+        return !!b;
+      })()`);
+      if (!found) console.error('warning: no chip ' + JSON.stringify(a.slice(5)));
+      viewportShot = true;
+    } else if (a.startsWith('type:')) {
+      // React tracks an input's value itself: set it through the native setter,
+      // then fire the input event React listens for.
+      await evaluate(`(() => {
+        const el = document.activeElement;
+        if (!el || el.tagName !== 'INPUT') return;
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(el, ${JSON.stringify(a.slice(5))});
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      })()`);
     } else {
       console.error('warning: unknown action ' + a);
     }

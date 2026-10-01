@@ -1,6 +1,7 @@
 import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.js';
 import { tierMatchCount, isProvisionalTier, fadesThinSamples } from '../../utils/performanceTier.js';
 import { POSITION_NAMES } from '../../utils/positions.js';
+import { slugifyCharacterName } from '../../utils/characterSlug.js';
 
 /**
  * The Characters page's data: its columns, its URL params, and the rows for a
@@ -38,7 +39,8 @@ export const statByKey = key => CHAR_STATS.find(s => s.key === key) || null;
 export const DEFAULT_PHONE_STATS = ['dmg', 'eff', 'dps', 'surv'];
 
 // ---- URL params ----------------------------------------------------------------
-// view=styles | tiers | (table), sort=<stat key | score | name>, dir=asc | (desc), pos=1,3
+// view=styles | tiers | (table), sort=<stat key | score | name>, dir=asc | (desc), pos=1,3,
+// char=android-13,android-16 (name slugs, as the Performances view's Character chip).
 // The Styles view's sort keys are its own (characters/styleRows.js STYLE_STATS).
 
 const VIEWS = ['styles', 'tiers'];
@@ -56,6 +58,13 @@ export function readPositions(params) {
   const set = [...new Set(raw)].sort();
   return set.length === 3 ? [] : set; // all three = no filter
 }
+/** The picked characters' name slugs ([] = every character). */
+export function readCharacters(params) {
+  const raw = (params.get('char') || '').split(',').map(s => s.trim()).filter(Boolean);
+  return [...new Set(raw)].sort();
+}
+/** A row's value in `char`. */
+export const characterSlugOf = row => slugifyCharacterName(row.name);
 
 /**
  * The rows for a set of positions ([] = all). Each character's matches are cut
@@ -77,20 +86,6 @@ export function rowsForPositions(aggregated, positions, charMap) {
  * The legend line under a list of character rows. When every row is a thin
  * sample nothing is faded (fadesThinSamples), and the line says so instead.
  */
-/** A name as plain lowercase words: "Goku (Z - End)" is "goku z end". */
-const words = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, ' ').trim();
-
-/**
- * The Characters page's search: every word typed is somewhere in the name,
- * punctuation ignored, so "goku end" finds "Goku (Z - End) Super Saiyan".
- */
-export function characterMatchesQuery(row, q) {
-  const want = words(q);
-  if (!want) return true;
-  const name = ` ${words(row.name)}`;
-  return want.split(' ').every(w => name.includes(w));
-}
-
 export function fadeLegend(rows) {
   if (rows.length && !fadesThinSamples(rows)) return 'Every character here has fewer than 5 matches, so none is faded.';
   const thin = rows.filter(isProvisionalTier).length;

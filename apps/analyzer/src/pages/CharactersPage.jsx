@@ -1,17 +1,17 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { SearchBox } from '../shell/tableParts.jsx';
 import { useSearchParams } from 'react-router-dom';
 import Segmented from '../shell/Segmented.jsx';
-import ChipMenu from '../shell/ChipMenu.jsx';
+import ChipMenu, { multiLabel } from '../shell/ChipMenu.jsx';
 import { useQueryUpdate } from '../shell/useQueryUpdate.js';
 import { useIsPhone, useTableSize, PICKED_COLUMNS } from '../shell/useMediaQuery.js';
 import { usePickedColumns, pickerChip as columnChip } from '../shell/usePickedColumns.js';
-import { tierBasisSummary } from '../utils/performanceTier.js';
+import { tierBasisSummary, tierMatchCount } from '../utils/performanceTier.js';
+import Portrait from '../components/Portrait.jsx';
 import CharacterTable from './characters/CharacterTable.jsx';
 import TierList from './characters/TierList.jsx';
 import {
   CHAR_STATS, DEFAULT_PHONE_STATS, statByKey,
-  readView, readSort, readPositions, rowsForPositions, sortRows, fadeLegend, characterMatchesQuery,
+  readView, readSort, readPositions, readCharacters, characterSlugOf, rowsForPositions, sortRows, fadeLegend,
 } from './characters/characterRows.js';
 import { STYLE_STATS, DEFAULT_PHONE_STYLES, styleByKey, withStyles } from './characters/styleRows.js';
 
@@ -29,11 +29,15 @@ const STYLES_FULL_FROM = 1000;
  * Its state lives in the query string, so any view of it is a link (the Home
  * page's curated boards are exactly such links): `view=styles|tiers`, `sort`
  * and `dir` (each table view has its own keys, so switching view drops them),
- * and `pos` for the Position chip, which App puts in the scope bar.
+ * `pos` for the Position chip, which App puts in the scope bar, and `char` for
+ * the character filter.
  *
- * A search box (as the Matches list has) narrows either view by name, and is
- * not in the URL. The bars, colours and fading stay measured against the whole
- * list, and a row keeps its place number, so a search only hides rows.
+ * The character filter is the Performances view's Character chip, beside the
+ * view switch: search the list, tick any number of characters. It sits in the
+ * page's control row rather than the scope bar, so it works in the Sandbox
+ * too, whose chips are hidden. The bars,
+ * colours and fading stay measured against the whole list, and a row keeps its
+ * place number, so picking characters only hides rows.
  *
  * `aggregated` is the scope's aggregated rows (App owns loading). A row opens
  * the character's page through `linkFor(name)`; `idFor(name)` gives the id its
@@ -45,8 +49,8 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
   const isPhone = useIsPhone();
   const [statPicks, setStatPick] = usePickedColumns(PHONE_COLS_KEY, DEFAULT_PHONE_STATS, statByKey);
   const [stylePicks, setStylePick] = usePickedColumns(PHONE_STYLES_KEY, DEFAULT_PHONE_STYLES, styleByKey);
+  // The open menu: a column picker's slot, or 'char'.
   const [pickerOpen, setPickerOpen] = useState(null);
-  const [query, setQuery] = useState('');
 
   const view = readView(params);
   const styles = view === 'styles';
@@ -62,6 +66,8 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
   const { sort, dir } = readSort(params, viewStats);
   const positions = readPositions(params);
   const posKey = positions.join(',');
+  const picked = readCharacters(params);
+  const pickedKey = picked.join(',');
 
   const cut = useMemo(() => rowsForPositions(aggregated, positions, charMap),
     // positions is re-derived each render; posKey is its identity.
@@ -69,9 +75,12 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
     [aggregated, posKey, charMap]);
   const pool = useMemo(() => (styles ? withStyles(cut) : cut), [cut, styles]);
   const rows = useMemo(() => sortRows(pool, { sort, dir }, viewStats), [pool, sort, dir, viewStats]);
-  const hits = useMemo(() => rows.filter(r => characterMatchesQuery(r, query)), [rows, query]);
+  const hits = useMemo(() => (picked.length ? rows.filter(r => picked.includes(characterSlugOf(r))) : rows),
+    // picked is re-derived each render; pickedKey is its identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rows, pickedKey]);
   const placeOf = useMemo(() => new Map(rows.map((r, i) => [r.name, i + 1])), [rows]);
-  const noHit = `No character in this scope matches “${query.trim()}”.`;
+  const noHit = `None of the picked characters ${picked.length === 1 ? 'is' : 'are'} in this scope.`;
 
   // A link sorted by a column the phone's two picks leave out (Home's Top
   // Tanks board opens the Styles view sorted by Defense) puts it in the second
@@ -101,6 +110,37 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
     slot, shown: n, cols: phoneStats, stats: viewStats, onPick: (i, v) => { setPhoneStat(i, v); setPickerOpen(null); },
   });
 
+  // The character filter: the Performances view's Character chip, over the
+  // characters in scope (and at the picked positions) with their match counts.
+  const charChip = useMemo(() => {
+    const options = [...cut].sort((a, b) => a.name.localeCompare(b.name)).map(r => {
+      const m = tierMatchCount(r);
+      return {
+        v: characterSlugOf(r), l: r.name, cnt: `${m.toLocaleString('en-US')} match${m === 1 ? '' : 'es'}`,
+        img: <Portrait id={idFor(r.name)} name={r.name} size={22} rounded={5} />,
+      };
+    });
+    // A character picked by a shared link may not be in this scope; it still needs a name.
+    const nameOf = v => (options.find(o => o.v === v) || {}).l || v;
+    return {
+      id: 'char',
+      name: 'Character',
+      multi: true,
+      search: true,
+      selected: picked,
+      set: picked.length > 0,
+      label: multiLabel('Character', picked, nameOf),
+      allLabel: 'Any character',
+      options,
+      onChange: next => update(p => {
+        const keep = [...new Set(next)].sort();
+        if (keep.length) p.set('char', keep.join(',')); else p.delete('char');
+      }),
+    };
+    // picked is re-derived each render; pickedKey is its identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cut, pickedKey, idFor, update]);
+
   if (!pool.length) {
     return (
       <div className="rounded-[10px] border border-solid border-gray-700 bg-shell-panel px-6 py-8 text-center text-slate-400">
@@ -112,12 +152,16 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
   return (
     <div>
       {/* The page's own control row: its view switch lives here, not in the tab row. */}
-      {/* The search sits beside the count, as on the Matches list; on a phone it
-          takes its own line under the switch and the column pickers. */}
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+      {/* What is shown (the view and the character filter) on the left; the
+          count and the column pickers pushed right, wrapping as they need on a
+          phone. The filter is a chip, as filters are everywhere else: it opens
+          a list to search and tick, and is not a box to type in. */}
+      <div className="mb-3 flex flex-wrap items-center gap-3">
         <Segmented label="View" value={view} onChange={setView}
           options={[{ value: 'table', label: 'Stats' }, { value: 'styles', label: 'Styles' }, { value: 'tiers', label: 'Tier list' }]} />
-        <div className={`flex items-center gap-3 ${isPhone ? 'contents' : ''}`}>
+        <ChipMenu chip={charChip} isPhone={isPhone} open={pickerOpen === 'char'}
+          onOpenChange={o => setPickerOpen(o ? 'char' : null)} />
+        <div className="ml-auto flex items-center gap-3">
           {(!compact || view === 'tiers') && (
             <span className="text-[13px] text-slate-400">
               <b className="font-semibold text-white">{hits.length}</b> {hits.length === 1 ? 'character' : 'characters'}
@@ -131,8 +175,6 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
               ))}
             </div>
           )}
-          <SearchBox value={query} onChange={setQuery} placeholder="Search characters"
-            className={isPhone ? 'w-full' : 'w-[300px]'} />
         </div>
       </div>
 
@@ -142,7 +184,7 @@ export default function CharactersPage({ aggregated, charMap, idFor, linkFor, lo
           : <div className="rounded-[10px] border border-solid border-gray-700 bg-shell-panel p-7 text-center text-slate-400">{noHit}</div>)
         : <CharacterTable rows={hits} pool={pool} sort={sort} dir={dir} onSort={onSort} size={size}
             phoneStats={phoneStats.slice(0, n)} idFor={idFor} linkFor={linkFor} styles={styles}
-            rankOf={query.trim() ? r => placeOf.get(r.name) : null} empty={noHit} />}
+            rankOf={picked.length ? r => placeOf.get(r.name) : null} empty={noHit} />}
 
       <p className="mt-2.5 mb-0 text-xs text-slate-500">
         {view === 'tiers' ? `${tierBasisSummary()} ` : ''}
