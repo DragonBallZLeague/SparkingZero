@@ -4,6 +4,7 @@ import { statByKey } from '../characters/characterRows.js';
 import { styleByKey } from '../characters/styleRows.js';
 import { STYLES } from '../../utils/characterOverview.js';
 import { dataQuality, MIN_OTHER, strategyPairs, styleRanks, transformShift } from './aiShift.js';
+import { actionByKey, actionRates, fmtPair, fmtRate, fmtRateChange } from './aiActions.js';
 import { UNKNOWN_AI } from '../../utils/transformation.js';
 
 /**
@@ -142,19 +143,97 @@ export const TRANSFORM_STAT = {
       + `${t.compared} matches over ${t.characters} character${t.characters === 1 ? '' : 's'} (${t.quality} data)`;
   },
 };
-/** The table's stat columns: Uses, the six styles, then Transform. */
+/** The table's stat columns: Uses, the six styles, then Transform (action columns go after Uses). */
 export const AI_COLUMNS = [USES_STAT, ...AI_STYLE_STATS, TRANSFORM_STAT];
+
+// ---- Action columns (`act=`) ------------------------------------------------------
+// Any single action can join the table as a column (the league, 2026-10-01:
+// "which AI makes my character spark most"), several at once for actions that
+// go together (sparking and ultimates). Picked from the control row or by
+// tapping a row of the detail's All actions box (aiActions.js).
+
+/** Up to this many at once: with them, the full table still fits a laptop. */
+export const MAX_ACTION_COLUMNS = 4;
+
+/**
+ * Each row with `actions` added, the figures behind the action columns:
+ * { [key]: { raw, cmp } }, `raw` the rates a minute on this AI over every
+ * character that ran it, `cmp` the same characters against their other AIs
+ * (aiActions.js actionRates). Apart from aiStrategyRows so the table pays for
+ * it only while an action column is shown.
+ */
+export function withActionRates(rows, aggregated, f = { chars: [] }) {
+  return rows.map(r => {
+    const { all, paired } = strategyPairs(aggregated, r.name, f);
+    const raw = actionRates(all, { compare: false });
+    const cmp = actionRates(paired);
+    return { ...r, actions: Object.fromEntries(raw.map((a, i) => [a.key, { raw: a, cmp: cmp[i] }])) };
+  });
+}
+
+const partName = a => (a.partWord === 'hit' ? ' (hits/thrown)' : a.partWord === 'won' ? ' (won/fought)' : '');
+
+/**
+ * An action as a table column, `a_<key>` in the URL's `sort`. With the
+ * Character chip on one character: its rate a minute on each AI, which finds
+ * the AI that makes it do something most. Otherwise the change a minute
+ * against the same characters on their other AIs, as the style columns are,
+ * since a pooled rate mostly says which characters run the AI. Its header's
+ * tooltip says what it counts; the footnote says which figure it is. Its
+ * header's second line ("/min", "±/min") keeps "Ults" from reading as the
+ * Ultimates style column beside it.
+ */
+export function actionColumn(key, one) {
+  const a = actionByKey(key);
+  const fig = r => (r.actions ? r.actions[key] : null);
+  const base = {
+    key: `a_${key}`, label: a.short, short: a.short, unit: one ? '/min' : '±/min', dir: 1,
+    title: `${a.label} a minute on the field${partName(a)}`,
+  };
+  if (one) {
+    return {
+      ...base,
+      fmt: fmtRate,
+      get: r => { const x = fig(r); return x ? x.raw.with : null; },
+      text: r => { const x = fig(r); return x ? fmtPair(x.raw.with, x.raw.partWith) : '–'; },
+      cellTitle: r => {
+        const x = fig(r);
+        if (!x || x.raw.with === null) return undefined;
+        const mine = `${a.label} a minute${partName(a)}: ${fmtPair(x.raw.with, x.raw.partWith)} on this AI`;
+        return x.cmp.usual === null ? mine : `${mine}, ${fmtPair(x.cmp.usual, x.cmp.partUsual)} on its other AIs`;
+      },
+    };
+  }
+  return {
+    ...base,
+    diverge: true,
+    fmt: fmtRateChange,
+    get: r => { const x = fig(r); return x && x.cmp.with !== null ? x.cmp.with - x.cmp.usual : null; },
+    cellTitle: r => {
+      const x = fig(r);
+      if (!x || x.cmp.with === null) return 'No character has enough matches on other AI strategies to compare';
+      return `${a.label} a minute${partName(a)}: ${fmtPair(x.cmp.with, x.cmp.partWith)} on this AI, `
+        + `${fmtPair(x.cmp.usual, x.cmp.partUsual)} on their other AIs (${x.cmp.characters} character${x.cmp.characters === 1 ? '' : 's'} on average)`;
+    },
+  };
+}
 export const aiStatByKey = key => AI_COLUMNS.find(c => c.key === key) || null;
 /** A compact table's columns before anyone picks (a phone the first two, a tablet all four). */
 export const AI_PHONE_DEFAULTS = ['style_melee', 'style_blast', 'style_ult', 'style_defense'];
 
 // ---- URL params (on /meta?tab=ai) --------------------------------------------------
 // type=Attack,Defense, char=<character slugs> (shared with the Builds tab),
-// sort=<a column key | score | chars | name>, dir=asc | desc. The Capsules tab
+// act=<action keys> (the action columns), sort=<a column key | score | chars |
+// name>, dir=asc | desc. The Capsules tab
 // uses the same two readers with its own columns (capsuleRows.js
 // CAPSULE_COLUMNS) and no score column (`{ score: false }`).
 
 const list = (params, key) => [...new Set((params.get(key) || '').split(',').map(s => s.trim()).filter(Boolean))];
+
+/** The action columns picked (`act=sparking,ult`): known keys, at most MAX_ACTION_COLUMNS. */
+export function readAiActions(params) {
+  return list(params, 'act').filter(k => actionByKey(k)).slice(0, MAX_ACTION_COLUMNS);
+}
 
 export function readAiFilters(params) {
   const types = list(params, 'type').filter(t => AI_TYPES.includes(t));

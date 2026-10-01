@@ -12,7 +12,7 @@ import { CHAR_STATS, DEFAULT_PHONE_STATS, statByKey } from '../characters/charac
 /** The same picks as the Characters table: its columns, one choice per viewer. */
 const PHONE_COLS_KEY = 'szl.analyzer.characters.phoneCols';
 /** From here every column fits; narrower, picked columns (two on a phone, four on a tablet). */
-const FULL_FROM = 900;
+export const FULL_FROM = 900;
 /** Room for all eight columns and the detail beside them; narrower, a row opens its detail under it. */
 const WIDE_QUERY = '(min-width: 1400px)';
 
@@ -45,6 +45,11 @@ const WIDE_QUERY = '(min-width: 1400px)';
  *               in the URL, `open=<slug>`, so a link can open a strategy:
  *               the Character page's Transformations tab does); without
  *               `onOpen` the tab keeps it, cleared when the filters change
+ *   pinned      stat columns (in `stats` too) that a compact table shows
+ *               first, before the viewer's picked ones, and that its pickers
+ *               do not offer (AI strategies' action columns, `act=`)
+ *   fullFrom    the width the full table fits from (default 900px; wider
+ *               with extra columns)
  */
 export default function PooledTab({
   rows, sort, dir, onSort, nameLabel, noun, nameCell, title, detail, controls = null, resetKey = '', empty, footnote = null,
@@ -55,9 +60,11 @@ export default function PooledTab({
   score = true,
   open = null,
   onOpen = null,
+  pinned = [],
+  fullFrom = FULL_FROM,
 }) {
   const isPhone = useIsPhone();
-  const size = useTableSize(FULL_FROM);
+  const size = useTableSize(fullFrom);
   const compact = size !== 'full';
   const n = PICKED_COLUMNS[size] || 0;
   const isWide = useMediaQuery(WIDE_QUERY) && !below;
@@ -76,7 +83,10 @@ export default function PooledTab({
   const expandedId = onOpen ? open : expanded;
 
   const fade = fadesThinSamples(rows);
-  const stats = compact ? picked.slice(0, n).map(phone.byKey).filter(Boolean) : allStats;
+  // A compact table's slots: the pinned columns, then the viewer's picks.
+  const slots = Math.max(0, n - pinned.length);
+  const pickable = allStats.filter(s => !pinned.includes(s));
+  const stats = compact ? [...pinned.slice(0, n), ...picked.slice(0, slots).map(phone.byKey).filter(Boolean)] : allStats;
   const uses = s => (s.key === 'matches' ? { label: 'Uses', short: 'Uses' } : null);
   const columns = [
     {
@@ -108,9 +118,9 @@ export default function PooledTab({
           <div className={compact ? 'w-full' : ''}>{controls}</div>
           {compact && (
             <div className="ml-auto flex gap-1.5">
-              {[...Array(n).keys()].map(slot => (
+              {[...Array(slots).keys()].map(slot => (
                 <ChipMenu key={slot} isPhone={isPhone} open={pickerOpen === slot} onOpenChange={o => setPickerOpen(o ? slot : null)}
-                  chip={pickerChip({ slot, shown: n, cols: picked, stats: allStats, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
+                  chip={pickerChip({ slot, shown: slots, cols: picked, stats: pickable, onPick: (i, v) => { setPicked(i, v); setPickerOpen(null); } })} />
               ))}
             </div>
           )}

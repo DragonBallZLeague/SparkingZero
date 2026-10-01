@@ -32,6 +32,9 @@ const VIEWS = [
   '/teams/sentai-squad?tab=matches',
   '/matches', '/matches?view=performances', '/matches/s0-week-3-match-5',
   '/meta', '/meta?tab=ai', '/meta?tab=capsules',
+  // Action columns: the most at once over every character, and one character's own.
+  '/meta?tab=ai&act=sparking,ult,guards,s1&sort=a_s1&open=attack-strategy-barrage',
+  '/meta?tab=ai&char=android-13&act=sparking,ult&open=attack-strategy-barrage',
   '/sandbox',
 ];
 

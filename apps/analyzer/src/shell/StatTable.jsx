@@ -25,6 +25,9 @@ import { placements } from '../pages/characters/characterRows.js';
  *   align          'right' (default) or 'left'
  *   sort           whether its header sorts (default: stat columns do)
  *   title          the header's tooltip
+ *   unit           a small second line under the header ("/min": Meta AI
+ *                  strategies' action columns, beside style columns of
+ *                  similar names)
  *   A stat column gives `get(row)` (a number, or null for "does not have it",
  *   shown "–") with `fmt(value)` or `text(row)`, and `dir`: 1 when higher is
  *   better, -1 lower, 0 neither (no colour). `diverge: true` draws a signed
@@ -76,7 +79,12 @@ export default function StatTable({
   const pad = 'px-2.5 sm:px-3.5';
 
   const header = c => {
-    const label = isPhone && c.short ? c.short : c.label;
+    const text = isPhone && c.short ? c.short : c.label;
+    const label = c.unit ? (
+      <span className={`inline-flex flex-col ${c.align === 'left' ? 'items-start' : 'items-end'}`}>
+        {text}<span className="text-[10px] font-medium normal-case tracking-normal text-slate-500">{c.unit}</span>
+      </span>
+    ) : text;
     const left = c.align === 'left';
     const sortable = onSort && (c.sort !== undefined ? c.sort : !!c.get);
     if (sortable) return <SortHead key={c.key} label={label} on={sort === c.key} dir={dir} onClick={() => onSort(c.key)} left={left} title={c.title} />;

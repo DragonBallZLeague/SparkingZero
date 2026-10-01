@@ -32,11 +32,15 @@ import {
 } from '../src/pages/meta/buildRows.js';
 import {
   aiStrategyRows, aiType, readAiFilters, readAiSort, sortAiRows, slug as aiSlug, aiStatByKey, AI_STYLE_STATS, TRANSFORM_STAT,
+  readAiActions, withActionRates, actionColumn, MAX_ACTION_COLUMNS,
 } from '../src/pages/meta/aiRows.js';
 import { overviewFromMatches, placeOverview } from '../src/utils/characterOverview.js';
 import {
-  aiShift, strategyPairs, dataQuality, MIN_OTHER, SUIT_MIN, ACTION_FLOOR,
+  aiShift, strategyPairs, dataQuality, MIN_OTHER, SUIT_MIN,
 } from '../src/pages/meta/aiShift.js';
+import {
+  ACTIONS, ACTION_GROUPS, ACTION_FLOOR, actionChange, actionRates, biggestChanges, fmtRate, fmtRateChange, fmtPair,
+} from '../src/pages/meta/aiActions.js';
 import {
   capsuleRows, capsuleChange, capsuleTransform, capsuleMatchesQuery, readCapsuleFilters, capsuleStatByKey, familyOf,
   BUILD_TYPES, FIT_STATS, PAIR_MIN, PAIR_SHARE,
@@ -276,9 +280,32 @@ for (const [label, { rows }] of [['default', def], ['everything', everything]]) 
   check('the shift has the Overview\'s six styles, as league ranks within the pool',
     sh.styles.length === 6 && sh.styles.every(st => st.gain === null
       || (st.with >= 1 && st.with <= st.pool && st.usual >= 1 && st.usual <= st.pool && Math.abs(st.gain - (st.usual - st.with)) < 1e-9)));
-  const change = a => Math.abs(Math.log((a.with + 0.1) / (a.usual + 0.1)));
-  check('listed actions clear the floor on one side, biggest change first', sh.actions.every(a => Math.max(a.with, a.usual) >= ACTION_FLOOR)
-    && sh.actions.every((a, i) => i === 0 || change(sh.actions[i - 1]) >= change(a)));
+  // Single actions a minute on the field (pages/meta/aiActions.js): All
+  // actions lists every one, Biggest changes the top of them by size of change.
+  check('All actions lists every action, in its groups\' order',
+    sh.actions.map(a => a.key).join() === ACTIONS.map(a => a.key).join()
+    && ACTIONS.every((a, i) => ACTION_GROUPS.includes(a.group) && (i === 0 || ACTION_GROUPS.indexOf(ACTIONS[i - 1].group) <= ACTION_GROUPS.indexOf(a.group))));
+  // Ki blast hits credit deflected enemy blasts as the deflector's own
+  // (docs/ACTION_CODES.md), so no action may count them.
+  check('no action counts ki blast hits', ACTIONS.every(a => a.count({ kiBlastHits: 5 }) === 0 && (!a.part || a.part({ kiBlastHits: 5 }) === 0)));
+  check('Biggest changes clear the floor on one side, biggest change first, out of All actions',
+    sh.biggest.length > 0 && sh.biggest.every(a => Math.max(a.with, a.usual) >= ACTION_FLOOR && sh.actions.includes(a))
+    && sh.biggest.every((a, i) => i === 0 || actionChange(sh.biggest[i - 1]) >= actionChange(a))
+    && sh.biggest.length === biggestChanges(sh.actions).length);
+  // Many characters: each one's own rate a minute, weighted by its uses.
+  const minutes = ms => ms.reduce((t, m) => t + (m.battleTime || 0), 0) / 60;
+  const rateOf = (ms, f) => { const t = minutes(ms); return t > 0 ? ms.reduce((c, m) => c + (m[f] || 0), 0) / t : null; };
+  {
+    let w = 0, x = 0, y = 0;
+    for (const p of paired) {
+      const a = rateOf(p.with, 'guardCount'), b = rateOf(p.without, 'guardCount');
+      if (a === null || b === null) continue;
+      w += p.with.length; x += p.with.length * a; y += p.with.length * b;
+    }
+    const g = sh.actions.find(a => a.key === 'guards');
+    check(`its characters' rates are combined weighted by uses (guards ${fmtRate(g.usual)} → ${fmtRate(g.with)} a minute)`,
+      Math.abs(g.with - x / w) < 1e-9 && Math.abs(g.usual - y / w) < 1e-9);
+  }
   check('the table\'s style columns are the rows\' style shifts', ais.every(a => AI_STYLE_STATS.every(c => {
     const st = a.styles.find(x => `style_${x.key}` === c.key);
     return c.get(a) === (st.gain === null ? null : st.gain);
@@ -299,7 +326,55 @@ for (const [label, { rows }] of [['default', def], ['everything', everything]]) 
     const got = mine.styles.find(x => x.key === 'melee').gain;
     check(`one character's shift is its own league places (${one.name}, melee)`, Math.abs(got - direct) < 1e-9, `${got} vs ${direct}`);
     check('one character compares all its uses', mine.compared === one.with.length && mine.characters === 1);
+
+    // Its actions a minute are its own counts over its own time on the field;
+    // a blast's hits and throws only over the matches that record hits.
+    const v = mine.actions.find(a => a.key === 'vanish');
+    check(`one character's actions a minute are its own (${one.name}, vanishing attacks ${fmtRate(v.usual)} → ${fmtRate(v.with)})`,
+      Math.abs(v.with - rateOf(one.with, 'vanishingAttackCount')) < 1e-9 && Math.abs(v.usual - rateOf(one.without, 'vanishingAttackCount')) < 1e-9);
+    const hitsOn = one.with.filter(m => m.s1HitBlast !== undefined);
+    const s1 = mine.actions.find(a => a.key === 's1');
+    check(`a blast is hits over throws, both over the matches that record hits (Super 1 ${fmtPair(s1.with, s1.partWith)})`,
+      Math.abs(s1.with - rateOf(hitsOn, 's1Blast')) < 1e-9 && Math.abs(s1.partWith - rateOf(hitsOn, 's1HitBlast')) < 1e-9);
+
+    // The table's action columns (aiRows.js actionColumn): with one character
+    // picked its rate on this AI, else the change against other AIs; both the
+    // detail's own figures.
+    const onlyIt = { chars: [aiSlug(one.name)], types: [] };
+    const t1 = Date.now();
+    const rated1 = withActionRates(aiStrategyRows(rows, onlyIt, charMap), rows, onlyIt);
+    const itsRow = rated1.find(a => a.name === lead.name);
+    const col1 = actionColumn('vanish', true);
+    check('with one character picked, an action column is its rate a minute on each AI',
+      Math.abs(col1.get(itsRow) - v.with) < 1e-9 && col1.key === 'a_vanish' && !col1.diverge);
+    const colS1 = actionColumn('s1', true);
+    check('a blast\'s column reads hits/thrown, sorted by throws', colS1.text(itsRow) === fmtPair(s1.with, s1.partWith) && Math.abs(colS1.get(itsRow) - s1.with) < 1e-9);
+    const byVanish = sortAiRows(rated1, { sort: 'a_vanish', dir: 'desc' }, k => (k === 'a_vanish' ? col1 : null)).map(col1.get);
+    check(`sorting by an action column puts the AI that does it most first (${rated1.length} strategies, ${Date.now() - t1}ms)`,
+      byVanish.every((x, i) => i === 0 || x === null || (byVanish[i - 1] !== null && byVanish[i - 1] >= x)));
   }
+  const t2 = Date.now();
+  const rated = withActionRates(ais, rows, { chars: [] });
+  log(`  withActionRates over ${ais.length} strategies took ${Date.now() - t2}ms`);
+  const colAll = actionColumn('guards', false);
+  const g = sh.actions.find(a => a.key === 'guards');
+  check('over many characters, an action column is the detail\'s change a minute against other AIs',
+    Math.abs(colAll.get(rated.find(a => a.name === lead.name)) - (g.with - g.usual)) < 1e-9 && colAll.diverge && colAll.fmt === fmtRateChange);
+  // Too new to compare: this AI's figures alone, every character that ran it counted.
+  // (A character with no time on the field on it, a fusion partner absorbed
+  // from the bench, has no rate to count.)
+  const ran = strategyPairs(rows, lead.name).all;
+  const alone = actionRates(ran, { compare: false });
+  check('with nothing to compare, the figures are this AI\'s alone, over every character with time on the field on it',
+    alone.every(a => a.usual === null && a.partUsual === null)
+    && alone.find(a => a.key === 'guards').characters === ran.filter(p => minutes(p.with) > 0).length);
+  check('the URL\'s action columns: known keys only, at most ' + MAX_ACTION_COLUMNS,
+    readAiActions(new URLSearchParams('act=sparking,ult,nope')).join() === 'sparking,ult'
+    && readAiActions(new URLSearchParams(`act=${ACTIONS.map(a => a.key).join(',')}`)).length === MAX_ACTION_COLUMNS
+    && readAiActions(new URLSearchParams('')).length === 0);
+  check('rates read as the league reads counts: "0.05", "4.1", "4,584", "0"; changes signed',
+    fmtRate(0.05) === '0.05' && fmtRate(4.13) === '4.1' && fmtRate(4584.4) === '4,584' && fmtRate(0) === '0' && fmtRate(0.001) === '0'
+    && fmtRateChange(0.42) === '+0.4' && fmtRateChange(-1.2) === '−1.2' && fmtPair(1.17, 0.82) === '0.8/1.2');
   const shares = sh.builds.types.reduce((n, x) => n + x.share, 0);
   check('build types are shares of its uses', shares > 0 && shares <= 1 + 1e-9);
   check('data quality: Low / Medium / High at the set bounds',

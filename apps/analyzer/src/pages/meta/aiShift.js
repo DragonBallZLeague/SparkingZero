@@ -3,6 +3,7 @@ import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.j
 import { overviewFromMatches, placeOverview, STYLES } from '../../utils/characterOverview.js';
 import { slugifyCharacterName } from '../../utils/characterSlug.js';
 import { transformationSummary, UNKNOWN_AI } from '../../utils/transformation.js';
+import { actionRates, biggestChanges } from './aiActions.js';
 
 /**
  * What an AI strategy changes: the same characters with it against their other
@@ -26,8 +27,8 @@ import { transformationSummary, UNKNOWN_AI } from '../../utils/transformation.js
  * the league, and read like every other rank on the site (the league,
  * 2026-09-30).
  *
- * Single ACTIONS have no league reference, so they are compared per match:
- * "0.3 -> 0.9 a match".
+ * Single ACTIONS have no league reference, so they are compared as plain
+ * rates a minute on the field (meta/aiActions.js): "0.3 -> 0.9".
  */
 
 const slug = slugifyCharacterName;
@@ -36,43 +37,10 @@ const slug = slugifyCharacterName;
 export const MIN_OTHER = 3;
 /** "Suits best / worst" needs this many matches each way. */
 export const SUIT_MIN = 3;
-/** An action is listed only when it happens at least this often a match on one side: rare ones swing wildly. */
-export const ACTION_FLOOR = 0.5;
 /** A style shift this many places or more (of the league's ~126) is named in the headline. */
 export const LEAN_PLACES = 15;
 
 const n = v => Number(v) || 0;
-
-/** Single actions, as the Match page names them. */
-export const SHIFT_ACTIONS = [
-  ['throws', 'Throws', 'throwCount'],
-  ['vanish', 'Vanishing attacks', 'vanishingAttackCount'],
-  ['homing', 'Dragon homing', 'dragonHomingCount'],
-  ['lightning', 'Lightning attacks', 'lightningAttackCount'],
-  ['rush', 'Rush hits', 'rushHits'],
-  ['heavy', 'Heavy hits', 'heavyHits'],
-  ['ki', 'Ki blasts', 'shotEnergyBulletCount'],
-  ['s1', 'Super 1', 's1Blast'],
-  ['s2', 'Super 2', 's2Blast'],
-  ['ult', 'Ultimates', 'ultimatesUsed'],
-  ['skill1', 'Skill 1', 'exa1Count'],
-  ['skill2', 'Skill 2', 'exa2Count'],
-  ['guards', 'Guards', 'guardCount'],
-  ['superC', 'Super counters', 'superCounterCount'],
-  ['zC', 'Z-counters', 'zCounterCount'],
-  ['revC', 'Revenge counters', 'revengeCounterCount'],
-  ['sparking', 'Sparking', 'sparkingCount'],
-  ['charges', 'Ki charges', 'chargeCount'],
-  ['impacts', 'Speed impacts', 'speedImpactCount'],
-  ['tags', 'Tags', 'tags'],
-].map(([key, label, field]) => ({ key, label, count: m => n(m[field]) }));
-
-/** Per match fought (time on the field); null with none. */
-export function perMatch(matches, count) {
-  let c = 0, k = 0;
-  for (const m of matches) { if (n(m.battleTime) > 0) { c += count(m); k++; } }
-  return k ? c / k : null;
-}
 
 const fought = ms => ms.some(m => n(m.battleTime) > 0);
 
@@ -208,8 +176,11 @@ const scoreOf = (name, matches, charMap) => {
  * One strategy's shift, for its detail:
  *   total, compared (uses with a usual to compare against), characters (paired)
  *   styles   styleRanks(): each style's mean league rank with it and usual, and the places gained
- *   actions  SHIFT_ACTIONS per match, { with, usual, shift }, either side at least
- *            ACTION_FLOOR, the biggest change (by ratio) first
+ *   actions  every action a minute (aiActions.js actionRates), in the box's
+ *            order: on other AIs and this one, over the paired characters;
+ *            with none to compare, this AI's alone (`usual` null) over all
+ *   biggest  the actions Biggest changes may list (aiActions.js
+ *            biggestChanges: ACTION_FLOOR on one side), biggest change first
  *   results  { dmg, taken, eff, score }, each { with, usual, shift } (score's
  *            shift is in points: with - usual)
  *   suits    { best, worst }: characters with SUIT_MIN+ matches each way, by
@@ -224,13 +195,8 @@ export function aiShift(aggregated, strategy, f = { chars: [] }, charMap = {}) {
   const compared = paired.reduce((s, p) => s + p.with.length, 0);
 
   const styles = styleRanks(paired);
-  // By ratio, on a log scale so halving counts as much as doubling; the 0.1
-  // keeps an action that one side never does from ranking as infinite.
-  const change = a => Math.abs(Math.log((a.with + 0.1) / (a.usual + 0.1)));
-  const actions = SHIFT_ACTIONS
-    .map(a => ({ key: a.key, label: a.label, ...(weighted(paired, ms => perMatch(ms, a.count)) || {}) }))
-    .filter(a => a.with !== undefined && Math.max(a.with, a.usual) >= ACTION_FLOOR)
-    .sort((a, b) => change(b) - change(a));
+  const actions = compared ? actionRates(paired) : actionRates(all, { compare: false });
+  const biggest = biggestChanges(actions);
 
   // Results: the Overview's per-match figures, and the leaderboard score.
   const ov = new Map();
@@ -282,7 +248,7 @@ export function aiShift(aggregated, strategy, f = { chars: [] }, charMap = {}) {
 
   return {
     total, compared, characters: paired.length,
-    styles, actions, results, suits,
+    styles, actions, biggest, results, suits,
     builds: { types: byShare(types, 'label').slice(0, 4), capsules: byShare(caps, 'name').slice(0, 5) },
   };
 }
