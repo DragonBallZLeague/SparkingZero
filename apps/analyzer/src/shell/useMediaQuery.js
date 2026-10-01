@@ -38,3 +38,23 @@ export const PICKED_COLUMNS = { phone: 2, tablet: 4 };
 
 /** A stat column's width in a compact table: a phone's are tight, a tablet's roomier. */
 export const pickedWidth = (size, i = 1) => (size === 'phone' ? ['54px', '58px'][i] || '58px' : '72px');
+
+/**
+ * An element's own width in px, kept current as it resizes: a ref callback
+ * and the width (null until measured, and on the server). For a part laid out
+ * by the room it is given rather than by the screen: the forms display sits
+ * in a full-width tab, a narrow detail panel and a phone
+ * (components/FormBreakdown.jsx).
+ */
+export function useElementWidth() {
+  const [node, setNode] = useState(null);
+  const [width, setWidth] = useState(null);
+  useEffect(() => {
+    if (!node || typeof ResizeObserver === 'undefined') return undefined;
+    setWidth(node.getBoundingClientRect().width);
+    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [node]);
+  return [setNode, width];
+}
