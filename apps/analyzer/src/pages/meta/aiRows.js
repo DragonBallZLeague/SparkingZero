@@ -1,6 +1,7 @@
 import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.js';
 import { slugifyCharacterName } from '../../utils/characterSlug.js';
 import { statByKey } from '../characters/characterRows.js';
+import { styleByKey } from '../characters/styleRows.js';
 import { STYLES } from '../../utils/characterOverview.js';
 import { dataQuality, MIN_OTHER, strategyPairs, styleRanks, transformShift } from './aiShift.js';
 import { UNKNOWN_AI } from '../../utils/transformation.js';
@@ -99,9 +100,19 @@ const SHORT = { melee: 'Melee', ki: 'Ki', blast: 'Blast', ult: 'Ult', skill: 'Sk
 const signed = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v))}`;
 export const styleOf = (r, key) => (r.styles || []).find(x => x.key === key) || null;
 
+/**
+ * What a style column's header tooltip says the style counts: the Characters
+ * table's Styles view's words for a rate (characters/styleRows.js), and for
+ * Defense what its rating is made of.
+ */
+const measures = st => (st.key === 'defense'
+  ? 'a 0-100 rating from guards and counters, then time on the field, tags and survival'
+  : styleByKey(st.key).what);
+
 export const AI_STYLE_STATS = STYLES.map(st => ({
   key: `style_${st.key}`, label: st.name, short: SHORT[st.key], dir: 1, diverge: true, fmt: signed,
-  title: `Places it moves its characters in the league's ${st.name.toLowerCase()} ranking, against their other AI strategies`,
+  // The header's tooltip says what the style counts, and only that (the league, 2026-10-01): the footnote says what the figure is.
+  title: `${st.name}: ${measures(st)}`,
   get: r => { const x = styleOf(r, st.key); return x && x.gain !== null ? x.gain : null; },
 }));
 /**

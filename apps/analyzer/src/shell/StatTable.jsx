@@ -79,7 +79,7 @@ export default function StatTable({
     const label = isPhone && c.short ? c.short : c.label;
     const left = c.align === 'left';
     const sortable = onSort && (c.sort !== undefined ? c.sort : !!c.get);
-    if (sortable) return <SortHead key={c.key} label={label} on={sort === c.key} dir={dir} onClick={() => onSort(c.key)} left={left} />;
+    if (sortable) return <SortHead key={c.key} label={label} on={sort === c.key} dir={dir} onClick={() => onSort(c.key)} left={left} title={c.title} />;
     return <div key={c.key} title={c.title} className={`${HEAD} text-slate-400 ${left ? '' : 'text-right'}`}>{label}</div>;
   };
 
