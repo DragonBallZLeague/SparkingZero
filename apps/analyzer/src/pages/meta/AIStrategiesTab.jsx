@@ -184,10 +184,13 @@ function TransformBox({ t, one, idFor, linkFor }) {
           <div className="mb-2 flex items-baseline justify-between gap-2 border-0 border-t border-solid border-gray-700/50 pt-1.5 text-[12.5px]"
             title={`${whose}: the median time on the field before the first transformation. Sooner is better.`}>
             <span className="text-slate-300">First transformation</span>
-            <span className="tabular-nums">
-              <span className="text-slate-400">{clock(t.seconds.usual)}</span><span className="mx-1.5 text-slate-500">→</span>
-              <b className="font-semibold text-slate-100">{clock(t.seconds.with)}</b>
-              <b className={`ml-2 font-semibold ${tone(dt, TONE_SECONDS, -1)}`}>{shown ? `${shown}s ${dt < 0 ? 'sooner' : 'later'}` : 'same'}</b>
+            {/* The times, then how much sooner or later in small type under them. */}
+            <span className="flex flex-col items-end tabular-nums">
+              <span>
+                <span className="text-slate-400">{clock(t.seconds.usual)}</span><span className="mx-1.5 text-slate-500">→</span>
+                <b className="font-semibold text-slate-100">{clock(t.seconds.with)}</b>
+              </span>
+              <span className={`text-[11px] font-semibold leading-tight ${tone(dt, TONE_SECONDS, -1)}`}>{shown ? `${shown}s ${dt < 0 ? 'sooner' : 'later'}` : 'same time'}</span>
             </span>
           </div>
         );
