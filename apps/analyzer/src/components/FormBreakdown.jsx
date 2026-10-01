@@ -87,11 +87,12 @@ export function shortFormNames(names, abbreviate = false) {
 }
 
 // Form colours: they only tie a form to its timeline segment, so they need to
-// be told apart at a glance (the league, 2026-10-01: the grey steps they
-// were did not). The starting form light grey, then hues from the Okabe-Ito
-// colour-blind-safe palette (sky blue, reddish purple, yellow) and a violet,
-// none of them the ranks' green and red or the picked form's orange.
-const SHADES = ['#cbd5e1', '#56b4e9', '#cc79a7', '#f0e442', '#a78bfa'];
+// be told apart at a glance, and the league wants them of one family
+// (2026-10-01: grey steps were too alike, unrelated hues too loud). A ramp
+// from blue to purple, the starting form palest and each later form deeper:
+// sky 200, sky 400, indigo 400, purple 400, fuchsia 400. None is the ranks'
+// green and red or the picked form's orange.
+const SHADES = ['#bae6fd', '#38bdf8', '#818cf8', '#c084fc', '#e879f9'];
 export const PICKED = '#f97316';
 
 const int = v => Math.round(v || 0).toLocaleString('en-US');
