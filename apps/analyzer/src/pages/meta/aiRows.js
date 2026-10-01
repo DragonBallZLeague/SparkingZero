@@ -2,7 +2,8 @@ import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.j
 import { slugifyCharacterName } from '../../utils/characterSlug.js';
 import { statByKey } from '../characters/characterRows.js';
 import { STYLES } from '../../utils/characterOverview.js';
-import { dataQuality, MIN_OTHER, strategyPairs, styleRanks } from './aiShift.js';
+import { dataQuality, MIN_OTHER, strategyPairs, styleRanks, transformShift } from './aiShift.js';
+import { UNKNOWN_AI } from '../../utils/transformation.js';
 
 /**
  * Meta's AI strategies tab: a row per AI strategy in scope, its URL params and
@@ -40,17 +41,23 @@ export const slug = slugifyCharacterName;
  * first, matches, comparable (uses whose character also has MIN_OTHER matches
  * on other strategies, what meta/aiShift.js can compare), quality (its
  * dataQuality()), styles (aiShift.js styleRanks(): each style's places
- * gained, the table's style columns) }. Sorted by uses.
+ * gained, the table's style columns), transform (aiShift.js transformShift(),
+ * the Transform column; null without `ctx` = { idFor, lineups }, or when none
+ * of its characters can transform) }. Sorted by uses.
+ *
+ * "Default" is not a strategy: the files whose AI was lost (UNKNOWN_AI) have
+ * no row, and count on neither side of a comparison.
  */
-export function aiStrategyRows(aggregated, f = { chars: [], types: [] }, charMap = {}) {
+export function aiStrategyRows(aggregated, f = { chars: [], types: [] }, charMap = {}, ctx = null) {
   const pools = new Map();
   // Each character's matches on any strategy, whatever the Type chip keeps.
   const totals = new Map();
   for (const c of aggregated || []) {
     if (f.chars.length && !f.chars.includes(slug(c.name))) continue;
-    totals.set(c.name, (c.matches || []).length);
+    totals.set(c.name, (c.matches || []).filter(m => (m.aiStrategy || UNKNOWN_AI) !== UNKNOWN_AI).length);
     for (const m of c.matches || []) {
-      const name = m.aiStrategy || 'Default';
+      const name = m.aiStrategy || UNKNOWN_AI;
+      if (name === UNKNOWN_AI) continue;
       if (f.types.length && !f.types.includes(aiType(name))) continue;
       if (!pools.has(name)) pools.set(name, { matches: [], by: new Map() });
       const p = pools.get(name);
@@ -64,6 +71,7 @@ export function aiStrategyRows(aggregated, f = { chars: [], types: [] }, charMap
     // strategy pools thousands across the whole corpus.
     const row = filterAggregatedData([{ name, matches: p.matches }], { charMap, maxMatches: Infinity })[0];
     if (!row) continue;
+    const { paired } = strategyPairs(aggregated, name, f);
     rows.push({
       ...row,
       id: slug(name),
@@ -74,7 +82,8 @@ export function aiStrategyRows(aggregated, f = { chars: [], types: [] }, charMap
       matches: p.matches,
       comparable: [...p.by].reduce((s, [n, uses]) => s + ((totals.get(n) || 0) - uses >= MIN_OTHER ? uses : 0), 0),
       quality: dataQuality(p.matches.length, p.by.size),
-      styles: styleRanks(strategyPairs(aggregated, name, f).paired),
+      styles: styleRanks(paired),
+      transform: transformShift(paired, ctx),
     });
   }
   return rows.sort((a, b) => b.matches.length - a.matches.length || a.name.localeCompare(b.name));
@@ -101,8 +110,29 @@ export const AI_STYLE_STATS = STYLES.map(st => ({
  * fought, which disagreed with the detail by a few). Shared by the Capsules tab.
  */
 export const USES_STAT = { ...statByKey('matches'), label: 'Uses', short: 'Uses', get: r => r.matches.length, title: 'Builds run with it in scope' };
-/** The table's stat columns: Uses, then the six styles. */
-export const AI_COLUMNS = [USES_STAT, ...AI_STYLE_STATS];
+/**
+ * How much more (or less) often its characters transform on it, fusions
+ * included: the same characters' rate on this AI minus on their other AIs, in
+ * points (aiShift.js transformShift). Participants read it to pick the AI that
+ * gets a character to transform; with the Character chip on one character it
+ * is that character's own.
+ */
+export const TRANSFORM_STAT = {
+  key: 'transform', label: 'Transform', short: 'Trans', dir: 1, diverge: true, fmt: signed,
+  title: 'Points more (or less) often its characters transform or fuse on it, against the same characters on their other AI strategies',
+  get: r => (r.transform && r.transform.gain !== null ? r.transform.gain * 100 : null),
+  // Its own sample is smaller than the row's (aiShift.js transformShift quality).
+  thin: r => !!(r.transform && r.transform.quality === 'Low'),
+  cellTitle: r => {
+    const t = r.transform;
+    if (!t) return 'None of its characters can transform or fuse';
+    if (t.gain === null) return 'No character that transforms has enough matches on other AI strategies to compare';
+    return `Transformed or fused in ${Math.round(t.with * 100)}% of matches on this AI, ${Math.round(t.usual * 100)}% on other AIs: `
+      + `${t.compared} matches over ${t.characters} character${t.characters === 1 ? '' : 's'} (${t.quality} data)`;
+  },
+};
+/** The table's stat columns: Uses, the six styles, then Transform. */
+export const AI_COLUMNS = [USES_STAT, ...AI_STYLE_STATS, TRANSFORM_STAT];
 export const aiStatByKey = key => AI_COLUMNS.find(c => c.key === key) || null;
 /** A compact table's columns before anyone picks (a phone the first two, a tablet all four). */
 export const AI_PHONE_DEFAULTS = ['style_melee', 'style_blast', 'style_ult', 'style_defense'];

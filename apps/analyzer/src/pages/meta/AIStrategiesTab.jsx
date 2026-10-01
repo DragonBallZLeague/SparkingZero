@@ -1,18 +1,22 @@
 import React, { useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import Portrait from '../../components/Portrait.jsx';
 import HeaderFigure from '../../components/HeaderFigure.jsx';
 import { useQueryUpdate } from '../../shell/useQueryUpdate.js';
+import { parseScope, writeScope } from '../../shell/scopeModel.js';
+import { isSandboxPath } from '../../routes.js';
 import { styleColor, capsuleTypeColor } from '../../utils/overviewPalette.js';
+import { lineupIndex } from '../../utils/transformation.js';
+import baseline from '../../config/style-baseline.json';
 import { BuildPill } from '../character/overview/BuildPicker.jsx';
 import PooledTab from './PooledTab.jsx';
 import {
   Box, DataSignal, PooledTiles, POOLED_FIGURES, UsedMostBy, tone, fmtInt, pct, pts,
 } from './detailParts.jsx';
 import {
-  aiStrategyRows, readAiFilters, readAiSort, sortAiRows, AI_COLUMNS, aiStatByKey, AI_PHONE_DEFAULTS,
+  aiStrategyRows, readAiFilters, readAiSort, sortAiRows, AI_COLUMNS, AI_PHONE_DEFAULTS,
 } from './aiRows.js';
-import { aiShift, MIN_OTHER, LEAN_PLACES } from './aiShift.js';
+import { aiShift, MIN_OTHER, LEAN_PLACES, SUIT_MIN } from './aiShift.js';
 
 const characters = r => `${r.characters} character${r.characters === 1 ? '' : 's'}`;
 const places = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v))}`;
@@ -22,6 +26,12 @@ const count = v => (v >= 10 ? Math.round(v).toLocaleString('en-US') : v.toFixed(
 const TONE_PLACES = LEAN_PLACES;
 /** A single action's change is coloured from this ratio up (+15% or -15%). */
 const TONE_RATIO = 0.15;
+/** A change in how often its characters transform is coloured from 5 points. */
+const TONE_TRANSFORM = 0.05;
+
+const rate = v => `${Math.round(v * 100)}%`;
+const points = v => `${v >= 0 ? '+' : '−'}${Math.round(Math.abs(v) * 100)}`;
+const clock = s => { const t = Math.round(s); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 
 const qualityTitle = r => `${r.quality} data: ${fmtInt(r.matches.length)} uses over ${characters(r)}, `
   + `${fmtInt(r.comparable)} comparable with the same characters on other AI strategies`;
@@ -111,6 +121,77 @@ function SuitList({ title, list, idFor, linkFor }) {
   );
 }
 
+/** Characters whose transform rate this AI raises (or lowers) most: rate on other AIs → on this AI. */
+function TransformList({ title, list, idFor, linkFor }) {
+  if (!list.length) return null;
+  return (
+    <div className="min-w-0">
+      <div className="mb-0.5 text-[11px] text-slate-400">{title}</div>
+      <ul className="m-0 list-none p-0">
+        {list.map(d => {
+          const to = linkFor ? linkFor(d.name) : null;
+          const Name = to ? Link : 'span';
+          return (
+            <li key={d.name} className="flex items-center gap-1.5 py-[3px]"
+              title={`Transformed in ${d.on.transformed} of ${d.on.matches} matches on this AI, ${d.off.transformed} of ${d.off.matches} on other AIs`}>
+              <Portrait id={idFor(d.name)} name={d.name} size={20} rounded={4} />
+              <Name to={to || undefined} className="min-w-0 flex-1 truncate text-[12.5px] text-slate-100 no-underline hover:underline">{d.name}</Name>
+              <span className="text-[12px] tabular-nums text-slate-500">{rate(d.usual)} → {rate(d.with)}</span>
+              <span className={`w-8 text-right text-[12px] tabular-nums ${tone(d.delta, 0)}`}>{points(d.delta)}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * How often its characters transform (fusions included) on this AI against
+ * their other AIs (aiShift.js transformShift), the question participants bring
+ * to this page: which AI gets my character to transform. The rate, the time on
+ * the field before the first transformation, and the characters it helps and
+ * hurts most.
+ */
+function TransformBox({ t, one, idFor, linkFor }) {
+  if (!t.compared) {
+    return (
+      <Box title="Transformations">
+        <p className="m-0 text-[12.5px] text-slate-400">
+          None of its characters that transform has {MIN_OTHER}+ matches on other AI strategies here, so there is nothing to compare it with.
+        </p>
+      </Box>
+    );
+  }
+  const whose = one ? 'On this AI, against its other AIs' : `Its ${t.characters} compared character${t.characters === 1 ? '' : 's'} on average`;
+  return (
+    <Box title="Transformations" aside="other AIs → this AI">
+      <div className="flex items-baseline gap-2" title={`${whose}: the share of matches they transformed or fused in`}>
+        <span className="text-[13px] tabular-nums text-slate-400">{rate(t.usual)} →</span>
+        <span className="text-[20px] font-extrabold tabular-nums leading-tight text-slate-50">{rate(t.with)}</span>
+        <b className={`text-[14px] font-semibold tabular-nums ${tone(t.gain, TONE_TRANSFORM)}`}>{points(t.gain)}</b>
+      </div>
+      <div className="mb-2 text-[11.5px] text-slate-500">of matches transformed or fused</div>
+      {t.seconds && (
+        <div className="mb-2 flex items-baseline justify-between gap-2 border-0 border-t border-solid border-gray-700/50 pt-1.5 text-[12.5px]"
+          title={`${whose}: the median time on the field before the first transformation`}>
+          <span className="text-slate-300">First transformation</span>
+          <span className="tabular-nums"><span className="text-slate-400">{clock(t.seconds.usual)}</span><span className="mx-1.5 text-slate-500">→</span><b className="font-semibold text-slate-100">{clock(t.seconds.with)}</b></span>
+        </div>
+      )}
+      {!one && (
+        <div className="flex flex-col gap-2.5">
+          <TransformList title="Raises most" list={t.byCharacter.filter(d => d.delta > 0).slice(0, 3)} idFor={idFor} linkFor={linkFor} />
+          <TransformList title="Lowers most" list={t.byCharacter.filter(d => d.delta < 0).reverse().slice(0, 3)} idFor={idFor} linkFor={linkFor} />
+        </div>
+      )}
+      {!one && !t.byCharacter.length && (
+        <p className="m-0 text-[12px] text-slate-500">No character has {SUIT_MIN}+ matches each way to list.</p>
+      )}
+    </Box>
+  );
+}
+
 /**
  * One strategy's detail, under its row at every width (it is wider than a
  * side panel): its figures, then bordered boxes (the league asked for borders
@@ -120,8 +201,9 @@ function SuitList({ title, list, idFor, linkFor }) {
  *   damage, efficiency and taken, the change "vs other AIs": the same
  *   characters' figures on this AI against their own on other AIs
  *   (meta/aiShift.js; nothing here is about who they fought);
- *   Style shift, Biggest changes and Suits (the same comparison), then Run
- *   with and Used most by.
+ *   Style shift, Biggest changes and Suits (the same comparison), then
+ *   Transformations (when any of its characters can transform), Run with and
+ *   Used most by.
  * With the Character chip on one character, the comparisons are its own.
  */
 function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
@@ -203,7 +285,10 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
         </div>
       )}
 
-      <div className="mt-2 grid gap-2 md:grid-cols-2">
+      <div className={`mt-2 grid gap-2 md:grid-cols-2 ${row.transform ? 'xl:grid-cols-3' : ''}`}>
+        {row.transform && (
+          <TransformBox t={row.transform} one={filters.chars.length === 1 && row.transform.characters === 1} idFor={idFor} linkFor={linkFor} />
+        )}
         <Box title="Run with" aside="share of its uses">
           <div className="mb-2 flex flex-wrap gap-1.5">
             {s.builds.types.map(t => (
@@ -245,23 +330,63 @@ function AIDetail({ row, pool, aggregated, filters, charMap, idFor, linkFor }) {
  * Its filters are scope-bar chips (Type, and the Builds tab's Character);
  * the sort is in the URL. `linkFor(name)` opens a character's page.
  *
+ * TRANSFORM, the last column (aiRows.js TRANSFORM_STAT): how much more often
+ * the same characters transform or fuse on it than on their other AIs. It
+ * goes when none of the characters in view can transform, with a line saying
+ * so (a column of dashes distinguishes nothing).
+ *
  * DATA: each row's data quality (aiShift.js dataQuality, from uses and
  * characters) is a column of rising bars, and Low rows fade as thin samples
  * do. When every row has the same level the column and the fading switch off:
- * a marker on every row distinguishes nothing.
+ * a marker on every row distinguishes nothing. When most rows are Low, a link
+ * widens the scope to the league reference's window (the last two seasons,
+ * Ultra: style-baseline.json's basis) by setting those chips, so the change is
+ * in the scope bar for anyone to see and undo (the league's choice, over
+ * changing the default scope or pinning the figures to that window).
  */
 export default function AIStrategiesTab({ aggregated, charMap, idFor, linkFor }) {
   const [params] = useSearchParams();
+  const { pathname } = useLocation();
   const update = useQueryUpdate();
   const filters = readAiFilters(params);
   const filterKey = JSON.stringify(filters);
-  const { sort, dir } = readAiSort(params, aiStatByKey);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const stableFilters = useMemo(() => filters, [filterKey]);
+  const lineups = useMemo(() => lineupIndex(aggregated, idFor), [aggregated, idFor]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const pool = useMemo(() => aiStrategyRows(aggregated, filters, charMap), [aggregated, filterKey, charMap]);
-  const rows = useMemo(() => sortAiRows(pool, { sort, dir }, aiStatByKey), [pool, sort, dir]);
+  const pool = useMemo(() => aiStrategyRows(aggregated, filters, charMap, { idFor, lineups }), [aggregated, filterKey, charMap, idFor, lineups]);
+  const transforms = pool.some(r => r.transform);
+  // Transform figures on too little data of their own fade, unless all of them
+  // do: a marker on every row distinguishes nothing (the footnote says so).
+  const figures = pool.filter(r => r.transform && r.transform.gain !== null);
+  const thinFigures = figures.filter(r => r.transform.quality === 'Low').length;
+  const allThin = figures.length > 0 && thinFigures === figures.length;
+  const columns = transforms
+    ? AI_COLUMNS.map(c => (c.key === 'transform' && allThin ? { ...c, thin: null } : c))
+    : AI_COLUMNS.filter(c => c.key !== 'transform');
+  const statFor = key => columns.find(c => c.key === key) || null;
+  const { sort, dir } = readAiSort(params, statFor);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const rows = useMemo(() => sortAiRows(pool, { sort, dir }, statFor), [pool, sort, dir, transforms]);
   const varied = new Set(pool.map(r => r.quality)).size > 1;
+
+  // Most rows thin, and not already on the reference window: offer it.
+  const basis = baseline.basis;
+  const scope = parseScope(params);
+  const onWindow = !scope.matchType && (scope.difficulty || []).join() === basis.difficulty
+    && [...(scope.seasonNumber || [])].sort().join() === [...basis.seasons].sort().join();
+  const thin = (pool.length > 0 && pool.filter(r => r.quality === 'Low').length * 2 > pool.length)
+    || (figures.length > 0 && thinFigures * 2 > figures.length);
+  const widen = thin && !onWindow && !isSandboxPath(pathname) ? (
+    <span className="text-[12.5px] text-slate-400">
+      Little data here.{' '}
+      <button type="button" className="cursor-pointer bg-transparent p-0 text-[12.5px] text-orange-400 hover:underline"
+        title={`Sets the Season chip to ${basis.seasons.map(s => `Season ${s}`).join(' and ')}, Difficulty to ${basis.difficulty}, and clears Match type`}
+        onClick={() => update(p => writeScope(p, { ...parseScope(p), seasonNumber: basis.seasons, difficulty: [basis.difficulty], matchType: [] }))}>
+        Widen to the last {basis.seasonWindow} seasons, {basis.difficulty} ({fmtInt(basis.matches)} matches)
+      </button>
+    </span>
+  ) : null;
 
   const onSort = key => update(p => {
     const byDefault = key === 'name' ? 'asc' : 'desc';
@@ -273,8 +398,8 @@ export default function AIStrategiesTab({ aggregated, charMap, idFor, linkFor })
 
   return (
     <PooledTab rows={rows} sort={sort} dir={dir} onSort={onSort} resetKey={filterKey + rows.length}
-      nameLabel="AI strategy" noun="strategies" empty="No AI strategies match these filters."
-      stats={AI_COLUMNS} phone={{ key: 'szl.analyzer.ai.phoneCols', defaults: AI_PHONE_DEFAULTS, byKey: aiStatByKey }} below
+      nameLabel="AI strategy" noun="strategies" empty="No AI strategies match these filters." controls={widen}
+      stats={columns} phone={{ key: 'szl.analyzer.ai.phoneCols', defaults: AI_PHONE_DEFAULTS, byKey: statFor }} below
       afterName={varied ? [{
         key: 'data', label: 'Data', width: '48px', sort: false, title: 'Data quality: uses and characters',
         cell: r => <div className="flex justify-center"><DataSignal level={r.quality} title={qualityTitle(r)} /></div>,
@@ -293,7 +418,10 @@ export default function AIStrategiesTab({ aggregated, charMap, idFor, linkFor })
       )}
       title={r => <div className="text-[15px] font-semibold leading-[1.25] text-slate-50">{r.name}</div>}
       detail={r => <AIDetail row={r} pool={pool} aggregated={aggregated} filters={stableFilters} charMap={charMap} idFor={idFor} linkFor={linkFor} />}
-      footnote={`Style columns: the places a strategy moves its characters in the league's ranking for that style, against the same characters on their other AI strategies.${
+      footnote={`Style columns: the places a strategy moves its characters in the league's ranking for that style, against the same characters on their other AI strategies. ${
+        transforms ? `Transform: how many points more often they transform or fuse on it${
+          allThin ? '; every figure here rests on little data, so none is faded' : ', faded where that rests on little data'}.`
+          : 'None of these characters can transform or fuse, so there is no Transform column.'}${
         varied ? '' : ` Every strategy here has ${pool[0] ? pool[0].quality : 'the same'} data, so none is marked.`}`} />
   );
 }

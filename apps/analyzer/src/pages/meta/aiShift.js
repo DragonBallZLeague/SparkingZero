@@ -2,6 +2,7 @@ import baseline from '../../config/style-baseline.json';
 import { filterAggregatedData } from '../../utils/aggregation/filterAggregated.js';
 import { overviewFromMatches, placeOverview, STYLES } from '../../utils/characterOverview.js';
 import { slugifyCharacterName } from '../../utils/characterSlug.js';
+import { transformationSummary, UNKNOWN_AI } from '../../utils/transformation.js';
 
 /**
  * What an AI strategy changes: the same characters with it against their other
@@ -116,10 +117,70 @@ export function strategyPairs(aggregated, strategy, f = { chars: [] }) {
   for (const c of aggregated || []) {
     if (f.chars && f.chars.length && !f.chars.includes(slug(c.name))) continue;
     const w = [], o = [];
-    for (const m of c.matches || []) ((m.aiStrategy || 'Default') === strategy ? w : o).push(m);
+    for (const m of c.matches || []) {
+      const ai = m.aiStrategy || UNKNOWN_AI;
+      // A file that lost its AI is on neither side (utils/transformation.js UNKNOWN_AI).
+      if (ai === UNKNOWN_AI) continue;
+      (ai === strategy ? w : o).push(m);
+    }
     if (w.length) all.push({ name: c.name, with: w, without: o });
   }
   return { all, paired: all.filter(p => p.without.length >= MIN_OTHER) };
+}
+
+/**
+ * How a strategy changes how often its characters transform (fusions
+ * included, by the rules in utils/transformation.js): for each character in
+ * `pairs` (strategyPairs' paired) that can transform or fuse, its rate on this
+ * AI against its rate on its other AIs, over counted matches only (fought, no
+ * Broly's Ring...), and MIN_OTHER+ of them on other AIs. Combined weighted by
+ * its counted matches on this AI. `ctx` is { idFor, lineups }
+ * (transformation.js lineupIndex).
+ *
+ *   { with, usual, gain (with - usual, a share: 0.22 is +22 points),
+ *     compared (counted matches on this AI), characters, quality
+ *     (dataQuality(compared, characters)),
+ *     seconds: { with, usual } median time on the field before the first
+ *     transformation, weighted by the timed ones on this AI (null without),
+ *     byCharacter: [{ name, with, usual, delta, on, off }] for those with
+ *     SUIT_MIN+ counted matches each way }
+ *
+ * null when none of its characters can transform or fuse: there is nothing to
+ * show, rather than a zero. With figures null when some can but none has
+ * enough matches to compare.
+ */
+export function transformShift(pairs, ctx) {
+  if (!ctx || !ctx.idFor) return null;
+  let able = false, w = 0, a = 0, b = 0, characters = 0;
+  let tw = 0, ta = 0, tb = 0;
+  const byCharacter = [];
+  for (const p of pairs) {
+    const id = ctx.idFor(p.name);
+    const on = transformationSummary(p.with, { id, lineups: ctx.lineups });
+    if (!on.able) continue;
+    able = true;
+    const off = transformationSummary(p.without, { id, lineups: ctx.lineups });
+    if (!on.matches || off.matches < MIN_OTHER) continue;
+    characters++;
+    w += on.matches; a += on.matches * on.rate; b += on.matches * off.rate;
+    if (on.seconds !== null && off.seconds !== null) { tw += on.timed; ta += on.timed * on.seconds; tb += on.timed * off.seconds; }
+    if (on.matches >= SUIT_MIN && off.matches >= SUIT_MIN) {
+      byCharacter.push({ name: p.name, with: on.rate, usual: off.rate, delta: on.rate - off.rate, on, off });
+    }
+  }
+  if (!able) return null;
+  return {
+    with: w ? a / w : null,
+    usual: w ? b / w : null,
+    gain: w ? (a - b) / w : null,
+    compared: w,
+    characters,
+    // Its own sample, smaller than the row's: only the counted matches of
+    // characters that can transform (the Transform column fades a Low one).
+    quality: dataQuality(w, characters),
+    seconds: tw ? { with: ta / tw, usual: tb / tw } : null,
+    byCharacter: byCharacter.sort((x, y) => y.delta - x.delta || x.name.localeCompare(y.name)),
+  };
 }
 
 /**

@@ -30,7 +30,9 @@ import { placements } from '../pages/characters/characterRows.js';
  *   better, -1 lower, 0 neither (no colour). `diverge: true` draws a signed
  *   figure's bar either way from a centre line (Meta's style shifts);
  *   `tint` gives a `dir: 0` column's bars a colour of its own (Meta
- *   Capsules' build types).
+ *   Capsules' build types). `thin(row)` marks one cell's figure as resting
+ *   on too little data of its own (faded, its number dimmed; Meta's
+ *   Transform column), and `cellTitle(row)` is a cell's tooltip.
  *   Any other column gives `cell(row, index)`.
  *
  * `rows` are already filtered and sorted; `pool` is what the bars and colours
@@ -86,7 +88,8 @@ export default function StatTable({
     const v = c.get(r);
     const text = c.text ? c.text(r) : v === null || v === undefined ? '–' : c.fmt(v);
     return <StatCell key={c.key} text={text} value={v || 0} max={max[c.key]} p={v === null || v === undefined ? null : place[c.key](v)}
-      faded={!!(faded && faded(r))} diverge={!!c.diverge} tint={c.tint || null} />;
+      faded={!!(faded && faded(r))} diverge={!!c.diverge} tint={c.tint || null}
+      thin={!!(c.thin && v !== null && v !== undefined && c.thin(r))} title={c.cellTitle ? c.cellTitle(r) : undefined} />;
   };
 
   return (

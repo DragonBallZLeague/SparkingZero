@@ -28,18 +28,21 @@ export function SortHead({ label, on, dir, onClick, left = false }) {
  * fifth (`p`, 0..1 in the "better" direction, or null), and stays grey between,
  * so colour marks only what stands out. `faded` is a thin sample's look.
  */
-export function StatCell({ text, value, max, p, faded = false, diverge = false, tint = null }) {
+export function StatCell({ text, value, max, p, faded = false, diverge = false, tint = null, thin = false, title }) {
   const colour = p === null || p === undefined ? null : p >= 0.8 ? '#16e05a' : p < 0.2 ? '#ff2b3a' : null;
   // `tint` is a column's own bar colour where rank colour does not apply
   // (Meta Capsules' build types wear their type's colour).
-  const fill = { background: colour || tint || '#56627a', ...(faded && (colour || tint) ? { filter: 'saturate(.45)', opacity: 0.62 } : null) };
+  const fill = { background: colour || tint || '#56627a', ...((faded || thin) && (colour || tint) ? { filter: 'saturate(.45)', opacity: 0.62 } : null) };
+  // A figure on too little data of its own (`thin`, one cell rather than the
+  // row) keeps its colour, faded, and its number dims; `title` says why.
+  const figure = thin ? 'text-slate-400' : 'text-slate-100';
   // A signed figure (a style shift) grows either way from a centre line;
   // `max` is then the largest size either side.
   if (diverge) {
     const w = max > 0 ? Math.min(50, (Math.abs(value) / max) * 50) : 0;
     return (
-      <div className="flex flex-col items-end gap-1">
-        <span className="text-[14px] leading-5 text-slate-100 tabular-nums">{text}</span>
+      <div className="flex flex-col items-end gap-1" title={title}>
+        <span className={`text-[14px] leading-5 ${figure} tabular-nums`}>{text}</span>
         <span className="relative block h-[3px] w-[52px] rounded-sm bg-shell-track">
           <span className="absolute inset-y-[-2px] left-1/2 w-px bg-slate-500" />
           <span className="absolute inset-y-0 rounded-sm" style={{ ...fill, width: `${w}%`, left: value >= 0 ? '50%' : `${50 - w}%` }} />
@@ -50,8 +53,8 @@ export function StatCell({ text, value, max, p, faded = false, diverge = false, 
   // A zero draws an empty bar: a sliver would say "some".
   const width = max > 0 && value > 0 ? Math.max(2, Math.round((value / max) * 100)) : 0;
   return (
-    <div className="flex flex-col items-end gap-1">
-      <span className="text-[14px] leading-5 text-slate-100 tabular-nums">{text}</span>
+    <div className="flex flex-col items-end gap-1" title={title}>
+      <span className={`text-[14px] leading-5 ${figure} tabular-nums`}>{text}</span>
       <span className="block h-[3px] w-[52px] overflow-hidden rounded-sm bg-shell-track">
         <span className="block h-full rounded-sm" style={{ ...fill, width: `${width}%` }} />
       </span>

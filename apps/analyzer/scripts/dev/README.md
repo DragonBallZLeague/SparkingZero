@@ -4,7 +4,7 @@ Headless-browser tools for checking visual work. They are not part of any build 
 
 | Tool | What it does | When to use it |
 |------|--------------|----------------|
-| `shot.mjs` | Screenshots a served page at a given width, optionally after opening the build picker, switching to Bars, hovering a tooltip or scrolling to a section. | Every layout or styling change: check desktop (1280) and phone (390). |
+| `shot.mjs` | Screenshots a served page at a given width, optionally after opening the build picker, switching to Bars, hovering a tooltip, scrolling to a section or clicking a row open. | Every layout or styling change: check desktop (1280) and phone (390). |
 | `css-diff.mjs` | Compares every element's computed style between two builds, view by view, and groups the changes by cause. | Before merging any sweeping style change: a theme value, a shared class, the CSS layering. |
 | `sweep.mjs` | Opens every view at each width and reports page or console errors, a page wider than the screen (in px), or a blank page. Exits 1 on any. | After any change touching more than one page: `npm run sweep -- 1280,390`, adding 640-1100 for tables. Add a view to its list when a page or tab is added. |
 

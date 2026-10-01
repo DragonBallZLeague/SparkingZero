@@ -17,6 +17,8 @@
  *   at:<classes>  scroll to the first <div> whose class attribute is exactly <classes>
  *   chip:<id>     open the chip or menu whose data-chip is <id> (e.g. chip:char)
  *   type:<text>   type <text> into the focused input (an open menu's search)
+ *   click:<text>  click the innermost element whose text starts with <text>
+ *                 (a table row's name, to open its detail; the shot stays full page)
  *
  * With picker, hover:, at: or chip:, the shot is the viewport. Otherwise it is the full
  * page - from the character card down on a character page - up to 2400px tall.
@@ -87,6 +89,17 @@ try {
       })()`);
       if (!found) console.error('warning: no chip ' + JSON.stringify(a.slice(5)));
       viewportShot = true;
+    } else if (a.startsWith('click:')) {
+      // The innermost element whose text starts with <text> (a table row's name
+      // opens its detail), scrolled to the top of the screen; the shot stays the
+      // full page, so the detail under the row is in it.
+      const found = await evaluate(`(() => {
+        const want = ${JSON.stringify(a.slice(6))};
+        const el = [...document.querySelectorAll('body *')].reverse().find(e => e.textContent.trim().startsWith(want));
+        if (el) el.click();
+        return !!el;
+      })()`);
+      if (!found) console.error('warning: nothing whose text starts with ' + JSON.stringify(a.slice(6)));
     } else if (a.startsWith('type:')) {
       // React tracks an input's value itself: set it through the native setter,
       // then fire the input event React listens for.

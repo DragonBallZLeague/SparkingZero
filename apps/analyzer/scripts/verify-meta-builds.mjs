@@ -31,7 +31,7 @@ import {
   leagueBuilds, readBuildFilters, filterBuilds, capsuleBreakdown, FLOORS, DEFAULT_FLOOR,
 } from '../src/pages/meta/buildRows.js';
 import {
-  aiStrategyRows, aiType, readAiFilters, readAiSort, sortAiRows, slug as aiSlug, aiStatByKey, AI_STYLE_STATS,
+  aiStrategyRows, aiType, readAiFilters, readAiSort, sortAiRows, slug as aiSlug, aiStatByKey, AI_STYLE_STATS, TRANSFORM_STAT,
 } from '../src/pages/meta/aiRows.js';
 import { overviewFromMatches, placeOverview } from '../src/utils/characterOverview.js';
 import {
@@ -42,6 +42,7 @@ import {
   BUILD_TYPES, FIT_STATS, PAIR_MIN, PAIR_SHARE,
 } from '../src/pages/meta/capsuleRows.js';
 import baseline from '../src/config/style-baseline.json' with { type: 'json' };
+import { lineupIndex, transformationSummary, UNKNOWN_AI } from '../src/utils/transformation.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const refData = path.resolve(__dirname, '..', '..', '..', 'referencedata');
@@ -58,6 +59,9 @@ function check(label, cond, detail) {
 const log = console.log;
 console.log = (...a) => { if (!String(a[0]).startsWith('[Fusion')) log(...a); };
 const charMap = parseCharacterCSV(fs.readFileSync(path.join(refData, 'characters.csv'), 'utf8'));
+// App's charIdFor: a character's id from its name.
+const idByName = new Map(Object.entries(charMap).map(([id, name]) => [name, id]));
+const idFor = name => idByName.get(name) || null;
 const capsuleInfo = loadCapsuleData(fs.readFileSync(path.join(refData, 'capsules.csv'), 'utf8'));
 const aiStrategies = {};
 for (const s of capsuleInfo.aiStrategies || []) if (s.id) aiStrategies[s.id] = s;
@@ -193,9 +197,51 @@ for (const [label, { rows }] of [['default', def], ['everything', everything]]) 
   log(`\n[AI strategies, ${label}]`);
   const none = { chars: [], types: [] };
   const ais = aiStrategyRows(rows, none, charMap);
-  const matches = rows.reduce((n, r) => n + (r.matches || []).length, 0);
-  check(`every match counts toward exactly one strategy (${ais.length} strategies)`,
-    ais.reduce((n, a) => n + a.matches.length, 0) === matches);
+  // A file that lost its AI ("Default", UNKNOWN_AI) is no strategy's.
+  const matches = rows.reduce((n, r) => n + (r.matches || []).filter(m => (m.aiStrategy || UNKNOWN_AI) !== UNKNOWN_AI).length, 0);
+  check(`every match with a known AI counts toward exactly one strategy (${ais.length} strategies), and "Default" has no row`,
+    ais.reduce((n, a) => n + a.matches.length, 0) === matches && !ais.some(a => a.name === UNKNOWN_AI));
+
+  // The Transform column (aiShift.js transformShift): the same characters'
+  // transform rate on this AI against their other AIs.
+  const ctx = { idFor, lineups: lineupIndex(rows, idFor) };
+  const t1 = Date.now();
+  const aisT = aiStrategyRows(rows, none, charMap, ctx);
+  log(`  with transformations: ${Date.now() - t1}ms; most raised: ${aisT.filter(a => a.transform && a.transform.gain !== null)
+    .sort((a, b) => b.transform.gain - a.transform.gain).slice(0, 3).map(a => `${a.name} ${Math.round(a.transform.gain * 100)}`).join(', ')}`);
+  check('each Transform cell is its row\'s change in points, this AI minus other AIs', aisT.every(a => {
+    const t = a.transform;
+    if (!t || t.gain === null) return TRANSFORM_STAT.get(a) === null;
+    return Math.abs(TRANSFORM_STAT.get(a) - t.gain * 100) < 1e-9 && Math.abs(t.gain - (t.with - t.usual)) < 1e-9
+      && t.with >= 0 && t.with <= 1 && t.usual >= 0 && t.usual <= 1;
+  }));
+  const leadT = aisT[0];
+  if (leadT.transform) {
+    // Counted again by hand: characters that can transform, MIN_OTHER+ counted matches on other AIs.
+    let compared = 0;
+    for (const p of strategyPairs(rows, leadT.name).paired) {
+      const id = idFor(p.name);
+      const on = transformationSummary(p.with, { id, lineups: ctx.lineups });
+      const off = transformationSummary(p.without, { id, lineups: ctx.lineups });
+      if (on.able && on.matches && off.matches >= MIN_OTHER) compared += on.matches;
+    }
+    check(`it compares the counted matches of the characters that transform (${leadT.name}: ${compared})`, leadT.transform.compared === compared);
+    const able = leadT.transform.byCharacter.slice().sort((a, b) => b.on.matches - a.on.matches)[0];
+    if (able) {
+      const [mine] = aiStrategyRows(rows, { chars: [aiSlug(able.name)], types: [] }, charMap, ctx).filter(a => a.name === leadT.name);
+      const own = transformationSummary(rows.find(r => r.name === able.name).matches.filter(m => m.aiStrategy === leadT.name), { id: idFor(able.name), lineups: ctx.lineups });
+      check(`with one character picked it is that character's own rate (${able.name}: ${own.transformed} of ${own.matches})`,
+        mine && mine.transform && Math.abs(mine.transform.with - own.rate) < 1e-9 && mine.transform.characters === 1);
+    }
+  }
+  const cannot = rows.find(r => r.matches.length >= 5 && !transformationSummary(r.matches, { id: idFor(r.name), lineups: ctx.lineups }).able);
+  if (cannot) {
+    check(`a character that cannot transform has no Transform figure (${cannot.name}), so the column goes`,
+      aiStrategyRows(rows, { chars: [aiSlug(cannot.name)], types: [] }, charMap, ctx).every(a => a.transform === null));
+  }
+  const byT = sortAiRows(aisT, { sort: 'transform', dir: 'desc' }, aiStatByKey).map(a => TRANSFORM_STAT.get(a));
+  check('sorting by Transform puts the biggest change first and strategies without one last',
+    byT.every((v, i) => i === 0 || v === null || (byT[i - 1] !== null && byT[i - 1] >= v)));
   // The pooled figures are the leaderboard's, recomputed here from the matches.
   const off = ais.filter(a => {
     const fought = a.matches.filter(m => (m.battleTime || 0) > 0);
