@@ -1041,7 +1041,8 @@ function createNamedRange(sheet, columns, dataRowCount, rangeName) {
   const namedRangeRef = `'${sheet.name}'!$A$3:$${lastColLetter}$${lastRow}`;
   
   try {
-    sheet.workbook.definedNames.add(namedRangeName, namedRangeRef);
+    // ExcelJS takes the range first, then the name
+    sheet.workbook.definedNames.add(namedRangeRef, namedRangeName);
     console.log(`✅ Added Named Range: "${namedRangeName}" (${namedRangeRef})`);
     console.log(`   Filter dropdowns enabled on Row 2 via auto-filter`);
     console.log(`   Users can convert to Table: Select data → Press Ctrl+T`);

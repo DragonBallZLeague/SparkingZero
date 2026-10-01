@@ -59,9 +59,9 @@ function createExcelTable(sheet, columns, dataRowCount, tableName) {
   // Add named range for easier pivot table creation
   const namedRangeName = `${tableName}Data`;
   sheet.workbook.definedNames.add(
-    `${namedRangeName}`, 
-    `'${sheet.name}'!$A$3:$${lastColLetter}$${lastRow}`
-  );
+    `'${sheet.name}'!$A$3:$${lastColLetter}$${lastRow}`,
+    `${namedRangeName}`
+  ); // range first, then the name
   
   console.log(`✅ Created Excel Table: "${tableName}" (Rows 2-${lastRow}, Columns A-${lastColLetter})`);
   console.log(`✅ Added Named Range: "${namedRangeName}" for pivot table creation`);

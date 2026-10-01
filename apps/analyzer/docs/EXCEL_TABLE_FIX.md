@@ -171,7 +171,7 @@ function createExcelTable(sheet, columns, dataRowCount, tableName) {
 ```javascript
 function createNamedRange(sheet, columns, dataRowCount, rangeName) {
   // Simple named range creation
-  sheet.workbook.definedNames.add(rangeName, reference);
+  sheet.workbook.definedNames.add(reference, rangeName); // range first, then the name
 }
 ```
 
