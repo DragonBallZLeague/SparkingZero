@@ -87,12 +87,23 @@ export function shortFormNames(names, abbreviate = false) {
 }
 
 // Form colours: they only tie a form to its timeline segment, so they need to
-// be told apart at a glance, and the league wants them of one family
-// (2026-10-01: grey steps were too alike, unrelated hues too loud). A ramp
-// from blue to purple, the starting form palest and each later form deeper:
-// sky 200, sky 400, indigo 400, purple 400, fuchsia 400. None is the ranks'
-// green and red or the picked form's orange.
-const SHADES = ['#bae6fd', '#38bdf8', '#818cf8', '#c084fc', '#e879f9'];
+// be told apart at a glance (the league, 2026-10-01: grey steps were too
+// alike, unrelated hues too loud, pale blues too close to the navy panel).
+// White for the starting form, then purple, darker with each later form,
+// spread over however many forms there are so the steps stay far apart (two
+// forms are white and purple 500, not white and a near-white lavender). It
+// stops at purple 700 (800 for a fifth form), which still shows on the
+// panel. SHADES[n] is the ramp for n forms. None is the ranks' green and red
+// or the picked form's orange.
+const WHITE = '#f8fafc';
+const SHADES = [
+  null,
+  [WHITE],
+  [WHITE, '#a855f7'],
+  [WHITE, '#c084fc', '#9333ea'],
+  [WHITE, '#d8b4fe', '#a855f7', '#7e22ce'],
+  [WHITE, '#e9d5ff', '#c084fc', '#9333ea', '#6b21a8'],
+];
 export const PICKED = '#f97316';
 
 const int = v => Math.round(v || 0).toLocaleString('en-US');
@@ -146,9 +157,11 @@ export default function FormBreakdown({
   const shownRows = of ? [['Reached', f => (f.start ? 'Starting form' : `${f.reached} of ${of}`), null, true], ...ROWS] : ROWS;
   const rows = complete && open ? shownRows.filter(([, , , core, zero]) => core || forms.some(f => !zero(f))) : [];
   const pickable = complete && !!onSelect;
-  // By form, not position: a form taken twice (Goku, Super Saiyan, Goku) keeps its colour.
+  // By form, not position: a form taken twice (Goku, Super Saiyan, Goku) keeps
+  // its colour. The ramp is the one for this many forms.
   const order = [...new Set(forms.map(f => f.id))];
-  const colour = i => (selected === i ? PICKED : SHADES[order.indexOf(forms[i].id) % SHADES.length]);
+  const ramp = SHADES[Math.min(order.length, SHADES.length - 1)];
+  const colour = i => (selected === i ? PICKED : ramp[order.indexOf(forms[i].id) % ramp.length]);
 
   // Where each form began: 0:00, then every change, unless it would run into
   // the label before it or the end's.
