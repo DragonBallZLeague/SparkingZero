@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/autoTagMatches.js && node scripts/generate-br-data-structure.js && node scripts/generate-br-data-tags.js && node scripts/verify-action-codes.mjs && node scripts/generate-br-aggregates.js && node --import ./scripts/json-import-hook.mjs scripts/generate-recent-uploads.mjs && node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs && node --import ./scripts/json-import-hook.mjs scripts/generate-style-baseline.mjs && node scripts/verify-character-slugs.mjs && node scripts/verify-match-slugs.mjs && node scripts/verify-portraits.mjs && node scripts/verify-teams.mjs && node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs",
+    "prebuild": "node scripts/autoTagMatches.js && node scripts/generate-br-data-structure.js && node scripts/generate-br-data-tags.js && node scripts/verify-action-codes.mjs && node scripts/generate-br-aggregates.js && node --import ./scripts/json-import-hook.mjs scripts/generate-recent-uploads.mjs && node --import ./scripts/json-import-hook.mjs scripts/generate-performance-bands.mjs && node --import ./scripts/json-import-hook.mjs scripts/generate-style-baseline.mjs && node scripts/verify-character-slugs.mjs && node scripts/verify-match-slugs.mjs && node scripts/verify-portraits.mjs && node scripts/verify-teams.mjs && node --import ./scripts/json-import-hook.mjs scripts/verify-transformations.mjs && node scripts/verify-routes.mjs && node scripts/verify-self-contained.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "fix-json": "node scripts/fix-json-encoding.js",
@@ -18,6 +18,7 @@
     "verify-match-slugs": "node scripts/verify-match-slugs.mjs",
     "build-team-logos": "node scripts/build-team-logos.mjs",
     "verify-teams": "node scripts/verify-teams.mjs",
+    "verify-transformations": "node --import ./scripts/json-import-hook.mjs scripts/verify-transformations.mjs",
     "verify-filters": "node --import ./scripts/json-import-hook.mjs scripts/verify-filter-aggregated.mjs",
     "verify-character-page": "node --import ./scripts/json-import-hook.mjs scripts/verify-character-page.mjs",
     "verify-meta-builds": "node --import ./scripts/json-import-hook.mjs scripts/verify-meta-builds.mjs",

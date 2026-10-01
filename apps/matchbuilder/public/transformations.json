@@ -20,7 +20,7 @@
   "0002_32": { "name": "Goku (GT) Super Saiyan 3", "transformsTo": ["0000_33", "0002_30"] },
   "0002_50": { "name": "Goku (Teen)", "transformsTo": [] },
 
-  "0020_00": { "name": "Vegeta (Z - Scouter)", "transformsTo": [] },
+  "0020_00": { "name": "Vegeta (Z - Scouter)", "transformsTo": ["0023_00"] },
   "0020_10": { "name": "Vegeta (Z - Early)", "transformsTo": ["0020_11"] },
   "0020_11": { "name": "Vegeta (Z - Early) Super Saiyan", "transformsTo": ["0020_10"] },
   "0020_30": { "name": "Vegeta (Z - End)", "transformsTo": ["0020_31", "0020_32"] },
@@ -142,7 +142,7 @@
 
   "0170_00": { "name": "Majin Buu", "transformsTo": [] },
   "0171_00": { "name": "Majin Buu (Evil)", "transformsTo": [] },
-  "0172_00": { "name": "Super Buu", "transformsTo": ["0172_10"] },
+  "0172_00": { "name": "Super Buu", "transformsTo": ["0172_10", "0172_11"] },
   "0172_10": { "name": "Super Buu (Gotenks Absorbed)", "transformsTo": ["0172_11"] },
   "0172_11": { "name": "Super Buu (Gohan Absorbed)", "transformsTo": [] },
   "0173_00": { "name": "Kid Buu", "transformsTo": [] },

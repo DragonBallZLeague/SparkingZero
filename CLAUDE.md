@@ -47,7 +47,7 @@ npm run dev:calculator   # Calculator         -> :5175
 
 # Build
 npm run build             # Match Builder
-npm run build:analyzer    # Analyzer (prebuild also runs autoTagMatches.js, generate-br-data-structure.js, generate-br-data-tags.js, verify-action-codes.mjs, generate-br-aggregates.js and generate-performance-bands.mjs over BR_Data, then verify-character-slugs, verify-match-slugs, verify-portraits, verify-teams, verify-routes and verify-self-contained)
+npm run build:analyzer    # Analyzer (prebuild also runs autoTagMatches.js, generate-br-data-structure.js, generate-br-data-tags.js, verify-action-codes.mjs, generate-br-aggregates.js and generate-performance-bands.mjs over BR_Data, then verify-character-slugs, verify-match-slugs, verify-portraits, verify-teams, verify-transformations, verify-routes and verify-self-contained)
 npm run build:calculator  # Calculator
 npm run build:all         # Match Builder + Analyzer + Calculator
 (cd apps/website && npm run build)
@@ -77,7 +77,8 @@ Each app's `vite.config.js` sets its own `base` to match its GitHub Pages subpat
 `characters.csv`, `capsules.csv`, `maps.csv`, `capsule-rules.yaml`, `transformations.json` and `teams.json` are the single source of truth for character/capsule/map/team data, consumed differently by each app:
 - **Analyzer** imports the CSVs directly at build time via Vite's `?raw` import, and `teams.json` (each team's ASCII tag, the website's display name, slugs, logo) as JSON. It shows the website's team names and logos from it; team tags and `BR_Data` folders never change.
 - **Match Builder** copies them into its `public/` folder at build time and `fetch`es them at runtime.
-- **Website**/**Match Builder** get `transformations.json` synced in by the deploy workflow (and must be synced manually for local builds — see `referencedata/README.md`).
+- **Website**/**Match Builder** get `transformations.json` synced in by the deploy workflow (and must be synced manually for local builds — see `referencedata/README.md`). The **Analyzer** imports it directly from the root (forms, the fusion rule, and how transformations are counted: `apps/analyzer/src/utils/transformation.js`, guarded by `verify-transformations` in its prebuild).
+- **Edit `transformations.json` only at the root.** The August 2026 DLC entries went into Match Builder's copy instead, and since the deploy copies the root file over it, production lost them until they were merged back on 2026-09-30.
 
 Always edit these files only in `/referencedata/` at the repo root, never in an app's local copy — local copies are generated/synced, not sources of truth. After editing, rebuild the Analyzer and Match Builder to pick up the change locally.
 

@@ -73,6 +73,7 @@ The league's call, after going through what was left of the plan: the restyle (t
 **Home (Phase 5) followed the same day** (see "Phases 4–7" below), with the Characters page's Styles view and a tablet layout for every wide table. **That closed the restyle work**: the league approved it, the local `analyzer-restyle` branch was merged into `dev-branch`, and the league pulled the remote's data submissions into it and pushed it (2026-09-30).
 
 **Next phase**, from the plan's remaining work:
+- **transformations, brought back** (decided 2026-09-30; see "Transformations" below): step 1 of 4 done
 - the share-snippet image card (Phase 3 and 7)
 - build comparison and the querystring-driven character comparison (Phase 3)
 - trends over time, and deeper matchup analysis (Phase 4)
@@ -94,6 +95,7 @@ For a fresh start on the next phase: where things stand, how work was checked, a
 - Many source files use CRLF line endings: keep a file's endings when editing it. `smoke-character-page` prints `useLayoutEffect` server-render warnings from react-router's `MemoryRouter` and `CharacterTabs`; they are harmless.
 
 **Where each item starts.**
+- **Transformations** ("Transformations" below): step 1 (the rules in `utils/transformation.js`, the reference fixes, `verify-transformations`) is on the local `analyzer-transformations` branch. Steps 2–4 read a transformation only through that module: `transformationSummary(matches, { id, lineups })` over any set of one character's matches, with `lineupIndex(rows, charIdFor)` built once per scope. The AI comparison belongs beside the style shifts in `meta/aiShift.js`, under the same `MIN_OTHER` rule.
 - **The share image card** ("Share-snippet feature" below): Character, Team and Match pages and the Sandbox, image first, for pasting into Discord. `components/ShareButton.jsx` copies the link today. No image library is installed yet (the plan names canvas or `html-to-image`). What the card shows is undecided: settle it with the league on a real-data demo, as the Overview was.
 - **Build comparison and character comparison** (Phase 3's list): the Character page's Builds tab (`character/CharacterBuilds.jsx` on Meta's `BuildsTable`, with the `?build=` cut) is the raw material for comparing builds. Build recommendations are to be rebuilt on the league's own score (the old engine was deleted). Character comparison is a querystring mode on `/characters`, 2-3 side by side, so a comparison is a link; its design is open.
 - **Trends over time** (Phase 4): match files carry no dates. `utils/matchOrder.js` orders matches by name (season, phase, round, week), the natural axis for season matches; per-file upload dates are available from git, as `generate-recent-uploads.mjs` reads them.
@@ -781,6 +783,39 @@ The analyzer's team tags and `BR_Data/Tests/` folders say "Master and Student" a
 - **In the Sandbox:** image-card export only, no deep link — sandbox data isn't persisted, so a link wouldn't resolve for anyone else.
 - Format priority: **image card first** (this is what gets pasted into Discord); text/markdown fallback deferred.
 - **Prerequisite:** the 404 dispatcher above. A share button that emits broken links is worse than no share button.
+
+---
+
+## Transformations — decided 2026-09-30
+
+The redesign dropped the transformation figures the old app had: an average count per match, per character and per AI strategy, with a sortable column on the old AI strategy table (`d068efba`). Participants read them to pick the AI that gets a character to transform, and to see how often one does. Only the workbook and the Forms tab's "Changed form in X of N" line kept them. The league settled their return on 2026-09-30.
+
+**Measured first** (the real corpus, 2026-09-30):
+- **The old average mostly said who runs an AI.** Pooled over every character and match, it counted characters whose only move is back to base (Trunks (Kid) Super Saiyan, 0 of 227), fusions as plain form changes, and matches with Broly's Ring, which blocks transforming (no match with it transformed).
+- **Compared within each character, the AI's effect is real and stable**: the same characters on an AI against their other AIs. Random halves of the data agree at r = 0.90 on the last two seasons, Ultra (0.87 over everything). Attack: Evasion leads (+42 points there, +24 over everything); Ultimate Blasts, Barrage, Combos and Counters sit at the bottom.
+- **Skill gauge capsules** (transformations and fusions spend the gauge: 1 count for most transformations, 2 or 3 for some, almost always 3 for a fusion, the league's account). League-wide, none moves the rate past the ±12 points unrelated capsules swing by (same character, same build type, last two seasons, Ultra: Super Transformation +4). Super Transformation cannot lower a 1-count transformation, so its effect is per character. Skills do not visibly compete with transforming for counts: 0.23 skills a minute whether the character transformed or not.
+- The median time on the field before the first transformation is 54 seconds.
+- **The default scope is too thin to compare AIs**: Season 0's league matches (105) leave 11 of 13 AI rows at Low data, while the last two seasons, Ultra (1,350 matches) give 7 High, 6 Medium and 2 Low.
+
+**The rules** (`apps/analyzer/src/utils/transformation.js`, guarded by `verify-transformations` in prebuild):
+- **A transformation is any form change the character makes itself, fusions included** (the league: the AI treats the two as one behaviour). A fusion counts for the character that starts it, whose record holds it. Form changes after a fusion are the fusion's.
+- **Counted matches**: it fought, it carried no Broly's Ring, and a character that can only fuse (Goku Black Super Saiyan Rosé, Zamasu, Vegeta (GT) Super Saiyan 4) had its partner on its team. A match it transformed in always counts.
+- **Reverts are not transformations.** A move back to the family's base form is set aside, so a form whose only move is down cannot transform (17 forms; `npm run verify-transformations -- --list`).
+- **The "Default" AI** is a since-fixed file bug that transforming set off (all 30 such matches transformed). Those matches count for the character, never in an AI comparison, and the Default row leaves Meta's AI strategies.
+- **The figures**: the transform rate (transformed / counted matches) and the median time on the field before the first transformation.
+- **Everything follows the scope bar** (the league's pick, over changing the site's default scope or pinning these figures to the reference window). Where most rows are Low, a link offers "Widen to the last 2 seasons, Ultra" and sets those chips, visibly.
+
+**Where it shows**, in order:
+1. ✅ **Rules, reference fixes and verifier** (2026-09-30). `referencedata/transformations.json` took the 33 DLC entries that had gone only into Match Builder's copy (Bardock Super Saiyan, Vegeta (GT), Trunks (GT) and Ma Junior with their forms, the fusion Super 17 (GT), and 25 characters with no moves) and Bardock's move to Super Saiyan; the deploy copies the root file over Match Builder's, so production had been losing them. It also took two moves the match files record: Vegeta (Z - Scouter) → Great Ape Vegeta, and Super Buu → Super Buu (Gohan Absorbed) directly. The copies in the analyzer, Match Builder and the website are synced.
+2. **Meta › AI strategies**: a **Transform** column, the change in points for the same characters on this AI against their other AIs, as a diverging bar, sortable (`sort=transform`), pickable on a phone. With the Character chip on one character it is that character's own, and for a character that cannot transform the column switches off with a line saying so. A **Transformations** box in the detail: the rate and the time to the first transformation, on this AI against other AIs, and the characters it helps and hurts most. The Default row goes.
+3. **Character page**: the Forms tab becomes **Transformations** (`?tab=forms` still opens it), shown for every character that can transform or fuse. Header figures (transformed x/N, first transformation, fused when it applies), a **By AI strategy** table (uses, transform %, first transformation; under 5 uses faded; a row opens Meta › AI strategies on this character), a **skill gauge capsules** box (Super Transformation, Secret Measures, Dragon Spirit, Dragon Heart and Broly's Ring, with and without, for this character), then the per-form averages. A fusion-only character whose partner was never on its team says so.
+4. **Smaller additions**: a Transform % column on the Character page's Builds tab; a transformation line in Meta › Capsules' detail for those five capsules, under the tab's own rule (hidden at Low data, neutral below the threshold); the count beside the Performances table's Forms path, sortable by it; transform columns on the workbook's Character Averages and AI Strategies sheets.
+
+Not doing: a Transform column on the Characters table (the league: too much for too little, and a character's own tabs have it).
+
+**Open, for the league:**
+- Each transformation's skill count (1, 2 or 3) is not in the reference. With it, the Transformations tab could show the cost beside each form and say when Super Transformation cannot help. Optional.
+- **Found on the way, not changed:** a partner absorbed into a fusion before it fought has no record in the file (12 of the 32 fusions, 11 of them Goku Black → Fused Zamasu). `utils/fusionSplit.js` then skips THE FUSION RULE (`if (!partnerOriginalId) break;`): the initiator keeps the fusion's whole output, and the partner gets no appearance in that match.
 
 ---
 
