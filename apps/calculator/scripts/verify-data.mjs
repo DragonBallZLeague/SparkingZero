@@ -179,12 +179,12 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   const spelledRight = (n) => refNames.includes(n) || refNames.some(x => x.startsWith(n + ' '));
   const broken = [], typos = [];
   for (const t of ref.season) for (const n of t.masterList) {
-    const links = calcNames.has(n) || getFormChain(n, calcNames, adj).length > 0;
+    const links = calcNames.has(n.trim()) || getFormChain(n, calcNames, adj).length > 0;
     if (links) continue;
-    (spelledRight(n) ? broken : typos).push(`${t.name}: "${n}"`);
+    (spelledRight(n.trim()) ? broken : typos).push(`${t.name}: "${n}"`);
   }
   strictCheck(!broken.length, 'every correctly spelled masterlist entry links into the calculator (website Teams page, run with the shipped formChain.js)', broken);
-  if (typos.length) warn(`${typos.length} masterlist entr${typos.length === 1 ? 'y is' : 'ies are'} misspelled or padded in ${ref.seasonFile}, so the website shows them as plain text (the calculator's team filter resolves them through aliases.csv)`, typos);
+  if (typos.length) warn(`${typos.length} masterlist entr${typos.length === 1 ? 'y is' : 'ies are'} misspelled in ${ref.seasonFile}, so the website shows them as plain text (the calculator's team filter resolves them through aliases.csv)`, typos);
   const nodes = Object.entries(ref.transformations).filter(([, e]) => e?.name).map(([id, e]) => [id, e.name]);
   const unresolved = nodes.filter(([id, n]) => !calcNames.has(n)).map(([id, n]) => `${id} ${n}`);
   strictCheck(!unresolved.length, `every transformations.json node is a calculator name (${nodes.length - unresolved.length}/${nodes.length})`, unresolved);

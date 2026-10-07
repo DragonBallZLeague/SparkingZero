@@ -129,39 +129,6 @@ export function applyOpponentDefense(value, opponentStats, defenseField) {
   return Math.round(value * def);
 }
 
-/**
- * Total cost of equipped capsules (null slots are free).
- */
-export function totalCapsuleCost(equippedCapsules) {
-  return equippedCapsules.reduce((sum, c) => sum + (typeof c?.cost === 'number' ? c.cost : 0), 0);
-}
-
-/**
- * Returns a numeric display value for a stat field.
- * Some raw values are 0–1 multipliers, others are raw numbers.
- */
-export function formatStat(field, value) {
-  if (value === null || value === undefined) return '—';
-  if (typeof value === 'string') return value;
-
-  // Fields stored as 0-1 multipliers — display as % modifier
-  const percentFields = ['meleeDefenseStat', 'blastDefense', 'energy', 'energyDecimal', 'sparkCharge'];
-
-  if (percentFields.includes(field)) {
-    const pct = Math.round((value - 1) * 100);
-    if (pct === 0) return 'Base';
-    return pct > 0 ? `+${pct}%` : `${pct}%`;
-  }
-
-  if (field === 'startingKi') {
-    return `${value} bars`;
-  }
-
-  return typeof value === 'number' ? value.toLocaleString() : String(value);
-}
-
-
-
 /** Build the URL for a character thumbnail stored in public/char_thumbnails/ */
 export function getImageUrl(filename, base = import.meta.env.BASE_URL) {
   if (!filename) return null;

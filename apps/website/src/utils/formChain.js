@@ -33,25 +33,13 @@ export function buildTransformAdj(data) {
  * name starting with it, then every form its transformsTo chain reaches, in declaration order.
  * An exact match is left out (the entry's own link covers it).
  */
-export function getFormChain(name, calcNames, transformAdj) {
+export function getFormChain(rawName, calcNames, transformAdj) {
+  const name = String(rawName).trim(); // masterlist entries are sometimes padded ("Demon King Piccolo ")
   const exactMatch = calcNames.has(name);
   let anchor = exactMatch ? name : [...calcNames].find(n => n.startsWith(name + ' '));
   if (!anchor) return [];
-  // Some transformation nodes use reversed naming, e.g. transformations.json has
-  // "Ultimate Gohan (Super Hero)" but the calc has "Gohan (Super Hero) Ultimate Gohan".
-  // Detect anchor's parenthetical variant like "(Super Hero)" and try remapping.
-  const anchorParenMatch = anchor.match(/\(([^)]+)\)$/);
-  const resolveCalcName = (node) => {
-    if (calcNames.has(node)) return node;
-    if (anchorParenMatch) {
-      const suffix = ' (' + anchorParenMatch[1] + ')';
-      if (node.endsWith(suffix)) {
-        const candidate = anchor + ' ' + node.slice(0, node.length - suffix.length);
-        if (calcNames.has(candidate)) return candidate;
-      }
-    }
-    return null;
-  };
+  // The calculator publishes referencedata's names, so transformation nodes match directly.
+  const resolveCalcName = (node) => (calcNames.has(node) ? node : null);
   // Forward BFS only — preserves transformsTo declaration order
   const visited = new Set([anchor]);
   const queue = [anchor];

@@ -299,7 +299,9 @@ export default function SkillsPanel({ character, blasts, skills = [], activeSkil
               {blast.lungeSpeed != null ? Number(blast.lungeSpeed).toLocaleString() : <span className="text-gray-600">—</span>}
             </td>
             <td className="py-1.5 px-1.5 text-sm text-center font-mono text-gray-300">
-              {blast.maxExpendEnergy != null ? fmtKiBars(blast.maxExpendEnergy) : <span className="text-gray-600">—</span>}
+              {blast.maxExpendEnergy != null
+                ? fmtKiBars(blast.maxExpendEnergy + ((isUltimate ? stats?.ultimateKiCostAdd : stats?.blastKiCostAdd) || 0))
+                : <span className="text-gray-600">—</span>}
             </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-gray-200 font-bold' : 'text-gray-300'}`}>
               {displayBase !== null ? displayBase.toLocaleString() : <NotMeasured />}

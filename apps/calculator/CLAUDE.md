@@ -25,7 +25,8 @@ Gotchas:
 - **Old share links carry display names.** `src/utils/shareLink.js` resolves names exact → `aliases` → normalised; renamed characters need a row in `data/curated/aliases.csv`. The website's Teams page builds name-based links too (see below).
 - **The website reads production `calculator/data/characters.json`**: it must stay a top-level array of objects with `name`, in referencedata order. Its form dropdown walks `transformations.json` by name (`apps/website/src/utils/formChain.js`, imported by `verify-data` so the check runs the shipped code).
 - `public/char_thumbnails/T_UI_FaceP1_<id>_00.png` is also read by the Analyzer's `build-portraits` — do not rename or move those files.
-- `scripts/oneoff/` holds the scripts that seeded the curated tables and proved the schema-2 conversion lossless; they read files that no longer exist and are kept only as a record.
+- The one-off scripts that seeded the curated tables from the old JSON and proved the schema-2 conversion lossless were deleted after use (git history, P1–P4 of the 2026-10 rebuild); their results are recorded in `data/rebuild-2026-10/`.
+- Website masterlist names are matched trimmed (`formChain.js`); misspelled ones (e.g. "Zangaya") still show as plain text on the website — `verify-data` lists them, `curated/aliases.csv` resolves them for the calculator's own team filter.
 
 ## Architecture
 

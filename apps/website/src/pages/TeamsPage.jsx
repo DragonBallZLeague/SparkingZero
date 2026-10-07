@@ -23,7 +23,8 @@ function normalizeRoster(roster = []) {
   );
 }
 
-function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdown, portalTarget }) {
+function CharLink({ name: rawName, calcNames, transformAdj, darkMode, className, noDropdown, portalTarget }) {
+  const name = String(rawName).trim(); // masterlist entries are sometimes padded
   const [open, setOpen] = useState(false);
   const [dropPos, setDropPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);

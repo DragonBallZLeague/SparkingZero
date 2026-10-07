@@ -23,7 +23,7 @@ Supporting infra:
 - `vercel-api/` — the deployed Vercel serverless API (GitHub OAuth, submission validation, admin approve/reject, BR_Data file listing, Decap CMS auth) backing Admin, Submit, and Website's `/cms`. `vercel.json` at repo root points Vercel at this directory. See `vercel-api/CLAUDE.md`.
 - `api/` — older duplicate of some `vercel-api` functions; **not** referenced by the active deployment. Reference only, don't extend it.
 - `docs/` — design docs/implementation notes for the admin dashboard, upload pipeline, and reference-data tagging.
-- `GSTest/`, `NADFileTesting/` — local data-extraction/experimentation scripts, not part of the deployed site.
+- `GSTest/`, `NADFileTesting/` — local data-extraction/experimentation scripts, not part of the deployed site. `GSTest/extract-data.js` produced the calculator's old hand-edited JSON; it is superseded by `apps/calculator/scripts/` (`pull-sheets` / `build-data`) and nothing reads its output.
 
 ## Development commands
 

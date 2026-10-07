@@ -76,7 +76,7 @@ Every page that the CMS previews is split into a **container** (default export: 
 
 - `TeamsView`, `SeasonView`, `EventsView`, `EventDetailView`, `CommunityView`, `ArchivesView`, and one `…View` per rules section.
 - `src/pages/rules/sections.js` is the single registry of rules sections (label + page + view); `RulesPage` and the CMS preview both read it.
-- `src/hooks/useCharacterIndex.js` (calculator names + transformation graph) and `src/hooks/useLineups.js` (`EMPTY_LINEUPS` for previews) are shared by both.
+- `src/hooks/useCharacterIndex.js` (calculator names + transformation graph) and `src/hooks/useLineups.js` (`EMPTY_LINEUPS` for previews) are shared by both. How a masterlist name becomes Calculator links (trimmed exact name or name prefix, then its `transformsTo` chain) lives in `src/utils/formChain.js`, which has no imports because the Calculator's `verify-data` check imports it to confirm every correctly spelled masterlist entry still links. The links are name-based; the Calculator resolves old and misspelled names through its `data/curated/aliases.csv`.
 - `SeasonContext` is exported so the settings preview can supply the `site.yaml` being edited instead of the fetched one.
 
 **When adding a page or a collection:** keep the fetching in the container, put the markup in a `XView`, and add a preview to `PREVIEWS` in `cms/previews.jsx` keyed by the **collection** name (`templateKeysFor` in `cms/entry.js` expands that to the right per-file keys). Don't hand-write a preview layout.

@@ -720,7 +720,7 @@ function reportMd() {
     '',
     table(['', 'Count'], [
       ['Characters built', characters.length],
-      ['Capsules', `${ref.capsules.length} from referencedata + ${capsules.length - ref.capsules.length} from curated/capsules-extra.csv; ${capsules.filter(c => !c.effects.length).length} without structured effects`],
+      ['Capsules', `${ref.capsules.length} from referencedata + ${capsules.length - ref.capsules.length} from curated/capsules-extra.csv; ${capsules.filter(c => c.effects.some(e => APPLIED_KEYS.has(e.key) || e.op === 'set')).length} change shown stats, the rest are notes only`],
       ['Blasts measured', st('measured')],
       ['Blasts computed (calibrated recipe)', st('computed')],
       ['Blasts not measured yet', st('unmeasured')],
