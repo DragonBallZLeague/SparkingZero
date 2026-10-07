@@ -42,7 +42,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [] };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [] };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -175,6 +175,17 @@ function skillPhases(id, slot) {
   return phases.filter(p => p.effects.length || p.duration);
 }
 
+/** Display traits for a skill with no skill-display.csv row, read off its effects (marked inferred). */
+function inferDisplay(phases, damage) {
+  const keys = new Set(phases.flatMap(p => p.effects.map(e => e.key)));
+  const has = (...k) => k.some(x => keys.has(x));
+  const buff = has('rushDamage', 'smashDamage', 'kiBlastDamage', 'superDamage', 'ultimateDamage', 'physicalResist', 'energyResist', 'armorLevel', 'moveSpeed');
+  const ki = has('kiRestore', 'kiPerSecond');
+  const heal = has('healthRestore', 'healthRestoreFraction');
+  const type = heal ? 'Health' : buff && ki ? 'Buff/Ki' : buff ? 'Buff' : ki ? 'Ki' : damage > 0 ? 'Damage' : null;
+  return { type, instantSparking: false, instantKi: false, unblockable: false, cutscene: false, activationTime: null, mobilePenalty: null, healthAmount: null, kiAmount: null, inferred: true };
+}
+
 const skills = {};
 function buildSkills(id, cc) {
   const ids = [];
@@ -199,7 +210,8 @@ function buildSkills(id, cc) {
       activationTime: num(disp.activationTime), mobilePenalty: num(disp.mobilePenalty),
       healthAmount: disp.healthAmount === '' ? null : (num(disp.healthAmount) ?? disp.healthAmount),
       kiAmount: num(disp.kiAmount),
-    } : null;
+    } : inferDisplay(phases, damage);
+    if (!disp) report.inferredSkills.push(`${refById.get(id).name} — ${m.Move}: ${display.type ?? 'no type'}`);
     const armor = phases.some(p => p.effects.some(e => e.key === 'armorLevel' && e.value > 0));
     // Several phases with the same effects are charge stages (one applies), not a sequence.
     const sig = (p) => p.effects.map(e => e.key).sort().join();
@@ -207,7 +219,8 @@ function buildSkills(id, cc) {
     const expiry = [...(expiryRules.map.get(key) || [])];
     skills[key] = {
       id: key, character: id, slot, name: m.Move,
-      stockCost: num(m['Skill stock cost']) ?? num(disp?.cost), damage: round(damage, 2), duration,
+      // The Move List leaves the game's default (2) blank
+      stockCost: num(m['Skill stock cost']) ?? 2, damage: round(damage, 2), duration,
       phases, stages: stages || undefined, expiryRule: expiry.length ? Math.max(...expiry) : undefined,
       display, armor,
     };
@@ -470,7 +483,13 @@ const rulesets = Object.entries(ref.rules.rulesets || {}).map(([name, rs]) => {
   return { name, totalCost: rs.totalCost, banned: [...banned], groups };
 });
 const defaultRuleset = rulesets.find(r => r.name === ref.rules.default) || rulesets[0];
-const capsules = ref.capsules.map(cap => ({
+// Capsules missing from referencedata (curated/capsules-extra.csv; cost may be unknown = null)
+const extraCapsules = curated('capsules-extra.csv').map(r => ({ id: r.id, name: r.name, cost: num(r.cost), exclusiveTo: null, description: r.description }));
+for (const x of extraCapsules) {
+  if (ref.capsules.some(c => c.id === x.id)) report.warn.push(`capsules-extra.csv: ${x.id} ${x.name} is now in referencedata/capsules.csv; delete the extra row`);
+  if (x.cost == null) report.warn.push(`capsule ${x.name} (${x.id}) has no confirmed cost; it counts 0 toward the budget and shows "?"`);
+}
+const capsules = [...ref.capsules, ...extraCapsules.filter(x => !ref.capsules.some(c => c.id === x.id))].map(cap => ({
   id: cap.id, name: cap.name, cost: cap.cost, description: cap.description,
   exclusiveTo: cap.exclusiveTo,
   effects: legacyEffects[cap.id]?.effects || [],
@@ -654,7 +673,6 @@ function reportMd() {
     const lost = [...keys].filter(k => !shown.includes(k));
     if (s.phases.length > 1 || lost.length) skillLoss.push(`${refById.get(s.character).name} — ${s.name}: ${s.phases.length > 1 ? `${s.phases.length} phases (${s.phases.map(p => `${p.duration}s`).join(' then ')}) merged; ` : ''}${lost.length ? `not shown: ${lost.join(', ')}` : ''}`);
   }
-  const noDisplay = Object.values(skills).filter(s => !s.display).map(s => `${refById.get(s.character).name} — ${s.name}`);
   const lines = [
     '# Calculator data report',
     '',
@@ -674,12 +692,12 @@ function reportMd() {
     table(['', 'Count'], [
       ['Characters built', characters.length],
       ['Characters published', `${roster.length} (${rosterMode === 'legacy' ? 'the old roster; full roster from P3' : 'all'})`],
-      ['Capsules', `${capsules.length} in referencedata, ${legacyCapsules.length} published`],
+      ['Capsules', `${ref.capsules.length} from referencedata + ${capsules.length - ref.capsules.length} from curated/capsules-extra.csv; ${capsules.filter(c => !c.effects.length).length} without structured effects`],
       ['Blasts measured', st('measured')],
       ['Blasts computed (calibrated recipe)', st('computed')],
       ['Blasts not measured yet', st('unmeasured')],
       ['Skills', Object.keys(skills).length],
-      ['Skills without display traits (skill-display.csv)', noDisplay.length],
+      ['Skills with inferred display traits', report.inferredSkills.length],
     ]),
     '## Warnings',
     '',
@@ -720,9 +738,9 @@ function reportMd() {
     `Skill effect fields not in curated/effects.csv: ${unknownSkillFields.size ? [...unknownSkillFields].map(([f, n]) => `${f} (${n})`).join(', ') : 'none'}.`,
     '',
     list(report.skills),
-    `Skills without display traits: ${noDisplay.length}`,
+    `Skills with no row in curated/skill-display.csv (type inferred from their effects; activation time and flags unknown): ${report.inferredSkills.length}`,
     '',
-    list(noDisplay, 60),
+    list(report.inferredSkills, 80),
     '## Teams',
     '',
     list(report.teams),

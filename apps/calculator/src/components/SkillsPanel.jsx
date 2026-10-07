@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Target } from 'lucide-react';
 import { parseEffectKey } from '../utils/calculator.js';
+import { ComputedMark, NotMeasured } from './BlastStatus.jsx';
 
 const SLOT_ORDER = ['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'Replacement_Slot2', 'ReplacementSlot2'];
 const SLOT_LABELS = {
@@ -307,8 +308,8 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
       return (
         <React.Fragment key={i}>
           <tr className={`${traitTags.length ? '' : 'border-b border-sz-border/30'} hover:bg-gray-800/30 ${changed ? 'bg-blue-950/20' : ''}`}>
-            <td className="py-1.5 px-2 text-sm text-gray-200 leading-tight">{blast.name || '—'}</td>
-            <td className="py-1.5 px-1.5 text-sm text-gray-500 leading-tight whitespace-nowrap">{SLOT_LABELS[blast.slot] || blast.slot}</td>
+            <td className="py-1.5 px-2 text-sm text-gray-200 leading-tight">{blast.name || '—'}<ComputedMark blast={blast} /></td>
+            <td className="py-1.5 px-1.5 text-sm text-gray-500 leading-tight whitespace-nowrap" title={blast.variant ? `Alternative move (${blast.variant}), set by costume` : undefined}>{blast.variant && blast.slot === 'BlastUltimate' ? 'Alt. Ult.' : (SLOT_LABELS[blast.slot] || blast.slot)}</td>
             <td className="py-1.5 px-1.5">
               {blast.category && (
                 <span className={`text-xs px-1.5 py-0.5 rounded font-medium whitespace-nowrap ${catClass(blast.category)}`}>
@@ -326,7 +327,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
               {blast.maxExpendEnergy != null ? fmtKiBars(blast.maxExpendEnergy) : <span className="text-gray-600">—</span>}
             </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-gray-200 font-bold' : 'text-gray-300'}`}>
-              {displayBase !== null ? displayBase.toLocaleString() : '—'}
+              {displayBase !== null ? displayBase.toLocaleString() : <NotMeasured />}
             </td>
             <td className={`py-1.5 px-1.5 text-sm text-right font-mono ${changed ? 'text-blue-300 font-bold' : 'text-blue-400/70'}`}>
               {displayBoosted !== null ? displayBoosted.toLocaleString() : '—'}

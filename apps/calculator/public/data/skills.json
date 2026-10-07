@@ -1681,7 +1681,18 @@
         ]
       }
     ],
-    "display": null,
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
     "armor": false
   },
   "0020_63:1": {
@@ -4239,6 +4250,71 @@
     },
     "armor": false
   },
+  "0121_00:1": {
+    "id": "0121_00:1",
+    "character": "0121_00",
+    "slot": 1,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
+  },
+  "0121_00:2": {
+    "id": "0121_00:2",
+    "character": "0121_00",
+    "slot": 2,
+    "name": "Finish Sign",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
   "0130_00:1": {
     "id": "0130_00:1",
     "character": "0130_00",
@@ -5593,6 +5669,69 @@
     },
     "armor": false
   },
+  "0220_00:1": {
+    "id": "0220_00:1",
+    "character": "0220_00",
+    "slot": 1,
+    "name": "Wild Sense",
+    "stockCost": 2,
+    "damage": 1540,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0220_00:2": {
+    "id": "0220_00:2",
+    "character": "0220_00",
+    "slot": 2,
+    "name": "High-Tension",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 15,
+    "phases": [
+      {
+        "duration": 15,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"skillDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1},
+          {"key":"kiRestore","value":20000}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": true,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": 2
+    },
+    "armor": false
+  },
   "0230_00:1": {
     "id": "0230_00:1",
     "character": "0230_00",
@@ -5756,6 +5895,233 @@
     },
     "armor": false
   },
+  "0260_00:1": {
+    "id": "0260_00:1",
+    "character": "0260_00",
+    "slot": 1,
+    "name": "Afterimage Strike",
+    "stockCost": 3,
+    "damage": 0,
+    "duration": 10,
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "display": {
+      "type": "Multi-Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0260_00:2": {
+    "id": "0260_00:2",
+    "character": "0260_00",
+    "slot": 2,
+    "name": "Sleep",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "display": {
+      "type": "Health",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 3,
+      "mobilePenalty": 0.6,
+      "healthAmount": 1.2,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0270_00:1": {
+    "id": "0270_00:1",
+    "character": "0270_00",
+    "slot": 1,
+    "name": "Afterimage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0270_00:2": {
+    "id": "0270_00:2",
+    "character": "0270_00",
+    "slot": 2,
+    "name": "For the Villagers",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {"duration":15,"effects":[{"key":"guardResist","value":0.1}]},
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "0280_00:1": {
+    "id": "0280_00:1",
+    "character": "0280_00",
+    "slot": 1,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
+  },
+  "0280_00:2": {
+    "id": "0280_00:2",
+    "character": "0280_00",
+    "slot": 2,
+    "name": "Howl",
+    "stockCost": 3,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 15,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1}
+        ]
+      },
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Sparking",
+      "instantSparking": true,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0301_00:1": {
+    "id": "0301_00:1",
+    "character": "0301_00",
+    "slot": 1,
+    "name": "Maiden's Temper",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "0301_00:2": {
+    "id": "0301_00:2",
+    "character": "0301_00",
+    "slot": 2,
+    "name": "Maiden's Passion",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 15,
+    "phases": [{"duration":15,"effects":[{"key":"kiRecovery","value":0.15}]}],
+    "display": {
+      "type": null,
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
   "0310_00:1": {
     "id": "0310_00:1",
     "character": "0310_00",
@@ -5822,6 +6188,78 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null
+    },
+    "armor": false
+  },
+  "0310_01:1": {
+    "id": "0310_01:1",
+    "character": "0310_01",
+    "slot": 1,
+    "name": "Shockwave of Rebellion",
+    "stockCost": 5,
+    "damage": 1124.4,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Explosion/Sparking",
+      "instantSparking": true,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.3,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0310_01:2": {
+    "id": "0310_01:2",
+    "character": "0310_01",
+    "slot": 2,
+    "name": "Super Saiyan Spirit",
+    "stockCost": 3,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.2},
+          {"key":"smashDamage","value":0.2},
+          {"key":"comboDamage","value":0.2},
+          {"key":"throwDamage","value":0.2},
+          {"key":"counterDamage","value":0.2},
+          {"key":"followUpDamage","value":0.2},
+          {"key":"kiBlastDamage","value":0.2},
+          {"key":"chargedKiBlastDamage","value":0.2},
+          {"key":"skillDamage","value":0.2},
+          {"key":"superDamage","value":0.2},
+          {"key":"ultimateDamage","value":0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
     },
     "armor": false
   },
@@ -6785,7 +7223,77 @@
         ]
       }
     ],
-    "display": null,
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "0451_00:1": {
+    "id": "0451_00:1",
+    "character": "0451_00",
+    "slot": 1,
+    "name": "Android Barrier",
+    "stockCost": 2,
+    "damage": 1124.4,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Barrier",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.25,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0451_00:2": {
+    "id": "0451_00:2",
+    "character": "0451_00",
+    "slot": 2,
+    "name": "Pump Up",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"kiRecovery","value":-0.1},
+          {"key":"rushDamage","value":0.15},
+          {"key":"smashDamage","value":0.15},
+          {"key":"comboDamage","value":0.15},
+          {"key":"throwDamage","value":0.15},
+          {"key":"counterDamage","value":0.15},
+          {"key":"followUpDamage","value":0.15},
+          {"key":"kiBlastDamage","value":0.15},
+          {"key":"chargedKiBlastDamage","value":0.15}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
     "armor": false
   },
   "0460_00:1": {
@@ -7083,6 +7591,69 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null
+    },
+    "armor": false
+  },
+  "0510_00:1": {
+    "id": "0510_00:1",
+    "character": "0510_00",
+    "slot": 1,
+    "name": "Explosive Wave",
+    "stockCost": 2,
+    "damage": 937,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Explosion",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0510_00:2": {
+    "id": "0510_00:2",
+    "character": "0510_00",
+    "slot": 2,
+    "name": "King of Saiyans",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1},
+          {"key":"meleeCharge","value":0.1},
+          {"key":"kiShotCharge","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
     },
     "armor": false
   },
@@ -7989,6 +8560,50 @@
     },
     "armor": false
   },
+  "0610_00:1": {
+    "id": "0610_00:1",
+    "character": "0610_00",
+    "slot": 1,
+    "name": "Explosive Wave",
+    "stockCost": 2,
+    "damage": 937,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Explosion",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0610_00:2": {
+    "id": "0610_00:2",
+    "character": "0610_00",
+    "slot": 2,
+    "name": "Finish Sign",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [{"duration":25,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]}],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
   "0620_00:1": {
     "id": "0620_00:1",
     "character": "0620_00",
@@ -8215,6 +8830,53 @@
       "instantKi": false,
       "unblockable": false,
       "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0640_00:1": {
+    "id": "0640_00:1",
+    "character": "0640_00",
+    "slot": 1,
+    "name": "Psycho Thread",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 3,
+    "phases": [{"duration":3,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": null,
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "0640_00:2": {
+    "id": "0640_00:2",
+    "character": "0640_00",
+    "slot": 2,
+    "name": "Wild Sense",
+    "stockCost": 2,
+    "damage": 1120,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
       "activationTime": 0,
       "mobilePenalty": null,
       "healthAmount": null,
@@ -8665,6 +9327,50 @@
     },
     "armor": false
   },
+  "0690_00:1": {
+    "id": "0690_00:1",
+    "character": "0690_00",
+    "slot": 1,
+    "name": "Instant Transmission",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 0.4,
+    "phases": [{"duration":0.4,"effects":[]}],
+    "display": {
+      "type": "Teleport",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0690_00:2": {
+    "id": "0690_00:2",
+    "character": "0690_00",
+    "slot": 2,
+    "name": "Explosive Wave",
+    "stockCost": 2,
+    "damage": 1077.55,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Explosion",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
   "0700_00:1": {
     "id": "0700_00:1",
     "character": "0700_00",
@@ -8779,6 +9485,168 @@
       "kiAmount": null
     },
     "armor": false
+  },
+  "0710_00:1": {
+    "id": "0710_00:1",
+    "character": "0710_00",
+    "slot": 1,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
+  },
+  "0710_00:2": {
+    "id": "0710_00:2",
+    "character": "0710_00",
+    "slot": 2,
+    "name": "Wild Sense",
+    "stockCost": 2,
+    "damage": 1260,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0720_00:1": {
+    "id": "0720_00:1",
+    "character": "0720_00",
+    "slot": 1,
+    "name": "Telekinesis",
+    "stockCost": 2,
+    "damage": 562.5,
+    "duration": 5,
+    "phases": [{"duration":5,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": "Bind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0720_00:2": {
+    "id": "0720_00:2",
+    "character": "0720_00",
+    "slot": 2,
+    "name": "I'm the Worst!",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 15,
+    "phases": [
+      {
+        "duration": 15,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"skillDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1},
+          {"key":"kiRestore","value":20000}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff/Ki",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "0730_00:1": {
+    "id": "0730_00:1",
+    "character": "0730_00",
+    "slot": 1,
+    "name": "Paralyze Beam",
+    "stockCost": 2,
+    "damage": 562.5,
+    "duration": 3,
+    "phases": [{"duration":3,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": "Bind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0730_00:2": {
+    "id": "0730_00:2",
+    "character": "0730_00",
+    "slot": 2,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
   },
   "0760_00:1": {
     "id": "0760_00:1",
@@ -9211,6 +10079,117 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null
+    },
+    "armor": false
+  },
+  "0820_00:1": {
+    "id": "0820_00:1",
+    "character": "0820_00",
+    "slot": 1,
+    "name": "Paralyze Beam",
+    "stockCost": 2,
+    "damage": 625,
+    "duration": 3,
+    "phases": [{"duration":3,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": "Bind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0820_00:2": {
+    "id": "0820_00:2",
+    "character": "0820_00",
+    "slot": 2,
+    "name": "Full Power",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Sparking",
+      "instantSparking": true,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 1.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "0830_00:1": {
+    "id": "0830_00:1",
+    "character": "0830_00",
+    "slot": 1,
+    "name": "Elite Flash",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 5,
+    "phases": [{"duration":5,"effects":[]}],
+    "display": {
+      "type": null,
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "0830_00:2": {
+    "id": "0830_00:2",
+    "character": "0830_00",
+    "slot": 2,
+    "name": "Elite Pose",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
     },
     "armor": false
   },
@@ -10279,6 +11258,61 @@
     },
     "armor": false
   },
+  "1000_00:1": {
+    "id": "1000_00:1",
+    "character": "1000_00",
+    "slot": 1,
+    "name": "Sleep",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "display": {
+      "type": "Health",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 3,
+      "mobilePenalty": 0.6,
+      "healthAmount": 1.2,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "1000_00:2": {
+    "id": "1000_00:2",
+    "character": "1000_00",
+    "slot": 2,
+    "name": "Fury",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
   "1190_00:1": {
     "id": "1190_00:1",
     "character": "1190_00",
@@ -10606,6 +11640,56 @@
       "kiAmount": null
     },
     "armor": false
+  },
+  "1960_00:1": {
+    "id": "1960_00:1",
+    "character": "1960_00",
+    "slot": 1,
+    "name": "Flash Blast",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 5,
+    "phases": [{"duration":5,"effects":[]}],
+    "display": {
+      "type": null,
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "1960_00:2": {
+    "id": "1960_00:2",
+    "character": "1960_00",
+    "slot": 2,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
   },
   "3000_00:1": {
     "id": "3000_00:1",
@@ -12215,6 +13299,821 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": 2
+    },
+    "armor": false
+  },
+  "3170_00:1": {
+    "id": "3170_00:1",
+    "character": "3170_00",
+    "slot": 1,
+    "name": "Afterimage Strike",
+    "stockCost": 3,
+    "damage": 0,
+    "duration": 10,
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "display": {
+      "type": "Multi-Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3170_00:2": {
+    "id": "3170_00:2",
+    "character": "3170_00",
+    "slot": 2,
+    "name": "Shockwave",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 3,
+    "phases": [{"duration":3,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": null,
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "3190_00:1": {
+    "id": "3190_00:1",
+    "character": "3190_00",
+    "slot": 1,
+    "name": "Wild Sense",
+    "stockCost": 2,
+    "damage": 1050,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3190_00:2": {
+    "id": "3190_00:2",
+    "character": "3190_00",
+    "slot": 2,
+    "name": "Saiyan Spirit",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3270_00:1": {
+    "id": "3270_00:1",
+    "character": "3270_00",
+    "slot": 1,
+    "name": "Explosive Wave",
+    "stockCost": 2,
+    "damage": 983.85,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Explosion",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3270_00:2": {
+    "id": "3270_00:2",
+    "character": "3270_00",
+    "slot": 2,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
+  },
+  "3270_01:1": {
+    "id": "3270_01:1",
+    "character": "3270_01",
+    "slot": 1,
+    "name": "Afterimage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3270_01:2": {
+    "id": "3270_01:2",
+    "character": "3270_01",
+    "slot": 2,
+    "name": "Saiyan Who Calls Earth Home",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "3280_00:1": {
+    "id": "3280_00:1",
+    "character": "3280_00",
+    "slot": 1,
+    "name": "Afterimage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3280_00:2": {
+    "id": "3280_00:2",
+    "character": "3280_00",
+    "slot": 2,
+    "name": "Finish Sign",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3280_01:1": {
+    "id": "3280_01:1",
+    "character": "3280_01",
+    "slot": 1,
+    "name": "Explosive Wave",
+    "stockCost": 2,
+    "damage": 1077.55,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Explosion",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3280_01:2": {
+    "id": "3280_01:2",
+    "character": "3280_01",
+    "slot": 2,
+    "name": "Power Up to the Very Limit",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 15,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      },
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Sparking",
+      "instantSparking": true,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3290_00:1": {
+    "id": "3290_00:1",
+    "character": "3290_00",
+    "slot": 1,
+    "name": "Android Barrier",
+    "stockCost": 2,
+    "damage": 983.85,
+    "duration": 0,
+    "phases": [],
+    "display": {
+      "type": "Barrier",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0.25,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3290_00:2": {
+    "id": "3290_00:2",
+    "character": "3290_00",
+    "slot": 2,
+    "name": "High-Tension",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"kiRecovery","value":0.1},
+          {"key":"kiPerSecond","value":0.1},
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": true,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": 2
+    },
+    "armor": false
+  },
+  "3300_00:1": {
+    "id": "3300_00:1",
+    "character": "3300_00",
+    "slot": 1,
+    "name": "Solar Flare",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 5,
+    "phases": [{"duration":5,"effects":[]}],
+    "display": {
+      "type": "Blind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3300_00:2": {
+    "id": "3300_00:2",
+    "character": "3300_00",
+    "slot": 2,
+    "name": "Wild Sense",
+    "stockCost": 2,
+    "damage": 1330,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3310_00:1": {
+    "id": "3310_00:1",
+    "character": "3310_00",
+    "slot": 1,
+    "name": "Paralyze Beam",
+    "stockCost": 2,
+    "damage": 656.25,
+    "duration": 3,
+    "phases": [{"duration":3,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": "Bind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3310_00:2": {
+    "id": "3310_00:2",
+    "character": "3310_00",
+    "slot": 2,
+    "name": "Wild Sense",
+    "stockCost": 2,
+    "damage": 1330,
+    "duration": 0,
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "expiryRule": 8,
+    "display": {
+      "type": "Evade",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3310_10:1": {
+    "id": "3310_10:1",
+    "character": "3310_10",
+    "slot": 1,
+    "name": "Full-Power Charge",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"physicalResist","value":-0.1},
+          {"key":"energyResist","value":-0.1},
+          {"key":"blastResist","value":-0.1},
+          {"key":"guardResist","value":-0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Ki",
+      "instantSparking": false,
+      "instantKi": true,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": 5
+    },
+    "armor": false
+  },
+  "3310_10:2": {
+    "id": "3310_10:2",
+    "character": "3310_10",
+    "slot": 2,
+    "name": "Pump Up",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.15},
+          {"key":"smashDamage","value":0.15},
+          {"key":"comboDamage","value":0.15},
+          {"key":"throwDamage","value":0.15},
+          {"key":"counterDamage","value":0.15},
+          {"key":"followUpDamage","value":0.15},
+          {"key":"kiBlastDamage","value":0.15},
+          {"key":"chargedKiBlastDamage","value":0.15},
+          {"key":"moveSpeed","value":-0.15}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3320_00:1": {
+    "id": "3320_00:1",
+    "character": "3320_00",
+    "slot": 1,
+    "name": "Solar Flare",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 5,
+    "phases": [{"duration":5,"effects":[]}],
+    "display": {
+      "type": "Blind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3320_00:2": {
+    "id": "3320_00:2",
+    "character": "3320_00",
+    "slot": 2,
+    "name": "Finish Sign",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3330_00:1": {
+    "id": "3330_00:1",
+    "character": "3330_00",
+    "slot": 1,
+    "name": "False Courage",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 10,
+    "phases": [
+      {
+        "duration": 10,
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": true
+  },
+  "3330_00:2": {
+    "id": "3330_00:2",
+    "character": "3330_00",
+    "slot": 2,
+    "name": "Anger Boost",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {"duration":15,"effects":[{"key":"sparkingDrain","value":0.3}]},
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "expiryRule": 16,
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": null,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null,
+      "inferred": true
+    },
+    "armor": false
+  },
+  "3350_00:1": {
+    "id": "3350_00:1",
+    "character": "3350_00",
+    "slot": 1,
+    "name": "Full Power",
+    "stockCost": 4,
+    "damage": 0,
+    "duration": 30,
+    "phases": [
+      {
+        "duration": 30,
+        "effects": [
+          {"key":"physicalResist","value":-0.2},
+          {"key":"energyResist","value":-0.2},
+          {"key":"blastResist","value":-0.2},
+          {"key":"guardResist","value":-0.2}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Sparking",
+      "instantSparking": true,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": false,
+      "activationTime": 1.4,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3350_00:2": {
+    "id": "3350_00:2",
+    "character": "3350_00",
+    "slot": 2,
+    "name": "Saiyan Spirit",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3360_00:1": {
+    "id": "3360_00:1",
+    "character": "3360_00",
+    "slot": 1,
+    "name": "Psychokinesis",
+    "stockCost": 2,
+    "damage": 718.75,
+    "duration": 3,
+    "phases": [{"duration":3,"effects":[]}],
+    "expiryRule": 34,
+    "display": {
+      "type": "Bind",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": true,
+      "cutscene": false,
+      "activationTime": 1.5,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
+    },
+    "armor": false
+  },
+  "3360_00:2": {
+    "id": "3360_00:2",
+    "character": "3360_00",
+    "slot": 2,
+    "name": "Finish Sign",
+    "stockCost": 2,
+    "damage": 0,
+    "duration": 25,
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [
+          {"key":"rushDamage","value":0.1},
+          {"key":"smashDamage","value":0.1},
+          {"key":"comboDamage","value":0.1},
+          {"key":"throwDamage","value":0.1},
+          {"key":"counterDamage","value":0.1},
+          {"key":"followUpDamage","value":0.1},
+          {"key":"kiBlastDamage","value":0.1},
+          {"key":"chargedKiBlastDamage","value":0.1},
+          {"key":"superDamage","value":0.1},
+          {"key":"ultimateDamage","value":0.1}
+        ]
+      }
+    ],
+    "display": {
+      "type": "Buff",
+      "instantSparking": false,
+      "instantKi": false,
+      "unblockable": false,
+      "cutscene": true,
+      "activationTime": 0,
+      "mobilePenalty": null,
+      "healthAmount": null,
+      "kiAmount": null
     },
     "armor": false
   }

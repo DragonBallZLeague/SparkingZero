@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { X, Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import { totalCapsuleCost, CAPSULE_BUDGET } from '../utils/calculator.js';
+import { useRules, totalCost as sumCost, capsuleCost } from '../utils/rules.js';
+import RulesBar from './RulesBar.jsx';
 
 const COST_COLORS = ['', 'text-gray-400', 'text-blue-400', 'text-yellow-400', 'text-orange-400', 'text-red-500'];
 
 function Stars({ cost }) {
+  if (typeof cost !== 'number') return <span className="font-bold text-sm text-gray-500" title="Cost not confirmed">?★</span>;
   return <span className={`font-bold text-sm ${COST_COLORS[cost] ?? 'text-gray-400'}`}>{cost}★</span>;
 }
 
@@ -17,13 +19,13 @@ export default function CapsuleBuilder({
   onRemove,
   onClear,
   onCollapse,
-  budget,
   collapseDirection = 'right',
 }) {
+  const { budget } = useRules();
   const [search, setSearch] = useState('');
   const [costFilter, setCostFilter] = useState('');
 
-  const totalCost = totalCapsuleCost(equippedCapsules);
+  const totalCost = sumCost(equippedCapsules);
   const overBudget = totalCost > budget;
   const pct = Math.min(100, (totalCost / budget) * 100);
 
@@ -74,6 +76,8 @@ export default function CapsuleBuilder({
           style={{ width: `${pct}%` }}
         />
       </div>
+
+      <RulesBar equipped={equippedCapsules} capsules={capsules} showPicker />
 
       {/* Slot table */}
       <table className="w-full">
@@ -164,8 +168,8 @@ export default function CapsuleBuilder({
               const equipped = equippedNames.has(cap.name);
               const hasOpenSlot = equippedCapsules.some(c => c === null);
               const canSelect = !equipped && (activeSlot !== null || hasOpenSlot);
-              const slotCost = activeSlot !== null ? (equippedCapsules[activeSlot]?.cost ?? 0) : 0;
-              const wouldExceed = canSelect && (totalCost - slotCost + cap.cost > budget);
+              const slotCost = activeSlot !== null ? capsuleCost(equippedCapsules[activeSlot]) : 0;
+              const wouldExceed = canSelect && (totalCost - slotCost + capsuleCost(cap) > budget);
 
               return (
                 <tr

@@ -13,8 +13,8 @@
  *   curated/blasts.csv       measured blast damage + display traits, relinked to the raw
  *                            Move List by move name (not by row position; the old file was
  *                            misaligned for 12 characters). Every relink is noted per row.
- *   curated/skill-display.csv  skill stock cost and display traits (type, activation time,
- *                            flags), keyed by the game's skill name; the raw map has neither
+ *   curated/skill-display.csv  skill display traits (type, activation time, flags), keyed by
+ *                            the game's skill name
  *   curated/sparking.csv     the Sparking armor flag (no game-data source found)
  *   curated/classes.csv      game class key -> display label (+ the labels Capsule Corp uses)
  *   curated/aliases.csv      old calculator names, Capsule Corp names and website masterlist
@@ -280,7 +280,6 @@ for (const c of legacy.characters) {
       unblockable: !!detail.unblockable, cutscene: !!detail.cutscene,
       activationTime: detail.activationTime ?? '', mobilePenalty: detail.mobilePenalty ?? '',
       healthAmount: detail.healthAmount ?? '', kiAmount: detail.kiAmount ?? '',
-      cost: detail.cost ?? '',
     };
     const votes = displayVotes.get(match.r) || new Map();
     const k = JSON.stringify(disp);
@@ -313,7 +312,7 @@ const out = (rel, content) => { const did = writeIfChanged(path.join(DATA, rel),
 out('curated/aliases.csv', toCsv(['alias', 'id', 'name', 'kind', 'note'], aliases));
 out('curated/classes.csv', classesCsv);
 out('curated/blasts.csv', toCsv(['id', 'character', 'slot', 'variant', 'move', 'damage', 'boostedDamage', 'category', 'type', 'impactPower', 'traits', 'flags', 'triggerKi', 'lungeSpeed', 'moveLimitTime', 'note'], blastRows));
-out('curated/skill-display.csv', toCsv(['skill', 'cost', 'type', 'instantSparking', 'instantKi', 'unblockable', 'cutscene', 'activationTime', 'mobilePenalty', 'healthAmount', 'kiAmount', 'note'],
+out('curated/skill-display.csv', toCsv(['skill', 'type', 'instantSparking', 'instantKi', 'unblockable', 'cutscene', 'activationTime', 'mobilePenalty', 'healthAmount', 'kiAmount', 'note'],
   skillDisplay.map(s => ({ ...s, instantSparking: s.instantSparking ? 'TRUE' : '', instantKi: s.instantKi ? 'TRUE' : '', unblockable: s.unblockable ? 'TRUE' : '', cutscene: s.cutscene ? 'TRUE' : '' }))));
 out('curated/sparking.csv', toCsv(['id', 'character', 'armor', 'note'], sparking));
 if (!fs.existsSync(path.join(DATA, 'curated', 'overrides.csv'))) out('curated/overrides.csv', toCsv(['id', 'field', 'value', 'reason'], []));

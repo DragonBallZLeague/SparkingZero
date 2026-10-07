@@ -34,7 +34,7 @@ Gotchas:
 `src/App.jsx` (~1,300 lines) composes the page from `src/components/`:
 - `CharacterSelector.jsx` — character picker (team, class, search filters).
 - `StatsPanel.jsx` / `CompareStatsPanel.jsx` — stat display for a single build vs. side-by-side comparison mode.
-- `CapsuleBuilder.jsx` / `CompareCapsuleBuilder.jsx` — capsule loadout builder, single vs. comparison mode.
+- `CapsuleBuilder.jsx` / `CompareCapsuleBuilder.jsx` — capsule loadout builder, single vs. comparison mode (with the ruleset picker).
 - `SkillsPanel.jsx` — skills, blasts and ultimates; skill rows toggle buffs.
 - `OpponentPanel.jsx` — lets a build be evaluated against an opponent's build/stats.
 
@@ -47,6 +47,10 @@ Gotchas:
 `src/utils/shareLink.js` — share links: v2 `{v:2, c:id, p:[capsuleId x7], o, op}`; decodes old name links too. If you add a build dimension, update encoder and decoder together.
 
 `src/utils/classStyles.js` — the one table of class-label colours (badge, portrait gradient).
+
+`src/utils/rules.js` — capsule rulesets from `meta.json` (budget, banned ids, group caps such as Rush/Smash/Blast Attack Boost <= 6). App provides the selected ruleset through `RulesContext`; the builders read `useRules()` and show `components/RulesBar.jsx` (picker + warnings). The picker lists only capsules the selected ruleset allows; a capsule with no confirmed cost (`cost: null`) shows "?" and counts 0.
+
+`src/components/BlastStatus.jsx` — the `calc` marker (damage computed by a calibrated recipe) and "not measured yet" (no value).
 
 ## Gotchas
 

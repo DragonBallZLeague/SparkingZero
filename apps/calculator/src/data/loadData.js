@@ -23,11 +23,8 @@ export async function loadData(base = import.meta.env.BASE_URL) {
   );
   const data = { characters, skills, blasts, capsules, teams, meta };
 
-  // Capsules allowed under the default ruleset (the builder's list).
-  const ruleset = meta.defaultRuleset;
-  const allowed = capsules.filter(c => !(c.bannedIn || []).includes(ruleset));
-  const legacy = toLegacy({ ...data, capsules: allowed }, { roster: meta.roster });
-  legacy.capsules.forEach((c, i) => { c.id = allowed[i].id; });
+  // Every capsule (with bannedIn); the app filters by the selected ruleset.
+  const legacy = toLegacy(data, { ultimateVariants: true });
 
   const aliases = {};
   for (const c of characters) for (const a of c.aliases || []) aliases[a] = c.id;

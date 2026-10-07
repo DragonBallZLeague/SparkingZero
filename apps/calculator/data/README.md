@@ -41,10 +41,11 @@ data/
 | ki-blast cost, ki regen, attack ki gain | raw map with the class coefficient applied | Capsule Corp |
 | moves (names, slots, variants, ki costs) | raw Move List | `curated/blasts.csv` |
 | skill effects and phases | raw Skill Values (exact coefficients) | the raw summary tab |
-| skill stock cost and display traits | `curated/skill-display.csv` | |
+| skill stock cost | raw Move List (blank = the game default, 2) | |
+| skill display traits (type, activation time, flags) | `curated/skill-display.csv`; skills without a row get a type inferred from their effects (`display.inferred`) | |
 | blast damage | `curated/blasts.csv` (measured) | a calibrated recipe fills gaps (see below) |
 | Sparking armor flag | `curated/sparking.csv` | |
-| capsules | `referencedata/capsules.csv` (Type = Capsule) + bans from `capsule-rules.yaml` | |
+| capsules | `referencedata/capsules.csv` (Type = Capsule) + `curated/capsules-extra.csv`, bans and group caps from `capsule-rules.yaml` | |
 | teams | the website's `content/teams/<season>.yaml` master lists, expanded to every form | |
 
 Damage: `final = ceil(raw Power x 1.25 x (DP damage scale + class add))`, in float32 like
@@ -76,6 +77,7 @@ class key or effect.
 | `blasts.csv` | id + slot + variant + move | measured damage (+ boosted damage when it is not x1.2 / x1.3), category, traits, flags |
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag |
+| `capsules-extra.csv` | capsule id | capsules the game has but `referencedata/capsules.csv` lacks (cost may be blank = not confirmed: shown "?", counts 0). Delete a row once referencedata has the capsule |
 | `effects.csv` | effect key | the game field and summary column each effect key reads |
 
 `overrides.csv` fields are dotted paths into a character (e.g. `stats.kiBlastDamage`).

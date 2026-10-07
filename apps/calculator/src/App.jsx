@@ -8,7 +8,8 @@ import SkillsPanel from './components/SkillsPanel.jsx';
 import CompareStatsPanel from './components/CompareStatsPanel.jsx';
 import CompareCapsuleBuilder from './components/CompareCapsuleBuilder.jsx';
 import OpponentPanel from './components/OpponentPanel.jsx';
-import { computeModifiedStats, applySkillBuffs, CAPSULE_BUDGET } from './utils/calculator.js';
+import { computeModifiedStats, applySkillBuffs } from './utils/calculator.js';
+import { RulesContext, DEFAULT_BUDGET } from './utils/rules.js';
 import { decodeBuild, encodeBuild, makeResolver } from './utils/shareLink.js';
 import { loadData } from './data/loadData.js';
 import { applyLightBodyKiBlastArmor } from './utils/calculator.js';
@@ -116,7 +117,9 @@ const COMPARE_TABLET_WIDTHS = {
 
 function App() {
   const [characters, setCharacters] = useState([]);
-  const [capsules, setCapsules] = useState([]);
+  const [allCapsules, setAllCapsules] = useState([]); // every capsule; `capsules` below is the selected ruleset's list
+  const [rulesets, setRulesets] = useState([]);
+  const [rulesetName, setRulesetName] = useState(null);
   const [blasts, setBlasts] = useState({});
   const [skills, setSkills] = useState([]);
   const [teams, setTeams] = useState({ teamNames: [], teams: {} });
@@ -171,10 +174,14 @@ function App() {
 
   // Load all data
   useEffect(() => {
-    loadData().then(({ legacy, aliases }) => {
+    loadData().then(({ data, legacy, aliases }) => {
       const { characters: chars, capsules: caps, blast: bl, teams: tm, characterImages: imgs, skills: sk } = legacy;
       setCharacters(chars);
-      setCapsules(caps);
+      setAllCapsules(caps);
+      setRulesets(data.meta.rulesets || []);
+      let saved = null;
+      try { saved = localStorage.getItem('calculator.ruleset'); } catch { /* storage unavailable */ }
+      setRulesetName((data.meta.rulesets || []).some(r => r.name === saved) ? saved : data.meta.defaultRuleset);
       setBlasts(bl);
       setSkills(sk);
       setTeams(tm);
@@ -182,7 +189,7 @@ function App() {
 
       // Restore from URL hash if present (old name-based links resolve through aliases)
       const hash = window.location.hash.slice(1);
-      const decoded = hash ? decodeBuild(hash, makeResolver(chars, caps, aliases)) : null;
+      const decoded = hash ? decodeBuild(hash, makeResolver(chars, caps, aliases)) : null; // caps = every capsule
       if (decoded) {
         if (decoded.notices.length) console.warn('Share link:', decoded.notices.join('; '));
         if (decoded.character) {
@@ -542,6 +549,22 @@ function App() {
   }, [handleTabletTouchStart, handleTabletTouchEnd]);
 
   // Shared OpponentPanel node — used in desktop standalone panel AND passed to SkillsPanel for tablet
+  const ruleset = useMemo(() => rulesets.find(r => r.name === rulesetName) || null, [rulesets, rulesetName]);
+  // The capsule picker lists what the selected ruleset allows; equipped capsules stay put (a banned one is flagged).
+  const capsules = useMemo(() => {
+    const banned = new Set(ruleset?.banned || []);
+    return allCapsules.filter(c => !banned.has(c.id));
+  }, [allCapsules, ruleset]);
+  const rulesValue = useMemo(() => ({
+    ruleset,
+    rulesets,
+    budget: ruleset?.totalCost ?? DEFAULT_BUDGET,
+    setRuleset: (name) => {
+      setRulesetName(name);
+      try { localStorage.setItem('calculator.ruleset', name); } catch { /* storage unavailable */ }
+    },
+  }), [ruleset, rulesets]);
+
   const opponentPanelNode = (
     <OpponentPanel
       characters={characters}
@@ -567,6 +590,7 @@ function App() {
   );
 
   return (
+    <RulesContext.Provider value={rulesValue}>
     <div className="h-screen bg-sz-dark text-gray-100 flex flex-col overflow-hidden">
       <NavBar
         current="calculator"
@@ -625,7 +649,6 @@ function App() {
                   onClear={handleClearBuildA}
                   onCollapse={() => setCompareCapsuleACollapsed(true)}
                   collapseDirection="left"
-                  budget={CAPSULE_BUDGET}
                 />
               )}
             </div>
@@ -719,7 +742,6 @@ function App() {
                   onClear={handleClearBuildB}
                   onCollapse={() => setCompareCapsuleBCollapsed(true)}
                   collapseDirection="right"
-                  budget={CAPSULE_BUDGET}
                 />
               )}
             </div>
@@ -804,7 +826,6 @@ function App() {
                 onRemove={handleRemoveCapsule}
                 onClear={handleClearBuild}
                 onCollapse={() => setCapsuleCollapsed(true)}
-                budget={CAPSULE_BUDGET}
               />
             )}
           </div>
@@ -963,7 +984,6 @@ function App() {
               onRemove={handleRemoveCapsule}
               onClear={handleClearBuild}
               onCollapse={() => {}}
-              budget={CAPSULE_BUDGET}
             />
           </div>
             </>
@@ -1191,7 +1211,6 @@ function App() {
               onRemove={handleRemoveCapsule}
               onClear={handleClearBuild}
               onCollapse={() => {}}
-              budget={CAPSULE_BUDGET}
             />
           </div>
             </>
@@ -1251,6 +1270,7 @@ function App() {
         </a>
       </footer>
     </div>
+    </RulesContext.Provider>
   );
 }
 

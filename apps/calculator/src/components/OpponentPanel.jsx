@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Search, ChevronDown, X, ArrowLeftRight } from 'lucide-react';
-import { getImageUrl, totalCapsuleCost, CAPSULE_BUDGET } from '../utils/calculator.js';
+import { getImageUrl } from '../utils/calculator.js';
+import { useRules, totalCost as sumCost, capsuleCost } from '../utils/rules.js';
+import RulesBar from './RulesBar.jsx';
 import { classBadge } from '../utils/classStyles.js';
 
 
@@ -17,6 +19,7 @@ function ClassBadge({ cls }) {
 }
 
 function Stars({ cost }) {
+  if (typeof cost !== 'number') return <span className="font-bold text-sm text-gray-500" title="Cost not confirmed">?★</span>;
   return <span className={`font-bold text-sm ${COST_COLORS[cost] ?? 'text-gray-400'}`}>{cost}★</span>;
 }
 
@@ -118,9 +121,10 @@ export default function OpponentPanel({
     return list;
   }, [capsules, costFilter, capsSearch]);
 
-  const totalCost = totalCapsuleCost(equippedCapsules);
-  const overBudget = totalCost > CAPSULE_BUDGET;
-  const pct = Math.min(100, (totalCost / CAPSULE_BUDGET) * 100);
+  const { budget } = useRules();
+  const totalCost = sumCost(equippedCapsules);
+  const overBudget = totalCost > budget;
+  const pct = Math.min(100, (totalCost / budget) * 100);
 
   // Build skill list for selected opponent
   const skillMap = useMemo(() => {
@@ -359,7 +363,7 @@ export default function OpponentPanel({
               <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Capsules</span>
               <div className="flex items-center gap-2">
                 <span className={`text-xs font-mono font-bold ${overBudget ? 'text-red-400' : 'text-sz-orange'}`}>
-                  {totalCost}/{CAPSULE_BUDGET}
+                  {totalCost}/{budget}
                 </span>
                 {equippedCapsules.some(Boolean) && (
                   <button onClick={onClearCapsules} className="text-xs text-gray-600 hover:text-red-400 transition-colors">Clear</button>
@@ -370,6 +374,7 @@ export default function OpponentPanel({
             <div className="h-1 bg-sz-border">
               <div className={`h-full transition-all ${overBudget ? 'bg-red-500' : 'bg-sz-orange'}`} style={{ width: `${pct}%` }} />
             </div>
+            <RulesBar equipped={equippedCapsules} capsules={capsules} />
             <table className="w-full">
               <tbody>
                 {equippedCapsules.map((cap, i) => {
@@ -443,8 +448,8 @@ export default function OpponentPanel({
                     const equipped = equippedNames.has(cap.name);
                     const hasOpenSlot = equippedCapsules.some(c => c === null);
                     const canSelect = !equipped && (activeSlot !== null || hasOpenSlot);
-                    const slotCost = activeSlot !== null ? (equippedCapsules[activeSlot]?.cost ?? 0) : 0;
-                    const wouldExceed = canSelect && (totalCost - slotCost + cap.cost > CAPSULE_BUDGET);
+                    const slotCost = activeSlot !== null ? capsuleCost(equippedCapsules[activeSlot]) : 0;
+                    const wouldExceed = canSelect && (totalCost - slotCost + capsuleCost(cap) > budget);
                     return (
                       <tr
                         key={cap.name}

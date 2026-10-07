@@ -19,7 +19,6 @@ export function applyLightBodyKiBlastArmor(stats, hasLightBody, hasDraconicAura 
  * Effect key → stat field mapping.
  */
 
-export const CAPSULE_BUDGET = 20;
 
 // Maps effect keys to which stat field they modify and how
 // Returns { fieldPath, operation } where operation is 'add' | 'multiply_percent' | 'set'
@@ -328,7 +327,7 @@ export function applyOpponentDefense(value, opponentStats, defenseField) {
  * Total cost of equipped capsules (null slots are free).
  */
 export function totalCapsuleCost(equippedCapsules) {
-  return equippedCapsules.reduce((sum, c) => sum + (c?.cost ?? 0), 0);
+  return equippedCapsules.reduce((sum, c) => sum + (typeof c?.cost === 'number' ? c.cost : 0), 0);
 }
 
 /**

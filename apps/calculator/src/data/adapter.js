@@ -54,6 +54,7 @@ const LEGACY_SLOT = (b) => {
 function legacyBlast(b) {
   const out = {
     slot: LEGACY_SLOT(b),
+    variant: b.variant || undefined,
     name: b.name,
     category: b.category ?? null,
     type: b.type ?? null,
@@ -190,7 +191,7 @@ export function toLegacy(data, opts = {}) {
     if (rows.length) blast[c.name] = rows.map(legacyBlast);
   }
 
-  const capsules = data.capsules.map(c => ({ name: c.name, cost: c.cost, description: c.description, effects: c.effects || [] }));
+  const capsules = data.capsules.map(c => ({ id: c.id, name: c.name, cost: c.cost, description: c.description, effects: c.effects || [], bannedIn: c.bannedIn || [] }));
 
   const names = new Map(chars.map(c => [c.id, c.name]));
   const teams = { teamNames: [], teams: {} };

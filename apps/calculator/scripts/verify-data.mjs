@@ -125,8 +125,11 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
     : ['Light Body', 'Draconic Aura', 'Dragon Rush'].filter(n => !caps.some(c => c.name === n)).map(n => [n]);
   check(!special.length, 'the specially handled capsules exist (Light Body, Draconic Aura, Dragon Rush)', special.map(s => s.join(' ')));
   const refCaps = new Map(ref.capsules.map(c => [c.name, c]));
-  const unknown = caps.filter(c => !refCaps.has(c.name)).map(c => c.name);
-  check(!unknown.length, 'every capsule is in referencedata/capsules.csv', unknown);
+  const extraFile = path.join(DATA, 'curated', 'capsules-extra.csv');
+  const extras = new Set(fs.existsSync(extraFile) ? readCsv(extraFile).rows.map(r => r.name) : []);
+  const unknown = caps.filter(c => !refCaps.has(c.name) && !extras.has(c.name)).map(c => c.name);
+  check(!unknown.length, 'every capsule is in referencedata/capsules.csv (or curated/capsules-extra.csv)', unknown);
+  if (extras.size) warn('capsules missing from referencedata/capsules.csv, published from curated/capsules-extra.csv', [...extras]);
 }
 
 // ------------------------------------------------------------------ curated tables
@@ -167,12 +170,19 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
 {
   const calcNames = new Set(chars.map(c => c.name));
   const adj = buildTransformAdj(ref.transformations);
-  const dead = [];
+  // A correctly spelled masterlist name (a referencedata name, or a prefix of one: the website's
+  // rule) must link; that is the calculator's side of the contract. Misspelled names are the
+  // yaml's problem: reported, and resolved for the calculator's own team filter by aliases.csv.
+  const refNames = ref.characters.map(c => c.name);
+  const spelledRight = (n) => refNames.includes(n) || refNames.some(x => x.startsWith(n + ' '));
+  const broken = [], typos = [];
   for (const t of ref.season) for (const n of t.masterList) {
-    if (!calcNames.has(n) && !getFormChain(n, calcNames, adj).length) dead.push(`${t.name}: "${n}"`);
+    const links = calcNames.has(n) || getFormChain(n, calcNames, adj).length > 0;
+    if (links) continue;
+    (spelledRight(n) ? broken : typos).push(`${t.name}: "${n}"`);
   }
-  if (dead.length) warn(`${dead.length} masterlist entr${dead.length === 1 ? 'y links' : 'ies link'} to nothing on the website's Teams page (typos in ${ref.seasonFile}; the calculator's own team filter resolves them through aliases.csv)`, dead);
-  else ok('every masterlist entry links into the calculator');
+  strictCheck(!broken.length, 'every correctly spelled masterlist entry links into the calculator (website Teams page, run with the shipped formChain.js)', broken);
+  if (typos.length) warn(`${typos.length} masterlist entr${typos.length === 1 ? 'y is' : 'ies are'} misspelled or padded in ${ref.seasonFile}, so the website shows them as plain text (the calculator's team filter resolves them through aliases.csv)`, typos);
   const nodes = Object.entries(ref.transformations).filter(([, e]) => e?.name).map(([id, e]) => [id, e.name]);
   const unresolved = nodes.filter(([id, n]) => !calcNames.has(n)).map(([id, n]) => `${id} ${n}`);
   strictCheck(!unresolved.length, `every transformations.json node is a calculator name (${nodes.length - unresolved.length}/${nodes.length})`, unresolved);

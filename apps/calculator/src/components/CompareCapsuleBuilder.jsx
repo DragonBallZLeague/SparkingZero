@@ -1,17 +1,20 @@
 import React, { useState, useMemo } from 'react';
 import { X, Search } from 'lucide-react';
-import { totalCapsuleCost, CAPSULE_BUDGET } from '../utils/calculator.js';
+import { useRules, totalCost as sumCost, capsuleCost } from '../utils/rules.js';
+import RulesBar from './RulesBar.jsx';
 
 const COST_COLORS = ['', 'text-gray-400', 'text-blue-400', 'text-yellow-400', 'text-orange-400', 'text-red-500'];
 
 function Stars({ cost }) {
+  if (typeof cost !== 'number') return <span className="font-bold text-sm text-gray-500" title="Cost not confirmed">?★</span>;
   return <span className={`font-bold text-sm ${COST_COLORS[cost] ?? 'text-gray-400'}`}>{cost}★</span>;
 }
 
-function SlotTable({ equippedCapsules, activeSlot, onSlotClick, onRemove, label }) {
-  const totalCost = totalCapsuleCost(equippedCapsules);
-  const overBudget = totalCost > CAPSULE_BUDGET;
-  const pct = Math.min(100, (totalCost / CAPSULE_BUDGET) * 100);
+function SlotTable({ equippedCapsules, activeSlot, onSlotClick, onRemove, label, capsules }) {
+  const { budget } = useRules();
+  const totalCost = sumCost(equippedCapsules);
+  const overBudget = totalCost > budget;
+  const pct = Math.min(100, (totalCost / budget) * 100);
 
   return (
     <div className="flex flex-col">
@@ -19,7 +22,7 @@ function SlotTable({ equippedCapsules, activeSlot, onSlotClick, onRemove, label 
       <div className="flex items-center gap-2 px-3 py-1.5 border-b border-sz-border">
         <span className="text-xs text-gray-500 font-semibold">{label}</span>
         <span className={`text-xs font-mono font-bold ml-auto ${overBudget ? 'text-red-400' : 'text-sz-orange'}`}>
-          {totalCost}/{CAPSULE_BUDGET}
+          {totalCost}/{budget}
         </span>
       </div>
       <div className="h-1 bg-sz-border">
@@ -151,7 +154,9 @@ export default function CompareCapsuleBuilder({
           onSlotClick={onSlotClick}
           onRemove={tab === 'A' ? onRemoveA : onRemoveB}
           label={`Character ${tab} Build`}
+          capsules={capsules}
         />
+        <RulesBar equipped={equippedCapsules} capsules={capsules} showPicker />
       </div>
 
       {activeSlot !== null && (
