@@ -1,1000 +1,910 @@
 [
   {
+    "id": "00_0_0000",
     "name": "Master Roshi Training",
     "cost": 1,
     "description": "Increases maximum health by 2,500 HP (1/4 of a bar).",
-    "effects": [
-      {
-        "key": "Health_Up",
-        "value": 2500
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Health_Up","value":2500}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0005",
     "name": "Rush Attack Boost 1",
     "cost": 1,
     "description": "Increases Rush Attack damage by 2.5%.",
-    "effects": [
-      {
-        "key": "Rush_Attack_Up",
-        "value": 2.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Attack_Up","value":2.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0006",
     "name": "Rush Attack Boost 2",
     "cost": 3,
     "description": "Increases Rush Attack damage by 5%.",
-    "effects": [
-      {
-        "key": "Rush_Attack_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Attack_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0007",
     "name": "Rush Attack Boost 3",
     "cost": 5,
     "description": "Increases Rush Attack damage by 7.5%.",
-    "effects": [
-      {
-        "key": "Rush_Attack_Up",
-        "value": 7.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Attack_Up","value":7.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0011",
     "name": "Smash Attack Boost 1",
     "cost": 1,
     "description": "Increases Smash Attack damage by 2.5%. Increases Rush Chain damage by 2.5%.",
-    "effects": [
-      {
-        "key": "Smash_Attack_Up",
-        "value": 2.5
-      },
-      {
-        "key": "Rush_Chain_Up",
-        "value": 2.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Smash_Attack_Up","value":2.5},{"key":"Rush_Chain_Up","value":2.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0012",
     "name": "Smash Attack Boost 2",
     "cost": 3,
     "description": "Increases Smash Attack damage by 5%. Increases Rush Chain damage by 5%.",
-    "effects": [
-      {
-        "key": "Smash_Attack_Up",
-        "value": 5
-      },
-      {
-        "key": "Rush_Chain_Damage",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Smash_Attack_Up","value":5},{"key":"Rush_Chain_Damage","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0013",
     "name": "Smash Attack Boost 3",
     "cost": 5,
     "description": "Increases Smash Attack damage by 7.5%. Increases Rush Chain damage by 7.5%.",
-    "effects": [
-      {
-        "key": "Smash_Attack_Up",
-        "value": 7.5
-      },
-      {
-        "key": "Rush_Chain_Damage",
-        "value": 7.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Smash_Attack_Up","value":7.5},{"key":"Rush_Chain_Damage","value":7.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0014",
     "name": "Ki Blast Attack Boost 1",
     "cost": 1,
     "description": "Increases Rush Ki Blast damage by 2.5%. Increases Smash Ki Blast damage by 2.5%.",
-    "effects": [
-      {
-        "key": "Rush_Ki_Blast_Up",
-        "value": 2.5
-      },
-      {
-        "key": "Smash_Ki_Blast_Up",
-        "value": 2.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Ki_Blast_Up","value":2.5},{"key":"Smash_Ki_Blast_Up","value":2.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0015",
     "name": "Ki Blast Attack Boost 2",
     "cost": 3,
     "description": "Increases Rush Ki Blast damage by 5%. Increases Smash Ki Blast damage by 5%.",
-    "effects": [
-      {
-        "key": "Rush_Ki_Blast_Up",
-        "value": 5
-      },
-      {
-        "key": "Smash_Ki_Blast_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Ki_Blast_Up","value":5},{"key":"Smash_Ki_Blast_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0016",
     "name": "Ki Blast Attack Boost 3",
     "cost": 5,
     "description": "Increases Rush Ki Blast damage by 7.5%. Increases Smash Ki Blast damage by 7.5%.",
-    "effects": [
-      {
-        "key": "Rush_Ki_Blast_Up",
-        "value": 7.5
-      },
-      {
-        "key": "Smash_Ki_Blast_Up",
-        "value": 7.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Ki_Blast_Up","value":7.5},{"key":"Smash_Ki_Blast_Up","value":7.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0023",
     "name": "Power Unleashed",
     "cost": 2,
     "description": "Increases Burst Rush damage by 5%.",
-    "effects": [
-      {
-        "key": "Burst_Rush_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Burst_Rush_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0024",
     "name": "Finishing Blow",
     "cost": 1,
     "description": "Increases Burst Meteor damage by 5%.",
-    "effects": [
-      {
-        "key": "Burst_Meteor_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Burst_Meteor_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0026",
     "name": "Blast Burst",
     "cost": 1,
     "description": "Increases ki cost for Blasts by 1 bar. Increases Blast damage by 5%. Increases Blast Combo damage by 5%.",
-    "effects": [
-      {
-        "key": "Ki_Bar_Blasts_Up",
-        "value": 1
-      },
-      {
-        "key": "Blast_Damage_Up",
-        "value": 5
-      },
-      {
-        "key": "Blast_Combo_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Bar_Blasts_Up","value":1},{"key":"Blast_Damage_Up","value":5},{"key":"Blast_Combo_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0027",
     "name": "Ultimate Burst",
     "cost": 2,
     "description": "Increases ki cost for Ultimate Blasts by 1 bar. Causes stun when Sparking Mode ends after using Ultimate Blast. Increases Ultimate Blast damage by 5%.",
-    "effects": [
-      {
-        "key": "Ultimate_Blasts_Cost_Up",
-        "value": 1
-      },
-      {
-        "key": "Sparking_Mode_Stun_Up",
-        "value": null
-      },
-      {
-        "key": "Ultimate_Blast_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ultimate_Blasts_Cost_Up","value":1},{"key":"Sparking_Mode_Stun_Up","value":null},{"key":"Ultimate_Blast_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0028",
     "name": "Blast Attack Boost 1",
     "cost": 1,
     "description": "Increases Blast damage by 2.5%. Increases Blast Combo damage by 2.5%. Increases Ultimate Blast damage by 2.5%.",
-    "effects": [
-      {
-        "key": "Blast_Damage_Up",
-        "value": 2.5
-      },
-      {
-        "key": "Blast_Combo_Up",
-        "value": 2.5
-      },
-      {
-        "key": "Ultimate_Blast_Damage_Up",
-        "value": 2.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Blast_Damage_Up","value":2.5},{"key":"Blast_Combo_Up","value":2.5},{"key":"Ultimate_Blast_Damage_Up","value":2.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0029",
     "name": "Blast Attack Boost 2",
     "cost": 3,
     "description": "Increases Blast damage by 5%. Increases Blast Combo damage by 5%. Increases Ultimate Blast damage by 5%.",
-    "effects": [
-      {
-        "key": "Blast_Damage_Up",
-        "value": 5
-      },
-      {
-        "key": "Blast_Combo_Up",
-        "value": 5
-      },
-      {
-        "key": "Ultimate_Blast_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Blast_Damage_Up","value":5},{"key":"Blast_Combo_Up","value":5},{"key":"Ultimate_Blast_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0030",
     "name": "Blast Attack Boost 3",
     "cost": 5,
     "description": "Increases Blast damage by 7.5%. Increases Blast Combo damage by 7.5%. Increases Ultimate Blast damage by 7.5%.",
-    "effects": [
-      {
-        "key": "Blast_Damage_Up",
-        "value": 7.5
-      },
-      {
-        "key": "Blast_Combo_Up",
-        "value": 7.5
-      },
-      {
-        "key": "Ultimate_Blast_Damage_Up",
-        "value": 7.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Blast_Damage_Up","value":7.5},{"key":"Blast_Combo_Up","value":7.5},{"key":"Ultimate_Blast_Damage_Up","value":7.5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0031",
     "name": "Super Warrior",
     "cost": 2,
     "description": "Increases Rush Attack damage by 5% during Sparking Mode.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0032",
     "name": "Draconic Aura",
     "cost": 4,
     "description": "Increases armor break level by 3. Beats Power body and Light body.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0033",
     "name": "Light Body",
     "cost": 4,
     "description": "Increases bullet armor level by 3. Cannot be flinched by Ki Blasts (Giants and Sparking ignore this capsule).",
-    "effects": [
-      {
-        "key": "Ki_Blast_Armor_Up",
-        "value": 10
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Blast_Armor_Up","value":10}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0035",
     "name": "Dragon Rush",
     "cost": 3,
     "description": "Increases armor break level by 3 against Rush Attack category actions. Beats Power Body.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0037",
     "name": "The Secret to Counters",
     "cost": 5,
     "description": "Reduces Skill Count needed for Super Perceptions by 1 (minimum 1).",
-    "effects": [
-      {
-        "key": "Super_Z_Counter_Down",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Super_Z_Counter_Down","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0038",
     "name": "Fury!",
     "cost": 4,
     "description": "Increases Blast damage by 5% at 75% HP. Increases Blast damage by additional 5% (10% total) at 50% HP. Increases Blast damage by additional 5% (15% total) at 25% HP. Increases Blast Combo damage by same amounts.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0039",
     "name": "Active Heart",
     "cost": 1,
     "description": "Increases ki gained from landing attacks by 10%.",
-    "effects": [
-      {
-        "key": "Ki_Gained_From_Attacks",
-        "value": 10
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Gained_From_Attacks","value":10}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0040",
     "name": "Indomitable Fighting Spirit",
     "cost": 3,
     "description": "Increases ki gained from landing attacks by 20%.",
-    "effects": [
-      {
-        "key": "Ki_Gained_From_Attacks",
-        "value": 20
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Gained_From_Attacks","value":20}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0041",
     "name": "Warming Up",
     "cost": 2,
     "description": "Increases health recovery while on standby in Team Battles by 50%.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0042",
     "name": "Ready for Anything",
     "cost": 1,
     "description": "Increases ki recovery per second while on standby in Team Battles by 50%.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0046",
     "name": "Z-Burst Dash Master",
     "cost": 3,
     "description": "Reduces ki cost for Z-Burst Dashes by 50%.",
-    "effects": [
-      {
-        "key": "Z-Burst_Dashes_Cost_Down",
-        "value": 50
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Z-Burst_Dashes_Cost_Down","value":50}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0047",
     "name": "The Secret to Z-Burst Dashes",
     "cost": 5,
     "description": "Reduces ki cost for Z-Burst Dashes by 100% (free).",
-    "effects": [
-      {
-        "key": "Z-Burst_Dashes_Cost_Down",
-        "value": 100
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Z-Burst_Dashes_Cost_Down","value":100}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0048",
     "name": "Proof of Friendship",
     "cost": 2,
     "description": "Switch gauge starts at maximum.",
-    "effects": [
-      {
-        "key": "Switch_Gauge_Start_Max",
-        "value": null
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Switch_Gauge_Start_Max","value":null}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0055",
     "name": "Dragon Spirit",
     "cost": 3,
     "description": "Increases skill gauge recovery speed by 25%.",
-    "effects": [
-      {
-        "key": "Skill_Gauge_Recovery",
-        "value": 25
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Skill_Gauge_Recovery","value":25}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0066",
     "name": "Super Transformation",
     "cost": 1,
     "description": "Reduces Skill Count needed for Transformations and Fusions by 1 (minimum 1).",
-    "effects": [
-      {
-        "key": "Transformations_Cost_Down",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Transformations_Cost_Down","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0068",
     "name": "Fighting Spirit",
     "cost": 5,
     "description": "Increases Ultimate Blast damage by 5% at 75% HP. Increases Ultimate Blast damage by additional 5% (10% total) at 50% HP. Increases Ultimate Blast damage by additional 5% (15% total) at 25% HP.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0070",
     "name": "Divine Blow",
     "cost": 3,
     "description": "Increases Ultimate Blast damage by 5%.",
-    "effects": [
-      {
-        "key": "Ultimate_Blast_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ultimate_Blast_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0072",
     "name": "Rising Fighting Spirit",
     "cost": 3,
     "description": "Ki gauge starts at maximum.",
-    "effects": [
-      {
-        "key": "Ki_Gauge_Starts",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Gauge_Starts","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0074",
     "name": "Power of Namek",
     "cost": 5,
     "description": "Increases all attack damage by 2.5% on Namek map. Increases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0075",
     "name": "Power of Earth",
     "cost": 5,
     "description": "Increases all attack damage by 2.5% on Earth maps (excluding City Ruins and Hyperbolic Time Chamber). Increases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0076",
     "name": "Power of the Universe",
     "cost": 5,
     "description": "Increases all attack damage by 2.5% on Tournament of Power map. Increases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
+  {"id":"00_0_0082","name":"Perfect Guard","cost":5,"description":"Take no damage while guarding.","exclusiveTo":null,"effects":[],"bannedIn":[]},
   {
-    "name": "Perfect Guard",
-    "cost": 5,
-    "description": "Take no damage while guarding.",
-    "effects": []
-  },
-  {
+    "id": "00_0_0092",
     "name": "Crisis Avoided",
     "cost": 1,
     "description": "Reduces ki cost for Short Dashes by 10%.",
-    "effects": [
-      {
-        "key": "Short_Dashes_Ki_Cost_Down",
-        "value": 10
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Short_Dashes_Ki_Cost_Down","value":10}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0093",
     "name": "Battle Control",
     "cost": 2,
     "description": "Increases Switch gauge recovery by 50% in Team Battles.",
-    "effects": [
-      {
-        "key": "Switch_Gauge_Recovery",
-        "value": 50
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Switch_Gauge_Recovery","value":50}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0094",
     "name": "Latent Power Unleashed 1",
     "cost": 1,
     "description": "Ki gauge starts with 1 bar extra.",
-    "effects": [
-      {
-        "key": "Ki_Gauge_Starts",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Gauge_Starts","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0095",
     "name": "Latent Power Unleashed 2",
     "cost": 2,
     "description": "Ki gauge starts with 2 bars extra.",
-    "effects": [
-      {
-        "key": "Ki_Gauge_Starts",
-        "value": 2
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Ki_Gauge_Starts","value":2}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0096",
     "name": "Big Impact",
     "cost": 1,
     "description": "Increases all Impact Action damage by 20% per DP advantage enemy has over you (stacks up to 5 times for 100% total). Only active when enemy has 1-5 more DP than you.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0098",
     "name": "Mind Breaker",
     "cost": 1,
     "description": "Increases ki damage dealt after successful Guard Clash by 50%.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0099",
     "name": "Waters Blessing",
     "cost": 3,
     "description": "Regenerates 100 HP per second and 100 ki per second while in water (1 bar of health and ki every 100 seconds).",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0101",
     "name": "Miracle Master",
     "cost": 1,
     "description": "Automatically dodges melee attacks when downed (excludes Ki Blasts).",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0102",
     "name": "Latent Power!",
     "cost": 5,
     "description": "Increases damage resistance by 2.5% at 75% HP. Increases damage resistance by additional 5% (7.5% total) at 50% HP. Increases damage resistance by additional 7.5% (15% total) at 25% HP.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
+  {"id":"00_0_0103","name":"Guard Master","cost":1,"description":"Grants immunity to Guard Clashes.","exclusiveTo":null,"effects":[],"bannedIn":[]},
   {
-    "name": "Guard Master",
-    "cost": 1,
-    "description": "Grants immunity to Guard Clashes.",
-    "effects": []
-  },
-  {
+    "id": "00_0_0104",
     "name": "Mirage",
     "cost": 1,
     "description": "Automatically dodges subsequent barrage Blasts after dodging one with High-Speed Movement or High-Speed Evasion.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0111",
+    "name": "Dendes Healing Ability",
+    "cost": 4,
+    "description": "Recovers 5,000 HP (half a bar) every 60 seconds.",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+  },
+  {
+    "id": "00_0_0112",
     "name": "Rising Tension",
     "cost": 3,
     "description": "Recovers 1 bar of ki every 60 seconds",
-    "effects": [
-      {
-        "key": "Recovers_Ki_Bar",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Recovers_Ki_Bar","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0113",
     "name": "Melee Charge 1",
     "cost": 1,
     "description": "Reduces charging time for Smash Attacks by 2%. Reduces charging time for Rush Chains by 2%.",
-    "effects": [
-      {
-        "key": "Charging_Smash_Attacks _Down",
-        "value": 2
-      },
-      {
-        "key": "Charging_Rush_Chains_Down",
-        "value": 2
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Charging_Smash_Attacks _Down","value":2},{"key":"Charging_Rush_Chains_Down","value":2}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0114",
     "name": "Melee Charge 2",
     "cost": 2,
     "description": "Reduces charging time for Smash Attacks by 3%. Reduces charging time for Rush Chains by 3%.",
-    "effects": [
-      {
-        "key": "Charging_Smash_Attacks _Down",
-        "value": 3
-      },
-      {
-        "key": "Reduce_Rush_Chains",
-        "value": 3
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Charging_Smash_Attacks _Down","value":3},{"key":"Reduce_Rush_Chains","value":3}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0115",
     "name": "Melee Charge 3",
     "cost": 3,
     "description": "Reduces charging time for Smash Attacks by 5%. Reduces charging time for Rush Chains by 5%.",
-    "effects": [
-      {
-        "key": "Charging_Smash_Attacks _Down",
-        "value": 5
-      },
-      {
-        "key": "Reduce_Rush_Chains",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Charging_Smash_Attacks _Down","value":5},{"key":"Reduce_Rush_Chains","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0116",
     "name": "Energy Saver 1",
     "cost": 1,
     "description": "Reduces ki cost for Rush Ki Blasts by 2%. Reduces ki cost for Smash Ki Blasts by 2%.",
-    "effects": [
-      {
-        "key": "Reduce_Rush_Ki_Blasts",
-        "value": 2
-      },
-      {
-        "key": "Reduces_Smash_Ki_Blasts",
-        "value": 2
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Reduce_Rush_Ki_Blasts","value":2},{"key":"Reduces_Smash_Ki_Blasts","value":2}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0117",
     "name": "Energy Saver 2",
     "cost": 2,
     "description": "Reduces ki cost for Rush Ki Blasts by 3%. Reduces ki cost for Smash Ki Blasts by 3%.",
-    "effects": [
-      {
-        "key": "Reduce_Rush_Ki_Blasts",
-        "value": 3
-      },
-      {
-        "key": "Reduces_Smash_Ki_Blasts",
-        "value": 3
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Reduce_Rush_Ki_Blasts","value":3},{"key":"Reduces_Smash_Ki_Blasts","value":3}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0118",
     "name": "Energy Saver 3",
     "cost": 3,
     "description": "Reduces ki cost for Rush Ki Blasts by 5%. Reduces ki cost for Smash Ki Blasts by 5%.",
-    "effects": [
-      {
-        "key": "Reduce_Rush_Ki_Blasts",
-        "value": 5
-      },
-      {
-        "key": "Reduces_Smash_Ki_Blasts",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Reduce_Rush_Ki_Blasts","value":5},{"key":"Reduces_Smash_Ki_Blasts","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0119",
     "name": "Ki Blast Charge 1",
     "cost": 1,
     "description": "Reduces charging time for Smash Ki Blasts by 2%.",
-    "effects": [
-      {
-        "key": "Charge_TIme_Smash_Ki_Down",
-        "value": 2
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Charge_TIme_Smash_Ki_Down","value":2}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0120",
     "name": "Ki Blast Charge 2",
     "cost": 2,
     "description": "Reduces charging time for Smash Ki Blasts by 3%.",
-    "effects": [
-      {
-        "key": "Reduces_Smash_Ki_Blasts",
-        "value": 3
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Reduces_Smash_Ki_Blasts","value":3}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0121",
     "name": "Ki Blast Charge 3",
     "cost": 3,
     "description": "Reduces charging time for Smash Ki Blasts by 5%.",
-    "effects": [
-      {
-        "key": "Reduces_Smash_Ki_Blasts",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Reduces_Smash_Ki_Blasts","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0122",
     "name": "Dragon Assault",
     "cost": 3,
     "description": "Reduces ki cost for Vanishing Assaults by 15%.",
-    "effects": [
-      {
-        "key": "Vanishing_Assaults_Cost_Down",
-        "value": 15
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Vanishing_Assaults_Cost_Down","value":15}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0123",
+    "name": "Power Body",
+    "cost": 5,
+    "description": "Increases combatives armor level by 3. Reduces melee defense by 20%. Reduces blast defense by 10%.",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+  },
+  {
+    "id": "00_0_0124",
     "name": "Speed Up",
     "cost": 3,
     "description": "Reduces ki cost for Short Dashes by 20%.",
-    "effects": [
-      {
-        "key": "Short_Dashes_Ki_Cost_Down",
-        "value": 20
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Short_Dashes_Ki_Cost_Down","value":20}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0125",
     "name": "Exquisite Skill",
     "cost": 1,
     "description": "Reduces self recovery time when stunned/restrained by 20%. Increases enemy recovery time when stunned/restrained by 20%.",
-    "effects": [
-      {
-        "key": "Recovery_Time_Down",
-        "value": 20
-      },
-      {
-        "key": "Enemy_Recovery_Time_Up",
-        "value": 20
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Recovery_Time_Down","value":20},{"key":"Enemy_Recovery_Time_Up","value":20}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0126",
     "name": "Ki Control",
     "cost": 3,
     "description": "Reduces ki cost for Dragon Dashes by 25%. Reduces automatic ki recovery by 5%.",
-    "effects": [
-      {
-        "key": "Dragon_Dashes_Ki_Down",
-        "value": 25
-      },
-      {
-        "key": "Ki_Recovery_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Dragon_Dashes_Ki_Down","value":25},{"key":"Ki_Recovery_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0127",
     "name": "The Secret to Dragon Dashes",
     "cost": 5,
     "description": "Reduces ki cost for Dragon Dashes by 25%.",
-    "effects": [
-      {
-        "key": "Dragon_Dashes_Ki_Down",
-        "value": 25
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Dragon_Dashes_Ki_Down","value":25}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0128",
     "name": "Savior",
     "cost": 5,
     "description": "Activates Sparking Mode on first switch-in. Only activates once per team in Team Battles.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0129",
     "name": "Combo Master",
     "cost": 1,
     "description": "Reduces combo damage scaling by 2.5%.",
-    "effects": [
-      {
-        "key": "Combo_Damage_Scaling_Down",
-        "value": 2.5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Combo_Damage_Scaling_Down","value":2.5}],
+    "bannedIn": []
+  },
+  {"id":"00_0_0130","name":"Combo King","cost":2,"description":"Reduces combo damage scaling by 5%.","exclusiveTo":null,"effects":[],"bannedIn":[]},
+  {
+    "id": "00_0_0131",
+    "name": "God Ki",
+    "cost": 5,
+    "description": "Reduces ki cost for Blasts by 50%. Recovers 1 bar of ki after unsuccessful Blast.",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
   },
   {
-    "name": "Combo King",
-    "cost": 2,
-    "description": "Reduces combo damage scaling by 5%.",
-    "effects": []
-  },
-  {
+    "id": "00_0_0132",
     "name": "Sparking! Plus",
     "cost": 1,
     "description": "Reduces Sparking Mode gauge decrease speed by 15%. Reduces melee defense by 20%. Reduces blast defense by 10%.",
-    "effects": [
-      {
-        "key": "Sparking_Down",
-        "value": 25
-      },
-      {
-        "key": "Melee_Defense_Down",
-        "value": 20
-      },
-      {
-        "key": "Blast_Defense_Down",
-        "value": 10
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Sparking_Down","value":25},{"key":"Melee_Defense_Down","value":20},{"key":"Blast_Defense_Down","value":10}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0133",
     "name": "Style of the Strong",
     "cost": 2,
     "description": "Reduces Sparking Mode gauge decrease speed by 15%.",
-    "effects": [
-      {
-        "key": "Sparking_Mode_Gauge_Down",
-        "value": 15
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Sparking_Mode_Gauge_Down","value":15}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0134",
     "name": "Dragon Break",
     "cost": 2,
     "description": "Increases Dragon Homing use limit by 1.",
-    "effects": [
-      {
-        "key": "Dragon_Homing_Limit_Up",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Dragon_Homing_Limit_Up","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0135",
     "name": "Dragon Crash",
     "cost": 2,
     "description": "Increases Dragon Smash damage by 5%.",
-    "effects": [
-      {
-        "key": "Dragon_Smash_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Dragon_Smash_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0136",
     "name": "Vanishing Break",
     "cost": 2,
     "description": "Increases Vanishing Attack use limit by 1.",
-    "effects": [
-      {
-        "key": "Vanishing_Attack_Limit_Up",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Vanishing_Attack_Limit_Up","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0137",
     "name": "Vanishing Crash",
     "cost": 2,
     "description": "Increases Vanishing Attack damage by 5%.",
-    "effects": [
-      {
-        "key": "Vanishing_Attack_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Vanishing_Attack_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0138",
     "name": "Secret Measures",
     "cost": 2,
     "description": "Grants 1 additional Skill Count.",
-    "effects": [
-      {
-        "key": "Skill_Start_Count_Up",
-        "value": 1
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Skill_Start_Count_Up","value":1}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0139",
     "name": "Rush Ki Blast 1",
     "cost": 1,
     "description": "Increases Rush Ki Blast speed by 5%.",
-    "effects": [
-      {
-        "key": "Rush_Ki_Blast_Speed_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Ki_Blast_Speed_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0140",
     "name": "Rush Ki Blast Count Boost",
     "cost": 1,
     "description": "Increases Rush Ki Blast maximum count by 2.",
-    "effects": [
-      {
-        "key": "Rush_Ki_Blast_Count",
-        "value": 2
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Ki_Blast_Count","value":2}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0141",
     "name": "Master Strike",
     "cost": 3,
     "description": "Increases Rush Attack damage by 5%. Increases Smash Attack damage by 5%. Increases Rush Chain damage by 5%. Reduces maximum health by 5,000 HP (half a bar).",
-    "effects": [
-      {
-        "key": "Rush_Attack_Up",
-        "value": 5
-      },
-      {
-        "key": "Smash_Attack_Up",
-        "value": 5
-      },
-      {
-        "key": "Rush_Chain_Damage",
-        "value": 5
-      },
-      {
-        "key": "Health_Down",
-        "value": 5000
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Rush_Attack_Up","value":5},{"key":"Smash_Attack_Up","value":5},{"key":"Rush_Chain_Damage","value":5},{"key":"Health_Down","value":5000}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0142",
     "name": "Master Ki Blast",
     "cost": 2,
     "description": "Increases Rush Ki Blast speed by 5%. Reduces ki cost for Rush Ki Blasts by 5%. Reduces ki cost for Smash Ki Blasts by 5%. Reduces maximum health by 5,000 HP (half a bar).",
+    "exclusiveTo": null,
     "effects": [
-      {
-        "key": "Rush_Ki_Blast_Speed",
-        "value": 5
-      },
-      {
-        "key": "Reduce_Rush_Ki_Blasts",
-        "value": 5
-      },
-      {
-        "key": "Reduces_Smash_Ki_Blasts",
-        "value": 5
-      },
-      {
-        "key": "Health_Down",
-        "value": 5000
-      }
-    ]
+      {"key":"Rush_Ki_Blast_Speed","value":5},
+      {"key":"Reduce_Rush_Ki_Blasts","value":5},
+      {"key":"Reduces_Smash_Ki_Blasts","value":5},
+      {"key":"Health_Down","value":5000}
+    ],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0143",
     "name": "Master Throw",
     "cost": 1,
     "description": "Increases Throw damage by 5%.",
-    "effects": [
-      {
-        "key": "Throw_Damage_Up",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Throw_Damage_Up","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0144",
     "name": "High-Speed Movement Master",
     "cost": 1,
     "description": "Reduces Sparking gauge cost for High-Speed Movements by 25%. Reduces all defense by 20%.",
-    "effects": [
-      {
-        "key": "Sparking_High_Speed_Cost_Down",
-        "value": 25
-      },
-      {
-        "key": "Melee_Defense_Down",
-        "value": 20
-      },
-      {
-        "key": "Blast_Defense_Down",
-        "value": 20
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Sparking_High_Speed_Cost_Down","value":25},{"key":"Melee_Defense_Down","value":20},{"key":"Blast_Defense_Down","value":20}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0145",
     "name": "The Secret to High-Speed Movements",
     "cost": 1,
     "description": "Reduces Sparking gauge cost for High-Speed Movements by 25%.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0146",
     "name": "Super Movement Master",
     "cost": 1,
     "description": "Reduces Sparking gauge cost for Super Movements by 25%. Reduces all defense by 20%.",
-    "effects": [
-      {
-        "key": "Sparking_Super_Movements_Cost_Down",
-        "value": 25
-      },
-      {
-        "key": "Melee_Defense_Down",
-        "value": 20
-      },
-      {
-        "key": "Blast_Defense_Down",
-        "value": 20
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Sparking_Super_Movements_Cost_Down","value":25},{"key":"Melee_Defense_Down","value":20},{"key":"Blast_Defense_Down","value":20}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0147",
     "name": "The Secret to Super Movements",
     "cost": 1,
     "description": "Reduces Sparking gauge cost for Super Movements by 25%.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0148",
     "name": "Performer",
     "cost": 1,
     "description": "Increases Blast by 5% for 30 seconds after using an emote for 1.5+ seconds.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0149",
     "name": "Dragon Heart",
     "cost": 3,
     "description": "Recovers 25% of Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement.",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0150",
     "name": "King Kai Training",
     "cost": 3,
     "description": "Increases maximum health by 5,000 HP (half a bar).",
-    "effects": [
-      {
-        "key": "Health_Up",
-        "value": 5000
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Health_Up","value":5000}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0151",
+    "name": "God of Destruction Training",
+    "cost": 5,
+    "description": "Increases maximum health by 7,500 HP (3/4 of a bar).",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+  },
+  {
+    "id": "00_0_0152",
+    "name": "Almighty Boost",
+    "cost": 5,
+    "description": "Increases Rush Attack damage by 2.5%. Increases Smash Attack damage by 2.5%. Increases Rush Chain damage by 2.5%. Increases Rush Ki Blast damage by 2.5%. Increases Smash Ki Blast damage by 2.5%.",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+  },
+  {
+    "id": "00_0_0153",
     "name": "Super Sparking!",
     "cost": 4,
     "description": "Increases Rush Attack damage by 5% during Sparking Mode. Reduces Sparking Mode gauge decrease speed by 5%.",
-    "effects": [
-      {
-        "key": "Sparking_Mode_Gauge_Down",
-        "value": 5
-      }
-    ]
+    "exclusiveTo": null,
+    "effects": [{"key":"Sparking_Mode_Gauge_Down","value":5}],
+    "bannedIn": []
   },
   {
+    "id": "00_0_0155",
     "name": "Brolys Ring",
     "cost": 1,
     "description": "Prevents Transformations and Fusions during battle",
-    "effects": []
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_1",
+    "name": "Heart Virus",
+    "cost": 1,
+    "description": "You and the opponent take damage slowly (50 hp/sec)",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_6",
+    "name": "Bloodlust",
+    "cost": 3,
+    "description": "After eliminating an opponent gain full ki and a 15% increase to all attack damage for 15 seconds",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_14",
+    "name": "Halo: Corrupted",
+    "cost": 7,
+    "description": "Blasts cost half ki but cost 2500 health on a miss",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_15",
+    "name": "Flight",
+    "cost": 0,
+    "description": "Enable flight",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_18",
+    "name": "Absorption Model",
+    "cost": 6,
+    "description": "Melee ki gain is increased by 200% but active and passive ki charge is 60% slower. Guard crashes give you 1 bar of ki.",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_17",
+    "name": "Unstable Power-Up",
+    "cost": 4,
+    "description": "Upon transforming for the first time immediately go into Sparking! mode but get active and passive ki charge -10% and defense -15% for 30 seconds",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_21",
+    "name": "Final Stand!",
+    "cost": 5,
+    "description": "When your brought near death gain 2 bars of life that drains rapidly over 5 seconds",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_28",
+    "name": "Vegeta's Technique",
+    "cost": 3,
+    "description": "Ki blast damage, speed, and cost are dependent on how much ki you have >4 bars: +30% Damage and Speed but +50% Cost >3 bars: +20% Damage and Speed but +25% Cost >2 bars: +10% Damage and Speed >1 bars: -25% Cost <1 bars: -10% Damage and Speed but -50% Cost",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_30",
+    "name": "Sore Loser",
+    "cost": 2,
+    "description": "When eliminated drain the opponents ki, blaststocks, and sparking mode",
+    "exclusiveTo": null,
+    "effects": [],
+    "bannedIn": ["Standard","Standard - Soft"]
   }
 ]

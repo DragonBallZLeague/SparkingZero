@@ -356,20 +356,6 @@ export function formatStat(field, value) {
 }
 
 
-/**
- * Encode build state into URL hash, including opponent and their capsules.
- * @param {string} characterName
- * @param {string[]} capsuleNames
- * @param {string|null} opponentName
- * @param {string[]|null} opponentCapsuleNames
- * @returns {string}
- */
-export function encodeBuild(characterName, capsuleNames, opponentName = null, opponentCapsuleNames = null) {
-  const data = { c: characterName, p: capsuleNames };
-  if (opponentName) data.o = opponentName;
-  if (opponentCapsuleNames) data.op = opponentCapsuleNames;
-  return btoa(encodeURIComponent(JSON.stringify(data)));
-}
 
 /** Build the URL for a character thumbnail stored in public/char_thumbnails/ */
 export function getImageUrl(filename, base = import.meta.env.BASE_URL) {

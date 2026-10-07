@@ -8,8 +8,9 @@ import SkillsPanel from './components/SkillsPanel.jsx';
 import CompareStatsPanel from './components/CompareStatsPanel.jsx';
 import CompareCapsuleBuilder from './components/CompareCapsuleBuilder.jsx';
 import OpponentPanel from './components/OpponentPanel.jsx';
-import { computeModifiedStats, applySkillBuffs, encodeBuild, CAPSULE_BUDGET } from './utils/calculator.js';
-import { decodeBuild, makeResolver } from './utils/shareLink.js';
+import { computeModifiedStats, applySkillBuffs, CAPSULE_BUDGET } from './utils/calculator.js';
+import { decodeBuild, encodeBuild, makeResolver } from './utils/shareLink.js';
+import { loadData } from './data/loadData.js';
 import { applyLightBodyKiBlastArmor } from './utils/calculator.js';
 
 const NUM_CAPSULE_SLOTS = 7;
@@ -170,16 +171,8 @@ function App() {
 
   // Load all data
   useEffect(() => {
-    const base = import.meta.env.BASE_URL;
-    Promise.all([
-      fetch(`${base}data/characters.json`).then(r => r.json()),
-      fetch(`${base}data/capsules.json`).then(r => r.json()),
-      fetch(`${base}data/blast.json`).then(r => r.json()),
-      fetch(`${base}data/teams.json`).then(r => r.json()),
-      fetch(`${base}data/characterImages.json`).then(r => r.json()),
-      fetch(`${base}data/skills.json`).then(r => r.json()),
-      fetch(`${base}data/aliases.json`).then(r => r.json()).catch(() => ({})),
-    ]).then(([chars, caps, bl, tm, imgs, sk, aliases]) => {
+    loadData().then(({ legacy, aliases }) => {
+      const { characters: chars, capsules: caps, blast: bl, teams: tm, characterImages: imgs, skills: sk } = legacy;
       setCharacters(chars);
       setCapsules(caps);
       setBlasts(bl);
@@ -204,15 +197,15 @@ function App() {
     }).catch(console.error);
   }, []);
 
-  // Update URL hash when build changes (now includes opponent info)
+  // Update URL hash when build changes (v2 links: ids, see utils/shareLink.js)
   useEffect(() => {
     if (!selectedCharacter) return;
-    const hash = encodeBuild(
-      selectedCharacter.name,
-      equippedCapsules.map(c => c?.name ?? null),
-      selectedOpponent?.name ?? null,
-      equippedOpponentCapsules.map(c => c?.name ?? null)
-    );
+    const hash = encodeBuild({
+      character: selectedCharacter,
+      capsules: equippedCapsules,
+      opponent: selectedOpponent,
+      opponentCapsules: equippedOpponentCapsules,
+    });
     window.history.replaceState(null, '', `#${hash}`);
   }, [selectedCharacter, equippedCapsules, selectedOpponent, equippedOpponentCapsules]);
 

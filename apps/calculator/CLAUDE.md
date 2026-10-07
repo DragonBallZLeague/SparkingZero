@@ -17,9 +17,9 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 `predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL). Both are offline and deterministic. Every build also regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration) and `data/CHANGES.md` (old → new per field). Read both diffs after any data change.
 
-`data/config.json` `output` controls what is published: `roster` (`legacy` = the 208 characters the old app had, `all` = every referencedata character) and `v2` (write schema-2 files instead of the old shapes).
+`data/config.json` `output` controls what is published: `roster` (`legacy` = the 208 characters the old app had, `all` = every referencedata character) and `v2` (schema-2 files, described in `data/README.md`; `false` wrote the old shapes directly).
 
-`src/data/adapter.js` `toLegacy()` turns schema-2 data into the shapes the components were written against (flat character objects keyed by name, `blast` keyed by name, skills as a numbered list). It has no imports so the build and the browser share it. Skill "levels" (`meleeBuff` etc.) are an interim projection of the game's exact coefficients (level = coefficient / 0.05).
+`src/data/loadData.js` fetches `meta.json` (no-cache) and the rest with `?v=<dataVersion>`. `src/data/adapter.js` `toLegacy()` turns schema-2 data into the shapes the components were written against (flat character objects keyed by name, `blast` keyed by name, skills as a numbered list). It has no imports so the build and the browser share it. Skill "levels" (`meleeBuff` etc.) are an interim projection of the game's exact coefficients (level = coefficient / 0.05).
 
 Gotchas:
 - **Damage coefficients add** (DP scale + class + capsules + skills), they do not multiply. `final = ceil(Power x 1.25 x coefficient)`.
@@ -42,8 +42,9 @@ Gotchas:
 - `computeModifiedStats(baseStats, equippedCapsules)` — applies capsule effects (see `parseEffectKey`).
 - `applySkillBuffs(stats, activeSkills)` — applies active-skill buffs on top.
 - `applyLightBodyKiBlastArmor` — Light Body's ki-blast-defense special case.
-- `encodeBuild` — share-link encoding (decoding lives in `src/utils/shareLink.js`). If you add a new build dimension, update encoder and decoder together or old links decode wrongly.
 - `CAPSULE_BUDGET` — the point cap enforced when building a loadout.
+
+`src/utils/shareLink.js` — share links: v2 `{v:2, c:id, p:[capsuleId x7], o, op}`; decodes old name links too. If you add a build dimension, update encoder and decoder together.
 
 `src/utils/classStyles.js` — the one table of class-label colours (badge, portrait gradient).
 

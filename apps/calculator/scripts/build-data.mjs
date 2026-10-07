@@ -22,7 +22,7 @@ import { readCsv, writeIfChanged, sameText } from './lib/csv.mjs';
 import { loadRefdata, normName, repoRoot } from './lib/refdata.mjs';
 import { CHANNELS, CLASS_COEFS, CC_CHANNEL_FIELDS, CC_COLUMNS, splitTraits, num, round, finalDamage } from './lib/fields.mjs';
 import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate } from './lib/blastRecipes.mjs';
-import { table, list, pct, fmt } from './lib/report.mjs';
+import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -505,12 +505,14 @@ const charmapManifest = manifest('charmap');
 const ccManifest = manifest('capsulecorp');
 const rosterMode = config.output?.roster || 'all';
 const roster = rosterMode === 'legacy' ? JSON.parse(fs.readFileSync(path.join(DATA, 'legacy', 'roster.json'), 'utf8')) : characters.map(c => c.id);
+// Only the published roster goes out (the website links every name in characters.json).
+const pub = new Set(roster);
 const v2 = {
-  characters,
-  skills,
-  blasts,
+  characters: characters.filter(c => pub.has(c.id)),
+  skills: Object.fromEntries(Object.entries(skills).filter(([, s]) => pub.has(s.character))),
+  blasts: Object.fromEntries(Object.entries(blasts).filter(([id]) => pub.has(id))),
   capsules,
-  teams,
+  teams: teams.map(t => ({ ...t, members: t.members.filter(id => pub.has(id)) })),
   meta: {
     schemaVersion: 2,
     sources: { charmap: charmapManifest.version, capsulecorp: ccManifest.version },
@@ -518,7 +520,6 @@ const v2 = {
     damageConstant: K,
     defaultRuleset: defaultRuleset?.name ?? null,
     rulesets,
-    roster: rosterMode === 'legacy' ? roster : undefined,
   },
 };
 const dataVersion = crypto.createHash('sha256').update(JSON.stringify(v2)).digest('hex').slice(0, 12);
@@ -531,13 +532,15 @@ const legacyCapsules = rosterMode === 'legacy'
 const legacy = toLegacy({ ...v2, capsules: legacyCapsules }, { roster });
 
 const outputs = new Map();
-const json = (v) => JSON.stringify(v, null, 2) + '\n';
+const json = (v) => compactJson(v);
 if (config.output?.v2) {
-  outputs.set('characters.json', json(characters));
-  outputs.set('skills.json', json(skills));
-  outputs.set('blasts.json', json(blasts));
+  // provenance published as source -> [fields] (compact; the UI inverts it)
+  const bySource = (p) => { const o = {}; for (const [f, s] of Object.entries(p)) (o[s] ??= []).push(f); return o; };
+  outputs.set('characters.json', json(v2.characters.map(c => ({ ...c, provenance: bySource(c.provenance) }))));
+  outputs.set('skills.json', json(v2.skills));
+  outputs.set('blasts.json', json(v2.blasts));
   outputs.set('capsules.json', json(capsules));
-  outputs.set('teams.json', json(teams));
+  outputs.set('teams.json', json(v2.teams));
   outputs.set('meta.json', json(v2.meta));
 } else {
   outputs.set('characters.json', json(legacy.characters));
@@ -735,17 +738,21 @@ function reportMd() {
 }
 
 // ------------------------------------------------------------------ write / check
+// Files this build owns in public/data; any not produced in the current output mode are removed.
+const MANAGED = ['characters.json', 'skills.json', 'blasts.json', 'blast.json', 'capsules.json', 'teams.json', 'meta.json', 'characterImages.json', 'aliases.json'];
+const obsolete = MANAGED.filter(f => !outputs.has(f) && fs.existsSync(path.join(PUBLIC, f)));
 const files = [...[...outputs].map(([f, c]) => [path.join(PUBLIC, f), c]), [path.join(DATA, 'REPORT.md'), reportMd()]];
 const changes = changesMd();
 if (changes) files.push([path.join(DATA, 'CHANGES.md'), changes + '\n']);
 
 if (check) {
-  const stale = files.filter(([f, c]) => !sameText(f, c)).map(([f]) => path.relative(APP, f));
+  const stale = [...files.filter(([f, c]) => !sameText(f, c)).map(([f]) => path.relative(APP, f)), ...obsolete.map(f => `public/data/${f} (obsolete)`)];
   if (stale.length) { console.error(`build-data --check: stale output, run npm run data:build:\n  ${stale.join('\n  ')}`); process.exit(1); }
   console.log('build-data --check: outputs are up to date.');
 } else {
   let n = 0;
   for (const [f, c] of files) if (writeIfChanged(f, c)) { n++; console.log(`  wrote ${path.relative(APP, f)}`); }
+  for (const f of obsolete) { fs.unlinkSync(path.join(PUBLIC, f)); n++; console.log(`  removed public/data/${f}`); }
   const all = Object.values(blasts).flat();
   console.log(`build-data: ${characters.length} characters (${roster.length} published), ${Object.keys(skills).length} skills, ${all.length} blasts (${all.filter(b => b.damageStatus === 'measured').length} measured, ${all.filter(b => b.damageStatus === 'computed').length} computed), ${capsules.length} capsules; data ${dataVersion}; ${n} file(s) changed.`);
 }

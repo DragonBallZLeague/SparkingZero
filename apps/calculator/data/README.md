@@ -79,3 +79,18 @@ class key or effect.
 | `effects.csv` | effect key | the game field and summary column each effect key reads |
 
 `overrides.csv` fields are dotted paths into a character (e.g. `stats.kiBlastDamage`).
+
+## Published files (`public/data/`, schema 2)
+
+| File | Shape |
+| --- | --- |
+| `meta.json` | `schemaVersion`, `dataVersion` (content hash; the app fetches every other file with `?v=<dataVersion>`), source versions, `referenceAttacker`, `defaultRuleset`, `rulesets` (total cost, banned ids, group caps) |
+| `characters.json` | array in referencedata order: `id`, `name`, `aliases`, `image`, `class {key, label}`, `dp`, `dpScale`, `stats` (explicit units: defenses are incoming-damage multipliers, ki in bars, `kiBlastLimit` null = unlimited), `coef` (total damage coefficient per channel = DP scale + class add), `classCoef`, `incomingDamage`, `skills` (ids into skills.json), `traits`, `sparking {armor, effects, armorBreakLevel}`, `passives`, `provenance {source: [fields]}`. **The website reads `name` from this file** |
+| `skills.json` | object keyed `<characterId>:<slot>`: `name`, `stockCost`, `damage`, `duration`, `phases [{duration, effects [{key, value}]}]` (exact game coefficients; `stages: true` when the phases are charge stages, one of which applies), `expiryRule`, `display`, `armor` |
+| `blasts.json` | object keyed by character id: `[{slot, variant, name, kiCost, triggerKi, damage, damageStatus (measured / computed / unmeasured), boostedDamage, recipe?, category, type, impactPower, traits, flags, lungeSpeed, moveLimitTime}]` |
+| `capsules.json` | every referencedata capsule: `id`, `name`, `cost`, `description`, `exclusiveTo`, `effects`, `bannedIn` (ruleset names) |
+| `teams.json` | `[{name, slug, members: [ids]}]` from the season's master lists, every form included |
+
+`src/data/loadData.js` loads them; `src/data/adapter.js` `toLegacy()` converts them to the shapes the components read.
+
+Share links (`src/utils/shareLink.js`) are `{v: 2, c: characterId, p: [capsuleId|null x7], o?, op?}`; old links and the website's links carry names and still decode (exact name, then `aliases`, then a case/punctuation-insensitive match).
