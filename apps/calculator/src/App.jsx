@@ -8,7 +8,8 @@ import SkillsPanel from './components/SkillsPanel.jsx';
 import CompareStatsPanel from './components/CompareStatsPanel.jsx';
 import CompareCapsuleBuilder from './components/CompareCapsuleBuilder.jsx';
 import OpponentPanel from './components/OpponentPanel.jsx';
-import { computeModifiedStats, applySkillBuffs, encodeBuild, decodeBuild, CAPSULE_BUDGET } from './utils/calculator.js';
+import { computeModifiedStats, applySkillBuffs, encodeBuild, CAPSULE_BUDGET } from './utils/calculator.js';
+import { decodeBuild, makeResolver } from './utils/shareLink.js';
 import { applyLightBodyKiBlastArmor } from './utils/calculator.js';
 
 const NUM_CAPSULE_SLOTS = 7;
@@ -177,7 +178,8 @@ function App() {
       fetch(`${base}data/teams.json`).then(r => r.json()),
       fetch(`${base}data/characterImages.json`).then(r => r.json()),
       fetch(`${base}data/skills.json`).then(r => r.json()),
-    ]).then(([chars, caps, bl, tm, imgs, sk]) => {
+      fetch(`${base}data/aliases.json`).then(r => r.json()).catch(() => ({})),
+    ]).then(([chars, caps, bl, tm, imgs, sk, aliases]) => {
       setCharacters(chars);
       setCapsules(caps);
       setBlasts(bl);
@@ -185,38 +187,19 @@ function App() {
       setTeams(tm);
       setCharacterImages(imgs);
 
-      // Restore from URL hash if present
+      // Restore from URL hash if present (old name-based links resolve through aliases)
       const hash = window.location.hash.slice(1);
-      if (hash) {
-        const decoded = decodeBuild(hash);
-        if (decoded) {
-          // Main character
-          const char = chars.find(c => c.name === decoded.characterName);
-          if (char) {
-            setSelectedCharacter(char);
-            setCurrentSection(1);
-            setTabletState('stats_skills');
-          }
-          if (decoded.capsuleNames) {
-            const restored = decoded.capsuleNames.map(name =>
-              name ? caps.find(c => c.name === name) || null : null
-            );
-            setEquippedCapsules(restored);
-          }
-          // Opponent
-          if (decoded.opponentName) {
-            const oppChar = chars.find(c => c.name === decoded.opponentName);
-            if (oppChar) {
-              setSelectedOpponent(oppChar);
-            }
-          }
-          if (decoded.opponentCapsuleNames) {
-            const oppRestored = decoded.opponentCapsuleNames.map(name =>
-              name ? caps.find(c => c.name === name) || null : null
-            );
-            setEquippedOpponentCapsules(oppRestored);
-          }
+      const decoded = hash ? decodeBuild(hash, makeResolver(chars, caps, aliases)) : null;
+      if (decoded) {
+        if (decoded.notices.length) console.warn('Share link:', decoded.notices.join('; '));
+        if (decoded.character) {
+          setSelectedCharacter(decoded.character);
+          setCurrentSection(1);
+          setTabletState('stats_skills');
         }
+        if (decoded.capsules) setEquippedCapsules(decoded.capsules);
+        if (decoded.opponent) setSelectedOpponent(decoded.opponent);
+        if (decoded.opponentCapsules) setEquippedOpponentCapsules(decoded.opponentCapsules);
       }
     }).catch(console.error);
   }, []);

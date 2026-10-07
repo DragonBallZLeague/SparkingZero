@@ -1,0 +1,35 @@
+key,label,kind,field,summaryColumn
+rushDamage,Rush attacks damage,damage,ParameterChanging.RushDamageScale,Rush Attack damage
+smashDamage,Smash attacks damage,damage,ParameterChanging.SmashDamageScale,Smash Attack damage
+comboDamage,Combo damage,damage,ParameterChanging.ComboAttackDamageScale,Combo attack damage
+throwDamage,Throw damage,damage,ParameterChanging.ThrowDamageScale,Throw damage
+counterDamage,Counter damage,damage,ParameterChanging.ParryDamageScale,Counter damage
+followUpDamage,Follow-up attack damage,damage,ParameterChanging.PursuitDamageScale,Follow-up attack damage
+interruptDamage,Interrupt attack damage,damage,ParameterChanging.InterruptDamageScale,Interrupt attack damage
+kiBlastDamage,Ki blast damage,damage,ParameterChanging.RushBulletDamageScale,Normal Ki-blast damage
+chargedKiBlastDamage,Charged ki blast damage,damage,ParameterChanging.SmashBulletDamageScale,Charged Ki-blast damage
+skillDamage,Skill attack damage,damage,ParameterChanging.BlastForteDamageScale,Skill attack damage
+superDamage,Super damage,damage,ParameterChanging.BlastDamageScale,Super damage
+ultimateDamage,Ultimate damage,damage,ParameterChanging.BlastUltimateDamageScale,Ultimate damage
+physicalResist,Physical resistance,resist,ParameterChanging.CombativesDamageResist,Physical resistance
+energyResist,Energy resistance,resist,ParameterChanging.EnergyDamageResist,Energy resistance
+blastResist,Separate blast resistance,resist,ParameterChanging.BlastDamageResist,Separate Blast resistance
+guardResist,Guarded-hit resistance,resist,ParameterChanging.ShaveDamageResist,Guarded-hit resistance
+comboScaling,Combo scaling,rate,ParameterChanging.ComboDamageScalingEffectScale,Combo scaling
+armorLevel,Armor level,level,ParameterChanging.ArmorLevelUp,Armor level
+armorBreakLevel,Armor break level,level,ParameterChanging.ArmorBreakLevelUp,Armor break level
+kiRecovery,Ki recovery,rate,ParameterChanging.SPAutoRecoveryScale,Ki recovery
+kiCharge,Ki charge,rate,ParameterChanging.SPChargeSpeedScale,Ki charge
+sparkingCharge,Sparking charge,rate,ParameterChanging.SparkingGaugeChargeSpeedScale,Sparking charge
+preSparkingDrain,Pre-Sparking drain,rate,ParameterChanging.PreSparkingGaugeDecreaseSpeedScale,Pre-Sparking drain
+sparkingDrain,Sparking drain,rate,ParameterChanging.SparkingModeGaugeDecreaseSpeedScale,Sparking drain
+skillRecovery,Skill Count recovery speed,rate,ParameterChanging.BlastRecoverSpeedScale,
+meleeCharge,Melee charge,rate,ParameterChanging.CombativesChargeScale,Melee charge
+kiShotCharge,Ki-shot charge,rate,ParameterChanging.BulletChargeScale,Ki-shot charge
+shortDashCost,Short-dash ki cost,rate,ParameterChanging.ShortDashSpCostScale,Short-dash ki cost
+kiRestore,Ki restored,resource,ResourceChanging.HealSP,
+kiPerSecond,Ki restored per second,resource,ParameterChanging.HealSPPerSec,
+healthRestore,Health restored,resource,ResourceChanging.HealHP,
+healthRestoreFraction,Health restored (fraction of max),resource,ResourceChanging.HealHPPercentage,
+moveSpeed,Movement speed,display,ParameterChanging.MovesScale.*,
+useCount,Uses before it ends,display,EffectiveCount,

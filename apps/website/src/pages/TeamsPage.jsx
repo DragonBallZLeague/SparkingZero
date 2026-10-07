@@ -5,6 +5,7 @@ import { Users, ChevronDown, ChevronUp, Calendar, UserMinus } from 'lucide-react
 import yaml from 'js-yaml';
 import { useSeasonContext } from '../contexts/SeasonContext';
 import { useCharacterIndex } from '../hooks/useCharacterIndex';
+import { getFormChain } from '../utils/formChain';
 
 const CALC_BASE = 'https://dragonballzleague.github.io/SparkingZero/calculator/#';
 const NULLS7 = [null, null, null, null, null, null, null];
@@ -20,47 +21,6 @@ function normalizeRoster(roster = []) {
       ? { character: entry, benched: [] }
       : { character: entry.character || entry, benched: entry.benched || [] }
   );
-}
-
-function getFormChain(name, calcNames, transformAdj) {
-  const exactMatch = calcNames.has(name);
-  let anchor = exactMatch ? name : [...calcNames].find(n => n.startsWith(name + ' '));
-  if (!anchor) return [];
-  // Some transformation nodes use reversed naming, e.g. transformations.json has
-  // "Ultimate Gohan (Super Hero)" but the calc has "Gohan (Super Hero) Ultimate Gohan".
-  // Detect anchor's parenthetical variant like "(Super Hero)" and try remapping.
-  const anchorParenMatch = anchor.match(/\(([^)]+)\)$/);
-  const resolveCalcName = (node) => {
-    if (calcNames.has(node)) return node;
-    if (anchorParenMatch) {
-      const suffix = ' (' + anchorParenMatch[1] + ')';
-      if (node.endsWith(suffix)) {
-        const candidate = anchor + ' ' + node.slice(0, node.length - suffix.length);
-        if (calcNames.has(candidate)) return candidate;
-      }
-    }
-    return null;
-  };
-  // Forward BFS only — preserves transformsTo declaration order
-  const visited = new Set([anchor]);
-  const queue = [anchor];
-  const ordered = [];
-  while (queue.length) {
-    const cur = queue.shift();
-    const calcName = resolveCalcName(cur);
-    if (calcName && !ordered.includes(calcName)) ordered.push(calcName);
-    for (const next of (transformAdj[cur] || [])) {
-      if (!visited.has(next)) {
-        visited.add(next);
-        queue.push(next);
-      }
-    }
-  }
-  if (exactMatch) {
-    const idx = ordered.indexOf(anchor);
-    if (idx !== -1) ordered.splice(idx, 1);
-  }
-  return ordered;
 }
 
 function CharLink({ name, calcNames, transformAdj, darkMode, className, noDropdown, portalTarget }) {

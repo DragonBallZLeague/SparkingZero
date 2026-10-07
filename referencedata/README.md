@@ -1,6 +1,6 @@
 # Shared Reference Data
 
-This directory contains the shared reference data files used by both the **Match Builder** and **Analyzer** applications.
+This directory contains the shared reference data files used by the **Match Builder**, **Analyzer**, **Website** and **Character Calculator** applications.
 
 ## Files
 
@@ -23,6 +23,9 @@ The match builder copies these files to its public folder during build via a Vit
 ```javascript
 const response = await fetch("characters.csv");
 ```
+
+### Character Calculator
+The calculator's data build (`apps/calculator/scripts/build-data.mjs`, run before every calculator dev server and build) reads `characters.csv` (ids, names, order), `transformations.json`, `capsules.csv` (rows of Type `Capsule`) and `capsule-rules.yaml`, and joins its game-data snapshots to them by character id. Renaming a character here renames it in the calculator; add the old name to `apps/calculator/data/curated/aliases.csv` so old share links keep working. See `apps/calculator/data/README.md`.
 
 ## Updating Data
 

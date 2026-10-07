@@ -371,35 +371,10 @@ export function encodeBuild(characterName, capsuleNames, opponentName = null, op
   return btoa(encodeURIComponent(JSON.stringify(data)));
 }
 
-/**
- * Decode build state from URL hash, including opponent and their capsules.
- * @param {string} hash
- * @returns {{ characterName: string, capsuleNames: string[], opponentName?: string, opponentCapsuleNames?: string[] } | null}
- */
-export function decodeBuild(hash) {
-  try {
-    const data = JSON.parse(decodeURIComponent(atob(hash)));
-    return {
-      characterName: data.c,
-      capsuleNames: data.p,
-      opponentName: data.o,
-      opponentCapsuleNames: data.op
-    };
-  } catch {
-    return null;
-  }
-}
-
 /** Build the URL for a character thumbnail stored in public/char_thumbnails/ */
 export function getImageUrl(filename, base = import.meta.env.BASE_URL) {
   if (!filename) return null;
   const b = base.endsWith('/') ? base : base + '/';
   return `${b}char_thumbnails/${filename}`;
 }
-
-/** Get class badge CSS class */
-export function getClassBadge(cls) {
-  if (!cls) return 'badge-normal';
-  const key = cls.toLowerCase().replace(/[\s\-]/g, '_');
-  return `badge-${key}`;
-}
+

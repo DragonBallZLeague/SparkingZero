@@ -1,0 +1,67 @@
+{
+  "sheets": {
+    "charmap": {
+      "title": "Sparking! ZERO character map (raw game data)",
+      "id": "1ISK0qGq1J7eFillAuwHQd6B6fq3TYVzeJNnAcL9lqqA",
+      "versionTab": "Read Me",
+      "tabs": {
+        "Characters": {
+          "file": "characters.csv",
+          "headerRow": 4
+        },
+        "Move List": {
+          "file": "move-list.csv",
+          "headerRow": 3
+        },
+        "Move Power": {
+          "file": "move-power.csv",
+          "headerRow": 3
+        },
+        "Skills and Passives": {
+          "file": "skills-passives.csv",
+          "headerRow": 3
+        },
+        "Skill Values": {
+          "file": "skill-values.csv",
+          "headerRow": 3
+        },
+        "Class Modifiers": {
+          "file": "class-modifiers.csv",
+          "headerRow": 3
+        },
+        "DP Power Factors": {
+          "file": "dp-power-factors.csv",
+          "headerRow": 3
+        },
+        "Form Access": {
+          "file": "form-access.csv",
+          "headerRow": 3
+        }
+      }
+    },
+    "capsulecorp": {
+      "title": "Capsule Corp community sheet (finalized numbers)",
+      "id": "17IrWrDxKPAkqvxH4k5AZhPeSgu0tGwA_TjdVj00EWUA",
+      "versionTab": "Stats",
+      "tabs": {
+        "Stats": {
+          "file": "stats.csv",
+          "headerRow": 4
+        }
+      }
+    }
+  },
+  "teamsSeason": "season-1",
+  "damageConstant": 1.25,
+  "referenceAttacker": "0000_10",
+  "calibration": {
+    "minMatchRate": 0.9,
+    "minSamples": 20,
+    "tolerance": 1
+  },
+  "attackKiGainBase": 0.03,
+  "output": {
+    "roster": "legacy",
+    "v2": false
+  }
+}

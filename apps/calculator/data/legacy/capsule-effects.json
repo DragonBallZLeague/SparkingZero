@@ -1,0 +1,822 @@
+{
+ "00_0_0000": {
+  "name": "Master Roshi Training",
+  "effects": [
+   {
+    "key": "Health_Up",
+    "value": 2500
+   }
+  ]
+ },
+ "00_0_0005": {
+  "name": "Rush Attack Boost 1",
+  "effects": [
+   {
+    "key": "Rush_Attack_Up",
+    "value": 2.5
+   }
+  ]
+ },
+ "00_0_0006": {
+  "name": "Rush Attack Boost 2",
+  "effects": [
+   {
+    "key": "Rush_Attack_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0007": {
+  "name": "Rush Attack Boost 3",
+  "effects": [
+   {
+    "key": "Rush_Attack_Up",
+    "value": 7.5
+   }
+  ]
+ },
+ "00_0_0011": {
+  "name": "Smash Attack Boost 1",
+  "effects": [
+   {
+    "key": "Smash_Attack_Up",
+    "value": 2.5
+   },
+   {
+    "key": "Rush_Chain_Up",
+    "value": 2.5
+   }
+  ]
+ },
+ "00_0_0012": {
+  "name": "Smash Attack Boost 2",
+  "effects": [
+   {
+    "key": "Smash_Attack_Up",
+    "value": 5
+   },
+   {
+    "key": "Rush_Chain_Damage",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0013": {
+  "name": "Smash Attack Boost 3",
+  "effects": [
+   {
+    "key": "Smash_Attack_Up",
+    "value": 7.5
+   },
+   {
+    "key": "Rush_Chain_Damage",
+    "value": 7.5
+   }
+  ]
+ },
+ "00_0_0014": {
+  "name": "Ki Blast Attack Boost 1",
+  "effects": [
+   {
+    "key": "Rush_Ki_Blast_Up",
+    "value": 2.5
+   },
+   {
+    "key": "Smash_Ki_Blast_Up",
+    "value": 2.5
+   }
+  ]
+ },
+ "00_0_0015": {
+  "name": "Ki Blast Attack Boost 2",
+  "effects": [
+   {
+    "key": "Rush_Ki_Blast_Up",
+    "value": 5
+   },
+   {
+    "key": "Smash_Ki_Blast_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0016": {
+  "name": "Ki Blast Attack Boost 3",
+  "effects": [
+   {
+    "key": "Rush_Ki_Blast_Up",
+    "value": 7.5
+   },
+   {
+    "key": "Smash_Ki_Blast_Up",
+    "value": 7.5
+   }
+  ]
+ },
+ "00_0_0023": {
+  "name": "Power Unleashed",
+  "effects": [
+   {
+    "key": "Burst_Rush_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0024": {
+  "name": "Finishing Blow",
+  "effects": [
+   {
+    "key": "Burst_Meteor_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0026": {
+  "name": "Blast Burst",
+  "effects": [
+   {
+    "key": "Ki_Bar_Blasts_Up",
+    "value": 1
+   },
+   {
+    "key": "Blast_Damage_Up",
+    "value": 5
+   },
+   {
+    "key": "Blast_Combo_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0027": {
+  "name": "Ultimate Burst",
+  "effects": [
+   {
+    "key": "Ultimate_Blasts_Cost_Up",
+    "value": 1
+   },
+   {
+    "key": "Sparking_Mode_Stun_Up",
+    "value": null
+   },
+   {
+    "key": "Ultimate_Blast_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0028": {
+  "name": "Blast Attack Boost 1",
+  "effects": [
+   {
+    "key": "Blast_Damage_Up",
+    "value": 2.5
+   },
+   {
+    "key": "Blast_Combo_Up",
+    "value": 2.5
+   },
+   {
+    "key": "Ultimate_Blast_Damage_Up",
+    "value": 2.5
+   }
+  ]
+ },
+ "00_0_0029": {
+  "name": "Blast Attack Boost 2",
+  "effects": [
+   {
+    "key": "Blast_Damage_Up",
+    "value": 5
+   },
+   {
+    "key": "Blast_Combo_Up",
+    "value": 5
+   },
+   {
+    "key": "Ultimate_Blast_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0030": {
+  "name": "Blast Attack Boost 3",
+  "effects": [
+   {
+    "key": "Blast_Damage_Up",
+    "value": 7.5
+   },
+   {
+    "key": "Blast_Combo_Up",
+    "value": 7.5
+   },
+   {
+    "key": "Ultimate_Blast_Damage_Up",
+    "value": 7.5
+   }
+  ]
+ },
+ "00_0_0031": {
+  "name": "Super Warrior",
+  "effects": []
+ },
+ "00_0_0032": {
+  "name": "Draconic Aura",
+  "effects": []
+ },
+ "00_0_0033": {
+  "name": "Light Body",
+  "effects": [
+   {
+    "key": "Ki_Blast_Armor_Up",
+    "value": 10
+   }
+  ]
+ },
+ "00_0_0035": {
+  "name": "Dragon Rush",
+  "effects": []
+ },
+ "00_0_0037": {
+  "name": "The Secret to Counters",
+  "effects": [
+   {
+    "key": "Super_Z_Counter_Down",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0038": {
+  "name": "Fury!",
+  "effects": []
+ },
+ "00_0_0039": {
+  "name": "Active Heart",
+  "effects": [
+   {
+    "key": "Ki_Gained_From_Attacks",
+    "value": 10
+   }
+  ]
+ },
+ "00_0_0040": {
+  "name": "Indomitable Fighting Spirit",
+  "effects": [
+   {
+    "key": "Ki_Gained_From_Attacks",
+    "value": 20
+   }
+  ]
+ },
+ "00_0_0041": {
+  "name": "Warming Up",
+  "effects": []
+ },
+ "00_0_0042": {
+  "name": "Ready for Anything",
+  "effects": []
+ },
+ "00_0_0046": {
+  "name": "Z-Burst Dash Master",
+  "effects": [
+   {
+    "key": "Z-Burst_Dashes_Cost_Down",
+    "value": 50
+   }
+  ]
+ },
+ "00_0_0047": {
+  "name": "The Secret to Z-Burst Dashes",
+  "effects": [
+   {
+    "key": "Z-Burst_Dashes_Cost_Down",
+    "value": 100
+   }
+  ]
+ },
+ "00_0_0048": {
+  "name": "Proof of Friendship",
+  "effects": [
+   {
+    "key": "Switch_Gauge_Start_Max",
+    "value": null
+   }
+  ]
+ },
+ "00_0_0055": {
+  "name": "Dragon Spirit",
+  "effects": [
+   {
+    "key": "Skill_Gauge_Recovery",
+    "value": 25
+   }
+  ]
+ },
+ "00_0_0066": {
+  "name": "Super Transformation",
+  "effects": [
+   {
+    "key": "Transformations_Cost_Down",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0068": {
+  "name": "Fighting Spirit",
+  "effects": []
+ },
+ "00_0_0070": {
+  "name": "Divine Blow",
+  "effects": [
+   {
+    "key": "Ultimate_Blast_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0072": {
+  "name": "Rising Fighting Spirit",
+  "effects": [
+   {
+    "key": "Ki_Gauge_Starts",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0074": {
+  "name": "Power of Namek",
+  "effects": []
+ },
+ "00_0_0075": {
+  "name": "Power of Earth",
+  "effects": []
+ },
+ "00_0_0076": {
+  "name": "Power of the Universe",
+  "effects": []
+ },
+ "00_0_0082": {
+  "name": "Perfect Guard",
+  "effects": []
+ },
+ "00_0_0092": {
+  "name": "Crisis Avoided",
+  "effects": [
+   {
+    "key": "Short_Dashes_Ki_Cost_Down",
+    "value": 10
+   }
+  ]
+ },
+ "00_0_0093": {
+  "name": "Battle Control",
+  "effects": [
+   {
+    "key": "Switch_Gauge_Recovery",
+    "value": 50
+   }
+  ]
+ },
+ "00_0_0094": {
+  "name": "Latent Power Unleashed 1",
+  "effects": [
+   {
+    "key": "Ki_Gauge_Starts",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0095": {
+  "name": "Latent Power Unleashed 2",
+  "effects": [
+   {
+    "key": "Ki_Gauge_Starts",
+    "value": 2
+   }
+  ]
+ },
+ "00_0_0096": {
+  "name": "Big Impact",
+  "effects": []
+ },
+ "00_0_0098": {
+  "name": "Mind Breaker",
+  "effects": []
+ },
+ "00_0_0099": {
+  "name": "Waters Blessing",
+  "effects": []
+ },
+ "00_0_0101": {
+  "name": "Miracle Master",
+  "effects": []
+ },
+ "00_0_0102": {
+  "name": "Latent Power!",
+  "effects": []
+ },
+ "00_0_0103": {
+  "name": "Guard Master",
+  "effects": []
+ },
+ "00_0_0104": {
+  "name": "Mirage",
+  "effects": []
+ },
+ "00_0_0112": {
+  "name": "Rising Tension",
+  "effects": [
+   {
+    "key": "Recovers_Ki_Bar",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0113": {
+  "name": "Melee Charge 1",
+  "effects": [
+   {
+    "key": "Charging_Smash_Attacks _Down",
+    "value": 2
+   },
+   {
+    "key": "Charging_Rush_Chains_Down",
+    "value": 2
+   }
+  ]
+ },
+ "00_0_0114": {
+  "name": "Melee Charge 2",
+  "effects": [
+   {
+    "key": "Charging_Smash_Attacks _Down",
+    "value": 3
+   },
+   {
+    "key": "Reduce_Rush_Chains",
+    "value": 3
+   }
+  ]
+ },
+ "00_0_0115": {
+  "name": "Melee Charge 3",
+  "effects": [
+   {
+    "key": "Charging_Smash_Attacks _Down",
+    "value": 5
+   },
+   {
+    "key": "Reduce_Rush_Chains",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0116": {
+  "name": "Energy Saver 1",
+  "effects": [
+   {
+    "key": "Reduce_Rush_Ki_Blasts",
+    "value": 2
+   },
+   {
+    "key": "Reduces_Smash_Ki_Blasts",
+    "value": 2
+   }
+  ]
+ },
+ "00_0_0117": {
+  "name": "Energy Saver 2",
+  "effects": [
+   {
+    "key": "Reduce_Rush_Ki_Blasts",
+    "value": 3
+   },
+   {
+    "key": "Reduces_Smash_Ki_Blasts",
+    "value": 3
+   }
+  ]
+ },
+ "00_0_0118": {
+  "name": "Energy Saver 3",
+  "effects": [
+   {
+    "key": "Reduce_Rush_Ki_Blasts",
+    "value": 5
+   },
+   {
+    "key": "Reduces_Smash_Ki_Blasts",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0119": {
+  "name": "Ki Blast Charge 1",
+  "effects": [
+   {
+    "key": "Charge_TIme_Smash_Ki_Down",
+    "value": 2
+   }
+  ]
+ },
+ "00_0_0120": {
+  "name": "Ki Blast Charge 2",
+  "effects": [
+   {
+    "key": "Reduces_Smash_Ki_Blasts",
+    "value": 3
+   }
+  ]
+ },
+ "00_0_0121": {
+  "name": "Ki Blast Charge 3",
+  "effects": [
+   {
+    "key": "Reduces_Smash_Ki_Blasts",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0122": {
+  "name": "Dragon Assault",
+  "effects": [
+   {
+    "key": "Vanishing_Assaults_Cost_Down",
+    "value": 15
+   }
+  ]
+ },
+ "00_0_0124": {
+  "name": "Speed Up",
+  "effects": [
+   {
+    "key": "Short_Dashes_Ki_Cost_Down",
+    "value": 20
+   }
+  ]
+ },
+ "00_0_0125": {
+  "name": "Exquisite Skill",
+  "effects": [
+   {
+    "key": "Recovery_Time_Down",
+    "value": 20
+   },
+   {
+    "key": "Enemy_Recovery_Time_Up",
+    "value": 20
+   }
+  ]
+ },
+ "00_0_0126": {
+  "name": "Ki Control",
+  "effects": [
+   {
+    "key": "Dragon_Dashes_Ki_Down",
+    "value": 25
+   },
+   {
+    "key": "Ki_Recovery_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0127": {
+  "name": "The Secret to Dragon Dashes",
+  "effects": [
+   {
+    "key": "Dragon_Dashes_Ki_Down",
+    "value": 25
+   }
+  ]
+ },
+ "00_0_0128": {
+  "name": "Savior",
+  "effects": []
+ },
+ "00_0_0129": {
+  "name": "Combo Master",
+  "effects": [
+   {
+    "key": "Combo_Damage_Scaling_Down",
+    "value": 2.5
+   }
+  ]
+ },
+ "00_0_0130": {
+  "name": "Combo King",
+  "effects": []
+ },
+ "00_0_0132": {
+  "name": "Sparking! Plus",
+  "effects": [
+   {
+    "key": "Sparking_Down",
+    "value": 25
+   },
+   {
+    "key": "Melee_Defense_Down",
+    "value": 20
+   },
+   {
+    "key": "Blast_Defense_Down",
+    "value": 10
+   }
+  ]
+ },
+ "00_0_0133": {
+  "name": "Style of the Strong",
+  "effects": [
+   {
+    "key": "Sparking_Mode_Gauge_Down",
+    "value": 15
+   }
+  ]
+ },
+ "00_0_0134": {
+  "name": "Dragon Break",
+  "effects": [
+   {
+    "key": "Dragon_Homing_Limit_Up",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0135": {
+  "name": "Dragon Crash",
+  "effects": [
+   {
+    "key": "Dragon_Smash_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0136": {
+  "name": "Vanishing Break",
+  "effects": [
+   {
+    "key": "Vanishing_Attack_Limit_Up",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0137": {
+  "name": "Vanishing Crash",
+  "effects": [
+   {
+    "key": "Vanishing_Attack_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0138": {
+  "name": "Secret Measures",
+  "effects": [
+   {
+    "key": "Skill_Start_Count_Up",
+    "value": 1
+   }
+  ]
+ },
+ "00_0_0139": {
+  "name": "Rush Ki Blast 1",
+  "effects": [
+   {
+    "key": "Rush_Ki_Blast_Speed_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0140": {
+  "name": "Rush Ki Blast Count Boost",
+  "effects": [
+   {
+    "key": "Rush_Ki_Blast_Count",
+    "value": 2
+   }
+  ]
+ },
+ "00_0_0141": {
+  "name": "Master Strike",
+  "effects": [
+   {
+    "key": "Rush_Attack_Up",
+    "value": 5
+   },
+   {
+    "key": "Smash_Attack_Up",
+    "value": 5
+   },
+   {
+    "key": "Rush_Chain_Damage",
+    "value": 5
+   },
+   {
+    "key": "Health_Down",
+    "value": 5000
+   }
+  ]
+ },
+ "00_0_0142": {
+  "name": "Master Ki Blast",
+  "effects": [
+   {
+    "key": "Rush_Ki_Blast_Speed",
+    "value": 5
+   },
+   {
+    "key": "Reduce_Rush_Ki_Blasts",
+    "value": 5
+   },
+   {
+    "key": "Reduces_Smash_Ki_Blasts",
+    "value": 5
+   },
+   {
+    "key": "Health_Down",
+    "value": 5000
+   }
+  ]
+ },
+ "00_0_0143": {
+  "name": "Master Throw",
+  "effects": [
+   {
+    "key": "Throw_Damage_Up",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0144": {
+  "name": "High-Speed Movement Master",
+  "effects": [
+   {
+    "key": "Sparking_High_Speed_Cost_Down",
+    "value": 25
+   },
+   {
+    "key": "Melee_Defense_Down",
+    "value": 20
+   },
+   {
+    "key": "Blast_Defense_Down",
+    "value": 20
+   }
+  ]
+ },
+ "00_0_0145": {
+  "name": "The Secret to High-Speed Movements",
+  "effects": []
+ },
+ "00_0_0146": {
+  "name": "Super Movement Master",
+  "effects": [
+   {
+    "key": "Sparking_Super_Movements_Cost_Down",
+    "value": 25
+   },
+   {
+    "key": "Melee_Defense_Down",
+    "value": 20
+   },
+   {
+    "key": "Blast_Defense_Down",
+    "value": 20
+   }
+  ]
+ },
+ "00_0_0147": {
+  "name": "The Secret to Super Movements",
+  "effects": []
+ },
+ "00_0_0148": {
+  "name": "Performer",
+  "effects": []
+ },
+ "00_0_0149": {
+  "name": "Dragon Heart",
+  "effects": []
+ },
+ "00_0_0150": {
+  "name": "King Kai Training",
+  "effects": [
+   {
+    "key": "Health_Up",
+    "value": 5000
+   }
+  ]
+ },
+ "00_0_0153": {
+  "name": "Super Sparking!",
+  "effects": [
+   {
+    "key": "Sparking_Mode_Gauge_Down",
+    "value": 5
+   }
+  ]
+ },
+ "00_0_0155": {
+  "name": "Brolys Ring",
+  "effects": []
+ }
+}

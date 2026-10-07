@@ -23,3 +23,6 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Calculator data pipeline: local copies of the source workbooks passed to `npm run data:pull -- --file`
+apps/calculator/data/**/*.xlsx

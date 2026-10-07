@@ -8,31 +8,46 @@ Character Calculator (`/calculator/`) — public Sparking Zero character data/st
 
 Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:calculator`.
 
-## ⚠️ Data source is independent of `/referencedata/`
+## Data pipeline (read `data/README.md` first)
 
-Unlike Analyzer and Match Builder, this app does **not** read from the repo-root `referencedata/` directory (no `copy-shared-referencedata` Vite plugin, no `?raw` import of the shared CSVs — confirmed by grep, there are zero references to `referencedata`/`characters.csv`/`capsules.csv` anywhere in this app). It has its own self-contained dataset in `public/data/`:
-- `characters.json`, `capsules.json`, `skills.json`, `blast.json`, `teams.json`, `characterImages.json`.
-- `public/char_thumbnails/`, `public/buffs/`, `public/ki_icons/`, `public/titleicons/` — game-extracted image assets (naming conventions like `T_UI_FaceP1_####_##_##.png` match raw game asset dumps — likely produced by the extraction scripts in `GSTest/`/`NADFileTesting/` at the repo root, not hand-authored).
+`public/data/*.json` is **generated** — never edit it by hand. `scripts/build-data.mjs` builds it from:
+- `data/snapshots/` — committed CSV copies of two spreadsheets: the raw game map (`charmap/`, game facts and raw inputs) and Capsule Corp's Stats tab (`capsulecorp/`, finals). Refreshed by hand with `npm run data:pull` (the only networked step; it refuses a changed column layout unless `--accept-layout`).
+- `data/curated/*.csv` — hand-maintained tables (measured blast damage, skill display traits, class labels, aliases, overrides, Sparking armor).
+- `referencedata/` (characters, forms, capsules, rulesets) and the website's `public/content/teams/<season>.yaml` master lists. **The calculator now joins the shared reference data by id**; names and order come from `referencedata/characters.csv`.
 
-**This means character/capsule data can silently drift out of sync with `referencedata/characters.csv`/`capsules.csv`** (the source other apps share) — there is currently no automated process keeping them aligned. If you're updating character/capsule stats, you likely need to update **both** `/referencedata/*.csv` (for Analyzer/Match Builder) **and** `apps/calculator/public/data/*.json` (for this app) — check with whoever maintains the data before assuming one update covers both.
+`predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL). Both are offline and deterministic. Every build also regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration) and `data/CHANGES.md` (old → new per field). Read both diffs after any data change.
+
+`data/config.json` `output` controls what is published: `roster` (`legacy` = the 208 characters the old app had, `all` = every referencedata character) and `v2` (write schema-2 files instead of the old shapes).
+
+`src/data/adapter.js` `toLegacy()` turns schema-2 data into the shapes the components were written against (flat character objects keyed by name, `blast` keyed by name, skills as a numbered list). It has no imports so the build and the browser share it. Skill "levels" (`meleeBuff` etc.) are an interim projection of the game's exact coefficients (level = coefficient / 0.05).
+
+Gotchas:
+- **Damage coefficients add** (DP scale + class + capsules + skills), they do not multiply. `final = ceil(Power x 1.25 x coefficient)`.
+- **Capsule Corp's class labels are not always the game's class** (Vegeta forms, Baby Vegeta, Fused Zamasu Half-Corrupted); the build rescales those channels from evidence and lists them in REPORT.md. Game class keys map to labels in `data/curated/classes.csv`.
+- **Old share links carry display names.** `src/utils/shareLink.js` resolves names exact → `aliases` → normalised; renamed characters need a row in `data/curated/aliases.csv`. The website's Teams page builds name-based links too (see below).
+- **The website reads production `calculator/data/characters.json`**: it must stay a top-level array of objects with `name`, in referencedata order. Its form dropdown walks `transformations.json` by name (`apps/website/src/utils/formChain.js`, imported by `verify-data` so the check runs the shipped code).
+- `public/char_thumbnails/T_UI_FaceP1_<id>_00.png` is also read by the Analyzer's `build-portraits` — do not rename or move those files.
+- `data/legacy/` and `scripts/oneoff/` are temporary (seeded once from the pre-rebuild JSON).
 
 ## Architecture
 
 `src/App.jsx` (~1,300 lines) composes the page from `src/components/`:
-- `CharacterSelector.jsx` — character/costume/form picker.
+- `CharacterSelector.jsx` — character picker (team, class, search filters).
 - `StatsPanel.jsx` / `CompareStatsPanel.jsx` — stat display for a single build vs. side-by-side comparison mode.
 - `CapsuleBuilder.jsx` / `CompareCapsuleBuilder.jsx` — capsule loadout builder, single vs. comparison mode.
-- `SkillsPanel.jsx` — active skill toggles that feed into buff calculations.
+- `SkillsPanel.jsx` — skills, blasts and ultimates; skill rows toggle buffs.
 - `OpponentPanel.jsx` — lets a build be evaluated against an opponent's build/stats.
 
-`src/utils/calculator.js` (~400 lines) is the stat engine, not a component-support file — this is where game-rule logic lives:
-- `computeModifiedStats(baseStats, equippedCapsules)` — applies capsule effects to base stats (percent vs. additive vs. set operations, tracked separately — see the `parseEffectKey` field/op map near the top of the file for how a capsule effect string maps to a stat mutation).
-- `applySkillBuffs(stats, activeSkills)` — applies active-skill percent buffs on top.
-- `applyLightBodyKiBlastArmor` — one-off special-cased buff (Light Body's 10% ki-blast-defense reduction); a model for how other character-specific special cases should be added if needed (small, named, explicitly documented function — not folded into the generic effect map).
-- `encodeBuild`/`decodeBuild` — serializes a build (character, capsules, optional opponent + opponent capsules) to/from a base64 URL hash for shareable build links. If you add a new build dimension (e.g. a new skill slot), update both functions together or old shared links will silently decode incorrectly.
+`src/utils/calculator.js` is the stat engine:
+- `computeModifiedStats(baseStats, equippedCapsules)` — applies capsule effects (see `parseEffectKey`).
+- `applySkillBuffs(stats, activeSkills)` — applies active-skill buffs on top.
+- `applyLightBodyKiBlastArmor` — Light Body's ki-blast-defense special case.
+- `encodeBuild` — share-link encoding (decoding lives in `src/utils/shareLink.js`). If you add a new build dimension, update encoder and decoder together or old links decode wrongly.
 - `CAPSULE_BUDGET` — the point cap enforced when building a loadout.
+
+`src/utils/classStyles.js` — the one table of class-label colours (badge, portrait gradient).
 
 ## Gotchas
 
 - `@szl/ui` (aliased in `vite.config.js`) provides the shared `NavBar` — see `packages/ui/CLAUDE.md`.
-- No test suite. Validate stat-engine changes by building a capsule/skill combination in the UI and checking the resulting numbers against the effect's documented percentage/value, not just that the UI doesn't crash.
+- No test suite. Validate engine changes by building a capsule/skill combination in the UI and checking the numbers against the effect's documented value, not just that the UI doesn't crash.

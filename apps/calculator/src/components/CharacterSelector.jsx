@@ -1,33 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
-import { getImageUrl, getClassBadge } from '../utils/calculator.js';
+import { getImageUrl } from '../utils/calculator.js';
+import { classBadge } from '../utils/classStyles.js';
 
-const CLASS_COLORS = {
-  'Normal':                          'bg-blue-600',
-  'Super Saiyan':                    'bg-yellow-500 text-black',
-  'Ki-Blast':                        'bg-purple-600',
-  'Power':                           'bg-red-600',
-  'Villain':                         'bg-indigo-900 border border-purple-600 text-purple-300',
-  'Fusion':                          'bg-sky-600',
-  'Almighty':                        'bg-orange-500',
-  'Rival':                           'bg-emerald-600',
-  'Secret':                          'bg-pink-600',
-  'Skill-User':                      'bg-gray-600',
-  'Speed':                           'bg-cyan-500 text-black',
-  'God':                             'bg-amber-400 text-black',
-  'Giant':                           'bg-amber-700',
-  'Legendary Super Saiyan':          'bg-green-600',
-  'Infinite Ki (Giant)':             'bg-amber-800',
-  'Infinite Ki (Villain)':           'bg-violet-700',
-  'Infinite Ki Android (Ki-Blast)':  'bg-purple-700',
-  'Infinite Ki Android (Power)':     'bg-rose-700',
-  'Ki Drain Android (Normal)':       'bg-slate-600',
-  'Ki Drain Android (Power)':        'bg-rose-600',
-  'Skill-User (Yajirobe)':           'bg-gray-500',
-};
+
 
 function ClassBadge({ cls }) {
-  const color = CLASS_COLORS[cls] || 'bg-gray-600';
+  const color = classBadge(cls);
   return (
     <span className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${color}`}>
       {cls}

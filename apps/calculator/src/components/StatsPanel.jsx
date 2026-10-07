@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { classBadge, classGradient } from '../utils/classStyles.js';
 import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense } from '../utils/calculator.js';
 
 // fmt types:
@@ -81,53 +82,9 @@ const STAT_SECTIONS = [
   },
 ];
 
-const CLASS_GRADIENT = {
-  'Normal':                          'from-blue-950',
-  'Super Saiyan':                    'from-yellow-950',
-  'Ki-Blast':                        'from-purple-950',
-  'Power':                           'from-red-950',
-  'Villain':                         'from-indigo-950',
-  'Fusion':                          'from-sky-950',
-  'Almighty':                        'from-orange-950',
-  'Rival':                           'from-emerald-950',
-  'Secret':                          'from-pink-950',
-  'Skill-User':                      'from-gray-950',
-  'Speed':                           'from-cyan-950',
-  'God':                             'from-amber-950',
-  'Giant':                           'from-amber-950',
-  'Legendary Super Saiyan':          'from-green-950',
-  'Infinite Ki (Giant)':             'from-amber-950',
-  'Infinite Ki (Villain)':           'from-violet-950',
-  'Infinite Ki Android (Ki-Blast)':  'from-purple-950',
-  'Infinite Ki Android (Power)':     'from-rose-950',
-  'Ki Drain Android (Normal)':       'from-slate-950',
-  'Ki Drain Android (Power)':        'from-rose-950',
-  'Skill-User (Yajirobe)':           'from-gray-950',
-};
 
-const CLASS_BADGE_COLOR = {
-  'Normal':                          'bg-blue-600 text-white',
-  'Super Saiyan':                    'bg-yellow-500 text-black',
-  'Ki-Blast':                        'bg-purple-600 text-white',
-  'Power':                           'bg-red-600 text-white',
-  'Villain':                         'bg-indigo-800 text-purple-200 border border-purple-600',
-  'Fusion':                          'bg-sky-600 text-white',
-  'Almighty':                        'bg-orange-500 text-white',
-  'Rival':                           'bg-emerald-600 text-white',
-  'Secret':                          'bg-pink-600 text-white',
-  'Skill-User':                      'bg-gray-600 text-white',
-  'Speed':                           'bg-cyan-500 text-black',
-  'God':                             'bg-amber-400 text-black',
-  'Giant':                           'bg-amber-700 text-white',
-  'Legendary Super Saiyan':          'bg-green-600 text-white',
-  'Infinite Ki (Giant)':             'bg-amber-800 text-white',
-  'Infinite Ki (Villain)':           'bg-violet-700 text-white',
-  'Infinite Ki Android (Ki-Blast)':  'bg-purple-700 text-white',
-  'Infinite Ki Android (Power)':     'bg-rose-700 text-white',
-  'Ki Drain Android (Normal)':       'bg-slate-600 text-white',
-  'Ki Drain Android (Power)':        'bg-rose-600 text-white',
-  'Skill-User (Yajirobe)':           'bg-gray-500 text-white',
-};
+
+
 
 function fmt(value, type) {
   if (value === null || value === undefined) return '—';
@@ -294,8 +251,8 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
     : 'Base';
   const modColLabel = opponentStats ? 'Build vs.' : 'Mod';
 
-  const gradientFrom = CLASS_GRADIENT[baseStats.class] || 'from-gray-950';
-  const badgeColor = CLASS_BADGE_COLOR[baseStats.class] || 'bg-gray-600 text-white';
+  const gradientFrom = classGradient(baseStats.class);
+  const badgeColor = classBadge(baseStats.class);
 
   return (
     <div className="flex flex-col">

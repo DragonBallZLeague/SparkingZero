@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { getImageUrl, parseEffectKey, calcFiveHitArmorDamage } from '../utils/calculator.js';
+import { classBadge } from '../utils/classStyles.js';
 
 // Reuse the same stat sections definition from StatsPanel
 const STAT_SECTIONS = [
@@ -189,29 +190,7 @@ function deltaLabel(key, valA, valB, fmt) {
   return { str, bWins, delta };
 }
 
-const CLASS_BADGE_COLOR = {
-  'Normal':                          'bg-blue-600 text-white',
-  'Super Saiyan':                    'bg-yellow-500 text-black',
-  'Ki-Blast':                        'bg-purple-600 text-white',
-  'Power':                           'bg-red-600 text-white',
-  'Villain':                         'bg-indigo-800 text-purple-200 border border-purple-600',
-  'Fusion':                          'bg-sky-600 text-white',
-  'Almighty':                        'bg-orange-500 text-white',
-  'Rival':                           'bg-emerald-600 text-white',
-  'Secret':                          'bg-pink-600 text-white',
-  'Skill-User':                      'bg-gray-600 text-white',
-  'Speed':                           'bg-cyan-500 text-black',
-  'God':                             'bg-amber-400 text-black',
-  'Giant':                           'bg-amber-700 text-white',
-  'Legendary Super Saiyan':          'bg-green-600 text-white',
-  'Infinite Ki (Giant)':             'bg-amber-800 text-white',
-  'Infinite Ki (Villain)':           'bg-violet-700 text-white',
-  'Infinite Ki Android (Ki-Blast)':  'bg-purple-700 text-white',
-  'Infinite Ki Android (Power)':     'bg-rose-700 text-white',
-  'Ki Drain Android (Normal)':       'bg-slate-600 text-white',
-  'Ki Drain Android (Power)':        'bg-rose-600 text-white',
-  'Skill-User (Yajirobe)':           'bg-gray-500 text-white',
-};
+
 
 // ─── Skills / Blast view helpers ───────────────────────────────────────────
 function isReplacementSlot(slot) {
@@ -308,7 +287,7 @@ const SKILL_BUFF_COLS = [
 
 function CharCard({ char, modStats, characterImages, label, onSelect }) {
   const imgId = char ? characterImages?.[char.name] : null;
-  const badgeColor = char ? (CLASS_BADGE_COLOR[char.class] || 'bg-gray-600 text-white') : '';
+  const badgeColor = char ? classBadge(char.class) : '';
 
   if (!char) {
     return (
