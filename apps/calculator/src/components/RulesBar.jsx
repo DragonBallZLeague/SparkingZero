@@ -1,14 +1,19 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useRules, groupOverages, bannedEquipped } from '../utils/rules.js';
+import { capsuleNotes } from '../utils/engine.js';
 
-/** Ruleset picker (optional) plus warnings for one loadout under the selected ruleset. */
+/**
+ * Ruleset picker (optional) plus, for one loadout: rule warnings under the selected
+ * ruleset, and what the equipped capsules do that the stats do not show.
+ */
 export default function RulesBar({ equipped, capsules, showPicker = false }) {
   const { ruleset, rulesets, setRuleset } = useRules();
   const over = groupOverages(equipped, ruleset, capsules);
   const banned = bannedEquipped(equipped, ruleset);
   const unknownCost = (equipped || []).filter(c => c && typeof c.cost !== 'number');
-  if (!showPicker && !over.length && !banned.length && !unknownCost.length) return null;
+  const notes = (equipped || []).filter(Boolean).flatMap(c => capsuleNotes(c).map(text => ({ name: c.name, text })));
+  if (!showPicker && !over.length && !banned.length && !unknownCost.length && !notes.length) return null;
   return (
     <div className="border-b border-sz-border">
       {showPicker && rulesets.length > 1 && (
@@ -41,6 +46,14 @@ export default function RulesBar({ equipped, capsules, showPicker = false }) {
           <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
           <span>Cost not confirmed (counted as 0): {unknownCost.map(c => c.name).join(', ')}</span>
         </div>
+      )}
+      {notes.length > 0 && (
+        <details className="px-3 py-1 text-xs text-gray-400 bg-gray-900/40">
+          <summary className="cursor-pointer select-none text-gray-500">Not reflected in the stats ({notes.length})</summary>
+          <ul className="mt-1 space-y-0.5 pb-1">
+            {notes.map((n, i) => <li key={i}><span className="text-gray-300">{n.name}:</span> {n.text}</li>)}
+          </ul>
+        </details>
       )}
     </div>
   );

@@ -23,18 +23,10 @@ function Stars({ cost }) {
   return <span className={`font-bold text-sm ${COST_COLORS[cost] ?? 'text-gray-400'}`}>{cost}★</span>;
 }
 
-const BUFF_COLS = [
-  { key: 'meleeBuff',      label: 'Melee' },
-  { key: 'defenseBuff',    label: 'Defense' },
-  { key: 'kiBlastBuff',    label: 'Ki Blast' },
-  { key: 'kiChargingBuff', label: 'Ki Charge' },
-  { key: 'blastBuff',      label: 'Blast' },
-  { key: 'ultimateBuff',   label: 'Ultimate' },
-];
-
+// A skill is toggleable when it has any game effect (skills[].effectCount), not only the headline columns.
 function hasBuff(detail) {
   if (!detail) return false;
-  return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
+  return (detail.effectCount ?? 0) > 0 || Object.values(detail.buffPct || {}).some(Boolean) || !!detail.armor;
 }
 
 /**
@@ -150,13 +142,11 @@ export default function OpponentPanel({
       const detail = (selectedOpponent.skill2Id != null ? skillIdMap[selectedOpponent.skill2Id] : skillMap[selectedOpponent.skill2Name.toLowerCase()]) ?? null;
       if (detail && hasBuff(detail)) details.push({ name: selectedOpponent.skill2Name, detail });
     }
-    // Add sparking buffs as a pseudo-skill if present
-    if (selectedOpponent.sparkStatBuffs && hasBuff(selectedOpponent.sparkStatBuffs)) {
-      details.push({
-        name: 'Sparking Mode',
-        detail: { id: `spark_${selectedOpponent.name}`, instantSparking: true, ...selectedOpponent.sparkStatBuffs },
-      });
-    }
+    // Sparking Mode toggle (every character can Spark)
+    details.push({
+      name: 'Sparking Mode',
+      detail: { id: `spark_${selectedOpponent.id}`, instantSparking: true, buffPct: selectedOpponent.sparkStatBuffs || {}, armor: !!selectedOpponent.sparkStatBuffs?.armor },
+    });
     return details;
   }, [selectedOpponent, skillMap]);
 

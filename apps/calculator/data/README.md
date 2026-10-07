@@ -6,14 +6,14 @@ generated output, rebuilt before every dev server and production build.
 
 ```
 data/
-  config.json        source sheet ids and tabs, damage constant, calibration thresholds, output mode
+  config.json        source sheet ids and tabs, damage constant, calibration thresholds, reference attacker
   snapshots/         faithful CSV copies of the source spreadsheets (pulled by hand, committed)
     charmap/         raw game data ("Sparking! ZERO character map"), one CSV per tab + MANIFEST.json
     capsulecorp/     Capsule Corp's "Stats" tab + MANIFEST.json
   curated/           hand-maintained tables (edit these)
-  legacy/            temporary seeds from the pre-rebuild JSON (deleted once nothing reads them)
-  REPORT.md          generated: coverage, source disagreements, blast calibration, what to review
-  CHANGES.md         generated: per character/field old -> new for the current data vs the old files
+  REPORT.md          generated: coverage, source disagreements, blast calibration, capsule effects, what to review
+  CHANGES.md         generated when the published data changes: every value, previous build -> this build
+  rebuild-2026-10/   frozen record of the one-time move from the old hand-edited JSON (nothing reads it)
 ```
 
 ## Updating for a game patch
@@ -24,7 +24,8 @@ data/
    `MANIFEST.json`; check that the build still reads the right columns, then rerun with
    `--accept-layout`. A sheet that is not shared "anyone with the link" can be downloaded
    by hand and passed as `--file charmap=path.xlsx` (xlsx files are git-ignored).
-2. `npm run data:build` rebuilds `public/data/`, `REPORT.md` and `CHANGES.md`.
+2. `npm run data:build` rebuilds `public/data/` and `REPORT.md`, and rewrites `CHANGES.md` with
+   every value that differs from the previous build.
 3. Read the diff of `CHANGES.md` and `REPORT.md`, fix what needs a curated row, commit.
 
 `npm run data:verify` runs the checks the production build runs (`prebuild`);
@@ -46,6 +47,8 @@ data/
 | blast damage | `curated/blasts.csv` (measured) | a calibrated recipe fills gaps (see below) |
 | Sparking armor flag | `curated/sparking.csv` | |
 | capsules | `referencedata/capsules.csv` (Type = Capsule) + `curated/capsules-extra.csv`, bans and group caps from `capsule-rules.yaml` | |
+| capsule effects | `curated/capsule-effects.csv` | REPORT.md lists what each capsule does in the engine |
+| which skill effects hit the opponent | `curated/skill-targets.csv` (default: the user) | |
 | teams | the website's `content/teams/<season>.yaml` master lists, expanded to every form | |
 
 Damage: `final = ceil(raw Power x 1.25 x (DP damage scale + class add))`, in float32 like
@@ -78,7 +81,9 @@ class key or effect.
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag |
 | `capsules-extra.csv` | capsule id | capsules the game has but `referencedata/capsules.csv` lacks (cost may be blank = not confirmed: shown "?", counts 0). Delete a row once referencedata has the capsule |
-| `effects.csv` | effect key | the game field and summary column each effect key reads |
+| `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
+| `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
+| `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |
 
 `overrides.csv` fields are dotted paths into a character (e.g. `stats.kiBlastDamage`).
 
@@ -96,3 +101,19 @@ class key or effect.
 `src/data/loadData.js` loads them; `src/data/adapter.js` `toLegacy()` converts them to the shapes the components read.
 
 Share links (`src/utils/shareLink.js`) are `{v: 2, c: characterId, p: [capsuleId|null x7], o?, op?}`; old links and the website's links carry names and still decode (exact name, then `aliases`, then a case/punctuation-insensitive match).
+
+## The stat engine
+
+`src/utils/engine.js` turns a character plus active effects into the shown stats, with the
+game's rules: damage effects add to the channel's coefficient (`ceil(Power x 1.25 x k)`, exact
+where the raw Power is known), resistance effects subtract from the incoming-damage multiplier,
+rate effects scale `(1 + class + sum) / (1 + class)`, flat effects add (starting ki is clamped to
+the maximum, Rising Fighting Spirit sets it to the maximum). A skill applies all its phases
+when turned on; Sparking Mode applies the character's While Sparking passive, Sparking armor
+and Sparking-only capsule effects. Armor from a skill (+10%) and from Sparking (+25%) keeps the
+old calculator's values: the game data has no number for them.
+
+`verify-data` checks the engine against known values on every build: first rush hits 390 / 410
+/ 468, Android 16 + Rush Attack Boost 3 + Pump Up = 556 (additive), Pump Up, Kaioken and
+Unforgivable's game values, the ki capsules, Sparking-only effects, a computed ultimate, and that
+with no effects every character's published numbers come back unchanged.

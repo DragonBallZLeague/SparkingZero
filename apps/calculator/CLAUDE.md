@@ -12,14 +12,12 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 `public/data/*.json` is **generated** — never edit it by hand. `scripts/build-data.mjs` builds it from:
 - `data/snapshots/` — committed CSV copies of two spreadsheets: the raw game map (`charmap/`, game facts and raw inputs) and Capsule Corp's Stats tab (`capsulecorp/`, finals). Refreshed by hand with `npm run data:pull` (the only networked step; it refuses a changed column layout unless `--accept-layout`).
-- `data/curated/*.csv` — hand-maintained tables (measured blast damage, skill display traits, class labels, aliases, overrides, Sparking armor).
-- `referencedata/` (characters, forms, capsules, rulesets) and the website's `public/content/teams/<season>.yaml` master lists. **The calculator now joins the shared reference data by id**; names and order come from `referencedata/characters.csv`.
+- `data/curated/*.csv` — hand-maintained tables: measured blast damage, capsule effects, the effect vocabulary, skill display traits, skill targets, class labels, aliases, overrides, Sparking armor, capsules missing from referencedata.
+- `referencedata/` (characters, forms, capsules, rulesets) and the website's `public/content/teams/<season>.yaml` master lists. **The calculator joins the shared reference data by id**; names and order come from `referencedata/characters.csv`.
 
-`predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL). Both are offline and deterministic. Every build also regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration) and `data/CHANGES.md` (old → new per field). Read both diffs after any data change.
+`predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL; it includes engine checks against known in-game values). Both are offline and deterministic. Every build regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration, capsule effects); `data/CHANGES.md` is rewritten only when the published data changes (previous build → this build). Read both diffs after any data change. `data/rebuild-2026-10/` is the frozen record of the one-time move from the old hand-edited JSON.
 
-`data/config.json` `output` controls what is published: `roster` (`legacy` = the 208 characters the old app had, `all` = every referencedata character) and `v2` (schema-2 files, described in `data/README.md`; `false` wrote the old shapes directly).
-
-`src/data/loadData.js` fetches `meta.json` (no-cache) and the rest with `?v=<dataVersion>`. `src/data/adapter.js` `toLegacy()` turns schema-2 data into the shapes the components were written against (flat character objects keyed by name, `blast` keyed by name, skills as a numbered list). It has no imports so the build and the browser share it. Skill "levels" (`meleeBuff` etc.) are an interim projection of the game's exact coefficients (level = coefficient / 0.05).
+`src/data/loadData.js` fetches `meta.json` (no-cache) and the rest with `?v=<dataVersion>`. `src/data/adapter.js` `toLegacy()` turns schema-2 data into the shapes the components read (flat character objects keyed by name, `blast` keyed by name, skills as a list keyed `<characterId>:<slot>` with `buffPct`, the six headline channels in percent). It has no imports so the build, the checks and the browser share it.
 
 Gotchas:
 - **Damage coefficients add** (DP scale + class + capsules + skills), they do not multiply. `final = ceil(Power x 1.25 x coefficient)`.
@@ -27,7 +25,7 @@ Gotchas:
 - **Old share links carry display names.** `src/utils/shareLink.js` resolves names exact → `aliases` → normalised; renamed characters need a row in `data/curated/aliases.csv`. The website's Teams page builds name-based links too (see below).
 - **The website reads production `calculator/data/characters.json`**: it must stay a top-level array of objects with `name`, in referencedata order. Its form dropdown walks `transformations.json` by name (`apps/website/src/utils/formChain.js`, imported by `verify-data` so the check runs the shipped code).
 - `public/char_thumbnails/T_UI_FaceP1_<id>_00.png` is also read by the Analyzer's `build-portraits` — do not rename or move those files.
-- `data/legacy/` and `scripts/oneoff/` are temporary (seeded once from the pre-rebuild JSON).
+- `scripts/oneoff/` holds the scripts that seeded the curated tables and proved the schema-2 conversion lossless; they read files that no longer exist and are kept only as a record.
 
 ## Architecture
 
@@ -35,24 +33,28 @@ Gotchas:
 - `CharacterSelector.jsx` — character picker (team, class, search filters).
 - `StatsPanel.jsx` / `CompareStatsPanel.jsx` — stat display for a single build vs. side-by-side comparison mode.
 - `CapsuleBuilder.jsx` / `CompareCapsuleBuilder.jsx` — capsule loadout builder, single vs. comparison mode (with the ruleset picker).
-- `SkillsPanel.jsx` — skills, blasts and ultimates; skill rows toggle buffs.
+- `SkillsPanel.jsx` — skills, blasts and ultimates; skill rows toggle the skill, the Sparking Mode row toggles Sparking.
 - `OpponentPanel.jsx` — lets a build be evaluated against an opponent's build/stats.
 
-`src/utils/calculator.js` is the stat engine:
-- `computeModifiedStats(baseStats, equippedCapsules)` — applies capsule effects (see `parseEffectKey`).
-- `applySkillBuffs(stats, activeSkills)` — applies active-skill buffs on top.
-- `applyLightBodyKiBlastArmor` — Light Body's ki-blast-defense special case.
-- `CAPSULE_BUDGET` — the point cap enforced when building a loadout.
+`src/utils/engine.js` is the stat engine — one data-driven path, no per-capsule code:
+- `collectEffects({character, capsules, skills, sparking, incoming})` — gathers effects from equipped capsules (`effects` rows from `curated/capsule-effects.csv`), active skills (every phase; the strongest stage of a charge-stage skill), Sparking (the character's While Sparking passive, Sparking armor, `condition: sparking` capsule effects) and opponent-targeted skill effects. Effects with any other condition, and keys no shown stat depends on, become notes.
+- `computeStats(character, effects, ctx)` — damage channels add to the coefficient (exact formula where the raw Power is known), resistances subtract from the incoming-damage multiplier, rates scale `(1 + class + Σ) / (1 + class)`, flat/set effects with clamping. Returns the old field names the panels render, plus `blastFactor` and `notes`.
+- `blastDamage(blast, stats)` — a blast row's damage under those effects (the panels no longer do their own blast math).
+- App computes each side with `sideEffects`/`sideStats`; the main character and the opponent exchange their skills' opponent-targeted effects (`curated/skill-targets.csv`).
+
+`src/utils/calculator.js` — combat helpers the panels share (damage taken against the reference attacker's hits, outgoing combos, defense, formatting) and Light Body's ki-blast-defense special case.
+
+`src/utils/specialCapsules.js` — the capsules with behaviour beyond their effect rows (Light Body, Draconic Aura, Dragon Rush), by id.
 
 `src/utils/shareLink.js` — share links: v2 `{v:2, c:id, p:[capsuleId x7], o, op}`; decodes old name links too. If you add a build dimension, update encoder and decoder together.
 
 `src/utils/classStyles.js` — the one table of class-label colours (badge, portrait gradient).
 
-`src/utils/rules.js` — capsule rulesets from `meta.json` (budget, banned ids, group caps such as Rush/Smash/Blast Attack Boost <= 6). App provides the selected ruleset through `RulesContext`; the builders read `useRules()` and show `components/RulesBar.jsx` (picker + warnings). The picker lists only capsules the selected ruleset allows; a capsule with no confirmed cost (`cost: null`) shows "?" and counts 0.
+`src/utils/rules.js` — capsule rulesets from `meta.json` (budget, banned ids, group caps such as Rush/Smash/Blast Attack Boost <= 6). App provides the selected ruleset through `RulesContext`; the builders read `useRules()` and show `components/RulesBar.jsx` (picker, rule warnings, and what equipped capsules do that the stats do not show). The picker lists only capsules the selected ruleset allows; a capsule with no confirmed cost (`cost: null`) shows "?" and counts 0.
 
 `src/components/BlastStatus.jsx` — the `calc` marker (damage computed by a calibrated recipe) and "not measured yet" (no value).
 
 ## Gotchas
 
 - `@szl/ui` (aliased in `vite.config.js`) provides the shared `NavBar` — see `packages/ui/CLAUDE.md`.
-- No test suite. Validate engine changes by building a capsule/skill combination in the UI and checking the numbers against the effect's documented value, not just that the UI doesn't crash.
+- No test suite beyond `verify-data`'s engine checks. Validate engine changes by building a capsule/skill combination in the UI and checking the numbers against the effect's documented value, not just that the UI doesn't crash.

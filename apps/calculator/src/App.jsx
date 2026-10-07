@@ -8,11 +8,33 @@ import SkillsPanel from './components/SkillsPanel.jsx';
 import CompareStatsPanel from './components/CompareStatsPanel.jsx';
 import CompareCapsuleBuilder from './components/CompareCapsuleBuilder.jsx';
 import OpponentPanel from './components/OpponentPanel.jsx';
-import { computeModifiedStats, applySkillBuffs } from './utils/calculator.js';
+import { collectEffects, computeStats } from './utils/engine.js';
+import { LIGHT_BODY, DRACONIC_AURA, hasCapsule } from './utils/specialCapsules.js';
 import { RulesContext, DEFAULT_BUDGET } from './utils/rules.js';
 import { decodeBuild, encodeBuild, makeResolver } from './utils/shareLink.js';
 import { loadData } from './data/loadData.js';
 import { applyLightBodyKiBlastArmor } from './utils/calculator.js';
+
+/** Effects acting on one side: capsules, active skills (and the Sparking row), plus what the opponent's skills target at it. */
+function sideEffects(engineData, char, capsules, skills, incoming = []) {
+  if (!engineData || !char) return null;
+  const c = engineData.charById.get(char.id);
+  if (!c) return null;
+  const sparking = skills.some(s => String(s.id).startsWith('spark_'));
+  const v2skills = skills.map(s => engineData.skillById[s.id]).filter(Boolean);
+  return { c, effects: collectEffects({ character: c, capsules: capsules.filter(Boolean), skills: v2skills, sparking, incoming }) };
+}
+
+/** The shown stats for one side: the character's own fields, overridden by the engine's numbers. */
+function sideStats(engineData, char, side, ownCapsules, otherCapsules) {
+  if (!side) return null;
+  const view = computeStats(side.c, side.effects, {
+    referenceHits: engineData.referenceHits,
+    damageConstant: engineData.damageConstant,
+    skillDamage: [char.skill1Damage, char.skill2Damage],
+  });
+  return applyLightBodyKiBlastArmor({ ...char, ...view }, hasCapsule(ownCapsules, LIGHT_BODY), hasCapsule(otherCapsules, DRACONIC_AURA));
+}
 
 const NUM_CAPSULE_SLOTS = 7;
 // Mobile sections: 0=Characters, 1=Stats/Skills, 2=Opponent, 3=Capsules
@@ -117,6 +139,7 @@ const COMPARE_TABLET_WIDTHS = {
 
 function App() {
   const [characters, setCharacters] = useState([]);
+  const [engineData, setEngineData] = useState(null); // schema-2 characters/skills the engine reads
   const [allCapsules, setAllCapsules] = useState([]); // every capsule; `capsules` below is the selected ruleset's list
   const [rulesets, setRulesets] = useState([]);
   const [rulesetName, setRulesetName] = useState(null);
@@ -177,6 +200,13 @@ function App() {
     loadData().then(({ data, legacy, aliases }) => {
       const { characters: chars, capsules: caps, blast: bl, teams: tm, characterImages: imgs, skills: sk } = legacy;
       setCharacters(chars);
+      const ref = data.characters.find(c => c.id === data.meta.referenceAttacker);
+      setEngineData({
+        charById: new Map(data.characters.map(c => [c.id, c])),
+        skillById: data.skills,
+        referenceHits: ref?.stats?.hits || null,
+        damageConstant: data.meta.damageConstant,
+      });
       setAllCapsules(caps);
       setRulesets(data.meta.rulesets || []);
       let saved = null;
@@ -217,42 +247,35 @@ function App() {
   }, [selectedCharacter, equippedCapsules, selectedOpponent, equippedOpponentCapsules]);
 
 
+  // Stats: the engine (utils/engine.js) over capsules, active skills, Sparking and opponent-targeted skill effects.
+  const mainSide = useMemo(() => sideEffects(engineData, selectedCharacter, equippedCapsules, activeSkills),
+    [engineData, selectedCharacter, equippedCapsules, activeSkills]);
+  const opponentSide = useMemo(() => sideEffects(engineData, selectedOpponent, equippedOpponentCapsules, activeOpponentSkills),
+    [engineData, selectedOpponent, equippedOpponentCapsules, activeOpponentSkills]);
+
   const modifiedStats = useMemo(() => {
-    const base = computeModifiedStats(selectedCharacter, equippedCapsules.filter(Boolean));
-    const withSkills = applySkillBuffs(base, activeSkills);
-    const hasLightBody = equippedCapsules.some(c => c && c.name === 'Light Body');
-    // TODO: Add hasDraconicAura logic when implemented
-    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
-  }, [selectedCharacter, equippedCapsules, activeSkills]);
+    const side = mainSide && opponentSide?.effects.outgoing.length
+      ? sideEffects(engineData, selectedCharacter, equippedCapsules, activeSkills, opponentSide.effects.outgoing)
+      : mainSide;
+    return sideStats(engineData, selectedCharacter, side, equippedCapsules, selectedOpponent ? equippedOpponentCapsules : []);
+  }, [engineData, mainSide, opponentSide, selectedCharacter, equippedCapsules, activeSkills, selectedOpponent, equippedOpponentCapsules]);
 
-  // Compare mode computed stats
+  // Compare mode computed stats (each side on its own)
+  const compareModStatsA = useMemo(() => sideStats(engineData, selectedCharacter,
+    sideEffects(engineData, selectedCharacter, equippedCapsulesA, activeSkillsA), equippedCapsulesA, []),
+  [engineData, selectedCharacter, equippedCapsulesA, activeSkillsA]);
 
-  const compareModStatsA = useMemo(() => {
-    const base = computeModifiedStats(selectedCharacter, equippedCapsulesA.filter(Boolean));
-    const withSkills = applySkillBuffs(base, activeSkillsA);
-    const hasLightBody = equippedCapsulesA.some(c => c && c.name === 'Light Body');
-    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
-  }, [selectedCharacter, equippedCapsulesA, activeSkillsA]);
+  const compareModStatsB = useMemo(() => sideStats(engineData, selectedCharacterB,
+    sideEffects(engineData, selectedCharacterB, equippedCapsulesB, activeSkillsB), equippedCapsulesB, []),
+  [engineData, selectedCharacterB, equippedCapsulesB, activeSkillsB]);
 
-  const compareModStatsB = useMemo(() => {
-    const base = computeModifiedStats(selectedCharacterB, equippedCapsulesB.filter(Boolean));
-    const withSkills = applySkillBuffs(base, activeSkillsB);
-    const hasLightBody = equippedCapsulesB.some(c => c && c.name === 'Light Body');
-    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, false);
-  }, [selectedCharacterB, equippedCapsulesB, activeSkillsB]);
-
-  // Opponent computed stats
-
+  // Opponent computed stats (receives what the main character's skills target at it)
   const opponentModStats = useMemo(() => {
-    // Ensure opponent always has armor property
-    const baseOpponent = selectedOpponent ? { ...selectedOpponent, armor: typeof selectedOpponent.armor === 'number' ? selectedOpponent.armor : 0 } : null;
-    const base = computeModifiedStats(baseOpponent, equippedOpponentCapsules.filter(Boolean));
-    const withSkills = applySkillBuffs(base, activeOpponentSkills);
-    const hasLightBody = equippedOpponentCapsules.some(c => c && c.name === 'Light Body');
-    // Draconic Aura is checked on the attacker (main character's capsules)
-    const hasDraconicAura = equippedCapsules.some(c => c && c.name === 'Draconic Aura');
-    return applyLightBodyKiBlastArmor(withSkills, hasLightBody, hasDraconicAura);
-  }, [selectedOpponent, equippedOpponentCapsules, activeOpponentSkills, equippedCapsules]);
+    const side = opponentSide && mainSide?.effects.outgoing.length
+      ? sideEffects(engineData, selectedOpponent, equippedOpponentCapsules, activeOpponentSkills, mainSide.effects.outgoing)
+      : opponentSide;
+    return sideStats(engineData, selectedOpponent, side, equippedOpponentCapsules, equippedCapsules);
+  }, [engineData, mainSide, opponentSide, selectedOpponent, equippedOpponentCapsules, activeOpponentSkills, equippedCapsules]);
 
   const handleEquipCapsule = useCallback((capsule) => {
     setEquippedCapsules(prev => {
@@ -780,7 +803,7 @@ function App() {
             characterImages={characterImages}
             opponentStats={opponentModStats}
             equippedCapsules={equippedCapsules}
-            opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
+            opponentHasLightBody={hasCapsule(equippedOpponentCapsules, LIGHT_BODY)}
           />
         </div>
 
@@ -794,6 +817,7 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              stats={modifiedStats}
               opponentStats={opponentModStats}
               opponentPanel={opponentPanelNode}
               onToggleSkill={(skill) => {
@@ -943,7 +967,7 @@ function App() {
               characterImages={characterImages}
               opponentStats={opponentModStats}
               equippedCapsules={equippedCapsules}
-              opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
+              opponentHasLightBody={hasCapsule(equippedOpponentCapsules, LIGHT_BODY)}
               onSelectCharacter={() => setTabletState('chars_stats')}
             />
           </div>
@@ -959,6 +983,7 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              stats={modifiedStats}
               opponentStats={opponentModStats}
               opponentPanel={opponentPanelNode}
               onToggleSkill={(skill) => {
@@ -1170,7 +1195,7 @@ function App() {
               characterImages={characterImages}
               opponentStats={opponentModStats}
               equippedCapsules={equippedCapsules}
-              opponentHasLightBody={equippedOpponentCapsules.some(c => c && c.name === 'Light Body')}
+              opponentHasLightBody={hasCapsule(equippedOpponentCapsules, LIGHT_BODY)}
               onSelectCharacter={() => setCurrentSection(0)}
             />
             <SkillsPanel
@@ -1179,6 +1204,7 @@ function App() {
               skills={skills}
               equippedCapsules={equippedCapsules}
               activeSkills={activeSkills}
+              stats={modifiedStats}
               opponentStats={opponentModStats}
               onToggleSkill={(skill) => {
                 setActiveSkills(prev => {

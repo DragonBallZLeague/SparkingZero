@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { classBadge, classGradient } from '../utils/classStyles.js';
+import { DRACONIC_AURA, DRAGON_RUSH, hasCapsule } from '../utils/specialCapsules.js';
 import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense } from '../utils/calculator.js';
 
 // fmt types:
@@ -161,12 +162,8 @@ function StatRow({ label, base, modified, fmtType, tooltip, armorTint = false, r
 
 export default function StatsPanel({ baseStats, modifiedStats, characterImages, onSelectCharacter, opponentStats, equippedCapsules, opponentHasLightBody }) {
     // Check if Draconic Aura or Dragon Rush is equipped
-    const hasArmorBreakCapsule = Array.isArray(equippedCapsules)
-      ? equippedCapsules.some(c => c && (c.name === 'Draconic Aura' || c.name === 'Dragon Rush'))
-      : false;
-    const hasDraconicAura = Array.isArray(equippedCapsules)
-      ? equippedCapsules.some(c => c && c.name === 'Draconic Aura')
-      : false;
+    const hasArmorBreakCapsule = hasCapsule(equippedCapsules, DRACONIC_AURA) || hasCapsule(equippedCapsules, DRAGON_RUSH);
+    const hasDraconicAura = hasCapsule(equippedCapsules, DRACONIC_AURA);
   if (!baseStats) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-700 p-6">
@@ -204,9 +201,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
     const dmg = basedmg * defense;
     let count = stats?.kiBlastLimit ?? 0;
     if (count >= 999) count = 20;
-    const hasDraconicAura = Array.isArray(equippedCapsules)
-      ? equippedCapsules.some(c => c && c.name === 'Draconic Aura')
-      : false;
+    const hasDraconicAura = hasCapsule(equippedCapsules, DRACONIC_AURA);
 
     // If opponent has Light Body or is armored (and attacker does NOT have Draconic Aura), apply defense and armor per hit
     if ((opponentHasLightBody && !hasDraconicAura) || (oppisArmored && !hasDraconicAura)) {

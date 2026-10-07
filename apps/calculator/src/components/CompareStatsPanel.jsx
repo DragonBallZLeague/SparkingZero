@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { getImageUrl, parseEffectKey, calcFiveHitArmorDamage } from '../utils/calculator.js';
+import { getImageUrl, calcFiveHitArmorDamage } from '../utils/calculator.js';
+import { blastDamage } from '../utils/engine.js';
 import { classBadge } from '../utils/classStyles.js';
 import { ComputedMark, NotMeasured } from './BlastStatus.jsx';
 
@@ -205,30 +206,6 @@ function fmtKiBars(val) {
   return `${display} bar${bars === 1 ? '' : 's'}`;
 }
 
-function getCapsuleBlastMod(equippedCapsules, fields) {
-  if (!equippedCapsules) return 0;
-  let percent = 0;
-  equippedCapsules.forEach(cap => {
-    if (!cap?.effects) return;
-    cap.effects.forEach(eff => {
-      if (!eff) return;
-      const m = parseEffectKey(eff.key);
-      if (m && eff.value !== null && fields.includes(m.field) && m.op === 'percent') {
-        percent += eff.value;
-      }
-    });
-  });
-  return percent;
-}
-
-function getModifiedDmg(rawPatch, capsulePct, skillPct) {
-  if (rawPatch == null || rawPatch === '') return null;
-  const base = Number(rawPatch);
-  if (isNaN(base)) return null;
-  const total = capsulePct + skillPct;
-  return total !== 0 ? Math.round(base * (1 + total / 100)) : base;
-}
-
 function getCharBlasts(charName, blasts) {
   const cb = blasts?.[charName] || [];
   return {
@@ -277,14 +254,16 @@ const SKILL_TYPE_COLORS = {
 };
 function skillTypeClass(type) { return SKILL_TYPE_COLORS[type] || 'bg-gray-700/70 text-gray-300'; }
 
+// A skill's exact effect on six headline channels, in percent (skills[].buffPct).
 const SKILL_BUFF_COLS = [
-  { key: 'meleeBuff',      label: 'Melee',     cls: 'bg-orange-800/60 text-orange-300' },
-  { key: 'defenseBuff',    label: 'Defense',   cls: 'bg-teal-800/60 text-teal-300'     },
-  { key: 'kiBlastBuff',    label: 'Ki Blast',  cls: 'bg-purple-800/60 text-purple-300' },
-  { key: 'kiChargingBuff', label: 'Ki Charge', cls: 'bg-blue-800/60 text-blue-300'     },
-  { key: 'blastBuff',      label: 'Blast',     cls: 'bg-red-800/60 text-red-300'       },
-  { key: 'ultimateBuff',   label: 'Ultimate',  cls: 'bg-amber-800/60 text-amber-300'   },
+  { key: 'melee',    label: 'Melee',     cls: 'bg-orange-800/60 text-orange-300' },
+  { key: 'defense',  label: 'Defense',   cls: 'bg-teal-800/60 text-teal-300'     },
+  { key: 'kiBlast',  label: 'Ki Blast',  cls: 'bg-purple-800/60 text-purple-300' },
+  { key: 'kiCharge', label: 'Ki Charge', cls: 'bg-blue-800/60 text-blue-300'     },
+  { key: 'blast',    label: 'Blast',     cls: 'bg-red-800/60 text-red-300'       },
+  { key: 'ultimate', label: 'Ultimate',  cls: 'bg-amber-800/60 text-amber-300'   },
 ];
+const pctText = (v) => `${v > 0 ? '+' : ''}${v}%`;
 
 function CharCard({ char, modStats, characterImages, label, onSelect }) {
   const imgId = char ? characterImages?.[char.name] : null;
@@ -417,7 +396,7 @@ function SkillAttrRow({ label, aContent, bContent, delta }) {
 
 function hasBuff(detail) {
   if (!detail) return false;
-  return SKILL_BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
+  return (detail.effectCount ?? 0) > 0 || SKILL_BUFF_COLS.some(col => detail.buffPct?.[col.key]) || !!detail.armor;
 }
 
 function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeSkillsB, onToggleSkillA, onToggleSkillB }) {
@@ -464,7 +443,7 @@ function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeS
   const kiDelta      = numDelta(kiA, kiB, false);
 
   const visibleBuffRows = SKILL_BUFF_COLS.filter(col =>
-    (ad?.[col.key] ?? 0) !== 0 || (bd?.[col.key] ?? 0) !== 0
+    (ad?.buffPct?.[col.key] ?? 0) !== 0 || (bd?.buffPct?.[col.key] ?? 0) !== 0
   );
 
   const aBuffable = hasBuff(ad);
@@ -604,16 +583,16 @@ function SkillCompareSection({ aSkill, bSkill, slotLabel, activeSkillsA, activeS
 
       {/* Buff rows — only shown if at least one side has a value */}
       {visibleBuffRows.map(col => {
-        const av = ad?.[col.key] ?? 0;
-        const bv = bd?.[col.key] ?? 0;
+        const av = ad?.buffPct?.[col.key] ?? 0;
+        const bv = bd?.buffPct?.[col.key] ?? 0;
         const d = numDelta(av !== 0 ? av : null, bv !== 0 ? bv : null, false);
         return (
           <SkillAttrRow
             key={col.key}
             label={col.label}
-            aContent={av !== 0 ? <span className={`font-mono font-semibold ${av > 0 ? 'text-green-400' : 'text-red-400'}`}>{av > 0 ? '+' : ''}{av}</span> : SKILL_DASH}
-            bContent={bv !== 0 ? <span className={`font-mono font-semibold ${bv > 0 ? 'text-green-400' : 'text-red-400'}`}>{bv > 0 ? '+' : ''}{bv}</span> : SKILL_DASH}
-            delta={d}
+            aContent={av !== 0 ? <span className={`font-mono font-semibold ${av > 0 ? 'text-green-400' : 'text-red-400'}`}>{pctText(av)}</span> : SKILL_DASH}
+            bContent={bv !== 0 ? <span className={`font-mono font-semibold ${bv > 0 ? 'text-green-400' : 'text-red-400'}`}>{pctText(bv)}</span> : SKILL_DASH}
+            delta={d ? { ...d, str: d.str + '%' } : null}
           />
         );
       })}
@@ -719,25 +698,16 @@ export default function CompareStatsPanel({
   const aBlastInfo = useMemo(() => getCharBlasts(charA?.name, blasts), [charA, blasts]);
   const bBlastInfo = useMemo(() => getCharBlasts(charB?.name, blasts), [charB, blasts]);
 
-  const aBlastCapPct = useMemo(() => getCapsuleBlastMod(equippedCapsulesA, ['blastDamage', 'blastCombo']), [equippedCapsulesA]);
-  const bBlastCapPct = useMemo(() => getCapsuleBlastMod(equippedCapsulesB, ['blastDamage', 'blastCombo']), [equippedCapsulesB]);
-  const aUltCapPct   = useMemo(() => getCapsuleBlastMod(equippedCapsulesA, ['ultimate']), [equippedCapsulesA]);
-  const bUltCapPct   = useMemo(() => getCapsuleBlastMod(equippedCapsulesB, ['ultimate']), [equippedCapsulesB]);
-
-  const aBlastSkillPct = useMemo(() => activeSkillsA.reduce((s, sk) => s + (sk.blastBuff || 0) * 5, 0), [activeSkillsA]);
-  const bBlastSkillPct = useMemo(() => activeSkillsB.reduce((s, sk) => s + (sk.blastBuff || 0) * 5, 0), [activeSkillsB]);
-  const aUltSkillPct   = useMemo(() => activeSkillsA.reduce((s, sk) => s + (sk.blastBuff || 0) * 5 + (sk.ultimateBuff || 0) * 5, 0), [activeSkillsA]);
-  const bUltSkillPct   = useMemo(() => activeSkillsB.reduce((s, sk) => s + (sk.blastBuff || 0) * 5 + (sk.ultimateBuff || 0) * 5, 0), [activeSkillsB]);
-
   const aSlot2 = (aBlastInfo.replacement && replActiveA) ? aBlastInfo.replacement : aBlastInfo.blast2;
   const bSlot2 = (bBlastInfo.replacement && replActiveB) ? bBlastInfo.replacement : bBlastInfo.blast2;
 
-  const aBlast1Dmg = getModifiedDmg(aBlastInfo.blast1?.baseDamagePatch, aBlastCapPct, aBlastSkillPct);
-  const bBlast1Dmg = getModifiedDmg(bBlastInfo.blast1?.baseDamagePatch, bBlastCapPct, bBlastSkillPct);
-  const aSlot2Dmg  = getModifiedDmg(aSlot2?.baseDamagePatch, aBlastCapPct, aBlastSkillPct);
-  const bSlot2Dmg  = getModifiedDmg(bSlot2?.baseDamagePatch, bBlastCapPct, bBlastSkillPct);
-  const aUltDmg    = getModifiedDmg(aBlastInfo.ultimate?.baseDamagePatch, aUltCapPct, aUltSkillPct);
-  const bUltDmg    = getModifiedDmg(bBlastInfo.ultimate?.baseDamagePatch, bUltCapPct, bUltSkillPct);
+  // Blast damage with every capsule/skill/Sparking effect, from the engine (utils/engine.js)
+  const aBlast1Dmg = blastDamage(aBlastInfo.blast1, modStatsA).base;
+  const bBlast1Dmg = blastDamage(bBlastInfo.blast1, modStatsB).base;
+  const aSlot2Dmg  = blastDamage(aSlot2, modStatsA).base;
+  const bSlot2Dmg  = blastDamage(bSlot2, modStatsB).base;
+  const aUltDmg    = blastDamage(aBlastInfo.ultimate, modStatsA).base;
+  const bUltDmg    = blastDamage(bBlastInfo.ultimate, modStatsB).base;
 
   function blastWinner(aVal, bVal) {
     if (aVal === null || bVal === null) return null;
@@ -749,10 +719,11 @@ export default function CompareStatsPanel({
   const slot2Winner  = blastWinner(aSlot2Dmg, bSlot2Dmg);
   const ultWinner    = blastWinner(aUltDmg, bUltDmg);
 
-  const aBlastChanged = aBlastCapPct + aBlastSkillPct !== 0;
-  const bBlastChanged = bBlastCapPct + bBlastSkillPct !== 0;
-  const aUltChanged   = aUltCapPct + aUltSkillPct !== 0;
-  const bUltChanged   = bUltCapPct + bUltSkillPct !== 0;
+  const moved = (stats, k) => !!stats?.blastFactor && Math.abs(stats.blastFactor[k] - 1) > 1e-9;
+  const aBlastChanged = moved(modStatsA, 'super');
+  const bBlastChanged = moved(modStatsB, 'super');
+  const aUltChanged   = moved(modStatsA, 'ultimate');
+  const bUltChanged   = moved(modStatsB, 'ultimate');
 
   function getSkillInfo(char, slot) {
     if (!char) return null;
@@ -813,10 +784,12 @@ export default function CompareStatsPanel({
   const hasAnyUlt   = !!(aBlastInfo.ultimate || bBlastInfo.ultimate);
   const hasAnySkill = !!(charA?.skill1Name || charA?.skill2Name || charB?.skill1Name || charB?.skill2Name);
 
-  const aSparkObj = useMemo(() => charA?.sparkStatBuffs ? { id: `spark_${charA.name}`, instantSparking: true, ...charA.sparkStatBuffs } : null, [charA]);
-  const bSparkObj = useMemo(() => charB?.sparkStatBuffs ? { id: `spark_${charB.name}`, instantSparking: true, ...charB.sparkStatBuffs } : null, [charB]);
-  const aSparkBuffable = hasBuff(aSparkObj);
-  const bSparkBuffable = hasBuff(bSparkObj);
+  // The Sparking row toggles Sparking Mode (every character can Spark)
+  const sparkObj = (c) => (c ? { id: `spark_${c.id}`, instantSparking: true, buffPct: c.sparkStatBuffs || {}, armor: !!c.sparkStatBuffs?.armor } : null);
+  const aSparkObj = useMemo(() => sparkObj(charA), [charA]);
+  const bSparkObj = useMemo(() => sparkObj(charB), [charB]);
+  const aSparkBuffable = !!aSparkObj;
+  const bSparkBuffable = !!bSparkObj;
   const aSparkActive = aSparkBuffable && activeSkillsA.some(s => s.id === aSparkObj?.id);
   const bSparkActive = bSparkBuffable && activeSkillsB.some(s => s.id === bSparkObj?.id);
   const hasAnyTraits = !!(charA?.miscellaneous || charB?.miscellaneous || aSparkObj || bSparkObj);
@@ -1106,7 +1079,7 @@ export default function CompareStatsPanel({
                           {aSparkBuffable && (
                             <span className={`inline-block w-2 h-2 rounded-full flex-shrink-0 ${aSparkActive ? 'bg-yellow-400' : 'bg-gray-600'}`} />
                           )}
-                          <span className="text-yellow-200">Sparking Buffs</span>
+                          <span className="text-yellow-200">Sparking Mode</span>
                         </div>
                       </td>
                       <td className="py-1.5 px-2 text-xs text-yellow-400 font-bold uppercase tracking-wider text-center leading-tight whitespace-nowrap">Spark</td>
@@ -1118,7 +1091,7 @@ export default function CompareStatsPanel({
                         title={bSparkBuffable ? (bSparkActive ? 'Deactivate B sparking buffs' : 'Activate B sparking buffs') : undefined}
                       >
                         <div className="flex items-center gap-1">
-                          <span className="text-yellow-200">Sparking Buffs</span>
+                          <span className="text-yellow-200">Sparking Mode</span>
                           {bSparkBuffable && (
                             <span className={`inline-block w-2 h-2 rounded-full flex-shrink-0 ${bSparkActive ? 'bg-yellow-400' : 'bg-gray-600'}`} />
                           )}
@@ -1128,17 +1101,17 @@ export default function CompareStatsPanel({
                     </tr>
                     {/* One row per buff column */}
                     {SKILL_BUFF_COLS.map(col => {
-                      const av = aSparkObj?.[col.key];
-                      const bv = bSparkObj?.[col.key];
+                      const av = aSparkObj?.buffPct?.[col.key];
+                      const bv = bSparkObj?.buffPct?.[col.key];
                       if (!av && !bv) return null;
                       const d = (av != null && bv != null) ? bv - av : null;
-                      const delta = d !== null && d !== 0 ? { str: Math.abs(d).toString(), bWins: d > 0 } : null;
+                      const delta = d !== null && d !== 0 ? { str: Math.abs(d).toString() + '%', bWins: d > 0 } : null;
                       return (
                         <SkillAttrRow
                           key={col.key}
                           label={col.label}
-                          aContent={av ? <span className={`font-mono font-semibold ${av > 0 ? 'text-green-400' : 'text-red-400'}`}>{av > 0 ? '+' : ''}{av}</span> : SKILL_DASH}
-                          bContent={bv ? <span className={`font-mono font-semibold ${bv > 0 ? 'text-green-400' : 'text-red-400'}`}>{bv > 0 ? '+' : ''}{bv}</span> : SKILL_DASH}
+                          aContent={av ? <span className={`font-mono font-semibold ${av > 0 ? 'text-green-400' : 'text-red-400'}`}>{pctText(av)}</span> : SKILL_DASH}
+                          bContent={bv ? <span className={`font-mono font-semibold ${bv > 0 ? 'text-green-400' : 'text-red-400'}`}>{pctText(bv)}</span> : SKILL_DASH}
                           delta={delta}
                         />
                       );

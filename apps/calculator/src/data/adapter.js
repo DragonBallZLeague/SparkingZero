@@ -4,13 +4,14 @@
  * character keyed by display name, blasts keyed by character name, skills as a
  * flat list referenced by skill1Id/skill2Id, and so on).
  *
- * Plain JavaScript with no imports, so the data build (Node) and the app share
- * it: the build uses it to prove the conversion is lossless, the app calls it
- * once after loading.
+ * Plain JavaScript with no imports, so the data build (Node), the checks and the
+ * app share it.
  *
- * The level columns of a skill (meleeBuff, defenseBuff, ...) are an interim
- * projection of the game's exact coefficients onto the old "1 level = 5%" model:
- * level = coefficient / 0.05, summed over the skill's phases.
+ * Skills keep their schema-2 id ("<characterId>:<slot>") and their exact effects;
+ * `buffPct` is only what the skill tables show: the effect on six headline
+ * channels in percent, summed over the skill's phases (the strongest stage for a
+ * charge-stage skill). The stat engine (src/utils/engine.js) applies the full
+ * effect list, not these columns.
  */
 
 const round = (v, d = 4) => {
@@ -20,28 +21,26 @@ const round = (v, d = 4) => {
   return Object.is(r, -0) ? 0 : r;
 };
 
-const LEVEL = 0.05;
-
-/** Sum a list of [{key, value}] effects into {key: total}. */
+/** Sum a list of [{key, value}] effects into {key: total} (self-targeted effects only). */
 function sumEffects(phases) {
   const t = {};
   for (const p of phases || []) for (const e of p.effects || []) {
-    if (typeof e.value !== 'number') continue;
+    if (typeof e.value !== 'number' || e.target === 'opponent') continue;
     t[e.key] = (t[e.key] || 0) + e.value;
   }
   return t;
 }
 
-/** The old six level columns, projected from exact coefficients. */
-export function projectLevels(totals) {
-  const lv = (v) => round((v || 0) / LEVEL, 2);
+/** The six headline columns the skill tables show, in percent. */
+export function buffPct(totals) {
+  const pct = (v) => round((v || 0) * 100, 2);
   return {
-    meleeBuff: lv(totals.rushDamage),
-    defenseBuff: lv(totals.physicalResist),
-    kiBlastBuff: lv(totals.kiBlastDamage),
-    kiChargingBuff: lv(totals.kiCharge),
-    blastBuff: lv(totals.superDamage),
-    ultimateBuff: lv((totals.ultimateDamage || 0) - (totals.superDamage || 0)),
+    melee: pct(totals.rushDamage),
+    defense: pct(totals.physicalResist),
+    kiBlast: pct(totals.kiBlastDamage),
+    kiCharge: pct(totals.kiCharge),
+    blast: pct(totals.superDamage),
+    ultimate: pct(totals.ultimateDamage),
   };
 }
 
@@ -88,15 +87,16 @@ export function toLegacy(data, opts = {}) {
   const refAttacker = data.characters.find(c => c.id === data.meta?.referenceAttacker);
   const ref5 = refAttacker?.stats?.rush5Hit ?? null;
 
-  // Skills: one entry per distinct (content) skill, numbered in first-use order.
+  // Skills: one entry per character skill, keyed by its schema-2 id.
   const skillList = [];
-  const skillKey = new Map();
   const skillIdOf = (sk) => {
     if (!sk) return null;
     const d = sk.display || {};
     // Charge stages (same effects at increasing strength): the strongest stage, not their sum.
     const totals = sumEffects(sk.stages ? sk.phases.slice(-1) : sk.phases);
-    const entry = {
+    const opponentEffects = (sk.phases || []).some(p => (p.effects || []).some(e => e.target === 'opponent'));
+    skillList.push({
+      id: sk.id,
       name: sk.name,
       type: d.type ?? null,
       instantSparking: !!d.instantSparking,
@@ -109,17 +109,16 @@ export function toLegacy(data, opts = {}) {
       kiAmount: d.kiAmount ?? null,
       baseDamage: sk.damage ?? 0,
       cost: sk.stockCost ?? null,
-      ...projectLevels(totals),
+      buffPct: buffPct(totals),
       armor: !!sk.armor,
       cutscene: !!d.cutscene,
-    };
-    const k = JSON.stringify(entry);
-    if (!skillKey.has(k)) {
-      const id = skillList.length + 1;
-      skillList.push({ id, ...entry });
-      skillKey.set(k, id);
-    }
-    return skillKey.get(k);
+      inferred: !!d.inferred,
+      phases: (sk.phases || []).length,
+      effectCount: (sk.phases || []).reduce((n, p) => n + (p.effects || []).length, 0),
+      stages: !!sk.stages,
+      opponentEffects,
+    });
+    return sk.id;
   };
 
   const characters = chars.map(c => {
@@ -127,9 +126,8 @@ export function toLegacy(data, opts = {}) {
     const coef = c.coef;
     const skillOf = (slot) => data.skills[(c.skills || []).find(k => data.skills[k]?.slot === slot)] || null;
     const sk1 = skillOf(1), sk2 = skillOf(2);
-    const sparkTotals = sumEffects([{ effects: c.sparking?.effects || [] }]);
-    const sparkLevels = Object.fromEntries(Object.entries(projectLevels(sparkTotals)).filter(([, v]) => v));
-    if (c.sparking?.armor) sparkLevels.armor = true;
+    // Every character can Spark: the row toggles Sparking (its passive buffs, Sparking armor, Sparking-only capsule effects).
+    const sparkStatBuffs = { ...buffPct(sumEffects([{ effects: c.sparking?.effects || [] }])), armor: !!c.sparking?.armor };
     return {
       name: c.name,
       class: c.class.label,
@@ -177,7 +175,7 @@ export function toLegacy(data, opts = {}) {
       skill2Damage: sk2?.damage ?? 0,
       sparkCharge: s.sparkCharge,
       sparkDuration: s.sparkDuration,
-      sparkStatBuffs: Object.keys(sparkLevels).length ? sparkLevels : null,
+      sparkStatBuffs,
       miscellaneous: c.traits?.length ? c.traits.join(', ') : null,
       id: c.id,
       skill1Id: skillIdOf(sk1),

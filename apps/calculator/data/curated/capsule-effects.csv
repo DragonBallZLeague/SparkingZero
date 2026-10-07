@@ -1,0 +1,154 @@
+id,name,key,value,op,condition,note
+00_0_0000,Master Roshi Training,health,2500,,,
+00_0_0005,Rush Attack Boost 1,rushDamage,0.025,,,
+00_0_0006,Rush Attack Boost 2,rushDamage,0.05,,,
+00_0_0007,Rush Attack Boost 3,rushDamage,0.075,,,
+00_0_0011,Smash Attack Boost 1,smashDamage,0.025,,,
+00_0_0011,Smash Attack Boost 1,comboDamage,0.025,,,Rush Chain damage
+00_0_0012,Smash Attack Boost 2,smashDamage,0.05,,,
+00_0_0012,Smash Attack Boost 2,comboDamage,0.05,,,Rush Chain damage
+00_0_0013,Smash Attack Boost 3,smashDamage,0.075,,,
+00_0_0013,Smash Attack Boost 3,comboDamage,0.075,,,Rush Chain damage
+00_0_0014,Ki Blast Attack Boost 1,kiBlastDamage,0.025,,,
+00_0_0014,Ki Blast Attack Boost 1,chargedKiBlastDamage,0.025,,,
+00_0_0015,Ki Blast Attack Boost 2,kiBlastDamage,0.05,,,
+00_0_0015,Ki Blast Attack Boost 2,chargedKiBlastDamage,0.05,,,
+00_0_0016,Ki Blast Attack Boost 3,kiBlastDamage,0.075,,,
+00_0_0016,Ki Blast Attack Boost 3,chargedKiBlastDamage,0.075,,,
+00_0_0023,Power Unleashed,burstRushDamage,0.05,,,
+00_0_0024,Finishing Blow,burstMeteorDamage,0.05,,,
+00_0_0026,Blast Burst,blastKiCost,1,,,
+00_0_0026,Blast Burst,superDamage,0.05,,,
+00_0_0026,Blast Burst,blastComboDamage,0.05,,,
+00_0_0027,Ultimate Burst,ultimateKiCost,1,,,
+00_0_0027,Ultimate Burst,ultimateDamage,0.05,,,
+00_0_0027,Ultimate Burst,display,,,,Stunned when Sparking Mode ends after using an Ultimate Blast
+00_0_0028,Blast Attack Boost 1,superDamage,0.025,,,
+00_0_0028,Blast Attack Boost 1,blastComboDamage,0.025,,,
+00_0_0028,Blast Attack Boost 1,ultimateDamage,0.025,,,
+00_0_0029,Blast Attack Boost 2,superDamage,0.05,,,
+00_0_0029,Blast Attack Boost 2,blastComboDamage,0.05,,,
+00_0_0029,Blast Attack Boost 2,ultimateDamage,0.05,,,
+00_0_0030,Blast Attack Boost 3,superDamage,0.075,,,
+00_0_0030,Blast Attack Boost 3,blastComboDamage,0.075,,,
+00_0_0030,Blast Attack Boost 3,ultimateDamage,0.075,,,
+00_0_0031,Super Warrior,rushDamage,0.05,,sparking,
+00_0_0032,Draconic Aura,armorBreakLevel,3,,,Beats Power Body and Light Body
+00_0_0033,Light Body,bulletArmorLevel,3,,,Cannot be flinched by Ki Blasts (Giants and Sparking ignore it)
+00_0_0035,Dragon Rush,armorBreakLevel,3,,against Rush Attack category actions,Beats Power Body
+00_0_0037,The Secret to Counters,superPerceptionCost,-1,,,Minimum 1
+00_0_0038,Fury!,superDamage,0.05,,health at or below 75%,
+00_0_0038,Fury!,superDamage,0.05,,health at or below 50% (10% total),
+00_0_0038,Fury!,superDamage,0.05,,health at or below 25% (15% total),
+00_0_0038,Fury!,blastComboDamage,0.05,,health at or below 75% (+5% per step like Blast damage),
+00_0_0039,Active Heart,attackKiGain,0.1,,,
+00_0_0040,Indomitable Fighting Spirit,attackKiGain,0.2,,,
+00_0_0041,Warming Up,display,,,,Health recovery on standby in Team Battles +50%
+00_0_0042,Ready for Anything,display,,,,Ki recovery on standby in Team Battles +50%
+00_0_0046,Z-Burst Dash Master,zBurstDashCost,-0.5,,,
+00_0_0047,The Secret to Z-Burst Dashes,zBurstDashCost,-1,,,Free
+00_0_0048,Proof of Friendship,display,,,,Switch gauge starts at maximum
+00_0_0055,Dragon Spirit,skillRecovery,0.25,,,
+00_0_0066,Super Transformation,transformationCost,-1,,,Minimum 1; also Fusions
+00_0_0068,Fighting Spirit,ultimateDamage,0.05,,health at or below 75%,
+00_0_0068,Fighting Spirit,ultimateDamage,0.05,,health at or below 50% (10% total),
+00_0_0068,Fighting Spirit,ultimateDamage,0.05,,health at or below 25% (15% total),
+00_0_0070,Divine Blow,ultimateDamage,0.05,,,
+00_0_0072,Rising Fighting Spirit,startingKi,max,set,,Ki gauge starts at maximum
+00_0_0074,Power of Namek,allDamage,0.025,,on the Namek map,
+00_0_0075,Power of Earth,allDamage,0.025,,on Earth maps (not City Ruins or the Hyperbolic Time Chamber),
+00_0_0076,Power of the Universe,allDamage,0.025,,on the Tournament of Power map,
+00_0_0082,Perfect Guard,display,,,,Take no damage while guarding
+00_0_0092,Crisis Avoided,shortDashCost,-0.1,,,
+00_0_0093,Battle Control,switchRecovery,0.5,,,Team Battles
+00_0_0094,Latent Power Unleashed 1,startingKi,1,,,
+00_0_0095,Latent Power Unleashed 2,startingKi,2,,,
+00_0_0096,Big Impact,display,,,,Impact Action damage +20% per DP the enemy has over you (up to +100% at 5 DP)
+00_0_0098,Mind Breaker,display,,,,Ki damage dealt after a successful Guard Clash +50%
+00_0_0099,Waters Blessing,display,,,,Regenerates 100 HP and 100 ki per second while in water
+00_0_0101,Miracle Master,display,,,,Automatically dodges melee attacks when downed (not Ki Blasts)
+00_0_0102,Latent Power!,allResist,0.025,,health at or below 75%,
+00_0_0102,Latent Power!,allResist,0.05,,health at or below 50% (7.5% total),
+00_0_0102,Latent Power!,allResist,0.075,,health at or below 25% (15% total),
+00_0_0103,Guard Master,display,,,,Immune to Guard Clashes
+00_0_0104,Mirage,display,,,,Automatically dodges the rest of a barrage Blast after dodging one with High-Speed Movement or Evasion
+00_0_0111,Dendes Healing Ability,display,,,,Recovers 5000 HP every 60 seconds
+00_0_0112,Rising Tension,display,,,,Recovers 1 bar of ki every 60 seconds
+00_0_0113,Melee Charge 1,meleeCharge,0.02,,,Smash Attack and Rush Chain charging time -2%
+00_0_0114,Melee Charge 2,meleeCharge,0.03,,,Smash Attack and Rush Chain charging time -3%
+00_0_0115,Melee Charge 3,meleeCharge,0.05,,,Smash Attack and Rush Chain charging time -5%
+00_0_0116,Energy Saver 1,kiBlastCost,-0.02,,,Rush and Smash Ki Blasts
+00_0_0117,Energy Saver 2,kiBlastCost,-0.03,,,Rush and Smash Ki Blasts
+00_0_0118,Energy Saver 3,kiBlastCost,-0.05,,,Rush and Smash Ki Blasts
+00_0_0119,Ki Blast Charge 1,kiShotCharge,0.02,,,Smash Ki Blast charging time -2%
+00_0_0120,Ki Blast Charge 2,kiShotCharge,0.03,,,Smash Ki Blast charging time -3%
+00_0_0121,Ki Blast Charge 3,kiShotCharge,0.05,,,Smash Ki Blast charging time -5%
+00_0_0122,Dragon Assault,vanishingAssaultCost,-0.15,,,
+00_0_0123,Power Body,combativesArmorLevel,3,,,
+00_0_0123,Power Body,physicalResist,-0.2,,,Melee defense -20%
+00_0_0123,Power Body,blastResist,-0.1,,,Blast defense -10%
+00_0_0124,Speed Up,shortDashCost,-0.2,,,
+00_0_0125,Exquisite Skill,display,,,,Your stun/restraint recovery time -20%; the enemy's +20%
+00_0_0126,Ki Control,dragonDashCost,-0.25,,,
+00_0_0126,Ki Control,kiRecovery,-0.05,,,Automatic ki recovery -5%
+00_0_0127,The Secret to Dragon Dashes,dragonDashCost,-0.25,,,
+00_0_0128,Savior,display,,,,Sparking Mode on first switch-in (once per team)
+00_0_0129,Combo Master,comboScaling,-0.025,,,Combo damage scaling -2.5%
+00_0_0130,Combo King,comboScaling,-0.05,,,Combo damage scaling -5%
+00_0_0131,God Ki,display,,,,Blasts cost 50% less ki; 1 bar of ki back after a missed Blast
+00_0_0132,Sparking! Plus,sparkingDrain,-0.15,,,Sparking Mode gauge decrease speed -15%
+00_0_0132,Sparking! Plus,physicalResist,-0.2,,,Melee defense -20%
+00_0_0132,Sparking! Plus,blastResist,-0.1,,,Blast defense -10%
+00_0_0133,Style of the Strong,sparkingDrain,-0.15,,,Sparking Mode gauge decrease speed -15%
+00_0_0134,Dragon Break,dragonHomingLimit,1,,,
+00_0_0135,Dragon Crash,dragonSmashDamage,0.05,,,
+00_0_0136,Vanishing Break,vanishingLimit,1,,,
+00_0_0137,Vanishing Crash,vanishingAttackDamage,0.05,,,
+00_0_0138,Secret Measures,skillStart,1,,,
+00_0_0139,Rush Ki Blast 1,kiBlastSpeed,0.05,,,
+00_0_0140,Rush Ki Blast Count Boost,kiBlastCount,2,,,
+00_0_0141,Master Strike,rushDamage,0.05,,,
+00_0_0141,Master Strike,smashDamage,0.05,,,
+00_0_0141,Master Strike,comboDamage,0.05,,,Rush Chain damage
+00_0_0141,Master Strike,health,-5000,,,
+00_0_0142,Master Ki Blast,kiBlastSpeed,0.05,,,
+00_0_0142,Master Ki Blast,kiBlastCost,-0.05,,,Rush and Smash Ki Blasts
+00_0_0142,Master Ki Blast,health,-5000,,,
+00_0_0143,Master Throw,throwDamage,0.05,,,
+00_0_0144,High-Speed Movement Master,hsmSparkingCost,-0.25,,,
+00_0_0144,High-Speed Movement Master,physicalResist,-0.2,,,All defense -20%
+00_0_0144,High-Speed Movement Master,energyResist,-0.2,,,All defense -20%
+00_0_0145,The Secret to High-Speed Movements,hsmSparkingCost,-0.25,,,
+00_0_0146,Super Movement Master,smSparkingCost,-0.25,,,
+00_0_0146,Super Movement Master,physicalResist,-0.2,,,All defense -20%
+00_0_0146,Super Movement Master,energyResist,-0.2,,,All defense -20%
+00_0_0147,The Secret to Super Movements,smSparkingCost,-0.25,,,
+00_0_0148,Performer,superDamage,0.05,,for 30 seconds after an emote of 1.5+ seconds,
+00_0_0149,Dragon Heart,display,,,,Recovers 25% of the Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement
+00_0_0150,King Kai Training,health,5000,,,
+00_0_0151,God of Destruction Training,health,7500,,,
+00_0_0152,Almighty Boost,rushDamage,0.025,,,
+00_0_0152,Almighty Boost,smashDamage,0.025,,,
+00_0_0152,Almighty Boost,comboDamage,0.025,,,Rush Chain damage
+00_0_0152,Almighty Boost,kiBlastDamage,0.025,,,
+00_0_0152,Almighty Boost,chargedKiBlastDamage,0.025,,,
+00_0_0153,Super Sparking!,rushDamage,0.05,,sparking,
+00_0_0153,Super Sparking!,sparkingDrain,-0.05,,,Sparking Mode gauge decrease speed -5%
+00_0_0154,Victory Power,display,,,,"Slightly increases Blast and Ultimate Blast damage (amount not confirmed, so not applied)"
+00_0_0155,Brolys Ring,display,,,,Prevents Transformations and Fusions
+DBZL_Cap_1,Heart Virus,display,,,,You and the opponent lose 50 HP per second
+DBZL_Cap_6,Bloodlust,allDamage,0.15,,for 15 seconds after eliminating an opponent,
+DBZL_Cap_6,Bloodlust,display,,,,Full ki after eliminating an opponent
+DBZL_Cap_14,Halo: Corrupted,display,,,,Blasts cost half ki but a miss costs 2500 HP
+DBZL_Cap_15,Flight,display,,,,Enables flight
+DBZL_Cap_18,Absorption Model,attackKiGain,2,,,Melee ki gain +200%
+DBZL_Cap_18,Absorption Model,kiCharge,-0.6,,,Active ki charge 60% slower
+DBZL_Cap_18,Absorption Model,kiRecovery,-0.6,,,Passive ki charge 60% slower
+DBZL_Cap_18,Absorption Model,display,,,,Guard Crashes give 1 bar of ki
+DBZL_Cap_17,Unstable Power-Up,kiCharge,-0.1,,for 30 seconds after the first transformation,
+DBZL_Cap_17,Unstable Power-Up,kiRecovery,-0.1,,for 30 seconds after the first transformation,
+DBZL_Cap_17,Unstable Power-Up,allResist,-0.15,,for 30 seconds after the first transformation,
+DBZL_Cap_17,Unstable Power-Up,display,,,,Enters Sparking Mode on the first transformation
+DBZL_Cap_21,Final Stand!,display,,,,Near death: 2 bars of life that drain over 5 seconds
+DBZL_Cap_28,Vegeta's Technique,display,,,,"Ki blast damage, speed and cost depend on current ki (>4 bars: +30% damage/speed, +50% cost ... <1 bar: -10% damage/speed, -50% cost)"
+DBZL_Cap_30,Sore Loser,display,,,,"When eliminated, drains the opponent's ki, Skill Count and Sparking"

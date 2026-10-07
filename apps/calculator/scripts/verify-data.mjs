@@ -15,6 +15,7 @@ import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
+import { collectEffects, computeStats } from '../src/utils/engine.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -23,8 +24,9 @@ const DATA = path.join(APP, 'data');
 const PUBLIC = path.join(APP, 'public', 'data');
 const config = JSON.parse(fs.readFileSync(path.join(DATA, 'config.json'), 'utf8'));
 const ref = loadRefdata(ROOT, config.teamsSeason);
-const strict = config.output?.roster === 'all';
-const v2 = !!config.output?.v2;
+// Kept as switches for the checks' wording; the pipeline now always publishes schema 2 for every character.
+const strict = true;
+const v2 = true;
 
 let failed = 0, warned = 0;
 const ok = (m) => console.log(`  ok    ${m}`);
@@ -186,6 +188,51 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   const nodes = Object.entries(ref.transformations).filter(([, e]) => e?.name).map(([id, e]) => [id, e.name]);
   const unresolved = nodes.filter(([id, n]) => !calcNames.has(n)).map(([id, n]) => `${id} ${n}`);
   strictCheck(!unresolved.length, `every transformations.json node is a calculator name (${nodes.length - unresolved.length}/${nodes.length})`, unresolved);
+}
+
+// ------------------------------------------------------------------ engine known values (schema 2)
+if (v2) {
+  const byId = new Map(data.characters.map(c => [c.id, c]));
+  const cap = (id) => data.capsules.find(c => c.id === id);
+  const ref = byId.get(data.meta.referenceAttacker);
+  const ctx = { referenceHits: ref?.stats?.hits, damageConstant: data.meta.damageConstant };
+  const run = (id, { capsules = [], skills = [], sparking = false } = {}) => {
+    const c = byId.get(id);
+    return computeStats(c, collectEffects({ character: c, capsules: capsules.map(cap), skills: skills.map(k => data.skills[k]), sparking }), ctx);
+  };
+  const skillNamed = (charId, name) => Object.values(data.skills).find(x => x.character === charId && x.name === name);
+  const expect = [];
+  const eq = (label, got, want) => { if (got !== want) expect.push(`${label}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
+  eq('Goku (Z - Early) first rush hit (DP 4)', byId.get('0000_00')?.stats.hits[0], 390);
+  eq('Goku (Z - Mid) first rush hit (DP 5)', byId.get('0000_10')?.stats.hits[0], 410);
+  eq('Android 16 first rush hit (1.05 + 0.15)', byId.get('0440_00')?.stats.hits[0], 468);
+  const pump = skillNamed('0440_00', 'Pump Up');
+  eq('Android 16 Pump Up: rush +15%', pump?.phases?.[0]?.effects.find(e => e.key === 'rushDamage')?.value, 0.15);
+  eq('Android 16 Pump Up duration', pump?.duration, 20);
+  eq('Android 16 + Rush Attack Boost 3 + Pump Up, first rush hit (additive: 312 x 1.25 x 1.425)', run('0440_00', { capsules: ['00_0_0007'], skills: [pump?.id] }).rush, 556);
+  const kaio = skillNamed('0000_43', 'Kaioken');
+  eq('SSGSS Goku Kaioken duration', kaio?.duration, 25);
+  eq('SSGSS Goku Kaioken super damage', kaio?.phases?.[0]?.effects.find(e => e.key === 'superDamage')?.value, 0.2);
+  const unf = skillNamed('0031_02', 'Unforgivable');
+  eq('Unforgivable phases', unf?.phases?.map(p => p.duration).join('/'), '15/30');
+  eq('Rising Fighting Spirit fills ki', run('0000_00', { capsules: ['00_0_0072'] }).startingKi, byId.get('0000_00')?.stats.maxKi);
+  eq('Latent Power Unleashed 2 adds 2 bars (capped at max)', run('0000_00', { capsules: ['00_0_0095'] }).startingKi, Math.min(byId.get('0000_00').stats.startingKi + 2, byId.get('0000_00').stats.maxKi));
+  eq('Master Roshi Training +2500 HP', run('0000_00', { capsules: ['00_0_0000'] }).health, byId.get('0000_00').stats.health + 2500);
+  eq('Super Warrior applies only while Sparking', run('0000_10', { capsules: ['00_0_0031'] }).rush, 410);
+  eq('Super Warrior while Sparking (312 x 1.25 x 1.10)', run('0000_10', { capsules: ['00_0_0031'], sparking: true }).rush, 429);
+  const death = (data.blasts['3360_00'] || []).find(b => b.name === 'Death Sphere');
+  eq("Chilled's Death Sphere (computed: 12000 x 1.25 x (1.05 + 0.175))", death?.damage, 18375);
+  check(!expect.length, 'engine reproduces the known values (rush 390/410/468, additive capsule + skill stacking, Pump Up, Kaioken, Unforgivable, ki capsules, Sparking conditions, Death Sphere)', expect);
+
+  // With no effects the engine must leave every published number alone.
+  const drift = [];
+  for (const c of data.characters) {
+    const v = computeStats(c, { applied: [], notes: [], outgoing: [] }, ctx);
+    const s = c.stats;
+    const pairs = [['rush', s.hits[0]], ['hit5', s.hits[4]], ['smash', s.smash], ['throw', s.throw], ['kiBlastDmg', s.kiBlastDamage], ['meleeDefenseStat', s.meleeDefense], ['energy', s.kiBlastDefense], ['blastDefense', s.blastDefense], ['startingKi', s.startingKi], ['kiRegen', s.kiRegen], ['health', s.health]];
+    for (const [k, want] of pairs) if (v[k] !== want) drift.push(`${c.name}.${k}: ${v[k]} vs ${want}`);
+  }
+  check(!drift.length, `with no effects the engine reproduces every character's published stats (${data.characters.length})`, drift);
 }
 
 // ------------------------------------------------------------------ images

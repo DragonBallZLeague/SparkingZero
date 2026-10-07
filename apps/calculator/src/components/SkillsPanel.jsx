@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Target } from 'lucide-react';
-import { parseEffectKey } from '../utils/calculator.js';
+import { blastDamage } from '../utils/engine.js';
 import { ComputedMark, NotMeasured } from './BlastStatus.jsx';
 
 const SLOT_ORDER = ['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'Replacement_Slot2', 'ReplacementSlot2'];
@@ -11,30 +11,6 @@ const SLOT_LABELS = {
   Replacement_Slot2:'Replace',
   ReplacementSlot2: 'Replace',
 };
-
-const SLOT_EFFECT_FIELDS = {
-  BlastSkill1:      ['blastDamage', 'blastCombo'],
-  BlastSkill2:      ['blastDamage', 'blastCombo'],
-  BlastUltimate:    ['ultimate'],
-  Replacement_Slot2:['blastDamage', 'blastCombo'],
-  ReplacementSlot2: ['blastDamage', 'blastCombo'],
-};
-
-function getCapsuleBlastModifier(equippedCapsules, fields) {
-  let percent = 0;
-  equippedCapsules.forEach(capsule => {
-    if (!capsule?.effects) return;
-    capsule.effects.forEach(effect => {
-      if (!effect) return;
-      const mapping = parseEffectKey(effect.key);
-      if (!mapping || effect.value === null) return;
-      if (fields.includes(mapping.field) && mapping.op === 'percent') {
-        percent += effect.value;
-      }
-    });
-  });
-  return percent;
-}
 
 const CAT_COLORS = {
   Beam:                        'bg-blue-700/70 text-blue-200',
@@ -96,23 +72,25 @@ function BuffCell({ value }) {
   const isPos = value > 0;
   return (
     <span className={`font-semibold ${isPos ? 'text-green-400' : 'text-red-400'}`}>
-      {isPos ? '+' : ''}{value}
+      {isPos ? '+' : ''}{value}%
     </span>
   );
 }
 
+// Exact effect of a skill on six headline channels, in percent (data: skills[].buffPct; the
+// engine applies every effect, these columns are what the table shows).
 const BUFF_COLS = [
-  { key: 'meleeBuff',      label: 'Melee' },
-  { key: 'defenseBuff',    label: 'Defense' },
-  { key: 'kiBlastBuff',    label: 'Ki Blast' },
-  { key: 'kiChargingBuff', label: 'Ki Charge' },
-  { key: 'blastBuff',      label: 'Blast' },
-  { key: 'ultimateBuff',   label: 'Ultimate' },
+  { key: 'melee',    label: 'Melee',     tip: 'Rush attack damage' },
+  { key: 'defense',  label: 'Defense',   tip: 'Physical resistance' },
+  { key: 'kiBlast',  label: 'Ki Blast',  tip: 'Ki blast damage' },
+  { key: 'kiCharge', label: 'Ki Charge', tip: 'Ki charge speed' },
+  { key: 'blast',    label: 'Blast',     tip: 'Super damage' },
+  { key: 'ultimate', label: 'Ultimate',  tip: 'Ultimate damage' },
 ];
 
 function hasBuff(detail) {
   if (!detail) return false;
-  return BUFF_COLS.some(col => detail[col.key] && detail[col.key] !== 0) || !!detail.armor;
+  return (detail.effectCount ?? 0) > 0 || BUFF_COLS.some(col => detail.buffPct?.[col.key]) || !!detail.armor;
 }
 
 function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats }) {
@@ -136,7 +114,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
           </tr>
           <tr className="bg-purple-900/20 border-b border-sz-border">
             {BUFF_COLS.map(col => (
-              <th key={col.key} className="py-1 px-1.5 text-gray-500 font-medium text-center border-l border-sz-border/20 first:border-l-0">
+              <th key={col.key} title={col.tip} className="py-1 px-1.5 text-gray-500 font-medium text-center border-l border-sz-border/20 first:border-l-0">
                 {col.label}
               </th>
             ))}
@@ -150,6 +128,9 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
               detail.unblockable && 'Unblockable',
               detail.armor && 'Armor',
               detail.cutscene && 'Cutscene',
+              detail.phases > 1 && !detail.stages && `${detail.phases} phases`,
+              detail.stages && 'Charge stages (max shown)',
+              detail.opponentEffects && 'Affects opponent',
             ].filter(Boolean) : [];
             const buffable = hasBuff(detail);
             const isActive = buffable && activeSkills?.some(s => s.id === detail?.id);
@@ -218,7 +199,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
                 </td>
                 {BUFF_COLS.map(col => (
                   <td key={col.key} className="py-1.5 px-1.5 text-center font-mono border-l border-sz-border/10">
-                    <BuffCell value={detail?.[col.key]} />
+                    <BuffCell value={detail?.buffPct?.[col.key]} />
                   </td>
                 ))}
               </tr>
@@ -230,7 +211,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
   );
 }
 
-export default function SkillsPanel({ character, blasts, skills = [], equippedCapsules = [], activeSkills = [], onToggleSkill, opponentStats, opponentPanel }) {
+export default function SkillsPanel({ character, blasts, skills = [], activeSkills = [], stats = null, onToggleSkill, opponentStats, opponentPanel }) {
   if (!character) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-700 p-4">
@@ -277,19 +258,13 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
 
   function renderBlastRows(rows, isUltimate = false) {
     return rows.map((blast, i) => {
-      const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
-      const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
-      // Skill buff: blastBuff applies to blasts+ultimates; ultimateBuff applies to ultimates only
-      const skillPct = activeSkills.reduce((sum, s) => {
-        const bp = (s.blastBuff || 0) * 5;
-        const up = isUltimate ? (s.ultimateBuff || 0) * 5 : 0;
-        return sum + bp + up;
-      }, 0);
-      const totalPct = capsulePct + skillPct;
       const baseRaw = blast.baseDamagePatch != null && blast.baseDamagePatch !== '' ? Number(blast.baseDamagePatch) : null;
       const boostedRaw = blast.boostedDamagePatch != null && blast.boostedDamagePatch !== '' ? Math.round(Number(blast.boostedDamagePatch)) : null;
-      const modBase = baseRaw !== null && totalPct !== 0 ? Math.round(baseRaw * (1 + totalPct / 100)) : baseRaw;
-      const modBoosted = boostedRaw !== null && totalPct !== 0 ? Math.round(boostedRaw * (1 + totalPct / 100)) : boostedRaw;
+      const mod = blastDamage(blast, stats);
+      const modBase = mod.base;
+      const modBoosted = mod.boosted;
+      const factor = stats?.blastFactor ? (isUltimate ? stats.blastFactor.ultimate : stats.blastFactor.super) : 1;
+      const totalPct = Math.round((factor - 1) * 1000) / 10;
 
       // Apply opponent blast defense
       const oppDef = opponentStats?.blastDefense ?? 1;
@@ -349,18 +324,8 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
     });
   }
 
-  const anyBlastModified = !!opponentStats || blastRows.some(blast => {
-    const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
-    const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
-    const skillPct = activeSkills.reduce((sum, s) => sum + (s.blastBuff || 0) * 5, 0);
-    return capsulePct + skillPct !== 0;
-  });
-  const anyUltModified = !!opponentStats || ultimateRows.some(blast => {
-    const fields = SLOT_EFFECT_FIELDS[blast.slot] || ['blastDamage'];
-    const capsulePct = getCapsuleBlastModifier(equippedCapsules, fields);
-    const skillPct = activeSkills.reduce((sum, s) => sum + (s.blastBuff || 0) * 5 + (s.ultimateBuff || 0) * 5, 0);
-    return capsulePct + skillPct !== 0;
-  });
+  const anyBlastModified = !!opponentStats || (stats?.blastFactor && Math.abs(stats.blastFactor.super - 1) > 1e-9);
+  const anyUltModified = !!opponentStats || (stats?.blastFactor && Math.abs(stats.blastFactor.ultimate - 1) > 1e-9);
 
   return (
     <div className="flex flex-col">
@@ -433,8 +398,8 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="bg-yellow-900/30 border-b border-sz-border">
-                    <th colSpan={7} className="py-1.5 px-2 text-xs font-bold uppercase tracking-wider text-yellow-400 text-center">
-                      Sparking Buffs
+                    <th colSpan={7} className="py-1.5 px-2 text-xs font-bold uppercase tracking-wider text-yellow-400 text-center" title="Click the row to turn Sparking Mode on: the character's Sparking passive, Sparking armor and Sparking-only capsule effects apply">
+                      Sparking Mode
                     </th>
                   </tr>
                   <tr className="bg-yellow-900/10 border-b border-sz-border">
@@ -449,8 +414,8 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                 <tbody>
                   {(() => {
                     const sb = character.sparkStatBuffs;
-                    const sparkSkill = { id: `spark_${character.name}`, instantSparking: true, ...sb };
-                    const sparkBuffable = hasBuff(sparkSkill);
+                    const sparkSkill = { id: `spark_${character.id}`, instantSparking: true, buffPct: sb, armor: sb.armor };
+                    const sparkBuffable = true;
                     const sparkActive = sparkBuffable && activeSkills?.some(s => s.id === sparkSkill.id);
                     return (
                       <tr
@@ -458,7 +423,7 @@ export default function SkillsPanel({ character, blasts, skills = [], equippedCa
                           sparkActive ? 'bg-yellow-900/30 ring-1 ring-inset ring-yellow-600/50' : ''
                         } ${sparkBuffable ? 'cursor-pointer select-none hover:bg-gray-800/20' : ''}`}
                         onClick={sparkBuffable ? () => onToggleSkill(sparkSkill) : undefined}
-                        title={sparkBuffable ? (sparkActive ? 'Click to deactivate sparking buffs' : 'Click to activate sparking buffs') : undefined}
+                        title={sparkActive ? 'Sparking Mode on: click to turn it off' : 'Click to turn Sparking Mode on'}
                       >
                         {BUFF_COLS.map(col => (
                           <td key={col.key} className="py-2 px-3 text-center font-mono">

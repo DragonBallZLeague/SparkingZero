@@ -9,7 +9,8 @@
  *            referencedata/ + the website's team yaml
  *   outputs  public/data/*.json                what the app loads
  *            data/REPORT.md                    coverage, disagreements, calibration
- *            data/CHANGES.md                   per character/field old -> new for the last data change
+ *            data/CHANGES.md                   per character/field previous build -> this build, rewritten
+ *                                              only when the published data changes
  *
  * Usage: node scripts/build-data.mjs [--check]
  *   --check  build in memory and exit 1 if any output file is stale (nothing written)
@@ -23,7 +24,7 @@ import { loadRefdata, normName, repoRoot } from './lib/refdata.mjs';
 import { CHANNELS, CLASS_COEFS, CC_CHANNEL_FIELDS, CC_COLUMNS, splitTraits, num, round, finalDamage } from './lib/fields.mjs';
 import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate } from './lib/blastRecipes.mjs';
 import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
-import { toLegacy } from '../src/data/adapter.js';
+import { APPLIED_KEYS } from '../src/utils/engine.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -102,10 +103,6 @@ const effectFor = (field) => effectByField.get(field) || (field.startsWith('Para
 
 // ------------------------------------------------------------------ characters
 const thumbs = new Set(fs.readdirSync(path.join(APP, 'public', 'char_thumbnails')));
-const legacyOrig = path.join(DATA, 'legacy', 'original');
-const legacyImages = fs.existsSync(path.join(legacyOrig, 'characterImages.json')) ? JSON.parse(fs.readFileSync(path.join(legacyOrig, 'characterImages.json'), 'utf8')) : {};
-const legacyImageById = new Map();
-for (const [n, f] of Object.entries(legacyImages)) { const id = resolveName(n.replace(/\s+/g, ' ')); if (id) legacyImageById.set(id, f); }
 
 const sparkingArmor = new Map(curated('sparking.csv').map(r => [r.id, r.armor === 'TRUE']));
 const overrides = curated('overrides.csv');
@@ -186,6 +183,19 @@ function inferDisplay(phases, damage) {
   return { type, instantSparking: false, instantKi: false, unblockable: false, cutscene: false, activationTime: null, mobilePenalty: null, healthAmount: null, kiAmount: null, inferred: true };
 }
 
+// Which skill effects act on the opponent (default: the user). id = <characterId>:<slot>;
+// phase (1-based) and key narrow a row; blank means every phase / every effect.
+const skillTargets = curated('skill-targets.csv');
+const effectKeys = new Set(effectsVocab.map(e => e.key));
+for (const t of skillTargets) {
+  if (!['self', 'opponent'].includes(t.target)) throw new Error(`skill-targets.csv: ${t.id} target "${t.target}" (self or opponent)`);
+  if (t.key && !effectKeys.has(t.key)) throw new Error(`skill-targets.csv: ${t.id} unknown effect key "${t.key}"`);
+}
+function targetOf(key, phaseIndex, effectKey) {
+  const row = skillTargets.find(t => t.id === key && (!t.phase || Number(t.phase) === phaseIndex + 1) && (!t.key || t.key === effectKey));
+  return row?.target || 'self';
+}
+
 const skills = {};
 function buildSkills(id, cc) {
   const ids = [];
@@ -195,6 +205,7 @@ function buildSkills(id, cc) {
     const slot = m.Slot === 'Skill 1' ? 1 : 2;
     const key = `${id}:${slot}`;
     const phases = skillPhases(id, slot);
+    phases.forEach((p, i) => p.effects.forEach(e => { if (targetOf(key, i, e.key) === 'opponent') e.target = 'opponent'; }));
     const summary = (summaryByChar.get(id) || []).find(r => r.Type === m.Slot);
     const duration = phases.length ? Math.max(...phases.map(p => p.duration || 0)) : (num(summary?.['Duration (seconds)']) ?? 0);
     // Capsule Corp skill damage, matched by skill name (its slot order differs from the game's for some characters)
@@ -366,7 +377,9 @@ for (const rc of ref.characters) {
   // Image
   let image = `T_UI_FaceP1_${id}_00.png`;
   if (!thumbs.has(image)) {
-    image = legacyImageById.get(id) && thumbs.has(legacyImageById.get(id)) ? legacyImageById.get(id) : null;
+    // costume variants are filed under the base id: 0080_01 -> T_UI_FaceP1_0080_00_01.png
+    const variant = 'T_UI_FaceP1_' + id.slice(0, 4) + '_00_' + id.slice(5) + '.png';
+    image = thumbs.has(variant) ? variant : null;
     if (!image) report.images.push(`${rc.name} (${id})`);
   }
 
@@ -379,6 +392,8 @@ for (const rc of ref.characters) {
     class: { key, label: cls.label },
     dp: num(r.DP), dpScale,
     stats, coef, classCoef, incomingDamage: incoming,
+    // raw Power behind the first rush hit, the throw and the normal ki blast (the engine's exact formula)
+    power: { rush: num(r['Rush A first hit: Power']), throw: num(r['Throw: Power']), kiBlast: num(r['Normal Ki: Power']) },
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
@@ -471,8 +486,23 @@ for (const bm of blastMoves) {
 for (const list of Object.values(blasts)) for (const b of list) if (b.recipe === undefined) delete b.recipe;
 
 // ------------------------------------------------------------------ capsules
-const legacyEffectsFile = path.join(DATA, 'legacy', 'capsule-effects.json');
-const legacyEffects = fs.existsSync(legacyEffectsFile) ? JSON.parse(fs.readFileSync(legacyEffectsFile, 'utf8')) : {};
+// Capsule effects: curated/capsule-effects.csv, in the effect vocabulary of curated/effects.csv.
+// value: a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys,
+// "max" with op "set". condition: blank = always, "sparking" = with the Sparking toggle, any other
+// text = shown as a note and not applied.
+const capsuleEffects = new Map();
+for (const r of curated('capsule-effects.csv')) {
+  if (!effectKeys.has(r.key)) throw new Error(`capsule-effects.csv: ${r.id} ${r.name}: unknown effect key "${r.key}"`);
+  if (r.op && !['add', 'set'].includes(r.op)) throw new Error(`capsule-effects.csv: ${r.id} op "${r.op}" (add or set)`);
+  const value = r.value === '' ? null : r.value === 'max' ? 'max' : num(r.value);
+  if (r.value !== '' && value === null) throw new Error(`capsule-effects.csv: ${r.id} value "${r.value}" is not a number`);
+  const e = { key: r.key, value };
+  if (r.op === 'set') e.op = 'set';
+  if (r.condition) e.condition = r.condition;
+  if (r.note) e.note = r.note;
+  if (!capsuleEffects.has(r.id)) capsuleEffects.set(r.id, []);
+  capsuleEffects.get(r.id).push(e);
+}
 const rulesets = Object.entries(ref.rules.rulesets || {}).map(([name, rs]) => {
   const banned = new Set();
   const groups = [];
@@ -492,7 +522,7 @@ for (const x of extraCapsules) {
 const capsules = [...ref.capsules, ...extraCapsules.filter(x => !ref.capsules.some(c => c.id === x.id))].map(cap => ({
   id: cap.id, name: cap.name, cost: cap.cost, description: cap.description,
   exclusiveTo: cap.exclusiveTo,
-  effects: legacyEffects[cap.id]?.effects || [],
+  effects: capsuleEffects.get(cap.id) || [],
   bannedIn: rulesets.filter(rs => rs.banned.includes(cap.id)).map(rs => rs.name),
 }));
 
@@ -522,9 +552,8 @@ const teams = ref.season.map(t => {
 // ------------------------------------------------------------------ outputs
 const charmapManifest = manifest('charmap');
 const ccManifest = manifest('capsulecorp');
-const rosterMode = config.output?.roster || 'all';
-const roster = rosterMode === 'legacy' ? JSON.parse(fs.readFileSync(path.join(DATA, 'legacy', 'roster.json'), 'utf8')) : characters.map(c => c.id);
-// Only the published roster goes out (the website links every name in characters.json).
+// Every character built is published (the website links every name in characters.json).
+const roster = characters.map(c => c.id);
 const pub = new Set(roster);
 const v2 = {
   characters: characters.filter(c => pub.has(c.id)),
@@ -544,112 +573,120 @@ const v2 = {
 const dataVersion = crypto.createHash('sha256').update(JSON.stringify(v2)).digest('hex').slice(0, 12);
 v2.meta.dataVersion = dataVersion;
 
-// Legacy-shaped files (what the components consume, until they read schema 2 directly)
-const legacyCapsules = rosterMode === 'legacy'
-  ? capsules.filter(c => legacyEffects[c.id]).map(c => ({ ...c }))
-  : capsules;
-const legacy = toLegacy({ ...v2, capsules: legacyCapsules }, { roster });
+for (const id of capsuleEffects.keys()) if (!capsules.some(c => c.id === id)) report.warn.push(`capsule-effects.csv: ${id} is not a capsule`);
+for (const c of capsules) if (!capsuleEffects.has(c.id)) report.warn.push(`capsule ${c.name} (${c.id}) has no rows in curated/capsule-effects.csv`);
 
 const outputs = new Map();
 const json = (v) => compactJson(v);
-if (config.output?.v2) {
-  // provenance published as source -> [fields] (compact; the UI inverts it)
-  const bySource = (p) => { const o = {}; for (const [f, s] of Object.entries(p)) (o[s] ??= []).push(f); return o; };
-  outputs.set('characters.json', json(v2.characters.map(c => ({ ...c, provenance: bySource(c.provenance) }))));
-  outputs.set('skills.json', json(v2.skills));
-  outputs.set('blasts.json', json(v2.blasts));
-  outputs.set('capsules.json', json(capsules));
-  outputs.set('teams.json', json(v2.teams));
-  outputs.set('meta.json', json(v2.meta));
-} else {
-  outputs.set('characters.json', json(legacy.characters));
-  outputs.set('skills.json', json(legacy.skills));
-  outputs.set('blast.json', json(legacy.blast));
-  outputs.set('capsules.json', json(legacy.capsules));
-  outputs.set('teams.json', json(legacy.teams));
-  outputs.set('characterImages.json', json(legacy.characterImages));
-  // Old share links and website spellings -> id (schema 2 carries these on each character)
-  outputs.set('aliases.json', json(Object.fromEntries(aliases.map(a => [a.alias, a.id]))));
-}
+// provenance published as source -> [fields] (compact; the UI inverts it)
+const bySource = (p) => { const o = {}; for (const [f, s] of Object.entries(p)) (o[s] ??= []).push(f); return o; };
+outputs.set('characters.json', json(v2.characters.map(c => ({ ...c, provenance: bySource(c.provenance) }))));
+outputs.set('skills.json', json(v2.skills));
+outputs.set('blasts.json', json(v2.blasts));
+outputs.set('capsules.json', json(capsules));
+outputs.set('teams.json', json(v2.teams));
+outputs.set('meta.json', json(v2.meta));
 
-// ------------------------------------------------------------------ CHANGES.md (old -> new, legacy shape)
-function loadBaseline() {
-  const dir = fs.existsSync(legacyOrig) ? legacyOrig : null;
-  if (!dir) return null;
-  const read = (f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-  return { characters: read('characters.json'), blast: read('blast.json'), skills: read('skills.json'), label: 'the calculator data before the 2026-10 rebuild (data/legacy/original)' };
+// ------------------------------------------------------------------ CHANGES.md (previous build -> this build)
+function readPublished() {
+  const read = (f) => { const p = path.join(PUBLIC, f); return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : null; };
+  const meta = read('meta.json');
+  if (meta?.schemaVersion !== 2) return null;
+  return { meta, characters: read('characters.json') || [], skills: read('skills.json') || {}, blasts: read('blasts.json') || {}, capsules: read('capsules.json') || [] };
 }
-function changesMd() {
-  const base = loadBaseline();
-  if (!base) return null;
-  const oldById = new Map();
-  for (const c of base.characters) { const id = c.id || resolveName(c.name); if (id) oldById.set(id, c); }
-  const oldSkill = new Map(base.skills.map(s => [s.id, s]));
-  const newSkill = new Map(legacy.skills.map(s => [s.id, s]));
-  const byField = new Map();
-  const added = [], removed = [];
-  const SKIP = new Set(['skill1Id', 'skill2Id']);
-  for (const c of legacy.characters) {
-    const o = oldById.get(c.id);
-    if (!o) { added.push(c.name); continue; }
-    for (const [f, v] of Object.entries(c)) {
-      if (SKIP.has(f)) continue;
-      const ov = o[f];
-      const same = typeof v === 'number' && typeof ov === 'number' ? Math.abs(v - ov) < 1e-9 : JSON.stringify(v ?? null) === JSON.stringify(ov ?? null);
-      if (same) continue;
-      if (!byField.has(f)) byField.set(f, []);
-      const src = characters.find(x => x.id === c.id)?.provenance?.[f === 'kiBlastDmg' ? 'kiBlastDamage' : f] || '';
-      byField.get(f).push([c.name, fmt(ov), fmt(v), src]);
-    }
-    // skill buffs (projected levels) by slot
-    for (const slot of [1, 2]) {
-      const ns = newSkill.get(c[`skill${slot}Id`]);
-      const os = o[`skill${slot}Id`] != null ? oldSkill.get(o[`skill${slot}Id`]) : base.skills.find(s => normName(s.name) === normName(o[`skill${slot}Name`] || ''));
-      if (!ns) continue;
-      for (const f of ['duration', 'cost', 'meleeBuff', 'defenseBuff', 'kiBlastBuff', 'kiChargingBuff', 'blastBuff', 'ultimateBuff', 'armor']) {
-        const a = os?.[f] ?? null, b = ns[f] ?? null;
-        if ((a ?? 0) === (b ?? 0) || (a === false && b === null) || (a === null && b === false)) continue;
-        const k = `skill ${f}`;
-        if (!byField.has(k)) byField.set(k, []);
-        byField.get(k).push([`${c.name} — ${ns.name}`, fmt(a), fmt(b), 'game (Skill Values), projected to levels']);
-      }
+/** Flatten an object into dotted paths (arrays stay whole). */
+function flatten(o, prefix = '', out = {}) {
+  for (const [k, v] of Object.entries(o || {})) {
+    const p = prefix ? `${prefix}.${k}` : k;
+    if (v && typeof v === 'object' && !Array.isArray(v)) flatten(v, p, out);
+    else out[p] = v;
+  }
+  return out;
+}
+const same = (a, b) => (typeof a === 'number' && typeof b === 'number' ? Math.abs(a - b) < 1e-9 : JSON.stringify(a ?? null) === JSON.stringify(b ?? null));
+function changesMd(prev) {
+  if (!prev || prev.meta.dataVersion === v2.meta.dataVersion) return null;
+  const rows = [];
+  const name = (id) => refById.get(id)?.name ?? id;
+  const prevChars = new Map(prev.characters.map(c => [c.id, c]));
+  const SKIP = new Set(['provenance', 'skills', 'aliases']);
+  for (const c of v2.characters) {
+    const o = prevChars.get(c.id);
+    if (!o) { rows.push([name(c.id), '(character)', 'none', 'added']); continue; }
+    const a = flatten(Object.fromEntries(Object.entries(o).filter(([k]) => !SKIP.has(k))));
+    const b = flatten(Object.fromEntries(Object.entries(c).filter(([k]) => !SKIP.has(k))));
+    for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) if (!same(a[k], b[k])) rows.push([c.name, k, fmt(a[k]), fmt(b[k])]);
+  }
+  for (const id of prevChars.keys()) if (!pub.has(id)) rows.push([name(id), '(character)', 'present', 'removed']);
+  for (const [k, sk] of Object.entries(v2.skills)) {
+    const o = prev.skills[k];
+    const label = `${name(sk.character)} — skill ${sk.slot}`;
+    if (!o) { rows.push([label, 'skill', 'none', sk.name]); continue; }
+    for (const f of ['name', 'stockCost', 'damage', 'duration', 'phases', 'armor']) if (!same(o[f], sk[f])) rows.push([label, f, fmt(o[f]), fmt(sk[f])]);
+  }
+  for (const [id, list] of Object.entries(v2.blasts)) {
+    const before = prev.blasts[id] || [];
+    for (const b of list) {
+      const o = before.find(x => x.slot === b.slot && x.variant === b.variant && x.name === b.name);
+      const label = `${name(id)} — ${b.slot}${b.variant ? ' ' + b.variant : ''} ${b.name}`;
+      if (!o) { rows.push([label, 'blast', 'none', `${fmt(b.damage)} (${b.damageStatus})`]); continue; }
+      for (const f of ['damage', 'damageStatus', 'kiCost', 'boostedDamage']) if (!same(o[f], b[f])) rows.push([label, f, fmt(o[f]), fmt(b[f])]);
     }
   }
-  for (const [id, o] of oldById) if (!legacy.characters.some(c => c.id === id)) removed.push(o.name);
-  // blasts by character + move
-  const blastChanges = [];
-  const oldBlastByChar = new Map();
-  for (const [k, arr] of Object.entries(base.blast)) { const id = resolveName(k.replace(/\s+/g, ' ')); if (id && Array.isArray(arr)) oldBlastByChar.set(id, arr); }
-  for (const c of legacy.characters) {
-    const nb = legacy.blast[c.name] || [];
-    const ob = oldBlastByChar.get(c.id) || [];
-    for (const b of nb) {
-      const o = ob.find(x => normName(x.name) === normName(b.name) && x.slot.replace(/[ _]/g, '') === b.slot);
-      const before = o ? `${o.name} ${fmt(o.baseDamagePatch)}` : 'none';
-      const after = `${b.name} ${fmt(b.baseDamagePatch)}`;
-      if (!o || o.baseDamagePatch !== b.baseDamagePatch || o.name !== b.name) blastChanges.push([c.name, b.slot, before, after]);
-    }
+  const prevCaps = new Map(prev.capsules.map(c => [c.id, c]));
+  for (const c of capsules) {
+    const o = prevCaps.get(c.id);
+    if (!o) { rows.push([c.name, '(capsule)', 'none', 'added']); continue; }
+    for (const f of ['name', 'cost', 'effects', 'bannedIn']) if (!same(o[f], c[f])) rows.push([c.name, f, fmt(o[f]), fmt(c[f])]);
   }
-  const lines = [
+  const fields = new Map();
+  for (const r of rows) fields.set(r[1], (fields.get(r[1]) || 0) + 1);
+  return [
     '# Calculator data changes',
     '',
-    `Generated by \`npm run data:build\`. Compares the files the app loads (in the old shapes) with ${base.label}.`,
-    `Sources: raw game map ${charmapManifest.version}, Capsule Corp ${ccManifest.version}.`,
+    'Generated by `npm run data:build` whenever the published data changes: every character, skill, blast and capsule value that differs from the previous build. (The one-time move from the old hand-edited JSON is recorded in `rebuild-2026-10/`.)',
     '',
-    `Characters added: ${added.length ? added.join(', ') : 'none'}. Removed: ${removed.length ? removed.join(', ') : 'none'}.`,
+    table(['', 'Previous build', 'This build'], [
+      ['Data version', prev.meta.dataVersion, v2.meta.dataVersion],
+      ['Raw game map', prev.meta.sources?.charmap, v2.meta.sources.charmap],
+      ['Capsule Corp', prev.meta.sources?.capsulecorp, v2.meta.sources.capsulecorp],
+    ]),
+    `## Summary (${rows.length} values)`,
     '',
-    '## Changed fields',
+    table(['Field', 'Changes'], [...fields.entries()].sort((a, b) => b[1] - a[1])),
+    '## Every change',
     '',
-    table(['Field', 'Characters changed'], [...byField.entries()].map(([f, v]) => [f, v.length])),
-  ];
-  for (const [f, rows] of byField) {
-    lines.push(`### ${f} (${rows.length})`, '', table(['Character', 'Old', 'New', 'Source'], rows));
-  }
-  lines.push(`## Blasts (${blastChanges.length})`, '', 'Rows whose move or damage differs from the old file (moves are matched by name within the character, not by row position).', '', table(['Character', 'Slot', 'Old', 'New'], blastChanges));
-  return lines.join('\n');
+    table(['Character / item', 'Field', 'Previous', 'Now'], rows),
+  ].join('\n');
 }
 
 // ------------------------------------------------------------------ REPORT.md
+const effectText = (e) => {
+  const v = typeof e.value === 'number' ? (['flat', 'level'].includes(effectsVocab.find(x => x.key === e.key)?.kind) || Math.abs(e.value) >= 1 ? `${e.value > 0 ? '+' : ''}${e.value}` : `${e.value > 0 ? '+' : ''}${round(e.value * 100, 2)}%`) : e.value === 'max' ? '= max' : '';
+  return `${e.key} ${v}`.trim();
+};
+function capsuleEffectRows() {
+  return capsules.map(c => {
+    const applied = [], cond = [], other = [];
+    for (const e of c.effects) {
+      if (e.key === 'display' || (!APPLIED_KEYS.has(e.key) && e.op !== 'set')) other.push(e.note || effectText(e));
+      else if (e.condition) cond.push(`${effectText(e)} (${e.condition})`);
+      else applied.push(effectText(e));
+    }
+    return [`${c.name} (${c.id})`, c.cost ?? '?', applied.join('; '), cond.join('; '), other.join('; ')];
+  });
+}
+function unshownSkillKeys() {
+  const by = new Map();
+  for (const s of Object.values(skills)) {
+    for (const k of new Set(s.phases.flatMap(p => p.effects.map(e => e.key)))) {
+      if (APPLIED_KEYS.has(k)) continue;
+      if (!by.has(k)) by.set(k, []);
+      by.get(k).push(`${refById.get(s.character).name} — ${s.name}`);
+    }
+  }
+  return [...by.entries()].sort((a, b) => b[1].length - a[1].length).map(([k, v]) => [k, `${v.length}: ${v.slice(0, 4).join('; ')}${v.length > 4 ? '; ...' : ''}`]);
+}
 function groupGaps(rows) {
   const g = new Map();
   for (const [name, f, a, b, note] of rows) {
@@ -665,14 +702,6 @@ function reportMd() {
   const calRows = [...calibration.entries()].sort((a, b) => b[1].samples - a[1].samples)
     .map(([fam, c]) => [fam, c.recipe, `${c.matched}/${c.samples}`, pct(c.matched, c.samples), c.accepted ? 'yes' : 'no', blastMoves.filter(m => m.family === fam && m.measured == null).length]);
   const uncal = [...new Set(blastMoves.filter(m => m.measured == null && !calibration.has(m.family)).map(m => m.family))];
-  const skillLoss = [];
-  for (const s of Object.values(skills)) {
-    if (!roster.includes(s.character)) continue;
-    const keys = new Set(s.phases.flatMap(p => p.effects.map(e => e.key)));
-    const shown = ['rushDamage', 'physicalResist', 'kiBlastDamage', 'kiCharge', 'superDamage', 'ultimateDamage', 'armorLevel'];
-    const lost = [...keys].filter(k => !shown.includes(k));
-    if (s.phases.length > 1 || lost.length) skillLoss.push(`${refById.get(s.character).name} — ${s.name}: ${s.phases.length > 1 ? `${s.phases.length} phases (${s.phases.map(p => `${p.duration}s`).join(' then ')}) merged; ` : ''}${lost.length ? `not shown: ${lost.join(', ')}` : ''}`);
-  }
   const lines = [
     '# Calculator data report',
     '',
@@ -691,7 +720,6 @@ function reportMd() {
     '',
     table(['', 'Count'], [
       ['Characters built', characters.length],
-      ['Characters published', `${roster.length} (${rosterMode === 'legacy' ? 'the old roster; full roster from P3' : 'all'})`],
       ['Capsules', `${ref.capsules.length} from referencedata + ${capsules.length - ref.capsules.length} from curated/capsules-extra.csv; ${capsules.filter(c => !c.effects.length).length} without structured effects`],
       ['Blasts measured', st('measured')],
       ['Blasts computed (calibrated recipe)', st('computed')],
@@ -732,15 +760,22 @@ function reportMd() {
     table(['Character', 'Field', 'Before', 'After', 'Reason'], report.overrides),
     '## Skills',
     '',
-    'The UI still shows skills on the old "1 level = 5%" scale: level = coefficient / 0.05, phases summed, duration = the longest phase. What that projection loses:',
+    'Turning a skill on applies every one of its effects (all phases at once; the strongest stage of a charge-stage skill) through src/utils/engine.js. The skill tables show six headline channels in percent. Effect keys the shown stats do not depend on (they appear on the skill, not in the numbers):',
     '',
-    list(skillLoss),
+    table(['Effect key', 'Skills'], unshownSkillKeys()),
+    `Skill effects that target the opponent (curated/skill-targets.csv): ${skillTargets.length ? skillTargets.length + ' rows' : 'none yet; every skill effect applies to its user. Add rows for debuffs aimed at the opponent'}.`,
+    '',
     `Skill effect fields not in curated/effects.csv: ${unknownSkillFields.size ? [...unknownSkillFields].map(([f, n]) => `${f} (${n})`).join(', ') : 'none'}.`,
     '',
     list(report.skills),
     `Skills with no row in curated/skill-display.csv (type inferred from their effects; activation time and flags unknown): ${report.inferredSkills.length}`,
     '',
     list(report.inferredSkills, 80),
+    '## Capsule effects (curated/capsule-effects.csv)',
+    '',
+    'What each capsule does in the engine. "Applied" changes the stats; "conditional" needs the stated condition (Sparking-only ones apply with Sparking Mode on); "not modelled" is shown as a note under the capsules.',
+    '',
+    table(['Capsule', 'Cost', 'Applied', 'Conditional', 'Not modelled'], capsuleEffectRows()),
     '## Teams',
     '',
     list(report.teams),
@@ -760,7 +795,7 @@ function reportMd() {
 const MANAGED = ['characters.json', 'skills.json', 'blasts.json', 'blast.json', 'capsules.json', 'teams.json', 'meta.json', 'characterImages.json', 'aliases.json'];
 const obsolete = MANAGED.filter(f => !outputs.has(f) && fs.existsSync(path.join(PUBLIC, f)));
 const files = [...[...outputs].map(([f, c]) => [path.join(PUBLIC, f), c]), [path.join(DATA, 'REPORT.md'), reportMd()]];
-const changes = changesMd();
+const changes = changesMd(readPublished());
 if (changes) files.push([path.join(DATA, 'CHANGES.md'), changes + '\n']);
 
 if (check) {
@@ -772,5 +807,5 @@ if (check) {
   for (const [f, c] of files) if (writeIfChanged(f, c)) { n++; console.log(`  wrote ${path.relative(APP, f)}`); }
   for (const f of obsolete) { fs.unlinkSync(path.join(PUBLIC, f)); n++; console.log(`  removed public/data/${f}`); }
   const all = Object.values(blasts).flat();
-  console.log(`build-data: ${characters.length} characters (${roster.length} published), ${Object.keys(skills).length} skills, ${all.length} blasts (${all.filter(b => b.damageStatus === 'measured').length} measured, ${all.filter(b => b.damageStatus === 'computed').length} computed), ${capsules.length} capsules; data ${dataVersion}; ${n} file(s) changed.`);
+  console.log(`build-data: ${characters.length} characters, ${Object.keys(skills).length} skills, ${all.length} blasts (${all.filter(b => b.damageStatus === 'measured').length} measured, ${all.filter(b => b.damageStatus === 'computed').length} computed), ${capsules.length} capsules; data ${dataVersion}; ${n} file(s) changed.`);
 }

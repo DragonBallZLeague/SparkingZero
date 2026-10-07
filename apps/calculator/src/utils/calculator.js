@@ -1,11 +1,11 @@
 /**
- * Applies Light Body ki blast defense armor buff to the energy stat.
- * This is a special 10% reduction (multiplier -0.10) that acts as a 'ki blast defense armor'.
- * If the character has Draconic Aura (future functionality), this buff should be ignored.
- * @param {object} stats - The stats object to modify.
- * @param {boolean} hasLightBody - True if the character has Light Body.
- * @param {boolean} hasDraconicAura - True if the character has Draconic Aura (future use).
- * @returns {object} - The stats object with the Light Body buff applied if appropriate.
+ * Combat helpers the panels share (damage taken, outgoing combos, defense, formatting).
+ * The stat engine itself is src/utils/engine.js.
+ */
+
+/**
+ * Light Body: the holder takes 10% less ki-blast damage (ki-blast defense multiplier - 0.10),
+ * unless the attacker has Draconic Aura. See utils/specialCapsules.js.
  */
 export function applyLightBodyKiBlastArmor(stats, hasLightBody, hasDraconicAura = false) {
   if (!stats || typeof stats.energy !== 'number') return stats;
@@ -14,205 +14,11 @@ export function applyLightBodyKiBlastArmor(stats, hasLightBody, hasDraconicAura 
   }
   return stats;
 }
-/**
- * Parses capsule effect codes and applies them to a character's stats.
- * Effect key → stat field mapping.
- */
 
-
-// Maps effect keys to which stat field they modify and how
-// Returns { fieldPath, operation } where operation is 'add' | 'multiply_percent' | 'set'
-export function parseEffectKey(key) {
-  if (!key) return null;
-  const k = key.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
-
-  const map = {
-    health_up:                   { field: 'health',        op: 'add' },
-    health_down:                 { field: 'health',        op: 'sub' },
-    rush_attack_up:              { fields: ['rush', 'hit2', 'hit3', 'hit4', 'hit5', 'rush5Hit', 'fiveHitAfterArmor'], op: 'percent' },
-    smash_attack_up:             { field: 'smash',         op: 'percent' },
-    rush_chain_up:               { field: 'chain',         op: 'percent' },
-    rush_chain_damage:           { field: 'chain',         op: 'percent' },
-    rush_ki_blast_up:            { field: 'kiBlast',       op: 'percent' },
-    smash_ki_blast_up:           { field: 'kiBlastDmg',    op: 'percent' },
-    blast_damage_up:             { field: 'blastDamage',   op: 'percent' }, // displayed label
-    blast_combo_up:              { field: 'blastCombo',    op: 'percent' },
-    blast_combo_damage_up:       { field: 'blastCombo',    op: 'percent' },
-    ultimate_blast_damage_up:    { field: 'ultimate',      op: 'percent' },
-    ki_gained_from_attacks:      { field: 'attackKiGain',  op: 'percent' },
-    ki_gauge_starts:             { field: 'startingKi',    op: 'add' },
-    ki_bar_blasts_up:            { field: 'blastKiCost',   op: 'add' },
-    ultimate_blasts_cost_up:     { field: 'ultimateKiCost',op: 'add' },
-    throw_damage_up:             { field: 'throw',         op: 'percent' },
-    // burst_rush_damage_up and burst_meteor_damage_up intentionally omitted —
-    // Burst Rush/Meteor are not displayed stats in the calculator.
-    dragon_homing_limit_up:      { field: 'dragonHoming',  op: 'add' },
-    vanishing_attack_limit_up:   { field: 'vanishingLimit',op: 'add' },
-    rush_ki_blast_count:         { field: 'kiBlastLimit',  op: 'add' },
-    super_z_counter_down:        { field: 'sCounter',      op: 'sub_flat' },
-    switch_gauge_recovery:       { field: 'switch',        op: 'percent_inv' },
-    // Defense reductions (raise multiplier = more damage taken)
-    melee_defense_down:          { field: 'meleeDefenseStat', op: 'percent' },
-    blast_defense_down:          { field: 'blastDefense',     op: 'percent' },
-    // Ki cost reductions
-    short_dashes_ki_cost_down:   { field: 'shortDashCost',    op: 'percent_inv' },
-    reduce_rush_ki_blasts:       { field: 'kiBlastCost',      op: 'percent_inv' },
-    reduces_smash_ki_blasts:     { field: 'kiBlastCost',      op: 'percent_inv' },
-    // Ki regen (key name misleading — description says reduces by X%)
-    ki_recovery_up:              { field: 'kiRegen',           op: 'percent_inv' },
-    // Skill gauge
-    skill_gauge_recovery:        { field: 'skillRegen',        op: 'percent' },
-    skill_start_count_up:        { field: 'skillStart',        op: 'add' },
-    // Sparking duration (base=0, stores fraction; +25 value → +0.25 → shows +25%)
-    sparking_down:               { field: 'sparkDuration',     op: 'add_pct' },
-    sparking_mode_gauge_down:    { field: 'sparkDuration',     op: 'add_pct' },
-    // Ki Blast armor (Light Body: inherent 10% reduction on armored ki blasts)
-    // sub_pct previously affected kiBlastDefenseArmor, now deprecated.
-  };
-
-  return map[k] || null;
-}
-
-/**
- * Given a character's base stats and a list of equipped capsules,
- * compute the modified stats.
- */
-export function computeModifiedStats(baseStats, equippedCapsules) {
-  if (!baseStats) return null;
-
-  // Start with a copy. We'll track percent-based modifiers separately.
-  const modifiers = {};
-
-  equippedCapsules.forEach(capsule => {
-    if (!capsule?.effects) return;
-    capsule.effects.forEach(effect => {
-      if (!effect) return;
-      const mapping = parseEffectKey(effect.key);
-      if (!mapping || effect.value === null) return;
-
-      const fieldList = mapping.fields ?? [mapping.field];
-      fieldList.forEach(field => {
-        if (!modifiers[field]) modifiers[field] = { add: 0, percent: 0, percentInv: 0 };
-
-        if (mapping.op === 'percent') {
-          modifiers[field].percent += effect.value;
-        } else if (mapping.op === 'percent_inv') {
-          modifiers[field].percentInv += effect.value;
-        } else if (mapping.op === 'add') {
-          modifiers[field].add += effect.value;
-        } else if (mapping.op === 'sub') {
-          modifiers[field].add -= effect.value;
-        } else if (mapping.op === 'sub_flat') {
-          modifiers[field].add -= effect.value;
-        } else if (mapping.op === 'add_pct') {
-          modifiers[field].add += effect.value / 100;
-        } else if (mapping.op === 'sub_pct') {
-          modifiers[field].add -= effect.value / 100;
-        }
-      });
-    });
-  });
-
-  const modified = { ...baseStats };
-
-  // Apply flat + percent to numeric fields
-  Object.entries(modifiers).forEach(([field, { add, percent, percentInv }]) => {
-    let base = baseStats[field];
-    // Some fields (e.g. skillRegen) are stored as formatted strings like "3.65 Points/m".
-    // Extract the leading number so capsule modifiers can still be applied.
-    let suffix = '';
-    if (typeof base === 'string') {
-      const m = base.match(/^([\d.]+)(.*)$/);
-      if (!m) return;
-      base = parseFloat(m[1]);
-      suffix = m[2];
-      if (isNaN(base)) return;
-    }
-    if (typeof base !== 'number') return;
-    // percentInv: +50% recovery means the time value goes DOWN by 50%
-    const result = (base + add) * (1 + percent / 100) * (1 - (percentInv || 0) / 100);
-    // Only round to integer for fields that are naturally integers AND whose
-    // result is also effectively an integer (within float-noise tolerance).
-    // Fields like meleeDefenseStat/blastDefense (base=1) or sparkDuration (base=0)
-    // store fractional multipliers — rounding them would discard capsule modifiers.
-    const isIntegerResult = Number.isInteger(base) && Math.abs(result - Math.round(result)) < 1e-6;
-    if (isIntegerResult) {
-      modified[field] = suffix ? `${Math.round(result)}${suffix}` : Math.round(result);
-    } else {
-      const decimals = (String(base).split('.')[1] || '').length;
-      const rounded = parseFloat(result.toFixed(Math.max(decimals, 4)));
-      modified[field] = suffix ? `${rounded}${suffix}` : rounded;
-    }
-  });
-
-  return modified;
-}
-
-// Skill buff key → affected base stat fields. Each +1 level = +5% to each field.
-export const SKILL_BUFF_FIELDS = {
-  meleeBuff:      ['smash', 'throw', 'pursuit', 'rush', 'hit2', 'hit3', 'hit4', 'hit5', 'rush5Hit', 'fiveHitAfterArmor'],
-  defenseBuff:    ['meleeDefenseStat', 'blastDefense', 'energy', 'melee'],
-  kiBlastBuff:    ['kiBlast', 'kiBlastDmg'],
-  kiChargingBuff: ['kiCharge'],
-  blastBuff:      ['blastDamage', 'blastCombo', 'ultimate'],
-  ultimateBuff:   ['ultimate'],
-};
-
-/**
- * Apply active skill buffs on top of already-modified stats.
- * Each +1 level = +5% multiplier, -1 = -5%.
- * Defense fields use inverted logic: 1.0 is base; buff increases (improves) means lower multiplier.
- */
-export function applySkillBuffs(stats, activeSkills) {
-  if (!stats || !activeSkills || activeSkills.length === 0) return stats;
-
-  // Accumulate total percent per field
-  const pctMap = {};
-  activeSkills.forEach(skill => {
-    Object.entries(SKILL_BUFF_FIELDS).forEach(([buffKey, fields]) => {
-      const level = skill[buffKey];
-      if (!level) return;
-      const pct = level * 5; // +1 level = +5%
-      fields.forEach(field => {
-        pctMap[field] = (pctMap[field] || 0) + pct;
-      });
-    });
-  });
-
-  const result = { ...stats };
-  Object.entries(pctMap).forEach(([field, pct]) => {
-    const base = stats[field];
-    if (typeof base !== 'number') return;
-    // Defense fields are damage multipliers (lower = better defense), so buff inverts
-    const defenseFields = ['meleeDefenseStat', 'blastDefense', 'energy', 'melee'];
-    if (defenseFields.includes(field)) {
-      // e.g. base=1.0, +5% defense → multiplier -= 0.05 → 0.95 (takes less damage)
-      result[field] = parseFloat((base * (1 - pct / 100)).toFixed(4));
-    } else {
-      if (Number.isInteger(base)) {
-        result[field] = Math.round(base * (1 + pct / 100));
-      } else {
-        const decimals = (String(base).split('.')[1] || '').length;
-        result[field] = parseFloat((base * (1 + pct / 100)).toFixed(Math.max(decimals, 4)));
-      }
-    }
-  });
-
-  // Apply sparking/skill armor buffs to armor stat only
-  const hasSparkingArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === true);
-  const hasSkillArmorBuff = activeSkills.some(skill => skill.armor === true && skill.instantSparking === false);
-  let armorBonus = 0;
-  if (hasSparkingArmorBuff) armorBonus = 0.25;
-  else if (hasSkillArmorBuff) armorBonus = 0.10;
-  if (armorBonus > 0 && typeof result.armor === 'number') {
-    result.armor = parseFloat((result.armor + armorBonus).toFixed(4));
-  }
-
-  return result;
-}
-
-// Base Mid Goku's 5-hit rush combo damages (hit 1–5), used for "damage taken" stats (no opponent)
-const GOKU_MID_HITS = [410, 410, 410, 567, 788];
+// With no opponent, damage taken is measured against the reference attacker's 5-hit rush
+// (meta.referenceAttacker, Goku (Z - Mid)); the engine puts its hits on every computed side.
+const FALLBACK_HITS = [410, 410, 410, 567, 788];
+const referenceHits = (stats) => stats?.referenceHits || FALLBACK_HITS;
 
 /**
  * Calculates "5-Hit Damage Taken" for a character.
@@ -230,7 +36,7 @@ export function calcFiveHitDamageTaken(defenderStats, opponentStats = null, brea
         typeof opponentStats.hit4 === 'number' ? opponentStats.hit4 : 0,
         typeof opponentStats.hit5 === 'number' ? opponentStats.hit5 : 0,
       ]
-    : GOKU_MID_HITS;
+    : referenceHits(defenderStats);
   let total = 0;
   const hits = opHits.map((hit, i) => {
     const damage = Math.round(hit * def);
@@ -258,7 +64,7 @@ export function calcFiveHitArmorDamage(stats, breakOnHit = 5, opponentStats = nu
         typeof opponentStats.hit4 === 'number' ? opponentStats.hit4 : 0,
         typeof opponentStats.hit5 === 'number' ? opponentStats.hit5 : 0,
       ]
-    : GOKU_MID_HITS;
+    : referenceHits(stats);
   let total = 0;
   opHits.forEach((hit, i) => {
     const hitNum = i + 1;
