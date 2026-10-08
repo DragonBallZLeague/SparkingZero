@@ -117,6 +117,8 @@ export function toLegacy(data, opts = {}) {
       effectCount: (sk.phases || []).reduce((n, p) => n + (p.effects || []).length, 0),
       stages: !!sk.stages,
       opponentEffects,
+      affectsOpponent: !!d.affectsOpponent || opponentEffects,
+      note: d.note ?? null,
     });
     return sk.id;
   };

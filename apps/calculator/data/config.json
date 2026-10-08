@@ -57,6 +57,17 @@
           "headerRow": 4
         }
       }
+    },
+    "neo": {
+      "title": "SZ Neo Export (pulled from the game files)",
+      "id": "1rJtET8QEmupXuHppokKt8AZDMNHwRh3v",
+      "tabs": {
+        "CharacterData": {
+          "file": "character-data.csv",
+          "headerRow": 1,
+          "columns": ["alNumId", "character", "Playable Char?", "abilityFlag_hyperArmor", "abilityFlag_sparkingArmor"]
+        }
+      }
     }
   },
   "teamsSeason": "season-1",

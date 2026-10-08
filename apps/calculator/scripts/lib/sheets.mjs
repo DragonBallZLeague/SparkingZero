@@ -53,7 +53,7 @@ function readVersion(rows) {
 
 /**
  * @param {Buffer|string} source  xlsx bytes or a file path
- * @param {Record<string, {headerRow: number, keep?: {column: string, values: string[]}}>} wanted  tab name → options
+ * @param {Record<string, {headerRow: number, keep?: {column: string, values: string[]}, columns?: string[]}>} wanted  tab name → options
  * @param {string} [versionTab]
  */
 export async function readWorkbookTabs(source, wanted, versionTab) {
@@ -101,7 +101,16 @@ export async function readWorkbookTabs(source, wanted, versionTab) {
       const values = new Set(want.keep.values);
       rows = rows.filter(r => values.has(r[at]));
     }
-    tabs[name] = { header, rows, errors };
+    // columns: [...] snapshots only those columns, in that order (a wide tab the build reads a few of)
+    let outHeader = header;
+    if (want.columns) {
+      const at = want.columns.map(c => header.indexOf(c));
+      const absent = want.columns.filter((_, i) => at[i] === -1);
+      if (absent.length) throw new Error(`${name}: columns not in the header: ${absent.join(', ')}`);
+      outHeader = want.columns;
+      rows = rows.map(r => at.map(i => r[i]));
+    }
+    tabs[name] = { header: outHeader, rows, errors };
   }
   const missing = Object.keys(wanted).filter(t => !tabs[t]);
   return { tabs, version, missing, seen };

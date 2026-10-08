@@ -111,7 +111,15 @@ const effectFor = (field) => effectByField.get(field) || (field.startsWith('Para
 // ------------------------------------------------------------------ characters
 const thumbs = new Set(fs.readdirSync(path.join(APP, 'public', 'char_thumbnails')));
 
-const sparkingArmor = new Map(curated('sparking.csv').map(r => [r.id, r.armor === 'TRUE']));
+// Sparking armor: the game's abilityFlag_sparkingArmor (Neo Export CharacterData); a curated/sparking.csv row wins
+const neoArmor = new Map(snap('neo/character-data.csv').map(r => [r.alNumId, r.abilityFlag_sparkingArmor === 'TRUE']));
+const sparkingOverride = new Map(curated('sparking.csv').map(r => [r.id, r.armor === 'TRUE']));
+function sparkingArmorOf(id, name) {
+  if (sparkingOverride.has(id)) return sparkingOverride.get(id);
+  if (neoArmor.has(id)) return neoArmor.get(id);
+  report.warn.push(`${name} (${id}) is not in the Neo Export, so its Sparking armor is unknown (shown as none; add a curated/sparking.csv row once known)`);
+  return false;
+}
 const overrides = curated('overrides.csv');
 
 function classAdd(key, channel) {
@@ -190,6 +198,10 @@ function inferDisplay(phases, damage) {
   return { type, instantSparking: false, instantKi: false, unblockable: false, cutscene: false, activationTime: null, mobilePenalty: null, healthAmount: null, kiAmount: null, inferred: true };
 }
 
+// Skill types (curated/skill-display.csv) that act on the opponent: the league's list, 2026-10-07.
+// Their effect is damage plus a push, bind, barrier or counter; none of them carries a stat effect.
+const OPPONENT_SKILL_TYPES = new Set(['Explosion', 'Barrier', 'Push', 'Bind', 'Counter']);
+
 // Which skill effects act on the opponent (default: the user). id = <characterId>:<slot>;
 // phase (1-based) and key narrow a row; blank means every phase / every effect.
 const skillTargets = curated('skill-targets.csv');
@@ -228,7 +240,10 @@ function buildSkills(id, cc) {
       activationTime: num(disp.activationTime), mobilePenalty: num(disp.mobilePenalty),
       healthAmount: disp.healthAmount === '' ? null : (num(disp.healthAmount) ?? disp.healthAmount),
       kiAmount: num(disp.kiAmount),
+      ...(disp.note ? { note: disp.note } : {}),
     } : inferDisplay(phases, damage);
+    // Skills that act on the opponent do it through their damage and behaviour, not stat effects
+    display.affectsOpponent = (display.type || '').split('/').some(t => OPPONENT_SKILL_TYPES.has(t));
     if (!disp) report.inferredSkills.push(`${refById.get(id).name} — ${m.Move}: ${display.type ?? 'no type'}`);
     const armor = phases.some(p => p.effects.some(e => e.key === 'armorLevel' && e.value > 0));
     // Several phases with the same effects are charge stages (one applies), not a sequence.
@@ -415,7 +430,7 @@ for (const rc of ref.characters) {
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
-      armor: sparkingArmor.get(id) || false,
+      armor: sparkingArmorOf(id, rc.name),
       effects: (sparkingPassive?.effects || []).filter(e => e.key !== 'armorBreakLevel'),
       armorBreakLevel: sparkingPassive?.effects.find(e => e.key === 'armorBreakLevel')?.value ?? null,
     },
@@ -564,6 +579,7 @@ const teams = ref.season.map(t => {
 // ------------------------------------------------------------------ outputs
 const charmapManifest = manifest('charmap');
 const ccManifest = manifest('capsulecorp');
+const neoManifest = manifest('neo');
 // Every character built is published (the website links every name in characters.json).
 const roster = characters.map(c => c.id);
 const pub = new Set(roster);
@@ -725,7 +741,8 @@ function reportMd() {
     table(['Source', 'Version', 'Role'], [
       ['Raw game map (data/snapshots/charmap)', charmapManifest.version, 'game facts and raw inputs: ids, classes, DP, coefficients, health, ki, moves, skills'],
       ['Capsule Corp Stats (data/snapshots/capsulecorp)', ccManifest.version, 'finals: hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break'],
-      ['data/curated/*.csv', '', 'measured blast damage, skill display traits, Sparking armor, class labels, aliases, overrides'],
+      ['SZ Neo Export CharacterData (data/snapshots/neo)', neoManifest.version ?? 'no version marker', 'Sparking armor flag (abilityFlag_sparkingArmor)'],
+      ['data/curated/*.csv', '', 'measured blast damage, skill display traits, Sparking armor overrides, class labels, aliases, overrides'],
       ['referencedata/', '', 'ids, names, order, forms, capsules, rulesets'],
       [ref.seasonFile, config.teamsSeason, 'team pools'],
     ]),
@@ -781,7 +798,7 @@ function reportMd() {
     'Turning a skill on applies every one of its effects (all phases at once; the strongest stage of a charge-stage skill) through src/utils/engine.js. The skill tables show six headline channels in percent. Effect keys the shown stats do not depend on (they appear on the skill, not in the numbers):',
     '',
     table(['Effect key', 'Skills'], unshownSkillKeys()),
-    `Skill effects that target the opponent (curated/skill-targets.csv): ${skillTargets.length ? skillTargets.length + ' rows' : 'none yet; every skill effect applies to its user. Add rows for debuffs aimed at the opponent'}.`,
+    `Skill effects that target the opponent (curated/skill-targets.csv): ${skillTargets.length ? skillTargets.length + ' rows' : 'none; every skill stat effect applies to its user (confirmed by the league 2026-10-07: skills that act on the opponent are the Explosion, Barrier, Push, Bind and Counter types, which work through damage and behaviour, not stat effects). Add rows only if a patch adds a stat debuff aimed at the opponent'}. Skills marked "Affects opponent" by type: ${Object.values(skills).filter(s => s.display.affectsOpponent).length}.`,
     '',
     `Skill effect fields not in curated/effects.csv: ${unknownSkillFields.size ? [...unknownSkillFields].map(([f, n]) => `${f} (${n})`).join(', ') : 'none'}.`,
     '',

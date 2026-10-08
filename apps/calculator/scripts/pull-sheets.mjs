@@ -6,11 +6,14 @@
  * and review the diff. Sources and tabs are listed in data/config.json:
  *   charmap      the raw game data map (ids, classes, moves, skills; raw inputs)
  *   capsulecorp  Capsule Corp's "Stats" tab (finalized combat numbers)
+ *   neo          the "SZ Neo Export" (pulled from the game files; character ability flags)
  *
  * Each tab is written verbatim to data/snapshots/<source>/<file>.csv (headers
  * with line breaks are joined with spaces; formulas become their cached value).
  * A tab with `keep: {column, values}` keeps only the rows whose column holds one
  * of the values (Combative Values has ~71,000 rows; the build reads two actions).
+ * A tab with `columns: [...]` keeps only those columns (the Neo Export's
+ * CharacterData has ~150 columns; the build reads the armor flags).
  * data/snapshots/<source>/MANIFEST.json records the source's own version marker,
  * every tab's exact header list, row counts and error cells.
  *
@@ -19,7 +22,7 @@
  * Review the printed column diff, then rerun with --accept-layout to take it.
  * Nothing is written unless every tab of every requested source parsed.
  *
- * Usage: node scripts/pull-sheets.mjs [--only charmap|capsulecorp]
+ * Usage: node scripts/pull-sheets.mjs [--only charmap|capsulecorp|neo]
  *          [--file charmap=path/to/export.xlsx] [--accept-layout]
  * Sheets must be shared "anyone with the link"; otherwise download the xlsx and pass --file.
  */
@@ -81,7 +84,7 @@ for (const [key, src] of sources) {
         (!removed.length && !added.length ? '\n    same columns, new order' : '') +
         '\n    Check the build still reads the right columns, then rerun with --accept-layout.');
     }
-    manifest.tabs[tab] = { file: spec.file, headerRow: spec.headerRow, ...(spec.keep ? { keep: spec.keep } : {}), rows: t.rows.length, columns: t.header, errorCells: t.errors.slice(0, 50), errorCount: t.errors.length };
+    manifest.tabs[tab] = { file: spec.file, headerRow: spec.headerRow, ...(spec.keep ? { keep: spec.keep } : {}), ...(spec.columns ? { columnsKept: true } : {}), rows: t.rows.length, columns: t.header, errorCells: t.errors.slice(0, 50), errorCount: t.errors.length };
     pending.push({ file: path.join(dir, spec.file), content: toCsv(t.header, t.rows), label: `${key}/${spec.file}`, rows: t.rows.length, errors: t.errors.length });
   }
   pending.push({ file: manifestFile, content: JSON.stringify(manifest, null, 2) + '\n', label: `${key}/MANIFEST.json` });

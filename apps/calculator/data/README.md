@@ -11,6 +11,7 @@ data/
     charmap/         raw game data ("Sparking! ZERO character map"), one CSV per tab + MANIFEST.json
                      (Combative Values keeps only the actions the build reads: config `keep`)
     capsulecorp/     Capsule Corp's "Stats" tab + MANIFEST.json
+    neo/             the "SZ Neo Export" CharacterData tab, id, name and armor-flag columns only (config `columns`)
   curated/           hand-maintained tables (edit these)
   REPORT.md          generated: coverage, source disagreements, blast calibration, capsule effects, what to review
   CHANGES.md         generated when the published data changes: every value, previous build -> this build
@@ -19,7 +20,7 @@ data/
 
 ## Updating for a game patch
 
-1. `npm run data:pull` (from `apps/calculator`) downloads both spreadsheets as xlsx and
+1. `npm run data:pull` (from `apps/calculator`) downloads the three spreadsheets as xlsx and
    rewrites `snapshots/`. It is the only step that touches the network. It refuses to
    write anything if a tab is missing or a tab's columns changed since the committed
    `MANIFEST.json`; check that the build still reads the right columns, then rerun with
@@ -46,10 +47,11 @@ data/
 | skill stock cost | raw Move List (blank = the game default, 2) | |
 | skill display traits (type, activation time, flags) | `curated/skill-display.csv`; skills without a row get a type inferred from their effects (`display.inferred`) | |
 | blast damage | `curated/blasts.csv` (measured) | a calibrated recipe fills gaps (see below) |
-| Sparking armor flag | `curated/sparking.csv` | |
+| Sparking armor flag | the SZ Neo Export's CharacterData `abilityFlag_sparkingArmor` (game files); a `curated/sparking.csv` row overrides it, and characters missing from the export are reported | |
 | capsules | `referencedata/capsules.csv` (Type = Capsule), bans and group caps from `capsule-rules.yaml`. A capsule the league never allows (e.g. Victory Power) is left out on purpose | |
 | capsule effects | `curated/capsule-effects.csv` | REPORT.md lists what each capsule does in the engine |
-| which skill effects hit the opponent | `curated/skill-targets.csv` (default: the user) | |
+| which skill effects hit the opponent | `curated/skill-targets.csv` (default: the user). Empty on purpose: the league confirmed (2026-10-07) that every skill stat effect applies to its user | |
+| "Affects opponent" tag on a skill | its `skill-display.csv` type contains Explosion, Barrier, Push, Bind or Counter (the league's list; Wild Sense is `Evade/Counter`). Those skills act through damage and behaviour, not stat effects | |
 | teams | the website's `content/teams/<season>.yaml` master lists, expanded to every form | |
 
 Damage: `final = ceil(raw Power x 1.25 x (DP damage scale + class add))`, in float32 like
@@ -91,7 +93,7 @@ class key or effect.
 | `overrides.csv` | id + field | a value that wins over every source; `reason` is required |
 | `blasts.csv` | id + slot + variant + move | measured damage (+ boosted damage when it is not x1.2 / x1.3), category, traits, flags |
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
-| `sparking.csv` | id | Sparking armor flag |
+| `sparking.csv` | id | Sparking armor flag that overrides the Neo Export (for characters it lacks or gets wrong); `note` says why |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |

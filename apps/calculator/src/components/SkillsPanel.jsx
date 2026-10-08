@@ -59,7 +59,7 @@ const SKILL_TYPE_COLORS = {
 };
 
 function skillTypeClass(type) {
-  return SKILL_TYPE_COLORS[type] || 'bg-gray-700/70 text-gray-300';
+  return SKILL_TYPE_COLORS[type] || SKILL_TYPE_COLORS[type?.split('/')[0]] || 'bg-gray-700/70 text-gray-300';
 }
 
 function BuffCell({ value }) {
@@ -130,7 +130,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
               detail.cutscene && 'Cutscene',
               detail.phases > 1 && !detail.stages && `${detail.phases} phases`,
               detail.stages && 'Charge stages (max shown)',
-              detail.opponentEffects && 'Affects opponent',
+              detail.affectsOpponent && 'Affects opponent',
             ].filter(Boolean) : [];
             const buffable = hasBuff(detail);
             const isActive = buffable && activeSkills?.some(s => s.id === detail?.id);
@@ -160,6 +160,9 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
                         <span key={f} className="text-[10px] px-1 py-px rounded bg-indigo-800/50 text-indigo-300">{f}</span>
                       ))}
                     </div>
+                  )}
+                  {detail?.note && (
+                    <div className="text-[10px] text-gray-400 font-normal mt-0.5">{detail.note}</div>
                   )}
                 </td>
                 <td className="py-1.5 px-1.5 text-center text-gray-300 font-mono">
