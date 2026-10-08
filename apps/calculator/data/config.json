@@ -66,6 +66,11 @@
           "file": "character-data.csv",
           "headerRow": 1,
           "columns": ["alNumId", "character", "Playable Char?", "abilityFlag_hyperArmor", "abilityFlag_sparkingArmor"]
+        },
+        "Blasts": {
+          "file": "blasts.csv",
+          "headerRow": 1,
+          "columns": ["character", "slot", "blastSkillName", "EngType", "bImpossibleGuard", "category", "trait1", "trait2", "trait3", "trait4", "lungeSpeed", "kiCost", "blastImpact", "blastImpactPower"]
         }
       }
     }

@@ -460,6 +460,34 @@ for (const o of overrides) {
 }
 
 // ------------------------------------------------------------------ blasts
+// Blast details from the Neo Export (game files) for moves with no curated/blasts.csv row; where
+// both exist the curated row wins and disagreements are reported. Neo names its characters its
+// own way; its CharacterData tab maps them to ids. Slots: Blast1Data/Blast2Data/UltimateData,
+// or the variant code (ULT2, SPM4, ...).
+const NEO_SLOT = { Blast1Data: 'Super 1', Blast2Data: 'Super 2', UltimateData: 'Ultimate' };
+const NEO_CATEGORY = { 'Short-range energy attack': 'Short-Range Energy Attack', 'Mow down and explode': 'Sweep', "Attack opponent's location": 'Lock-On Explosion' };
+const NEO_TYPE = { 'Charging Melee Attack': 'Lunge Fighting', Throw: 'Throw', Special: 'Special' };
+const neoIdByName = new Map(snap('neo/character-data.csv').map(r => [r.character, r.alNumId]));
+const neoBlast = new Map();
+for (const r of snap('neo/blasts.csv')) {
+  const id = neoIdByName.get(r.character);
+  if (id) neoBlast.set(`${id}|${NEO_SLOT[r.slot] || r.slot}`, r);
+}
+function neoDetails(r) {
+  if (!r) return null;
+  const traits = [r.trait1, r.trait2, r.trait3, r.trait4];
+  const unguardable = r.bImpossibleGuard === 'TRUE' || traits.includes('Unguardable');
+  return {
+    category: r.category ? NEO_CATEGORY[r.category] || r.category : null,
+    type: NEO_TYPE[r.EngType] || null,
+    impactPower: num(r.blastImpactPower) || null,
+    lungeSpeed: num(r.lungeSpeed) || null,
+    traits: [...(traits.includes('Chargeable') ? ['Chargeable'] : []), ...(unguardable ? ['Unguardable'] : [])],
+    flags: unguardable ? ['unblockable'] : [],
+  };
+}
+const neoBlastGaps = [];
+let neoFilled = 0;
 const measuredBlasts = new Map();
 for (const b of curated('blasts.csv')) measuredBlasts.set(`${b.id}|${b.slot}|${b.variant}|${normName(b.move)}`, b);
 const partsByMove = new Map();
@@ -509,17 +537,40 @@ for (const bm of blastMoves) {
   }
   const mult = m.Slot === 'Ultimate' ? 1.3 : 1.2;
   const boosted = cur?.boostedDamage ? Number(cur.boostedDamage) : damage != null ? Math.round(damage * mult) : null;
+  const split = (v) => (v ? v.split(';').map(s => s.trim()).filter(Boolean) : []);
+  const neo = neoDetails(neoBlast.get(`${c.id}|${m.Variant || m.Slot}`));
+  // Field by field: a curated value wins, a blank one is filled from the Neo Export. Traits and
+  // flags count as blank only when the curated row has neither.
+  const curDet = cur ? { category: cur.category || null, type: cur.type || null, impactPower: num(cur.impactPower), traits: split(cur.traits), flags: split(cur.flags), lungeSpeed: num(cur.lungeSpeed) } : null;
+  const det = { category: null, type: null, impactPower: null, traits: [], flags: [], lungeSpeed: null, source: null };
+  let fromNeo = false;
+  for (const f of ['category', 'type', 'impactPower', 'lungeSpeed']) {
+    if (curDet?.[f] != null) { det[f] = curDet[f]; det.source = 'curated'; } else if (neo?.[f] != null) { det[f] = neo[f]; fromNeo = true; }
+  }
+  if (curDet && (curDet.traits.length || curDet.flags.length)) { det.traits = curDet.traits; det.flags = curDet.flags; det.source = 'curated'; }
+  else if (neo && (neo.traits.length || neo.flags.length)) { det.traits = neo.traits; det.flags = neo.flags; fromNeo = true; }
+  if (fromNeo) { det.source = det.source ? 'curated + neo' : 'neo'; neoFilled++; }
+  if (curDet && neo) {
+    // Report where the game files disagree with a curated value (blank on either side is not a disagreement)
+    const where = [c.name, m.Slot + (m.Variant ? ` ${m.Variant}` : ''), m.Move];
+    if (neo.category && curDet.category && neo.category !== curDet.category) neoBlastGaps.push([...where, 'category', curDet.category, neo.category]);
+    if (neo.lungeSpeed && curDet.lungeSpeed && neo.lungeSpeed !== curDet.lungeSpeed) neoBlastGaps.push([...where, 'lunge speed', curDet.lungeSpeed, neo.lungeSpeed]);
+    if (neo.impactPower && curDet.impactPower && neo.impactPower !== curDet.impactPower) neoBlastGaps.push([...where, 'Blast Impact power', curDet.impactPower, neo.impactPower]);
+    const ugCur = curDet.traits.includes('Unguardable'), ugNeo = neo.traits.includes('Unguardable');
+    if (ugCur !== ugNeo && (curDet.traits.length || curDet.flags.length)) neoBlastGaps.push([...where, 'unguardable', ugCur ? 'yes' : 'no', ugNeo ? 'yes' : 'no']);
+  }
   (blasts[c.id] ??= []).push({
     slot: m.Slot, variant: m.Variant || '', name: m.Move,
     kiCost: num(m['Ki cost']), triggerKi: cur ? num(cur.triggerKi) : null,
     damage, damageStatus: status, boostedDamage: boosted,
     recipe: status === 'computed' ? cal.recipe : undefined,
-    category: cur?.category || null, type: cur?.type || null,
-    impactPower: cur ? num(cur.impactPower) : null,
-    traits: cur?.traits ? cur.traits.split(';').map(s => s.trim()).filter(Boolean) : [],
-    flags: cur?.flags ? cur.flags.split(';').map(s => s.trim()).filter(Boolean) : [],
-    lungeSpeed: cur ? num(cur.lungeSpeed) : null,
+    category: det.category, type: det.type,
+    impactPower: det.impactPower,
+    traits: det.traits,
+    flags: det.flags,
+    lungeSpeed: det.lungeSpeed,
     moveLimitTime: cur ? num(cur.moveLimitTime) : null,
+    detailsSource: det.source,
   });
 }
 for (const list of Object.values(blasts)) for (const b of list) if (b.recipe === undefined) delete b.recipe;
@@ -664,7 +715,7 @@ function changesMd(prev) {
       const o = before.find(x => x.slot === b.slot && x.variant === b.variant && x.name === b.name);
       const label = `${name(id)} — ${b.slot}${b.variant ? ' ' + b.variant : ''} ${b.name}`;
       if (!o) { rows.push([label, 'blast', 'none', `${fmt(b.damage)} (${b.damageStatus})`]); continue; }
-      for (const f of ['damage', 'damageStatus', 'kiCost', 'boostedDamage']) if (!same(o[f], b[f])) rows.push([label, f, fmt(o[f]), fmt(b[f])]);
+      for (const f of ['damage', 'damageStatus', 'kiCost', 'boostedDamage', 'category', 'type', 'impactPower', 'lungeSpeed', 'traits', 'flags']) if (!same(o[f], b[f])) rows.push([label, f, fmt(o[f]), fmt(b[f])]);
     }
   }
   const prevCaps = new Map(prev.capsules.map(c => [c.id, c]));
@@ -747,7 +798,7 @@ function reportMd() {
     table(['Source', 'Version', 'Role'], [
       ['Raw game map (data/snapshots/charmap)', charmapManifest.version, 'game facts and raw inputs: ids, classes, DP, coefficients, health, ki, moves, skills'],
       ['Capsule Corp Stats (data/snapshots/capsulecorp)', ccManifest.version, 'finals: hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break'],
-      ['SZ Neo Export CharacterData (data/snapshots/neo)', neoManifest.version ?? 'no version marker', 'Sparking armor flag (abilityFlag_sparkingArmor)'],
+      ['SZ Neo Export CharacterData (data/snapshots/neo)', neoManifest.version ?? 'no version marker', 'Sparking armor flag (abilityFlag_sparkingArmor); blast details for moves without a curated row (Blasts tab)'],
       ['data/curated/*.csv', '', 'measured blast damage, skill display traits, Sparking armor overrides, class labels, aliases, overrides'],
       ['referencedata/', '', 'ids, names, order, forms, capsules, rulesets'],
       [ref.seasonFile, config.teamsSeason, 'team pools'],
@@ -760,6 +811,7 @@ function reportMd() {
       ['Blasts measured', st('measured')],
       ['Blasts computed (calibrated recipe)', st('computed')],
       ['Blasts not measured yet', st('unmeasured')],
+      ['Blast details (category, traits, impact, lunge) from curated/blasts.csv / Neo Export / none', `${all.filter(b => b.detailsSource === 'curated').length} / ${all.filter(b => b.detailsSource === 'neo').length} (+ ${all.filter(b => b.detailsSource === 'curated + neo').length} curated rows with blanks filled) / ${all.filter(b => !b.detailsSource).length}`],
       ['Skills', Object.keys(skills).length],
       ['Skills with inferred display traits', report.inferredSkills.length],
     ]),
@@ -778,6 +830,11 @@ function reportMd() {
     'Either the measured value is stale or the move is special. Review in game.',
     '',
     table(['Character', 'Slot', 'Move', 'Measured', 'Recipe', 'Recipe used'], blastMismatch),
+    `## Blast details: Neo Export vs curated/blasts.csv (${neoBlastGaps.length} disagreements)`,
+    '',
+    `Category, type, traits, Blast Impact power and lunge speed come from curated/blasts.csv, or from the Neo Export's Blasts tab where curated/blasts.csv is blank (${neoFilled} moves). Where both exist the curated value is used; check these in game and correct whichever is wrong.`,
+    '',
+    table(['Character', 'Slot', 'Move', 'Field', 'Curated', 'Neo Export'], neoBlastGaps),
     `## Capsule Corp class label differs from the game class (${report.classFixes.length} values rescaled)`,
     '',
     "Capsule Corp sometimes computes a channel's damage with its class label's coefficient instead of the game class's. A channel is rescaled (game coefficient / label coefficient) only when its anchor value (first rush hit, throw or ki blast, whose raw Power is known) matches the label's coefficient and not the game's; channels without an anchor follow the character's other channels.",

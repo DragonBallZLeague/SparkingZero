@@ -11,7 +11,7 @@ data/
     charmap/         raw game data ("Sparking! ZERO character map"), one CSV per tab + MANIFEST.json
                      (Combative Values keeps only the actions the build reads: config `keep`)
     capsulecorp/     Capsule Corp's "Stats" tab + MANIFEST.json
-    neo/             the "SZ Neo Export" CharacterData tab, id, name and armor-flag columns only (config `columns`)
+    neo/             the "SZ Neo Export": CharacterData (id, name, armor flags) and Blasts (category, traits, impact, lunge) columns only (config `columns`)
   curated/           hand-maintained tables (edit these)
   REPORT.md          generated: coverage, source disagreements, blast calibration, capsule effects, what to review
   CHANGES.md         generated when the published data changes: every value, previous build -> this build
@@ -47,6 +47,7 @@ data/
 | skill stock cost | raw Move List (blank = the game default, 2) | |
 | skill display traits (type, activation time, flags) | `curated/skill-display.csv`; skills without a row get a type inferred from their effects (`display.inferred`) | |
 | blast damage | `curated/blasts.csv` (measured) | a calibrated recipe fills gaps (see below) |
+| blast details (category, type, traits, Blast Impact power, lunge speed) | `curated/blasts.csv`; a blank value is filled from the Neo Export's Blasts tab (game files) | REPORT.md lists every curated value the Neo Export disagrees with |
 | Sparking armor flag | the SZ Neo Export's CharacterData `abilityFlag_sparkingArmor` (game files); a `curated/sparking.csv` row overrides it, and characters missing from the export are reported | |
 | capsules | `referencedata/capsules.csv` (Type = Capsule), bans and group caps from `capsule-rules.yaml`. A capsule the league never allows (e.g. Victory Power) is left out on purpose | |
 | capsule effects | `curated/capsule-effects.csv` | REPORT.md lists what each capsule does in the engine |

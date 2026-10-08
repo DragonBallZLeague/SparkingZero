@@ -246,21 +246,21 @@ id,character,slot,variant,move,damage,boostedDamage,category,type,impactPower,tr
 0155_00,Golden Frieza,Super 1,,Great Death Beam,9265,,Beam,,,,,30000,,,
 0155_00,Golden Frieza,Super 2,,"""No Hard Feelings"" Hit",10888,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,
 0155_00,Golden Frieza,Ultimate,,Earth Breaker,19501,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable; destroyMap,50000,8750,2,
-0160_00,Cell 1st Form,Super 1,,Kamehameha,7485,,Fire,,5,,beamClashCapable; audienceFlees,30000,,,"row set was filed under ""Cell 2nd Form""; its moves are Cell 1st Form's"
-0160_00,Cell 1st Form,Super 2,,Special Beam Cannon,7490,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,"row set was filed under ""Cell 2nd Form""; its moves are Cell 1st Form's"
-0160_00,Cell 1st Form,Ultimate,,Drain Life Cell,15751,,Explosive Wave,,,Self-damage; Unguardable; Cinematic,lockOnNeeded; unblockable; audienceFlees; destroyMap,50000,11700,1,"row set was filed under ""Cell 2nd Form""; its moves are Cell 1st Form's"
-0161_00,Cell 2nd Form,Super 1,,Big Bang Crash,7482,,Beam,,,Chargeable,,30000,,,"row set was filed under ""Cell Jr.""; its moves are Cell 2nd Form's"
-0161_00,Cell 2nd Form,Super 2,,Drain Life Cell,8795,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,"row set was filed under ""Cell Jr.""; its moves are Cell 2nd Form's"
-0161_00,Cell 2nd Form,Ultimate,,Unforgivable!,17062,,Beam,,9,,beamClashCapable; audienceFlees,50000,,,"row set was filed under ""Cell Jr.""; its moves are Cell 2nd Form's; old name ""Unforgiveable!"""
+0160_00,Cell 1st Form,Super 1,,Kamehameha,7485,,Beam,,5,Chargeable,beamClashCapable; audienceFlees,30000,,,"row set was filed under ""Cell 2nd Form""; its moves are Cell 1st Form's; category/traits/impact/ki/lunge columns were left on the Cell Jr. row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0160_00,Cell 1st Form,Super 2,,Special Beam Cannon,7490,,Beam,,,Chargeable,audienceFlees,30000,,,"row set was filed under ""Cell 2nd Form""; its moves are Cell 1st Form's; category/traits/impact/ki/lunge columns were left on the Cell Jr. row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0160_00,Cell 1st Form,Ultimate,,Drain Life Cell,15751,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,8750,2,"row set was filed under ""Cell 2nd Form""; its moves are Cell 1st Form's; category/traits/impact/ki/lunge columns were left on the Cell Jr. row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0161_00,Cell 2nd Form,Super 1,,Big Bang Crash,7482,,Fire,,5,,beamClashCapable; audienceFlees,30000,,,"row set was filed under ""Cell Jr.""; its moves are Cell 2nd Form's; category/traits/impact/ki/lunge columns were left on the Cell 1st Form row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0161_00,Cell 2nd Form,Super 2,,Drain Life Cell,8795,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,"row set was filed under ""Cell Jr.""; its moves are Cell 2nd Form's; category/traits/impact/ki/lunge columns were left on the Cell 1st Form row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0161_00,Cell 2nd Form,Ultimate,,Unforgivable!,17062,,Explosive Wave,,,Self-damage; Unguardable; Cinematic,lockOnNeeded; unblockable; audienceFlees; destroyMap,50000,11700,1,"row set was filed under ""Cell Jr.""; its moves are Cell 2nd Form's; old name ""Unforgiveable!""; category/traits/impact/ki/lunge columns were left on the Cell 1st Form row by the seed, moved here (the Neo Export's Blasts tab agrees)"
 0162_00,Cell Perfect Form,Super 1,,Super Kamehameha,9085,,Beam,,5,Chargeable,beamClashCapable; audienceFlees,30000,,,
 0162_00,Cell Perfect Form,Super 2,,Barrage Death Beam,7970,,Beam,,,,,20000,,,
 0162_00,Cell Perfect Form,Ultimate,,Perfect Barrier,20130,,Explosive Wave,,,,audienceFlees,50000,,,
 0162_01,Perfect Cell,Super 1,,Perfect Beam,8125,,Beam,,,,,20000,,,
 0162_01,Perfect Cell,Super 2,,Perfect Rush,10469,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,
 0162_01,Perfect Cell,Ultimate,,Solar Kamehameha,18750,,Beam,,9,Cinematic,beamClashCapable; audienceFlees; destroyMap,50000,,,
-0163_00,Cell Jr.,Super 1,,Special Beam Cannon,6181,,Beam,,5,Chargeable,beamClashCapable; audienceFlees,30000,,,"row set was filed under ""Cell 1st Form""; its moves are Cell Jr.'s"
-0163_00,Cell Jr.,Super 2,,Innocence Rush,7987,,Beam,,,Chargeable,audienceFlees,30000,,,"row set was filed under ""Cell 1st Form""; its moves are Cell Jr.'s"
-0163_00,Cell Jr.,Ultimate,,Super Kamehameha,14250,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,8750,2,"row set was filed under ""Cell 1st Form""; its moves are Cell Jr.'s"
+0163_00,Cell Jr.,Super 1,,Special Beam Cannon,6181,,Beam,,,Chargeable,,30000,,,"row set was filed under ""Cell 1st Form""; its moves are Cell Jr.'s; category/traits/impact/ki/lunge columns were left on the Cell 2nd Form row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0163_00,Cell Jr.,Super 2,,Innocence Rush,7987,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,"row set was filed under ""Cell 1st Form""; its moves are Cell Jr.'s; category/traits/impact/ki/lunge columns were left on the Cell 2nd Form row by the seed, moved here (the Neo Export's Blasts tab agrees)"
+0163_00,Cell Jr.,Ultimate,,Super Kamehameha,14250,,Beam,,9,,beamClashCapable; audienceFlees,50000,,,"row set was filed under ""Cell 1st Form""; its moves are Cell Jr.'s; category/traits/impact/ki/lunge columns were left on the Cell 2nd Form row by the seed, moved here (the Neo Export's Blasts tab agrees)"
 0170_00,Majin Buu,Super 1,,Buu Buu Gum,8794,,Fire,,,Cinematic,,30000,,,
 0170_00,Majin Buu,Super 2,,Super Kamehameha,7485,,Beam,,5,Chargeable,beamClashCapable; audienceFlees,30000,,,
 0170_00,Majin Buu,Ultimate,,Angry Explosion,17063,,Explosive Wave,,,Unguardable; Cinematic,unblockable; audienceFlees,50000,,,
