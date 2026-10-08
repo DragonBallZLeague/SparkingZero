@@ -227,6 +227,25 @@ if (v2) {
   eq("Chilled's Death Sphere (computed: 12000 x 1.25 x (1.05 + 0.175))", death?.damage, 18375);
   check(!expect.length, 'engine reproduces the known values (rush 390/410/468, additive capsule + skill stacking, Pump Up, Kaioken, Unforgivable, ki capsules, Sparking conditions, Death Sphere)', expect);
 
+  // Measured in game by the league on 2026-10-07 (training, Goku (Z - Early) dummy, defense 1.0).
+  // Each one settled a rule: the formula over Capsule Corp's negative values (Mr. Satan), the
+  // class-label rescale (Baby Vegeta, Vegeta), additive stacking (Android 16), Capsule Corp's
+  // multi-hit first strikes (Kid Buu), a computed ultimate (Death Sphere, checked above) and the
+  // game's defense formula over Capsule Corp's (Baby Vegeta taking a 390 hit).
+  const named = (n) => data.characters.find(c => c.name === n);
+  const game = [];
+  const ig = (label, got, want) => { if (got !== want) game.push(`${label}: got ${JSON.stringify(got)}, game ${want}`); };
+  ig('Mr. Satan smash', named('Mr. Satan')?.stats.smash, 156);
+  ig('Mr. Satan throw', named('Mr. Satan')?.stats.throw, 288);
+  ig('Mr. Satan ki blast', named('Mr. Satan')?.stats.kiBlastDamage, 58);
+  ig('Baby Vegeta (GT) first rush hit', named('Baby Vegeta (GT)')?.stats.hits[0], 371);
+  ig('Vegeta (Z - Early) ki blast', named('Vegeta (Z - Early)')?.stats.kiBlastDamage, 238);
+  ig('Android 16 + Rush Attack Boost 3, first rush hit', run('0440_00', { capsules: ['00_0_0007'] }).rush, 498);
+  ig('Kid Buu first rush hit', named('Kid Buu')?.stats.hits[0], 564);
+  const bv = named('Baby Vegeta (GT)');
+  ig('Goku (Z - Early) first rush hit into Baby Vegeta (GT)', Math.round(390 * (bv?.stats.meleeDefense ?? 0)), 410);
+  check(!game.length, 'published values equal the in-game measurements of 2026-10-07 (Mr. Satan, Baby Vegeta, Vegeta, Android 16, Kid Buu, defense)', game);
+
   // With no effects the engine must leave every published number alone.
   const drift = [];
   for (const c of data.characters) {

@@ -55,6 +55,17 @@ data/
 Damage: `final = ceil(raw Power x 1.25 x (DP damage scale + class add))`, in float32 like
 the game. Coefficients from DP, class, capsules and skills add up; they do not multiply.
 
+**Confirmed in game (2026-10-07).** The league measured seven values in training against a
+Goku (Z - Early) dummy (defense 1.0), and all seven matched the published data exactly:
+- **Mr. Satan:** smash 156, throw 288, ki blast 58. This confirms the formula over Capsule Corp's negative values.
+- **Baby Vegeta (GT):** first rush hit 371. **Vegeta (Z - Early):** ki blast 238. Both confirm the class-label rescale below.
+- **Android 16:** first rush hit 498 with Rush Attack Boost 3, and 556 with Pump Up on as well. Bonuses add; they do not multiply.
+- **Kid Buu:** first rush hit 564. Capsule Corp is right on multi-hit first strikes.
+- **Chilled:** Death Sphere 18,375. A computed ultimate.
+- **Goku (Z - Early) first rush hit into Baby Vegeta (GT):** 410. This confirms the game's defense formula (incoming damage factor − class resistance) over Capsule Corp's defense values.
+
+`verify-data` checks these numbers on every build.
+
 **Capsule Corp class labels.** Capsule Corp sometimes computes a channel with its class
 label's coefficient instead of the game class's (most Vegeta forms' ki blasts, Baby Vegeta,
 Fused Zamasu Half-Corrupted). The build detects it on the values whose raw Power is known
