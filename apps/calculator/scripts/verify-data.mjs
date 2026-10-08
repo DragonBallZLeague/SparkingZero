@@ -109,6 +109,10 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   const nulls = [];
   for (const c of legacy.characters) for (const f of ['health', 'dp', 'rush', 'hit2', 'hit3', 'hit4', 'hit5', 'smash', 'throw', 'kiBlastDmg', 'meleeDefenseStat', 'blastDefense', 'energy']) if (c[f] == null) nulls.push(`${c.name}.${f}`);
   check(!nulls.length, 'core combat fields are never null (capsules silently stop applying on null)', nulls);
+  // Giants have a four-hit rush, so their fifth hit is 0; every other damage value must be positive
+  const nonPositive = [];
+  for (const c of legacy.characters) for (const f of ['rush', 'hit2', 'hit3', 'hit4', 'smash', 'throw', 'pursuit', 'kiBlastDmg', 'rush5Hit']) if (typeof c[f] === 'number' && c[f] <= 0) nonPositive.push(`${c.name}.${f} = ${c[f]}`);
+  check(!nonPositive.length, 'damage values are positive (Capsule Corp goes negative for very low coefficients)', nonPositive);
   const bl = [];
   for (const [n, rows] of Object.entries(legacy.blast)) for (const b of rows) if (b.baseDamagePatch !== null && typeof b.baseDamagePatch !== 'number') bl.push(`${n} ${b.name}`);
   check(!bl.length, 'blast damage is a number or null', bl);
@@ -127,11 +131,10 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
     : ['Light Body', 'Draconic Aura', 'Dragon Rush'].filter(n => !caps.some(c => c.name === n)).map(n => [n]);
   check(!special.length, 'the specially handled capsules exist (Light Body, Draconic Aura, Dragon Rush)', special.map(s => s.join(' ')));
   const refCaps = new Map(ref.capsules.map(c => [c.name, c]));
-  const extraFile = path.join(DATA, 'curated', 'capsules-extra.csv');
-  const extras = new Set(fs.existsSync(extraFile) ? readCsv(extraFile).rows.map(r => r.name) : []);
-  const unknown = caps.filter(c => !refCaps.has(c.name) && !extras.has(c.name)).map(c => c.name);
-  check(!unknown.length, 'every capsule is in referencedata/capsules.csv (or curated/capsules-extra.csv)', unknown);
-  if (extras.size) warn('capsules missing from referencedata/capsules.csv, published from curated/capsules-extra.csv', [...extras]);
+  const unknown = caps.filter(c => !refCaps.has(c.name)).map(c => c.name);
+  check(!unknown.length, 'every capsule is in referencedata/capsules.csv', unknown);
+  const noCost = caps.filter(c => typeof c.cost !== 'number').map(c => c.name);
+  check(!noCost.length, 'every capsule has a cost', noCost);
 }
 
 // ------------------------------------------------------------------ curated tables

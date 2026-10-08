@@ -53,7 +53,7 @@ function readVersion(rows) {
 
 /**
  * @param {Buffer|string} source  xlsx bytes or a file path
- * @param {Record<string, {headerRow: number}>} wanted  tab name → options
+ * @param {Record<string, {headerRow: number, keep?: {column: string, values: string[]}}>} wanted  tab name → options
  * @param {string} [versionTab]
  */
 export async function readWorkbookTabs(source, wanted, versionTab) {
@@ -93,7 +93,14 @@ export async function readWorkbookTabs(source, wanted, versionTab) {
       if (used.has(h)) { used.set(h, used.get(h) + 1); h = `${h} #${used.get(h)}`; } else used.set(h, 1);
       header.push(h);
     }
-    const rows = raw.slice(want.headerRow).map(r => header.map((_, c) => r[c] ?? ''));
+    let rows = raw.slice(want.headerRow).map(r => header.map((_, c) => r[c] ?? ''));
+    // keep: { column, values } snapshots only the rows a huge tab's consumer needs
+    if (want.keep) {
+      const at = header.indexOf(want.keep.column);
+      if (at === -1) throw new Error(`${name}: keep column "${want.keep.column}" is not in the header`);
+      const values = new Set(want.keep.values);
+      rows = rows.filter(r => values.has(r[at]));
+    }
     tabs[name] = { header, rows, errors };
   }
   const missing = Object.keys(wanted).filter(t => !tabs[t]);

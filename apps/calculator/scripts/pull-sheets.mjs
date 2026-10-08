@@ -9,6 +9,8 @@
  *
  * Each tab is written verbatim to data/snapshots/<source>/<file>.csv (headers
  * with line breaks are joined with spaces; formulas become their cached value).
+ * A tab with `keep: {column, values}` keeps only the rows whose column holds one
+ * of the values (Combative Values has ~71,000 rows; the build reads two actions).
  * data/snapshots/<source>/MANIFEST.json records the source's own version marker,
  * every tab's exact header list, row counts and error cells.
  *
@@ -79,7 +81,7 @@ for (const [key, src] of sources) {
         (!removed.length && !added.length ? '\n    same columns, new order' : '') +
         '\n    Check the build still reads the right columns, then rerun with --accept-layout.');
     }
-    manifest.tabs[tab] = { file: spec.file, headerRow: spec.headerRow, rows: t.rows.length, columns: t.header, errorCells: t.errors.slice(0, 50), errorCount: t.errors.length };
+    manifest.tabs[tab] = { file: spec.file, headerRow: spec.headerRow, ...(spec.keep ? { keep: spec.keep } : {}), rows: t.rows.length, columns: t.header, errorCells: t.errors.slice(0, 50), errorCount: t.errors.length };
     pending.push({ file: path.join(dir, spec.file), content: toCsv(t.header, t.rows), label: `${key}/${spec.file}`, rows: t.rows.length, errors: t.errors.length });
   }
   pending.push({ file: manifestFile, content: JSON.stringify(manifest, null, 2) + '\n', label: `${key}/MANIFEST.json` });

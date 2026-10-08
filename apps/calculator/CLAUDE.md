@@ -12,7 +12,7 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 `public/data/*.json` is **generated** — never edit it by hand. `scripts/build-data.mjs` builds it from:
 - `data/snapshots/` — committed CSV copies of two spreadsheets: the raw game map (`charmap/`, game facts and raw inputs) and Capsule Corp's Stats tab (`capsulecorp/`, finals). Refreshed by hand with `npm run data:pull` (the only networked step; it refuses a changed column layout unless `--accept-layout`).
-- `data/curated/*.csv` — hand-maintained tables: measured blast damage, capsule effects, the effect vocabulary, skill display traits, skill targets, class labels, aliases, overrides, Sparking armor, capsules missing from referencedata.
+- `data/curated/*.csv` — hand-maintained tables: measured blast damage, capsule effects, the effect vocabulary, skill display traits, skill targets, class labels, aliases, overrides, Sparking armor.
 - `referencedata/` (characters, forms, capsules, rulesets) and the website's `public/content/teams/<season>.yaml` master lists. **The calculator joins the shared reference data by id**; names and order come from `referencedata/characters.csv`.
 
 `predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL; it includes engine checks against known in-game values). Both are offline and deterministic. Every build regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration, capsule effects); `data/CHANGES.md` is rewritten only when the published data changes (previous build → this build). Read both diffs after any data change. `data/rebuild-2026-10/` is the frozen record of the one-time move from the old hand-edited JSON.
@@ -21,6 +21,7 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 Gotchas:
 - **Damage coefficients add** (DP scale + class + capsules + skills), they do not multiply. `final = ceil(Power x 1.25 x coefficient)`.
+- **Capsule Corp's own formula goes negative for very low coefficients** (Mr. Satan's smash/throw/pursuit/ki blast were negative). The build replaces any zero or negative damage value with the game formula, and `verify-data` fails on one.
 - **Capsule Corp's class labels are not always the game's class** (Vegeta forms, Baby Vegeta, Fused Zamasu Half-Corrupted); the build rescales those channels from evidence and lists them in REPORT.md. Game class keys map to labels in `data/curated/classes.csv`.
 - **Old share links carry display names.** `src/utils/shareLink.js` resolves names exact → `aliases` → normalised; renamed characters need a row in `data/curated/aliases.csv`. The website's Teams page builds name-based links too (see below).
 - **The website reads production `calculator/data/characters.json`**: it must stay a top-level array of objects with `name`, in referencedata order. Its form dropdown walks `transformations.json` by name (`apps/website/src/utils/formChain.js`, imported by `verify-data` so the check runs the shipped code).
@@ -51,7 +52,7 @@ Gotchas:
 
 `src/utils/classStyles.js` — the one table of class-label colours (badge, portrait gradient).
 
-`src/utils/rules.js` — capsule rulesets from `meta.json` (budget, banned ids, group caps such as Rush/Smash/Blast Attack Boost <= 6). App provides the selected ruleset through `RulesContext`; the builders read `useRules()` and show `components/RulesBar.jsx` (picker, rule warnings, and what equipped capsules do that the stats do not show). The picker lists only capsules the selected ruleset allows; a capsule with no confirmed cost (`cost: null`) shows "?" and counts 0.
+`src/utils/rules.js` — capsule rulesets from `meta.json` (budget, banned ids, group caps such as Rush/Smash/Blast Attack Boost <= 6). App provides the selected ruleset through `RulesContext`; the builders read `useRules()` and show `components/RulesBar.jsx` (picker, rule warnings, and what equipped capsules do that the stats do not show). The picker lists only capsules the selected ruleset allows. Capsules come only from `referencedata/capsules.csv`; Victory Power is a real game capsule left out on purpose (the league never allows it).
 
 `src/components/BlastStatus.jsx` — the `calc` marker (damage computed by a calibrated recipe) and "not measured yet" (no value).
 

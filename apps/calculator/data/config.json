@@ -36,6 +36,14 @@
         "Form Access": {
           "file": "form-access.csv",
           "headerRow": 3
+        },
+        "Combative Values": {
+          "file": "combative-values.csv",
+          "headerRow": 3,
+          "keep": {
+            "column": "Action",
+            "values": ["actSMMN", "actBSSM"]
+          }
         }
       }
     },

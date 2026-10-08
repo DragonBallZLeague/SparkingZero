@@ -43,7 +43,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [] };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [] };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -67,6 +67,13 @@ const moveList = snap('charmap/move-list.csv');
 const movePower = snap('charmap/move-power.csv');
 const skillValues = snap('charmap/skill-values.csv');
 const skillSummary = snap('charmap/skills-passives.csv');
+// Raw Power of the actions the Characters tab lacks: neutral smash (actSMMN), vanish follow-up (actBSSM)
+const combative = new Map();
+for (const r of snap('charmap/combative-values.csv')) {
+  if (r.Condition !== 'Default') continue;
+  const k = `${r['Character ID']}:${r.Action}`;
+  if (!combative.has(k)) combative.set(k, num(r.Power));
+}
 const ccRows = snap('capsulecorp/stats.csv');
 const ccById = new Map();
 for (const r of ccRows) {
@@ -313,7 +320,18 @@ for (const rc of ref.characters) {
     ['hit1', num(r['Rush A first hit: Power']), coef.rush],
     ['throw', num(r['Throw: Power']), coef.throw],
     ['kiBlastDamage', num(r['Normal Ki: Power']), coef.kiBlast],
+    ['smash', combative.get(`${id}:actSMMN`) ?? null, coef.smash],
+    ['pursuit', combative.get(`${id}:actBSSM`) ?? null, coef.followUp],
   ];
+  // Damage can never be zero or negative: Capsule Corp's own formula goes negative for very low
+  // coefficients (Mr. Satan). Such values are replaced by the game formula.
+  for (const [f, P, c] of anchors) {
+    if (P == null || finals[f] == null || finals[f] > 0) continue;
+    const want = finalDamage(P, c, K);
+    report.impossible.push([rc.name, f, finals[f], want, P]);
+    finals[f] = want;
+    prov[f] = 'formula (Capsule Corp value impossible)';
+  }
   for (const [f, P, c] of anchors) {
     if (P == null) continue;
     const want = finalDamage(P, c, K);
@@ -513,13 +531,7 @@ const rulesets = Object.entries(ref.rules.rulesets || {}).map(([name, rs]) => {
   return { name, totalCost: rs.totalCost, banned: [...banned], groups };
 });
 const defaultRuleset = rulesets.find(r => r.name === ref.rules.default) || rulesets[0];
-// Capsules missing from referencedata (curated/capsules-extra.csv; cost may be unknown = null)
-const extraCapsules = curated('capsules-extra.csv').map(r => ({ id: r.id, name: r.name, cost: num(r.cost), exclusiveTo: null, description: r.description }));
-for (const x of extraCapsules) {
-  if (ref.capsules.some(c => c.id === x.id)) report.warn.push(`capsules-extra.csv: ${x.id} ${x.name} is now in referencedata/capsules.csv; delete the extra row`);
-  if (x.cost == null) report.warn.push(`capsule ${x.name} (${x.id}) has no confirmed cost; it counts 0 toward the budget and shows "?"`);
-}
-const capsules = [...ref.capsules, ...extraCapsules.filter(x => !ref.capsules.some(c => c.id === x.id))].map(cap => ({
+const capsules = ref.capsules.map(cap => ({
   id: cap.id, name: cap.name, cost: cap.cost, description: cap.description,
   exclusiveTo: cap.exclusiveTo,
   effects: capsuleEffects.get(cap.id) || [],
@@ -639,6 +651,7 @@ function changesMd(prev) {
     if (!o) { rows.push([c.name, '(capsule)', 'none', 'added']); continue; }
     for (const f of ['name', 'cost', 'effects', 'bannedIn']) if (!same(o[f], c[f])) rows.push([c.name, f, fmt(o[f]), fmt(c[f])]);
   }
+  for (const [id, o] of prevCaps) if (!capsules.some(c => c.id === id)) rows.push([o.name, '(capsule)', 'present', 'removed']);
   const fields = new Map();
   for (const r of rows) fields.set(r[1], (fields.get(r[1]) || 0) + 1);
   return [
@@ -720,7 +733,7 @@ function reportMd() {
     '',
     table(['', 'Count'], [
       ['Characters built', characters.length],
-      ['Capsules', `${ref.capsules.length} from referencedata + ${capsules.length - ref.capsules.length} from curated/capsules-extra.csv; ${capsules.filter(c => c.effects.some(e => APPLIED_KEYS.has(e.key) || e.op === 'set')).length} change shown stats, the rest are notes only`],
+      ['Capsules', `${capsules.length} from referencedata; ${capsules.filter(c => c.effects.some(e => APPLIED_KEYS.has(e.key) || e.op === 'set')).length} change shown stats, the rest are notes only`],
       ['Blasts measured', st('measured')],
       ['Blasts computed (calibrated recipe)', st('computed')],
       ['Blasts not measured yet', st('unmeasured')],
@@ -747,9 +760,14 @@ function reportMd() {
     "Capsule Corp sometimes computes a channel's damage with its class label's coefficient instead of the game class's. A channel is rescaled (game coefficient / label coefficient) only when its anchor value (first rush hit, throw or ki blast, whose raw Power is known) matches the label's coefficient and not the game's; channels without an anchor follow the character's other channels.",
     '',
     table(['Character', 'Capsule Corp label', 'Game class', 'Field', 'Capsule Corp', 'Used', 'Evidence of the label coefficient'], report.classFixes),
+    `## Impossible Capsule Corp values replaced by the formula (${report.impossible.length})`,
+    '',
+    "Damage cannot be zero or negative. Capsule Corp's sheet goes negative for very low coefficients, so these use ceil(raw Power x 1.25 x coefficient).",
+    '',
+    table(['Character', 'Field', 'Capsule Corp', 'Used', 'Raw Power'], report.impossible),
     `## Finals that differ from the base formula (${report.specials.length})`,
     '',
-    'ceil(raw Power x 1.25 x coefficient) on the first rush hit, throw and ki blast. Kept as published (special moves or data to check).',
+    'ceil(raw Power x 1.25 x coefficient) on the first rush hit, throw, ki blast, neutral smash (actSMMN) and vanish follow-up (actBSSM). Kept as published (special moves or data to check).',
     '',
     table(['Character', 'Field', 'Value', 'Formula', 'Source'], report.specials),
     `## Capsule Corp vs game data (${report.ccGaps.length})`,

@@ -311,6 +311,40 @@
       ],
       "errorCells": [],
       "errorCount": 0
+    },
+    "Combative Values": {
+      "file": "combative-values.csv",
+      "headerRow": 3,
+      "keep": {
+        "column": "Action",
+        "values": [
+          "actSMMN",
+          "actBSSM"
+        ]
+      },
+      "rows": 482,
+      "columns": [
+        "Character ID",
+        "Character",
+        "Move",
+        "Power",
+        "Shave",
+        "Ki damage",
+        "Ki damage on guard",
+        "Ki gain",
+        "Category",
+        "Game slot",
+        "Family",
+        "Action",
+        "Condition",
+        "Power status",
+        "Record key",
+        "Native Power default",
+        "Native Shave default",
+        "Notes"
+      ],
+      "errorCells": [],
+      "errorCount": 0
     }
   }
 }

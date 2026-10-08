@@ -20,7 +20,7 @@ export function useRules() {
   return useContext(RulesContext);
 }
 
-/** Capsule cost for budget sums; an unconfirmed cost (null) counts 0. */
+/** Capsule cost for budget sums; an empty slot counts 0. */
 export function capsuleCost(c) {
   return typeof c?.cost === 'number' ? c.cost : 0;
 }

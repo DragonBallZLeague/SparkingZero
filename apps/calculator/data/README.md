@@ -9,6 +9,7 @@ data/
   config.json        source sheet ids and tabs, damage constant, calibration thresholds, reference attacker
   snapshots/         faithful CSV copies of the source spreadsheets (pulled by hand, committed)
     charmap/         raw game data ("Sparking! ZERO character map"), one CSV per tab + MANIFEST.json
+                     (Combative Values keeps only the actions the build reads: config `keep`)
     capsulecorp/     Capsule Corp's "Stats" tab + MANIFEST.json
   curated/           hand-maintained tables (edit these)
   REPORT.md          generated: coverage, source disagreements, blast calibration, capsule effects, what to review
@@ -38,7 +39,7 @@ data/
 | id, name, order, forms | `referencedata/characters.csv`, `transformations.json` | the raw map's names |
 | class (game key -> label via `curated/classes.csv`), DP, DP damage scale, class coefficients, health, ki, skill stocks, ki-blast count | raw map | Capsule Corp |
 | defense multipliers | raw map: incoming damage factor - class resistance | Capsule Corp |
-| rush hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break, armor, short-dash cost, ki charge, skill regen, Sparking duration | Capsule Corp Stats | `ceil(Power x 1.25 x coefficient)` where the raw Power is known |
+| rush hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break, armor, short-dash cost, ki charge, skill regen, Sparking duration | Capsule Corp Stats | `ceil(Power x 1.25 x coefficient)` where the raw Power is known (first rush hit, throw, ki blast; smash and pursuit from the raw map's Combative Values, actions `actSMMN` / `actBSSM`). A zero or negative Capsule Corp damage value is impossible and is replaced by the formula (Mr. Satan) |
 | ki-blast cost, ki regen, attack ki gain | raw map with the class coefficient applied | Capsule Corp |
 | moves (names, slots, variants, ki costs) | raw Move List | `curated/blasts.csv` |
 | skill effects and phases | raw Skill Values (exact coefficients) | the raw summary tab |
@@ -46,7 +47,7 @@ data/
 | skill display traits (type, activation time, flags) | `curated/skill-display.csv`; skills without a row get a type inferred from their effects (`display.inferred`) | |
 | blast damage | `curated/blasts.csv` (measured) | a calibrated recipe fills gaps (see below) |
 | Sparking armor flag | `curated/sparking.csv` | |
-| capsules | `referencedata/capsules.csv` (Type = Capsule) + `curated/capsules-extra.csv`, bans and group caps from `capsule-rules.yaml` | |
+| capsules | `referencedata/capsules.csv` (Type = Capsule), bans and group caps from `capsule-rules.yaml`. A capsule the league never allows (e.g. Victory Power) is left out on purpose | |
 | capsule effects | `curated/capsule-effects.csv` | REPORT.md lists what each capsule does in the engine |
 | which skill effects hit the opponent | `curated/skill-targets.csv` (default: the user) | |
 | teams | the website's `content/teams/<season>.yaml` master lists, expanded to every form | |
@@ -80,7 +81,6 @@ class key or effect.
 | `blasts.csv` | id + slot + variant + move | measured damage (+ boosted damage when it is not x1.2 / x1.3), category, traits, flags |
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag |
-| `capsules-extra.csv` | capsule id | capsules the game has but `referencedata/capsules.csv` lacks (cost may be blank = not confirmed: shown "?", counts 0). Delete a row once referencedata has the capsule |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |
