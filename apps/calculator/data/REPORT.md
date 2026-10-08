@@ -40,20 +40,20 @@ Recipes are scored per family on the moves with measured damage (match: within 1
 | super: one action part | largest action part | 124/132 | 94% | yes | 17 |
 | super: beam (BeamPower = Power x revivals) | projectile x (revivals + 1) | 108/108 | 100% | yes | 12 |
 | super: projectile with revivals | projectile once | 45/62 | 73% | no | 17 |
-| super: projectile with revivals + action | projectile x (revivals + 1) | 16/38 | 42% | no | 6 |
-| super: volley + action | projectile x shots | 11/25 | 44% | no | 7 |
+| barrage (hit count in the Record key) | projectile x Record-key count | 34/40 | 85% | no | 7 |
+| super: projectile with revivals + action | projectile x (revivals + 1) | 16/37 | 43% | no | 6 |
 | ultimate: projectile with revivals + action | projectile x (revivals + 1) | 19/25 | 76% | no | 1 |
-| super: volley | projectile x shots | 9/17 | 53% | no | 1 |
 | super: several projectiles + action | every projectile x (revivals + 1) | 1/11 | 9% | no | 2 |
 | super: several action parts | last action part | 7/9 | 78% | no | 2 |
-| super: several projectiles | projectile x (revivals + 1) | 3/8 | 38% | no | 1 |
+| super: several projectiles | projectile x (revivals + 1) | 3/7 | 43% | no | 1 |
 | ultimate: several action parts | largest action part | 3/7 | 43% | no | 0 |
 | super: beam (BeamPower = Power x revivals) + action | projectile x (revivals + 1) | 3/6 | 50% | no | 0 |
+| super: volley + action | projectile x shots | 1/3 | 33% | no | 1 |
+| super: volley | projectile x shots | 2/2 | 100% | no | 0 |
 | ultimate: several projectiles + action | largest action part | 2/2 | 100% | no | 0 |
 | super: no damaging part | largest action part | 0/2 | 0% | no | 1 |
 | ultimate: beam (BeamPower = Power x revivals) + action | largest action part | 0/1 | 0% | no | 0 |
 | ultimate: no damaging part | largest action part | 0/1 | 0% | no | 0 |
-| ultimate: volley + action | largest action part | 1/1 | 100% | no | 0 |
 
 Families with unmeasured moves but no measured samples: none.
 

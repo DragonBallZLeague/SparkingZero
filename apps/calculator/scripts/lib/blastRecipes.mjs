@@ -18,6 +18,10 @@
 
 const F = Math.fround;
 const COMMON_ACTION = /BLF1W/; // the 1000-Power blast-lunge part every move carries
+// A barrage projectile's Record key ends in its hit count: BulletParam_actSPM_BULLET_barrage10,
+// ..._BEAM_rapid10, ..._HUGE_BEAM_s3 (34 of 40 measured barrages match exactly; league idea,
+// 2026-10-07). Other trailing numbers (actSPM2, L200, sbm2, flash_40) are not counts.
+const KEY_COUNT = /(?:barrage|rapid|_s)(\d+)$/;
 
 const num = (v) => (v === '' || v == null ? null : Number(v));
 
@@ -32,6 +36,7 @@ export function moveParts(rows) {
       projectiles.push({
         P, FL: num(r.FireLimit) || 1, fireNum: num(r.FireNum) || 1, rev: num(r['Collision revivals']) || 0,
         apps: num(r['Damage applications']), beamPower: num(r.BeamPower),
+        keyCount: num(String(r['Record key'] || '').match(KEY_COUNT)?.[1]),
       });
     }
   }
@@ -45,6 +50,8 @@ export function family(slot, parts) {
   if (!projectiles.length) return `${kind}: ${actions.length > 1 ? 'several action parts' : actions.length ? 'one action part' : 'no damaging part'}`;
   const p = projectiles[0];
   const withAction = actions.length ? ' + action' : '';
+  // supers and ultimates pooled: the hit count, not the slot, decides the recipe
+  if (p.keyCount) return 'barrage (hit count in the Record key)';
   if (projectiles.length > 1) return `${kind}: several projectiles${withAction}`;
   if (p.FL > 1) return `${kind}: volley${withAction}`;
   if (p.rev > 0 && p.beamPower != null && Math.abs(p.beamPower - p.P * p.rev) <= 2) return `${kind}: beam (BeamPower = Power x revivals)${withAction}`;
@@ -63,6 +70,7 @@ export const RECIPES = {
     const q = p.projectiles[0];
     return q ? [[q.P, q.apps || (q.rev + 1) * q.FL]] : null;
   },
+  'projectile x Record-key count': (p) => (p.projectiles[0]?.keyCount ? [[p.projectiles[0].P, p.projectiles[0].keyCount]] : null),
   'every projectile x (revivals + 1)': (p) => (p.projectiles.length ? p.projectiles.map(q => [q.P, q.apps || (q.rev + 1) * q.FL]) : null),
 };
 

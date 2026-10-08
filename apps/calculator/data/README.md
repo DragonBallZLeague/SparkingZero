@@ -98,6 +98,12 @@ only when it reproduces at least `calibration.minMatchRate` of at least
 stay `unmeasured` ("not measured yet" in the UI). Measuring a move in game and adding it
 to `blasts.csv` always wins.
 
+Barrages are their own family. A barrage projectile's Record key (Move Power tab) ends in its
+hit count, as in `BulletParam_actSPM_BULLET_barrage10`, `..._BEAM_rapid10` and
+`..._HUGE_BEAM_s3`, and the damage is that count × one shot. This reproduces 34 of 40 measured
+barrages exactly. Four of the six misses are Vegeta (Z) barrages at exactly 5/6 of the formula,
+which looks like stale measurements. The family starts filling gaps at 90% (36 of 40).
+
 ## Curated tables
 
 All UTF-8 CSV, one header row, edited by hand. The build fails on an unknown id, slot,
