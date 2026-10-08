@@ -34,7 +34,7 @@ id,character,slot,variant,move,damage,boostedDamage,category,type,impactPower,tr
 0000_43,Goku (Super) Super Saiyan God Super Saiyan,Super 2,,"""No Hard Feelings"" Hit",10888,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,
 0000_43,Goku (Super) Super Saiyan God Super Saiyan,Ultimate,,Limit Breaker God Kamehameha,19501,,Beam,,9,Cinematic,beamClashCapable; audienceFlees; destroyMap,50000,,,
 0000_50,Goku (Super) Ultra Instinct -Sign-,Super 1,,Kamehameha -Sign-,9620,,Beam,,5,,beamClashCapable; audienceFlees,30000,,,
-0000_50,Goku (Super) Ultra Instinct -Sign-,Super 2,,Flash -Sign-,10174,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,
+0000_50,Goku (Super) Ultra Instinct -Sign-,Super 2,,Flash -Sign-,11307,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,league in-game test 2026-10-07 (was 10174)
 0000_50,Goku (Super) Ultra Instinct -Sign-,Ultimate,,Point-Blank Kamehameha,20250,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,8750,2,
 0000_51,Goku (Super) Ultra Instinct,Super 1,,Ultra Kamehameha,9975,,Beam,,5,Chargeable,beamClashCapable; audienceFlees,30000,,,
 0000_51,Goku (Super) Ultra Instinct,Super 2,,Ultra Barrage,11725,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,20000,8750,0.3,
@@ -88,7 +88,7 @@ id,character,slot,variant,move,damage,boostedDamage,category,type,impactPower,tr
 0020_63,Vegeta (Super) Super Saiyan God Super Saiyan,Super 2,,Gamma Burst Flash,9478,,Short-Range Energy Attack,,,,audienceFlees,20000,,,
 0020_63,Vegeta (Super) Super Saiyan God Super Saiyan,Ultimate,,Final God Explosion,26001,,Explosive Wave,,,Self-damage; Unguardable; Cinematic,unblockable; audienceFlees,50000,,,
 0021_20,Super Vegeta,Super 1,,Big Bang Attack,8550,,Fire,,5,,beamClashCapable; audienceFlees,30000,,,
-0021_20,Super Vegeta,Super 2,,Spirit Breaking Cannon,10551,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,
+0021_20,Super Vegeta,Super 2,,Spirit Breaking Cannon,10051,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,"league in-game test 2026-10-07 (was 10551, which includes the 500 ground-bounce hit that not every use lands)"
 0021_20,Super Vegeta,Ultimate,,Final Flash,19501,,Beam,,9,Cinematic,beamClashCapable; audienceFlees; destroyMap,50000,,,
 0022_62,Vegeta (Super) Super Saiyan God,Super 1,,God Shine Attack,8915,,Continuous Fire,,,Cinematic,audienceFlees,30000,,,
 0022_62,Vegeta (Super) Super Saiyan God,Super 2,,Gamma Fist,10469,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,11700,1,
@@ -98,7 +98,7 @@ id,character,slot,variant,move,damage,boostedDamage,category,type,impactPower,tr
 0023_00,Great Ape Vegeta,Ultimate,,Super Galick Gun,20125,,Beam,,9,Cinematic,beamClashCapable; audienceFlees; destroyMap,50000,,,
 0030_00,Gohan (Kid),Super 1,,Masenko,6770,,Beam,,5,Chargeable,beamClashCapable,30000,,,
 0030_00,Gohan (Kid),Super 2,,Energy Blast Barrage,7130,,Continuous Fire,,,,,20000,,,
-0030_00,Gohan (Kid),Ultimate,,Wild Rush Blaster,17250,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,8750,2,
+0030_00,Gohan (Kid),Ultimate,,Wild Rush Blaster,17250,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,8750,2,confirmed: league in-game test 2026-10-07; includes his Sparking passive (+20% ultimate damage)
 0031_00,Gohan (Teen),Super 1,,Super Masenko,7125,,Beam,,5,Chargeable,beamClashCapable; audienceFlees,30000,,,
 0031_00,Gohan (Teen),Super 2,,Energy Blast Barrage,7500,,Continuous Fire,,,,,20000,,,
 0031_00,Gohan (Teen),Ultimate,,Super Kamehameha,15000,,Beam,,9,,beamClashCapable; audienceFlees,50000,,,
@@ -107,7 +107,7 @@ id,character,slot,variant,move,damage,boostedDamage,category,type,impactPower,tr
 0031_01,Gohan (Teen) Super Saiyan,Ultimate,,Raging Masenko,18001,,Continuous Fire,,,Cinematic,audienceFlees,50000,,,
 0031_02,Gohan (Teen) Super Saiyan 2,Super 1,,Super Kamehameha,8915,,Beam,,5,,beamClashCapable; audienceFlees,20000,,,
 0031_02,Gohan (Teen) Super Saiyan 2,Super 2,,Explosive Rush,10469,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,
-0031_02,Gohan (Teen) Super Saiyan 2,Ultimate,,Father-Son Kamehameha,19250,,Beam,,9,Unguardable; Cinematic,beamClashCapable; unblockable; audienceFlees,50000,,,
+0031_02,Gohan (Teen) Super Saiyan 2,Ultimate,,Father-Son Kamehameha,19250,,Beam,,9,Unguardable; Cinematic,beamClashCapable; unblockable; audienceFlees,50000,,,confirmed: league in-game test 2026-10-07; includes his Sparking passive (+15% ultimate damage)
 0032_00,Gohan (Adult),Super 1,,Explosive Cannon,7500,,Short-Range Energy Attack,,,,audienceFlees,20000,,,
 0032_00,Gohan (Adult),Super 2,,Explosive Flash Strike,8375,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,
 0032_00,Gohan (Adult),Ultimate,,Super Kamehameha,15000,,Beam,,9,Cinematic,beamClashCapable; audienceFlees,50000,,,
@@ -284,7 +284,7 @@ id,character,slot,variant,move,damage,boostedDamage,category,type,impactPower,tr
 0180_00,Mr. Satan,Ultimate,,Mr. Buu Arrives!,9318,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,8750,2,
 0190_00,Chiaotzu,Super 1,,Dodon Ray,5850,,Beam,,,,,20000,,,
 0190_00,Chiaotzu,Super 2,,Psychic Rock Throw,6413,,Fire,,,,,20000,,,
-0190_00,Chiaotzu,Ultimate,,"Farewell, Mr. Tien",16250,,Rush,Lunge Fighting,,Cinematic; Self-damage,lockOnNeeded; dashClashCapable; audienceFlees,50000,8750,2,
+0190_00,Chiaotzu,Ultimate,,"Farewell, Mr. Tien",16250,,Rush,Lunge Fighting,,Cinematic; Self-damage,lockOnNeeded; dashClashCapable; audienceFlees,50000,8750,2,confirmed: league in-game test 2026-10-07
 0210_00,Yajirobe,Super 1,,Ka-Blam Attack,5850,,Rush,Lunge Fighting,,Unguardable,lockOnNeeded; dashClashCapable; unblockable,40000,8750,1,
 0210_00,Yajirobe,Super 2,,Flash and Kill,6533,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,
 0210_00,Yajirobe,Ultimate,,Miracle Ka-Blam Slash,12000,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,11700,1,"old name ""Miracle Ka-Blam Smash"""
@@ -405,7 +405,7 @@ Transformation, Switch, skills, Blasts, or Ultimate Blasts.",lockOnNeeded,50000,
 0600_00,Cooler,Super 2,,Darkness Eye Beam,7152,,Sweep,,,,,20000,,,
 0600_00,Cooler,Ultimate,,Death Ball,16500,,Fire,,12,,beamClashCapable; audienceFlees; destroyMap,50000,,,
 0600_10,Metal Cooler,Super 1,,Lock-On Buster,8613,,Fire,,,Unguardable,unblockable,40000,,,
-0600_10,Metal Cooler,Super 2,,Finger Blitz Barrage,7470,,Continuous Fire,,,,,20000,,,
+0600_10,Metal Cooler,Super 2,,Finger Blitz Barrage,8300,,Continuous Fire,,,,,20000,,,league in-game test 2026-10-07: 20 hits (was 7470)
 0600_10,Metal Cooler,Ultimate,,Supernova,19875,,Fire,,12,Cinematic,beamClashCapable; audienceFlees; destroyMap,50000,,,
 0601_00,Cooler Final Form,Super 1,,Death Beam,7150,,Beam,,,,,20000,,,
 0601_00,Cooler Final Form,Super 2,,Death Chaser,9213,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,15000,8750,2,
@@ -424,7 +424,7 @@ Transformation, Switch, skills, Blasts, or Ultimate Blasts.",lockOnNeeded,50000,
 0631_00,Full-Power Bojack,Ultimate,,Galactic Buster,17188,,Fire,,8,Cinematic,beamClashCapable; audienceFlees,50000,,,
 0650_00,Janemba,Super 1,,Chou Makouhou,8915,,Beam,,5,,beamClashCapable; audienceFlees,30000,,,
 0650_00,Janemba,Super 2,,Rapid Cannon,9640,,Simultaneous Fire,,,,audienceFlees,30000,,,
-0650_00,Janemba,Ultimate,,Illusion Smash,19188,,Rush,Throw,,Unguardable; Cinematic,lockOnNeeded; unblockable,50000,11700,,
+0650_00,Janemba,Ultimate,,Illusion Smash,18750,,Rush,Throw,,Unguardable; Cinematic,lockOnNeeded; unblockable,50000,11700,,league in-game test 2026-10-07 (was 19188)
 0651_00,Super Janemba,Super 1,,Evil Cannon,8910,,Beam,,5,,beamClashCapable; audienceFlees,30000,,,
 0651_00,Super Janemba,Super 2,,Lightning Shower Rain,8125,,Simultaneous Fire,,,,,30000,,,
 0651_00,Super Janemba,Ultimate,,Dimension Sword Attack,18750,,Rush,Lunge Fighting,,Cinematic,lockOnNeeded; dashClashCapable,50000,11700,1,
@@ -570,10 +570,10 @@ Transformation, Switch, skills, Blasts, or Ultimate Blasts.",lockOnNeeded,50000,
 3012_00,Orange Piccolo Giant Form,Super 2,,Mighty Fist,9751,,Rush,,,,,20000,,,
 3012_00,Orange Piccolo Giant Form,Ultimate,,Apocalyptic Burst,19501,,,,,,,,,,
 3020_00,Gamma 1,Super 1,,Gamma Blaster,8194,,,,,,,,,,
-3020_00,Gamma 1,Super 2,,Gamma Impact,9640,,Rush,,,,,15000,,,
+3020_00,Gamma 1,Super 2,,Gamma Impact,9632,,Rush,,,,,15000,,,league in-game test 2026-10-07 (was 9640)
 3020_00,Gamma 1,Ultimate,,Gamma Shift Shot,17250,,,,,,,,,,
 3030_00,Gamma 2,Super 1,,Gamma Blaster,8194,,,,,,,,,,
-3030_00,Gamma 2,Super 2,,Gamma Impact,9640,,Rush,,,,,15000,,,
+3030_00,Gamma 2,Super 2,,Gamma Impact,9632,,Rush,,,,,15000,,,Gamma 1's in-game value; same move and coefficient (was 9640)
 3030_00,Gamma 2,Ultimate,,Core Breaker,23000,,,,,,,,,,
 3040_00,Cell Max,Super 1,,Max Cannon,10465,,,,,,,,,,
 3040_00,Cell Max,Super 2,,Mighty Fist,10125,,Rush,,,,,20000,,,

@@ -15,7 +15,9 @@
  *
  * Effects whose condition is not "always" apply only when that condition is on:
  * "sparking" follows the Sparking toggle; anything else (health thresholds, maps,
- * timers) is listed as a note and not applied. Keys of kind "display"/"level" are
+ * timers) is listed as a note and not applied. Ultimates are the exception to the
+ * toggle: they need Sparking Mode, so ultimate damage always includes the
+ * character's While Sparking passive and every Sparking-only ultimate effect. Keys of kind "display"/"level" are
  * listed too: the game has them but no shown stat depends on them.
  *
  * The result keeps the field names the panels were written against (rush, hit2..,
@@ -50,6 +52,17 @@ export const APPLIED_KEYS = HANDLED;
 export const SKILL_ARMOR = 0.10;
 export const SPARKING_ARMOR = 0.25;
 
+const ULTIMATE_KEYS = new Set(['ultimateDamage', 'allDamage']);
+
+/**
+ * The character's While Sparking passive on ultimate damage. Ultimates are only usable in
+ * Sparking Mode, so this is part of every published ultimate (measured or computed), and the
+ * Sparking toggle does not add it again. Confirmed in game: Gohan (Kid) 17,250, Gohan (Teen) SSJ2 19,250.
+ */
+export function sparkingUltimateBonus(c) {
+  return (c?.sparking?.effects || []).reduce((s, e) => s + (ULTIMATE_KEYS.has(e.key) ? e.value || 0 : 0), 0);
+}
+
 const round = (v, d = 4) => (typeof v === 'number' && Number.isFinite(v) ? Math.round(v * 10 ** d) / 10 ** d : v);
 const hit = (power, k, K) => Math.ceil(F(F(power * K) * F(k)));
 
@@ -79,11 +92,15 @@ function scale(final, k0, k1, K, power = null) {
  */
 export function collectEffects({ character, capsules = [], skills = [], sparking = false, incoming = [] }) {
   const applied = [], notes = [], outgoing = [];
-  const take = (e, source) => {
+  const take = (e, source, extra = {}) => {
     const cond = e.condition || 'always';
     if (cond === 'always' || (cond === 'sparking' && sparking)) {
       if (e.key === 'display' || (!HANDLED.has(e.key) && e.op !== 'set')) notes.push({ source, text: e.note || describe(e) });
-      else applied.push({ ...e, source });
+      else applied.push({ ...e, ...extra, source });
+    } else if (cond === 'sparking' && ULTIMATE_KEYS.has(e.key)) {
+      // Ultimates are always used in Sparking Mode: Sparking-only ultimate damage applies to them anyway
+      applied.push({ ...e, ultimateOnly: true, source });
+      if (e.key !== 'ultimateDamage') notes.push({ source, text: `${e.note || describe(e)} (while Sparking; applied to ultimates only until Sparking Mode is on)` });
     } else {
       notes.push({ source, text: `${e.note || describe(e)} (${cond === 'sparking' ? 'while Sparking' : cond}; not applied)` });
     }
@@ -99,7 +116,8 @@ export function collectEffects({ character, capsules = [], skills = [], sparking
     if (s.armor) applied.push({ key: 'armorLevel', value: 1, source: s.name });
   }
   if (sparking && character?.sparking) {
-    for (const e of character.sparking.effects || []) take(e, 'Sparking');
+    // passive: its ultimate damage is already in the published ultimates (sparkingUltimateBonus)
+    for (const e of character.sparking.effects || []) take(e, 'Sparking', { passive: true });
     if (character.sparking.armor) applied.push({ key: 'sparkingArmor', value: 1, source: 'Sparking' });
   }
   for (const e of incoming) take(e, `${e.source} (opponent)`);
@@ -132,14 +150,16 @@ export function computeStats(c, effects, ctx = {}) {
   for (const e of effects.applied) {
     const v = typeof e.value === 'number' ? e.value : 0;
     if (e.op === 'set') { if (e.key === 'startingKi' && e.value === 'max') setMaxKi = true; continue; }
-    if (CHANNEL_OF[e.key]) plus(`dmg.${CHANNEL_OF[e.key]}`, v);
-    else if (e.key === 'allDamage') for (const ch of ALL_DAMAGE) plus(`dmg.${ch}`, v);
+    if (e.ultimateOnly) { plus('dmg.ultimate', v); continue; }
+    if (CHANNEL_OF[e.key]) { if (!(e.passive && e.key === 'ultimateDamage')) plus(`dmg.${CHANNEL_OF[e.key]}`, v); }
+    else if (e.key === 'allDamage') for (const ch of ALL_DAMAGE) { if (!(e.passive && ch === 'ultimate')) plus(`dmg.${ch}`, v); }
     else if (RESIST_OF[e.key]) for (const r of RESIST_OF[e.key]) plus(`res.${r}`, v);
     else if (e.key === 'armorLevel') armorLevel = armorLevel || v > 0;
     else if (e.key === 'sparkingArmor') sparkingArmor = true;
     else plus(e.key, v);
   }
-  const k0 = c.coef;
+  // The ultimate coefficient always includes the Sparking passive (ultimates need Sparking Mode)
+  const k0 = { ...c.coef, ultimate: c.coef.ultimate + sparkingUltimateBonus(c) };
   const k1 = Object.fromEntries(Object.entries(k0).map(([ch, k]) => [ch, k + (add[`dmg.${ch}`] || 0)]));
   const P = c.power || {};
 

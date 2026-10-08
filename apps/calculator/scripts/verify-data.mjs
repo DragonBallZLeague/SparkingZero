@@ -144,7 +144,7 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   const problems = [];
   for (const r of cur('aliases.csv')) if (!ids.has(r.id)) problems.push(`aliases.csv: unknown id ${r.id}`);
   for (const r of cur('overrides.csv')) {
-    if (!ids.has(r.id)) problems.push(`overrides.csv: unknown id ${r.id}`);
+    if (!ids.has(r.id.split(':')[0])) problems.push(`overrides.csv: unknown id ${r.id}`);
     if (!r.reason?.trim()) problems.push(`overrides.csv: ${r.id} ${r.field} has no reason`);
   }
   for (const r of cur('sparking.csv')) if (!ids.has(r.id)) problems.push(`sparking.csv: unknown id ${r.id}`);
@@ -244,7 +244,27 @@ if (v2) {
   ig('Kid Buu first rush hit', named('Kid Buu')?.stats.hits[0], 564);
   const bv = named('Baby Vegeta (GT)');
   ig('Goku (Z - Early) first rush hit into Baby Vegeta (GT)', Math.round(390 * (bv?.stats.meleeDefense ?? 0)), 410);
-  check(!game.length, 'published values equal the in-game measurements of 2026-10-07 (Mr. Satan, Baby Vegeta, Vegeta, Android 16, Kid Buu, defense)', game);
+  // Second round, same day: blasts and skills
+  const blastOf = (n, move) => (data.blasts[named(n)?.id] || []).find(b => b.name === move)?.damage;
+  for (const [n, move, want] of [
+    ['Chiaotzu', 'Farewell, Mr. Tien', 16250], ['Super Vegeta', 'Spirit Breaking Cannon', 10051],
+    ['Janemba', 'Illusion Smash', 18750], ['Gohan (Kid)', 'Wild Rush Blaster', 17250],
+    ['Gohan (Teen) Super Saiyan 2', 'Father-Son Kamehameha', 19250], ['Metal Cooler', 'Finger Blitz Barrage', 8300],
+    ['Goku (Super) Ultra Instinct -Sign-', 'Flash -Sign-', 11307], ['Gamma 1', 'Gamma Impact', 9632],
+  ]) ig(`${n} ${move}`, blastOf(n, move), want);
+  const skillOf = (n, skill) => Object.values(data.skills).find(s => s.character === named(n)?.id && s.name === skill)?.damage;
+  ig('Goku (Daima) Super Saiyan 4 Saiyan Burst', skillOf('Goku (Daima) Super Saiyan 4', 'Saiyan Burst'), 1313);
+  ig('Vegeta (Daima) Super Saiyan 3 Saiyan Burst', skillOf('Vegeta (Daima) Super Saiyan 3', 'Saiyan Burst'), 1266);
+  ig('Super Garlic Jr. Sealing Paralyze Beam', skillOf('Super Garlic Jr.', 'Sealing Paralyze Beam'), 594);
+  check(!game.length, 'published values equal the in-game measurements of 2026-10-07 (Mr. Satan, Baby Vegeta, Vegeta, Android 16, Kid Buu, defense, 8 blasts, 3 skills)', game);
+
+  // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
+  const ult = [];
+  const kidOff = run('0030_00'), kidOn = run('0030_00', { sparking: true });
+  if (kidOn.blastFactor.ultimate !== 1) ult.push(`Gohan (Kid) Sparking toggle changes ultimate damage (factor ${kidOn.blastFactor.ultimate})`);
+  if (kidOn.rush <= kidOff.rush) ult.push('Gohan (Kid) Sparking toggle no longer raises rush damage');
+  if (kidOff.ultimate !== 0.15) ult.push(`Gohan (Kid) ultimate modifier ${kidOff.ultimate}, want 0.15 (0.95 + 0.20 Sparking passive - 1)`);
+  check(!ult.length, 'ultimate damage always includes the Sparking passive; the Sparking toggle changes the other channels only', ult);
 
   // With no effects the engine must leave every published number alone.
   const drift = [];

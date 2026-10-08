@@ -430,11 +430,17 @@ export default function SkillsPanel({ character, blasts, skills = [], activeSkil
                         onClick={sparkBuffable ? () => onToggleSkill(sparkSkill) : undefined}
                         title={sparkActive ? 'Sparking Mode on: click to turn it off' : 'Click to turn Sparking Mode on'}
                       >
-                        {BUFF_COLS.map(col => (
-                          <td key={col.key} className="py-2 px-3 text-center font-mono">
-                            <BuffCell value={sb[col.key] ?? 0} />
-                          </td>
-                        ))}
+                        {BUFF_COLS.map(col => {
+                          // Ultimates need Sparking Mode, so this is already in every ultimate's damage
+                          const builtIn = col.key === 'ultimate' && !!sb[col.key];
+                          return (
+                            <td key={col.key} className="py-2 px-3 text-center font-mono"
+                              title={builtIn ? 'Always included in ultimate damage: ultimates can only be used in Sparking Mode' : undefined}>
+                              <BuffCell value={sb[col.key] ?? 0} />
+                              {builtIn && <div className="text-[9px] text-gray-500 font-sans">in ultimates</div>}
+                            </td>
+                          );
+                        })}
                         <td className="py-2 px-3 text-center font-mono">
                           <BuffCell value={sb.armor ?? false} />
                         </td>

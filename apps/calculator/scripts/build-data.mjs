@@ -24,7 +24,7 @@ import { loadRefdata, normName, repoRoot } from './lib/refdata.mjs';
 import { CHANNELS, CLASS_COEFS, CC_CHANNEL_FIELDS, CC_COLUMNS, splitTraits, num, round, finalDamage } from './lib/fields.mjs';
 import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate } from './lib/blastRecipes.mjs';
 import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
-import { APPLIED_KEYS } from '../src/utils/engine.js';
+import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -200,7 +200,7 @@ function inferDisplay(phases, damage) {
 
 // Skill types (curated/skill-display.csv) that act on the opponent: the league's list, 2026-10-07.
 // Their effect is damage plus a push, bind, barrier or counter; none of them carries a stat effect.
-const OPPONENT_SKILL_TYPES = new Set(['Explosion', 'Barrier', 'Push', 'Bind', 'Counter']);
+const OPPONENT_SKILL_TYPES = new Set(['Explosion', 'Barrier', 'Push', 'Bind', 'Counter', 'Blind']);
 
 // Which skill effects act on the opponent (default: the user). id = <characterId>:<slot>;
 // phase (1-based) and key narrow a row; blank means every phase / every effect.
@@ -440,21 +440,23 @@ for (const rc of ref.characters) {
   characters.push(c);
 }
 
-// Overrides (id, dotted field path, value, reason) win over everything.
+// Overrides (id, dotted field path, value, reason) win over everything. The id is a character
+// id, or a skill id <characterId>:<slot> (e.g. a skill's damage that Capsule Corp leaves blank).
 for (const o of overrides) {
-  const c = characters.find(x => x.id === o.id);
-  if (!c) throw new Error(`overrides.csv: unknown id ${o.id}`);
+  const skill = o.id.includes(':') ? skills[o.id] : null;
+  const c = characters.find(x => x.id === (skill ? skill.character : o.id));
+  if (!c || (o.id.includes(':') && !skill)) throw new Error(`overrides.csv: unknown id ${o.id}`);
   if (!o.reason) throw new Error(`overrides.csv: ${o.id} ${o.field} has no reason`);
   const pathParts = o.field.split('.');
-  let obj = c;
+  let obj = skill || c;
   for (const p of pathParts.slice(0, -1)) { if (obj[p] === undefined) throw new Error(`overrides.csv: ${o.id} has no field ${o.field}`); obj = obj[p]; }
   const last = pathParts[pathParts.length - 1];
   if (!(last in obj)) throw new Error(`overrides.csv: ${o.id} has no field ${o.field}`);
   const before = obj[last];
   const v = o.value === '' ? null : (num(o.value) ?? o.value);
   obj[last] = v;
-  c.provenance[o.field] = `override: ${o.reason}`;
-  report.overrides.push([c.name, o.field, fmt(before), fmt(v), o.reason]);
+  if (!skill) c.provenance[o.field] = `override: ${o.reason}`;
+  report.overrides.push([skill ? `${c.name} — ${skill.name}` : c.name, o.field, fmt(before), fmt(v), o.reason]);
 }
 
 // ------------------------------------------------------------------ blasts
@@ -474,7 +476,11 @@ for (const c of characters) {
     if (!['Super 1', 'Super 2', 'Ultimate'].includes(m.Slot)) continue;
     const k = `${c.id}|${m.Slot}|${m.Variant}|${normName(m.Move)}`;
     const parts = moveParts(partsByMove.get(k) || []);
-    const add = num(r[m.Slot === 'Ultimate' ? 'Ultimate damage: class add' : 'Super damage: class add']) || 0;
+    // An ultimate is only usable in Sparking Mode, so its damage always includes the character's
+    // While Sparking passive (Gohan (Kid): 12000 x 1.25 x (0.95 + 0.20) = 17250, measured in game).
+    const add = m.Slot === 'Ultimate'
+      ? (num(r['Ultimate damage: class add']) || 0) + sparkingUltimateBonus(c)
+      : num(r['Super damage: class add']) || 0;
     const cur = measuredBlasts.get(k);
     measuredBlasts.delete(k);
     blastMoves.push({
@@ -798,7 +804,7 @@ function reportMd() {
     'Turning a skill on applies every one of its effects (all phases at once; the strongest stage of a charge-stage skill) through src/utils/engine.js. The skill tables show six headline channels in percent. Effect keys the shown stats do not depend on (they appear on the skill, not in the numbers):',
     '',
     table(['Effect key', 'Skills'], unshownSkillKeys()),
-    `Skill effects that target the opponent (curated/skill-targets.csv): ${skillTargets.length ? skillTargets.length + ' rows' : 'none; every skill stat effect applies to its user (confirmed by the league 2026-10-07: skills that act on the opponent are the Explosion, Barrier, Push, Bind and Counter types, which work through damage and behaviour, not stat effects). Add rows only if a patch adds a stat debuff aimed at the opponent'}. Skills marked "Affects opponent" by type: ${Object.values(skills).filter(s => s.display.affectsOpponent).length}.`,
+    `Skill effects that target the opponent (curated/skill-targets.csv): ${skillTargets.length ? skillTargets.length + ' rows' : 'none; every skill stat effect applies to its user (confirmed by the league 2026-10-07: skills that act on the opponent are the Explosion, Barrier, Push, Bind and Counter types, plus Blind, which work through damage and behaviour, not stat effects). Add rows only if a patch adds a stat debuff aimed at the opponent'}. Skills marked "Affects opponent" by type: ${Object.values(skills).filter(s => s.display.affectsOpponent).length}.`,
     '',
     `Skill effect fields not in curated/effects.csv: ${unknownSkillFields.size ? [...unknownSkillFields].map(([f, n]) => `${f} (${n})`).join(', ') : 'none'}.`,
     '',

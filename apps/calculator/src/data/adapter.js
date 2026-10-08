@@ -156,7 +156,8 @@ export function toLegacy(data, opts = {}) {
       perception: round(coef.counter - 1),
       sCounter: round(coef.counter - 1),
       super: round(coef.super - 1),
-      ultimate: round(coef.ultimate - 1),
+      // ultimates need Sparking Mode, so their modifier includes the While Sparking passive
+      ultimate: round(coef.ultimate + (c.sparking?.effects || []).reduce((t, e) => t + (e.key === 'ultimateDamage' || e.key === 'allDamage' ? e.value || 0 : 0), 0) - 1),
       shortDashCost: s.shortDashCost,
       kiBlastDmg: s.kiBlastDamage,
       kiBlast: round(coef.kiBlast - 1),

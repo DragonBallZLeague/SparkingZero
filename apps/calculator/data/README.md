@@ -51,11 +51,17 @@ data/
 | capsules | `referencedata/capsules.csv` (Type = Capsule), bans and group caps from `capsule-rules.yaml`. A capsule the league never allows (e.g. Victory Power) is left out on purpose | |
 | capsule effects | `curated/capsule-effects.csv` | REPORT.md lists what each capsule does in the engine |
 | which skill effects hit the opponent | `curated/skill-targets.csv` (default: the user). Empty on purpose: the league confirmed (2026-10-07) that every skill stat effect applies to its user | |
-| "Affects opponent" tag on a skill | its `skill-display.csv` type contains Explosion, Barrier, Push, Bind or Counter (the league's list; Wild Sense is `Evade/Counter`). Those skills act through damage and behaviour, not stat effects | |
+| "Affects opponent" tag on a skill | its `skill-display.csv` type contains Explosion, Barrier, Push, Bind or Counter (the league's list) or Blind (Solar Flare-type skills; Wild Sense is `Evade/Counter`). Those skills act through damage and behaviour, not stat effects | |
 | teams | the website's `content/teams/<season>.yaml` master lists, expanded to every form | |
 
 Damage: `final = ceil(raw Power x 1.25 x (DP damage scale + class add))`, in float32 like
 the game. Coefficients from DP, class, capsules and skills add up; they do not multiply.
+
+**Ultimates and Sparking.** An ultimate can only be used in Sparking Mode, so every ultimate's
+damage includes the character's While Sparking passive (Gohan (Kid): 12000 x 1.25 x (0.95 + 0.20)
+= 17,250, measured in game), as do computed ultimates and the "Ultimate" modifier. The Sparking
+Mode toggle changes every other channel but leaves ultimate damage alone, and Sparking-only
+ultimate effects apply to ultimates even with the toggle off.
 
 **Confirmed in game (2026-10-07).** The league measured seven values in training against a
 Goku (Z - Early) dummy (defense 1.0), and all seven matched the published data exactly:
@@ -65,6 +71,16 @@ Goku (Z - Early) dummy (defense 1.0), and all seven matched the published data e
 - **Kid Buu:** first rush hit 564. Capsule Corp is right on multi-hit first strikes.
 - **Chilled:** Death Sphere 18,375. A computed ultimate.
 - **Goku (Z - Early) first rush hit into Baby Vegeta (GT):** 410. This confirms the game's defense formula (incoming damage factor − class resistance) over Capsule Corp's defense values.
+
+A second round the same day confirmed or corrected eight blasts and three skills:
+- **Blasts confirmed:** Chiaotzu's Farewell, Mr. Tien (16,250), Gohan (Kid)'s Wild Rush Blaster (17,250) and Gohan (Teen) SSJ2's Father-Son Kamehameha (19,250). Both Gohan values include their Sparking passive.
+- **Blasts corrected:**
+  - Super Vegeta's Spirit Breaking Cannon: 10,051. The old 10,551 included a 500 ground-bounce hit that not every use lands; measured values leave such extra hits out.
+  - Janemba's Illusion Smash: 18,750.
+  - Metal Cooler's Finger Blitz Barrage: 8,300, over 20 hits.
+  - UI -Sign-'s Flash -Sign-: 11,307.
+  - Gamma 1's Gamma Impact: 9,632. Gamma 2 has the same move and was changed to match.
+- **Skills:** Saiyan Burst does 1,313 for Goku (Daima) SSJ4 and 1,266 for Vegeta (Daima) SSJ3, and Super Garlic Jr.'s Sealing Paralyze Beam does 594. Capsule Corp leaves all three blank, so they are set in `overrides.csv`.
 
 `verify-data` checks these numbers on every build.
 
@@ -98,7 +114,8 @@ class key or effect.
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |
 
-`overrides.csv` fields are dotted paths into a character (e.g. `stats.kiBlastDamage`).
+`overrides.csv` fields are dotted paths into a character (e.g. `stats.kiBlastDamage`), or, with a
+skill id `<characterId>:<slot>` as the id, into that skill (e.g. `damage`).
 
 ## Published files (`public/data/`, schema 2)
 

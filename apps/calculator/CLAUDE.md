@@ -21,6 +21,7 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 Gotchas:
 - **Damage coefficients add** (DP scale + class + capsules + skills), they do not multiply. `final = ceil(Power x 1.25 x coefficient)`.
+- **Ultimates are always in Sparking Mode** (they cannot be used outside it): published ultimate damage includes the character's While Sparking passive (`sparkingUltimateBonus` in `engine.js`, also used by the build's blast recipes), and the Sparking toggle leaves ultimate damage alone.
 - **Capsule Corp's own formula goes negative for very low coefficients** (Mr. Satan's smash/throw/pursuit/ki blast were negative). The build replaces any zero or negative damage value with the game formula, and `verify-data` fails on one.
 - **Capsule Corp's class labels are not always the game's class** (Vegeta forms, Baby Vegeta, Fused Zamasu Half-Corrupted); the build rescales those channels from evidence and lists them in REPORT.md. Game class keys map to labels in `data/curated/classes.csv`.
 - **Old share links carry display names.** `src/utils/shareLink.js` resolves names exact → `aliases` → normalised; renamed characters need a row in `data/curated/aliases.csv`. The website's Teams page builds name-based links too (see below).

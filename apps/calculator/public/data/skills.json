@@ -18,7 +18,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -939,7 +939,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -1743,8 +1743,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -1752,7 +1752,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -2868,7 +2867,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -2987,7 +2986,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -3274,7 +3273,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -5166,7 +5165,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -5213,7 +5212,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -5369,7 +5368,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -6209,8 +6208,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -6218,7 +6217,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -6315,8 +6313,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -6324,7 +6322,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -6339,7 +6336,7 @@
     "duration": 15,
     "phases": [{"duration":15,"effects":[{"key":"kiRecovery","value":0.15}]}],
     "display": {
-      "type": null,
+      "type": "Buff",
       "instantSparking": false,
       "instantKi": false,
       "unblockable": false,
@@ -6348,7 +6345,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -6493,7 +6489,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -7491,8 +7486,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -7500,7 +7495,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -7934,7 +7928,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -8423,7 +8416,7 @@
     "slot": 1,
     "name": "Sealing Paralyze Beam",
     "stockCost": 2,
-    "damage": 0,
+    "damage": 594,
     "duration": 3,
     "phases": [{"duration":3,"effects":[]}],
     "expiryRule": 34,
@@ -9172,7 +9165,7 @@
     "phases": [{"duration":3,"effects":[]}],
     "expiryRule": 34,
     "display": {
-      "type": null,
+      "type": "Bind",
       "instantSparking": false,
       "instantKi": false,
       "unblockable": false,
@@ -9181,8 +9174,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -9948,7 +9940,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -10523,7 +10514,7 @@
     "duration": 5,
     "phases": [{"duration":5,"effects":[]}],
     "display": {
-      "type": null,
+      "type": "Blind",
       "instantSparking": false,
       "instantKi": false,
       "unblockable": false,
@@ -10532,8 +10523,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -10557,8 +10547,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -10566,7 +10556,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -11720,8 +11709,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -11729,7 +11718,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -12083,7 +12071,7 @@
     "duration": 5,
     "phases": [{"duration":5,"effects":[]}],
     "display": {
-      "type": null,
+      "type": "Blind",
       "instantSparking": false,
       "instantKi": false,
       "unblockable": false,
@@ -12092,8 +12080,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -13361,7 +13348,7 @@
     "slot": 1,
     "name": "Saiyan Burst",
     "stockCost": 3,
-    "damage": 0,
+    "damage": 1266,
     "duration": 15,
     "phases": [
       {
@@ -13561,7 +13548,7 @@
     "slot": 1,
     "name": "Saiyan Burst",
     "stockCost": 3,
-    "damage": 0,
+    "damage": 1313,
     "duration": 15,
     "phases": [
       {
@@ -13830,7 +13817,7 @@
     "phases": [{"duration":3,"effects":[]}],
     "expiryRule": 34,
     "display": {
-      "type": null,
+      "type": "Bind",
       "instantSparking": false,
       "instantKi": false,
       "unblockable": false,
@@ -13839,8 +13826,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -14003,8 +13989,8 @@
       }
     ],
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -14012,7 +13998,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -14232,7 +14217,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -14400,7 +14385,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "affectsOpponent": false
+      "affectsOpponent": true
     },
     "armor": false
   },
@@ -14493,8 +14478,8 @@
     ],
     "expiryRule": 16,
     "display": {
-      "type": "Buff",
-      "instantSparking": false,
+      "type": "Sparking",
+      "instantSparking": true,
       "instantKi": false,
       "unblockable": false,
       "cutscene": false,
@@ -14502,7 +14487,6 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
-      "inferred": true,
       "affectsOpponent": false
     },
     "armor": false
