@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { classBadge, classGradient } from '../utils/classStyles.js';
 import { DRACONIC_AURA, DRAGON_RUSH, hasCapsule } from '../utils/specialCapsules.js';
-import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense, damageTaken } from '../utils/calculator.js';
+import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense, damageTaken, kiBlastVolley } from '../utils/calculator.js';
 
 // fmt types:
 //   'raw'          — toLocaleString (default)
@@ -164,18 +164,10 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
     // Check if Draconic Aura or Dragon Rush is equipped
     const hasArmorBreakCapsule = hasCapsule(equippedCapsules, DRACONIC_AURA) || hasCapsule(equippedCapsules, DRAGON_RUSH);
     const hasDraconicAura = hasCapsule(equippedCapsules, DRACONIC_AURA);
-  if (!baseStats) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-700 p-6">
-        <div className="text-5xl mb-3">?</div>
-        <p className="text-sm text-center">Select a character to view stats</p>
-      </div>
-    );
-  }
-
-  const imgFilename = characterImages?.[baseStats.name];
   const [imgCentered, setImgCentered] = useState(false);
   const imgContainerRef = useRef(null);
+  const [armorBreakHit, setArmorBreakHit] = useState(5);
+  const hasStats = !!baseStats;
 
   // Observe the portrait container: when it is wider than it is tall (landscape)
   // center the image; otherwise anchor to the top so the face stays visible.
@@ -188,42 +180,23 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
-  const [armorBreakHit, setArmorBreakHit] = useState(5);
+  }, [hasStats]);
 
+  if (!baseStats) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-gray-700 p-6">
+        <div className="text-5xl mb-3">?</div>
+        <p className="text-sm text-center">Select a character to view stats</p>
+      </div>
+    );
+  }
+
+  const imgFilename = characterImages?.[baseStats.name];
   const mod = modifiedStats ?? baseStats;
 
-  function kiVolley(stats, opponentStats, equippedCapsules, opponentHasLightBody) {
-    const oppArmor = opponentStats?.armor ?? 0;
-    const oppisArmored = oppArmor > 0;
-    const defense = opponentStats?.energy ?? 1;
-    const basedmg = stats?.kiBlastDmg ?? 0;
-    const dmg = basedmg * defense;
-    let count = stats?.kiBlastLimit ?? 0;
-    if (count >= 999) count = 20;
-    const hasDraconicAura = hasCapsule(equippedCapsules, DRACONIC_AURA);
-
-    // If opponent has Light Body or is armored (and attacker does NOT have Draconic Aura), apply defense and armor per hit
-    if ((opponentHasLightBody && !hasDraconicAura) || (oppisArmored && !hasDraconicAura)) {
-      let total = 0;
-      const armorMult = oppisArmored ? (1 - oppArmor) : 1;
-      for (let i = 0; i < count; i++) {
-        // Apply both ki blast defense and armor reduction
-        total += damageTaken(basedmg, defense, armorMult);
-      }
-      return total;
-    }
-
-    // Otherwise, just sum the volley (no armor)
-    let total = 0;
-    for (let i = 0; i < count; i++) {
-      // For hit i (0-based): dmg - i * (dmg * 0.05)
-      total += dmg - i * (dmg * 0.05);
-    }
-    return Math.round(total);
-  }
-  const baseAug = { ...baseStats, kiBlastVolley: kiVolley(baseStats, opponentStats, equippedCapsules, opponentHasLightBody) };
-  const modAug  = { ...mod,       kiBlastVolley: kiVolley(mod, opponentStats, equippedCapsules, opponentHasLightBody) };
+  const volleyOpts = { opponentStats, opponentHasLightBody, attackerHasDraconicAura: hasDraconicAura };
+  const baseAug = { ...baseStats, kiBlastVolley: kiBlastVolley(baseStats, volleyOpts) };
+  const modAug  = { ...mod,       kiBlastVolley: kiBlastVolley(mod, volleyOpts) };
 
   // If armor break capsule is equipped, ignore opponent armor for combo damage
   const outgoingCombo = opponentStats

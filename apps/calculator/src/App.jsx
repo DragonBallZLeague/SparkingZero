@@ -39,6 +39,7 @@ function sideStats(engineData, char, side, ownCapsules, otherCapsules) {
 const NUM_CAPSULE_SLOTS = 7;
 // Mobile sections: 0=Characters, 1=Stats/Skills, 2=Opponent, 3=Capsules
 const MOBILE_SECTIONS = ['Characters', 'Stats', 'Opponent', 'Capsules'];
+const TABLET_SECTIONS = ['Characters', 'Stats', 'Skills', 'Capsules'];
 const COMPARE_MOBILE_SECTIONS = ['Char A', 'Char B', 'Compare', 'Capsules'];
 
 // ---------------------------------------------------------------------------
@@ -1069,7 +1070,7 @@ function App() {
                     : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
-                {MOBILE_SECTIONS[i]}
+                {TABLET_SECTIONS[i]}
               </button>
             ))}
           </div>

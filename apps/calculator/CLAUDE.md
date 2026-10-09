@@ -45,7 +45,7 @@ Gotchas:
 - `blastDamage(blast, stats)` — a blast row's damage under those effects (the panels no longer do their own blast math).
 - App computes each side with `sideEffects`/`sideStats`; the main character and the opponent exchange their skills' opponent-targeted effects (`curated/skill-targets.csv`).
 
-`src/utils/calculator.js` — combat helpers the panels share (damage taken against the reference attacker's hits, outgoing combos, defense, formatting) and Light Body's ki-blast-defense special case.
+`src/utils/calculator.js` — combat helpers the panels share (damage taken against the reference attacker's hits, outgoing combos, defense, the ki-blast volley, formatting) and Light Body's ki-blast-defense special case. Single and compare mode must use these helpers, never their own copies: they once had two volley formulas. Game rules: damage taken rounds up per hit (`adapter.js` `hitsTaken` is the import-free copy the engine uses for "5-Hit Damage Taken"); in a ki-blast volley each shot deals 5% of the first shot less, except against armor (hits on armor are not a combo).
 
 `src/utils/specialCapsules.js` — the capsules with behaviour beyond their effect rows (Light Body, Draconic Aura, Dragon Rush), by id.
 

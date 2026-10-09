@@ -24,6 +24,8 @@
  * meleeDefenseStat, energy, kiBlastDmg, ...) so components only render.
  */
 
+import { hitsTaken } from '../data/adapter.js';
+
 const F = Math.fround;
 
 export const CHANNEL_OF = {
@@ -204,7 +206,6 @@ export function computeStats(c, effects, ctx = {}) {
   else if (armorLevel) armor = Math.max(armor, SKILL_ARMOR);
 
   const refHits = ctx.referenceHits || null;
-  const refTotal = refHits ? refHits.reduce((a, b) => a + b, 0) : null;
   const skillDamage = (d) => (typeof d === 'number' && d ? round(scale(d, k0.skill, k1.skill, K), 2) : d ?? 0);
 
   return {
@@ -220,7 +221,7 @@ export function computeStats(c, effects, ctx = {}) {
     blastDefense,
     energy: kiBlastDefense,
     energyDecimal: round(1 - kiBlastDefense),
-    melee: refTotal != null ? Math.round(refTotal * meleeDefense) : null,
+    melee: hitsTaken(refHits, meleeDefense),
     rush: hits[0], hit2: hits[1], hit3: hits[2], hit4: hits[3], hit5: hits[4],
     rush5Hit, fiveHitAfterArmor,
     smash: scale(s.smash, k0.smash, k1.smash, K),

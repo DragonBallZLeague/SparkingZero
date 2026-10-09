@@ -16,6 +16,7 @@ import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
 import { APPLIED_KEYS, collectEffects, computeStats } from '../src/utils/engine.js';
+import { kiBlastVolley } from '../src/utils/calculator.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -300,7 +301,12 @@ if (v2) {
     if (cine !== null) ig(`${n} ${move} cinematic`, !!b?.traits.includes('Cinematic'), cine);
     if (clash) ig(`${n} ${move} clash`, clashOf(b), clash);
   }
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes)', game);
+  // 2026-10-09: each ki blast in a combo deals 5% of the first shot less; hits on armor are not a combo
+  ig('Ki blast volley, 5 x 250 with falloff', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 5 }), 1125);
+  ig('Ki blast volley, 5 x 250 into 25% armor (no falloff)', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 5 }, { opponentStats: { energy: 1, armor: 0.25 } }), 940);
+  const a16 = run('0440_00');
+  ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

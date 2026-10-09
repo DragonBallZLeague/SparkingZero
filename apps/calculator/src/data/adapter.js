@@ -21,6 +21,15 @@ const round = (v, d = 4) => {
   return Object.is(r, -0) ? 0 : r;
 };
 
+/**
+ * Damage taken from a list of hits: the game rounds each hit up after defense (the same rule as
+ * calculator.js damageTaken; this file has no imports).
+ */
+export function hitsTaken(hits, defense) {
+  if (!Array.isArray(hits) || typeof defense !== 'number') return null;
+  return hits.reduce((t, h) => t + (typeof h === 'number' ? Math.ceil(h * defense - 1e-9) : 0), 0);
+}
+
 /** Sum a list of [{key, value}] effects into {key: total} (self-targeted effects only). */
 function sumEffects(phases) {
   const t = {};
@@ -89,7 +98,7 @@ export function toLegacy(data, opts = {}) {
   const applies = (e) => !opts.appliedKeys || opts.appliedKeys.has(e.key) || e.op === 'set';
   const chars = data.characters.filter(c => !roster || roster.has(c.id));
   const refAttacker = data.characters.find(c => c.id === data.meta?.referenceAttacker);
-  const ref5 = refAttacker?.stats?.rush5Hit ?? null;
+  const refHits = refAttacker?.stats?.hits ?? null;
 
   // Skills: one entry per character skill, keyed by its schema-2 id.
   const skillList = [];
@@ -145,7 +154,7 @@ export function toLegacy(data, opts = {}) {
       kiBlastDefenseArmor: s.kiBlastDefenseArmor,
       blastDefense: s.blastDefense,
       health: s.health,
-      melee: ref5 != null && s.meleeDefense != null ? Math.round(ref5 * s.meleeDefense) : null,
+      melee: hitsTaken(refHits, s.meleeDefense),
       energy: s.kiBlastDefense,
       energyDecimal: s.kiBlastDefense != null ? round(1 - s.kiBlastDefense) : null,
       armor: s.armor ?? 0,

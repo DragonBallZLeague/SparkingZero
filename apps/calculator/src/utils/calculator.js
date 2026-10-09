@@ -25,6 +25,28 @@ export function applyLightBodyKiBlastArmor(stats, hasLightBody, hasDraconicAura 
   return stats;
 }
 
+/**
+ * Total damage of a full ki-blast volley (an unlimited count is shown as 20 shots).
+ * In a combo each shot deals 5% of the first shot's damage less than the one before. Hits on
+ * armor are not a combo in the game, so against armor (or Light Body) every shot deals full
+ * damage after defense and armor, unless the attacker has Draconic Aura.
+ */
+export function kiBlastVolley(stats, { opponentStats = null, opponentHasLightBody = false, attackerHasDraconicAura = false } = {}) {
+  const base = stats?.kiBlastDmg ?? 0;
+  let count = stats?.kiBlastLimit ?? 0;
+  if (count >= 999) count = 20;
+  const defense = opponentStats?.energy ?? 1;
+  const oppArmor = opponentStats?.armor ?? 0;
+  if (!attackerHasDraconicAura && (opponentHasLightBody || oppArmor > 0)) {
+    const per = damageTaken(base, defense, oppArmor > 0 ? 1 - oppArmor : 1);
+    return per * count;
+  }
+  const dmg = base * defense;
+  let total = 0;
+  for (let i = 0; i < count; i++) total += dmg - i * dmg * 0.05;
+  return Math.round(total);
+}
+
 // With no opponent, damage taken is measured against the reference attacker's 5-hit rush
 // (meta.referenceAttacker, Goku (Z - Mid)); the engine puts its hits on every computed side.
 const FALLBACK_HITS = [410, 410, 410, 567, 788];

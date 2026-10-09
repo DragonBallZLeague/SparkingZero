@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { getImageUrl, calcFiveHitArmorDamage } from '../utils/calculator.js';
+import { getImageUrl, calcFiveHitArmorDamage, kiBlastVolley } from '../utils/calculator.js';
 import { blastDamage } from '../utils/engine.js';
 import { classBadge } from '../utils/classStyles.js';
 import { ComputedMark, NotMeasured, SpreadNote } from './BlastStatus.jsx';
@@ -655,13 +655,6 @@ function BlastSide({ blast, modDmg, changed, side, hasReplacement, replActive, o
   );
 }
 
-function kiVolley(stats) {
-  if (!stats) return 0;
-  const dmg = stats.kiBlastDmg ?? 0;
-  const count = stats.kiBlastLimit ?? 0;
-  return Math.round(dmg * (count >= 999 ? 20 : count));
-}
-
 export default function CompareStatsPanel({
   charA, charB, modStatsA, modStatsB, characterImages,
   onSelectA, onSelectB,
@@ -675,10 +668,10 @@ export default function CompareStatsPanel({
   const [replActiveB, setReplActiveB] = useState(false);
   const [armorBreakHit, setArmorBreakHit] = useState(5);
 
-  const augA = charA ? { ...charA, kiBlastVolley: kiVolley(charA) } : null;
-  const augB = charB ? { ...charB, kiBlastVolley: kiVolley(charB) } : null;
-  const modAugA = modStatsA ? { ...modStatsA, kiBlastVolley: kiVolley(modStatsA) } : augA;
-  const modAugB = modStatsB ? { ...modStatsB, kiBlastVolley: kiVolley(modStatsB) } : augB;
+  const augA = charA ? { ...charA, kiBlastVolley: kiBlastVolley(charA) } : null;
+  const augB = charB ? { ...charB, kiBlastVolley: kiBlastVolley(charB) } : null;
+  const modAugA = modStatsA ? { ...modStatsA, kiBlastVolley: kiBlastVolley(modStatsA) } : augA;
+  const modAugB = modStatsB ? { ...modStatsB, kiBlastVolley: kiBlastVolley(modStatsB) } : augB;
 
   const neitherSelected = !charA && !charB;
 
