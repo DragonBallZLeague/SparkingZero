@@ -23,7 +23,7 @@ function Stars({ cost }) {
   return <span className={`font-bold text-sm ${COST_COLORS[cost] ?? 'text-gray-400'}`}>{cost}★</span>;
 }
 
-// A skill is toggleable when it has any game effect (skills[].effectCount), not only the headline columns.
+// A skill is toggleable when it has an effect the engine applies (skills[].effectCount), not only the headline columns.
 function hasBuff(detail) {
   if (!detail) return false;
   return (detail.effectCount ?? 0) > 0 || Object.values(detail.buffPct || {}).some(Boolean) || !!detail.armor;

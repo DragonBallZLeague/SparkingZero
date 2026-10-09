@@ -36,7 +36,7 @@ Gotchas:
 - `CharacterSelector.jsx` — character picker (team, class, search filters).
 - `StatsPanel.jsx` / `CompareStatsPanel.jsx` — stat display for a single build vs. side-by-side comparison mode.
 - `CapsuleBuilder.jsx` / `CompareCapsuleBuilder.jsx` — capsule loadout builder, single vs. comparison mode (with the ruleset picker).
-- `SkillsPanel.jsx` — skills, blasts and ultimates; skill rows toggle the skill, the Sparking Mode row toggles Sparking.
+- `SkillsPanel.jsx` — skills, blasts and ultimates; skill rows toggle the skill (only when it has an effect the engine applies: `toLegacy`'s `effectCount`, given `APPLIED_KEYS`; evasions and one-off heals are not toggleable), the Sparking Mode row toggles Sparking.
 - `OpponentPanel.jsx` — lets a build be evaluated against an opponent's build/stats.
 
 `src/utils/engine.js` is the stat engine — one data-driven path, no per-capsule code:

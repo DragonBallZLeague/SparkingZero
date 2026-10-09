@@ -81,9 +81,12 @@ function legacyBlast(b) {
  * @param {object} [opts]
  * @param {string[]} [opts.roster]  character ids to include (default: all)
  * @param {boolean} [opts.ultimateVariants]  include alternative ultimates (ULT2/ULT3) as extra rows
+ * @param {Set<string>} [opts.appliedKeys]  effect keys the stat engine applies (engine.js APPLIED_KEYS); a skill
+ *   whose effects are all outside it (e.g. Wild Sense's use count) is not toggleable. Default: every key counts.
  */
 export function toLegacy(data, opts = {}) {
   const roster = opts.roster ? new Set(opts.roster) : null;
+  const applies = (e) => !opts.appliedKeys || opts.appliedKeys.has(e.key) || e.op === 'set';
   const chars = data.characters.filter(c => !roster || roster.has(c.id));
   const refAttacker = data.characters.find(c => c.id === data.meta?.referenceAttacker);
   const ref5 = refAttacker?.stats?.rush5Hit ?? null;
@@ -115,7 +118,8 @@ export function toLegacy(data, opts = {}) {
       cutscene: !!d.cutscene,
       inferred: !!d.inferred,
       phases: (sk.phases || []).length,
-      effectCount: (sk.phases || []).reduce((n, p) => n + (p.effects || []).length, 0),
+      // Effects that change a shown stat; the panels make a skill row toggleable only when this is > 0.
+      effectCount: (sk.phases || []).reduce((n, p) => n + (p.effects || []).filter(applies).length, 0),
       stages: !!sk.stages,
       opponentEffects,
       affectsOpponent: !!d.affectsOpponent || opponentEffects,

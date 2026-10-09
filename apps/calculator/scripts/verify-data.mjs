@@ -15,7 +15,7 @@ import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
-import { collectEffects, computeStats } from '../src/utils/engine.js';
+import { APPLIED_KEYS, collectEffects, computeStats } from '../src/utils/engine.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -43,7 +43,7 @@ console.log(`verify-data (${v2 ? 'schema 2' : 'legacy shapes'}, ${strict ? 'full
 let data, legacy, aliasMap = {};
 if (v2) {
   data = { characters: read('characters.json'), skills: read('skills.json'), blasts: read('blasts.json'), capsules: read('capsules.json'), teams: read('teams.json'), meta: read('meta.json') };
-  legacy = toLegacy(data, { roster: data.meta.roster });
+  legacy = toLegacy(data, { roster: data.meta.roster, appliedKeys: APPLIED_KEYS });
   for (const c of data.characters) for (const a of c.aliases || []) aliasMap[a] = c.id;
 } else {
   legacy = { characters: read('characters.json'), skills: read('skills.json'), blast: read('blast.json'), capsules: read('capsules.json'), teams: read('teams.json'), characterImages: read('characterImages.json') };

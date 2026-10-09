@@ -436,9 +436,8 @@ export default function SkillsPanel({ character, blasts, skills = [], activeSkil
                           const builtIn = col.key === 'ultimate' && !!sb[col.key];
                           return (
                             <td key={col.key} className="py-2 px-3 text-center font-mono"
-                              title={builtIn ? 'Always included in ultimate damage: ultimates can only be used in Sparking Mode' : undefined}>
+                              title={builtIn ? 'Always included in ultimate damage' : undefined}>
                               <BuffCell value={sb[col.key] ?? 0} />
-                              {builtIn && <div className="text-[9px] text-gray-500 font-sans">in ultimates</div>}
                             </td>
                           );
                         })}

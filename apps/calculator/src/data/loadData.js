@@ -9,6 +9,7 @@
  * the alias -> id map the share-link decoder uses.
  */
 import { toLegacy } from './adapter.js';
+import { APPLIED_KEYS } from '../utils/engine.js';
 
 export async function loadData(base = import.meta.env.BASE_URL) {
   const url = (f) => `${base}data/${f}`;
@@ -24,7 +25,7 @@ export async function loadData(base = import.meta.env.BASE_URL) {
   const data = { characters, skills, blasts, capsules, teams, meta };
 
   // Every capsule (with bannedIn); the app filters by the selected ruleset.
-  const legacy = toLegacy(data, { ultimateVariants: true });
+  const legacy = toLegacy(data, { ultimateVariants: true, appliedKeys: APPLIED_KEYS });
 
   const aliases = {};
   for (const c of characters) for (const a of c.aliases || []) aliases[a] = c.id;
