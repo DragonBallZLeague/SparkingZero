@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Target } from 'lucide-react';
 import { blastDamage } from '../utils/engine.js';
+import { damageTaken } from '../utils/calculator.js';
 import { ComputedMark, NotMeasured, SpreadNote } from './BlastStatus.jsx';
 
 const SLOT_ORDER = ['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'Replacement_Slot2', 'ReplacementSlot2'];
@@ -183,7 +184,7 @@ function SkillsTable({ skillDetails, activeSkills, onToggleSkill, opponentStats 
                     const raw = detail?.baseDamage > 0 ? Number(detail.baseDamage) : damage > 0 ? Number(damage) : null;
                     if (raw === null) return '—';
                     const meleeDef = opponentStats?.meleeDefenseStat ?? 1;
-                    const val = opponentStats ? Math.round(raw * meleeDef) : raw;
+                    const val = opponentStats ? damageTaken(raw, meleeDef) : raw;
                     return val.toLocaleString();
                   })()}
                 </td>
@@ -271,10 +272,10 @@ export default function SkillsPanel({ character, blasts, skills = [], activeSkil
 
       // Apply opponent blast defense
       const oppDef = opponentStats?.blastDefense ?? 1;
-      const displayBase    = modBase    !== null && opponentStats ? Math.round(modBase    * oppDef) : modBase;
-      const displayBoosted = modBoosted !== null && opponentStats ? Math.round(modBoosted * oppDef) : modBoosted;
-      const baseDisplay    = baseRaw    !== null && opponentStats ? Math.round(baseRaw    * oppDef) : baseRaw;
-      const boostedDisplay = boostedRaw !== null && opponentStats ? Math.round(boostedRaw * oppDef) : boostedRaw;
+      const displayBase    = modBase    !== null && opponentStats ? damageTaken(modBase,    oppDef) : modBase;
+      const displayBoosted = modBoosted !== null && opponentStats ? damageTaken(modBoosted, oppDef) : modBoosted;
+      const baseDisplay    = baseRaw    !== null && opponentStats ? damageTaken(baseRaw,    oppDef) : baseRaw;
+      const boostedDisplay = boostedRaw !== null && opponentStats ? damageTaken(boostedRaw, oppDef) : boostedRaw;
 
       const changed = totalPct !== 0 || (opponentStats !== null && opponentStats !== undefined);
       const traitTags = [

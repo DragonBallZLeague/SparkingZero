@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { classBadge, classGradient } from '../utils/classStyles.js';
 import { DRACONIC_AURA, DRAGON_RUSH, hasCapsule } from '../utils/specialCapsules.js';
-import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense } from '../utils/calculator.js';
+import { getImageUrl, calcFiveHitArmorDamage, calcFiveHitDamageTaken, calcOutgoingCombo, applyOpponentDefense, damageTaken } from '../utils/calculator.js';
 
 // fmt types:
 //   'raw'          — toLocaleString (default)
@@ -209,7 +209,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
       const armorMult = oppisArmored ? (1 - oppArmor) : 1;
       for (let i = 0; i < count; i++) {
         // Apply both ki blast defense and armor reduction
-        total += Math.round(dmg * armorMult);
+        total += damageTaken(basedmg, defense, armorMult);
       }
       return total;
     }
@@ -328,7 +328,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                     const raw = typeof baseAug[key] === 'number' ? baseAug[key] : 0;
                     const meleeDef = opponentStats?.meleeDefenseStat ?? 1;
                     // Always calculate what the value would be with armor applied, even if Draconic Aura or Dragon Rush is equipped
-                    const baseValWithArmor = Math.round(raw * meleeDef * (wasArmored ? (1 - oppArmor) : 1));
+                    const baseValWithArmor = damageTaken(raw, meleeDef, wasArmored ? (1 - oppArmor) : 1);
 
                     // Calculate value with armor break capsule (ignoring armor)
                     const baseVal = outgoingCombo
@@ -336,7 +336,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                           const ignoreArmor = hasArmorBreakCapsule && wasArmored;
                           const ignoreDraconic = hasDraconicAura && wasArmored;
                           // If either capsule is breaking armor, ignore it
-                          return Math.round(raw * meleeDef * ((ignoreArmor || ignoreDraconic) ? 1 : (wasArmored ? (1 - oppArmor) : 1)));
+                          return damageTaken(raw, meleeDef, (ignoreArmor || ignoreDraconic) ? 1 : (wasArmored ? (1 - oppArmor) : 1));
                         })()
                       : baseAug[key];
                     const modVal = outgoingCombo
@@ -381,7 +381,7 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                           const oppArmor = hasArmorBreakCapsule ? 0 : (opponentStats?.armor ?? 0);
                           const baseArmorBreak = baseAug.armorBreak ?? 999;
                           const isArmored = oppArmor > 0 && (i + 1) < baseArmorBreak;
-                          return sum + Math.round(raw * meleeDef * (isArmored ? (1 - oppArmor) : 1));
+                          return sum + damageTaken(raw, meleeDef, isArmored ? (1 - oppArmor) : 1);
                         }, 0)
                       : baseAug.rush5Hit;
                     const modTotal = outgoingCombo ? outgoingCombo.rush5Hit : modAug.rush5Hit;
@@ -518,12 +518,10 @@ export default function StatsPanel({ baseStats, modifiedStats, characterImages, 
                   if (isOutgoing && opponentStats) {
                     // Only apply defense/armor to kiBlastDmg, not kiBlastVolley (already included in volley logic)
                     if (key === 'kiBlastDmg') {
-                      baseVal = typeof baseVal === 'number' ? Math.round(baseVal * (opponentStats.energy ?? 1)) : baseVal;
-                      modVal  = typeof modVal === 'number'  ? Math.round(modVal  * (opponentStats.energy ?? 1))  : modVal;
-                      // Ignore opponent armor if Draconic Aura is equipped
+                      // Ignore opponent armor if Draconic Aura is equipped; defense and armor round once
                       const armorToApply = hasDraconicAura ? 0 : (opponentStats.armor ?? 0);
-                      baseVal = typeof baseVal === 'number' ? Math.round(baseVal * (1 - armorToApply)) : baseVal;
-                      modVal  = typeof modVal === 'number'  ? Math.round(modVal  * (1 - armorToApply))  : modVal;
+                      baseVal = damageTaken(baseVal, opponentStats.energy ?? 1, 1 - armorToApply);
+                      modVal  = damageTaken(modVal, opponentStats.energy ?? 1, 1 - armorToApply);
                     }
                   }
                   return (

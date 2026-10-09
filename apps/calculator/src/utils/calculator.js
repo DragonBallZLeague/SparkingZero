@@ -4,6 +4,16 @@
  */
 
 /**
+ * Damage a hit deals after the target's defense and armor: the game rounds up once, after every
+ * multiplier (measured 2026-10-08: 390 x 0.7905 x 0.9 = 277.47 shows as 278). The epsilon keeps
+ * float noise such as 7.000000000000001 from rounding up a whole number.
+ */
+export function damageTaken(value, ...multipliers) {
+  if (typeof value !== 'number') return value;
+  return Math.ceil(multipliers.reduce((v, m) => v * m, value) - 1e-9);
+}
+
+/**
  * Light Body: the holder takes 10% less ki-blast damage (ki-blast defense multiplier - 0.10),
  * unless the attacker has Draconic Aura. See utils/specialCapsules.js.
  */
@@ -39,7 +49,7 @@ export function calcFiveHitDamageTaken(defenderStats, opponentStats = null, brea
     : referenceHits(defenderStats);
   let total = 0;
   const hits = opHits.map((hit, i) => {
-    const damage = Math.round(hit * def);
+    const damage = damageTaken(hit, def);
     total += damage;
     return { damage };
   });
@@ -69,9 +79,9 @@ export function calcFiveHitArmorDamage(stats, breakOnHit = 5, opponentStats = nu
   opHits.forEach((hit, i) => {
     const hitNum = i + 1;
     const isArmored = hitNum < breakOnHit;
-    total += hit * def * (isArmored ? (1 - armor) : 1);
+    total += damageTaken(hit, def, isArmored ? (1 - armor) : 1);
   });
-  return Math.round(total);
+  return total;
 }
 
 /**
@@ -102,7 +112,7 @@ export function calcOutgoingCombo(yourStats, opponentStats) {
   const perHit = rawHits.map((raw, i) => {
     const hitNum = i + 1;
     const armorReduced = oppArmor > 0 && hitNum < oppArmorBreak;
-    const damage = Math.round(raw * meleeDef * (armorReduced ? (1 - oppArmor) : 1));
+    const damage = damageTaken(raw, meleeDef, armorReduced ? (1 - oppArmor) : 1);
     return { damage, armorReduced };
   });
 
@@ -126,7 +136,7 @@ export function applyOpponentDefense(value, opponentStats, defenseField) {
   if (value === null || value === undefined || !opponentStats) return value;
   if (typeof value !== 'number') return value;
   const def = typeof opponentStats[defenseField] === 'number' ? opponentStats[defenseField] : 1;
-  return Math.round(value * def);
+  return damageTaken(value, def);
 }
 
 /** Build the URL for a character thumbnail stored in public/char_thumbnails/ */

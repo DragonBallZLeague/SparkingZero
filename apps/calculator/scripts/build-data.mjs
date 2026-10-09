@@ -122,6 +122,20 @@ function sparkingArmorOf(id, name) {
 }
 const overrides = curated('overrides.csv');
 
+// Short-dash ki cost: the league's datamine of the game files (curated/short-dash-cost.csv, raw ki,
+// 10000 = 1 bar). Shown on Capsule Corp's scale, raw x 2 / 10000 bars (0.265 for the common 1325),
+// which matches Capsule Corp on 182 characters; Capsule Corp fills characters the file lacks.
+const shortDashRaw = new Map(curated('short-dash-cost.csv').map(r => [r.id, num(r.shortDashKiCost)]));
+const shortDashGaps = [];
+function shortDashOf(id, name, cc, prov) {
+  const raw = shortDashRaw.get(id);
+  if (raw == null) { prov.shortDashCost = cc == null ? 'missing' : 'capsulecorp'; return cc; }
+  const v = round(raw * 2 / 10000, 4);
+  if (cc != null && Math.abs(cc - v) > 0.002) shortDashGaps.push([name, cc, v]);
+  prov.shortDashCost = 'game (league datamine)';
+  return v;
+}
+
 function classAdd(key, channel) {
   return num(classRowByKey.get(key)?.[CHANNELS[channel]]) || 0;
 }
@@ -355,9 +369,11 @@ for (const rc of ref.characters) {
   }
 
   // Game-derived stats
-  const meleeDefense = round(incoming - classCoef.physicalResist);
-  const kiBlastDefense = round(incoming - classCoef.energyResist);
-  const blastDefense = round(incoming - classCoef.energyResist - classCoef.blastResist);
+  // Damage taken = incoming damage factor x (1 - resistance). Measured in game 2026-10-08:
+  // Android 16 (0.92, resist 0.05) takes 341 from a 390 hit = 0.874, not 0.92 - 0.05 = 0.87.
+  const meleeDefense = round(incoming * (1 - classCoef.physicalResist));
+  const kiBlastDefense = round(incoming * (1 - classCoef.energyResist));
+  const blastDefense = round(incoming * (1 - classCoef.energyResist - classCoef.blastResist));
   for (const [f, v] of [['meleeDefense', meleeDefense], ['kiBlastDefense', kiBlastDefense], ['blastDefense', blastDefense]]) {
     const c = ccv(f);
     if (c != null && Math.abs(round(c) - v) > 0.0005) report.ccGaps.push([rc.name, f, round(c), v, 'game formula used']);
@@ -387,14 +403,14 @@ for (const rc of ref.characters) {
     attackKiGain: round(config.attackKiGainBase * (1 + classCoef.attackKiGain)),
     kiRegen: round((num(r['Ki auto-recovery speed (raw)']) ?? 0) * (1 + classCoef.kiRecovery) / 10000),
     kiRegenRange: round((num(r['Ki auto-recovery limit (raw)']) ?? 0) / 10000),
-    shortDashCost: ccv('shortDashCost'),
+    shortDashCost: shortDashOf(id, rc.name, ccv('shortDashCost'), prov),
     skillStart: num(r['Starting Skill Count']) ?? 0,
     skillLimit: num(r['Skill stock capacity']),
     skillRegen: ccv('skillRegen'),
     sparkCharge: round(classCoef.sparkingCharge),
     sparkDuration: ccv('sparkDuration') ?? 0,
   };
-  Object.assign(prov, { health: 'game', switch: 'capsulecorp', armorBreak: 'capsulecorp', armor: 'capsulecorp', kiBlastCost: 'game formula', kiBlastLimit: 'game', startingKi: 'game', maxKi: 'game', kiCharge: cc ? 'capsulecorp' : 'game formula', attackKiGain: 'game formula', kiRegen: 'game formula', kiRegenRange: 'game', shortDashCost: 'capsulecorp', skillStart: 'game', skillLimit: 'game', skillRegen: 'capsulecorp', sparkCharge: 'game', sparkDuration: 'capsulecorp' });
+  Object.assign(prov, { health: 'game', switch: 'capsulecorp', armorBreak: 'capsulecorp', armor: 'capsulecorp', kiBlastCost: 'game formula', kiBlastLimit: 'game', startingKi: 'game', maxKi: 'game', kiCharge: cc ? 'capsulecorp' : 'game formula', attackKiGain: 'game formula', kiRegen: 'game formula', kiRegenRange: 'game', skillStart: 'game', skillLimit: 'game', skillRegen: 'capsulecorp', sparkCharge: 'game', sparkDuration: 'capsulecorp' });
   // Capsule Corp cross-checks on game-derived stats
   for (const [f, v] of [['startingKi', stats.startingKi], ['kiRegenRange', stats.kiRegenRange], ['skillLimit', stats.skillLimit], ['sparkCharge', stats.sparkCharge], ['kiRegen', stats.kiRegen]]) {
     const c = ccv(f);
@@ -878,6 +894,11 @@ function reportMd() {
     'ceil(raw Power x 1.25 x coefficient) on the first rush hit, throw, ki blast, neutral smash (actSMMN) and vanish follow-up (actBSSM). Kept as published (special moves or data to check).',
     '',
     table(['Character', 'Field', 'Value', 'Formula', 'Source'], report.specials),
+    `## Short-dash ki cost (curated/short-dash-cost.csv: ${characters.filter(c => c.provenance.shortDashCost === 'game (league datamine)').length} characters)`,
+    '',
+    `Shown as raw x 2 / 10000 bars, Capsule Corp's scale. Capsule Corp fills ${characters.filter(c => c.provenance.shortDashCost === 'capsulecorp').length} characters the file lacks; ${characters.filter(c => c.stats.shortDashCost == null).length} have no value (${characters.filter(c => c.stats.shortDashCost == null).map(c => c.name).join(', ') || 'none'}). Ids in the file that are not playable characters: ${[...shortDashRaw.keys()].filter(i => !refById.has(i)).join(', ') || 'none'}. Where Capsule Corp differs, the datamine is used:`,
+    '',
+    table(['Character', 'Capsule Corp', 'Used'], shortDashGaps),
     `## Capsule Corp vs game data (${report.ccGaps.length})`,
     '',
     table(['Field', 'Note', 'Characters', 'Examples (Capsule Corp -> used)'], groupGaps(report.ccGaps)),

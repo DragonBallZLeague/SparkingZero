@@ -26,7 +26,7 @@ export function ComputedMark({ blast }) {
  */
 export function SpreadNote({ blast }) {
   const s = blast?.spread;
-  if (!s) return null;
+  if (!s || s.shotsFired <= 1) return null; // a single bullet needs no shot count
   const n = (v) => Number(v).toLocaleString();
   const title = [
     `${s.commonHits} of ${s.shotsFired} shots usually land, ${n(s.perShot)} each.`,

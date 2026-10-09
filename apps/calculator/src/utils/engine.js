@@ -8,7 +8,7 @@
  *                damage effect on that channel (they ADD, they do not multiply).
  *                Where the raw Power of a value is unknown it is implied from the
  *                published final and the base coefficient.
- *   resistance   incoming-damage multiplier = incoming factor - (class + effects)
+ *   resistance   incoming-damage multiplier = incoming factor x (1 - (class + effects))
  *   rates        stat x (1 + class + effects) / (1 + class)
  *   flat         health, starting ki (bars, clamped to max ki), skill count, ki-blast count
  *   set          e.g. Rising Fighting Spirit: starting ki = max ki
@@ -48,7 +48,7 @@ const HANDLED = new Set([...Object.keys(CHANNEL_OF), 'allDamage', ...Object.keys
 /** Effect keys that change a shown stat (everything else is listed as a note). */
 export const APPLIED_KEYS = HANDLED;
 
-/** Skill armor and Sparking armor, as the old calculator modelled them (no game value found). */
+/** Skill armor (10%, from the old calculator) and Sparking armor (25%, measured 2026-10-08); they replace, not add to, a lower base armor. */
 export const SKILL_ARMOR = 0.10;
 export const SPARKING_ARMOR = 0.25;
 
@@ -176,9 +176,10 @@ export function computeStats(c, effects, ctx = {}) {
   const rPhys = resist('physical', cls.physicalResist);
   const rEnergy = resist('energy', cls.energyResist);
   const rBlast = resist('blast', cls.blastResist);
-  const meleeDefense = round(c.incomingDamage - rPhys);
-  const kiBlastDefense = round(c.incomingDamage - rEnergy);
-  const blastDefense = round(c.incomingDamage - rEnergy - rBlast);
+  // incoming damage factor x (1 - resistance); resistance effects add to the class's
+  const meleeDefense = round(c.incomingDamage * (1 - rPhys));
+  const kiBlastDefense = round(c.incomingDamage * (1 - rEnergy));
+  const blastDefense = round(c.incomingDamage * (1 - rEnergy - rBlast));
 
   const rate = (key, base) => {
     const [, clsKey] = RATES[key];
@@ -195,9 +196,12 @@ export function computeStats(c, effects, ctx = {}) {
   const skillStart = Math.max(0, Math.min(s.skillLimit ?? Infinity, (s.skillStart ?? 0) + (add.skillStart || 0)));
   const kiBlastLimit = s.kiBlastLimit == null ? null : s.kiBlastLimit + (add.kiBlastCount || 0);
 
+  // Armor does not stack: Sparking armor (25%) or skill armor (10%) replaces a lower base armor.
+  // Measured in game 2026-10-08: Janemba (10% base) takes 278 from a 390 hit, 232 while Sparking
+  // = 25%, not 35%.
   let armor = s.armor ?? 0;
-  if (sparkingArmor) armor = round(armor + SPARKING_ARMOR);
-  else if (armorLevel) armor = round(armor + SKILL_ARMOR);
+  if (sparkingArmor) armor = Math.max(armor, SPARKING_ARMOR);
+  else if (armorLevel) armor = Math.max(armor, SKILL_ARMOR);
 
   const refHits = ctx.referenceHits || null;
   const refTotal = refHits ? refHits.reduce((a, b) => a + b, 0) : null;

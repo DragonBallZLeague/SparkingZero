@@ -264,7 +264,23 @@ if (v2) {
   // Spread shots use the league's usual hit count (2026-10-08): one shot x hits
   ig('Krillin Spread Energy Wave (3 of 6 shots x 2257)', blastOf('Krillin', 'Spread Energy Wave'), 6771);
   ig('Fasha Energy Bullet (5 of 10 shots x 1030)', blastOf('Fasha', 'Energy Bullet'), 5150);
-  check(!game.length, 'published values equal the in-game measurements of 2026-10-07 (Mr. Satan, Baby Vegeta, Vegeta, Android 16, Kid Buu, defense, 8 blasts, 3 skills)', game);
+  // Third round, 2026-10-08: defense, armor, ki and the remaining blasts
+  const taken = (hit, s) => Math.ceil(hit * s.meleeDefenseStat * (1 - (s.armor || 0)) - 1e-9);
+  ig('Goku (Z - Early) first rush hit into Android 16', taken(390, run('0440_00')), 341);
+  ig('... into Android 16 while Sparking (25% armor)', taken(390, run('0440_00', { sparking: true })), 256);
+  ig('... into Janemba (10% armor)', taken(390, run('0650_00')), 278);
+  ig('... into Janemba while Sparking (armor does not stack: 25%)', taken(390, run('0650_00', { sparking: true })), 232);
+  ig('Vegeta (Z - Early) ki blasts from one full bar', Math.floor(1 / named('Vegeta (Z - Early)').stats.kiBlastCost), 8);
+  for (const [n, move, want] of [
+    ['Goku (Super)', 'Power Pole Dance', 8794], ['Vegeta (Z - Early) Super Saiyan', 'Cosmic Impact', 9001],
+    ['Gotenks Super Saiyan 3', 'Charging Ultra Buu Buu Volleyball', 19501], ['Super Zarbon', 'Monster Crush', 15688],
+    ['Broly (Z) Super Saiyan', 'Bloody Smash', 9713], ['Cell Jr.', 'Innocence Rush', 7957], ['Baby Vegeta (GT)', 'Finger Blitz Barrage', 6580],
+    ['Vegeta (Z - End) Super Saiyan', 'Infinite Blaster', 9000], ['Zarbon', 'Shooting Star Arrow', 5940],
+    ['Chilled', 'Death Rain', 11028], ['Champa', "God of Destruction's Menace", 12255], ['Super 17 (GT)', 'Flash Bomber', 7530],
+  ]) ig(`${n} ${move}`, blastOf(n, move), want);
+  const glorio = (data.blasts[named('Glorio')?.id] || []).find(b => b.name === 'Lightning Cannon');
+  if (!glorio?.traits.includes('Unguardable')) game.push('Glorio Lightning Cannon is unguardable (in game 2026-10-08)');
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 and 08: rush, smash, throw, ki blast, defense, armor, ki cost, 20+ blasts, skills, spread shots)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

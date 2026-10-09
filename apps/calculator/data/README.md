@@ -40,7 +40,7 @@ data/
 | id, name, order, forms | `referencedata/characters.csv`, `transformations.json` | the raw map's names |
 | class (game key -> label via `curated/classes.csv`), DP, DP damage scale, class coefficients, health, ki, skill stocks, ki-blast count | raw map | Capsule Corp |
 | defense multipliers | raw map: incoming damage factor - class resistance | Capsule Corp |
-| rush hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break, armor, short-dash cost, ki charge, skill regen, Sparking duration | Capsule Corp Stats | `ceil(Power x 1.25 x coefficient)` where the raw Power is known (first rush hit, throw, ki blast; smash and pursuit from the raw map's Combative Values, actions `actSMMN` / `actBSSM`). A zero or negative Capsule Corp damage value is impossible and is replaced by the formula (Mr. Satan) |
+| rush hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break, armor, ki charge, skill regen, Sparking duration | Capsule Corp Stats | `ceil(Power x 1.25 x coefficient)` where the raw Power is known (first rush hit, throw, ki blast; smash and pursuit from the raw map's Combative Values, actions `actSMMN` / `actBSSM`). A zero or negative Capsule Corp damage value is impossible and is replaced by the formula (Mr. Satan) |
 | ki-blast cost, ki regen, attack ki gain | raw map with the class coefficient applied | Capsule Corp |
 | moves (names, slots, variants, ki costs) | raw Move List | `curated/blasts.csv` |
 | skill effects and phases | raw Skill Values (exact coefficients) | the raw summary tab |
@@ -83,6 +83,15 @@ A second round the same day confirmed or corrected eight blasts and three skills
   - Gamma 1's Gamma Impact: 9,632. Gamma 2 has the same move and was changed to match.
 - **Skills:** Saiyan Burst does 1,313 for Goku (Daima) SSJ4 and 1,266 for Vegeta (Daima) SSJ3, and Super Garlic Jr.'s Sealing Paralyze Beam does 594. Capsule Corp leaves all three blank, so they are set in `overrides.csv`.
 
+A third round on 2026-10-08 settled these:
+- **Defense:** damage taken is the incoming damage factor × (1 − resistance), not the factor minus the resistance. Android 16 (0.92, 5%) takes 341 from a 390 hit. Damage taken rounds up once, after defense and armor.
+- **Armor:** Sparking armor is 25% and does not stack with a giant's 10%; the higher one applies. Janemba takes 278, and 232 while Sparking.
+- **Ki:** the ki-blast cost and ki regen formulas with the class modifier hold. Vegeta (Z - Early) fires 8 blasts from one bar, and Goku (Z - Mid) SSJ refills 2 bars in about 14.8 s.
+- **Ground bounce:** most rush blasts' 500 is a ground bounce that not every use lands, so it is left out (Power Pole Dance, Cosmic Impact, Gotenks SSJ3's Volleyball). Super Zarbon's Monster Crush and Broly (Z) SSJ's Bloody Smash have the ground impact in the cinematic, so theirs is always included.
+- **Barrages:** the six barrage tests confirmed the Record-key hit count. Two DLC barrages don't follow their key: Chilled's Death Rain is 12 hits (key 10), and Tora's volley is 5 (key 8).
+- **New blast values:** every DLC blast is now measured, except Fasha's Energy Bullet and Cheelai's Energy Shot, which are one shot × a league-set hit count.
+- **Unguardable:** the Neo Export was right on six blasts and wrong on two (Captain Ginyu's Body Change and Android 18's Chain Destructo Disc).
+
 `verify-data` checks these numbers on every build.
 
 **Capsule Corp class labels.** Capsule Corp sometimes computes a channel with its class
@@ -124,7 +133,8 @@ class key or effect.
 | `blasts.csv` | id + slot + variant + move | measured damage (+ boosted damage when it is not x1.2 / x1.3), category, traits, flags |
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag that overrides the Neo Export (for characters it lacks or gets wrong); `note` says why |
-| `spread-blasts.csv` | id + slot + move | spread-shot blasts: `shotsFired` and `commonHits` (the hit count the damage uses, league-observed) |
+| `spread-blasts.csv` | id + slot + move | blasts whose hit count the league sets: spread shots (`shotsFired`, `commonHits` = the count the damage uses) and single bullets (1 of 1, e.g. Cheelai's Energy Shot) |
+| `short-dash-cost.csv` | id | short-dash ki cost from the league's datamine of the game files (raw ki, 10000 = 1 bar), shown as raw x 2 / 10000 bars, Capsule Corp's scale (it matches 182 characters). Capsule Corp fills characters the file lacks |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |
@@ -151,7 +161,7 @@ Share links (`src/utils/shareLink.js`) are `{v: 2, c: characterId, p: [capsuleId
 
 `src/utils/engine.js` turns a character plus active effects into the shown stats, with the
 game's rules: damage effects add to the channel's coefficient (`ceil(Power x 1.25 x k)`, exact
-where the raw Power is known), resistance effects subtract from the incoming-damage multiplier,
+where the raw Power is known), resistance effects add to the class resistance in `incoming x (1 - resistance)`, Sparking or skill armor replaces a lower base armor (both measured in game),
 rate effects scale `(1 + class + sum) / (1 + class)`, flat effects add (starting ki is clamped to
 the maximum, Rising Fighting Spirit sets it to the maximum). A skill applies all its phases
 when turned on; Sparking Mode applies the character's While Sparking passive, Sparking armor
