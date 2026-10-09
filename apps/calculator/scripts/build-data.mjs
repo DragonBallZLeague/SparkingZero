@@ -130,15 +130,24 @@ const overrides = curated('overrides.csv');
 
 // Short-dash ki cost: the league's datamine of the game files (curated/short-dash-cost.csv, raw ki,
 // 10000 = 1 bar). Shown on Capsule Corp's scale, raw x 2 / 10000 bars (0.265 for the common 1325),
-// which matches Capsule Corp on 182 characters; Capsule Corp fills characters the file lacks.
+// which matches Capsule Corp on 182 characters and was confirmed in game (3 dashes per bar).
+// Some DLC characters have no step data of their own: the game reads another character's
+// (curated/short-dash-shared.csv). Capsule Corp fills characters the file lacks.
 const shortDashRaw = new Map(curated('short-dash-cost.csv').map(r => [r.id, num(r.shortDashKiCost)]));
+const shortDashShared = new Map(curated('short-dash-shared.csv').map(r => [r.id, r]));
+for (const [id, r] of shortDashShared) {
+  if (!refById.has(id) || !refById.has(r.sameAs)) throw new Error(`short-dash-shared.csv: unknown id ${refById.has(id) ? r.sameAs : id}`);
+  if (shortDashRaw.has(id)) throw new Error(`short-dash-shared.csv: ${r.character} has its own value in short-dash-cost.csv`);
+  if (!shortDashRaw.has(r.sameAs)) throw new Error(`short-dash-shared.csv: ${r.sameAsCharacter} (${r.sameAs}) has no value in short-dash-cost.csv`);
+}
 const shortDashGaps = [];
 function shortDashOf(id, name, cc, prov) {
-  const raw = shortDashRaw.get(id);
+  const shared = shortDashShared.get(id);
+  const raw = shortDashRaw.get(shared ? shared.sameAs : id);
   if (raw == null) { prov.shortDashCost = cc == null ? 'missing' : 'capsulecorp'; return cc; }
   const v = round(raw * 2 / 10000, 4);
   if (cc != null && Math.abs(cc - v) > 0.002) shortDashGaps.push([name, cc, v]);
-  prov.shortDashCost = 'game (league datamine)';
+  prov.shortDashCost = shared ? `game (league datamine, step data shared with ${shared.sameAsCharacter})` : 'game (league datamine)';
   return v;
 }
 
@@ -914,7 +923,7 @@ function reportMd() {
     table(['Character', 'Field', 'Value', 'Formula', 'Source'], report.specials),
     `## Short-dash ki cost (curated/short-dash-cost.csv: ${characters.filter(c => c.provenance.shortDashCost === 'game (league datamine)').length} characters)`,
     '',
-    `Shown as raw x 2 / 10000 bars, Capsule Corp's scale. Capsule Corp fills ${characters.filter(c => c.provenance.shortDashCost === 'capsulecorp').length} characters the file lacks; ${characters.filter(c => c.stats.shortDashCost == null).length} have no value (${characters.filter(c => c.stats.shortDashCost == null).map(c => c.name).join(', ') || 'none'}). Ids in the file that are not playable characters: ${[...shortDashRaw.keys()].filter(i => !refById.has(i)).join(', ') || 'none'}. Where Capsule Corp differs, the datamine is used:`,
+    `Shown as raw x 2 / 10000 bars, Capsule Corp's scale. ${shortDashShared.size} characters use another character's step data, as the game does (curated/short-dash-shared.csv: ${[...shortDashShared.values()].map(r => `${r.character} from ${r.sameAsCharacter}`).join(', ') || 'none'}). Capsule Corp fills ${characters.filter(c => c.provenance.shortDashCost === 'capsulecorp').length} characters the file lacks; ${characters.filter(c => c.stats.shortDashCost == null).length} have no value (${characters.filter(c => c.stats.shortDashCost == null).map(c => c.name).join(', ') || 'none'}). Ids in the file that are not playable characters: ${[...shortDashRaw.keys()].filter(i => !refById.has(i)).join(', ') || 'none'}. Where Capsule Corp differs, the datamine is used:`,
     '',
     table(['Character', 'Capsule Corp', 'Used'], shortDashGaps),
     `## Capsule Corp vs game data (${report.ccGaps.length})`,

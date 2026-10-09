@@ -186,7 +186,7 @@ ceil(raw Power x 1.25 x coefficient) on the first rush hit, throw, ki blast, neu
 
 ## Short-dash ki cost (curated/short-dash-cost.csv: 220 characters)
 
-Shown as raw x 2 / 10000 bars, Capsule Corp's scale. Capsule Corp fills 14 characters the file lacks; 7 have no value (Bardock Super Saiyan, Vegeta (GT), Vegeta (GT) Super Saiyan, Ma Junior, Tien (World Tournament), Uub (Kid), Tora). Ids in the file that are not playable characters: 2230_00, 2230_01. Where Capsule Corp differs, the datamine is used:
+Shown as raw x 2 / 10000 bars, Capsule Corp's scale. 7 characters use another character's step data, as the game does (curated/short-dash-shared.csv: Bardock Super Saiyan from Bardock, Vegeta (GT) from Vegeta (Z - End) Super Saiyan, Vegeta (GT) Super Saiyan from Vegeta (Z - End) Super Saiyan, Ma Junior from Piccolo, Tien (World Tournament) from Tien, Uub (Kid) from Goku (Z - Early), Tora from Raditz). Capsule Corp fills 14 characters the file lacks; 0 have no value (none). Ids in the file that are not playable characters: 2230_00, 2230_01. Where Capsule Corp differs, the datamine is used:
 
 | Character | Capsule Corp | Used |
 | --- | --- | --- |
