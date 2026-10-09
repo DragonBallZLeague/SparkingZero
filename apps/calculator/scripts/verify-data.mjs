@@ -303,6 +303,7 @@ if (v2) {
   }
   // 2026-10-09: each ki blast in a combo deals 5% of the first shot less; hits on armor are not a combo
   ig('Ki blast volley, 5 x 250 with falloff', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 5 }), 1125);
+  ig('Ki blast volley, 20 x 250, falloff held at 40% from shot 13 (game curve)', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 20 }), 2975);
   ig('Ki blast volley, 5 x 250 into 25% armor (no falloff)', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 5 }, { opponentStats: { energy: 1, armor: 0.25 } }), 940);
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));

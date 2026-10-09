@@ -27,9 +27,10 @@ export function applyLightBodyKiBlastArmor(stats, hasLightBody, hasDraconicAura 
 
 /**
  * Total damage of a full ki-blast volley (an unlimited count is shown as 20 shots).
- * In a combo each shot deals 5% of the first shot's damage less than the one before. Hits on
- * armor are not a combo in the game, so against armor (or Light Body) every shot deals full
- * damage after defense and armor, unless the attacker has Draconic Aura.
+ * In a combo each shot deals 5% of the first shot's damage less than the one before, down to 40%
+ * from the 13th shot on (the game's ComboRushBulletDamageScalingCurve: 1.0 at shot 1, 0.4 at shot
+ * 13, held after). Hits on armor are not a combo in the game, so against armor (or Light Body)
+ * every shot deals full damage after defense and armor, unless the attacker has Draconic Aura.
  */
 export function kiBlastVolley(stats, { opponentStats = null, opponentHasLightBody = false, attackerHasDraconicAura = false } = {}) {
   const base = stats?.kiBlastDmg ?? 0;
@@ -43,7 +44,7 @@ export function kiBlastVolley(stats, { opponentStats = null, opponentHasLightBod
   }
   const dmg = base * defense;
   let total = 0;
-  for (let i = 0; i < count; i++) total += dmg - i * dmg * 0.05;
+  for (let i = 0; i < count; i++) total += dmg * Math.max(0.4, 1 - i * 0.05);
   return Math.round(total);
 }
 
