@@ -104,6 +104,13 @@ hit count, as in `BulletParam_actSPM_BULLET_barrage10`, `..._BEAM_rapid10` and
 barrages exactly. Four of the six misses are Vegeta (Z) barrages at exactly 5/6 of the formula,
 which looks like stale measurements. The family starts filling gaps at 90% (36 of 40).
 
+**Spread shots** (Krillin's Spread Energy Wave, Fasha's Energy Bullet, Super Buu's Assault Rain,
+Anilaza's Spread Energy Blast) rain several shots down, and how many land depends on distance.
+`curated/spread-blasts.csv` holds each move's shots fired and the hit count the league sees
+most often. The damage is one shot × that count, using the side projectile (Record key
+`..._2_A`) when the move opens with a centre shot that rarely hits. The UI shows the count,
+all shots and the opening shot beside the value. A measured value that agrees stays measured.
+
 ## Curated tables
 
 All UTF-8 CSV, one header row, edited by hand. The build fails on an unknown id, slot,
@@ -117,6 +124,7 @@ class key or effect.
 | `blasts.csv` | id + slot + variant + move | measured damage (+ boosted damage when it is not x1.2 / x1.3), category, traits, flags |
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag that overrides the Neo Export (for characters it lacks or gets wrong); `note` says why |
+| `spread-blasts.csv` | id + slot + move | spread-shot blasts: `shotsFired` and `commonHits` (the hit count the damage uses, league-observed) |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |

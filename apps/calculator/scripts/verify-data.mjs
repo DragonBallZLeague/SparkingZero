@@ -148,6 +148,11 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
     if (!r.reason?.trim()) problems.push(`overrides.csv: ${r.id} ${r.field} has no reason`);
   }
   for (const r of cur('sparking.csv')) if (!ids.has(r.id)) problems.push(`sparking.csv: unknown id ${r.id}`);
+  for (const r of cur('spread-blasts.csv')) {
+    const fired = Number(r.shotsFired), hits = Number(r.commonHits);
+    if (!ids.has(r.id)) problems.push(`spread-blasts.csv: unknown id ${r.id}`);
+    if (!(Number.isInteger(fired) && Number.isInteger(hits) && hits > 0 && hits <= fired)) problems.push(`spread-blasts.csv: ${r.character} ${r.move}: commonHits must be a whole number from 1 to shotsFired`);
+  }
   for (const r of cur('blasts.csv')) {
     if (!ids.has(r.id)) problems.push(`blasts.csv: unknown id ${r.id}`);
     if (!['Super 1', 'Super 2', 'Ultimate'].includes(r.slot)) problems.push(`blasts.csv: ${r.id} unknown slot "${r.slot}"`);
@@ -256,6 +261,9 @@ if (v2) {
   ig('Goku (Daima) Super Saiyan 4 Saiyan Burst', skillOf('Goku (Daima) Super Saiyan 4', 'Saiyan Burst'), 1313);
   ig('Vegeta (Daima) Super Saiyan 3 Saiyan Burst', skillOf('Vegeta (Daima) Super Saiyan 3', 'Saiyan Burst'), 1266);
   ig('Super Garlic Jr. Sealing Paralyze Beam', skillOf('Super Garlic Jr.', 'Sealing Paralyze Beam'), 594);
+  // Spread shots use the league's usual hit count (2026-10-08): one shot x hits
+  ig('Krillin Spread Energy Wave (3 of 6 shots x 2257)', blastOf('Krillin', 'Spread Energy Wave'), 6771);
+  ig('Fasha Energy Bullet (5 of 10 shots x 1030)', blastOf('Fasha', 'Energy Bullet'), 5150);
   check(!game.length, 'published values equal the in-game measurements of 2026-10-07 (Mr. Satan, Baby Vegeta, Vegeta, Android 16, Kid Buu, defense, 8 blasts, 3 skills)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone

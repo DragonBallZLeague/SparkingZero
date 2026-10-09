@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Target } from 'lucide-react';
 import { blastDamage } from '../utils/engine.js';
-import { ComputedMark, NotMeasured } from './BlastStatus.jsx';
+import { ComputedMark, NotMeasured, SpreadNote } from './BlastStatus.jsx';
 
 const SLOT_ORDER = ['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'Replacement_Slot2', 'ReplacementSlot2'];
 const SLOT_LABELS = {
@@ -286,7 +286,7 @@ export default function SkillsPanel({ character, blasts, skills = [], activeSkil
       return (
         <React.Fragment key={i}>
           <tr className={`${traitTags.length ? '' : 'border-b border-sz-border/30'} hover:bg-gray-800/30 ${changed ? 'bg-blue-950/20' : ''}`}>
-            <td className="py-1.5 px-2 text-sm text-gray-200 leading-tight">{blast.name || '—'}<ComputedMark blast={blast} /></td>
+            <td className="py-1.5 px-2 text-sm text-gray-200 leading-tight">{blast.name || '—'}<ComputedMark blast={blast} /><SpreadNote blast={blast} /></td>
             <td className="py-1.5 px-1.5 text-sm text-gray-500 leading-tight whitespace-nowrap" title={blast.variant ? `Alternative move (${blast.variant}), set by costume` : undefined}>{blast.variant && blast.slot === 'BlastUltimate' ? 'Alt. Ult.' : (SLOT_LABELS[blast.slot] || blast.slot)}</td>
             <td className="py-1.5 px-1.5">
               {blast.category && (

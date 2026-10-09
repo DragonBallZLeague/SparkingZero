@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { getImageUrl, calcFiveHitArmorDamage } from '../utils/calculator.js';
 import { blastDamage } from '../utils/engine.js';
 import { classBadge } from '../utils/classStyles.js';
-import { ComputedMark, NotMeasured } from './BlastStatus.jsx';
+import { ComputedMark, NotMeasured, SpreadNote } from './BlastStatus.jsx';
 
 // Reuse the same stat sections definition from StatsPanel
 const STAT_SECTIONS = [
@@ -606,7 +606,7 @@ function BlastSide({ blast, modDmg, changed, side, hasReplacement, replActive, o
 
   const contentBlock = (
     <div className={`flex flex-col ${isRight ? 'items-end' : 'items-start'} min-w-0 flex-1 overflow-hidden`}>
-      <span className={`text-sm text-gray-200 font-medium leading-tight w-full ${isRight ? 'text-right' : ''}`}>{blast.name || '—'}<ComputedMark blast={blast} /></span>
+      <span className={`text-sm text-gray-200 font-medium leading-tight w-full ${isRight ? 'text-right' : ''}`}>{blast.name || '—'}<ComputedMark blast={blast} /><SpreadNote blast={blast} /></span>
       {blast.category && (
         <span className={`text-xs px-1.5 py-px rounded font-medium whitespace-nowrap ${catClass(blast.category)}`}>
           {blast.category}

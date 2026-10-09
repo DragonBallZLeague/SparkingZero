@@ -67,6 +67,7 @@ function legacyBlast(b) {
     triggerExpendEnergy: b.triggerKi ?? null,
   };
   if (b.damageStatus) out.damageStatus = b.damageStatus;
+  if (b.spread) out.spread = b.spread;
   const flags = new Set(b.flags || []);
   if (flags.has('beamClashCapable')) out.beamClashCapable = true;
   if (b.lungeSpeed != null) out.lungeSpeed = b.lungeSpeed;

@@ -12,7 +12,7 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 `public/data/*.json` is **generated** — never edit it by hand. `scripts/build-data.mjs` builds it from:
 - `data/snapshots/` — committed CSV copies of three spreadsheets: the raw game map (`charmap/`, game facts and raw inputs), Capsule Corp's Stats tab (`capsulecorp/`, finals) and the SZ Neo Export's CharacterData and Blasts tabs (`neo/`, the Sparking armor flag and blast details where `curated/blasts.csv` is blank). Huge or wide tabs are snapshotted in part (`keep` rows / `columns` in `data/config.json`). Refreshed by hand with `npm run data:pull` (the only networked step; it refuses a changed column layout unless `--accept-layout`).
-- `data/curated/*.csv` — hand-maintained tables: measured blast damage, capsule effects, the effect vocabulary, skill display traits, skill targets, class labels, aliases, overrides, Sparking armor overrides.
+- `data/curated/*.csv` — hand-maintained tables: measured blast damage, capsule effects, the effect vocabulary, skill display traits, skill targets, class labels, aliases, overrides, Sparking armor overrides, spread-shot hit counts.
 - `referencedata/` (characters, forms, capsules, rulesets) and the website's `public/content/teams/<season>.yaml` master lists. **The calculator joins the shared reference data by id**; names and order come from `referencedata/characters.csv`.
 
 `predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL; it includes engine checks against known in-game values). Both are offline and deterministic. Every build regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration, capsule effects); `data/CHANGES.md` is rewritten only when the published data changes (previous build → this build). Read both diffs after any data change. `data/rebuild-2026-10/` is the frozen record of the one-time move from the old hand-edited JSON.
@@ -55,7 +55,7 @@ Gotchas:
 
 `src/utils/rules.js` — capsule rulesets from `meta.json` (budget, banned ids, group caps such as Rush/Smash/Blast Attack Boost <= 6). App provides the selected ruleset through `RulesContext`; the builders read `useRules()` and show `components/RulesBar.jsx` (picker, rule warnings, and what equipped capsules do that the stats do not show). The picker lists only capsules the selected ruleset allows. Capsules come only from `referencedata/capsules.csv`; Victory Power is a real game capsule left out on purpose (the league never allows it).
 
-`src/components/BlastStatus.jsx` — the `calc` marker (damage computed by a calibrated recipe) and "not measured yet" (no value).
+`src/components/BlastStatus.jsx` — the `calc` marker (damage computed by a calibrated recipe), "not measured yet" (no value) and the spread-shot note ("3 of 6 shots x 2,257").
 
 ## Gotchas
 

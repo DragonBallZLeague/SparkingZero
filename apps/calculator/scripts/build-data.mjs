@@ -22,7 +22,7 @@ import { fileURLToPath } from 'url';
 import { readCsv, writeIfChanged, sameText } from './lib/csv.mjs';
 import { loadRefdata, normName, repoRoot } from './lib/refdata.mjs';
 import { CHANNELS, CLASS_COEFS, CC_CHANNEL_FIELDS, CC_COLUMNS, splitTraits, num, round, finalDamage } from './lib/fields.mjs';
-import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate } from './lib/blastRecipes.mjs';
+import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate, applicationDamage } from './lib/blastRecipes.mjs';
 import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
 import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
 
@@ -43,7 +43,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [] };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [] };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -521,6 +521,8 @@ for (const c of characters) {
   }
 }
 for (const [k, b] of measuredBlasts) report.warn.push(`blasts.csv row matches no move in the raw Move List: ${b.character} ${b.slot} ${b.variant} "${b.move}" (${k})`);
+// Spread-shot blasts: how many of their shots usually land (league-observed), keyed like the moves
+const spreadRows = new Map(curated('spread-blasts.csv').map(r => [`${r.id}|${r.slot}||${normName(r.move)}`, r]));
 const calibration = calibrate(blastMoves, config.calibration, K);
 const blastMismatch = [];
 const blasts = {};
@@ -534,6 +536,25 @@ for (const bm of blastMoves) {
     else { damage = null; status = 'unmeasured'; }
   } else if (pred && cal?.accepted && Math.abs(pred.damage - damage) > pred.hits) {
     blastMismatch.push([c.name, m.Slot + (m.Variant ? ` ${m.Variant}` : ''), m.Move, damage, pred.damage, cal.recipe]);
+  }
+  // Spread shots: damage = one shot x the hit count the league uses (curated/spread-blasts.csv).
+  // The shot is the side projectile (Record key ..._2_A) where the move opens with a centre shot
+  // that rarely hits, else the move's projectile. A measured value that agrees is kept as measured.
+  let spread;
+  const sp = spreadRows.get(bm.key);
+  if (sp) {
+    spreadRows.delete(bm.key);
+    const projs = (partsByMove.get(bm.key) || []).filter(x => x['Mapped part'] === 'Projectile' && num(x.Power) > 0);
+    const shotRow = projs.find(x => /_2_[A-Z]$/.test(x['Record key'])) || projs[0];
+    const centreRow = projs.find(x => /_2_[A-Z]$/.test(x['Record key'])) ? projs.find(x => !/_2_[A-Z]$/.test(x['Record key'])) : null;
+    if (!shotRow) throw new Error(`spread-blasts.csv: ${c.name} ${m.Move} has no damaging projectile in the Move Power tab`);
+    const perShot = applicationDamage(num(shotRow.Power), bm.coef, K);
+    const hits = num(sp.commonHits), fired = num(sp.shotsFired);
+    spread = { perShot, commonHits: hits, shotsFired: fired, allShots: perShot * fired, centreShot: centreRow ? applicationDamage(num(centreRow.Power), bm.coef, K) : null };
+    const value = perShot * hits;
+    if (damage != null && Math.abs(damage - value) > hits) report.spread.push([c.name, m.Move, `${hits} of ${fired} x ${perShot}`, value, `measured ${damage} differs; spread value used`]);
+    else report.spread.push([c.name, m.Move, `${hits} of ${fired} x ${perShot}`, value, damage != null ? `agrees with measured ${damage}` : 'no measured value']);
+    if (damage == null || Math.abs(damage - value) > hits) { damage = value; status = 'computed'; }
   }
   const mult = m.Slot === 'Ultimate' ? 1.3 : 1.2;
   const boosted = cur?.boostedDamage ? Number(cur.boostedDamage) : damage != null ? Math.round(damage * mult) : null;
@@ -563,7 +584,8 @@ for (const bm of blastMoves) {
     slot: m.Slot, variant: m.Variant || '', name: m.Move,
     kiCost: num(m['Ki cost']), triggerKi: cur ? num(cur.triggerKi) : null,
     damage, damageStatus: status, boostedDamage: boosted,
-    recipe: status === 'computed' ? cal.recipe : undefined,
+    recipe: status === 'computed' ? (spread ? 'spread: shot x common hit count' : cal.recipe) : undefined,
+    spread,
     category: det.category, type: det.type,
     impactPower: det.impactPower,
     traits: det.traits,
@@ -573,7 +595,8 @@ for (const bm of blastMoves) {
     detailsSource: det.source,
   });
 }
-for (const list of Object.values(blasts)) for (const b of list) if (b.recipe === undefined) delete b.recipe;
+for (const list of Object.values(blasts)) for (const b of list) { if (b.recipe === undefined) delete b.recipe; if (b.spread === undefined) delete b.spread; }
+for (const r of spreadRows.values()) throw new Error(`spread-blasts.csv: ${r.character} ${r.slot} "${r.move}" matches no move in the raw Move List`);
 
 // ------------------------------------------------------------------ capsules
 // Capsule effects: curated/capsule-effects.csv, in the effect vocabulary of curated/effects.csv.
@@ -830,6 +853,11 @@ function reportMd() {
     'Either the measured value is stale or the move is special. Review in game.',
     '',
     table(['Character', 'Slot', 'Move', 'Measured', 'Recipe', 'Recipe used'], blastMismatch),
+    `## Spread-shot blasts (${report.spread.length})`,
+    '',
+    'How many shots land depends on distance, so these use one shot x the hit count the league sees most often (curated/spread-blasts.csv). Shots fired, all shots and the rarely landing opening shot are shown beside the value.',
+    '',
+    table(['Character', 'Move', 'Hits used', 'Damage', 'Check'], report.spread),
     `## Blast details: Neo Export vs curated/blasts.csv (${neoBlastGaps.length} disagreements)`,
     '',
     `Category, type, traits, Blast Impact power and lunge speed come from curated/blasts.csv, or from the Neo Export's Blasts tab where curated/blasts.csv is blank (${neoFilled} moves). Where both exist the curated value is used; check these in game and correct whichever is wrong.`,
