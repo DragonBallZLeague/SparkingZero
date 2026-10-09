@@ -264,6 +264,9 @@ if (v2) {
   // Spread shots use the league's usual hit count (2026-10-08): one shot x hits
   ig('Krillin Spread Energy Wave (3 of 6 shots x 2257)', blastOf('Krillin', 'Spread Energy Wave'), 6771);
   ig('Fasha Energy Bullet (5 of 10 shots x 1030)', blastOf('Fasha', 'Energy Bullet'), 5150);
+  // 2026-10-09: rain-down spreads land about half their shots
+  ig('Super Buu Assault Rain (7 of 15 shots x 797)', blastOf('Super Buu', 'Assault Rain'), 5579);
+  ig('Anilaza Spread Energy Blast (5 of 10 shots x 813)', blastOf('Anilaza', 'Spread Energy Blast'), 4065);
   // Third round, 2026-10-08: defense, armor, ki and the remaining blasts
   const taken = (hit, s) => Math.ceil(hit * s.meleeDefenseStat * (1 - (s.armor || 0)) - 1e-9);
   ig('Goku (Z - Early) first rush hit into Android 16', taken(390, run('0440_00')), 341);

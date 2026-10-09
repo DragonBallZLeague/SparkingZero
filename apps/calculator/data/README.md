@@ -125,9 +125,12 @@ which looks like stale measurements. The family starts filling gaps at 90% (36 o
 **Spread shots** (Krillin's Spread Energy Wave, Fasha's Energy Bullet, Super Buu's Assault Rain,
 Anilaza's Spread Energy Blast; Cheelai's Energy Shot is a single bullet, not one) rain several shots down, and how many land depends on distance.
 `curated/spread-blasts.csv` holds each move's shots fired and the hit count the league sees
-most often. The damage is one shot × that count, using the side projectile (Record key
-`..._2_A`) when the move opens with a centre shot that rarely hits. The UI shows the count,
-all shots and the opening shot beside the value. A measured value that agrees stays measured.
+most often: about half the shots for these rain-down moves (Krillin 3 of 6, Fasha 5 of 10,
+Super Buu 7 of 15, Anilaza 5 of 10; league, 2026-10-09). The damage is one shot × that count,
+using the side projectile (Record key `..._2_A`) when the move opens with a centre shot that
+rarely hits. The UI shows the count, all shots and the opening shot beside the value. A
+measured value that agrees stays measured; Super Buu's and Anilaza's measured values are
+every shot landing (11,955 and 8,120), so the half count is used instead.
 
 ## Curated tables
 
