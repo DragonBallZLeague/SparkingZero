@@ -1,0 +1,31 @@
+field,asset,path,default,charmap,note
+dp,Character,DestroyedPower,5,DP,Unreal omits the default; 46 characters have no value
+health,Numeric,Life,50000,Life,Unreal omits the default; 22 characters have no value
+kiAutoRecovery,Numeric,SPAutoRecoverySpeed,,Ki auto-recovery speed (raw),
+kiRecoveryBelowOneGaugeScale,Numeric,SPAutoRecoverySpeedScaleUnderOneGauge,1,Ki recovery below one gauge: scale,Unreal omits the default (learned from the character map)
+kiChargeSpeed,Numeric,SPChargeSpeed,,Ki charge speed (raw),
+kiChargeBelowLimit,Numeric,SPChargeSpeedUnderAutoRecoveryLimit,-1,Ki charge below auto-recovery limit (raw),Unreal omits the default (learned from the character map)
+kiAutoRecoveryLimit,Numeric,SPAutoRecoveryLimit,20000,Ki auto-recovery limit (raw),Unreal omits the default (learned from the character map)
+startingKi,Numeric,InitialSP,20000,Starting Ki (raw),Unreal omits the default (learned from the character map)
+sparkingDrainSpeed,Numeric,SparkingModeGaugeDecreaseSpeed,,Sparking drain speed (raw),
+incomingDamageFactor,Numeric,DamageRate,1,Incoming damage factor,Unreal omits the default (learned from the character map)
+skillStockCapacity,Numeric,BlastStock,5,Skill stock capacity,Unreal omits the default (learned from the character map)
+startingSkillCount,Numeric,InitialBlastStock,0,Starting Skill Count,Unreal omits the default (learned from the character map)
+followUpLimit,Numeric,PursuitBaseLimit,0,Follow-up base limit,Unreal omits the default (learned from the character map)
+dragonHomingLimit,Numeric,PursuitLimitDragonHoming,,Dragon Homing follow-up limit,
+vanishingLimit,Numeric,PursuitLimitVanishingAttack,,Vanishing Attack follow-up limit,
+lightningLimit,Numeric,PursuitLimitLightningAttack,1,Lightning Attack follow-up limit,Unreal omits the default (learned from the character map)
+sparkingExtraFollowUps,Numeric,PursuitBaseLimitAddAtSparking,0,Sparking: extra follow-ups,Unreal omits the default (learned from the character map)
+sparkingExtraDragonHoming,Numeric,PursuitLimitDragonHomingAddAtSparking,1,Sparking: extra Dragon Homing follow-ups,Unreal omits the default (learned from the character map)
+sparkingExtraVanishing,Numeric,PursuitLimitVanishingAttackAddAtSparking,,Sparking: extra Vanishing Attacks,
+sparkingExtraLightning,Numeric,PursuitLimitLightningAttackAddAtSparking,,Sparking: extra Lightning Attacks,
+meleeChargeLevel1,Numeric,AttackChargeSpeedsBySmashLevel[0],,Melee charge speed: level 1,
+meleeChargeLevel2,Numeric,AttackChargeSpeedsBySmashLevel[1],,Melee charge speed: level 2,
+meleeChargeLevel3,Numeric,AttackChargeSpeedsBySmashLevel[2],,Melee charge speed: level 3,
+kiBlastCount,Numeric,BulletNum,10,Ki-blast count,Unreal omits the default (learned from the character map)
+jumpKiBlastCount,Numeric,JumpBulletNum,4,Jump Ki-blast count,Unreal omits the default (learned from the character map)
+jumpKiBlastSets,Numeric,JumpBulletSetNum,2,Jump Ki-blast sets,Unreal omits the default (learned from the character map)
+dashKiBlastCount,Numeric,DashBulletNum,4,Dashing Ki-blast count,Unreal omits the default (learned from the character map)
+normalKiBlastLimit,Numeric,RushBulletLimit,-1,Normal Ki-blast limit,Unreal omits the default (learned from the character map)
+chargedKiBlastLimit,Numeric,SmashBulletLimit,,Charged Ki-blast limit,
+shortDashKiCost,Steps,StepShortDash.SpCost,,,ki per short dash (/ 10000 = bars); twice the step-cancel dash cost that curated/short-dash-cost.csv holds

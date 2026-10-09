@@ -12,7 +12,9 @@
     "data:pull": "node scripts/pull-sheets.mjs",
     "data:build": "node scripts/build-data.mjs",
     "data:verify": "node scripts/verify-data.mjs",
-    "data:check": "node scripts/build-data.mjs --check"
+    "data:check": "node scripts/build-data.mjs --check",
+    "data:fmodel": "node scripts/pull-fmodel.mjs",
+    "data:parity": "node scripts/fmodel-parity.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.553.0",
