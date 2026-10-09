@@ -280,7 +280,24 @@ if (v2) {
   ]) ig(`${n} ${move}`, blastOf(n, move), want);
   const glorio = (data.blasts[named('Glorio')?.id] || []).find(b => b.name === 'Lightning Cannon');
   if (!glorio?.traits.includes('Unguardable')) game.push('Glorio Lightning Cannon is unguardable (in game 2026-10-08)');
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 and 08: rush, smash, throw, ki blast, defense, armor, ki cost, 20+ blasts, skills, spread shots)', game);
+  // Fourth round, 2026-10-09: short-dash scale, Cheelai, blast categories, cinematics and clashes
+  ig('Goku (Z - Early) short dashes from one full bar', Math.floor(1 / named('Goku (Z - Early)').stats.shortDashCost), 3);
+  ig('Cheelai Energy Shot (one bullet)', blastOf('Cheelai', 'Energy Shot'), 5914);
+  const blastRow = (n, move) => (data.blasts[named(n)?.id] || []).find(b => b.name === move);
+  const clashOf = (b) => b?.flags.includes('beamClashCapable') ? 'Beam Clash' : b?.flags.includes('dashClashCapable') ? 'Speed Clash' : 'none';
+  for (const [n, move, cat, cine, clash] of [
+    ['Glorio', 'Lightning Cannon', 'Short-Range Energy Attack', null, null], ['Cell Max', 'Max Bomb', 'Fire', true, null],
+    ['Gamma 1', 'Gamma Shift Shot', 'Continuous Fire', true, null], ['Orange Piccolo Giant Form', 'Apocalyptic Burst', 'Rush', true, null],
+    ['Piccolo (Super Hero)', 'Light Grenade', 'Fire', false, null], ['Mighty Mask', 'Mighty Rush', null, true, null],
+    ['Dr. Wheelo', 'Gigantic Bomber', null, null, 'none'], ['Majin Kuu', 'Majin Corkscrew Attack', null, null, 'Speed Clash'],
+    ['Giant Gomah', 'Giga Magic Burst', 'Fire', null, 'Beam Clash'], ['Captain Ginyu', 'Galaxy Dynamite', null, null, 'Beam Clash'],
+  ]) {
+    const b = blastRow(n, move);
+    if (cat) ig(`${n} ${move} category`, b?.category, cat);
+    if (cine !== null) ig(`${n} ${move} cinematic`, !!b?.traits.includes('Cinematic'), cine);
+    if (clash) ig(`${n} ${move} clash`, clashOf(b), clash);
+  }
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

@@ -94,6 +94,13 @@ A third round on 2026-10-08 settled these:
 - **New blast values:** every DLC blast is now measured, except Fasha's Energy Bullet and Cheelai's Energy Shot, which are one shot × a league-set hit count.
 - **Unguardable:** the Neo Export was right on six blasts and wrong on two (Captain Ginyu's Body Change and Android 18's Chain Destructo Disc).
 
+A fourth round on 2026-10-09 checked blast details the data left blank or disputed (rows noted "league in-game 2026-10-09" in `curated/blasts.csv`):
+- **Category:** all 76 ultimates the game files leave without one. Every melee ultimate is Rush; energy ultimates vary (Beam, Fire, Explosive Wave, Continuous Fire, Short-Range Energy Attack).
+- **Cinematic:** 96 blasts are cinematic; Piccolo's and Piccolo (Super Hero) Power Awakening's Special Beam Cannon and Piccolo (Super Hero)'s Light Grenade are not.
+- **Clash:** the Neo Export was right on five (Dr. Wheelo's Gigantic Bomber cannot clash; Majin Kuu's Corkscrew Attack and Majin Duu's Rolling Attack Speed Clash; both Gomahs' Magic Burst Beam Clash). The curated flags were right on four, which REPORT.md still lists as Neo disagreements: Power Pole Dance (Speed Clash), Galaxy Dynamite (Beam Clash), Gohan (Kid)'s Wild Rush Blaster (Speed Clash) and Gohan (Adult)'s Super Kamehameha (Beam Clash).
+- **Short dash:** Goku (Z - Early) dashes 3 times from one bar (a 4th goes just over), which confirms Capsule Corp's scale, raw x 2 / 10000 bars (0.265 each).
+- **Cheelai's Energy Shot** is a single bullet of 5,914, now measured.
+
 `verify-data` checks these numbers on every build.
 
 **Capsule Corp class labels.** Capsule Corp sometimes computes a channel with its class
@@ -116,7 +123,7 @@ barrages exactly. Four of the six misses are Vegeta (Z) barrages at exactly 5/6 
 which looks like stale measurements. The family starts filling gaps at 90% (36 of 40).
 
 **Spread shots** (Krillin's Spread Energy Wave, Fasha's Energy Bullet, Super Buu's Assault Rain,
-Anilaza's Spread Energy Blast) rain several shots down, and how many land depends on distance.
+Anilaza's Spread Energy Blast; Cheelai's Energy Shot is a single bullet, not one) rain several shots down, and how many land depends on distance.
 `curated/spread-blasts.csv` holds each move's shots fired and the hit count the league sees
 most often. The damage is one shot × that count, using the side projectile (Record key
 `..._2_A`) when the move opens with a centre shot that rarely hits. The UI shows the count,
@@ -136,7 +143,7 @@ class key or effect.
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag that overrides the Neo Export (for characters it lacks or gets wrong); `note` says why |
 | `spread-blasts.csv` | id + slot + move | blasts whose hit count the league sets: spread shots (`shotsFired`, `commonHits` = the count the damage uses) and single bullets (1 of 1, e.g. Cheelai's Energy Shot) |
-| `short-dash-cost.csv` | id | short-dash ki cost from the league's datamine of the game files (raw ki, 10000 = 1 bar), shown as raw x 2 / 10000 bars, Capsule Corp's scale (it matches 182 characters). Capsule Corp fills characters the file lacks |
+| `short-dash-cost.csv` | id | short-dash ki cost from the league's datamine of the game files (raw ki, 10000 = 1 bar), shown as raw x 2 / 10000 bars, Capsule Corp's scale (it matches 182 characters, and the league confirmed it in game: 3 short dashes per bar). Capsule Corp fills characters the file lacks |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |
