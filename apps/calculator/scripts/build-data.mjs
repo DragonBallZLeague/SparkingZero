@@ -111,8 +111,14 @@ const effectFor = (field) => effectByField.get(field) || (field.startsWith('Para
 // ------------------------------------------------------------------ characters
 const thumbs = new Set(fs.readdirSync(path.join(APP, 'public', 'char_thumbnails')));
 
+// The Neo Export is joined by character NAME: its own ids repeat across forms (Ma Junior and its Giant
+// Form are both 3310_00, Trunks (GT) and its Super Saiyan both 3280_00, Goten Super Saiyan is 9998_00,
+// and story-mode rows share ids with playable ones), so joining by id mixed those forms up.
+const neoChars = snap('neo/character-data.csv').filter(r => r['Playable Char?'] === 'YES');
+for (const r of neoChars) if (!resolveName(r.character)) report.warn.push(`Neo Export character "${r.character}" matches no character (add it to curated/aliases.csv)`);
+
 // Sparking armor: the game's abilityFlag_sparkingArmor (Neo Export CharacterData); a curated/sparking.csv row wins
-const neoArmor = new Map(snap('neo/character-data.csv').map(r => [r.alNumId, r.abilityFlag_sparkingArmor === 'TRUE']));
+const neoArmor = new Map(neoChars.map(r => [resolveName(r.character), r.abilityFlag_sparkingArmor === 'TRUE']));
 const sparkingOverride = new Map(curated('sparking.csv').map(r => [r.id, r.armor === 'TRUE']));
 function sparkingArmorOf(id, name) {
   if (sparkingOverride.has(id)) return sparkingOverride.get(id);
@@ -477,29 +483,35 @@ for (const o of overrides) {
 
 // ------------------------------------------------------------------ blasts
 // Blast details from the Neo Export (game files) for moves with no curated/blasts.csv row; where
-// both exist the curated row wins and disagreements are reported. Neo names its characters its
-// own way; its CharacterData tab maps them to ids. Slots: Blast1Data/Blast2Data/UltimateData,
-// or the variant code (ULT2, SPM4, ...).
+// both exist the curated row wins and disagreements are reported. Joined by character name (see
+// neoChars above). Slots: Blast1Data/Blast2Data/UltimateData, or the variant code (ULT2, SPM4, ...).
 const NEO_SLOT = { Blast1Data: 'Super 1', Blast2Data: 'Super 2', UltimateData: 'Ultimate' };
 const NEO_CATEGORY = { 'Short-range energy attack': 'Short-Range Energy Attack', 'Mow down and explode': 'Sweep', "Attack opponent's location": 'Lock-On Explosion' };
 const NEO_TYPE = { 'Charging Melee Attack': 'Lunge Fighting', Throw: 'Throw', Special: 'Special' };
-const neoIdByName = new Map(snap('neo/character-data.csv').map(r => [r.character, r.alNumId]));
+const NEO_MELEE = new Set(['Charging Melee Attack', 'Throw']);
 const neoBlast = new Map();
 for (const r of snap('neo/blasts.csv')) {
-  const id = neoIdByName.get(r.character);
+  const id = resolveName(r.character);
   if (id) neoBlast.set(`${id}|${NEO_SLOT[r.slot] || r.slot}`, r);
 }
+// blastImpact = the move can clash: a Speed Impact for a rush (dashClashCapable), a Blast Impact
+// for an energy move (beamClashCapable); it agrees with the curated flags on 384 of 393 blasts.
+// bNonLockUsable FALSE = needs lock-on (agrees on 470 of 483).
 function neoDetails(r) {
   if (!r) return null;
   const traits = [r.trait1, r.trait2, r.trait3, r.trait4];
   const unguardable = r.bImpossibleGuard === 'TRUE' || traits.includes('Unguardable');
+  const flags = [];
+  if (r.blastImpact === 'TRUE') flags.push(NEO_MELEE.has(r.EngType) ? 'dashClashCapable' : 'beamClashCapable');
+  if (r.bNonLockUsable === 'FALSE') flags.push('lockOnNeeded');
+  if (unguardable) flags.push('unblockable');
   return {
     category: r.category ? NEO_CATEGORY[r.category] || r.category : null,
     type: NEO_TYPE[r.EngType] || null,
     impactPower: num(r.blastImpactPower) || null,
     lungeSpeed: num(r.lungeSpeed) || null,
     traits: [...(traits.includes('Chargeable') ? ['Chargeable'] : []), ...(unguardable ? ['Unguardable'] : [])],
-    flags: unguardable ? ['unblockable'] : [],
+    flags,
   };
 }
 const neoBlastGaps = [];
@@ -595,6 +607,12 @@ for (const bm of blastMoves) {
     if (neo.impactPower && curDet.impactPower && neo.impactPower !== curDet.impactPower) neoBlastGaps.push([...where, 'Blast Impact power', curDet.impactPower, neo.impactPower]);
     const ugCur = curDet.traits.includes('Unguardable'), ugNeo = neo.traits.includes('Unguardable');
     if (ugCur !== ugNeo && (curDet.traits.length || curDet.flags.length)) neoBlastGaps.push([...where, 'unguardable', ugCur ? 'yes' : 'no', ugNeo ? 'yes' : 'no']);
+    if (curDet.traits.length || curDet.flags.length) {
+      const has = (d, f) => d.flags.includes(f);
+      const clash = (d) => has(d, 'beamClashCapable') ? 'Blast Impact' : has(d, 'dashClashCapable') ? 'Speed Impact' : 'no';
+      if (clash(curDet) !== clash(neo)) neoBlastGaps.push([...where, 'can clash', clash(curDet), clash(neo)]);
+      if (has(curDet, 'lockOnNeeded') !== has(neo, 'lockOnNeeded')) neoBlastGaps.push([...where, 'needs lock-on', has(curDet, 'lockOnNeeded') ? 'yes' : 'no', has(neo, 'lockOnNeeded') ? 'yes' : 'no']);
+    }
   }
   (blasts[c.id] ??= []).push({
     slot: m.Slot, variant: m.Variant || '', name: m.Move,

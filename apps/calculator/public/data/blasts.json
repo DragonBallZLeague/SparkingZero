@@ -68,7 +68,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -199,7 +199,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -274,7 +274,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -349,7 +349,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -610,7 +610,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -741,7 +741,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -1768,7 +1768,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2179,7 +2179,7 @@
       "type": null,
       "impactPower": 9,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["beamClashCapable","unblockable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2254,7 +2254,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2273,7 +2273,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2348,7 +2348,7 @@
       "type": null,
       "impactPower": 9,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["beamClashCapable","unblockable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2703,7 +2703,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2778,7 +2778,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -2910,7 +2910,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -4275,7 +4275,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -4294,7 +4294,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -4312,7 +4312,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -4387,7 +4387,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -4854,7 +4854,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -5772,7 +5772,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -5791,7 +5791,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -5810,7 +5810,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -5999,7 +5999,7 @@
       "type": null,
       "impactPower": 5,
       "traits": ["Chargeable"],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6018,7 +6018,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6037,7 +6037,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6057,7 +6057,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6075,7 +6075,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6094,7 +6094,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6115,7 +6115,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6152,7 +6152,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6191,7 +6191,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6210,7 +6210,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6287,7 +6287,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6306,7 +6306,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6325,7 +6325,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -7189,7 +7189,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -7266,7 +7266,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -7303,7 +7303,7 @@
       "type": null,
       "impactPower": 8,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -7622,7 +7622,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -7659,7 +7659,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -8520,7 +8520,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -8557,7 +8557,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -8801,7 +8801,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -8838,7 +8838,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9306,7 +9306,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9324,7 +9324,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9343,7 +9343,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9494,7 +9494,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9513,7 +9513,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9571,7 +9571,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9610,7 +9610,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -10173,7 +10173,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -10192,7 +10192,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11220,7 +11220,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11257,7 +11257,7 @@
       "type": null,
       "impactPower": 12,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["beamClashCapable","unblockable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11579,7 +11579,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11598,7 +11598,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11618,7 +11618,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11636,7 +11636,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11654,7 +11654,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11674,7 +11674,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11692,7 +11692,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11710,7 +11710,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11748,7 +11748,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11766,7 +11766,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11786,7 +11786,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11804,7 +11804,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11822,7 +11822,7 @@
       "type": "Lunge Fighting",
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11860,7 +11860,7 @@
       "type": "Lunge Fighting",
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11878,7 +11878,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11916,7 +11916,7 @@
       "type": "Lunge Fighting",
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11954,7 +11954,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11972,7 +11972,7 @@
       "type": "Lunge Fighting",
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -11990,7 +11990,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12010,7 +12010,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12028,7 +12028,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["lockOnNeeded","unblockable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12046,7 +12046,7 @@
       "type": "Throw",
       "impactPower": 9,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["lockOnNeeded","unblockable"],
       "lungeSpeed": 6750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12084,7 +12084,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12140,7 +12140,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12178,7 +12178,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12196,7 +12196,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["lockOnNeeded","unblockable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12214,7 +12214,7 @@
       "type": null,
       "impactPower": 12,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["beamClashCapable","unblockable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12309,7 +12309,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12327,7 +12327,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12345,7 +12345,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12365,7 +12365,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Chargeable"],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12383,7 +12383,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12401,7 +12401,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12421,7 +12421,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12439,7 +12439,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12457,7 +12457,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12495,7 +12495,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12513,7 +12513,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12533,7 +12533,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12551,7 +12551,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable","lockOnNeeded"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12569,7 +12569,7 @@
       "type": null,
       "impactPower": 8,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12607,7 +12607,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12625,7 +12625,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12663,7 +12663,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12701,7 +12701,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12775,7 +12775,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12793,7 +12793,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12849,7 +12849,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12943,7 +12943,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12961,7 +12961,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -12981,7 +12981,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13017,7 +13017,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13093,7 +13093,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13111,7 +13111,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13129,7 +13129,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13150,7 +13150,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13169,7 +13169,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13188,7 +13188,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13209,7 +13209,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13248,7 +13248,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13268,7 +13268,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13287,7 +13287,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13306,7 +13306,7 @@
       "type": null,
       "impactPower": 9,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13327,7 +13327,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13346,7 +13346,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13386,7 +13386,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13423,7 +13423,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13439,14 +13439,14 @@
       "damage": 8194,
       "damageStatus": "measured",
       "boostedDamage": 9833,
-      "category": null,
+      "category": "Fire",
       "type": null,
-      "impactPower": null,
+      "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
-      "detailsSource": null
+      "detailsSource": "neo"
     },
     {
       "slot": "Super 2",
@@ -13457,14 +13457,14 @@
       "damage": 9632,
       "damageStatus": "measured",
       "boostedDamage": 11558,
-      "category": null,
-      "type": null,
+      "category": "Rush",
+      "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
-      "lungeSpeed": null,
+      "flags": ["dashClashCapable","lockOnNeeded"],
+      "lungeSpeed": 10000,
       "moveLimitTime": null,
-      "detailsSource": null
+      "detailsSource": "neo"
     },
     {
       "slot": "Ultimate",
@@ -13477,13 +13477,13 @@
       "boostedDamage": 23360,
       "recipe": "largest action part",
       "category": null,
-      "type": null,
+      "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
-      "lungeSpeed": null,
+      "flags": ["dashClashCapable","lockOnNeeded"],
+      "lungeSpeed": 11700,
       "moveLimitTime": null,
-      "detailsSource": null
+      "detailsSource": "neo"
     }
   ],
   "3290_00": [
@@ -13500,7 +13500,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13537,7 +13537,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13558,7 +13558,7 @@
       "type": null,
       "impactPower": 5,
       "traits": ["Chargeable"],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13577,7 +13577,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13596,7 +13596,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13634,7 +13634,7 @@
       "type": null,
       "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13670,14 +13670,14 @@
       "damageStatus": "computed",
       "boostedDamage": 10230,
       "recipe": "projectile x (revivals + 1)",
-      "category": null,
+      "category": "Beam",
       "type": null,
-      "impactPower": null,
+      "impactPower": 5,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
-      "detailsSource": null
+      "detailsSource": "neo"
     },
     {
       "slot": "Super 2",
@@ -13688,14 +13688,14 @@
       "damage": 9630,
       "damageStatus": "measured",
       "boostedDamage": 11556,
-      "category": null,
+      "category": "Explosive Wave",
       "type": null,
       "impactPower": null,
       "traits": [],
       "flags": [],
       "lungeSpeed": null,
       "moveLimitTime": null,
-      "detailsSource": null
+      "detailsSource": "neo"
     },
     {
       "slot": "Ultimate",
@@ -13708,13 +13708,13 @@
       "boostedDamage": 21450,
       "recipe": "largest action part",
       "category": null,
-      "type": null,
-      "impactPower": null,
-      "traits": [],
-      "flags": [],
-      "lungeSpeed": null,
+      "type": "Throw",
+      "impactPower": 9,
+      "traits": ["Unguardable"],
+      "flags": ["lockOnNeeded","unblockable"],
+      "lungeSpeed": 6750,
       "moveLimitTime": null,
-      "detailsSource": null
+      "detailsSource": "neo"
     }
   ],
   "3320_00": [
@@ -13749,7 +13749,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13768,7 +13768,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13807,7 +13807,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13826,7 +13826,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["dashClashCapable","lockOnNeeded"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13883,7 +13883,7 @@
       "type": null,
       "impactPower": 8,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13940,7 +13940,7 @@
       "type": null,
       "impactPower": 12,
       "traits": [],
-      "flags": [],
+      "flags": ["beamClashCapable"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
