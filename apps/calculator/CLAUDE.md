@@ -59,6 +59,10 @@ Gotchas:
 
 `src/components/BlastStatus.jsx` — the `calc` marker (damage computed by a calibrated recipe), "not measured yet" (no value) and the spread-shot note ("3 of 6 shots x 2,257").
 
+## Redesign (option B, in progress)
+
+The league chose to rebuild the calculator on the Analyzer's design (the 2026-10-09 review doc): a Characters table, a page per character (quick view, then Stats, Moves and Skills tabs) and one Build page with Compare and Vs opponent as modes, every number opening its breakdown. `design/demo/` is the real-data demo of it (`node apps/calculator/design/demo/build-demo.mjs`, see its README); it bundles this app's engine, so its numbers are the app's. Delete it once the real pages ship and match it.
+
 ## Gotchas
 
 - `@szl/ui` (aliased in `vite.config.js`) provides the shared `NavBar` — see `packages/ui/CLAUDE.md`.
