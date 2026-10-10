@@ -89,6 +89,10 @@ scales, 28 numeric stats, rush/throw/smash/follow-up and ki-blast Power and ki c
 map and the league's datamine. The only differences are three capsule names written without
 apostrophes in referencedata. The game's ki-blast combo curve
 (`ComboRushBulletDamageScalingCurve`: 1.0 at shot 1 to 0.4 at shot 13) set the volley falloff.
+The melee combo scaling is not applied until league tests settle it: `CharacterData`'s
+`ComboDamageScaleCurve` (0 up to step 3, 0.8 at step 11) probably counts changes between the
+`ComboAttackActionCategory` types (Rush, RushDerivative, Kiadn, UniqueAttack, Smash), not hits,
+and `BlastDamageScaleInCombo` (0.7) probably scales a blast used inside a combo.
 The second run added 21,070 blast-part values, 333 skill buffs and 468 passive values (all
 agree) and the capsule effects, which corrected six capsules in `curated/capsule-effects.csv`:
 Power Body and Sparking! Plus lower energy resistance (ki blasts and blasts), not blast only;
