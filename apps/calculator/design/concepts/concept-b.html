@@ -11,7 +11,7 @@
   (Z - Scouter) with Light Body; Goku with Rush Attack Boost 1 and Kaioken vs Janemba Sparking),
   typed in. Full-body art: art/<id>.webp, cut by scripts/build-art.mjs from the game's
   favorite-character cards. The sheet frames a figure from the head and fades its lower half;
-  the two-fighter headers stand both on one hidden floor, each img's --fh being its height on
+  the two-fighter headers stand both on one hidden floor (a giant is anchored by its head instead), each img's --fh being its height on
   the card (art/sizes.json), times 1.3 for Janemba, a giant the card shrinks (a guess to tune).
   Conventions (the league, second review): ki yellow; Sparking and ultimates purple; blasts
   orange; skills and the skill gauge cyan; vivid shades, not the Analyzer's pastels; column
@@ -181,14 +181,16 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 
 /* compare and versus */
 /* one stage split by a slanted barrier; each side is clipped to its half along the barrier */
-.vshead { position: relative; height: 200px; --k: .224px; --sink: 218px; --tilt: 24px; --skew: -13.5deg; }
+.vshead { position: relative; height: 200px; --k: .224px; --sink: 182px; --over: 34px; --tilt: 24px; --skew: -13.5deg; }
 .vside { position: absolute; inset: 0; overflow: hidden; display: flex; align-items: flex-end; padding: 12px 18px; }
 .vside.l { background: linear-gradient(100deg, rgba(234,88,12,.6), rgba(10,13,32,.2) 50%); clip-path: polygon(0 0, calc(50% + var(--tilt)) 0, calc(50% - var(--tilt)) 100%, 0 100%); }
 .vside.r { background: linear-gradient(260deg, rgba(37,99,235,.65), rgba(10,13,32,.2) 50%); justify-content: flex-end; text-align: right; clip-path: polygon(calc(50% + var(--tilt)) 0, 100% 0, 100% 100%, calc(50% - var(--tilt)) 100%); }
 .vside .who { max-width: calc(50% - 50px); }
 /* --fh: the figure's height on its game card (art/sizes.json), x a factor for giants the card shrinks */
-.vside .vfig { position: absolute; inset: 0; -webkit-mask-image: linear-gradient(#000 58%, transparent 100%); mask-image: linear-gradient(#000 58%, transparent 100%); }
-.vside .vfig img { position: absolute; bottom: calc(-1 * var(--sink)); height: calc(var(--fh) * var(--k)); max-height: calc(100% + var(--sink) - 6px); width: auto; }
+.vside .vfig { position: absolute; inset: 0; -webkit-mask-image: linear-gradient(transparent 0, #000 26px, #000 58%, transparent 100%); mask-image: linear-gradient(transparent 0, #000 26px, #000 58%, transparent 100%); }
+.vside .vfig img { position: absolute; bottom: calc(-1 * var(--sink)); height: calc(var(--fh) * var(--k)); max-height: calc(100% + var(--sink) + var(--over)); width: auto; }
+/* a giant keeps its face in view: anchored by the head, its floor sits deeper */
+.vside .vfig img.giant { bottom: auto; top: 4px; max-height: none; }
 .vside.l .vfig img { right: calc(50% + 14px); } .vside.r .vfig img { left: calc(50% + 14px); transform: scaleX(-1); }
 .vside.l .vfig.c img { right: auto; left: 25%; transform: translateX(-50%); }
 .vside.r .vfig.c img { left: 75%; transform: translateX(-50%) scaleX(-1); }
@@ -280,12 +282,12 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 .ph .phtabs { display: flex; position: absolute; left: 0; right: 0; bottom: 0; height: 46px; background: rgba(10,13,32,.95); border-top: 1px solid var(--line); }
 .ph .phtabs span { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 .ph .phtabs span.on { color: #fff; box-shadow: inset 0 -3px 0 #f97316; }
-.ph .vshead { height: 170px; --k: .15px; --sink: 120px; --tilt: 18px; --skew: -11.9deg; }
+.ph .vshead { height: 170px; --k: .15px; --sink: 96px; --over: 22px; --tilt: 18px; --skew: -11.9deg; }
 .ph .vsmid b { font-size: 28px; top: 42%; }
 .ph .vside .who { max-width: calc(50% - 26px); }
 /* on a phone a giant runs off the screen edge: fade the outer edge as well as the bottom */
-.ph .vside.l .vfig { -webkit-mask-image: linear-gradient(#000 58%, transparent 100%), linear-gradient(90deg, transparent, #000 28px); -webkit-mask-composite: source-in; mask-image: linear-gradient(#000 58%, transparent 100%), linear-gradient(90deg, transparent, #000 28px); mask-composite: intersect; }
-.ph .vside.r .vfig { -webkit-mask-image: linear-gradient(#000 58%, transparent 100%), linear-gradient(270deg, transparent, #000 28px); -webkit-mask-composite: source-in; mask-image: linear-gradient(#000 58%, transparent 100%), linear-gradient(270deg, transparent, #000 28px); mask-composite: intersect; }
+.ph .vside.l .vfig { -webkit-mask-image: linear-gradient(transparent 0, #000 26px, #000 58%, transparent 100%), linear-gradient(90deg, transparent, #000 28px); -webkit-mask-composite: source-in; mask-image: linear-gradient(transparent 0, #000 26px, #000 58%, transparent 100%), linear-gradient(90deg, transparent, #000 28px); mask-composite: intersect; }
+.ph .vside.r .vfig { -webkit-mask-image: linear-gradient(transparent 0, #000 26px, #000 58%, transparent 100%), linear-gradient(270deg, transparent, #000 28px); -webkit-mask-composite: source-in; mask-image: linear-gradient(transparent 0, #000 26px, #000 58%, transparent 100%), linear-gradient(270deg, transparent, #000 28px); mask-composite: intersect; }
 .ph .vside { padding: 8px 10px; }
 .ph .vside .who .nm { font-size: 13px; }
 .ph .cmpgrid { display: block; padding: 8px 10px; }
@@ -683,7 +685,7 @@ h1 { font-size: 20px; margin: 0 0 4px; }
           <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span>Full stats</span><span>Compare</span><span class="on">Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
           <div class="vshead">
             <div class="vside l"><div class="vfig"><img src="art/0000_00.webp" alt="" style="--fh:1784"></div><div class="who"><div class="nm">Goku<br>(Z - Early)</div><div class="chips"><span class="chip ghost">Rush Attack Boost 1</span><span class="chip sk">Kaioken on</span></div></div></div>
-            <div class="vside r"><div class="vfig"><img src="art/0650_00.webp" alt="" style="--fh:2205"></div><div class="who"><div class="nm">Janemba</div><div class="chips" style="justify-content:flex-end"><span class="chip sp">Sparking</span><span class="chip dp">DP 5</span></div></div></div>
+            <div class="vside r"><div class="vfig"><img src="art/0650_00.webp" alt="" class="giant" style="--fh:2205"></div><div class="who"><div class="nm">Janemba</div><div class="chips" style="justify-content:flex-end"><span class="chip sp">Sparking</span><span class="chip dp">DP 5</span></div></div></div>
             <div class="vsmid"><b>VS</b></div>
           </div>
           <div class="modes"><span class="on">Exchange</span><span>All stats</span></div>
@@ -736,7 +738,7 @@ h1 { font-size: 20px; margin: 0 0 4px; }
           <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
           <div class="vshead">
             <div class="vside l"><div class="vfig c"><img src="art/0000_00.webp" alt="" style="--fh:1784"></div><div class="who"><div class="nm">Goku (Z - Early)</div></div></div>
-            <div class="vside r"><div class="vfig c"><img src="art/0650_00.webp" alt="" style="--fh:2205"></div><div class="who"><div class="nm">Janemba</div></div></div>
+            <div class="vside r"><div class="vfig c"><img src="art/0650_00.webp" alt="" class="giant" style="--fh:2205"></div><div class="who"><div class="nm">Janemba</div></div></div>
             <div class="vsmid"><b>VS</b></div>
           </div>
           <div class="modes"><span class="on">Exchange</span><span>All stats</span></div>
