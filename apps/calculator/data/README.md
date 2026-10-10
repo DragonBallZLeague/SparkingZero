@@ -93,8 +93,9 @@ The second run added 21,070 blast-part values, 333 skill buffs and 468 passive v
 agree) and the capsule effects, which corrected six capsules in `curated/capsule-effects.csv`:
 Power Body and Sparking! Plus lower energy resistance (ki blasts and blasts), not blast only;
 Blast Burst and Performer also raise Ultimate Blast damage; High-Speed and Super Movement Master
-also raise guarded-hit damage taken (a note). Ultimate Burst's +1 bar ultimate ki cost is not in
-the game files and waits for an in-game test.
+also raise guarded-hit damage taken (a note). Ultimate Burst's +1 bar is the league's reading of
+its collapse (`bStunWhenEndSparkingAfterUltimate`): ki burnout until 1 bar recharges, so the
+ultimate effectively costs 6 bars instead of 5.
 
 ## Where each value comes from
 

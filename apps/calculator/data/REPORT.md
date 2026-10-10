@@ -279,7 +279,7 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Power Unleashed (00_0_0023) | 2 |  |  | burstRushDamage +5% |
 | Finishing Blow (00_0_0024) | 1 |  |  | burstMeteorDamage +5% |
 | Blast Burst (00_0_0026) | 1 | blastKiCost +1; superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
-| Ultimate Burst (00_0_0027) | 2 | ultimateKiCost +1; ultimateDamage +5% |  | Stunned when Sparking Mode ends after using an Ultimate Blast |
+| Ultimate Burst (00_0_0027) | 2 | ultimateKiCost +1; ultimateDamage +5% |  | Collapses into ki burnout when Sparking Mode ends after an Ultimate Blast (cannot act until 1 bar of ki recharges) |
 | Blast Attack Boost 1 (00_0_0028) | 1 | superDamage +2.5%; ultimateDamage +2.5% |  | blastComboDamage +2.5% |
 | Blast Attack Boost 2 (00_0_0029) | 3 | superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
 | Blast Attack Boost 3 (00_0_0030) | 5 | superDamage +7.5%; ultimateDamage +7.5% |  | blastComboDamage +7.5% |

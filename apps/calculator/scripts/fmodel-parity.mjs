@@ -336,8 +336,10 @@ for (const f of fieldMap) {
       if (!fields) continue;
       n++;
       const want = Number(r.value);
-      // "set starting ki to max" (Rising Fighting Spirit) is the game's ResourceChanging.MaxSP flag
-      const hit = r.value === 'max' ? effects.find(e => e.values.get('ResourceChanging.MaxSP') === 'true') : effects.find(e => fields.some(([f, s]) => e.values.has(f) && same(String(Number(e.values.get(f)) / s), String(want)))
+      // "set starting ki to max" (Rising Fighting Spirit) is the game's ResourceChanging.MaxSP flag; Ultimate
+      // Burst's +1 bar is the league's reading of its collapse (ki burnout until 1 bar recharges)
+      const flag = r.value === 'max' ? 'ResourceChanging.MaxSP' : r.key === 'ultimateKiCost' && id === '00_0_0027' ? 'ParameterChanging.bStunWhenEndSparkingAfterUltimate' : null;
+      const hit = flag ? effects.find(e => e.values.get(flag) === 'true') : effects.find(e => fields.some(([f, s]) => e.values.has(f) && same(String(Number(e.values.get(f)) / s), String(want)))
         && (r.condition === 'sparking') === e.cond.includes('bSparking'));
       if (!hit) {
         const seen = effects.flatMap(e => fields.filter(([f]) => e.values.has(f)).map(([f, s]) => `${Number(e.values.get(f)) / s}${e.cond.length ? ` (${e.cond.join(', ')})` : ''}`));

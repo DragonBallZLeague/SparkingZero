@@ -21,9 +21,9 @@ id,name,key,value,op,condition,note
 00_0_0026,Blast Burst,superDamage,0.05,,,
 00_0_0026,Blast Burst,blastComboDamage,0.05,,,
 00_0_0026,Blast Burst,ultimateDamage,0.05,,,Game files: Ultimate Blast damage +5% too (its in-game title says Blast and Ultimate Blast)
-00_0_0027,Ultimate Burst,ultimateKiCost,1,,,
+00_0_0027,Ultimate Burst,ultimateKiCost,1,,,"Ki burnout after the ultimate until 1 bar recharges, so the league counts it as 1 more bar (6 instead of 5). Game files: bStunWhenEndSparkingAfterUltimate"
 00_0_0027,Ultimate Burst,ultimateDamage,0.05,,,
-00_0_0027,Ultimate Burst,display,,,,Stunned when Sparking Mode ends after using an Ultimate Blast
+00_0_0027,Ultimate Burst,display,,,,Collapses into ki burnout when Sparking Mode ends after an Ultimate Blast (cannot act until 1 bar of ki recharges)
 00_0_0028,Blast Attack Boost 1,superDamage,0.025,,,
 00_0_0028,Blast Attack Boost 1,blastComboDamage,0.025,,,
 00_0_0028,Blast Attack Boost 1,ultimateDamage,0.025,,,

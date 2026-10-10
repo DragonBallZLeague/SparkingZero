@@ -128,9 +128,17 @@
     "description": "Increases ki cost for Ultimate Blasts by 1 bar. Causes stun when Sparking Mode ends after using Ultimate Blast. Increases Ultimate Blast damage by 5%.",
     "exclusiveTo": null,
     "effects": [
-      {"key":"ultimateKiCost","value":1},
+      {
+        "key": "ultimateKiCost",
+        "value": 1,
+        "note": "Ki burnout after the ultimate until 1 bar recharges, so the league counts it as 1 more bar (6 instead of 5). Game files: bStunWhenEndSparkingAfterUltimate"
+      },
       {"key":"ultimateDamage","value":0.05},
-      {"key":"display","value":null,"note":"Stunned when Sparking Mode ends after using an Ultimate Blast"}
+      {
+        "key": "display",
+        "value": null,
+        "note": "Collapses into ki burnout when Sparking Mode ends after an Ultimate Blast (cannot act until 1 bar of ki recharges)"
+      }
     ],
     "bannedIn": []
   },
