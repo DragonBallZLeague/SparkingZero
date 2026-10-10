@@ -113,7 +113,12 @@
     "cost": 1,
     "description": "Increases ki cost for Blasts by 1 bar. Increases Blast damage by 5%. Increases Blast Combo damage by 5%.",
     "exclusiveTo": null,
-    "effects": [{"key":"blastKiCost","value":1},{"key":"superDamage","value":0.05},{"key":"blastComboDamage","value":0.05}],
+    "effects": [
+      {"key":"blastKiCost","value":1},
+      {"key":"superDamage","value":0.05},
+      {"key":"blastComboDamage","value":0.05},
+      {"key":"ultimateDamage","value":0.05,"note":"Game files: Ultimate Blast damage +5% too (its in-game title says Blast and Ultimate Blast)"}
+    ],
     "bannedIn": []
   },
   {
@@ -583,7 +588,11 @@
     "effects": [
       {"key":"combativesArmorLevel","value":3},
       {"key":"physicalResist","value":-0.2,"note":"Melee defense -20%"},
-      {"key":"blastResist","value":-0.1,"note":"Blast defense -10%"}
+      {
+        "key": "energyResist",
+        "value": -0.1,
+        "note": "Ki-blast and Blast defense -10% (game files: EnergyDamageResist; the description says blast defense)"
+      }
     ],
     "bannedIn": ["Standard","Standard - Soft","NEO Event"]
   },
@@ -668,7 +677,11 @@
     "effects": [
       {"key":"sparkingDrain","value":-0.15,"note":"Sparking Mode gauge decrease speed -15%"},
       {"key":"physicalResist","value":-0.2,"note":"Melee defense -20%"},
-      {"key":"blastResist","value":-0.1,"note":"Blast defense -10%"}
+      {
+        "key": "energyResist",
+        "value": -0.1,
+        "note": "Ki-blast and Blast defense -10% (game files: EnergyDamageResist; the description says blast defense)"
+      }
     ],
     "bannedIn": []
   },
@@ -785,7 +798,8 @@
     "effects": [
       {"key":"hsmSparkingCost","value":-0.25},
       {"key":"physicalResist","value":-0.2,"note":"All defense -20%"},
-      {"key":"energyResist","value":-0.2,"note":"All defense -20%"}
+      {"key":"energyResist","value":-0.2,"note":"All defense -20%"},
+      {"key":"guardResist","value":-0.2,"note":"Guarded-hit damage taken +20% (game files: ShaveDamageResist)"}
     ],
     "bannedIn": []
   },
@@ -807,7 +821,8 @@
     "effects": [
       {"key":"smSparkingCost","value":-0.25},
       {"key":"physicalResist","value":-0.2,"note":"All defense -20%"},
-      {"key":"energyResist","value":-0.2,"note":"All defense -20%"}
+      {"key":"energyResist","value":-0.2,"note":"All defense -20%"},
+      {"key":"guardResist","value":-0.2,"note":"Guarded-hit damage taken +20% (game files: ShaveDamageResist)"}
     ],
     "bannedIn": []
   },
@@ -826,7 +841,15 @@
     "cost": 1,
     "description": "Increases Blast by 5% for 30 seconds after using an emote for 1.5+ seconds.",
     "exclusiveTo": null,
-    "effects": [{"key":"superDamage","value":0.05,"condition":"for 30 seconds after an emote of 1.5+ seconds"}],
+    "effects": [
+      {"key":"superDamage","value":0.05,"condition":"for 30 seconds after an emote of 1.5+ seconds"},
+      {
+        "key": "ultimateDamage",
+        "value": 0.05,
+        "condition": "for 30 seconds after an emote of 1.5+ seconds",
+        "note": "Game files: its buff raises Ultimate Blast damage too"
+      }
+    ],
     "bannedIn": []
   },
   {

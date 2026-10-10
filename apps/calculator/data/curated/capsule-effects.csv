@@ -20,6 +20,7 @@ id,name,key,value,op,condition,note
 00_0_0026,Blast Burst,blastKiCost,1,,,
 00_0_0026,Blast Burst,superDamage,0.05,,,
 00_0_0026,Blast Burst,blastComboDamage,0.05,,,
+00_0_0026,Blast Burst,ultimateDamage,0.05,,,Game files: Ultimate Blast damage +5% too (its in-game title says Blast and Ultimate Blast)
 00_0_0027,Ultimate Burst,ultimateKiCost,1,,,
 00_0_0027,Ultimate Burst,ultimateDamage,0.05,,,
 00_0_0027,Ultimate Burst,display,,,,Stunned when Sparking Mode ends after using an Ultimate Blast
@@ -86,7 +87,7 @@ id,name,key,value,op,condition,note
 00_0_0122,Dragon Assault,vanishingAssaultCost,-0.15,,,
 00_0_0123,Power Body,combativesArmorLevel,3,,,
 00_0_0123,Power Body,physicalResist,-0.2,,,Melee defense -20%
-00_0_0123,Power Body,blastResist,-0.1,,,Blast defense -10%
+00_0_0123,Power Body,energyResist,-0.1,,,Ki-blast and Blast defense -10% (game files: EnergyDamageResist; the description says blast defense)
 00_0_0124,Speed Up,shortDashCost,-0.2,,,
 00_0_0125,Exquisite Skill,display,,,,Your stun/restraint recovery time -20%; the enemy's +20%
 00_0_0126,Ki Control,dragonDashCost,-0.25,,,
@@ -98,7 +99,7 @@ id,name,key,value,op,condition,note
 00_0_0131,God Ki,display,,,,Blasts cost 50% less ki; 1 bar of ki back after a missed Blast
 00_0_0132,Sparking! Plus,sparkingDrain,-0.15,,,Sparking Mode gauge decrease speed -15%
 00_0_0132,Sparking! Plus,physicalResist,-0.2,,,Melee defense -20%
-00_0_0132,Sparking! Plus,blastResist,-0.1,,,Blast defense -10%
+00_0_0132,Sparking! Plus,energyResist,-0.1,,,Ki-blast and Blast defense -10% (game files: EnergyDamageResist; the description says blast defense)
 00_0_0133,Style of the Strong,sparkingDrain,-0.15,,,Sparking Mode gauge decrease speed -15%
 00_0_0134,Dragon Break,dragonHomingLimit,1,,,
 00_0_0135,Dragon Crash,dragonSmashDamage,0.05,,,
@@ -118,12 +119,15 @@ id,name,key,value,op,condition,note
 00_0_0144,High-Speed Movement Master,hsmSparkingCost,-0.25,,,
 00_0_0144,High-Speed Movement Master,physicalResist,-0.2,,,All defense -20%
 00_0_0144,High-Speed Movement Master,energyResist,-0.2,,,All defense -20%
+00_0_0144,High-Speed Movement Master,guardResist,-0.2,,,Guarded-hit damage taken +20% (game files: ShaveDamageResist)
 00_0_0145,The Secret to High-Speed Movements,hsmSparkingCost,-0.25,,,
 00_0_0146,Super Movement Master,smSparkingCost,-0.25,,,
 00_0_0146,Super Movement Master,physicalResist,-0.2,,,All defense -20%
 00_0_0146,Super Movement Master,energyResist,-0.2,,,All defense -20%
+00_0_0146,Super Movement Master,guardResist,-0.2,,,Guarded-hit damage taken +20% (game files: ShaveDamageResist)
 00_0_0147,The Secret to Super Movements,smSparkingCost,-0.25,,,
 00_0_0148,Performer,superDamage,0.05,,for 30 seconds after an emote of 1.5+ seconds,
+00_0_0148,Performer,ultimateDamage,0.05,,for 30 seconds after an emote of 1.5+ seconds,Game files: its buff raises Ultimate Blast damage too
 00_0_0149,Dragon Heart,display,,,,Recovers 25% of the Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement
 00_0_0150,King Kai Training,health,5000,,,
 00_0_0151,God of Destruction Training,health,7500,,,

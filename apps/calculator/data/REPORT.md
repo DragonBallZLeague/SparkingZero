@@ -266,7 +266,7 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Ki Blast Attack Boost 3 (00_0_0016) | 5 | kiBlastDamage +7.5%; chargedKiBlastDamage +7.5% |  |  |
 | Power Unleashed (00_0_0023) | 2 |  |  | burstRushDamage +5% |
 | Finishing Blow (00_0_0024) | 1 |  |  | burstMeteorDamage +5% |
-| Blast Burst (00_0_0026) | 1 | blastKiCost +1; superDamage +5% |  | blastComboDamage +5% |
+| Blast Burst (00_0_0026) | 1 | blastKiCost +1; superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
 | Ultimate Burst (00_0_0027) | 2 | ultimateKiCost +1; ultimateDamage +5% |  | Stunned when Sparking Mode ends after using an Ultimate Blast |
 | Blast Attack Boost 1 (00_0_0028) | 1 | superDamage +2.5%; ultimateDamage +2.5% |  | blastComboDamage +2.5% |
 | Blast Attack Boost 2 (00_0_0029) | 3 | superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
@@ -316,7 +316,7 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Ki Blast Charge 2 (00_0_0120) | 2 |  |  | Smash Ki Blast charging time -3% |
 | Ki Blast Charge 3 (00_0_0121) | 3 |  |  | Smash Ki Blast charging time -5% |
 | Dragon Assault (00_0_0122) | 3 |  |  | vanishingAssaultCost -15% |
-| Power Body (00_0_0123) | 5 | physicalResist -20%; blastResist -10% |  | combativesArmorLevel +3 |
+| Power Body (00_0_0123) | 5 | physicalResist -20%; energyResist -10% |  | combativesArmorLevel +3 |
 | Speed Up (00_0_0124) | 3 | shortDashCost -20% |  |  |
 | Exquisite Skill (00_0_0125) | 1 |  |  | Your stun/restraint recovery time -20%; the enemy's +20% |
 | Ki Control (00_0_0126) | 3 | kiRecovery -5% |  | dragonDashCost -25% |
@@ -325,7 +325,7 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Combo Master (00_0_0129) | 1 |  |  | Combo damage scaling -2.5% |
 | Combo King (00_0_0130) | 2 |  |  | Combo damage scaling -5% |
 | God Ki (00_0_0131) | 5 |  |  | Blasts cost 50% less ki; 1 bar of ki back after a missed Blast |
-| Sparking! Plus (00_0_0132) | 1 | sparkingDrain -15%; physicalResist -20%; blastResist -10% |  |  |
+| Sparking! Plus (00_0_0132) | 1 | sparkingDrain -15%; physicalResist -20%; energyResist -10% |  |  |
 | Style of the Strong (00_0_0133) | 2 | sparkingDrain -15% |  |  |
 | Dragon Break (00_0_0134) | 2 |  |  | dragonHomingLimit +1 |
 | Dragon Crash (00_0_0135) | 2 |  |  | dragonSmashDamage +5% |
@@ -337,11 +337,11 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Master Strike (00_0_0141) | 3 | rushDamage +5%; smashDamage +5%; comboDamage +5%; health -5000 |  |  |
 | Master Ki Blast (00_0_0142) | 2 | kiBlastCost -5%; health -5000 |  | kiBlastSpeed +5% |
 | Master Throw (00_0_0143) | 1 | throwDamage +5% |  |  |
-| High-Speed Movement Master (00_0_0144) | 1 | physicalResist -20%; energyResist -20% |  | hsmSparkingCost -25% |
+| High-Speed Movement Master (00_0_0144) | 1 | physicalResist -20%; energyResist -20% |  | hsmSparkingCost -25%; Guarded-hit damage taken +20% (game files: ShaveDamageResist) |
 | The Secret to High-Speed Movements (00_0_0145) | 1 |  |  | hsmSparkingCost -25% |
-| Super Movement Master (00_0_0146) | 1 | physicalResist -20%; energyResist -20% |  | smSparkingCost -25% |
+| Super Movement Master (00_0_0146) | 1 | physicalResist -20%; energyResist -20% |  | smSparkingCost -25%; Guarded-hit damage taken +20% (game files: ShaveDamageResist) |
 | The Secret to Super Movements (00_0_0147) | 1 |  |  | smSparkingCost -25% |
-| Performer (00_0_0148) | 1 |  | superDamage +5% (for 30 seconds after an emote of 1.5+ seconds) |  |
+| Performer (00_0_0148) | 1 |  | superDamage +5% (for 30 seconds after an emote of 1.5+ seconds); ultimateDamage +5% (for 30 seconds after an emote of 1.5+ seconds) |  |
 | Dragon Heart (00_0_0149) | 3 |  |  | Recovers 25% of the Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement |
 | King Kai Training (00_0_0150) | 3 | health +5000 |  |  |
 | God of Destruction Training (00_0_0151) | 5 | health +7500 |  |  |

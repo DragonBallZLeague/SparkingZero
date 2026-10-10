@@ -233,10 +233,37 @@ for (const f of fm.list(`${MDA}/CharacterItem`, /^ItemData_00_0_\d{4}\.json$/)) 
   capsuleRows.push({ id, name: en.get(p.Name?.Key) ?? '', description: en.get(descKey) ?? '', type: String(p.Type || '').replace(/^.*::/, ''),
     category: String(p.Category || '').replace(/^.*::/, ''), effectFiles: effects.map(e => e.name).join(' ') });
   effects.forEach((e, ei) => {
-    for (const [field, v] of leaves(e.props, { skip: /^(InfoText|ThisItemConditions)$/, drop: (pth, val) => isZero(val) || /\.Curve$/.test(pth) })) {
+    // Some effects apply a timed buff (Performer: Buff_Common_080_Item); its values go to buff-params.
+    for (const eff of e.props.Effects || []) if (eff?.Buff) paramsOnce(buffParams, fm.load(eff.Buff), { skip: COSMETIC, drop: (p, v) => isZero(v) });
+    for (const [field, v] of leaves(e.props,{ skip: /^(InfoText|ThisItemConditions)$/, drop: (pth, val) => isZero(val) || /\.Curve$/.test(pth) })) {
       capsuleEffectRows.push({ id, effect: ei, file: e.name, field, value: text(v) });
     }
   });
+}
+// Effect structs are exported whole, so their defaults (ExpGainMultiplier 1, AiLevel -1, the
+// "no more than" comparison of an unused condition, …) appear on every capsule. A field and value
+// that more than half of all capsules share is such a default and is left out.
+{
+  const fold = (f) => f.replace(/\[\d+\]/g, '[]');
+  const users = new Map();
+  for (const r of capsuleEffectRows) {
+    const k = `${fold(r.field)}=${r.value}`;
+    if (!users.has(k)) users.set(k, new Set());
+    users.get(k).add(r.id);
+  }
+  const common = new Set([...users].filter(([, s]) => s.size * 2 > capsuleRows.length).map(([k]) => k));
+  // Unused parts of a condition keep their enum defaults ("no more than", "Enable", gender None):
+  // an enum value that 90% of the capsules using that field share is a default too.
+  const fieldUsers = new Map();
+  for (const [k, s] of users) {
+    const f = k.slice(0, k.indexOf('='));
+    fieldUsers.set(f, (fieldUsers.get(f) || 0) + s.size);
+  }
+  for (const [k, s] of users) {
+    const f = k.slice(0, k.indexOf('=')), v = k.slice(k.indexOf('=') + 1);
+    if (/::/.test(v) && fieldUsers.get(f) >= 10 && s.size >= 0.9 * fieldUsers.get(f)) common.add(k);
+  }
+  capsuleEffectRows.splice(0, capsuleEffectRows.length, ...capsuleEffectRows.filter(r => !common.has(`${fold(r.field)}=${r.value}`)));
 }
 
 // ---- write ------------------------------------------------------------------------
