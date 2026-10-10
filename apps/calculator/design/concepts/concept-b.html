@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept B views</title>
+<!--
+  Concept B (the in-game character sheet), the league's pick on 2026-10-09, as quick static
+  mockups of its four views: the sheet, full stats, compare and vs opponent. Real numbers from
+  public/data and the engine (Goku (Z - Early) with Rush Attack Boost 1 and Blast Burst; Vegeta
+  (Z - Scouter); Goku with Rush Attack Boost 1 and Kaioken vs Janemba Sparking), typed in.
+  Conventions: ki yellow, Sparking purple, blasts B1/B2 orange, ultimates pink, skills S1/S2
+  purple, no middle-dot separators.
+-->
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+.page { max-width: 1680px; margin: 0 auto; padding: 20px 24px 60px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.lead { color: #94a3b8; margin: 0 0 14px; max-width: 980px; }
+.switch { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.switch a { padding: 8px 14px; border-radius: 8px; border: 1px solid #2a2f3a; color: #cbd5e1; text-decoration: none; font-weight: 600; }
+.switch a.on { border-color: #f97316; color: #fff; background: rgba(249,115,22,.12); }
+.view { display: none; } .view.on { display: block; }
+.about { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+.about div { border: 1px solid #23283a; border-radius: 10px; padding: 10px 14px; color: #cbd5e1; }
+.about b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-bottom: 4px; }
+.frames { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+.frame-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 0 0 6px; }
+.desk { width: 1180px; max-width: 100%; height: 940px; overflow: hidden; border: 1px solid #2a2f3a; border-radius: 10px; }
+.phone { width: 390px; height: 1240px; overflow: hidden; border: 1px solid #2a2f3a; border-radius: 26px; }
+
+/* ---------------- the sheet's look ---------------- */
+:root {
+  --ki: #facc15; --ki-dim: rgba(250, 204, 21, .16); --spark: #a855f7; --hp: #22c55e; --skill: #22d3ee;
+  --blast: #fb923c; --ult: #f472b6; --sk: #c084fc; --up: #fb923c; --win: #4ade80;
+  --plate: rgba(10, 13, 32, .62); --line: rgba(148, 163, 184, .14); --muted: #94a3b8; --label: #93c5fd;
+}
+.B { height: 100%; color: #f1f5f9; background: radial-gradient(1200px 700px at 20% 0%, #24305e 0%, #121836 45%, #0a0d20 100%); position: relative; overflow: hidden; }
+.B::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, rgba(255,255,255,.022) 0 2px, transparent 2px 22px); pointer-events: none; }
+.B > * { position: relative; }
+.top { height: 50px; display: flex; align-items: center; gap: 16px; padding: 0 18px; background: linear-gradient(90deg, rgba(249,115,22,.92), rgba(234,88,12,0) 46%); }
+.top .ttl { font-style: italic; font-weight: 900; letter-spacing: .04em; font-size: 17px; text-transform: uppercase; white-space: nowrap; }
+.tabs { display: flex; gap: 4px; margin-left: 8px; }
+.tabs span { padding: 5px 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #cbd5e1; background: rgba(10,13,32,.55); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+.tabs span.on { background: #f8fafc; color: #0a0d20; }
+.top .rs { margin-left: auto; font-size: 12px; color: #e2e8f0; border: 1px solid rgba(255,255,255,.25); padding: 3px 10px; }
+.cols { display: grid; grid-template-columns: 350px minmax(0, 1fr); height: calc(100% - 50px); }
+.art { position: relative; overflow: hidden; }
+.art img.por { position: absolute; left: -46px; top: 0; width: 450px; height: 450px; object-fit: cover; filter: drop-shadow(0 0 30px rgba(96,165,250,.35)); }
+.nameplate { position: absolute; left: 0; right: 0; top: 330px; padding: 10px 18px; background: linear-gradient(90deg, rgba(10,13,32,.96), rgba(10,13,32,.45)); clip-path: polygon(0 0, 100% 0, 93% 100%, 0 100%); }
+.nameplate .nm { font-size: 25px; font-weight: 900; font-style: italic; text-transform: uppercase; line-height: 1.05; }
+.chips { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+.chip { font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 2px 11px; background: #2563eb; clip-path: polygon(9% 0, 100% 0, 91% 100%, 0 100%); white-space: nowrap; }
+.chip.dp { background: #f97316; }
+.chip.ghost { background: rgba(148,163,184,.22); color: #e2e8f0; }
+.build { position: absolute; left: 14px; right: 14px; top: 448px; }
+.lbl2 { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); margin: 0 0 6px; display: flex; justify-content: space-between; }
+.toggles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 14px; }
+.tog { padding: 6px 10px; background: rgba(148,163,184,.12); clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); }
+.tog small { display: block; font-size: 10px; font-weight: 800; letter-spacing: .1em; color: var(--muted); }
+.tog span { font-size: 12.5px; font-weight: 700; }
+.tog.on { background: linear-gradient(90deg, rgba(192,132,252,.45), rgba(192,132,252,.15)); }
+.tog.sp.on { background: linear-gradient(90deg, rgba(168,85,247,.6), rgba(168,85,247,.2)); }
+.hexes { display: flex; gap: 6px; }
+.hex { width: 42px; height: 48px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: rgba(148,163,184,.18); display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 800; text-align: center; line-height: 1.1; color: #cbd5e1; }
+.hex.f { background: linear-gradient(160deg, #f59e0b, #b45309); color: #111; }
+.caplist { margin-top: 8px; font-size: 12px; color: #cbd5e1; }
+.caplist div { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid var(--line); }
+.sheet { padding: 14px 20px 14px 4px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.plate { background: var(--plate); border-left: 3px solid #f97316; padding: 9px 14px 11px; }
+.plate h5 { margin: 0 0 8px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #fdba74; font-style: italic; display: flex; justify-content: space-between; }
+.plate h5 em { font-style: normal; letter-spacing: .04em; text-transform: none; color: var(--muted); font-weight: 500; }
+.plate.res { border-left-color: var(--ki); } .plate.res h5 { color: #fde68a; }
+.plate.off { border-left-color: #ef4444; } .plate.off h5 { color: #fca5a5; }
+.plate.cmd { border-left-color: var(--ult); } .plate.cmd h5 { color: #f9a8d4; }
+.plate.new { border-left-color: #22d3ee; } .plate.new h5 { color: #a5f3fc; }
+
+/* gauges */
+.bars { display: flex; gap: 5px; flex: 1; min-width: 0; }
+.bars i { flex: 1; height: 14px; background: rgba(148,163,184,.14); transform: skewX(-20deg); }
+.bars.hp i.f { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.bars.hp i.cap { background: transparent; outline: 1px dashed rgba(148,163,184,.35); outline-offset: -1px; }
+.bars.ki i.f { background: linear-gradient(90deg, #eab308, #fde047); }
+.grow { display: flex; align-items: center; gap: 14px; }
+.grow .k { width: 64px; font-size: 12.5px; color: #e2e8f0; font-weight: 700; flex: none; }
+.grow .v { width: 96px; text-align: right; font-weight: 900; font-size: 18px; font-style: italic; font-variant-numeric: tabular-nums; flex: none; }
+.grow .v small { display: block; font-size: 11px; font-style: normal; font-weight: 500; color: var(--muted); }
+.kiwrap { flex: 1; min-width: 0; }
+.regen-mark { position: relative; height: 18px; margin-top: 4px; }
+.regen-mark span { position: absolute; left: 0; top: 0; height: 8px; border: 2px solid var(--ki); border-top: 0; }
+.regen-mark em { position: absolute; top: 6px; font-style: normal; font-size: 11px; color: #fde68a; white-space: nowrap; }
+.tiles { display: grid; gap: 6px; margin-top: 10px; }
+.tiles.t5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.tiles.t4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tile { background: rgba(255,255,255,.045); padding: 5px 10px 6px; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); }
+.tile span { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile b { font-size: 20px; font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tile b small { font-size: 11px; font-style: normal; font-weight: 600; color: var(--muted); margin-left: 3px; }
+.tile b.up { color: var(--up); }
+.tap { text-decoration: underline dotted rgba(148,163,184,.45); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.meters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.meter { background: rgba(255,255,255,.045); padding: 7px 12px 9px; }
+.meter .h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.meter .h span { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #fde68a; font-weight: 700; }
+.meter .h b { font-size: 19px; font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums; }
+.meter .h b small { font-size: 11px; font-style: normal; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.meter .track { height: 8px; background: rgba(148,163,184,.14); margin: 7px 0 4px; position: relative; }
+.meter .track i { position: absolute; left: 0; top: 0; bottom: 0; }
+.meter .track i.charge { background: repeating-linear-gradient(90deg, var(--ki) 0 10px, #fde047 10px 12px); }
+.meter .track i.regen { background: repeating-linear-gradient(135deg, rgba(250,204,21,.85) 0 4px, rgba(250,204,21,.25) 4px 8px); }
+.meter .note { font-size: 11.5px; color: var(--muted); }
+.meter.skill .h span { color: #a5f3fc; }
+.pips { display: flex; gap: 5px; margin: 7px 0 4px; }
+.pips i { width: 26px; height: 10px; background: rgba(34,211,238,.16); transform: skewX(-20deg); }
+.pips i.f { background: var(--skill); }
+
+/* command list */
+.cmdrow { display: grid; grid-template-columns: 34px minmax(0, 1.3fr) minmax(0, 1.4fr) 84px 150px; align-items: center; gap: 12px; padding: 6px 2px; border-bottom: 1px solid var(--line); }
+.cmdrow:last-child { border-bottom: 0; }
+.btn { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #111; }
+.btn.b { background: var(--blast); } .btn.u { background: var(--ult); } .btn.s { background: var(--sk); }
+.mvn { font-weight: 800; font-style: italic; text-transform: uppercase; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tags span { font-size: 10.5px; font-weight: 700; padding: 1px 7px; background: rgba(148,163,184,.16); color: #e2e8f0; white-space: nowrap; }
+.tags span.eff { background: rgba(192,132,252,.22); color: #f3e8ff; }
+.dmg { text-align: right; font-weight: 900; font-size: 17px; font-style: italic; font-variant-numeric: tabular-nums; }
+.dmg.up { color: var(--up); }
+.cost { display: flex; gap: 3px; justify-content: flex-end; align-items: center; }
+.cost i { width: 11px; height: 12px; transform: skewX(-20deg); background: var(--ki); }
+.cost i.add { background: transparent; outline: 2px solid var(--ki); outline-offset: -2px; }
+.cost i.sp { width: 24px; background: var(--spark); box-shadow: 0 0 8px rgba(168,85,247,.8); }
+.cost i.pt { background: var(--skill); }
+.cost em { font-style: normal; font-size: 11px; color: var(--muted); margin-left: 6px; white-space: nowrap; }
+
+/* full stats */
+.fs { padding: 14px 18px; height: calc(100% - 50px); display: flex; flex-direction: column; gap: 12px; }
+.fs-id { display: flex; align-items: center; gap: 14px; }
+.fs-id img { width: 64px; height: 64px; object-fit: cover; background: rgba(255,255,255,.06); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+.fs-id .nm { font-size: 20px; font-weight: 900; font-style: italic; text-transform: uppercase; }
+.fs-grid { columns: 3; column-gap: 12px; }
+.fs-grid .plate { break-inside: avoid; margin-bottom: 12px; }
+.srow { display: grid; grid-template-columns: minmax(0, 1fr) 58px 58px 74px; gap: 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+.srow.h { border-top: 0; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 0; }
+.srow span:nth-child(2), .srow span:nth-child(3) { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+.srow span:nth-child(2) { color: var(--muted); font-weight: 500; }
+.srow .up { color: var(--up); }
+.src { font-size: 10px; font-weight: 700; padding: 1px 5px; text-align: center; white-space: nowrap; }
+.src.g { background: rgba(34,197,94,.16); color: #86efac; } .src.c { background: rgba(251,146,60,.16); color: #fdba74; } .src.f { background: rgba(147,197,253,.16); color: #bfdbfe; } .src.l { background: rgba(244,114,182,.16); color: #f9a8d4; }
+.newtag { font-size: 9.5px; font-weight: 900; background: #22d3ee; color: #062a33; padding: 1px 6px; margin-left: 6px; letter-spacing: .06em; }
+.tip { position: absolute; width: 360px; background: #0b1030; border: 1px solid rgba(147,197,253,.35); box-shadow: 0 18px 40px rgba(0,0,0,.7); }
+.tip .th { background: linear-gradient(90deg, #f97316, rgba(249,115,22,.15)); padding: 6px 12px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 13px; }
+.tip .tb { padding: 6px 12px 10px; }
+.tip .tr { display: grid; grid-template-columns: minmax(0, 1fr) 70px 110px; gap: 8px; padding: 4px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.tip .tr span:nth-child(2) { text-align: right; font-weight: 800; }
+.tip .tr span:nth-child(3) { color: var(--muted); font-size: 11px; }
+.tip .tr.t span { color: var(--up); font-weight: 900; }
+
+/* compare and versus */
+.vshead { display: grid; grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr); height: 170px; }
+.vside { position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 12px 18px; }
+.vside.l { background: linear-gradient(110deg, rgba(234,88,12,.55), rgba(10,13,32,0) 75%); }
+.vside.r { background: linear-gradient(250deg, rgba(37,99,235,.6), rgba(10,13,32,0) 75%); justify-content: flex-end; text-align: right; }
+.vside img { position: absolute; top: -26px; width: 230px; height: 230px; object-fit: cover; }
+.vside.l img { right: 0; } .vside.r img { left: 0; transform: scaleX(-1); }
+.vside .who { position: relative; text-shadow: 0 1px 3px #000, 0 0 10px #000; }
+.vside .who .nm { font-size: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; line-height: 1.05; }
+.vside .chips { justify-content: inherit; }
+.vsmid { display: flex; align-items: center; justify-content: center; }
+.vsmid b { font-size: 44px; font-weight: 900; font-style: italic; color: #f97316; text-shadow: 0 0 18px rgba(249,115,22,.6); }
+.cmpgrid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 12px; padding: 10px 18px; }
+.pair { display: grid; grid-template-columns: 70px minmax(0, 1fr) 150px minmax(0, 1fr) 70px; align-items: center; gap: 8px; padding: 4px 0; }
+.pair .a { text-align: right; font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums; }
+.pair .b { font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums; }
+.pair .w { color: var(--win); }
+.pair .n { text-align: center; font-size: 12px; color: #cbd5e1; }
+.pair .n small { display: block; font-size: 10px; color: var(--muted); }
+.pb { height: 10px; position: relative; background: rgba(148,163,184,.1); transform: skewX(-20deg); }
+.pb i { position: absolute; top: 0; bottom: 0; }
+.pb.l i { right: 0; background: linear-gradient(270deg, #f97316, #c2410c); }
+.pb.r i { left: 0; background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+.hpair { display: grid; grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr); gap: 8px; align-items: center; padding: 4px 0; }
+.hpair .bars i { height: 12px; }
+.hpair .bars.l { flex-direction: row-reverse; }
+.verdict { font-size: 13px; color: #e2e8f0; }
+.verdict b { color: var(--win); font-size: 18px; font-style: italic; }
+.strong { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.strong div small { display: block; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.sim { display: flex; gap: 8px; margin-top: 4px; }
+.sim div { text-align: center; width: 92px; font-size: 11px; color: #cbd5e1; }
+.sim img { display: block; width: 56px; height: 56px; object-fit: cover; margin: 0 auto 3px; background: rgba(255,255,255,.06); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+.mvpair { display: grid; grid-template-columns: 30px minmax(0, 1fr) 64px 64px; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+.mvpair .btn { width: 24px; height: 24px; font-size: 9.5px; }
+.mvpair span:nth-child(3), .mvpair span:nth-child(4) { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.mvpair small { display: block; color: var(--muted); font-size: 10.5px; }
+.ko { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ko div { background: rgba(255,255,255,.045); padding: 8px 12px; }
+.ko b { font-size: 34px; font-weight: 900; font-style: italic; line-height: 1; }
+.ko small { display: block; font-size: 11px; color: var(--muted); }
+.ko .you b { color: #fdba74; } .ko .them b { color: #93c5fd; }
+.xrow { display: grid; grid-template-columns: 34px minmax(0, 1fr) 110px 110px; gap: 10px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.xrow .btn { width: 26px; height: 26px; font-size: 10px; }
+.xrow .btn.m { background: #f87171; } .xrow .btn.k { background: var(--ki); }
+.xrow .nm2 { font-weight: 700; font-size: 13px; }
+.xrow .v1 { text-align: right; font-weight: 900; font-style: italic; color: #fdba74; font-variant-numeric: tabular-nums; }
+.xrow .v2 { text-align: right; font-weight: 900; font-style: italic; color: #93c5fd; font-variant-numeric: tabular-nums; }
+.hpstrip { display: flex; gap: 4px; margin-top: 6px; }
+.hpstrip i { flex: 1; height: 12px; background: linear-gradient(90deg, #16a34a, #4ade80); transform: skewX(-20deg); position: relative; }
+.hpstrip i.cut::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: var(--w); background: #ef4444; }
+
+/* phone */
+.ph .cols { display: block; height: auto; }
+.ph .art { height: 430px; }
+.ph .art img.por { left: 20px; top: -10px; width: 350px; height: 350px; }
+.ph .nameplate { top: 250px; }
+.ph .build { top: 335px; }
+.ph .toggles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ph .hexes { gap: 4px; } .ph .hex { width: 44px; height: 50px; }
+.ph .sheet { padding: 6px 10px 20px; }
+.ph .tabs { display: none; }
+.ph .tiles.t5, .ph .tiles.t4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ph .meters { grid-template-columns: 1fr; gap: 6px; }
+.ph .grow .v { width: 76px; font-size: 16px; }
+.ph .grow .k { width: 50px; }
+.ph .cmdrow { grid-template-columns: 30px minmax(0, 1fr) 70px; row-gap: 3px; }
+.ph .cmdrow .tags { grid-column: 2 / 4; grid-row: 2; }
+.ph .cmdrow .cost { grid-column: 2 / 4; grid-row: 3; justify-content: flex-start; }
+.ph .phtabs { display: flex; height: 46px; background: rgba(10,13,32,.9); border-top: 1px solid var(--line); }
+.ph .phtabs span { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.ph .phtabs span.on { color: #fff; box-shadow: inset 0 -3px 0 #f97316; }
+.phtabs { display: none; }
+.ph .vshead { grid-template-columns: 1fr 1fr; height: 150px; position: relative; }
+.ph .vsmid { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); }
+.ph .vsmid b { font-size: 30px; }
+.ph .vside img { width: 160px; height: 160px; top: -8px; }
+.ph .vside .who .nm { font-size: 14px; }
+.ph .cmpgrid { display: block; padding: 8px 10px; }
+.ph .cmpgrid > div + div { margin-top: 10px; }
+.ph .pair { grid-template-columns: 56px minmax(0, 1fr) 92px minmax(0, 1fr) 56px; gap: 5px; font-size: 13px; }
+.ph .pair .n { font-size: 11px; }
+.ph .hpair { grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr); }
+.ph .xrow { grid-template-columns: 28px minmax(0, 1fr) 62px 62px; }
+.ph .xrow .vbar { display: none; }
+.ph .fs-grid { columns: 1; }
+.ph .fs { padding: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Concept B: the in-game character sheet</h1>
+  <p class="lead">The four views of concept B as quick static mockups, with your six fixes applied. The numbers are real, from the published data and the engine. Only the switcher below works. On the real pages every dotted number opens its breakdown (Full stats shows one open).</p>
+  <nav class="switch">
+    <a href="#sheet" data-v="sheet">1. Sheet</a>
+    <a href="#stats" data-v="stats">2. Full stats</a>
+    <a href="#compare" data-v="compare">3. Compare</a>
+    <a href="#versus" data-v="versus">4. Vs opponent</a>
+  </nav>
+
+  <!-- ============================================================ SHEET -->
+  <section class="view" id="sheet">
+    <div class="about">
+      <div><b>What changed</b>Health has its own Toughness plate with bars across the full width (the dashed fifth bar is the roster's 50,000 maximum). Ki and the skill gauge moved to Resources, in the game's yellow. The bracket under the ki bars marks how far ki recharges on its own (2 bars here). Ki charge and ki regen are separate meters, drawn differently: a solid fill for holding charge, hatched for passive regen. Each shows how long one bar takes. Ki blasts joined Offense. Blasts are B1 and B2 in orange, the ultimate is UL in pink with a purple Sparking marker, and skills are S1 and S2 in purple. Tags replace the dot separators.</div>
+      <div><b>Still open</b>The build (Active skills, Sparking, capsules) sits under the portrait on desktop and phone. A capsule picker would open over the sheet. On a phone the sheet scrolls, and the bar at the bottom moves between the four views.</div>
+    </div>
+    <div class="frames">
+      <div>
+        <p class="frame-lbl">Desktop 1180px</p>
+        <div class="desk"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span class="on">Sheet</span><span>Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="cols">
+            <div class="art">
+              <img class="por" src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt="">
+              <div class="nameplate"><div class="nm">Goku (Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span><span class="chip ghost">Change ▾</span></div></div>
+              <div class="build">
+                <p class="lbl2"><span>Active</span></p>
+                <div class="toggles">
+                  <div class="tog"><small>S1</small><span>Solar Flare</span></div>
+                  <div class="tog"><small>S2</small><span>Kaioken</span></div>
+                  <div class="tog sp"><small>SPARKING</small><span>Off</span></div>
+                </div>
+                <p class="lbl2"><span>Capsules</span><span>2 of 20 points</span></p>
+                <div class="hexes"><span class="hex f">Rush<br>Boost 1</span><span class="hex f">Blast<br>Burst</span><span class="hex">+</span><span class="hex"></span><span class="hex"></span><span class="hex"></span><span class="hex"></span></div>
+                <div class="caplist"><div><span>Rush Attack Boost 1</span><span>Rush damage +2.5%</span></div><div><span>Blast Burst</span><span>Blasts +5%, +1 ki bar</span></div></div>
+              </div>
+            </div>
+            <div class="sheet">
+              <div class="plate">
+                <h5>Toughness</h5>
+                <div class="grow"><span class="k">Health</span><span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="cap"></i></span><span class="v tap">40,000<small>4 bars</small></span></div>
+                <div class="tiles t5">
+                  <div class="tile"><span>5-hit taken</span><b class="tap">2,585</b></div>
+                  <div class="tile"><span>Melee def</span><b class="tap">Base</b></div>
+                  <div class="tile"><span>Blast def</span><b class="tap">Base</b></div>
+                  <div class="tile"><span>Ki-blast def</span><b class="tap">Base</b></div>
+                  <div class="tile"><span>Armor</span><b class="tap">None</b></div>
+                </div>
+              </div>
+              <div class="plate res">
+                <h5>Resources</h5>
+                <div class="grow">
+                  <span class="k">Ki</span>
+                  <div class="kiwrap">
+                    <span class="bars ki"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></span>
+                    <div class="regen-mark"><span style="width:39.2%"></span><em style="left:41%">recharges on its own up to 2 bars</em></div>
+                  </div>
+                  <span class="v tap">2 of 5<small>at the start</small></span>
+                </div>
+                <div class="meters">
+                  <div class="meter"><div class="h"><span>Ki charge</span><b class="tap">1.40<small>bars/s</small></b></div><div class="track"><i class="charge" style="width:12%"></i></div><div class="note">One bar in 0.7s while holding charge</div></div>
+                  <div class="meter"><div class="h"><span>Ki regen</span><b class="tap">0.175<small>bars/s</small></b></div><div class="track"><i class="regen" style="width:95%"></i></div><div class="note">One bar in 5.7s on its own, up to 2 bars</div></div>
+                  <div class="meter skill"><div class="h"><span>Skill gauge</span><b class="tap">0<small>of 6</small></b></div><div class="pips"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="note">Gains 3.65 points a minute</div></div>
+                </div>
+              </div>
+              <div class="plate off">
+                <h5>Offense</h5>
+                <div class="tiles t5" style="margin-top:0">
+                  <div class="tile"><span>Rush 5-hit</span><b class="tap up">2,523</b></div>
+                  <div class="tile"><span>Smash</span><b class="tap">675</b></div>
+                  <div class="tile"><span>Throw</span><b class="tap">1,250</b></div>
+                  <div class="tile"><span>Pursuit</span><b class="tap">1,250</b></div>
+                  <div class="tile"><span>Armor break</span><b class="tap">5<small>hits</small></b></div>
+                </div>
+                <div class="tiles t4">
+                  <div class="tile"><span>Ki blast</span><b class="tap">250</b></div>
+                  <div class="tile"><span>Ki blasts</span><b class="tap">5<small>a volley</small></b></div>
+                  <div class="tile"><span>Ki blast cost</span><b class="tap">0.2<small>bars</small></b></div>
+                  <div class="tile"><span>Full volley</span><b class="tap">1,125</b></div>
+                </div>
+              </div>
+              <div class="plate cmd">
+                <h5>Command list <em>Damage in this build</em></h5>
+                <div class="cmdrow"><span class="btn b">B1</span><span class="mvn">Kamehameha</span><span class="tags"><span>Beam</span><span>Chargeable</span><span>Beam clash</span></span><span class="dmg up tap">7,481</span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
+                <div class="cmdrow"><span class="btn b">B2</span><span class="mvn">Kaioken Attack</span><span class="tags"><span>Rush</span><span>Cinematic</span></span><span class="dmg up tap">8,794</span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
+                <div class="cmdrow"><span class="btn u">UL</span><span class="mvn">Spirit Bomb</span><span class="tags"><span>Fire</span><span>Unguardable</span><span>Cinematic</span></span><span class="dmg up tap">15,750</span><span class="cost"><i></i><i></i><i></i><i></i><i></i><i class="sp"></i><em>5 + Sparking</em></span></div>
+                <div class="cmdrow"><span class="btn s">S1</span><span class="mvn">Solar Flare</span><span class="tags"><span>Blind</span><span>Unblockable</span><span>5s</span></span><span class="dmg"></span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
+                <div class="cmdrow"><span class="btn s">S2</span><span class="mvn">Kaioken</span><span class="tags"><span>Buff</span><span class="eff">Melee +10%</span><span>25s</span></span><span class="dmg"></span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px (scrolls)</p>
+        <div class="phone"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="cols">
+            <div class="art">
+              <img class="por" src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt="">
+              <div class="nameplate"><div class="nm">Goku (Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span><span class="chip ghost">Change ▾</span></div></div>
+              <div class="build">
+                <div class="toggles"><div class="tog"><small>S1</small><span>Solar Flare</span></div><div class="tog"><small>S2</small><span>Kaioken</span></div><div class="tog sp"><small>SPARKING</small><span>Off</span></div></div>
+                <div class="hexes"><span class="hex f">Rush<br>Boost 1</span><span class="hex f">Blast<br>Burst</span><span class="hex">+</span><span class="hex"></span><span class="hex"></span><span class="hex"></span><span class="hex"></span></div>
+              </div>
+            </div>
+            <div class="sheet">
+              <div class="plate">
+                <h5>Toughness</h5>
+                <div class="grow"><span class="k">Health</span><span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="cap"></i></span><span class="v">40,000</span></div>
+                <div class="tiles t5"><div class="tile"><span>5-hit taken</span><b>2,585</b></div><div class="tile"><span>Melee def</span><b>Base</b></div><div class="tile"><span>Blast def</span><b>Base</b></div><div class="tile"><span>Armor</span><b>None</b></div></div>
+              </div>
+              <div class="plate res">
+                <h5>Resources</h5>
+                <div class="grow"><span class="k">Ki</span><div class="kiwrap"><span class="bars ki"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></span><div class="regen-mark"><span style="width:39.2%"></span><em style="left:41%">recharges to 2</em></div></div><span class="v">2 of 5</span></div>
+                <div class="meters">
+                  <div class="meter"><div class="h"><span>Ki charge</span><b>1.40<small>bars/s</small></b></div><div class="track"><i class="charge" style="width:12%"></i></div></div>
+                  <div class="meter"><div class="h"><span>Ki regen</span><b>0.175<small>bars/s</small></b></div><div class="track"><i class="regen" style="width:95%"></i></div></div>
+                  <div class="meter skill"><div class="h"><span>Skill gauge</span><b>0<small>of 6</small></b></div><div class="pips"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+                </div>
+              </div>
+              <div class="plate off">
+                <h5>Offense</h5>
+                <div class="tiles t4" style="margin-top:0"><div class="tile"><span>Rush 5-hit</span><b class="up">2,523</b></div><div class="tile"><span>Smash</span><b>675</b></div><div class="tile"><span>Throw</span><b>1,250</b></div><div class="tile"><span>Armor break</span><b>5<small>hits</small></b></div><div class="tile"><span>Ki blast</span><b>250</b></div><div class="tile"><span>Ki blasts</span><b>5</b></div></div>
+              </div>
+              <div class="plate cmd">
+                <h5>Command list</h5>
+                <div class="cmdrow"><span class="btn b">B1</span><span class="mvn">Kamehameha</span><span class="dmg up">7,481</span><span class="tags"><span>Beam</span><span>Chargeable</span></span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
+                <div class="cmdrow"><span class="btn u">UL</span><span class="mvn">Spirit Bomb</span><span class="dmg up">15,750</span><span class="tags"><span>Fire</span><span>Unguardable</span></span><span class="cost"><i></i><i></i><i></i><i></i><i></i><i class="sp"></i><em>5 + Sparking</em></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phtabs" style="position:absolute;left:0;right:0;bottom:0"><span class="on">Sheet</span><span>Stats</span><span>Compare</span><span>Vs</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ FULL STATS -->
+  <section class="view" id="stats">
+    <div class="about">
+      <div><b>The idea</b>Every value, in plates by topic, with the base, this build, and where the value comes from (game files, Capsule Corp, formula, league tests). Tap any value for its breakdown: Rush hit 1 is open here. The sheet shows the quick view, and this is the deep dive.</div>
+      <div><b>How it grows</b>A new stat is one more row in its plate, and a new topic is one more plate. The cyan "Combat limits" plate shows how game-file values the calculator doesn't show today (follow-ups, jump and dash ki blasts, charged ki-blast limit) would join. When a plate grows past a screen it folds to its main rows with a "Show all" control.</div>
+    </div>
+    <div class="frames">
+      <div>
+        <p class="frame-lbl">Desktop 1180px</p>
+        <div class="desk"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span class="on">Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="fs">
+            <div class="fs-id"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div><div class="nm">Goku (Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span><span class="chip ghost">Rush Attack Boost 1</span><span class="chip ghost">Blast Burst</span></div></div></div>
+            <div class="fs-grid">
+              <div class="plate">
+                <h5>Toughness</h5>
+                <div class="srow h"><span></span><span>Base</span><span>Build</span><span>Source</span></div>
+                <div class="srow"><span>HP</span><span>40,000</span><span class="tap">40,000</span><span class="src g">Game</span></div>
+                <div class="srow"><span>5-hit damage taken</span><span>2,585</span><span class="tap">2,585</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>5-hit taken, armored</span><span>2,585</span><span class="tap">2,585</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Melee defense</span><span>Base</span><span class="tap">Base</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Blast defense</span><span>Base</span><span class="tap">Base</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Ki-blast defense</span><span>Base</span><span class="tap">Base</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Armor</span><span>None</span><span class="tap">None</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Switch</span><span>19s</span><span class="tap">19s</span><span class="src c">Capsule Corp</span></div>
+              </div>
+              <div class="plate off">
+                <h5>Melee</h5>
+                <div class="srow h"><span></span><span>Base</span><span>Build</span><span>Source</span></div>
+                <div class="srow"><span>Rush hit 1</span><span>390</span><span class="tap up">400</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Rush hit 2</span><span>390</span><span class="tap up">400</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Rush hit 3</span><span>390</span><span class="tap up">400</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Rush hit 4</span><span>540</span><span class="tap up">554</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Rush hit 5</span><span>750</span><span class="tap up">769</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Rush 5-hit total</span><span>2,460</span><span class="tap up">2,523</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Rush 5-hit into armor</span><span>2,289</span><span class="tap up">2,346</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Smash</span><span>675</span><span class="tap">675</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Throw</span><span>1,250</span><span class="tap">1,250</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Pursuit</span><span>1,250</span><span class="tap">1,250</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Armor break</span><span>5 hits</span><span class="tap">5 hits</span><span class="src c">Capsule Corp</span></div>
+              </div>
+              <div class="plate off">
+                <h5>Ki blasts</h5>
+                <div class="srow"><span>Ki blast damage</span><span>250</span><span class="tap">250</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Ki blast count</span><span>5</span><span class="tap">5</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Full volley</span><span>1,125</span><span class="tap">1,125</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Cost a shot (bars)</span><span>0.2</span><span class="tap">0.2</span><span class="src f">Formula</span></div>
+              </div>
+              <div class="plate res">
+                <h5>Resources</h5>
+                <div class="srow"><span>Starting ki (bars)</span><span>2</span><span class="tap">2</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Ki charge (bars/s)</span><span>1.40</span><span class="tap">1.40</span><span class="src c">Capsule Corp</span></div>
+                <div class="srow"><span>Ki regen (bars/s)</span><span>0.175</span><span class="tap">0.175</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Recharges up to (bars)</span><span>2</span><span class="tap">2</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Ki from attacks (bars/hit)</span><span>0.03</span><span class="tap">0.03</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Short dash (bars)</span><span>0.265</span><span class="tap">0.265</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Skill gauge start</span><span>0</span><span class="tap">0</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Skill gauge limit</span><span>6</span><span class="tap">6</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Skill gauge regen (a min)</span><span>3.65</span><span class="tap">3.65</span><span class="src c">Capsule Corp</span></div>
+              </div>
+              <div class="plate new">
+                <h5>Combat limits <span class="newtag">NEW</span></h5>
+                <div class="srow"><span>Follow-ups</span><span>2</span><span class="tap">2</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Follow-ups while Sparking</span><span>+2</span><span class="tap">+2</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Lightning attacks</span><span>1</span><span class="tap">1</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Jump ki blasts</span><span>5</span><span class="tap">5</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Dash ki blasts</span><span>4</span><span class="tap">4</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Charged ki blasts</span><span>1</span><span class="tap">1</span><span class="src g">Game</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="tip" style="left:470px;top:250px">
+            <div class="th">Rush hit 1</div>
+            <div class="tb">
+              <div class="tr"><span>Raw power</span><span>312</span><span>Game files</span></div>
+              <div class="tr"><span>Damage constant</span><span>× 1.25</span><span>Game formula</span></div>
+              <div class="tr"><span>DP 4 damage scale</span><span>1.00</span><span>Game files</span></div>
+              <div class="tr"><span>Rush Attack Boost 1</span><span>+0.025</span><span>Capsule</span></div>
+              <div class="tr t"><span>Rush hit 1</span><span>400</span><span>Rounded up</span></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px (scrolls)</p>
+        <div class="phone"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="fs">
+            <div class="fs-id"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div><div class="nm" style="font-size:16px">Goku (Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span></div></div></div>
+            <div class="fs-grid">
+              <div class="plate off">
+                <h5>Melee</h5>
+                <div class="srow h"><span></span><span>Base</span><span>Build</span><span>Source</span></div>
+                <div class="srow"><span>Rush hit 1</span><span>390</span><span class="up">400</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Rush hit 4</span><span>540</span><span class="up">554</span><span class="src c">CC</span></div>
+                <div class="srow"><span>Rush 5-hit</span><span>2,460</span><span class="up">2,523</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Smash</span><span>675</span><span>675</span><span class="src c">CC</span></div>
+                <div class="srow"><span>Throw</span><span>1,250</span><span>1,250</span><span class="src g">Game</span></div>
+              </div>
+              <div class="plate res">
+                <h5>Resources</h5>
+                <div class="srow"><span>Ki charge</span><span>1.40</span><span>1.40</span><span class="src c">CC</span></div>
+                <div class="srow"><span>Ki regen</span><span>0.175</span><span>0.175</span><span class="src f">Formula</span></div>
+                <div class="srow"><span>Short dash</span><span>0.265</span><span>0.265</span><span class="src g">Game</span></div>
+              </div>
+              <div class="plate new">
+                <h5>Combat limits <span class="newtag">NEW</span></h5>
+                <div class="srow"><span>Follow-ups</span><span>2</span><span>2</span><span class="src g">Game</span></div>
+                <div class="srow"><span>Dash ki blasts</span><span>4</span><span>4</span><span class="src g">Game</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phtabs" style="position:absolute;left:0;right:0;bottom:0"><span>Sheet</span><span class="on">Stats</span><span>Compare</span><span>Vs</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ COMPARE -->
+  <section class="view" id="compare">
+    <div class="about">
+      <div><b>The idea</b>Two sheets facing each other. Each plate pairs the two values with bars growing from the middle, and the better value is green. The top answers "who is better" in a sentence and names each side's strengths. "Closest fighters" suggests similar characters by core stats, for "who else could fill this slot".</div>
+      <div><b>Notes</b>Each side keeps its own build (the hexes under each portrait open its loadout). The closest fighters are computed from nine core stats (HP, rush, smash, throw, ki blast, melee defense, ki charge, skill limit, armor break). Tapping one swaps it in as B.</div>
+    </div>
+    <div class="frames">
+      <div>
+        <p class="frame-lbl">Desktop 1180px</p>
+        <div class="desk"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span>Full stats</span><span class="on">Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="vshead">
+            <div class="vside l"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div class="who"><div class="nm">Goku<br>(Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span><span class="chip ghost">2 capsules</span></div></div></div>
+            <div class="vsmid"><b>VS</b></div>
+            <div class="vside r"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_00_00.png" alt=""><div class="who"><div class="nm">Vegeta<br>(Z - Scouter)</div><div class="chips" style="justify-content:flex-end"><span class="chip" style="background:#7c3aed">Ki-Blast (Vegeta)</span><span class="chip dp">DP 4</span><span class="chip ghost">Light Body</span></div></div></div>
+          </div>
+          <div class="cmpgrid">
+            <div>
+              <div class="plate">
+                <h5>Toughness</h5>
+                <div class="hpair"><span class="bars hp l"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="cap"></i></span><span style="text-align:center;font-size:12px">HP<br><b>40,000 each</b></span><span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="cap"></i></span></div>
+                <div class="pair"><span class="a w">2,585</span><span class="pb l"><i style="width:76%"></i></span><span class="n">5-hit taken<small>less is better</small></span><span class="pb r"><i style="width:80%"></i></span><span class="b">2,717</span></div>
+                <div class="pair"><span class="a w">Base</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Melee defense</span><span class="pb r"><i style="width:76%"></i></span><span class="b">−5%</span></div>
+              </div>
+              <div class="plate off" style="margin-top:10px">
+                <h5>Offense</h5>
+                <div class="pair"><span class="a w">2,523</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Rush 5-hit</span><span class="pb r"><i style="width:70%"></i></span><span class="b">2,214</span></div>
+                <div class="pair"><span class="a w">675</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Smash</span><span class="pb r"><i style="width:72%"></i></span><span class="b">608</span></div>
+                <div class="pair"><span class="a w">1,250</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Throw</span><span class="pb r"><i style="width:72%"></i></span><span class="b">1,125</span></div>
+                <div class="pair"><span class="a">1,125</span><span class="pb l"><i style="width:34%"></i></span><span class="n">Ki-blast volley</span><span class="pb r"><i style="width:80%"></i></span><span class="b w">2,678</span></div>
+              </div>
+              <div class="plate res" style="margin-top:10px">
+                <h5>Resources</h5>
+                <div class="pair"><span class="a">1.40</span><span class="pb l"><i style="width:73%"></i></span><span class="n">Ki charge</span><span class="pb r"><i style="width:80%"></i></span><span class="b w">1.54</span></div>
+                <div class="pair"><span class="a">0.175</span><span class="pb l"><i style="width:73%"></i></span><span class="n">Ki regen</span><span class="pb r"><i style="width:80%"></i></span><span class="b w">0.193</span></div>
+                <div class="pair"><span class="a w">6</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Skill gauge limit</span><span class="pb r"><i style="width:67%"></i></span><span class="b">5</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="plate">
+                <h5>Verdict</h5>
+                <div class="verdict">Goku is ahead on <b>17</b> stats, Vegeta on <b>6</b>.</div>
+                <div class="strong">
+                  <div><small>Goku's edge</small><div class="tags"><span>Rush</span><span>Throw</span><span>Damage taken</span><span>Skill limit</span></div></div>
+                  <div><small>Vegeta's edge</small><div class="tags"><span>Ki blasts</span><span>Ki charge</span><span>Ki regen</span></div></div>
+                </div>
+              </div>
+              <div class="plate cmd" style="margin-top:10px">
+                <h5>Command list</h5>
+                <div class="mvpair"><span class="btn b">B1</span><span>Kamehameha<small>Galick Gun</small></span><span style="color:var(--win)">7,481</span><span>7,125</span></div>
+                <div class="mvpair"><span class="btn b">B2</span><span>Kaioken Attack<small>Final Galick Cannon</small></span><span style="color:var(--win)">8,794</span><span>8,375</span></div>
+                <div class="mvpair"><span class="btn u">UL</span><span>Spirit Bomb<small>Dirty Fireworks</small></span><span style="color:var(--win)">15,750</span><span>15,000</span></div>
+                <div class="mvpair"><span class="btn s">S2</span><span>Kaioken<small>Saiyan Spirit</small></span><span>+10%</span><span>+10%</span></div>
+              </div>
+              <div class="plate new" style="margin-top:10px">
+                <h5>Closest fighters to Goku</h5>
+                <div class="sim">
+                  <div><img src="../../public/char_thumbnails/T_UI_FaceP1_0121_00_00.png" alt="">Mighty Mask</div>
+                  <div><img src="../../public/char_thumbnails/T_UI_FaceP1_3300_00_00.png" alt="">Goku (World Tournament)</div>
+                  <div><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_10_00.png" alt="">Goku (Z - Mid)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px (scrolls)</p>
+        <div class="phone"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="vshead">
+            <div class="vside l"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div class="who"><div class="nm">Goku (Z - Early)</div></div></div>
+            <div class="vside r"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_00_00.png" alt=""><div class="who"><div class="nm">Vegeta (Z - Scouter)</div></div></div>
+            <div class="vsmid"><b>VS</b></div>
+          </div>
+          <div class="cmpgrid">
+            <div class="plate"><div class="verdict">Goku is ahead on <b>17</b> stats, Vegeta on <b>6</b>.</div></div>
+            <div class="plate off">
+              <h5>Offense</h5>
+              <div class="pair"><span class="a w">2,523</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Rush 5-hit</span><span class="pb r"><i style="width:70%"></i></span><span class="b">2,214</span></div>
+              <div class="pair"><span class="a w">1,250</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Throw</span><span class="pb r"><i style="width:72%"></i></span><span class="b">1,125</span></div>
+              <div class="pair"><span class="a">1,125</span><span class="pb l"><i style="width:34%"></i></span><span class="n">Volley</span><span class="pb r"><i style="width:80%"></i></span><span class="b w">2,678</span></div>
+            </div>
+            <div class="plate res">
+              <h5>Resources</h5>
+              <div class="pair"><span class="a">1.40</span><span class="pb l"><i style="width:73%"></i></span><span class="n">Ki charge</span><span class="pb r"><i style="width:80%"></i></span><span class="b w">1.54</span></div>
+              <div class="pair"><span class="a w">6</span><span class="pb l"><i style="width:80%"></i></span><span class="n">Skill limit</span><span class="pb r"><i style="width:67%"></i></span><span class="b">5</span></div>
+            </div>
+          </div>
+          <div class="phtabs" style="position:absolute;left:0;right:0;bottom:0"><span>Sheet</span><span>Stats</span><span class="on">Compare</span><span>Vs</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ VERSUS -->
+  <section class="view" id="versus">
+    <div class="about">
+      <div><b>The idea</b>A fight between your build and an opponent's. "To knock out" leads: how many rush combos or ultimates each side needs. Then the damage exchange, attack by attack, after the other side's defenses and armor. Each HP strip shows one rush combo's bite in red.</div>
+      <div><b>Notes</b>Your build here: Rush Attack Boost 1 with Kaioken active. Janemba is Sparking, so 25% Sparking armor applies to your hits on it. Opponent-targeted skills (blinds, debuffs) apply across, as the engine does today.</div>
+    </div>
+    <div class="frames">
+      <div>
+        <p class="frame-lbl">Desktop 1180px</p>
+        <div class="desk"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span>Full stats</span><span>Compare</span><span class="on">Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="vshead">
+            <div class="vside l"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div class="who"><div class="nm">Goku<br>(Z - Early)</div><div class="chips"><span class="chip ghost">Rush Attack Boost 1</span><span class="chip" style="background:#9333ea">Kaioken on</span></div></div></div>
+            <div class="vsmid"><b>VS</b></div>
+            <div class="vside r"><img src="../../public/char_thumbnails/T_UI_FaceP1_0650_00_00.png" alt=""><div class="who"><div class="nm">Janemba</div><div class="chips" style="justify-content:flex-end"><span class="chip" style="background:#a855f7">Sparking</span><span class="chip dp">DP 5</span></div></div></div>
+          </div>
+          <div class="cmpgrid">
+            <div>
+              <div class="plate cmd">
+                <h5>Damage exchange <em>after defenses and armor</em></h5>
+                <div class="xrow" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)"><span></span><span></span><span style="text-align:right">You deal</span><span style="text-align:right">You take</span></div>
+                <div class="xrow"><span class="btn m">R</span><span class="nm2">Rush 5-hit</span><span class="v1">1,812</span><span class="v2">2,306</span></div>
+                <div class="xrow"><span class="btn m">Sm</span><span class="nm2">Smash</span><span class="v1">588</span><span class="v2">2,158</span></div>
+                <div class="xrow"><span class="btn m">Th</span><span class="nm2">Throw</span><span class="v1">1,087</span><span class="v2">3,995</span></div>
+                <div class="xrow"><span class="btn k">Ki</span><span class="nm2">Ki blast</span><span class="v1">211</span><span class="v2">322</span></div>
+                <div class="xrow"><span class="btn k">Kv</span><span class="nm2">Ki-blast volley</span><span class="v1">1,055</span><span class="v2">627</span></div>
+                <div class="xrow"><span class="btn b">B1</span><span class="nm2">Kamehameha<br><small style="color:var(--muted)">You take: Janemba's B1</small></span><span class="v1">7,289</span><span class="v2">8,024</span></div>
+                <div class="xrow"><span class="btn b">B2</span><span class="nm2">Kaioken Attack</span><span class="v1">8,568</span><span class="v2">8,676</span></div>
+                <div class="xrow"><span class="btn u">UL</span><span class="nm2">Spirit Bomb</span><span class="v1">15,345</span><span class="v2">16,875</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="plate">
+                <h5>To knock out</h5>
+                <div class="ko">
+                  <div class="you"><small>Rush combos you need</small><b>28</b></div>
+                  <div class="them"><small>Rush combos they need</small><b>18</b></div>
+                  <div class="you"><small>Ultimates you need</small><b>4</b></div>
+                  <div class="them"><small>Ultimates they need</small><b>3</b></div>
+                </div>
+              </div>
+              <div class="plate" style="margin-top:10px">
+                <h5>Health</h5>
+                <div style="font-size:12px;color:var(--muted)">Janemba 50,000. Your rush combo takes 1,812.</div>
+                <div class="hpstrip"><i class="cut" style="--w:18%"></i><i></i><i></i><i></i><i></i></div>
+                <div style="font-size:12px;color:var(--muted);margin-top:10px">You 40,000. Their rush combo takes 2,306.</div>
+                <div class="hpstrip"><i class="cut" style="--w:23%"></i><i></i><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px (scrolls)</p>
+        <div class="phone"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="vshead">
+            <div class="vside l"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div class="who"><div class="nm">Goku (Z - Early)</div></div></div>
+            <div class="vside r"><img src="../../public/char_thumbnails/T_UI_FaceP1_0650_00_00.png" alt=""><div class="who"><div class="nm">Janemba</div></div></div>
+            <div class="vsmid"><b>VS</b></div>
+          </div>
+          <div class="cmpgrid">
+            <div class="plate"><h5>To knock out</h5><div class="ko"><div class="you"><small>Rush combos you need</small><b>28</b></div><div class="them"><small>They need</small><b>18</b></div></div></div>
+            <div class="plate cmd">
+              <h5>Damage exchange</h5>
+              <div class="xrow"><span class="btn m">R</span><span class="nm2">Rush 5-hit</span><span class="v1">1,812</span><span class="v2">2,306</span></div>
+              <div class="xrow"><span class="btn m">Th</span><span class="nm2">Throw</span><span class="v1">1,087</span><span class="v2">3,995</span></div>
+              <div class="xrow"><span class="btn b">B1</span><span class="nm2">Kamehameha</span><span class="v1">7,289</span><span class="v2">8,024</span></div>
+              <div class="xrow"><span class="btn u">UL</span><span class="nm2">Spirit Bomb</span><span class="v1">15,345</span><span class="v2">16,875</span></div>
+            </div>
+          </div>
+          <div class="phtabs" style="position:absolute;left:0;right:0;bottom:0"><span>Sheet</span><span>Stats</span><span>Compare</span><span class="on">Vs</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  const show = () => {
+    const v = location.hash.slice(1) || 'sheet';
+    document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === v));
+    document.querySelectorAll('.switch a').forEach(a => a.classList.toggle('on', a.dataset.v === v));
+  };
+  window.addEventListener('hashchange', show);
+  show();
+</script>
+</body>
+</html>
