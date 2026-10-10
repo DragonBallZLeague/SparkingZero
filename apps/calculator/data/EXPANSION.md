@@ -64,26 +64,79 @@ Ki blasts vary per character far more than melee does.
 | Jump ki blast (cost only) | cost 0.135 for most | 241, 5 | |
 | Jump charged ki blast | 700 for most | 241, 16; 46 have charge levels | |
 
-The counts (ki blasts, jump and dash ki blasts) are already in the concept's "Combat limits" section. Some
-charged ki blasts fire several projectiles or hit several times. Like blasts, they need hit counts and spot
-checks before their totals can be published (test 2).
+The counts (ki blasts, jump and dash ki blasts) are already in the concept's "Combat limits" section.
+
+### Ki blast traits
+
+Beyond damage, each ki blast records how it behaves:
+- **Shots** (`FireNum`).
+- **Charge levels:** a damage multiplier per level (`ChangePerChargeLv`): ×1.5 and ×2 for most, ×1.15 and ×1.75,
+  ×1.05 and ×1.1, or ×1.2 and ×1.8 for others.
+- **Tracking:** the homing angle and how long it homes.
+- **Speed:** a speed curve, in separate files the snapshot doesn't capture yet.
+- **Range:** speed over the blast's lifetime.
+- **Paralysis:** the "Numb" bullet category.
+
+The characters fall into a few archetypes, which suits trait tags better than numbers.
+
+**Ki blast (normal):**
+
+| Archetype | Speed at 0.5 s, range | Characters |
+| --- | --- | --- |
+| Standard | 10,000, 11,000 | 214 |
+| Laser (fast, long range) | 20,000, 23,500 | 14: the Frieza forms, Mecha Frieza, King Cold, Cooler forms, Metal Cooler, Frost, Perfect Cell |
+| Giant (slow, big) | 8,500, 9,700 | the 11 Giants |
+| Thrown objects | 10,000, 14,000 (life 1.5 s) | Mr. Satan, Yajirobe |
+| None | | Nam, Eighter, Chi-Chi, General Blue, Uub (Kid): pressing ki blast does a Heavy Finish instead |
+
+**Charged ki blast:**
+
+| Archetype | Speed at 0.5 s, range | Characters |
+| --- | --- | --- |
+| Standard | 12,000, 35,000 | 142 |
+| Slow homing | 5,000, 21,000 | 40, among them Piccolo, Krillin, Yamcha, Kid Buu, Broly (Z), Whis |
+| Multi-shot, short range (2 to 8 shots) | 19,750, 9,000 (life 0.5 s) | 33, among them Goku (GT) SS4, Vegito, Gogeta, Jiren Full Power, Broly (Super), Caulifla |
+| Paralyzing (very slow) | 3,000, 8,500 | 13: Chiaotzu, Guldo, Babidi, Lord Slug, Cooler, Cooler Final Form, Full-Power Bojack, Zangya, Frost, Ribrianne, Glorio, Third Eye Gomah, Ma Junior |
+| Giant | 9,000, 28,000 (slow homing for Dr. Wheelo and Janemba) | the 11 Giants |
+| Thrown object (Mr. Satan's grenade, Yajirobe's) | 12,000, 17,000 (life 1.5 s) | Mr. Satan, Yajirobe |
+
+Speeds are the game's units (centimetres per second) and range is speed over the blast's life. The league adds
+what the files can't show: thrown objects don't track and reach less far. Some charged ki blasts fire several
+shots or hit several times. Like blasts, they need hit counts and spot checks before their totals can be
+published (test 2).
+
+## Mobility
+
+**Movement speed is the same for everyone:** walk, run, fly, Dragon Dash and vanish speeds are identical in every
+character's files. What differs:
+- **Movement ki costs:** Dragon Dash (start, per second, boost), Z Burst Dash, dash up and down, Dragon Homing,
+  and the step-cancel short dash (six different costs). Nine characters pay 15% less for all of them: Majin Buu
+  (Evil), Zarbon, Burter, Zangya, Tapion, Nuova Shenron (GT), Dyspo, Kakunsa, Fasha. The Giants pay double to start
+  a Z Burst Dash (2 bars instead of 1).
+- **Short-dash acceleration:** 33 characters accelerate slower in a short dash (50,000 instead of 60,000), among
+  them Nappa, Recoome, Majin Buu, Android 16, King Cold and Tapion.
+- **Speed buffs:** 14 skills raise movement speed (the engine has them as `moveSpeed`), and capsules may too.
+
+A Mobility section would hold the short dash (already shown), these ki costs and a "slower short dash" trait.
 
 ## Other per-character values not shown yet
 
-- **Movement ki costs:** Dragon Dash (start, per second, boost), Z Burst Dash, dash up and down, Dragon Homing,
-  and the step-cancel short dash (six different costs). Nine characters pay 15% less. This would make a
-  "Mobility" section next to the short dash.
-- **Low-health buffs:** 15 characters gain a buff when their health drops to 10,000 or 5,000.
+- **Low-health buffs:** 15 characters gain a buff when their health drops to 10,000 or 5,000 (Goku (Z - Early),
+  Goku (Teen), Majin Vegeta, Future Trunks, Bardock, Goku Black and others).
 - **Skill gauge gains:** repelling a blast gives ×1.1 to ×1.6 (178 characters), and one character gains double
   from fast avoids.
 - **Guard crash:** 34 characters have a different ki damage rate when their guard is crashed.
 
 ## Suggested order
 
-1. **Charged ki blast** (normal charge) for everyone. Its Power is already read and the channel is known.
+Agreed with the league on 2026-10-10.
+
+1. **Charged ki blast** for everyone: damage, cost, shots, charge levels, and its archetype as trait tags (slow
+   homing, multi-shot, paralyzing, thrown, none). Give the normal ki blast its archetype too (laser, thrown,
+   none). Speed curves need adding to `pull-fmodel.mjs` first.
 2. **Jump and dash ki blasts.**
 3. **Charged smash levels and Heavy Finish,** after test 1 settles the channel.
-4. **A Mobility section** for movement ki costs.
+4. **A Mobility section:** movement ki costs and the slower short dash.
 5. **Low-health buffs,** shown as a trait.
 6. **The other follow-ups and counters,** in Full stats only, since they are the same for everyone apart from
    class and DP.

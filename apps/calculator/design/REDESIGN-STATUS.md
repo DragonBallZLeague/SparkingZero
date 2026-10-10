@@ -12,12 +12,12 @@ The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its
 - **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
   cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them for now, a
   guess. Per-character tuning can wait until the full art set is cut.
-- **The full art set.** Cutting all 241 card images (about 12 MB, about 49 KB each) into `public/char_art/`.
-- **Stat expansion.** `data/EXPANSION.md` lists what the game files can add (charged and jump/dash ki blasts,
+- **Stat expansion.** Order agreed: charged ki blast (with archetype tags), jump and dash ki blasts, charged
+  smash levels, then a Mobility section. `data/EXPANSION.md` lists what the game files can add (charged and jump/dash ki blasts,
   charged smash levels, rush follow-ups, movement ki costs, low-health buffs) and four league tests. Decide
   which go in first, so Full stats and the sheet are laid out for them from the start.
 
-Settled (2026-10-10): stats on the sheet get a thin bar filled to where the character sits in the roster's range
+Settled (2026-10-10): all 241 card images are cut into `public/char_art/` (11.7 MB, with `sizes.json`). stats on the sheet get a thin bar filled to where the character sits in the roster's range
 (5th to 95th percentile; no average marker), "less is better" stats fill the better the character is, and rates
 (ki charge, ki regen, skill gauge gain) use chevrons that light up with speed. Health, starting ki and
 auto-recharge get no bar. Blasts and ultimates get none either: their types differ too much.

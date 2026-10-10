@@ -126,8 +126,8 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 .meter .track { height: 8px; background: rgba(148,163,184,.14); margin: 7px 0 4px; position: relative; }
 .meter .track i { position: absolute; left: 0; top: 0; bottom: 0; }
 /* a rate (per second or per minute) as chevrons: more lit = faster than the roster's slowest */
-.chev { display: flex; gap: 2px; margin: 7px 0 4px; }
-.chev i { flex: 1; height: 10px; background: rgba(148,163,184,.16); clip-path: polygon(0 0, 55% 0, 100% 50%, 55% 100%, 0 100%, 45% 50%); }
+.chev { display: flex; margin: 7px 6px 4px 0; }
+.chev i { flex: 1; height: 10px; margin-right: -6px; background: rgba(148,163,184,.16); clip-path: polygon(0 0, 62% 0, 100% 50%, 62% 100%, 0 100%, 38% 50%); }
 .chev.ki i.f { background: var(--ki); } .chev.rg i.f { background: #fde68a; } .chev.sk i.f { background: var(--skill); }
 .rsegs { display: flex; gap: 4px; margin: 7px 0 4px; }
 /* one slot per bar ki recharges on its own (the auto-recharge limit), on the ki gauge's scale */
