@@ -29,8 +29,8 @@ into several hits.
 | Air rush A and B (rush follow-up) | as the A and B chains | split hits for ~14 | to check |
 | "激烈ラッシュ" rush A and B (Rush) | as the A and B chains | split hits for ~13 | rush, assumed |
 | "激烈ラッシュ" chain (unique move) | 360 ×4 | split hits for ~13 | to check |
-| Smash in 5 directions (Smash) | normal 540, part charged 900, full 1,120, just-timed 1,120, hyper 1,960 (675, 1,125, 1,400, 1,400, 2,450) | no | smash, confirmed for normal (Tien) |
-| Heavy Finish (rush follow-up) | normal 540, part 900, full 1,120 | no (9 characters gain less ki from it) | combo or smash: test 1 |
+| Smash in 5 directions (Smash) | normal 540, part charged 900, full 1,120, just-timed 1,120, hyper 1,960 (675, 1,125, 1,400, 1,400, 2,450) | no | smash; confirmed for normal (Tien) and full (Goku 1,400) |
+| Heavy Finish (rush follow-up) | normal 540, part 900, full 1,120 | no (9 characters gain less ki from it) | combo, confirmed (Tien 743) |
 | Lift Strike / Grand Slash | 540 / 720 / 1,070 and 500 / 620 / 1,010 | no | combo, assumed |
 | Rolling Hammer | 270 / 340 / 450 | no | combo, assumed |
 | Kiai Cannon / ki explosion (rush follow-ups) | 620 / 810 / 1,070 | no | combo, assumed |
@@ -55,7 +55,7 @@ Ki blasts vary per character far more than melee does.
 | Family | Base Power and ki cost | Characters, distinct values | Note |
 | --- | --- | --- | --- |
 | Ki blast (shown today) | 200, 0.2 bars | 241, 5 | in use |
-| Charged ki blast (normal charge) | 700, 0.3 bars for most | 241, 15 | Power is read today but not shown; channel: charged ki blast |
+| Charged ki blast (normal charge) | 750 standing (`actSTDSMBN`, Goku measured 938), 700 moving (`actSMBN`); 0.3 bars for most | 241, 15 to 23 | the build reads the 700 one today, unshown; channel: charged ki blast |
 | Charged ki blast, part and full charge | 700, 1 bar | 46 have them | |
 | Directional charged ki blasts | 750, 1 bar | 46 | |
 | Dash ki blast | 200, cost 0.12 to 0.2 | 241, 6 | |
@@ -135,7 +135,7 @@ Agreed with the league on 2026-10-10.
    homing, multi-shot, paralyzing, thrown, none). Give the normal ki blast its archetype too (laser, thrown,
    none). Speed curves need adding to `pull-fmodel.mjs` first.
 2. **Jump and dash ki blasts.**
-3. **Charged smash levels and Heavy Finish,** after test 1 settles the channel.
+3. **Charged smash levels and Heavy Finish.** Test 1 settled the channel: rush follow-ups use combo.
 4. **A Mobility section:** movement ki costs and the slower short dash.
 5. **Low-health buffs,** shown as a trait.
 6. **The other follow-ups and counters,** in Full stats only, since they are the same for everyone apart from
@@ -143,8 +143,25 @@ Agreed with the league on 2026-10-10.
 
 ## Tests for the league
 
-1. **Tien's normal Heavy Finish** (rush, then the smash finisher): 675 means it uses the smash channel, 743 the
-   combo channel.
-2. **Goku's normal-charge charged ki blast:** predicted 875, if it lands as one hit.
-3. **Name the inputs** for the rush B chain, the "激烈ラッシュ" rushes and the 激烈ラッシュ chain.
-4. **Goku's fully charged smash:** predicted 1,400.
+Results from 2026-10-10:
+
+1. **Tien's Heavy Finish: 743, so the combo channel.** Tien's Heavy Finish is his third rush chain: 3 rush hits
+   (1,287), then the finisher, 2,030 in all. Rush follow-ups (the game's RushDerivative category) use the combo
+   channel, and plain smashes the smash channel.
+2. **Goku's charged ki blast: weakest charge 938, full charge 1,975.**
+   - 938 is exactly 750 × 1.25. So the standing charged ki blast reads `actSTDSMBN` (Power 750), not
+     `actSMBN` (700, the character data's "EnergyBulletSmash" action). `actSMBN` is probably the version fired
+     while moving.
+   - The file's charge levels are ×1.5 and ×2, which predict 1,407 and 1,875. Full charge measured 1,975, about
+     5% more, which the files don't explain yet.
+   - Follow-up: test the middle charge (×1.5 predicts 1,407), and say whether anything was equipped.
+3. **Input names (the league's reading):**
+   - The rush **B chain** is the combo B that continues after a step-in mid-combo. This fits the files: it is a
+     second 5-hit Rush chain, separate from the follow-up chains. Heavy Finish into Heavy Crush is a rush
+     follow-up: Heavy Crush is `actHC1`-`HC3`.
+   - **激烈ラッシュ** reads as "Furious Rush". It may be the **Violent Rush** that some characters have in Sparking
+     Mode, where mashing rush combos without end. There are two families: rush-category `actRSHS*` (the same
+     Power as rush A and B) and `actBSR*` (360 a hit, 450 for Goku).
+   - To check: does a character with Violent Rush deal 450 a hit with it, and does a character without it still
+     have those actions in its files?
+4. **Goku's fully charged smash: 1,400,** as predicted. The smash charge levels read correctly.
