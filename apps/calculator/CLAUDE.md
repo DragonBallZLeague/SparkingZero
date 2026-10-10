@@ -61,7 +61,7 @@ Gotchas:
 
 ## Redesign (option B, in progress)
 
-The league chose to rebuild the calculator on the Analyzer's design (the 2026-10-09 review doc): a Characters table, a page per character (quick view, then Stats, Moves and Skills tabs) and one Build page with Compare and Vs opponent as modes, every number opening its breakdown. `design/demo/` is the real-data demo of it (`node apps/calculator/design/demo/build-demo.mjs`, see its README); it bundles this app's engine, so its numbers are the app's. Delete it once the real pages ship and match it.
+The league chose option B in the 2026-10-09 review doc: rebuild the calculator through the Analyzer's **process** (a real-data demo, the league's review, then the rebuild), **not the Analyzer's look**. The visual starting point is this app's own design, and a character's primary view comes first: no leaderboard-first pages, shell tab rows or Analyzer tables. Design work goes concepts first: `design/concepts/concepts.html` is a static page of quick UI/UX concepts (A today's look re-laid out, B an in-game character sheet, C a versus screen) for the user to pick from. Only the chosen direction gets a detailed real-data demo. `design/demo/` is the first detailed demo, built in the Analyzer's look before that rule and rejected for it; its build script (`node apps/calculator/design/demo/build-demo.mjs`) bundles this app's engine, so its plumbing can carry the chosen concept. Delete both once the real pages ship.
 
 ## Gotchas
 
