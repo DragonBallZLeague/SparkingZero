@@ -3,7 +3,8 @@
  * curated tables. Offline and deterministic: runs before every dev server and
  * build (predev/prebuild), writes a file only when its content changes.
  *
- *   inputs   data/snapshots/charmap/*.csv      raw game data (game facts, raw inputs)
+ *   inputs   data/snapshots/fmodel/*.csv       the game files (FModel export): game facts, read first
+ *            data/snapshots/charmap/*.csv      raw game data map: fallback and cross-check for game facts
  *            data/snapshots/capsulecorp/stats.csv  Capsule Corp finals
  *            data/curated/*.csv                hand-maintained tables (see data/README.md)
  *            referencedata/ + the website's team yaml
@@ -25,6 +26,8 @@ import { CHANNELS, CLASS_COEFS, CC_CHANNEL_FIELDS, CC_COLUMNS, splitTraits, num,
 import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate, applicationDamage } from './lib/blastRecipes.mjs';
 import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
 import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
+import { loadFmodel } from './lib/fmodelData.mjs';
+import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -61,18 +64,35 @@ function resolveName(name) {
   return refByNorm.get(normName(n))?.id ?? null;
 }
 
-const raw = snap('charmap/characters.csv');
+// Game facts: the FModel snapshot of the game files first (scripts/lib/gameSource.mjs), the
+// character map as fallback and cross-check; every disagreement goes to REPORT.md.
+const fm = loadFmodel(DATA);
+const fmodelManifest = fm ? manifest('fmodel') : null;
+const fieldMap = readCsv(path.join(DATA, 'fmodel-fields.csv')).rows;
+const mapCharacters = snap('charmap/characters.csv');
+const gameChars = fm ? gameCharacterRows(fm, mapCharacters, { CHANNELS, CLASS_COEFS, fieldMap }) : { rows: new Map(), gaps: [], filled: 0 };
+const raw = mapCharacters.map(r => gameChars.rows.get(r['Character ID']) || r);
 const rawById = new Map(raw.map(r => [r['Character ID'], r]));
 const moveList = snap('charmap/move-list.csv');
-const movePower = snap('charmap/move-power.csv');
+const gameParts = fm ? gameMovePower(fm, snap('charmap/move-power.csv')) : { rows: snap('charmap/move-power.csv'), gaps: [], filled: 0 };
+const movePower = gameParts.rows;
 const skillValues = snap('charmap/skill-values.csv');
 const skillSummary = snap('charmap/skills-passives.csv');
+const sourceGaps = [...gameChars.gaps, ...gameParts.gaps];
 // Raw Power of the actions the Characters tab lacks: neutral smash (actSMMN), vanish follow-up (actBSSM)
 const combative = new Map();
 for (const r of snap('charmap/combative-values.csv')) {
   if (r.Condition !== 'Default') continue;
   const k = `${r['Character ID']}:${r.Action}`;
   if (!combative.has(k)) combative.set(k, num(r.Power));
+}
+if (fm) for (const k of combative.keys()) {
+  const [id, action] = k.split(':');
+  const files = fm.attackFiles(id, action);
+  const v = files.length === 1 ? num(fm.param(files[0], 'Power')) : null;
+  if (v == null) continue;
+  if (combative.get(k) !== v) sourceGaps.push([refById.get(id)?.name ?? id, `${action} Power`, combative.get(k), v]);
+  combative.set(k, v);
 }
 const ccRows = snap('capsulecorp/stats.csv');
 const ccById = new Map();
@@ -143,7 +163,18 @@ for (const [id, r] of shortDashShared) {
 const shortDashGaps = [];
 function shortDashOf(id, name, cc, prov) {
   const shared = shortDashShared.get(id);
-  const raw = shortDashRaw.get(shared ? shared.sameAs : id);
+  const league = shortDashRaw.get(shared ? shared.sameAs : id);
+  // The game files hold the full per-dash cost (StepShortDash.SpCost, twice the league's raw value),
+  // read through each character's own link to its step data.
+  const game = fm?.characters.has(id) ? fm.field(id, 'shortDashKiCost') : null;
+  if (game != null) {
+    const v = round(game / 10000, 4);
+    if (league != null && Math.abs(league * 2 - game) > 1e-6) sourceGaps.push([name, 'short-dash ki cost (raw)', league * 2, game]);
+    if (cc != null && Math.abs(cc - v) > 0.002) shortDashGaps.push([name, cc, v]);
+    prov.shortDashCost = `game files (steps ${fm.characters.get(id).steps})`;
+    return v;
+  }
+  const raw = league;
   if (raw == null) { prov.shortDashCost = cc == null ? 'missing' : 'capsulecorp'; return cc; }
   const v = round(raw * 2 / 10000, 4);
   if (cc != null && Math.abs(cc - v) > 0.002) shortDashGaps.push([name, cc, v]);
@@ -161,6 +192,21 @@ for (const m of moveList) {
   if (!movesById.has(id)) movesById.set(id, []);
   movesById.get(id).push(m);
 }
+// Move names and ki costs from the game's move files (BlastSkill/BlastForte/BlastUltimate), matched by slot
+// and name; the map's Move List keeps the variant codes, skill stock costs and moves the files lack.
+if (fm) {
+  const SLOT = { BlastSkill1: 'Super 1', BlastSkill2: 'Super 2', BlastForte1: 'Skill 1', BlastForte2: 'Skill 2', BlastUltimate: 'Ultimate' };
+  for (const [id, list] of movesById) {
+    for (const g of fm.movesOf(id)) {
+      const i = list.findIndex(m => m.Slot === SLOT[g.slot] && m.Move === g.name);
+      if (i === -1) { sourceGaps.push([refById.get(id)?.name ?? id, `${SLOT[g.slot]} move`, '(not in the Move List)', g.name]); continue; }
+      const cost = fm.param(g.file, 'ExpendEnergy');
+      if (cost === undefined) continue;
+      if (list[i]['Ki cost'] !== '' && !sameValue(list[i]['Ki cost'], cost)) sourceGaps.push([refById.get(id)?.name ?? id, `${g.name} ki cost`, list[i]['Ki cost'], cost]);
+      list[i] = { ...list[i], 'Ki cost': cost };
+    }
+  }
+}
 
 function similar(a, b) {
   const x = normName(a), y = normName(b);
@@ -176,13 +222,16 @@ function similar(a, b) {
 
 // ---- skills (exact phases from the Skill Values tab)
 const skillDisplay = new Map(curated('skill-display.csv').map(r => [normName(r.skill), r]));
-const svByChar = new Map();
+// Skill buff rows: the game's buff files (FModel) where the snapshot has the character, else the map's
+const mapSvByChar = new Map();
 for (const r of skillValues) {
   if (!/^actEXA[12]/.test(r.Action)) continue;
   const id = r['Character ID'];
-  if (!svByChar.has(id)) svByChar.set(id, []);
-  svByChar.get(id).push(r);
+  if (!mapSvByChar.has(id)) mapSvByChar.set(id, []);
+  mapSvByChar.get(id).push(r);
 }
+const svByChar = new Map(mapSvByChar);
+if (fm) for (const id of fm.characters.keys()) svByChar.set(id, gameSkillValues(fm, id).filter(r => /^actEXA[12]/.test(r.Action)));
 const summaryByChar = new Map();
 for (const r of skillSummary) {
   const id = r['Character ID'];
@@ -193,19 +242,20 @@ const unknownSkillFields = new Map();
 // EffectiveTermType per skill: how the effect expires (the game's own enum; 8/34 are timed, 64 is not)
 const expiryRules = { map: new Map(), add(k, v) { if (!this.map.has(k)) this.map.set(k, new Set()); this.map.get(k).add(v); } };
 
-function skillPhases(id, slot) {
-  const rows = (svByChar.get(id) || []).filter(r => r.Action.startsWith(`actEXA${slot}`));
+function skillPhases(id, slot, byChar = svByChar) {
+  const rows = (byChar.get(id) || []).filter(r => r.Action.startsWith(`actEXA${slot}`));
+  const live = byChar === svByChar;
   const phases = [];
   let cur = null;
   for (const r of rows) {
     if (r.Field === 'EffectiveTime') { cur = { duration: num(r['Numeric value']) ?? 0, effects: [] }; phases.push(cur); continue; }
-    if (r.Field === 'EffectiveTermType') { expiryRules.add(`${id}:${slot}`, num(r['Numeric value'])); continue; }
+    if (r.Field === 'EffectiveTermType') { if (live) expiryRules.add(`${id}:${slot}`, num(r['Numeric value'])); continue; }
     const v = num(r['Numeric value']);
     if (v === null) continue;
     if (!cur) { cur = { duration: num(r['Duration (s)']) ?? 0, effects: [] }; phases.push(cur); }
     const eff = effectFor(r.Field);
     if (!eff) {
-      if (!/^(EffectiveTermType|NumbEndSecMoreThan|DodgeMoveChangeDistance)$|ReactionParam|SearchParamChanging|LevelSequence/.test(r.Field)) {
+      if (live && !/^(EffectiveTermType|NumbEndSecMoreThan|DodgeMoveChangeDistance)$|ReactionParam|SearchParamChanging|LevelSequence/.test(r.Field)) {
         unknownSkillFields.set(r.Field, (unknownSkillFields.get(r.Field) || 0) + 1);
       }
       continue;
@@ -253,6 +303,10 @@ function buildSkills(id, cc) {
     const slot = m.Slot === 'Skill 1' ? 1 : 2;
     const key = `${id}:${slot}`;
     const phases = skillPhases(id, slot);
+    if (fm && mapSvByChar.has(id)) {
+      const mapPhases = skillPhases(id, slot, mapSvByChar);
+      if (JSON.stringify(mapPhases) !== JSON.stringify(phases)) sourceGaps.push([refById.get(id).name, `skill ${slot} ${m.Move} phases`, JSON.stringify(mapPhases), JSON.stringify(phases)]);
+    }
     phases.forEach((p, i) => p.effects.forEach(e => { if (targetOf(key, i, e.key) === 'opponent') e.target = 'opponent'; }));
     const summary = (summaryByChar.get(id) || []).find(r => r.Type === m.Slot);
     const duration = phases.length ? Math.max(...phases.map(p => p.duration || 0)) : (num(summary?.['Duration (seconds)']) ?? 0);
@@ -293,7 +347,35 @@ function buildSkills(id, cc) {
   return ids;
 }
 
+// Passives from the game's buff files: the Sparking buff, then each low-health trigger buff
+function gamePassiveList(id) {
+  const by = gamePassives(fm, id);
+  const out = [];
+  for (const [action, fields] of [...by].sort((a, b) => (a[0] === 'Sparking' ? -1 : b[0] === 'Sparking' ? 1 : 0))) {
+    const effects = [];
+    for (const [, eff] of effectBySummary) {
+      const v = fields.get(eff.field);
+      if (v) effects.push({ key: eff.key, value: round(v, 6) });
+    }
+    const hp = action.match(/^HPTrigger@(\d+)$/);
+    out.push(action === 'Sparking'
+      ? { name: 'While Sparking', condition: 'sparking', effects }
+      : { name: 'Low health', condition: `health below ${Number(hp[1]).toLocaleString('en-US')} HP`, effects });
+  }
+  return out;
+}
+
 function passives(id) {
+  if (fm?.characters.has(id)) {
+    const game = gamePassiveList(id);
+    const map = mapPassives(id);
+    if (JSON.stringify(game) !== JSON.stringify(map)) sourceGaps.push([refById.get(id).name, 'passives', JSON.stringify(map), JSON.stringify(game)]);
+    return game;
+  }
+  return mapPassives(id);
+}
+
+function mapPassives(id) {
   const rows = (summaryByChar.get(id) || []).filter(r => r.Type === 'Passive');
   return rows.map(r => {
     const effects = [];
@@ -714,7 +796,7 @@ const v2 = {
   teams: teams.map(t => ({ ...t, members: t.members.filter(id => pub.has(id)) })),
   meta: {
     schemaVersion: 2,
-    sources: { charmap: charmapManifest.version, capsulecorp: ccManifest.version },
+    sources: { charmap: charmapManifest.version, capsulecorp: ccManifest.version, ...(fm ? { fmodel: `game files, ${fmodelManifest.characters} characters` } : {}) },
     referenceAttacker: config.referenceAttacker,
     damageConstant: K,
     defaultRuleset: defaultRuleset?.name ?? null,
@@ -862,13 +944,21 @@ function reportMd() {
     '## Sources',
     '',
     table(['Source', 'Version', 'Role'], [
-      ['Raw game map (data/snapshots/charmap)', charmapManifest.version, 'game facts and raw inputs: ids, classes, DP, coefficients, health, ki, moves, skills'],
+      ['Game files, FModel export (data/snapshots/fmodel)', fm ? `${fmodelManifest.characters} characters` : 'not present', 'primary for game facts: class, DP and DP scale, class coefficients, health, ki, counts, rush/throw/ki-blast/smash/follow-up Power, move names and ki costs, blast part values, skill buffs, passives'],
+      ['Raw game map (data/snapshots/charmap)', charmapManifest.version, 'fallback and cross-check for game facts; still the source of move variants, skill stock costs, Maximum Ki and the move-to-part links'],
       ['Capsule Corp Stats (data/snapshots/capsulecorp)', ccManifest.version, 'finals: hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break'],
       ['SZ Neo Export CharacterData (data/snapshots/neo)', neoManifest.version ?? 'no version marker', 'Sparking armor flag (abilityFlag_sparkingArmor); blast details for moves without a curated row (Blasts tab)'],
       ['data/curated/*.csv', '', 'measured blast damage, skill display traits, Sparking armor overrides, class labels, aliases, overrides'],
       ['referencedata/', '', 'ids, names, order, forms, capsules, rulesets'],
       [ref.seasonFile, config.teamsSeason, 'team pools'],
     ]),
+    '## Game files vs character map',
+    '',
+    fm
+      ? `Game facts are read from the FModel snapshot first (${gameChars.filled} character values, ${gameParts.filled} blast-part values, every skill buff and passive); the character map fills what the snapshot lacks. ${sourceGaps.length ? `${sourceGaps.length} value(s) differ:` : 'They agree everywhere both have a value.'}`
+      : 'No FModel snapshot (data/snapshots/fmodel): game facts come from the character map.',
+    '',
+    ...(sourceGaps.length ? [table(['Character', 'Value', 'Character map', 'Game files (used)'], sourceGaps.slice(0, 60)), sourceGaps.length > 60 ? `... and ${sourceGaps.length - 60} more` : ''] : []),
     '## Coverage',
     '',
     table(['', 'Count'], [

@@ -39,13 +39,29 @@ data/
 ## FModel game files (`snapshots/fmodel/`)
 
 The game's own data, exported with FModel as JSON (one file per Unreal asset, about 140,000
-of them), is becoming the primary source for game facts. The export stays on the exporting
-machine; `npm run data:fmodel -- <export folder>` (the folder holding `Content/`, offline)
-follows the links from each referencedata character's `CharacterData_<id>.json` and writes
-compact long tables (one row per value) plus `MANIFEST.json`. Then `npm run data:parity`
+of them), is the primary source for game facts since 2026-10-09. The export stays on the
+exporting machine; `npm run data:fmodel -- <export folder>` (the folder holding `Content/`,
+offline) follows the links from each referencedata character's `CharacterData_<id>.json` and
+writes compact long tables (one row per value) plus `MANIFEST.json`. `npm run data:parity`
 compares them with the character map, the curated tables and referencedata and writes
-`FMODEL-PARITY.md`. The build does not read the FModel tables yet; switching it over is the
-next step of the data-layer rework (see the 2026-10 calculator review).
+`FMODEL-PARITY.md`.
+
+**How the build uses it** (`scripts/lib/fmodelData.mjs` reads the snapshot, `scripts/lib/gameSource.mjs`
+puts it first): class, DP and DP scale, every class coefficient, health, ki values and counts
+(through `fmodel-fields.csv`), first rush hit / throw / ki-blast / smash / follow-up Power,
+move names and ki costs, every blast part's Power, BeamPower, Shave, FireLimit, revivals and
+FireNum, skill buff phases, passives (While Sparking, low health) and each character's short-dash
+cost come from the game files. The character map fills what the snapshot lacks (move variants,
+skill stock costs, Maximum Ki, which game files make up each blast) and is the cross-check:
+REPORT.md's "Game files vs character map" lists every value the two disagree on (none on
+2026-10-09, apart from float noise in three DP scales). Without a committed snapshot the build
+falls back to the map entirely.
+
+**Short dash** now comes from each character's own step data for all 241 (`curated/short-dash-cost.csv`
+and `short-dash-shared.csv` are the league's datamine, kept as the cross-check). Seven characters
+change from Capsule Corp's 0.385 to the game's 0.265: Goku (Mini) SSJ, Vegeta (Mini) and its three
+forms, Glorio and Majin Kuu. Capsule Corp's 0.385 looks like a placeholder (Trunks (Kid) shares
+Vegeta (Mini)'s step file and has 0.265 there); an in-game test is on the tracker.
 
 What the export needs: `Content/SS/MasterDataAsset` (characters, stats, steps, attacks, ki
 blasts, moves, buffs, capsules), `Content/SS/Blueprints` (class table, DP table, battle
@@ -73,18 +89,25 @@ scales, 28 numeric stats, rush/throw/smash/follow-up and ki-blast Power and ki c
 map and the league's datamine. The only differences are three capsule names written without
 apostrophes in referencedata. The game's ki-blast combo curve
 (`ComboRushBulletDamageScalingCurve`: 1.0 at shot 1 to 0.4 at shot 13) set the volley falloff.
+The second run added 21,070 blast-part values, 333 skill buffs and 468 passive values (all
+agree) and the capsule effects, which corrected six capsules in `curated/capsule-effects.csv`:
+Power Body and Sparking! Plus lower energy resistance (ki blasts and blasts), not blast only;
+Blast Burst and Performer also raise Ultimate Blast damage; High-Speed and Super Movement Master
+also raise guarded-hit damage taken (a note). Ultimate Burst's +1 bar ultimate ki cost is not in
+the game files and waits for an in-game test.
 
 ## Where each value comes from
 
 | Values | Source | Checked against |
 | --- | --- | --- |
 | id, name, order, forms | `referencedata/characters.csv`, `transformations.json` | the raw map's names |
-| class (game key -> label via `curated/classes.csv`), DP, DP damage scale, class coefficients, health, ki, skill stocks, ki-blast count | raw map | Capsule Corp |
-| defense multipliers | raw map: incoming damage factor - class resistance | Capsule Corp |
+| class (game key -> label via `curated/classes.csv`), DP, DP damage scale, class coefficients, health, ki, skill stocks, ki-blast count | game files (FModel), raw map where the snapshot lacks a value | raw map, Capsule Corp |
+| defense multipliers | game files: incoming damage factor x (1 - class resistance) | Capsule Corp |
+| short-dash ki cost | game files: the character's own step data (`StepShortDash.SpCost` / 10000 bars) | the league's datamine, Capsule Corp |
 | rush hits, smash, throw, pursuit, ki blast damage, skill damage, switch, armor break, armor, ki charge, skill regen, Sparking duration | Capsule Corp Stats | `ceil(Power x 1.25 x coefficient)` where the raw Power is known (first rush hit, throw, ki blast; smash and pursuit from the raw map's Combative Values, actions `actSMMN` / `actBSSM`). A zero or negative Capsule Corp damage value is impossible and is replaced by the formula (Mr. Satan) |
 | ki-blast cost, ki regen, attack ki gain | raw map with the class coefficient applied | Capsule Corp |
-| moves (names, slots, variants, ki costs) | raw Move List | `curated/blasts.csv` |
-| skill effects and phases | raw Skill Values (exact coefficients) | the raw summary tab |
+| moves (names, slots, variants, ki costs) | game files for names and ki costs; raw Move List for variants and the move-to-part links | `curated/blasts.csv` |
+| skill effects and phases, passives | game files: the buff files of each skill action, the Sparking buff and the low-health trigger buffs | raw Skill Values and summary tab |
 | skill stock cost | raw Move List (blank = the game default, 2) | |
 | skill display traits (type, activation time, flags) | `curated/skill-display.csv`; skills without a row get a type inferred from their effects (`display.inferred`) | |
 | blast damage | `curated/blasts.csv` (measured) | a calibrated recipe fills gaps (see below) |
@@ -187,7 +210,7 @@ class key or effect.
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag that overrides the Neo Export (for characters it lacks or gets wrong); `note` says why |
 | `spread-blasts.csv` | id + slot + move | blasts whose hit count the league sets: spread shots (`shotsFired`, `commonHits` = the count the damage uses) and single bullets (1 of 1, e.g. Cheelai's Energy Shot) |
-| `short-dash-cost.csv` | id | short-dash ki cost from the league's datamine of the game files (raw ki, 10000 = 1 bar), shown as raw x 2 / 10000 bars, Capsule Corp's scale (it matches 182 characters, and the league confirmed it in game: 3 short dashes per bar). Capsule Corp fills characters the file lacks |
+| `short-dash-cost.csv` | id | the league's datamine of the step-cancel dash cost (raw ki, 10000 = 1 bar); half the game's per-dash cost, so raw x 2 / 10000 bars (confirmed in game: 3 short dashes per bar). Since 2026-10-09 the cross-check for the game files' own value; used only when no FModel snapshot is committed |
 | `short-dash-shared.csv` | id | DLC characters with no step data of their own: the game reads `sameAs`'s (league, 2026-10-09: Bardock SSJ from Bardock, Vegeta (GT) and its SSJ from Vegeta (Z - End) SSJ, Ma Junior from Piccolo, Tien (World Tournament) from Tien, Uub (Kid) from Goku (Z - Early), Tora from Raditz) |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
 | `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |

@@ -68,6 +68,14 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   strictCheck(!missing.length, `every referencedata character is published (${chars.length}/${ref.characters.length})`, missing);
 }
 
+// Game facts come from the FModel snapshot when it is committed (scripts/lib/gameSource.mjs)
+if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
+  check(!!data.meta?.sources?.fmodel, 'the build reads game facts from the FModel snapshot (meta.sources.fmodel)');
+  // published provenance is { source: [fields] }
+  const fromGame = chars.filter(c => Object.entries(c.provenance || {}).some(([s, f]) => s.startsWith('game files') && f.includes('shortDashCost'))).length;
+  check(fromGame === chars.length, `every character's short-dash cost comes from its own step data in the game files (${fromGame}/${chars.length})`);
+}
+
 // ------------------------------------------------------------------ share links
 {
   const caps = v2 ? data.capsules : legacy.capsules;
