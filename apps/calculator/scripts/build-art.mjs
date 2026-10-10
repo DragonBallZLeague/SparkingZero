@@ -7,6 +7,11 @@
  * glow), then scaled so the longer side is SIZE px, and saved as public/char_art/<id>.webp with
  * its transparency. The originals are ~1.1 MB each (254 MB for 241); a cut is far smaller.
  *
+ * The cards draw every character on one 2048px canvas, children smaller than adults, so the
+ * figure's height on its card is a relative size: public/char_art/sizes.json records it per id
+ * (card px), and the pages stand figures side by side at that scale. The cards shrink giants
+ * (Janemba, the Great Apes) to fit, so those need a factor on top (to be curated).
+ *
  * Like the Analyzer's build-portraits, it uses headless Edge/Chrome to decode and encode (no
  * image library is installed), so its output is committed rather than made in prebuild.
  * Re-run it when the game adds characters.
@@ -47,6 +52,8 @@ const ids = JSON.parse(fs.readFileSync(path.join(APP, 'public', 'data', 'charact
 const todo = only.length ? only : ids;
 
 fs.mkdirSync(OUT, { recursive: true });
+const sizesFile = path.join(OUT, 'sizes.json');
+const sizes = fs.existsSync(sizesFile) ? JSON.parse(fs.readFileSync(sizesFile, 'utf8')) : {};
 const browser = await launch();
 const missing = [];
 let bytes = 0;
@@ -54,7 +61,7 @@ try {
   for (const id of todo) {
     const file = files.get(id);
     if (!file) { missing.push(id); continue; }
-    const url = await browser.evaluate(`new Promise((resolve, reject) => {
+    const { url, h } = await browser.evaluate(`new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
         // find the figure on a 256px copy, then cut it from the full image
@@ -74,7 +81,7 @@ try {
         const c = document.createElement('canvas'); c.width = Math.round(sw * f); c.height = Math.round(sh * f);
         const g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
         g.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
-        resolve(c.toDataURL('image/webp', ${QUALITY}));
+        resolve({ url: c.toDataURL('image/webp', ${QUALITY}), h: Math.round(sh) });
       };
       img.onerror = () => reject(new Error('decode failed'));
       img.src = ${JSON.stringify('data:image/png;base64,' + '__B64__')};
@@ -82,10 +89,12 @@ try {
     const buf = Buffer.from(url.split(',')[1], 'base64');
     fs.writeFileSync(path.join(OUT, `${id}.webp`), buf);
     bytes += buf.length;
+    sizes[id] = h;
   }
 } finally {
   await browser.close();
 }
+fs.writeFileSync(sizesFile, JSON.stringify(Object.fromEntries(Object.entries(sizes).sort())) + '\n');
 const n = todo.length - missing.length;
 console.log(`cut ${n} characters to public/char_art/ (${Math.round(bytes / 1024)} KB, ${n ? Math.round(bytes / n / 1024) : 0} KB each on average)`);
 if (missing.length) console.log(`no card for: ${missing.join(', ')}`);
