@@ -127,6 +127,34 @@ A Mobility section would hold the short dash (already shown), these ki costs and
   from fast avoids.
 - **Guard crash:** 34 characters have a different ki damage rate when their guard is crashed.
 
+## Move and ability flags
+
+Each character's file sets which moves and abilities it has (`ActionFlag.*`, `AbilityFlag.*` in
+`character-values.csv`). This would give each character a moveset and trait list:
+- **Violent Rush** (`SparkingRush`), 50 characters: Great Ape Vegeta, Master Roshi Full Power, Frieza (Z) 2nd Form,
+  Frieza (Z) Full Power, Cell 2nd Form, Majin Buu, Mr. Satan, Chiaotzu, Yajirobe, Eighter, Chi-Chi, Nappa, Super
+  Zarbon, Dodoria, Recoome, Guldo, King Cold, Android 16, Android 19, Dr. Gero, Babidi, Frieza Force Soldier, Broly
+  (Z), Broly (Z) Legendary Super Saiyan, Broly (Super), Broly (Super) Super Saiyan, Broly (Super) Super Saiyan
+  (Full Power), Super Garlic Jr., Dr. Wheelo, Lord Slug, Lord Slug Giant Form, Cooler Final Form, Fusion Android
+  13, Full-Power Bojack, Janemba, Hirudegarn, Great Ape Baby (GT), Spopovich, Fused Zamasu Half-Corrupted, Jaco,
+  Kale, Kale Super Saiyan (Berserk), Toppo God of Destruction, Anilaza, Cheelai, Orange Piccolo Giant Form, Cell
+  Max, Panzy, Giant Gomah, Ma Junior Giant Form.
+- **No ki blasts** (`CannotShoot`, a Heavy Finish replaces them): Nam, Eighter, Chi-Chi, General Blue, Goku (Mini),
+  Uub (Kid). Goku (Mini) is a data issue today: the calculator publishes a ki blast limit of 5 for him from
+  `BulletNum`, but the flag says he cannot shoot.
+- **Thrown ki blasts** (`StoneKidan`; they can't be fired while moving): Mr. Satan, Yajirobe.
+- **Hyper armor:** the 11 Giants, Broly (Z) Legendary Super Saiyan, Broly (Super) Super Saiyan (Full Power), Kale
+  Super Saiyan (Berserk).
+- **Cannot fly:** 14, among them Goku (Teen), Master Roshi, Mr. Satan, Yajirobe, Chi-Chi, Jaco, Uub (Kid).
+- **Cannot charge ki:** 15. **No Crash Impact:** 17. **No Power Impact:** 8.
+- **Ki drain:** Super 17 (GT), Android 19, Dr. Gero. **Immune to drain:** 8 androids and Dr. Wheelo.
+- **Other moves:** Super Z Counter (15), Throw Escape (21), Dragon Tornado (73), Rolling Hurricane (45), Spiral
+  Slash (49), Heavy Crush (81), Tri Attack (170), Delta Storm (98), Air Rush (127), and smaller sets such as
+  Burst Smash, Lightning Attack and Vanishing Attack.
+
+A few flags (`AutoReflect`, `bCanHighSpeedMove`, `bCanSuperHighSpeedMove`) are stored mostly as `false`. Their
+defaults need checking before they are read.
+
 ## Suggested order
 
 Agreed with the league on 2026-10-10.
@@ -148,20 +176,17 @@ Results from 2026-10-10:
 1. **Tien's Heavy Finish: 743, so the combo channel.** Tien's Heavy Finish is his third rush chain: 3 rush hits
    (1,287), then the finisher, 2,030 in all. Rush follow-ups (the game's RushDerivative category) use the combo
    channel, and plain smashes the smash channel.
-2. **Goku's charged ki blast: weakest charge 938, full charge 1,975.**
-   - 938 is exactly 750 × 1.25. So the standing charged ki blast reads `actSTDSMBN` (Power 750), not
-     `actSMBN` (700, the character data's "EnergyBulletSmash" action). `actSMBN` is probably the version fired
-     while moving.
-   - The file's charge levels are ×1.5 and ×2, which predict 1,407 and 1,875. Full charge measured 1,975, about
-     5% more, which the files don't explain yet.
-   - Follow-up: test the middle charge (×1.5 predicts 1,407), and say whether anything was equipped.
+2. **Goku's charged ki blast: 938, 1,407 and 1,875** at the weakest, middle and full charge, and **875 at the
+   weakest charge while moving.** Every value matches the files:
+   - Standing, it reads `actSTDSMBN` (Power 750): 938, ×1.5 = 1,407, ×2 = 1,875.
+   - Moving, it reads `actSMBN` (Power 700): 875.
+   - The charge levels (`ChangePerChargeLv` DamageRate) apply to Power. The build reads only the 700 one today.
 3. **Input names (the league's reading):**
    - The rush **B chain** is the combo B that continues after a step-in mid-combo. This fits the files: it is a
      second 5-hit Rush chain, separate from the follow-up chains. Heavy Finish into Heavy Crush is a rush
      follow-up: Heavy Crush is `actHC1`-`HC3`.
-   - **激烈ラッシュ** reads as "Furious Rush". It may be the **Violent Rush** that some characters have in Sparking
-     Mode, where mashing rush combos without end. There are two families: rush-category `actRSHS*` (the same
-     Power as rush A and B) and `actBSR*` (360 a hit, 450 for Goku).
-   - To check: does a character with Violent Rush deal 450 a hit with it, and does a character without it still
-     have those actions in its files?
+   - **激烈ラッシュ ("Furious Rush") is the Violent Rush**, the normal rush combo on a loop with no damage modifier.
+     The 50 characters with `ActionFlag.SparkingRush` are the ones who have it (listed under "Move and ability
+     flags"). The rush-category `actRSHS*` family has the same Power as rush A and B, which fits. `actBSR*` (360 a
+     hit) shares the label, and what it is remains open.
 4. **Goku's fully charged smash: 1,400,** as predicted. The smash charge levels read correctly.
