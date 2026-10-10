@@ -8,18 +8,25 @@ The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its
 
 ## 1. Decisions waiting on the league
 
-- **Sign-off on concept B** after round 3 (header barrier, average strips, ki regen as the self-recharge bars only,
-  All stats modes, ULT, "per" wording, breakdowns from the base hit).
-- **Giants and their size factors.** The game's cards shrink giants to fit, so they need a factor on top of their
-  card height. Only Janemba has one (×1.3, a guess). Needed: the list of giants (Great Apes, Hirudegarn and so on)
-  and a factor each, then a curated table such as `data/curated/art-scale.csv`.
-- **"To knock out" on Vs opponent.** It is marked as a draft. The league doesn't find "rush combos and ultimates
-  needed" useful, so decide what it should measure, or drop it.
-- **Ki charge bar.** It now shows where the character sits between the roster's slowest and fastest, with a tick at
-  the league average. Confirm this meaning.
-- **League-average strips.** Confirm which stats get one, and the scale (5th to 95th percentile of the roster).
-  Should the command list's blast and ultimate damage get one too?
+- **Sign-off on concept B** after round 4 (fill bars under stats, chevron rates on the three meters).
+- **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
+  cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them for now, a
+  guess. Per-character tuning can wait until the full art set is cut.
 - **The full art set.** Cutting all 241 card images (about 12 MB, about 49 KB each) into `public/char_art/`.
+- **Stat expansion.** `data/EXPANSION.md` lists what the game files can add (charged and jump/dash ki blasts,
+  charged smash levels, rush follow-ups, movement ki costs, low-health buffs) and four league tests. Decide
+  which go in first, so Full stats and the sheet are laid out for them from the start.
+
+Settled (2026-10-10): stats on the sheet get a thin bar filled to where the character sits in the roster's range
+(5th to 95th percentile; no average marker), "less is better" stats fill the better the character is, and rates
+(ki charge, ki regen, skill gauge gain) use chevrons that light up with speed. Health, starting ki and
+auto-recharge get no bar. Blasts and ultimates get none either: their types differ too much.
+
+### Ideas kept for later
+
+- **"To knock out"** on Vs opponent (rush combos or ultimates each side needs). The league didn't find that
+  measure useful, so it was taken out of the mock. Keep the idea of a short "who wins the exchange" summary for
+  a later round.
 
 ## 2. Views and interactions not mocked yet
 
