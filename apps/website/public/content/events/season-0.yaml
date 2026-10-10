@@ -1,11 +1,6 @@
 label: Season 0
 events:
-  - status: upcoming
-    slug: sparkingneo
-    name: Sparking Neo Event
-    tagline: New Diamonds in the Rough
-    timing: off-season
-    date: 10/11/2026
+  - participants: []
     blocks:
       - type: markdown
         title: Why and What
@@ -13,7 +8,55 @@ events:
           wanted to make an event to show them off. Every current team got to
           select at least 2 new characters who are on their roster, plus
           another, and get to build them for a 3v3 mach match. Its all for fun!
+      - type: single_match
+        status: upcoming
+        title: Match 1
+        team_a: Master & Student
+        team_b: Time Patrol
+        map: Tundra
+        lineup_file: neo_m1.yaml
+      - type: single_match
+        status: upcoming
+        team_a: Cinema
+        title: Match 2
+        team_b: Tiny Terrors
+        map: Kame House
+        lineup_file: neo_m2.yaml
+      - type: single_match
+        status: upcoming
+        title: Match 3
+        team_a: Malevolent Souls
+        team_b: Z-Fighters
+        map: Stratosphere (Vegeta)
+        lineup_file: neo_m3.yaml
+      - type: single_match
+        status: upcoming
+        title: Match 4
+        team_a: Demons
+        team_b: Sentai Squad
+        map: Kami's Lookout
+        lineup_file: neo_m4.yaml
+      - type: single_match
+        status: upcoming
+        title: Match 5
+        team_a: Creations
+        team_b: Primal Instincts
+        map: Molten Lava
+        lineup_file: neo_m5.yaml
+      - type: single_match
+        status: upcoming
+        title: Match 6
+        team_a: Budokai
+        team_b: Cold Kingdom
+        map: White Valley
+        lineup_file: neo_m6.yaml
+    timing: off-season
+    name: Sparking Neo Event
+    slug: sparkingneo
     banner: /SparkingZero/images/1000009423.png
+    tagline: New Diamonds in the Rough
+    date: 10/11/2026
+    status: upcoming
   - participants:
       - name: Team Beerus
         color: "#bd2b2c"
