@@ -19,9 +19,10 @@ will ship it later, to dev-branch on its own or with the redesign.
   build, e.g. Rush 5-hit 2,523 → 2,648; In Sparking! and Not in the stats tags; banned hidden behind "Show
   banned"). In `concepts/concept-b.html#pick`. The league's first review (2026-10-10): every form stays its own face; Ki and Skill became separate capsule groups; faces sit on their class's colour (split tiles for sub-types and close colours). Waiting on the league's look at those changes.
 
-- **Round 13 (2026-10-11):** Unguardable back on skills; penalties applied on activation shown with the buff, not as stages; No Step Back; Grand Slash damage. Data published for them (interrupts, stages, noStepBack, crash). Crash still to confirm (TESTS.md 4).
-- **Round 12 (2026-10-11):** trimmed traits (Initial cost only when different, Lock-on required only when true, Burst cost only in the cost display, no Unguardable on skills), a Special line for unique rules, stage buttons for multi-stage skills, Interrupts; a frame of other characters' cards. Data to publish for it: Interrupts, multi-stage display, Special texts (Devilmite Beam's wickedness).
-- **Round 11 (2026-10-11):** tighter Command list cards (primary values beside the damage, minor traits as small tags); Unguardable once; Speed clash; Grab for throw-type rush blasts; lunge speed only on Rush and Grab. **Open:** the league sorts every blast and skill trait into primary (tiles) and minor (tags); the full lists were sent on 2026-10-11 (draft primary for blasts: Clash, Impact power, Lunge speed, Time limit).
+- **Round 14 (2026-10-11, `#more`):** first versions of the views not mocked before: editing the opponent's build on Vs opponent (league lineup builds for that fighter first, from the website's lineups; then No capsules or Same as yours, their capsules, skills and Sparking; changed Exchange rows tinted old → new), Compare's All stats on a phone (value | stat | value rows, "Only differences" on, shared stats folded into a "Same for both" line, section chips), breakdowns on touch (a bottom sheet), with a mouse (hover previews, click pins) and a keyboard (every dotted number a Tab stop; Enter or Space opens, Esc closes), and Similar fighters (was Closest fighters; it lists what differs, since the nine core stats come mostly from DP and class and many same-DP fighters are near-identical). Waiting on the league's look.
+- **Round 13 (2026-10-11):** Unguardable back on skills; penalties applied on activation shown with the buff, not as stages; No Step Back; Grand Slash damage. Data published for them (interrupts, stages, noStepBack, crash; Crash confirmed by the league).
+- **Round 12 (2026-10-11):** trimmed traits (Initial cost only when different, Lock-on required only when true, Burst cost only in the cost display, no Unguardable on skills), a Special line for unique rules, stage buttons for multi-stage skills, Interrupts; a frame of other characters' cards. Interrupts, stages and Devilmite Beam's wickedness scaling are published; the Special texts themselves are still to publish.
+- **Round 11 (2026-10-11):** tighter Command list cards (primary values beside the damage, minor traits as small tags); Unguardable once; Speed clash; Grab for throw-type rush blasts; lunge speed only on Rush and Grab. **Open:** the league sorts every blast and skill trait into primary (tiles) and minor (tags); the current setup was resent on 2026-10-11 (blasts: tiles Clash, Impact power, Speed, Tracking, Lunge speed, Time limit; tags Initial cost, Lock-on required, No Step Back, Unguardable, Cinematic, Chargeable, Audience flees; not placed yet: Destroys map, Targets giants. Skills: tiles Activation, Targets; tags Unguardable, Cutscene, Instant Sparking, Interrupts; not placed yet: Instant ki, Armor).
 - **Round 10 (2026-10-11):** Command list rows (Skills, Blasts, Ultimates; up to 3 a row), wide cards with the main type by the damage, boost labelled "+1 bar", no Lunge Fighting tag; Breaking armor under Ki blasts. Open: how to show the 10 Throw-type rush blasts and the 6 lunging non-rush blasts.
 - **Round 9 (2026-10-11):** Full stats' Command list of move cards (blasts, ultimates, skills with every value the data has); Heavy Finish and Perfect Smash out of Melee. Waiting on the league's look.
 - **Round 8 (2026-10-11):** Rush Chains (renamed from Moveset) after Melee in a rose of its own, with chain and follow-up damage; follow-ups one per line as separate routes; Combat limits per pursuit; class colours inside the picker's class chips. Waiting on the league's look.
@@ -61,11 +62,15 @@ auto-recharge get no bar. Blasts and ultimates get none either: their types diff
 
 ## 2. Views and interactions not mocked yet
 
+All first mocked in round 14 (`#more`), waiting on the league's look:
 - Compare's **All stats** mode on a phone.
-- **Opponent build editing** on Vs opponent: their capsules, skills and Sparking.
+- **Opponent build editing** on Vs opponent: their capsules, skills and Sparking, with the league's lineup builds.
 - **Breakdowns on touch screens**: tap to open and close, and keyboard and screen-reader access.
-- **"Closest fighters"**: confirm the nine-stat similarity and what tapping one does.
-- **Combat limits ("NEW")**: which game-file values to show, and their wording.
+- **Similar fighters** (was "Closest fighters"): what differs, same DP first; tapping one fills Compare's right side.
+- **Combat limits**: mocked in round 8 (follow-up limit and each pursuit); its wording is waiting on the league.
+
+Ideas from round 14, not mocked: a "their health" control on Vs opponent to apply health-step capsules (Fury!,
+Latent Power!), which most of the league's Piccolo builds carry.
 
 ## 3. Build-out
 

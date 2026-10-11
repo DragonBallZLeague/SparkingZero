@@ -562,18 +562,106 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 .ph .fs { padding: 10px; }
 .sample { display: inline-flex; gap: 3px; vertical-align: middle; margin: 0 4px; }
 .sample i { display: inline-block; height: 10px; transform: skewX(-20deg); }
+/* round 14: opponent build, Compare's All stats on a phone, breakdowns on touch and keyboard, similar fighters */
+.plate.opp { border-left-color: #3b82f6; } .plate.opp h5 { color: #93c5fd; }
+.hex.o { background: linear-gradient(160deg, #60a5fa, #1d4ed8); color: #fff; }
+.bud.o i.f { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.vside .editb { display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 3px 14px; background: #f8fafc; color: #0a0d20; text-shadow: none; clip-path: polygon(9% 0, 100% 0, 91% 100%, 0 100%); }
+.xrow.chgd { background: linear-gradient(270deg, rgba(59,130,246,.16), transparent 60%); }
+.xrow .chg s { text-decoration: none; font-size: 11px; font-weight: 500; font-style: normal; color: var(--muted); margin-right: 4px; }
+.xrow .chg s::after { content: ' \2192'; }
+.sublbl { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); margin: 10px 0 4px; }
+.sublbl:first-of-type { margin-top: 0; }
+.sublbl em { font-style: normal; letter-spacing: 0; text-transform: none; font-size: 11px; color: var(--muted); }
+.lb > div { padding: 6px 8px; border-top: 1px solid var(--line); }
+.lb > div.on { background: rgba(59,130,246,.16); outline: 1px solid rgba(96,165,250,.55); outline-offset: -1px; }
+.lb .lbh { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; font-weight: 800; margin-bottom: 4px; }
+.lb .lbh em { font-style: normal; font-weight: 600; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.lb .more { font-size: 11.5px; color: var(--muted); }
+.tgl { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+.tgl .slot { flex: none; }
+.tgl .sw { margin-left: auto; flex: none; width: 30px; height: 16px; background: rgba(148,163,184,.25); position: relative; border-radius: 9px; }
+.tgl .sw::after { content: ''; position: absolute; left: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; }
+.tgl .sw.on { background: var(--skill); } .tgl .sw.on::after { left: 16px; background: #fff; }
+.tgl .sw.sp.on { background: var(--spark); }
+.opp .hexes { flex-wrap: wrap; }
+.opp .hex { font-size: 8.5px; line-height: 1.05; text-align: center; }
+/* bottom sheets (phone) */
+.dim { position: absolute; left: 0; right: 0; top: 50px; bottom: 0; background: rgba(3,5,15,.62); z-index: 4; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; background: #0d1336; border-top: 2px solid #3b82f6; padding: 8px 12px 14px; box-shadow: 0 -16px 40px rgba(0,0,0,.6); display: flex; flex-direction: column; gap: 8px; }
+.sheet::before { content: ''; display: block; width: 44px; height: 4px; border-radius: 2px; background: rgba(148,163,184,.5); margin: 0 auto; }
+.sheet.bd { border-top-color: #f97316; }
+.sheet .tr, .tip .tr { display: grid; grid-template-columns: minmax(0, 1fr) 80px; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.sheet .tr span:nth-child(2) { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.sheet .tr.t span { color: var(--up); font-weight: 900; }
+.sheet .tr small { color: var(--muted); margin-left: 4px; }
+.sheet .hint, .bdhint { font-size: 11.5px; color: var(--muted); }
+.hitl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.srow .sel { background: rgba(249,115,22,.22); outline: 1px solid rgba(249,115,22,.75); padding: 0 3px; }
+/* keyboard */
+.focus { outline: 2px solid #fbbf24; outline-offset: 2px; box-shadow: 0 0 0 5px rgba(251,191,36,.22); }
+.tip .x { float: right; font-style: normal; font-size: 10.5px; font-weight: 700; color: #e2e8f0; text-transform: none; letter-spacing: 0; margin-top: 2px; }
+.keys { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #cbd5e1; padding: 7px 10px; background: rgba(255,255,255,.045); }
+kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6px; border: 1px solid rgba(148,163,184,.45); border-bottom-width: 2px; border-radius: 3px; color: #f1f5f9; margin-right: 4px; }
+.srline { font-size: 12px; color: #cffafe; padding: 7px 10px; border-left: 3px solid var(--skill); background: rgba(34,211,238,.08); }
+.srline b { display: block; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); margin-bottom: 2px; }
+/* Compare's All stats on a phone */
+.cbar { display: grid; grid-template-columns: 1fr 1fr; }
+.cbar > span { display: flex; align-items: center; gap: 7px; padding: 6px 10px; font-size: 11.5px; font-weight: 900; font-style: italic; text-transform: uppercase; line-height: 1.1; }
+.cbar img { width: 30px; height: 30px; object-fit: cover; object-position: top; flex: none; }
+.cbar .l { background: linear-gradient(90deg, rgba(234,88,12,.6), rgba(234,88,12,.05)); }
+.cbar .r { background: linear-gradient(270deg, rgba(37,99,235,.65), rgba(37,99,235,.05)); flex-direction: row-reverse; text-align: right; }
+.only { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #e2e8f0; text-transform: none; letter-spacing: 0; }
+.only .sw { width: 30px; height: 16px; background: var(--win); position: relative; border-radius: 9px; }
+.only .sw::after { content: ''; position: absolute; left: 16px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+.jump { display: flex; gap: 5px; padding: 7px 10px; overflow: hidden; border-bottom: 1px solid var(--line); background: rgba(10,13,32,.6); }
+.jump span { flex: none; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 9px; background: rgba(148,163,184,.14); color: #cbd5e1; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); }
+.jump span.on { background: #f8fafc; color: #0a0d20; }
+.pstack { padding: 8px 10px 60px; display: flex; flex-direction: column; gap: 8px; }
+.pstack .plate { padding: 8px 10px 9px; }
+.pstack .plate h5 { margin-bottom: 4px; }
+.prow { display: grid; grid-template-columns: 74px minmax(0, 1fr) 74px; gap: 6px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.prow.h { border-top: 0; padding-top: 0; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.prow .a, .prow .b { font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.prow .b { text-align: right; }
+.prow .n { text-align: center; font-size: 11.5px; color: #cbd5e1; line-height: 1.2; }
+.prow .n small { display: block; font-size: 9.5px; color: var(--muted); }
+.prow .w { color: var(--win); }
+.prow.h .a, .prow.h .b { font-style: normal; font-weight: 800; }
+.same { font-size: 11px; color: var(--muted); padding-top: 5px; border-top: 1px solid var(--line); }
+.same b { color: #cbd5e1; font-weight: 700; }
+.ph .mvcmp { grid-template-columns: 58px minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
+.ph .mvcmp .cd { display: block; margin: 1px 0 0; }
+.pcmd { display: grid; grid-template-columns: 30px minmax(0, 1fr) minmax(0, 1fr); gap: 6px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.pcmd b { display: block; font-size: 13px; font-style: italic; font-variant-numeric: tabular-nums; }
+.pcmd > span:last-child { text-align: right; }
+.pcmd .w { color: var(--win); }
+/* similar fighters */
+.simrow { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 9px; align-items: center; padding: 5px 6px; border-top: 1px solid var(--line); }
+.simrow img { width: 40px; height: 40px; object-fit: cover; object-position: top; background: rgba(255,255,255,.06); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+.simrow .snm { font-size: 12.5px; font-weight: 800; margin-bottom: 3px; }
+.simrow .snm i { font-style: normal; font-size: 10px; font-weight: 900; color: #111; background: #f97316; padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
+.simrow .act { display: none; font-size: 10.5px; font-weight: 900; text-transform: uppercase; color: #fff; background: #2563eb; padding: 3px 10px; clip-path: polygon(9% 0, 100% 0, 91% 100%, 0 100%); }
+.simrow.hov { background: rgba(59,130,246,.14); outline: 1px solid rgba(96,165,250,.55); outline-offset: -1px; }
+.simrow.hov .act { display: block; }
+.simrow .tags span.same0 { background: none; color: var(--muted); font-weight: 500; padding-left: 0; }
+.modes span { white-space: nowrap; }
+.ph .mvcmp .fu span { white-space: normal; }
+.ph .mvcmp .fu span small { margin-left: 0; display: block; }
+.jump { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Concept B: the in-game character sheet</h1>
-  <p class="lead">The four views of concept B and its two pickers as quick static mockups, after your third round of changes. The numbers are real, from the published data and the engine. Only the switcher below works. On the real pages every dotted number opens its breakdown (Full stats shows one open).</p>
+  <p class="lead">The four views of concept B, its two pickers and the views not mocked before (6) as quick static mockups. The numbers are real, from the published data and the engine. Only the switcher below works. On the real pages every dotted number opens its breakdown (Full stats shows one open).</p>
   <nav class="switch">
     <a href="#sheet" data-v="sheet">1. Sheet</a>
     <a href="#stats" data-v="stats">2. Full stats</a>
     <a href="#compare" data-v="compare">3. Compare</a>
     <a href="#versus" data-v="versus">4. Vs opponent</a>
     <a href="#pick" data-v="pick">5. Pickers</a>
+    <a href="#more" data-v="more">6. New views</a>
   </nav>
 
   <!-- ============================================================ SHEET -->
@@ -1216,6 +1304,292 @@ h1 { font-size: 20px; margin: 0 0 4px; }
             </div>
           </div>
           <div class="phtabs"><span class="on">Sheet</span><span>Stats</span><span>Compare</span><span>Vs</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ NEW VIEWS (round 14) -->
+  <section class="view" id="more">
+    <div class="about">
+      <div><b>This round</b>First versions of the four views not mocked yet. <b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">Opponent build</b>: on Vs opponent, the opponent's nameplate has "Edit build". It opens their build next to the Exchange: the league's own lineup builds for that fighter first (from the website's lineups, 22 for Piccolo, grouped when the capsules match), then "No capsules" or "Same as yours", their capsules (the same capsule picker, filling their side), their skills and Sparking. Rows the build changes are tinted, old value → new. <b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">Compare's All stats on a phone</b>: one column of value | stat | value rows, the better value in green, with "Only differences" on by default (stats both share fold into one "Same for both" line) and section chips to jump. <b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">Breakdowns</b>: on a phone, tapping a dotted number opens its breakdown in a sheet from the bottom (tap another number to switch, swipe down or tap outside to close); with a mouse, hovering previews and clicking pins it; with a keyboard, every dotted number is a stop. <b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">Similar fighters</b> (was Closest fighters) on Compare's Summary.</div>
+      <div><b>Found while mocking</b>Closest fighters by the nine core stats turned out to be weak: those stats come mostly from DP and class, so most DP 4 Normal fighters are near-identical to Goku (Z - Early), and Piccolo, Gohan (Adult), Great Saiyaman and Nail differ from him only in skill gauge limit. So the panel now says what differs instead of a similarity score: same DP first, then the nearest at other DPs. Tapping a fighter puts them on Compare's right side; their sheet is one more tap. Moves aren't part of the match (Piccolo's blasts and Rush Chains differ from Goku's); Compare shows those. Numbers are real, from the engine: Goku (Z - Early) with Rush Attack Boost 1 and Kaioken on, against Piccolo with no build and with the Budokai build. Fury! and Latent Power! work below a health step, so they go under "Not in the stats" (a "their health" control could apply them later).</div>
+    </div>
+    <div class="frames">
+      <div>
+        <p class="frame-lbl">Desktop 1180px, Vs opponent: editing the opponent's build</p>
+        <div class="desk" style="height:1010px"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span>Full stats</span><span>Compare</span><span class="on">Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="vshead">
+            <div class="vside l"><div class="vfig"><img src="art/0000_00.webp" alt="" style="--fh:1784"></div><div class="who"><div class="nm">Goku<br>(Z - Early)</div><div class="chips"><span class="chip ghost">Rush Attack Boost 1</span><span class="chip sk">Kaioken on</span></div></div></div>
+            <div class="vside r"><div class="vfig"><img src="../../public/char_art/0040_00.webp" alt="" style="--fh:1920"></div><div class="who"><div class="nm">Piccolo</div><div class="chips" style="justify-content:flex-end"><span class="chip ghost">Budokai build</span><span class="chip dp">DP 4</span></div><span class="editb">Edit build ▴</span></div></div>
+            <div class="vsmid"><b>VS</b></div>
+          </div>
+          <div class="modes"><span class="on">Exchange</span><span>All stats</span><em>4 rows changed by Piccolo's build</em></div>
+          <div class="cmpgrid" style="grid-template-columns:minmax(0,1fr) 380px">
+            <div>
+              <div class="plate neutral">
+                <h5>Damage exchange</h5>
+                <div class="xhead"><span></span><span>You deal</span><span>You take</span></div>
+                <div class="xgroup melee"><div class="gh">Melee</div>
+                  <div class="xrow chgd"><span class="nm2">Rush 5-hit<small>their Rush Attack Boost 2</small></span><span class="v1">2,769</span><span class="v2 chg"><s>2,214</s>2,328</span></div>
+                  <div class="xrow"><span class="nm2">Smash, Charge Lv.1</span><span class="v1">743</span><span class="v2">608</span></div>
+                  <div class="xrow"><span class="nm2">Throw</span><span class="v1">1,375</span><span class="v2">1,125</span></div>
+                </div>
+                <div class="xgroup kib"><div class="gh">Ki blasts</div>
+                  <div class="xrow"><span class="nm2">One ki blast</span><span class="v1">275</span><span class="v2">225</span></div>
+                  <div class="xrow"><span class="nm2">Full volley</span><span class="v1">1,238</span><span class="v2">1,181</span></div>
+                </div>
+                <div class="xgroup blast"><div class="gh">Blasts</div>
+                  <div class="xrow chgd"><span class="nm2">B1 Kamehameha<small>vs Explosive Demon Wave, their Blast Attack Boost 2</small></span><span class="v1">7,125</span><span class="v2 chg"><s>6,750</s>7,088</span></div>
+                  <div class="xrow chgd"><span class="nm2">B2 Kaioken Attack<small>vs Explosive Breath Cannon</small></span><span class="v1">8,375</span><span class="v2 chg"><s>7,538</s>7,915</span></div>
+                </div>
+                <div class="xgroup ult"><div class="gh">Ultimate</div>
+                  <div class="xrow chgd"><span class="nm2">Spirit Bomb<small>vs Special Beam Cannon</small></span><span class="v1">15,000</span><span class="v2 chg"><s>13,500</s>14,175</span></div>
+                </div>
+              </div>
+              <div class="plate" style="margin-top:10px">
+                <h5>Health</h5>
+                <div class="hpcap"><span>Piccolo</span><b>40,000</b></div>
+                <span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f hit" style="--w:28%"></i><i class="cap"></i></span>
+                <div class="hpcap"><span>You</span><b>40,000</b></div>
+                <span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f hit" style="--w:23%"></i><i class="cap"></i></span>
+                <div class="hpcap" style="margin-top:8px"><span>Red: one rush combo</span><span></span></div>
+              </div>
+            </div>
+            <div>
+              <div class="plate opp">
+                <h5>Piccolo's build</h5>
+                <div class="sublbl"><span>League builds</span><em>22 Piccolo lineups</em></div>
+                <div class="lb">
+                  <div class="on"><div class="lbh"><span>Budokai</span><em>5 lineups, Season 0 playoffs</em></div><div class="tags"><span>Rush Attack Boost 2</span><span>Blast Attack Boost 2</span><span>Fury!</span><span>Latent Power!</span><span>Indomitable Fighting Spirit</span><span>Latent Power Unleashed 2</span></div></div>
+                  <div><div class="lbh"><span>Budokai</span><em>4 lineups</em></div><div class="tags"><span>Rush Attack Boost 3</span><span>Rush Attack Boost 1</span><span>Master Strike</span><span>Latent Power!</span><span>Melee Charge 3</span><span>King Kai Training</span></div></div>
+                  <div><div class="lbh"><span>Team Beerus</span><em>4 lineups, All-Stars</em></div><div class="tags"><span>Rush Attack Boost 3</span><span>Indomitable Fighting Spirit</span><span>Rising Fighting Spirit</span><span>Melee Charge 3</span><span>Latent Power!</span><span>Active Heart</span></div></div>
+                  <div class="more">4 more builds</div>
+                </div>
+                <div class="fl" style="margin-top:8px"><small>Or</small><span>No capsules</span><span>Same as yours</span></div>
+                <div class="sublbl" style="margin-top:12px"><span>Capsules</span><em>tap one to change it</em></div>
+                <div class="hexes"><span class="hex o">Rush<br>Boost 2</span><span class="hex o">Blast<br>Boost 2</span><span class="hex o">Fury!</span><span class="hex o">Latent<br>Power!</span><span class="hex o">Indom.<br>Spirit</span><span class="hex o">Latent<br>Unl. 2</span></div>
+                <div style="margin-top:8px"><div class="meterl"><span>Budget</span><b>20 of 20</b></div><div class="bud o"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div></div>
+                <div class="sublbl" style="margin-top:12px"><span>Skills and Sparking</span></div>
+                <div class="tgl"><span class="slot s">S1</span>Paralyze Beam<span class="sw"></span></div>
+                <div class="tgl"><span class="slot s">S2</span>All-Out<span class="sw"></span></div>
+                <div class="tgl"><span class="slot u">SP</span>Sparking!<span class="sw sp"></span></div>
+                <div class="nsl" style="margin-top:8px"><div class="meterl" style="margin:0 0 2px"><span>Not in the stats</span></div><div><b>Fury!</b> Blasts +5% at 75% health, up to +15% at 25%</div><div><b>Latent Power!</b> Defense +2.5% at 75% health, up to +15% at 25%</div></div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px, Vs opponent: the opponent's build</p>
+        <div class="phone" style="height:960px"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="vshead">
+            <div class="vside l"><div class="vfig c"><img src="art/0000_00.webp" alt="" style="--fh:1784"></div><div class="who"><div class="nm">Goku (Z - Early)</div></div></div>
+            <div class="vside r"><div class="vfig c"><img src="../../public/char_art/0040_00.webp" alt="" style="--fh:1920"></div><div class="who"><div class="nm">Piccolo</div><span class="editb">Edit build</span></div></div>
+            <div class="vsmid"><b>VS</b></div>
+          </div>
+          <div class="modes"><span class="on">Exchange</span><span>All stats</span></div>
+          <div class="cmpgrid">
+            <div class="plate neutral">
+              <h5>Damage exchange</h5>
+              <div class="xhead"><span></span><span>Deal</span><span>Take</span></div>
+              <div class="xgroup melee"><div class="gh">Melee</div>
+                <div class="xrow chgd"><span class="nm2">Rush 5-hit</span><span class="v1">2,769</span><span class="v2">2,328</span></div>
+                <div class="xrow"><span class="nm2">Throw</span><span class="v1">1,375</span><span class="v2">1,125</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dim"></div>
+          <div class="sheet">
+            <div class="pk-h"><b>Piccolo's build</b><span class="x">Done</span></div>
+            <div class="sublbl"><span>League builds</span><em>22 lineups</em></div>
+            <div class="lb">
+              <div class="on"><div class="lbh"><span>Budokai</span><em>5 lineups</em></div><div class="tags"><span>Rush Attack Boost 2</span><span>Blast Attack Boost 2</span><span>Fury!</span><span>Latent Power!</span><span>Indomitable Fighting Spirit</span><span>Latent Power Unleashed 2</span></div></div>
+              <div><div class="lbh"><span>Budokai</span><em>4 lineups</em></div><div class="tags"><span>Rush Attack Boost 3</span><span>Rush Attack Boost 1</span><span>Master Strike</span><span>Latent Power!</span><span>Melee Charge 3</span><span>King Kai Training</span></div></div>
+              <div class="more">5 more builds</div>
+            </div>
+            <div class="fl"><small>Or</small><span>No capsules</span><span>Same as yours</span></div>
+            <div class="hexes" style="flex-wrap:wrap"><span class="hex o">Rush<br>Boost 2</span><span class="hex o">Blast<br>Boost 2</span><span class="hex o">Fury!</span><span class="hex o">Latent<br>Power!</span><span class="hex o">Indom.<br>Spirit</span><span class="hex o">Latent<br>Unl. 2</span></div>
+            <div><div class="meterl"><span>Budget</span><b>20 of 20</b></div><div class="bud o"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div></div>
+            <div>
+              <div class="tgl"><span class="slot s">S1</span>Paralyze Beam<span class="sw"></span></div>
+              <div class="tgl"><span class="slot s">S2</span>All-Out<span class="sw"></span></div>
+              <div class="tgl"><span class="slot u">SP</span>Sparking!<span class="sw sp"></span></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px, Compare: All stats (scrolls)</p>
+        <div class="phone" style="height:2340px"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="cbar"><span class="l"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt="">Goku (Z - Early)</span><span class="r"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_00_00.png" alt="">Vegeta (Z - Scouter)</span></div>
+          <div class="modes" style="padding:8px 10px 6px"><span>Summary</span><span class="on">All stats</span><em class="only">Only differences<i class="sw"></i></em></div>
+          <div class="jump"><span class="on">Toughness</span><span>Melee</span><span>Rush Chains</span><span>Ki blasts</span><span>Armor</span><span>Resources</span><span>Limits</span></div>
+          <div class="pstack">
+            <div class="plate">
+              <h5>Toughness</h5>
+              <div class="prow h"><span class="a">Goku</span><span class="n"></span><span class="b">Vegeta</span></div>
+              <div class="prow"><span class="a w">2,585</span><span class="n">5-hit taken<small>less is better</small></span><span class="b">2,717</span></div>
+              <div class="prow"><span class="a w">Base</span><span class="n">Melee defense</span><span class="b">−5%</span></div>
+              <div class="prow"><span class="a w">Base</span><span class="n">Blast defense</span><span class="b">−5%</span></div>
+              <div class="prow"><span class="a">Base</span><span class="n">Ki-blast defense</span><span class="b w">+5%</span></div>
+              <div class="same">Same for both: <b>HP 40,000</b>, <b>Armor None</b>, <b>Switch 19s</b></div>
+            </div>
+            <div class="plate off">
+              <h5>Melee</h5>
+              <div class="prow"><span class="a w">400</span><span class="n">Rush hits 1-3</span><span class="b">351</span></div>
+              <div class="prow"><span class="a w">554</span><span class="n">Rush hit 4</span><span class="b">486</span></div>
+              <div class="prow"><span class="a w">769</span><span class="n">Rush hit 5</span><span class="b">675</span></div>
+              <div class="prow"><span class="a w">2,523</span><span class="n">Rush 5-hit</span><span class="b">2,214</span></div>
+              <div class="prow"><span class="a w">2,346</span><span class="n">Rush 5-hit into armor</span><span class="b">2,060</span></div>
+              <div class="prow"><span class="a w">675</span><span class="n">Smash, Charge Lv.1</span><span class="b">608</span></div>
+              <div class="prow"><span class="a w">1,125</span><span class="n">Smash, Charge Lv.2</span><span class="b">1,013</span></div>
+              <div class="prow"><span class="a w">1,400</span><span class="n">Smash, Charge Lv.3</span><span class="b">1,260</span></div>
+              <div class="prow"><span class="a w">1,250</span><span class="n">Throw</span><span class="b">1,125</span></div>
+              <div class="prow"><span class="a w">1,250</span><span class="n">Pursuit</span><span class="b">1,125</span></div>
+              <div class="same">Same for both: <b>Armor break 5 hits</b></div>
+            </div>
+            <div class="plate mov">
+              <h5>Rush Chains</h5>
+              <div class="mvcmp h"><span></span><span>Goku</span><span>Vegeta</span></div>
+              <div class="mvcmp"><span>Chain 1<span class="hits"><i class="f"></i><i></i><i></i><i></i></span></span><span><span class="ctype">Heavy Finishes</span><b class="cd"><em>Lv.3</em>1,400</b><span class=fu><span>Heavy Crush<b>1,338</b></span></span></span><span><span class="ctype">Heavy Finishes</span><b class="cd"><em>Lv.3</em>1,260</b><span class=fu><span>Heavy Crush<b>1,205</b></span></span></span></div>
+              <div class="mvcmp"><span>Chain 2<span class="hits"><i class="f"></i><i class="f"></i><i></i><i></i></span></span><span><span class="ctype">Ki Blast Cannon</span><b class="cd"><em>Lv.3</em>1,338</b><span class=fu><span>KBC Attack<b>2,325</b></span></span></span><span><span class="ctype">Flying Kicks</span><b class="cd">1,036</b></span></div>
+              <div class="mvcmp"><span>Chain 3<span class="hits"><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span></span><span><span class="ctype">Flying Kicks</span><b class="cd">1,150</b></span><span><span class="ctype">Rush Ki Waves</span><b class="cd"><em>Lv.3</em>1,690</b><span class=fu><span>Energy Storm<b>1,103</b><small>+ ki blasts</small></span></span></span></div>
+              <div class="mvcmp"><span>Chain 4<span class="hits"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></span></span><span><span class="ctype">Heavy Finishes</span><b class="cd"><em>Lv.3</em>1,400</b><span class=fu><span>Heavy Crush<b>1,338</b></span></span></span><span><span class="ctype">Heavy Finishes</span><b class="cd"><em>Lv.3</em>1,260</b><span class=fu><span>Heavy Crush<b>1,205</b></span></span></span></div>
+              <div class="mvcmp"><span>Step-In</span><span><span class="ctype">Heavy Finishes</span></span><span><span class="ctype">Rush Ki Waves</span></span></div>
+              <div class="mvcmp"><span>Grand Slash</span><span><span class="fu"><span>Tornado Slash</span><span>Aerial Slash</span></span></span><span><span class="fu"><span>Tornado Slash</span></span></span></div>
+            </div>
+            <div class="plate kib">
+              <h5>Ki blasts</h5>
+              <div class="prow"><span class="a w">250</span><span class="n">Ki blast</span><span class="b">225</span></div>
+              <div class="prow"><span class="a">5</span><span class="n">Ki blast limit</span><span class="b w">No limit</span></div>
+              <div class="prow"><span class="a">1,125</span><span class="n">Full volley</span><span class="b w">2,678</span></div>
+              <div class="prow"><span class="a">0.2</span><span class="n">Cost per shot<small>bars, less is better</small></span><span class="b w">0.112</span></div>
+              <div class="prow"><span class="a">938</span><span class="n">Charged, Lv.1</span><span class="b w">1,079</span></div>
+              <div class="prow"><span class="a">1,407</span><span class="n">Charged, Lv.2</span><span class="b w">1,618</span></div>
+              <div class="prow"><span class="a">1,875</span><span class="n">Charged, Lv.3</span><span class="b w">2,157</span></div>
+              <div class="prow"><span class="a w">313</span><span class="n">Jump ki blast</span><span class="b">282</span></div>
+              <div class="prow"><span class="a w">250</span><span class="n">Dash ki blast</span><span class="b">225</span></div>
+            </div>
+            <div class="plate armp">
+              <h5>Breaking armor</h5>
+              <div class="same" style="border-top:0;padding-top:0">Same for both: every row (rush hits 1-4, Lv.1 smash, ki blast, charged ki blast), normally and In Sparking!</div>
+            </div>
+            <div class="plate res">
+              <h5>Resources</h5>
+              <div class="prow"><span class="a">1.40</span><span class="n">Ki charge<small>bars/s</small></span><span class="b w">1.54</span></div>
+              <div class="prow"><span class="a">0.175</span><span class="n">Ki regen<small>bars/s</small></span><span class="b w">0.193</span></div>
+              <div class="prow"><span class="a w">6</span><span class="n">Skill gauge limit</span><span class="b">5</span></div>
+              <div class="same">Same for both: <b>Starting ki 2 bars</b>, <b>Auto-recharge to 2 bars</b>, <b>Ki from hits 0.03</b>, <b>Skill gauge 3.65 per minute</b></div>
+            </div>
+            <div class="plate neutral">
+              <h5>Combat limits</h5>
+              <div class="prow"><span class="a">4</span><span class="n">Dash ki blasts</span><span class="b w">8</span></div>
+              <div class="same">Same for both: <b>Follow-ups 2</b>, <b>Vanishing Attack</b>, <b>Lightning Attack</b>, <b>Dragon Homing</b>, <b>Jump ki blasts 5</b>, <b>Charged ki blasts 1</b></div>
+            </div>
+            <div class="plate spk">
+              <h5>Sparking! Mode</h5>
+              <div class="prow"><span class="a w">2,450</span><span class="n">Hyper Smash</span><span class="b">2,205</span></div>
+              <div class="same">Same for both: <b>Burst Melee Attack 1,250</b>, <b>Burst Rush 450 per hit</b>, <b>Violent Rush</b>, <b>Extra follow-ups +2</b></div>
+            </div>
+            <div class="plate cmd">
+              <h5>Command list</h5>
+              <div class="pcmd"><span class="slot b">B1</span><span>Kamehameha<b class="w">7,481</b></span><span>Galick Gun<b>7,125</b></span></div>
+              <div class="pcmd"><span class="slot b">B2</span><span>Kaioken Attack<b class="w">8,794</b></span><span>Final Galick Cannon<b>8,375</b></span></div>
+              <div class="pcmd"><span class="slot u">ULT</span><span>Spirit Bomb<b class="w">15,750</b></span><span>Dirty Fireworks<b>15,000</b></span></div>
+              <div class="pcmd"><span class="slot s">S2</span><span>Kaioken<b>+10%</b></span><span>Saiyan Spirit<b>+10%</b></span></div>
+            </div>
+            <div class="plate mob">
+              <h5>Mobility</h5>
+              <div class="same" style="border-top:0;padding-top:0">Same for both: every row (short dash, Dragon Dash, High-Speed Dragon Dash, Z-Burst Dash, Dragon Homing)</div>
+            </div>
+          </div>
+          <div class="phtabs"><span>Sheet</span><span>Stats</span><span class="on">Compare</span><span>Vs</span></div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px, a breakdown on touch</p>
+        <div class="phone" style="height:860px"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="fs">
+            <div class="fs-id"><img class="face" src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div><div class="nm" style="font-size:16px">Goku (Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span><span class="chip sk">Kaioken on</span></div></div></div>
+            <div class="plate off">
+              <h5>Melee</h5>
+              <div class="srow h"><span></span><span>Base</span><span>Build</span></div>
+              <div class="srow"><span>Rush hit 1</span><span>390</span><span class="up tap">439</span></div>
+              <div class="srow"><span>Rush hit 4</span><span>540</span><span class="up tap">608</span></div>
+              <div class="srow"><span>Rush hit 5</span><span>750</span><span class="up tap">844</span></div>
+              <div class="srow"><span>Rush 5-hit</span><span>2,460</span><span class="up"><span class="sel tap">2,769</span></span></div>
+              <div class="srow"><span>Smash, Charge Lv.1</span><span>675</span><span class="up tap">743</span></div>
+              <div class="srow"><span>Throw</span><span>1,250</span><span class="up tap">1,375</span></div>
+            </div>
+          </div>
+          <div class="dim"></div>
+          <div class="sheet bd">
+            <div class="pk-h"><b>Rush 5-hit</b><span class="x">Close</span></div>
+            <div>
+              <div class="tr"><span>Base</span><span>2,460</span></div>
+              <div class="tr"><span>Rush Attack Boost 1 <small>+2.5%</small></span><span>+63</span></div>
+              <div class="tr"><span>Kaioken <small>+10%</small></span><span>+246</span></div>
+              <div class="tr t"><span>With this build</span><span>2,769</span></div>
+            </div>
+            <div class="hitl">Hits<span class="tags"><span>439</span><span>439</span><span>439</span><span>608</span><span>844</span></span></div>
+            <div class="hint">Tap another dotted number to switch. Swipe down or tap outside to close.</div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Desktop 1180px, breakdowns with a mouse and a keyboard</p>
+        <div class="desk" style="height:auto"><div class="B" style="padding-bottom:16px">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span class="on">Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div style="display:grid;grid-template-columns:360px 300px minmax(0,1fr);gap:18px;padding:14px 18px 0;align-items:start">
+            <div class="plate off">
+              <h5>Melee</h5>
+              <div class="srow h"><span></span><span>Base</span><span>Build</span></div>
+              <div class="srow"><span>Rush hit 1</span><span>390</span><span class="up tap">439</span></div>
+              <div class="srow"><span>Rush hit 4</span><span>540</span><span class="up tap">608</span></div>
+              <div class="srow"><span>Rush hit 5</span><span>750</span><span class="up tap">844</span></div>
+              <div class="srow"><span>Rush 5-hit</span><span>2,460</span><span class="up"><span class="tap focus">2,769</span></span></div>
+              <div class="srow"><span>Smash, Charge Lv.1</span><span>675</span><span class="up tap">743</span></div>
+              <div class="srow"><span>Throw</span><span>1,250</span><span class="up tap">1,375</span></div>
+            </div>
+            <div class="tip" style="position:relative;width:auto">
+              <div class="th">Rush 5-hit <em class="x">Pinned ✕</em></div>
+              <div class="tb">
+                <div class="tr"><span>Base</span><span>2,460</span></div>
+                <div class="tr"><span>Rush Attack Boost 1 <small>+2.5%</small></span><span>+63</span></div>
+                <div class="tr"><span>Kaioken <small>+10%</small></span><span>+246</span></div>
+                <div class="tr t"><span>With this build</span><span>2,769</span></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="keys"><span><kbd>Tab</kbd>next number</span><span><kbd>Shift</kbd><kbd>Tab</kbd>back</span><span><kbd>Enter</kbd>or <kbd>Space</kbd>open and pin</span><span><kbd>Esc</kbd>close</span></div>
+              <div class="keys">Mouse: hovering a dotted number previews its breakdown; clicking pins it open (✕ or Esc closes). Only one is open at a time.</div>
+              <div class="srline"><b>A screen reader hears</b>"Rush 5-hit, 2,769 with this build, base 2,460. Breakdown, button, collapsed."</div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Compare's Summary, right column: Similar fighters</p>
+        <div class="desk" style="width:400px;height:auto"><div class="B" style="padding:12px">
+          <div class="plate new">
+            <h5>Fighters like Goku (Z - Early)</h5>
+            <div class="sublbl"><span>Same DP, nearly the same stats</span><em>differs in</em></div>
+            <div class="simrow hov"><img src="../../public/char_thumbnails/T_UI_FaceP1_0040_00_00.png" alt=""><div><div class="snm">Piccolo<i>4</i></div><div class="tags"><span>Skill gauge limit 5</span></div></div><span class="act">Compare</span></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_00_00.png" alt=""><div><div class="snm">Gohan (Adult)<i>4</i></div><div class="tags"><span>Skill gauge limit 5</span></div></div><span class="act">Compare</span></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_10_00.png" alt=""><div><div class="snm">Great Saiyaman<i>4</i></div><div class="tags"><span>Skill gauge limit 5</span></div></div><span class="act">Compare</span></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_0040_20_00.png" alt=""><div><div class="snm">Nail<i>4</i></div><div class="tags"><span>Skill gauge limit 5</span></div></div><span class="act">Compare</span></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_0082_00_00.png" alt=""><div><div class="snm">Trunks (Kid)<i>4</i></div><div class="tags"><span>HP 35,000</span></div></div><span class="act">Compare</span></div>
+            <div class="sublbl" style="margin-top:12px"><span>Closest at other DPs</span><em>differs in</em></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_0121_00_00.png" alt=""><div><div class="snm">Mighty Mask<i>3</i></div><div class="tags"><span>Rush 5-hit 2,397</span><span>Smash 642</span><span>Ki blast 238</span></div></div><span class="act">Compare</span></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_3300_00_00.png" alt=""><div><div class="snm">Goku (World Tournament)<i>3</i></div><div class="tags"><span>Rush 5-hit 2,339</span><span>Smash 642</span><span>Ki blast 238</span></div></div><span class="act">Compare</span></div>
+            <div class="simrow"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_10_00.png" alt=""><div><div class="snm">Goku (Z - Mid)<i>5</i></div><div class="tags"><span>Rush 5-hit 2,585</span><span>Ki blast 263</span><span>Armor break 4 hits</span></div></div><span class="act">Compare</span></div>
+            <div class="bdhint" style="margin-top:8px">Tap one to put them on the right side. Values are without capsules.</div>
+          </div>
         </div></div>
       </div>
     </div>
