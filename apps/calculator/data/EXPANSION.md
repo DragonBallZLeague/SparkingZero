@@ -27,8 +27,8 @@ into several hits.
 | Rush A chain, the calculator's rush (Rush) | 312 ×3, 432, 600 (390 ×3, 540, 750) | Giants; split hits for ~13 | rush, confirmed |
 | Rush B chain (Rush) | 336 ×3, 504, 1,008 (420 ×3, 630, 1,260) | Giants; split hits for ~14 | rush, assumed |
 | Air rush A and B (rush follow-up) | as the A and B chains | split hits for ~14 | to check |
-| "激烈ラッシュ" rush A and B (Rush) | as the A and B chains | split hits for ~13 | rush, assumed |
-| "激烈ラッシュ" chain (unique move) | 360 ×4 | split hits for ~13 | to check |
+| Violent Rush A and B (Rush; Sparking only) | as the A and B chains, 4 hits on a loop | split hits for ~13 | rush, assumed |
+| Burst Melee Attack, then Burst Rush (unique move; Sparking only) | 1,000, then 360 a hit (1,250, then 450) | Burst Rush split hits for ~13 | measured for Goku |
 | Smash in 5 directions (Smash) | normal 540, part charged 900, full 1,120, just-timed 1,120, hyper 1,960 (675, 1,125, 1,400, 1,400, 2,450) | no | smash; confirmed for normal (Tien) and full (Goku 1,400) |
 | Heavy Finish (rush follow-up) | normal 540, part 900, full 1,120 | no (9 characters gain less ki from it) | combo, confirmed (Tien 743) |
 | Lift Strike / Grand Slash | 540 / 720 / 1,070 and 500 / 620 / 1,010 | no | combo, assumed |
@@ -187,9 +187,11 @@ Results from 2026-10-10:
    - **激烈ラッシュ ("Furious Rush"):** two groups of game actions carry this label, and every character has both:
      - `actRSHSA1`-`A4` and `actRSHSB1`-`B4`: rush category, with the same Power as the normal rush hits (312, 312,
        312, 432 for A). This fits the Violent Rush: the normal rush combo on a loop with no damage modifier.
-     - `actBSRA1`-`A4` and `actBSRB1`-`B4`: "unique move" category, 360 a hit (450 for Goku). It is not the Violent
-       Rush, and what it is remains open.
-   - The 50 characters with `ActionFlag.SparkingRush` are **not** the Violent Rush list: Goku (Z - Early) and Tien
+     - `actBSRA1`-`A4` and `actBSRB1`-`B4` are the **Burst Rush** ("unique move" category, 360 a hit): in Sparking
+       Mode, after a Z Burst Dash behind the opponent, the Burst Melee Attack (`actBSA`, 1,000), then mashing rush.
+       Measured for Goku (Z - Early): the Burst Melee Attack 1,250 and its first Burst Rush hit 450 (1,700 in all),
+       as the files predict. `BS` in an action name means Burst (`actBSS*` are probably the Burst Smashes).
+   - The 50 characters with `ActionFlag.SparkingRush` are **not** the Violent Rush or Burst Rush list: Goku (Z - Early) and Tien
      have the Violent Rush in game but not the flag. The flagged characters have the same action files as everyone
      else. To find out: what do those 50 have in common in game (a different Sparking rush, perhaps the 360 one)?
 4. **Goku's fully charged smash: 1,400,** as predicted. The smash charge levels read correctly.
