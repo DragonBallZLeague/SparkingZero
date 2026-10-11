@@ -7,7 +7,8 @@
  *
  *   season number, then phase - PS (pre-season), S (main season), S Playoffs,
  *   OS (off-season events) - then the playoff round (Wildcards, Quarter-finals,
- *   Semi-finals, Finals), then the rest of the name with numbers compared as
+ *   Semi-finals, then Finals and the Bowl, played alongside them), then the
+ *   rest of the name with numbers compared as
  *   numbers (Week 2 before Week 10, Match 2 before Match 10, R1 before R2).
  *
  * A name outside the scheme (tests: "OS0 Budokai 4v4 Test 12") still sorts
@@ -34,7 +35,7 @@ function round(name) {
   if (b.includes('wildcard')) return 0;
   if (b.includes('quarter')) return 1;
   if (b.includes('semi')) return 2;
-  if (b.includes('final')) return 3;
+  if (b.includes('final') || b.includes('bowl')) return 3;
   return 0;
 }
 
