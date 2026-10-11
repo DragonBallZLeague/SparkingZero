@@ -91,3 +91,25 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
     notes,
   };
 }
+
+/**
+ * Charged melee from the game files: the neutral smash (actSMM*: normal, part charged, full, just-timed,
+ * hyper) through the smash channel, and the Heavy Finish (actHF*: normal, part, full), a rush follow-up,
+ * through the combo channel. Measured 2026-10-10: Goku's full smash 1,400 and hyper smash 2,450;
+ * Tien's Heavy Finish 743 (combo channel, not smash's 675).
+ */
+export function chargedMeleeOf(fm, id, { coef, damageConstant }) {
+  const hit = (action, channel) => {
+    const files = fm.attackFiles(id, action);
+    const powers = files.map(f => num(fm.param(f, 'Power'))).filter(v => v != null);
+    if (!powers.length) return null;
+    return powers.reduce((t, p) => t + finalDamage(p, coef[channel], damageConstant), 0);
+  };
+  const levels = (prefix, channel) => ['N', 'P', 'F'].map(l => hit(`${prefix}${l}`, channel));
+  return {
+    smash: levels('actSMM', 'smash'),
+    smashJust: hit('actSMMJ', 'smash'),
+    hyperSmash: hit('actSMMH', 'smash'),
+    heavyFinish: levels('actHF', 'combo'),
+  };
+}

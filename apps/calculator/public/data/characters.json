@@ -66,6 +66,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0000_00:1","0000_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -123,7 +124,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -208,6 +210,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[1050,1575,2100],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0000_10:1","0000_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -246,7 +249,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -331,6 +335,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0000_11:1","0000_11:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -369,7 +374,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -454,6 +460,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1182,1418,1654],"shots":1,"cost":0.5,"tags":["slash"]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0000_20:1","0000_20:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -492,7 +499,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -577,6 +585,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0000_21:1","0000_21:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -615,7 +624,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_21)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -700,6 +710,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0000_22:1","0000_22:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -738,7 +749,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_22)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -823,6 +835,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":318,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0000_23:1","0000_23:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -861,7 +874,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_23)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -949,6 +963,7 @@
         "charged": {"damage":[446,535,802],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "skills": ["0000_33:1","0000_33:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -987,7 +1002,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_33)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1072,6 +1088,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1182,1418,1654],"shots":1,"cost":0.5,"tags":["slash"]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0000_40:1","0000_40:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1110,7 +1127,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_40)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1195,6 +1213,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0000_41:1","0000_41:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1233,7 +1252,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_41)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1321,6 +1341,7 @@
         "charged": {"damage":[446,535,802],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "skills": ["0000_43:1","0000_43:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1359,7 +1380,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_43)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1444,6 +1466,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[600,901,1200],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":300,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[912,1519,1890],"smashJust":1890,"hyperSmash":3308,"heavyFinish":[912,1519,1890]},
     "skills": ["0000_50:1","0000_50:2"],
     "traits": ["Auto Dodge","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1482,7 +1505,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_50)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1567,6 +1591,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[625,938,1250],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":313,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[945,1575,1960],"smashJust":1960,"hyperSmash":3430,"heavyFinish":[945,1575,1960]},
     "skills": ["0000_51:1","0000_51:2"],
     "traits": ["Auto Dodge","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1605,7 +1630,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_51)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1690,6 +1716,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1270,1905,2540],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":318,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0001_42:1","0001_42:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1728,7 +1755,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0001_42)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1813,6 +1841,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0002_30:1","0002_30:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1851,7 +1880,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0002_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1936,6 +1966,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0002_31:1","0002_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1974,7 +2005,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0002_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2059,6 +2091,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":318,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0002_32:1","0002_32:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2097,7 +2130,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0002_32)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2182,6 +2216,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0002_50:1","0002_50:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2239,7 +2274,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0002_50)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2312,6 +2348,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.096,"tags":[]},"charged":{"damage":[1007,1510,2013],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":8,"cost":0.096,"tags":[]},"charged":{"damage":[1007,1510,2013],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0020_00:1","0020_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2350,7 +2387,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2435,6 +2473,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":8,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0020_10:1","0020_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2473,7 +2512,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2558,6 +2598,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0020_11:1","0020_11:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2596,7 +2637,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2681,6 +2723,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":8,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0020_30:1","0020_30:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2719,7 +2762,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2804,6 +2848,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0020_31:1","0020_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2842,7 +2887,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2927,6 +2973,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0020_32:1","0020_32:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2965,7 +3012,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_32)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3050,6 +3098,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0020_40:1","0020_40:2"],
     "traits": ["Sparking Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -3107,7 +3156,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_40)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3192,6 +3242,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":280,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "skills": ["0020_50:1","0020_50:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3230,7 +3281,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_50)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3318,6 +3370,7 @@
       },
       "dash": {"normal":{"damage":238,"count":8,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0020_60:1","0020_60:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3356,7 +3409,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_60)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3444,6 +3498,7 @@
       },
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0020_61:1","0020_61:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3482,7 +3537,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_61)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3573,6 +3629,7 @@
         "charged": {"damage":[446,535,802],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "skills": ["0020_63:1","0020_63:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3611,7 +3668,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_63)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3696,6 +3754,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0021_20:1","0021_20:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -3734,7 +3793,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0021_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3819,6 +3879,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.12,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":268,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0022_62:1","0022_62:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3857,7 +3918,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0022_62)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3942,6 +4004,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1336,2004,2672],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":357,"count":4,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1188,1782,2375],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1722,2869,3570],"smashJust":3570,"hyperSmash":6248,"heavyFinish":[642,1069,1330]},
     "skills": ["0023_00:1","0023_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -3980,7 +4043,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0023_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4065,6 +4129,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0030_00:1","0030_00:2"],
     "traits": [],
     "sparking": {
@@ -4120,7 +4185,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0030_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4193,6 +4259,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0031_00:1","0031_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4231,7 +4298,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0031_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4316,6 +4384,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0031_01:1","0031_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4354,7 +4423,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0031_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4439,6 +4509,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":318,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0031_02:1","0031_02:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {
@@ -4493,7 +4564,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0031_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4566,6 +4638,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0032_00:1","0032_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4604,7 +4677,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4689,6 +4763,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[1220,1830,2440],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0032_01:1","0032_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4727,7 +4802,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4812,6 +4888,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1270,1905,2540],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":318,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0032_02:1","0032_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4850,7 +4927,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4923,6 +5001,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0032_10:1","0032_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4961,7 +5040,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5046,6 +5126,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":313,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0032_20:1","0032_20:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5084,7 +5165,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5169,6 +5251,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0032_30:1","0032_30:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5226,7 +5309,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5311,6 +5395,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0032_31:1","0032_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5368,7 +5453,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0032_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5441,6 +5527,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[1000,1500,2000],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0040_00:1","0040_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5479,7 +5566,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5564,6 +5652,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[525,788,1050],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[525,788,1050],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0040_10:1","0040_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5602,7 +5691,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0040_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5675,6 +5765,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[500,750,1000],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[500,750,1000],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0040_20:1","0040_20:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5713,7 +5804,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5798,6 +5890,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[1069,1283,1497],"shots":1,"cost":0.5,"tags":["slash"]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0050_00:1","0050_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5836,7 +5929,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0050_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5921,6 +6015,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[950,1425,1900],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0060_00:1","0060_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5959,7 +6054,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0060_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6044,6 +6140,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[743,1238,1540]},
     "skills": ["0070_00:1","0070_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6082,7 +6179,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0070_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6155,6 +6253,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0080_00:1","0080_00:2"],
     "traits": ["Sword"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6193,7 +6292,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6281,6 +6381,7 @@
       },
       "dash": {"normal":{"damage":305,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0080_01:1","0080_01:2"],
     "traits": ["Sword"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6319,7 +6420,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6410,6 +6512,7 @@
         "charged": {"damage":[355,426,638],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0080_10:1","0080_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6448,7 +6551,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6539,6 +6643,7 @@
         "charged": {"damage":[412,495,742],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0080_11:1","0080_11:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6577,7 +6682,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6665,6 +6771,7 @@
       },
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0080_30:1","0080_30:2"],
     "traits": ["Sword"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6722,7 +6829,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6810,6 +6918,7 @@
       },
       "dash": {"normal":{"damage":305,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0080_31:1","0080_31:2"],
     "traits": ["Sword","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6867,7 +6976,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6958,6 +7068,7 @@
         "charged": {"damage":[321,385,578],"shots":3,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0081_20:1","0081_20:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -6996,7 +7107,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0081_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7072,6 +7184,7 @@
       },
       "dash": {"normal":{"damage":250,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0082_00:1","0082_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7110,7 +7223,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7198,6 +7312,7 @@
       },
       "dash": {"normal":{"damage":293,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[790,1317,1638],"smashJust":1638,"hyperSmash":2867,"heavyFinish":[790,1317,1638]},
     "skills": ["0082_01:1","0082_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7236,7 +7351,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7312,6 +7428,7 @@
       },
       "dash": {"normal":{"damage":250,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0090_00:1","0090_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7350,7 +7467,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0090_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7438,6 +7556,7 @@
       },
       "dash": {"normal":{"damage":293,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[790,1317,1638],"smashJust":1638,"hyperSmash":2867,"heavyFinish":[790,1317,1638]},
     "skills": ["0090_01:1","0090_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7476,7 +7595,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0090_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7567,6 +7687,7 @@
         "charged": {"damage":[352,405,616],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[864,1440,1792],"smashJust":1792,"hyperSmash":3136,"heavyFinish":[864,1440,1792]},
     "skills": ["0100_00:1","0100_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7605,7 +7726,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0100_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7696,6 +7818,7 @@
         "charged": {"damage":[366,421,641],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[898,1497,1862],"smashJust":1862,"hyperSmash":3259,"heavyFinish":[898,1497,1862]},
     "skills": ["0100_01:1","0100_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7734,7 +7857,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0100_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7825,6 +7949,7 @@
         "charged": {"damage":[394,453,689],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[966,1609,2002],"smashJust":2002,"hyperSmash":3504,"heavyFinish":[966,1609,2002]},
     "skills": ["0100_02:1","0100_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -7863,7 +7988,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0100_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7954,6 +8080,7 @@
         "charged": {"damage":[272,313,476],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[864,1440,1792],"smashJust":1792,"hyperSmash":3136,"heavyFinish":[864,1440,1792]},
     "skills": ["0110_00:1","0110_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7992,7 +8119,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0110_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8083,6 +8211,7 @@
         "charged": {"damage":[167,192,291],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[898,1497,1862],"smashJust":1862,"hyperSmash":3259,"heavyFinish":[898,1497,1862]},
     "skills": ["0110_01:1","0110_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8121,7 +8250,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0110_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8212,6 +8342,7 @@
         "charged": {"damage":[179,206,313],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[966,1609,2002],"smashJust":2002,"hyperSmash":3504,"heavyFinish":[966,1609,2002]},
     "skills": ["0110_02:1","0110_02:2"],
     "traits": ["Super Movement","High-Speed Movement","Multi-Hit Rushes"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8250,7 +8381,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0110_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8338,6 +8470,7 @@
       },
       "dash": {"normal":{"damage":358,"count":8,"cost":0.198,"tags":[]},"charged":{"damage":[1341,2011,2682],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[966,1609,2002],"smashJust":2002,"hyperSmash":3504,"heavyFinish":[966,1609,2002]},
     "skills": ["0110_03:1","0110_03:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -8376,7 +8509,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0110_03)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8467,6 +8601,7 @@
         "charged": {"damage":[167,192,291],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[898,1497,1862],"smashJust":1862,"hyperSmash":3259,"heavyFinish":[898,1497,1862]},
     "skills": ["0110_04:1","0110_04:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -8505,7 +8640,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0110_04)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8590,6 +8726,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.1485,"tags":[]},"charged":{"damage":[1077,1615,2153],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":308,"count":5,"cost":0.22,"tags":[]},"charged":{"damage":[1077,1615,2153],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[831,1384,1722],"smashJust":1722,"hyperSmash":3014,"heavyFinish":[831,1384,1722]},
     "skills": ["0120_00:1","0120_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8628,7 +8765,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0120_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8713,6 +8851,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.1485,"tags":[]},"charged":{"damage":[1120,1680,2240],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":320,"count":6,"cost":0.22,"tags":[]},"charged":{"damage":[1120,1680,2240],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[864,1440,1792],"smashJust":1792,"hyperSmash":3136,"heavyFinish":[864,1440,1792]},
     "skills": ["0120_01:1","0120_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8751,7 +8890,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0120_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8836,6 +8976,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.1485,"tags":[]},"charged":{"damage":[1164,1746,2328],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":333,"count":7,"cost":0.198,"tags":[]},"charged":{"damage":[1164,1746,2328],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[898,1497,1862],"smashJust":1862,"hyperSmash":3259,"heavyFinish":[898,1497,1862]},
     "skills": ["0120_02:1","0120_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8874,7 +9015,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0120_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8959,6 +9101,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0121_00:1","0121_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8997,7 +9140,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0121_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9082,6 +9226,7 @@
       "jump": {"normal":{"damage":null,"count":2,"cost":0.135,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0130_00:1","0130_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9120,7 +9265,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0130_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9205,6 +9351,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[780,1170,1560],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":195,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["0140_00:1","0140_00:2"],
     "traits": ["Grounded"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9243,7 +9390,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0140_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9328,6 +9476,7 @@
       "jump": {"normal":{"damage":null,"count":2,"cost":0.1485,"tags":[]},"charged":{"damage":[657,985,1313],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":188,"count":2,"cost":0.22,"tags":[]},"charged":{"damage":[657,985,1313],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0141_00:1","0141_00:2"],
     "traits": ["Grounded"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -9366,7 +9515,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0141_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9451,6 +9601,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.108,"tags":["laser"]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":300,"count":4,"cost":0.16,"tags":["laser"]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0150_00:1","0150_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9489,7 +9640,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0150_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9562,6 +9714,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.1485,"tags":["laser"]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":4,"cost":0.22,"tags":["laser"]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[811,1350,1681]},
     "skills": ["0151_00:1","0151_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -9600,7 +9753,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0151_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9688,6 +9842,7 @@
         "charged": {"damage":[289,333,506],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0152_00:1","0152_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9726,7 +9881,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0152_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9814,6 +9970,7 @@
       },
       "dash": {"normal":{"damage":275,"count":5,"cost":0.2,"tags":["laser"]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0153_00:1","0153_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9852,7 +10009,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0153_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9928,6 +10086,7 @@
       },
       "dash": {"normal":{"damage":313,"count":5,"cost":0.16,"tags":["laser"]},"charged":{"damage":[625,938,1250],"shots":3,"cost":0.48,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0153_10:1","0153_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9966,7 +10125,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0153_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10054,6 +10214,7 @@
       },
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":["laser"]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0153_20:1","0153_20:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10092,7 +10253,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0153_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10177,6 +10339,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":["laser"]},"charged":{"damage":[1294,1553,1812],"shots":1,"cost":0.5,"tags":["slash"]}},
       "dash": {"normal":{"damage":288,"count":4,"cost":0.2,"tags":["laser"]},"charged":{"damage":[575,863,1150],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["0154_00:1","0154_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -10215,7 +10378,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0154_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10303,6 +10467,7 @@
       },
       "dash": {"normal":{"damage":325,"count":6,"cost":0.2,"tags":["laser"]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0155_00:1","0155_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10341,7 +10506,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0155_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10426,6 +10592,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0160_00:1","0160_00:2"],
     "traits": ["HP Drain Grab"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10464,7 +10631,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0160_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10549,6 +10717,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0161_00:1","0161_00:2"],
     "traits": ["HP Drain Grab"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -10587,7 +10756,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0161_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10672,6 +10842,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0162_00:1","0162_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10710,7 +10881,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0162_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10795,6 +10967,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":["laser"]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":313,"count":6,"cost":0.2,"tags":["laser"]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0162_01:1","0162_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10833,7 +11006,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0162_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10918,6 +11092,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0163_00:1","0163_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10956,7 +11131,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0163_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11044,6 +11220,7 @@
         "charged": {"damage":[185,212,323],"shots":7,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0170_00:1","0170_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -11082,7 +11259,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0170_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11158,6 +11336,7 @@
       },
       "dash": {"normal":{"damage":275,"count":3,"cost":0.24,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.36,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0171_00:1","0171_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11196,7 +11375,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0171_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11281,6 +11461,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0172_00:1","0172_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11319,7 +11500,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0172_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11404,6 +11586,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":313,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0172_10:1","0172_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11442,7 +11625,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0172_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11530,6 +11714,7 @@
         "charged": {"damage":[266,306,465],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0172_11:1","0172_11:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11568,7 +11753,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0172_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11653,6 +11839,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":313,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0173_00:1","0173_00:2"],
     "traits": ["Super Movement","High-Speed Movement","Multi-Hit Rushes"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11691,7 +11878,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0173_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11776,6 +11964,7 @@
       "jump": {"normal":{"damage":null,"count":1,"cost":0.09,"tags":[]},"charged":{"damage":[202,302,403],"shots":1,"cost":0.2,"tags":["thrown"]}},
       "dash": {"normal":{"damage":58,"count":0,"cost":0.1,"tags":[]},"charged":{"damage":[87,130,173],"shots":1,"cost":0.2,"tags":["thrown"]}}
     },
+    "chargedMelee": {"smash":[156,259,322],"smashJust":322,"hyperSmash":564,"heavyFinish":[156,259,322]},
     "skills": ["0180_00:1","0180_00:2"],
     "traits": ["Grounded"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":1},
@@ -11811,7 +12000,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0180_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11902,6 +12092,7 @@
         "charged": {"damage":[840,882,924],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[540,900,1120],"smashJust":1120,"hyperSmash":1960,"heavyFinish":[540,900,1120]},
     "skills": ["0190_00:1","0190_00:2"],
     "traits": ["High-Speed Movement","Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11940,7 +12131,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0190_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12025,6 +12217,7 @@
       "jump": {"normal":{"damage":null,"count":1,"cost":0.09,"tags":[]},"charged":{"damage":[878,1053,1229],"shots":1,"cost":0.6,"tags":["slash","thrown"]}},
       "dash": {"normal":{"damage":195,"count":0,"cost":0.2,"tags":[]},"charged":{"damage":[293,439,585],"shots":1,"cost":0.2,"tags":["thrown"]}}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["0210_00:1","0210_00:2"],
     "traits": ["Grounded","Sword"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -12063,7 +12256,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0210_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12148,6 +12342,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0220_00:1","0220_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12186,7 +12381,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0220_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12271,6 +12467,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0230_00:1","0230_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12309,7 +12506,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0230_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12382,6 +12580,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[500,750,1000],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0240_00:1","0240_00:2"],
     "traits": [],
     "sparking": {
@@ -12437,7 +12636,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0240_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12525,6 +12725,7 @@
         "charged": {"damage":[234,269,410],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0240_01:1","0240_01:2"],
     "traits": ["Super Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12563,7 +12764,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0240_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12648,6 +12850,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":195,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["0260_00:1","0260_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12686,7 +12889,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0260_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12767,6 +12971,7 @@
       "jump": {"normal":null,"charged":null},
       "dash": {"normal":null,"charged":null}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["0270_00:1","0270_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12805,7 +13010,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0270_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12886,6 +13092,7 @@
       "jump": {"normal":null,"charged":null},
       "dash": {"normal":null,"charged":null}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0280_00:1","0280_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -12924,7 +13131,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0280_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13005,6 +13213,7 @@
       "jump": {"normal":null,"charged":null},
       "dash": {"normal":null,"charged":null}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["0301_00:1","0301_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13043,7 +13252,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0301_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13116,6 +13326,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0310_00:1","0310_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -13173,7 +13384,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0310_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13261,6 +13473,7 @@
       },
       "dash": {"normal":{"damage":305,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0310_01:1","0310_01:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -13318,7 +13531,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0310_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13403,6 +13617,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0320_00:1","0320_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13441,7 +13656,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0320_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13526,6 +13742,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0330_00:1","0330_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13564,7 +13781,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0330_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13652,6 +13870,7 @@
       },
       "dash": {"normal":{"damage":200,"count":4,"cost":0.22,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0340_00:1","0340_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -13690,7 +13909,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0340_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13775,6 +13995,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.162,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.24,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}}
     },
+    "chargedMelee": {"smash":[507,844,1050],"smashJust":1050,"hyperSmash":1838,"heavyFinish":[507,844,1050]},
     "skills": ["0350_00:1","0350_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13813,7 +14034,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0350_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13898,6 +14120,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.1485,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":200,"count":5,"cost":0.22,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0351_00:1","0351_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -13936,7 +14159,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0351_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14021,6 +14245,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.1485,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":200,"count":4,"cost":0.22,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0360_00:1","0360_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -14059,7 +14284,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0360_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14144,6 +14370,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0370_00:1","0370_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14182,7 +14409,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0370_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14255,6 +14483,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1000,1500,2000],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0380_00:1","0380_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14293,7 +14522,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0380_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14378,6 +14608,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.1485,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":200,"count":6,"cost":0.22,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0390_00:1","0390_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -14416,7 +14647,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0390_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14501,6 +14733,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.162,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.24,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}}
     },
+    "chargedMelee": {"smash":[507,844,1050],"smashJust":1050,"hyperSmash":1838,"heavyFinish":[507,844,1050]},
     "skills": ["0400_00:1","0400_00:2"],
     "traits": ["Scouter","Super Movement","High-Speed Movement","Multi-Hit Rushes"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14539,7 +14772,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0400_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14624,6 +14858,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[950,1425,1900],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0410_00:1","0410_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14662,7 +14897,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0410_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14753,6 +14989,7 @@
         "charged": {"damage":[720,756,792],"shots":2,"cost":1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0420_00:1","0420_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14791,7 +15028,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0420_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14876,6 +15114,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.1485,"tags":["laser"]},"charged":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":213,"count":4,"cost":0.22,"tags":["laser"]},"charged":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["0430_00:1","0430_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14914,7 +15153,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0430_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14987,6 +15227,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.1485,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":3,"cost":0.22,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[811,1350,1681]},
     "skills": ["0440_00:1","0440_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15025,7 +15266,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0440_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15110,6 +15352,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.108,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":300,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0450_00:1","0450_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15148,7 +15391,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0450_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15221,6 +15465,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.108,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":313,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0450_10:1","0450_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15259,7 +15504,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0450_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15347,6 +15593,7 @@
       },
       "dash": {"normal":{"damage":338,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[675,1013,1350],"shots":3,"cost":0.48,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0451_00:1","0451_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15385,7 +15632,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0451_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15470,6 +15718,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.108,"tags":[]},"charged":{"damage":[1350,1621,1891],"shots":1,"cost":0.4,"tags":["slash"]}},
       "dash": {"normal":{"damage":300,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0460_00:1","0460_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15508,7 +15757,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0460_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15593,6 +15843,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.1485,"tags":[]},"charged":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":213,"count":2,"cost":0.22,"tags":[]},"charged":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["0470_00:1","0470_00:2"],
     "traits": ["HP Drain Grab","Free Dragon Dash"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15631,7 +15882,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0470_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15704,6 +15956,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0480_00:1","0480_00:2"],
     "traits": ["HP Drain Grab","Free Dragon Dash","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15742,7 +15995,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0480_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15830,6 +16084,7 @@
         "charged": {"damage":[880,924,968],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[574,957,1190],"smashJust":1190,"hyperSmash":2083,"heavyFinish":[574,957,1190]},
     "skills": ["0490_00:1","0490_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15868,7 +16123,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0490_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15953,6 +16209,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0500_00:1","0500_00:2"],
     "traits": ["Sword","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15991,7 +16248,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0500_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16064,6 +16322,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0510_00:1","0510_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16102,7 +16361,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0510_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16187,6 +16447,7 @@
       "jump": {"normal":{"damage":null,"count":2,"cost":0.135,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0540_00:1","0540_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16225,7 +16486,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0540_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16310,6 +16572,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0550_00:1","0550_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16348,7 +16611,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0550_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16433,6 +16697,7 @@
       "jump": {"normal":{"damage":null,"count":6,"cost":0.1485,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.22,"tags":[]},"charged":{"damage":[500,750,1000],"shots":3,"cost":0.66,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0551_00:1","0551_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16471,7 +16736,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0551_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16556,6 +16822,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1182,1772,2363],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":338,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[675,1013,1350],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[1080,1800,2240],"smashJust":2240,"hyperSmash":3920,"heavyFinish":[1080,1800,2240]},
     "skills": ["0552_00:1","0552_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16594,7 +16861,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0552_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16685,6 +16953,7 @@
         "charged": {"damage":[289,333,506],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0553_00:1","0553_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16723,7 +16992,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0553_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16814,6 +17084,7 @@
         "charged": {"damage":[213,245,372],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0554_00:1","0554_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16852,7 +17123,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0554_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16943,6 +17215,7 @@
         "charged": {"damage":[262,301,458],"shots":7,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[1080,1800,2240],"smashJust":2240,"hyperSmash":3920,"heavyFinish":[1080,1800,2240]},
     "skills": ["0555_00:1","0555_00:2"],
     "traits": ["Super Armor","Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16981,7 +17254,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0555_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17066,6 +17340,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.1485,"tags":[]},"charged":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":213,"count":4,"cost":0.22,"tags":[]},"charged":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["0561_00:1","0561_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -17104,7 +17379,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0561_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17192,6 +17468,7 @@
         "charged": {"damage":[450,675,900],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[1688,2813,3500],"smashJust":3500,"hyperSmash":6125,"heavyFinish":[608,1013,1260]},
     "skills": ["0570_00:1","0570_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -17230,7 +17507,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0570_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17318,6 +17596,7 @@
       },
       "dash": {"normal":{"damage":288,"count":6,"cost":0.16,"tags":[]},"charged":{"damage":[575,863,1150],"shots":3,"cost":0.48,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0580_00:1","0580_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17356,7 +17635,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0580_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17444,6 +17724,7 @@
         "charged": {"damage":[680,714,748],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["0590_00:1","0590_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17482,7 +17763,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0590_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17555,6 +17837,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1407,2110,2813],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":375,"count":3,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1250,1875,2500],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1755,2925,3640],"smashJust":3640,"hyperSmash":6370,"heavyFinish":[675,1125,1400]},
     "skills": ["0591_00:1","0591_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -17593,7 +17876,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0591_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17684,6 +17968,7 @@
         "charged": {"damage":[880,924,968],"shots":2,"cost":1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0600_00:1","0600_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17722,7 +18007,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0600_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17813,6 +18099,7 @@
         "charged": {"damage":[317,364,554],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["0600_10:1","0600_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17851,7 +18138,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0600_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17942,6 +18230,7 @@
         "charged": {"damage":[800,840,880],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0601_00:1","0601_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17980,7 +18269,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0601_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18056,6 +18346,7 @@
         "charged": {"damage":[275,317,482],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0610_00:1","0610_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18094,7 +18385,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0610_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18182,6 +18474,7 @@
       },
       "dash": {"normal":{"damage":300,"count":4,"cost":0.16,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0620_00:1","0620_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18220,7 +18513,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0620_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18308,6 +18602,7 @@
       },
       "dash": {"normal":{"damage":250,"count":4,"cost":0.22,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0621_00:1","0621_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -18346,7 +18641,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0621_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18425,6 +18721,7 @@
         "charged": {"damage":[338,405,608],"shots":2,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[811,1350,1681]},
     "skills": ["0630_00:1","0630_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18463,7 +18760,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0630_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18554,6 +18852,7 @@
         "charged": {"damage":[800,840,880],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0631_00:1","0631_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -18592,7 +18891,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0631_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18668,6 +18968,7 @@
         "charged": {"damage":[800,840,880],"shots":2,"cost":1.2,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[540,900,1120],"smashJust":1120,"hyperSmash":1960,"heavyFinish":[540,900,1120]},
     "skills": ["0640_00:1","0640_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18706,7 +19007,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0640_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18797,6 +19099,7 @@
         "charged": {"damage":[475,713,950],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[1722,2869,3570],"smashJust":3570,"hyperSmash":6248,"heavyFinish":[642,1069,1330]},
     "skills": ["0650_00:1","0650_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -18835,7 +19138,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0650_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18920,6 +19224,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":313,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0651_00:1","0651_00:2"],
     "traits": ["Sword","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18958,7 +19263,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0651_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19031,6 +19337,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.162,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":3,"cost":0.24,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.36,"tags":[]}}
     },
+    "chargedMelee": {"smash":[540,900,1120],"smashJust":1120,"hyperSmash":1960,"heavyFinish":[540,900,1120]},
     "skills": ["0660_00:1","0660_00:2"],
     "traits": ["Sword","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19069,7 +19376,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0660_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19142,6 +19450,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1407,2110,2813],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":250,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[1755,2925,3640],"smashJust":3640,"hyperSmash":6370,"heavyFinish":[675,1125,1400]},
     "skills": ["0670_00:1","0670_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -19180,7 +19489,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0670_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19265,6 +19575,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.096,"tags":[]},"charged":{"damage":[600,901,1200],"shots":3,"cost":0.48,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0680_00:1","0680_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19284,7 +19595,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0680_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19372,6 +19684,7 @@
       },
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[550,825,1100],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[743,1238,1540]},
     "skills": ["0680_01:1","0680_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19410,7 +19723,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0680_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19495,6 +19809,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1407,1688,1969],"shots":1,"cost":0.5,"tags":["slash"]}},
       "dash": {"normal":{"damage":313,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[844,1407,1750],"smashJust":1750,"hyperSmash":3063,"heavyFinish":[844,1407,1750]},
     "skills": ["0680_02:1","0680_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19533,7 +19848,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0680_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19618,6 +19934,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1477,2215,2954],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":394,"count":3,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1313,1969,2625],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1789,2982,3711],"smashJust":3711,"hyperSmash":6493,"heavyFinish":[709,1182,1470]},
     "skills": ["0681_00:1","0681_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -19656,7 +19973,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0681_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19741,6 +20059,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.162,"tags":[]},"charged":{"damage":[1007,1510,2013],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":288,"count":5,"cost":0.24,"tags":[]},"charged":{"damage":[575,863,1150],"shots":3,"cost":0.72,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["0690_00:1","0690_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19779,7 +20098,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0690_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19864,6 +20184,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.1485,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":5,"cost":0.22,"tags":[]},"charged":{"damage":[500,750,1000],"shots":3,"cost":0.66,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0700_00:1","0700_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19902,7 +20223,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0700_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19987,6 +20309,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":325,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[650,975,1300],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["0700_01:1","0700_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -20025,7 +20348,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0700_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20110,6 +20434,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":2,"cost":0.2,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0710_00:1","0710_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20148,7 +20473,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0710_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20229,6 +20555,7 @@
       "jump": {"normal":null,"charged":null},
       "dash": {"normal":null,"charged":null}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0720_00:1","0720_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20267,7 +20594,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0720_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20352,6 +20680,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":225,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[450,675,900],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0730_00:1","0730_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20390,7 +20719,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0730_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20475,6 +20805,7 @@
       "jump": {"normal":{"damage":null,"count":1,"cost":0.1485,"tags":[]},"charged":{"damage":[657,985,1313],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":188,"count":1,"cost":0.22,"tags":[]},"charged":{"damage":[657,985,1313],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0760_00:1","0760_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20513,7 +20844,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0760_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20598,6 +20930,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1400,2100,2800],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":350,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1225,1838,2450],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[979,1632,2031],"smashJust":2031,"hyperSmash":3553,"heavyFinish":[979,1632,2031]},
     "skills": ["0780_00:1","0780_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20636,7 +20969,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0780_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20721,6 +21055,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1400,2100,2800],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":350,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1225,1838,2450],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[979,1632,2031],"smashJust":2031,"hyperSmash":3553,"heavyFinish":[979,1632,2031]},
     "skills": ["0790_00:1","0790_00:2"],
     "traits": ["Auto Dodge","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20759,7 +21094,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0790_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20844,6 +21180,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0800_00:1","0800_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20901,7 +21238,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0800_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20986,6 +21324,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":330,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "skills": ["0800_01:1","0800_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21043,7 +21382,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0800_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21128,6 +21468,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0810_00:1","0810_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21166,7 +21507,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0810_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21254,6 +21596,7 @@
       },
       "dash": {"normal":{"damage":300,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[811,1350,1681]},
     "skills": ["0810_01:1","0810_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21292,7 +21635,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0810_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21377,6 +21721,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.1485,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":4,"cost":0.22,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[945,1575,1960],"smashJust":1960,"hyperSmash":3430,"heavyFinish":[945,1575,1960]},
     "skills": ["0811_00:1","0811_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -21411,7 +21756,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0811_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21499,6 +21845,7 @@
       },
       "dash": {"normal":{"damage":288,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[1007,1510,2013],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0820_00:1","0820_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21537,7 +21884,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0820_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21622,6 +21970,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.108,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[574,957,1190],"smashJust":1190,"hyperSmash":2083,"heavyFinish":[574,957,1190]},
     "skills": ["0830_00:1","0830_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21660,7 +22009,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0830_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21745,6 +22095,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":325,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[878,1463,1820]},
     "skills": ["0870_00:1","0870_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21783,7 +22134,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0870_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21862,6 +22214,7 @@
         "charged": {"damage":[1000,1050,1100],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["0881_00:1","0881_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21900,7 +22253,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0881_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21985,6 +22339,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0890_00:1","0890_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22023,7 +22378,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0890_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22108,6 +22464,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0890_01:1","0890_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22146,7 +22503,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0890_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22231,6 +22589,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":318,"count":8,"cost":0.18,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0890_02:1","0890_02:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22269,7 +22628,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0890_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22360,6 +22720,7 @@
         "charged": {"damage":[355,426,638],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0900_00:1","0900_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22398,7 +22759,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0900_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22489,6 +22851,7 @@
         "charged": {"damage":[350,402,612],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["0900_02:1","0900_02:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22527,7 +22890,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0900_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22612,6 +22976,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0910_00:1","0910_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22650,7 +23015,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0910_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22741,6 +23107,7 @@
         "charged": {"damage":[266,306,465],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[1013,1688,2100],"smashJust":2100,"hyperSmash":3675,"heavyFinish":[1013,1688,2100]},
     "skills": ["0911_00:1","0911_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22779,7 +23146,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0911_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22864,6 +23232,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":305,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["0912_00:1","0912_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22902,7 +23271,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0912_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22987,6 +23357,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.1485,"tags":[]},"charged":{"damage":[1077,1615,2153],"shots":1,"cost":0.33,"tags":[]}},
       "dash": {"normal":{"damage":308,"count":5,"cost":0.22,"tags":[]},"charged":{"damage":[1077,1615,2153],"shots":1,"cost":0.33,"tags":[]}}
     },
+    "chargedMelee": {"smash":[831,1384,1722],"smashJust":1722,"hyperSmash":3014,"heavyFinish":[831,1384,1722]},
     "skills": ["0920_00:1","0920_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23025,7 +23396,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0920_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23116,6 +23488,7 @@
         "charged": {"damage":[272,313,476],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[864,1440,1792],"smashJust":1792,"hyperSmash":3136,"heavyFinish":[864,1440,1792]},
     "skills": ["0920_01:1","0920_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23154,7 +23527,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0920_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23245,6 +23619,7 @@
         "charged": {"damage":[283,326,495],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[898,1497,1862],"smashJust":1862,"hyperSmash":3259,"heavyFinish":[898,1497,1862]},
     "skills": ["0920_02:1","0920_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23283,7 +23658,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0920_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23368,6 +23744,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1200,1801,2400],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":325,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[878,1463,1820]},
     "skills": ["0930_00:1","0930_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23406,7 +23783,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0930_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23497,6 +23875,7 @@
         "charged": {"damage":[287,330,503],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[912,1519,1890],"smashJust":1890,"hyperSmash":3308,"heavyFinish":[912,1519,1890]},
     "skills": ["0931_00:1","0931_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23535,7 +23914,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0931_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23620,6 +24000,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.108,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":325,"count":5,"cost":0.16,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["0940_00:1","0940_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23658,7 +24039,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0940_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23746,6 +24128,7 @@
       },
       "dash": {"normal":{"damage":325,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[912,1519,1890],"smashJust":1890,"hyperSmash":3308,"heavyFinish":[912,1519,1890]},
     "skills": ["0941_00:1","0941_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23784,7 +24167,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0941_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23857,6 +24241,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.162,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":5,"cost":0.24,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.36,"tags":[]}}
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["0950_00:1","0950_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23895,7 +24280,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0950_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23980,6 +24366,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":350,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[700,1050,1400],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[979,1632,2031],"smashJust":2031,"hyperSmash":3553,"heavyFinish":[979,1632,2031]},
     "skills": ["1000_00:1","1000_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24018,7 +24405,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24103,6 +24491,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["1190_00:1","1190_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -24141,7 +24530,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1190_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24220,6 +24610,7 @@
         "charged": {"damage":[720,756,792],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[811,1350,1681],"smashJust":1681,"hyperSmash":2940,"heavyFinish":[811,1350,1681]},
     "skills": ["1321_00:1","1321_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24258,7 +24649,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1321_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24343,6 +24735,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.162,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.24,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.36,"tags":[]}}
     },
+    "chargedMelee": {"smash":[574,957,1190],"smashJust":1190,"hyperSmash":2083,"heavyFinish":[574,957,1190]},
     "skills": ["1331_00:1","1331_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24381,7 +24774,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1331_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24466,6 +24860,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.108,"tags":[]},"charged":{"damage":[600,901,1200],"shots":3,"cost":0.24,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":300,"count":8,"cost":0.144,"tags":[]},"charged":{"damage":[600,901,1200],"shots":3,"cost":0.48,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["1341_00:1","1341_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24504,7 +24899,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1341_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24589,6 +24985,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1547,2321,3094],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":413,"count":3,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1823,3038,3780],"smashJust":3780,"hyperSmash":6615,"heavyFinish":[743,1238,1540]},
     "skills": ["1500_00:1","1500_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -24627,7 +25024,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1500_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24712,6 +25110,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[727,1090,1453],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":208,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[727,1090,1453],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[561,934,1162],"smashJust":1162,"hyperSmash":2034,"heavyFinish":[561,934,1162]},
     "skills": ["1960_00:1","1960_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24750,7 +25149,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_1960_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24823,6 +25223,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["3000_00:1","3000_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -24861,7 +25262,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24946,6 +25348,7 @@
       "jump": {"normal":{"damage":null,"count":6,"cost":0.135,"tags":[]},"charged":{"damage":[1220,1830,2440],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":305,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["3000_01:1","3000_01:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -24984,7 +25387,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3000_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25069,6 +25473,7 @@
       "jump": {"normal":{"damage":null,"count":8,"cost":0.135,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":325,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["3000_02:1","3000_02:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25107,7 +25512,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3000_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25192,6 +25598,7 @@
       "jump": {"normal":{"damage":null,"count":8,"cost":0.135,"tags":[]},"charged":{"damage":[1250,1875,2500],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":313,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[945,1575,1960],"smashJust":1960,"hyperSmash":3430,"heavyFinish":[945,1575,1960]},
     "skills": ["3000_03:1","3000_03:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25230,7 +25637,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3000_03)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25315,6 +25723,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[525,788,1050],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":263,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[525,788,1050],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["3010_00:1","3010_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25353,7 +25762,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0040_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25438,6 +25848,7 @@
       "jump": {"normal":{"damage":null,"count":9,"cost":0.135,"tags":[]},"charged":{"damage":[550,825,1100],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":300,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[550,825,1100],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[743,1238,1540],"smashJust":1540,"hyperSmash":2695,"heavyFinish":[811,1350,1681]},
     "skills": ["3010_01:1","3010_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25476,7 +25887,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3010_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25561,6 +25973,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[650,975,1300],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":325,"count":6,"cost":0.2,"tags":[]},"charged":{"damage":[650,975,1300],"shots":3,"cost":0.6,"tags":["multi-shot"]}}
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["3011_00:1","3011_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25599,7 +26012,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3011_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25684,6 +26098,7 @@
       "jump": {"normal":{"damage":null,"count":6,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1547,2321,3094],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":413,"count":4,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1823,3038,3780],"smashJust":3780,"hyperSmash":6615,"heavyFinish":[743,1238,1540]},
     "skills": ["3012_00:1","3012_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25722,7 +26137,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3012_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25807,6 +26223,7 @@
       "jump": {"normal":{"damage":null,"count":10,"cost":0.108,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":325,"count":8,"cost":0.144,"tags":[]},"charged":{"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["3020_00:1","3020_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25845,7 +26262,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3020_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25936,6 +26354,7 @@
         "charged": {"damage":[358,412,626],"shots":5,"cost":0.24,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["3030_00:1","3030_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25974,7 +26393,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3030_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26059,6 +26479,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1618,2426,3235],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":432,"count":3,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1438,2157,2875],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1857,3094,3850],"smashJust":3850,"hyperSmash":6738,"heavyFinish":[777,1294,1610]},
     "skills": ["3040_00:1","3040_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -26097,7 +26518,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26170,6 +26592,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["3050_00:1","3050_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -26208,7 +26631,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26296,6 +26720,7 @@
       },
       "dash": {"normal":{"damage":293,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[790,1317,1638],"smashJust":1638,"hyperSmash":2867,"heavyFinish":[790,1317,1638]},
     "skills": ["3050_01:1","3050_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26334,7 +26759,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26419,6 +26845,7 @@
       "jump": {"normal":{"damage":null,"count":7,"cost":0.135,"tags":[]},"charged":{"damage":[1270,1905,2540],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":318,"count":5,"cost":0.2,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["3050_14:1","3050_14:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26457,7 +26884,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26536,6 +26964,7 @@
         "charged": {"damage":[389,466,699],"shots":3,"cost":0.24,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[608,1013,1260],"smashJust":1260,"hyperSmash":2205,"heavyFinish":[608,1013,1260]},
     "skills": ["3060_00:1","3060_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26574,7 +27003,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26659,6 +27089,7 @@
       "jump": {"normal":{"damage":null,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":243,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[790,1317,1638],"smashJust":1638,"hyperSmash":2867,"heavyFinish":[790,1317,1638]},
     "skills": ["3060_01:1","3060_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26697,7 +27128,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26782,6 +27214,7 @@
       "jump": {"normal":{"damage":null,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1220,1830,2440],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["3060_02:1","3060_02:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26820,7 +27253,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26908,6 +27342,7 @@
         "charged": {"damage":[270,311,473],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["3060_03:1","3060_03:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26946,7 +27381,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27019,6 +27455,7 @@
       "jump": {"normal":{"damage":null,"count":6,"cost":0.135,"tags":[]},"charged":{"damage":[800,880,960],"shots":1,"cost":1,"tags":["paralyzing"]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[800,1200,1600],"shots":1,"cost":1,"tags":["paralyzing"]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["3070_00:1","3070_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -27057,7 +27494,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0080_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27145,6 +27583,7 @@
         "charged": {"damage":[800,840,880],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["3080_00:1","3080_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -27183,7 +27622,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3080_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27268,6 +27708,7 @@
       "jump": {"normal":{"damage":null,"count":10,"cost":0.12,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":268,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[858,1429,1778],"smashJust":1778,"hyperSmash":3112,"heavyFinish":[858,1429,1778]},
     "skills": ["3100_03:1","3100_03:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -27306,7 +27747,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27391,6 +27833,7 @@
       "jump": {"normal":{"damage":null,"count":6,"cost":0.135,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":263,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["3110_00:1","3110_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -27429,7 +27872,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27514,6 +27958,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":195,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["3130_00:1","3130_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -27552,7 +27997,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3130_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27637,6 +28083,7 @@
       "jump": {"normal":{"damage":null,"count":8,"cost":0.135,"tags":[]},"charged":{"damage":[660,991,1320],"shots":3,"cost":0.3,"tags":["multi-shot"]}},
       "dash": {"normal":{"damage":330,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "skills": ["3120_04:1","3120_04:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -27675,7 +28122,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27766,6 +28214,7 @@
         "charged": {"damage":[213,245,372],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[878,1463,1820],"smashJust":1820,"hyperSmash":3185,"heavyFinish":[878,1463,1820]},
     "skills": ["3140_00:1","3140_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -27804,7 +28253,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3140_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -27892,6 +28342,7 @@
       },
       "dash": {"normal":{"damage":413,"count":3,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1823,3038,3780],"smashJust":3780,"hyperSmash":6615,"heavyFinish":[743,1238,1540]},
     "skills": ["3150_00:1","3150_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -27930,7 +28381,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3150_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28018,6 +28470,7 @@
       },
       "dash": {"normal":{"damage":263,"count":8,"cost":0.18,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["3160_00:1","3160_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28075,7 +28528,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3160_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28160,6 +28614,7 @@
       "jump": {"normal":{"damage":null,"count":6,"cost":0.135,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":275,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[777,1294,1610],"smashJust":1610,"hyperSmash":2818,"heavyFinish":[777,1294,1610]},
     "skills": ["3170_00:1","3170_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28198,7 +28653,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3170_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28283,6 +28739,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.162,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.24,"tags":[]},"charged":{"damage":null,"shots":4,"cost":0.36,"tags":["short range","multi-shot"]}}
     },
+    "chargedMelee": {"smash":[507,844,1050],"smashJust":1050,"hyperSmash":1838,"heavyFinish":[507,844,1050]},
     "skills": ["3190_00:1","3190_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28340,7 +28797,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3190_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28425,6 +28883,7 @@
       "jump": {"normal":{"damage":null,"count":10,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":8,"cost":0.096,"tags":[]},"charged":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["3270_00:1","3270_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28463,7 +28922,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28551,6 +29011,7 @@
       },
       "dash": {"normal":{"damage":255,"count":8,"cost":0.12,"tags":[]},"charged":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "skills": ["3270_01:1","3270_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28586,7 +29047,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0020_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28659,6 +29121,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":250,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[675,1125,1400],"smashJust":1400,"hyperSmash":2450,"heavyFinish":[675,1125,1400]},
     "skills": ["3280_00:1","3280_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28697,7 +29160,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3280_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28782,6 +29246,7 @@
       "jump": {"normal":{"damage":null,"count":5,"cost":0.135,"tags":[]},"charged":{"damage":[1170,1755,2340],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":293,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[790,1317,1638],"smashJust":1638,"hyperSmash":2867,"heavyFinish":[790,1317,1638]},
     "skills": ["3280_01:1","3280_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28820,7 +29285,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3280_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -28911,6 +29377,7 @@
         "charged": {"damage":[600,901,1200],"shots":2,"cost":0.32,"tags":["homing","multi-shot"]}
       }
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["3290_00:1","3290_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -28949,7 +29416,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3290_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29034,6 +29502,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["3300_00:1","3300_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -29091,7 +29560,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3300_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29176,6 +29646,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.135,"tags":[]},"charged":{"damage":[950,1425,1900],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":238,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[760,1140,1520],"shots":1,"cost":1,"tags":["paralyzing"]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["3310_00:1","3310_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -29214,7 +29685,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29299,6 +29771,7 @@
       "jump": {"normal":{"damage":null,"count":3,"cost":0.27,"tags":["giant"]},"charged":{"damage":[1266,1899,2532],"shots":1,"cost":0.45,"tags":["giant"]}},
       "dash": {"normal":{"damage":338,"count":3,"cost":0.3,"tags":["giant"]},"charged":{"damage":[1125,1688,2250],"shots":1,"cost":0.45,"tags":["giant"]}}
     },
+    "chargedMelee": {"smash":[1688,2813,3500],"smashJust":3500,"hyperSmash":6125,"heavyFinish":[608,1013,1260]},
     "skills": ["3310_10:1","3310_10:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -29337,7 +29810,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3310_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29422,6 +29896,7 @@
       "jump": {"normal":{"damage":null,"count":4,"cost":0.135,"tags":[]},"charged":{"damage":[950,1425,1900],"shots":1,"cost":0.4,"tags":["homing"]}},
       "dash": {"normal":{"damage":263,"count":3,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[709,1182,1470]},
     "skills": ["3320_00:1","3320_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -29460,7 +29935,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0070_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29541,6 +30017,7 @@
       "jump": {"normal":null,"charged":null},
       "dash": {"normal":null,"charged":null}
     },
+    "chargedMelee": {"smash":[527,878,1092],"smashJust":1092,"hyperSmash":1911,"heavyFinish":[527,878,1092]},
     "skills": ["3330_00:1","3330_00:2"],
     "traits": [],
     "sparking": {
@@ -29596,7 +30073,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29684,6 +30162,7 @@
       },
       "dash": {"normal":{"damage":238,"count":4,"cost":0.2,"tags":[]},"charged":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "skills": ["3350_00:1","3350_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -29741,7 +30220,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_0320_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -29826,6 +30306,7 @@
       "jump": {"normal":{"damage":null,"count":8,"cost":0.135,"tags":[]},"charged":{"damage":[840,924,1008],"shots":1,"cost":1,"tags":["paralyzing"]}},
       "dash": {"normal":{"damage":263,"count":8,"cost":0.2,"tags":[]},"charged":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
     },
+    "chargedMelee": {"smash":[709,1182,1470],"smashJust":1470,"hyperSmash":2573,"heavyFinish":[709,1182,1470]},
     "skills": ["3360_00:1","3360_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -29864,7 +30345,8 @@
         "skillStart",
         "skillLimit",
         "sparkCharge",
-        "kiBlasts"
+        "kiBlasts",
+        "chargedMelee"
       ],
       "game files (steps Steps_3360_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]

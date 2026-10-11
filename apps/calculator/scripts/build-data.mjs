@@ -27,7 +27,7 @@ import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate, application
 import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
 import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
 import { loadFmodel } from './lib/fmodelData.mjs';
-import { kiBlastsOf } from './lib/kiBlasts.mjs';
+import { kiBlastsOf, chargedMeleeOf } from './lib/kiBlasts.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -47,7 +47,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), kiBlastTags: { normal: {}, standing: {}, moving: {} } };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], kiBlastTags: { normal: {}, standing: {}, moving: {} } };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -542,6 +542,11 @@ for (const rc of ref.characters) {
     if (kb.charged.moving) count(report.kiBlastTags.moving, kb.charged.moving.tags);
     prov.kiBlasts = 'game';
   }
+  const chargedMelee = fm ? chargedMeleeOf(fm, id, { coef, damageConstant: K }) : null;
+  if (chargedMelee) {
+    prov.chargedMelee = 'game';
+    if (stats.smash != null && chargedMelee.smash[0] != null && Math.abs(stats.smash - chargedMelee.smash[0]) > 1) report.meleeGaps.push([rc.name, stats.smash, chargedMelee.smash[0]]);
+  }
 
   const pas = passives(id);
   const sparkingPassive = pas.find(p => p.condition === 'sparking');
@@ -555,6 +560,7 @@ for (const rc of ref.characters) {
     // raw Power behind the first rush hit, the throw and the normal ki blast (the engine's exact formula)
     power: { rush: num(r['Rush A first hit: Power']), throw: num(r['Throw: Power']), kiBlast: num(r['Normal Ki: Power']) },
     kiBlasts,
+    chargedMelee,
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
@@ -1067,6 +1073,11 @@ function reportMd() {
     report.kiBlasts.size ? 'Gaps (by file, with the characters it affects):' : 'Gaps: none.',
     '',
     list([...report.kiBlasts].map(([n, who]) => `${n}: ${who.length > 6 ? `${who.length} characters (${who.slice(0, 4).join(', ')}, …)` : who.join(', ')}`)),
+    '## Charged melee',
+    '',
+    "Smash (neutral, actSMM*) at normal / part / full charge, just-timed and hyper, through the smash channel; Heavy Finish (actHF*) at the three charges through the combo channel. Where the published smash differs from the files' normal smash (the published one is kept; it may be a different move):",
+    '',
+    table(['Character', 'Published smash', "Files' normal smash"], report.meleeGaps),
     '## Images',
     '',
     `Characters with no face icon in public/char_thumbnails: ${report.images.length ? report.images.join(', ') : 'none'}.`,

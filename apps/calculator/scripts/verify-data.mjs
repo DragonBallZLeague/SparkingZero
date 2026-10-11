@@ -317,9 +317,13 @@ if (v2) {
   const gokuKb = data.characters.find(c => c.id === '0000_00')?.kiBlasts?.charged;
   ig('Goku charged ki blast standing, no / first / full charge', gokuKb?.standing?.damage?.join(' / '), '938 / 1407 / 1875');
   ig('Goku charged ki blast moving, no charge', gokuKb?.moving?.damage?.[0], 875);
+  const cm = (cid) => data.characters.find(c => c.id === cid)?.chargedMelee;
+  ig('Goku full charged smash', cm('0000_00')?.smash?.[2], 1400);
+  ig('Goku hyper smash', cm('0000_00')?.hyperSmash, 2450);
+  ig('Tien Heavy Finish (combo channel)', cm('0070_00')?.heavyFinish?.[0], 743);
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast)', game);
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, charged smash, Heavy Finish)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

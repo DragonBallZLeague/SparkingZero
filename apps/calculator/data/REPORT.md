@@ -400,6 +400,24 @@ Gaps (by file, with the characters it affects):
 - actSMBN: no Power in BulletParam_Common_actSMBN3_Shots4 (the game's default, unknown); damage left out: Fasha
 - actDSMBN: no Power in BulletParam_Common_actDSMBN3_Shots4 (the game's default, unknown); damage left out: Fasha
 
+## Charged melee
+
+Smash (neutral, actSMM*) at normal / part / full charge, just-timed and hyper, through the smash channel; Heavy Finish (actHF*) at the three charges through the combo channel. Where the published smash differs from the files' normal smash (the published one is kept; it may be a different move):
+
+| Character | Published smash | Files' normal smash |
+| --- | --- | --- |
+| Great Ape Vegeta | 2397 | 1722 |
+| Dr. Wheelo | 2363 | 1688 |
+| Lord Slug Giant Form | 2430 | 1755 |
+| Janemba | 2397 | 1722 |
+| Hirudegarn | 2430 | 1755 |
+| Great Ape Baby (GT) | 2464 | 1789 |
+| Anilaza | 2498 | 1823 |
+| Orange Piccolo Giant Form | 2498 | 1823 |
+| Cell Max | 2532 | 1857 |
+| Giant Gomah | 2498 | 1823 |
+| Ma Junior Giant Form | 2363 | 1688 |
+
 ## Images
 
 Characters with no face icon in public/char_thumbnails: none.
