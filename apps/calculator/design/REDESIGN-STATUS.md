@@ -12,12 +12,15 @@ will ship it later, to dev-branch on its own or with the redesign.
 
 ## 1. Decisions waiting on the league
 
-- **Sign-off on concept B** after round 5 (2026-10-10): Full stats gained the new game-file data (charged, jump and
+- **Sign-off on concept B** after round 6 (2026-10-10): Rush Chains drawn as rush-hit pips, the chain, then ▸ follow-ups
+  (sheet, Full stats, Compare, Vs); charge levels tabbed under each attack (Charge Lv.1-3); a Sparking! Mode section
+  for Sparking-only moves and traits; ki blasts in their own red-orange; a Full volley roster bar; Vs All stats as
+  both full sheets side by side and an expanded Exchange (charge levels, charged ki blast, Hyper Smash). Before that, round 5 (2026-10-10): Full stats gained the new game-file data (charged, jump and
   dash ki blasts; smash and Heavy Finish charge levels, Hyper Smash; Mobility; Moveset; Traits), the sheet a
   Charged ki blast tile and a trait chip under the name.
 - **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
-  cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them for now, a
-  guess. Per-character tuning can wait until the full art set is cut.
+  cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them (the league
+  approved it on Janemba, 2026-10-10).
 - **Stat expansion.** Order agreed: charged ki blast (with archetype tags), jump and dash ki blasts, charged
   smash levels, then a Mobility section. `data/EXPANSION.md` lists what the game files can add (charged and jump/dash ki blasts,
   charged smash levels, rush follow-ups, movement ki costs, low-health buffs) and four league tests. Decide
