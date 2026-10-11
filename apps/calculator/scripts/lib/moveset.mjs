@@ -13,8 +13,8 @@
  * Heavy Finish; CannonCombo = no Ki Blast Cannon Smash; TriAttack = no Ki Blast Cannon Attack;
  * PowerPress = no Rolling Press; RollingHurricane = no Rolling Hurricane). Grand Slash's two follow-ups
  * (the guide's GsRushDerivedCombo1 and 2): AirRush = no Aerial Slash (Tien has the flag and only Tornado
- * Slash, Goku has neither flag and both), and by the same pattern DragonTornado = no Tornado Slash (not
- * yet seen in game). Flags whose in-game name is not known yet are listed under `unavailableUnnamed`.
+ * Slash, Goku has neither flag and both) and DragonTornado = no Tornado Slash (Krillin and Goku (Teen)
+ * have only Aerial Slash). Gamma 1's list was checked too. Flags whose in-game name is not known yet are listed under `unavailableUnnamed`.
  */
 
 export const CHAINS = {
