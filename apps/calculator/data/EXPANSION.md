@@ -337,7 +337,9 @@ Not measured yet: Ki Blast Cannon Smash (`actSCS`, 640), Delta Heavy Finish (`ac
   took 28,350 (33,750 x 16/20, x his 1.05 blast defense). Only Devilmite Beam has the flag (bExScale).
 - **Rush tracking:** 134 rush blasts home (`homing`, the files' ControllableTarget), 14 steer (`steering`,
   ControllableTurn). Of the steering ones, Justice Kick is a cinematic rush once it connects; the other 13 crash
-  (`crash`: no cinematic). 115 give no value (the game's default, probably non-homing; TESTS.md 1).
+  (`crash`: no cinematic). The rest give no value and go **straight** (`straight`: they head for where the opponent
+  was and neither home nor steer; confirmed on Final Galick Cannon and Gigantic Swing, with Kaioken Attack and
+  Piccolo's Explosive Breath Cannon homing).
 
 ### Second round (run 2026-10-11)
 

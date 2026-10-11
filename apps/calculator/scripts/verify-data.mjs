@@ -361,6 +361,11 @@ if (v2) {
     ig('Devilmite Beam on Goku (Z - Early)', on('Goku (Z - Early)'), 0);
     ig('Devilmite Beam on Frieza (Z) 1st Form', on('Frieza (Z) 1st Form'), 28350);
   }
+  {
+    const tr = (n, mv) => ['homing', 'steering', 'straight'].find(f => data.blasts[data.characters.find(c => c.name === n)?.id]?.find(b => b.name === mv)?.flags?.includes(f));
+    ig('rush tracking (league 2026-10-11)', JSON.stringify([tr('Vegeta (Z - Scouter)', 'Final Galick Cannon'), tr('Kefla', 'Gigantic Swing'), tr('Goku (Z - Early)', 'Kaioken Attack'), tr('Piccolo', 'Explosive Breath Cannon')]),
+      JSON.stringify(['straight', 'straight', 'homing', 'homing']));
+  }
   ig('Justice Kick steers but is not a crash; Dodoria Head Ram crashes', JSON.stringify([
     data.blasts[data.characters.find(c => c.name === 'Dyspo')?.id]?.find(b => b.name === 'Justice Kick')?.flags?.includes('crash'),
     data.blasts[data.characters.find(c => c.name === 'Dodoria')?.id]?.find(b => b.name === 'Dodoria Head Ram')?.flags?.includes('crash')]), JSON.stringify([false, true]));

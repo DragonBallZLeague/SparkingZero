@@ -777,11 +777,14 @@ for (const bm of blastMoves) {
   if (gm) {
     const add = (f) => { if (!det.flags.includes(f)) det.flags = [...det.flags, f]; };
     if (fm.param(gm.file, 'BlastSkillParamData.bBackstepWhenNearMode') === 'false' || fm.param(gm.file, 'BlastUltimateParamData.bBackstepWhenNearMode') === 'false') add('noStepBack');
-    // a rush's tracking: homing (follows the target) or steering (turned by the player); none given is the game's
-    // default, to check (league 2026-10-11: Justice Kick steers but is a cinematic rush; the others steer and crash)
+    // a rush's tracking: homing (follows the target), steering (turned by the player) or straight (none given)
+    // (league 2026-10-11: Justice Kick steers but is a cinematic rush; the other steering ones crash)
     const moveType = (fm.param(gm.file, 'BlastSkillParamData.MoveType') ?? fm.param(gm.file, 'BlastUltimateParamData.MoveType')) || '';
     if (/ControllableTarget/.test(moveType)) add('homing');
     if (/ControllableTurn/.test(moveType)) { add('steering'); if (!det.traits.includes('Cinematic')) add('crash'); }
+    // no tracking value: a straight rush (heads for where the opponent was, no homing or steering; league
+    // 2026-10-11: Final Galick Cannon and Gigantic Swing go straight, Kaioken Attack and Piccolo's home)
+    if (det.category === 'Rush' && !moveType) add('straight');
     // damage scaled by the opponent's wickedness (ExParam, 0 to 20): Devilmite Beam
     if (fm.param(gm.file, 'BlastUltimateParamData.bExScale') === 'true' || fm.param(gm.file, 'BlastSkillParamData.bExScale') === 'true') add('wickednessScaled');
   }
