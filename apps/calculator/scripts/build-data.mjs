@@ -28,6 +28,7 @@ import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
 import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
 import { loadFmodel } from './lib/fmodelData.mjs';
 import { kiBlastsOf, chargedMeleeOf } from './lib/kiBlasts.mjs';
+import { mobilityOf } from './lib/mobility.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -543,6 +544,8 @@ for (const rc of ref.characters) {
     prov.kiBlasts = 'game';
   }
   const chargedMelee = fm ? chargedMeleeOf(fm, id, { coef, damageConstant: K }) : null;
+  const mobility = fm ? mobilityOf(fm, id) : null;
+  if (mobility) prov.mobility = 'game';
   if (chargedMelee) {
     prov.chargedMelee = 'game';
     if (stats.smash != null && chargedMelee.smash[0] != null && Math.abs(stats.smash - chargedMelee.smash[0]) > 1) report.meleeGaps.push([rc.name, stats.smash, chargedMelee.smash[0]]);
@@ -561,6 +564,7 @@ for (const rc of ref.characters) {
     power: { rush: num(r['Rush A first hit: Power']), throw: num(r['Throw: Power']), kiBlast: num(r['Normal Ki: Power']) },
     kiBlasts,
     chargedMelee,
+    mobility,
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
