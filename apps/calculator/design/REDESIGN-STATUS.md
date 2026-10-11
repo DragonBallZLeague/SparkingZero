@@ -17,7 +17,10 @@ will ship it later, to dev-branch on its own or with the redesign.
   for Sparking-only moves and traits; ki blasts in their own red-orange; a Full volley roster bar; Vs All stats as
   both full sheets side by side and an expanded Exchange (charge levels, charged ki blast, Hyper Smash). Before that, round 5 (2026-10-10): Full stats gained the new game-file data (charged, jump and
   dash ki blasts; smash and Heavy Finish charge levels, Hyper Smash; Mobility; Moveset; Traits), the sheet a
-  Charged ki blast tile and a trait chip under the name.
+  Charged ki blast tile and a trait chip under the name. After round 6, armor markers (today's calculator's ARM
+  badges): shields on armored hits in Vs opponent's Exchange with the rush hit by hit, and a Breaking armor table
+  in Full stats. Open: whether blasts and ultimates are reduced by armor (not in the data yet, so unmarked), and
+  whether the table also belongs on the sheet or in Compare's All stats.
 - **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
   cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them (the league
   approved it on Janemba, 2026-10-10).

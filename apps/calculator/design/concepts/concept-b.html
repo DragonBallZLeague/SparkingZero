@@ -324,6 +324,23 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 .mvcmp .ctype { font-size: 12px; }
 .mvcmp > span:first-child .hits { margin-top: 3px; }
 .mvcmp .fu { display: inline-flex; margin-left: 6px; vertical-align: 1px; }
+/* armor: a shield on a hit the armor reduces, a cracked one on the hit that breaks it */
+.arm { display: inline-block; width: 9px; height: 11px; margin-right: 5px; vertical-align: -1px; background: #cbd5e1; clip-path: polygon(50% 0, 100% 16%, 100% 55%, 50% 100%, 0 55%, 0 16%); }
+.arm.brk { background: linear-gradient(118deg, var(--win) 0 44%, transparent 44% 60%, var(--win) 60%); }
+.xrow .held { color: #cbd5e1; }
+.xlegend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 11.5px; color: #cbd5e1; padding: 6px 10px; margin: 2px 0 6px; background: rgba(255,255,255,.045); }
+.xlegend b { color: #f1f5f9; }
+.plate.armp { border-left-color: #cbd5e1; } .plate.armp h5 { color: #f1f5f9; }
+.abtabs { display: flex; gap: 4px; margin: 0 0 6px; }
+.abtabs span { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 9px; background: rgba(255,255,255,.06); color: var(--muted); }
+.abtabs span.on { background: rgba(255,255,255,.16); color: #f1f5f9; }
+.abtabs span.sp.on { background: rgba(168,85,247,.35); color: #f3e8ff; }
+.abrow { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 62px); gap: 6px; align-items: center; padding: 4px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+.abrow.h { border-top: 0; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); line-height: 1.2; align-items: end; padding-top: 0; }
+.abrow > span:not(:first-child) { text-align: center; }
+.abrow .ok { color: var(--win); font-weight: 800; font-size: 11.5px; }
+.abrow .no { color: #cbd5e1; font-size: 11.5px; }
+.abnote { font-size: 11px; color: var(--muted); line-height: 1.45; padding-top: 6px; border-top: 1px solid var(--line); }
 /* phone */
 .ph .cols { display: block; height: auto; }
 .ph .art { height: 470px; }
@@ -537,12 +554,12 @@ h1 { font-size: 20px; margin: 0 0 4px; }
   <section class="view" id="stats">
     <div class="about">
       <div><b>The idea</b>Every value in sections by topic, with the base and this build side by side. Tap any value to see what changed it (Rush hit 1 is open here): the base hit, then each capsule, skill or Sparking effect. The sheet is the quick view, and this is the deep dive.</div>
-      <div><b>This round</b>Charge levels sit under their attack (Charge Lv.1 to 3, as many as the attack has). Sparking-only moves and traits (Hyper Smash, Burst Rush, Violent Rush, extra follow-ups) have their own Sparking! Mode section. New from the game files (marked NEW): charged, jump and dash ki blasts; smash and Heavy Finish charge levels; a Mobility section with movement ki costs; the Moveset (Rush Chains and their follow-ups, in the game's own names); and Traits. A long section folds to its main rows with "Show all". Another character's traits read like "Hyper armor", "No Violent Rush", "Laser ki blasts" or "Can't fly".</div>
+      <div><b>This round</b>Charge levels sit under their attack (Charge Lv.1 to 3, as many as the attack has). Sparking-only moves and traits (Hyper Smash, Burst Rush, Violent Rush, extra follow-ups) have their own Sparking! Mode section. New from the game files (marked NEW): charged, jump and dash ki blasts; smash and Heavy Finish charge levels; a Mobility section with movement ki costs; the Moveset (Rush Chains and their follow-ups, in the game's own names); and Traits. A long section folds to its main rows with "Show all". Another character's traits read like "Hyper armor", "No Violent Rush", "Laser ki blasts" or "Can't fly". Breaking armor (new) shows which attacks break each kind of armor, normally and in Sparking!.</div>
     </div>
     <div class="frames">
       <div>
         <p class="frame-lbl">Desktop 1180px</p>
-        <div class="desk" style="height:1240px"><div class="B">
+        <div class="desk" style="height:1490px"><div class="B">
           <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span class="on">Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
           <div class="fs">
             <div class="fs-id"><img class="face" src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><div><div class="nm">Goku (Z - Early)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 4</span><span class="chip ghost">Rush Attack Boost 1</span><span class="chip ghost">Blast Burst</span></div></div></div>
@@ -577,6 +594,13 @@ h1 { font-size: 20px; margin: 0 0 4px; }
                 <div class="srow"><span>Throw</span><span>1,250</span><span class="tap">1,250</span></div>
                 <div class="srow"><span>Pursuit</span><span>1,250</span><span class="tap">1,250</span></div>
                 <div class="srow"><span>Armor break</span><span>5 hits</span><span class="tap">5 hits</span></div>
+              </div>
+              <div class="plate armp">
+                <h5>Breaking armor <span class="newtag">NEW</span></h5>
+                <div class="abtabs"><span class="on">Normal</span><span class="sp">In Sparking!</span></div>
+                <div class="abrow h"><span>Against</span><span>Hyper Armor</span><span>Sparking Armor</span><span>Hyper, in Sparking</span></div>
+                <div class="abrow"><span>Rush hits 1-4</span><span><span class="no"><i class="arm"></i>Holds</span></span><span><span class="no"><i class="arm"></i>Holds</span></span><span><span class="no"><i class="arm"></i>Holds</span></span></div><div class="abrow"><span>Rush hit 5</span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span></div><div class="abrow"><span>Smash, all charges</span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span></div><div class="abrow"><span>Heavy Finish, all</span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span></div><div class="abrow"><span>Throw</span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span></div><div class="abrow"><span>Ki blast</span><span><span class="no"><i class="arm"></i>Holds</span></span><span><span class="no"><i class="arm"></i>Holds</span></span><span><span class="no"><i class="arm"></i>Holds</span></span></div><div class="abrow"><span>Charged ki blast</span><span><span class="ok">Breaks</span></span><span><span class="ok">Breaks</span></span><span><span class="no"><i class="arm"></i>Holds</span></span></div>
+                <div class="abnote">Armor takes 10% off a hit (Hyper Armor) or 25% (Sparking Armor) until a hit breaks it. Hyper-armor fighters in Sparking are the hardest to break. In Sparking!, Goku's rush hits and ki blasts break more armor too.</div>
               </div>
               <div class="plate kib">
                 <h5>Ki blasts</h5>
@@ -820,13 +844,13 @@ h1 { font-size: 20px; margin: 0 0 4px; }
   <!-- ============================================================ VERSUS -->
   <section class="view" id="versus">
     <div class="about">
-      <div><b>Two modes</b><b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">Exchange</b> is the matchup: what each attack deals to the other side, after their defenses and armor (so your rush and ki blasts lose 25% to Janemba's Sparking armor). <b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">All stats</b> (the second frame) is each side's own sheet with its build, side by side like Compare, every section included. The HP strips show one rush combo in red.</div>
+      <div><b>Two modes</b><b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">Exchange</b> is the matchup: what each attack deals to the other side, after their defenses and armor (so your rush and ki blasts lose 25% to Janemba's Sparking armor). <b style="display:inline;color:#e2e8f0;text-transform:none;letter-spacing:0">All stats</b> (the second frame) is each side's own sheet with its build, side by side like Compare, every section included. The HP strips show one rush combo in red. A shield marks a hit the armor reduces, a cracked one the hit that breaks it, and the rush opens hit by hit.</div>
       <div><b>Notes</b>Your build: Rush Attack Boost 1 with Kaioken active (+10% damage, 10% less taken). Janemba is Sparking. Each blast row compares your move with theirs in the same slot. Numbers from the app's engine. Measured: a charged ki blast breaks Janemba's normal armor but not his Sparking armor (1,919 vs 1,439 at full charge), and Kaioken doesn't change Burst attacks.</div>
     </div>
     <div class="frames">
       <div>
         <p class="frame-lbl">Desktop 1180px</p>
-        <div class="desk" style="height:1190px"><div class="B">
+        <div class="desk" style="height:1400px"><div class="B">
           <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span>Sheet</span><span>Full stats</span><span>Compare</span><span class="on">Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
           <div class="vshead">
             <div class="vside l"><div class="vfig"><img src="art/0000_00.webp" alt="" style="--fh:1784"></div><div class="who"><div class="nm">Goku<br>(Z - Early)</div><div class="chips"><span class="chip ghost">Rush Attack Boost 1</span><span class="chip sk">Kaioken on</span></div></div></div>
@@ -838,8 +862,9 @@ h1 { font-size: 20px; margin: 0 0 4px; }
             <div>
               <div class="plate neutral">
                 <h5>Damage exchange</h5>
+                <div class="xlegend"><span><b>Janemba's Sparking Armor</b> takes 25% off your hits until one breaks it.</span><span><i class="arm"></i>Armor holds</span><span><i class="arm brk"></i>Breaks it</span><span>No mark: full damage</span></div>
                 <div class="xhead"><span></span><span>You deal</span><span>You take</span></div>
-                <div class="xgroup melee"><div class="gh">Melee</div><div class="xrow"><span class="nm2">Rush 5-hit</span><span class="v1">1,812</span><span class="v2">2,306</span></div><div class="xrow"><span class="nm2">Smash</span><span class="v1"></span><span class="v2"></span></div><div class="xrow sub"><span class="nm2">Charge Lv.1</span><span class="v1">588</span><span class="v2">1,550</span></div><div class="xrow sub"><span class="nm2">Charge Lv.2</span><span class="v1">979</span><span class="v2">2,583</span></div><div class="xrow sub"><span class="nm2">Charge Lv.3</span><span class="v1">1,218</span><span class="v2">3,213</span></div><div class="xrow"><span class="nm2">Heavy Finish</span><span class="v1"></span><span class="v2"></span></div><div class="xrow sub"><span class="nm2">Charge Lv.1</span><span class="v1">588</span><span class="v2">578</span></div><div class="xrow sub"><span class="nm2">Charge Lv.2</span><span class="v1">979</span><span class="v2">963</span></div><div class="xrow sub"><span class="nm2">Charge Lv.3</span><span class="v1">1,218</span><span class="v2">1,197</span></div><div class="xrow"><span class="nm2">Throw</span><span class="v1">1,087</span><span class="v2">3,995</span></div></div><div class="xgroup kib"><div class="gh">Ki blasts</div><div class="xrow"><span class="nm2">One ki blast</span><span class="v1">211</span><span class="v2">322</span></div><div class="xrow"><span class="nm2">Full volley</span><span class="v1">1,055</span><span class="v2">627</span></div><div class="xrow"><span class="nm2">Charged ki blast<small>theirs fires 3 shots</small></span><span class="v1"></span><span class="v2"></span></div><div class="xrow sub"><span class="nm2">Charge Lv.1</span><span class="v1">792</span><span class="v2">428 ×3</span></div><div class="xrow sub"><span class="nm2">Charge Lv.2</span><span class="v1">1,187</span><span class="v2">642 ×3</span></div><div class="xrow sub"><span class="nm2">Charge Lv.3</span><span class="v1">1,583</span><span class="v2">855 ×3</span></div></div><div class="xgroup blast"><div class="gh">Blasts</div><div class="xrow"><span class="nm2">B1 Kamehameha<small>vs Chou Makouhou</small></span><span class="v1">7,289</span><span class="v2">8,024</span></div><div class="xrow"><span class="nm2">B2 Kaioken Attack<small>vs Rapid Cannon</small></span><span class="v1">8,568</span><span class="v2">8,676</span></div></div><div class="xgroup ult"><div class="gh">Ultimate</div><div class="xrow"><span class="nm2">Spirit Bomb<small>vs Illusion Smash</small></span><span class="v1">15,345</span><span class="v2">16,875</span></div></div><div class="xgroup spk"><div class="gh">Sparking! Mode</div><div class="xrow"><span class="nm2">Hyper Smash</span><span class="v1">2,131</span><span class="v2">5,624</span></div></div>
+                <div class="xgroup melee"><div class="gh">Melee</div><div class="xrow"><span class="nm2">Rush 5-hit<small>breaks the armor on hit 5</small></span><span class="v1">1,812</span><span class="v2">2,306</span></div><div class="xrow sub"><span class="nm2">Hit 1</span><span class="v1 held"><i class="arm"></i>261</span><span class="v2">544</span></div><div class="xrow sub"><span class="nm2">Hit 2</span><span class="v1 held"><i class="arm"></i>261</span><span class="v2">544</span></div><div class="xrow sub"><span class="nm2">Hit 3</span><span class="v1 held"><i class="arm"></i>261</span><span class="v2">544</span></div><div class="xrow sub"><span class="nm2">Hit 4</span><span class="v1 held"><i class="arm"></i>361</span><span class="v2">674</span></div><div class="xrow sub"><span class="nm2">Hit 5</span><span class="v1"><i class="arm brk"></i>668</span><span class="v2" title="Janemba&#39;s rush has 4 hits">-</span></div><div class="xrow"><span class="nm2">Smash</span><span class="v1"></span><span class="v2"></span></div><div class="xrow sub"><span class="nm2">Charge Lv.1</span><span class="v1">588</span><span class="v2">1,550</span></div><div class="xrow sub"><span class="nm2">Charge Lv.2</span><span class="v1">979</span><span class="v2">2,583</span></div><div class="xrow sub"><span class="nm2">Charge Lv.3</span><span class="v1">1,218</span><span class="v2">3,213</span></div><div class="xrow"><span class="nm2">Heavy Finish</span><span class="v1"></span><span class="v2"></span></div><div class="xrow sub"><span class="nm2">Charge Lv.1</span><span class="v1">588</span><span class="v2">578</span></div><div class="xrow sub"><span class="nm2">Charge Lv.2</span><span class="v1">979</span><span class="v2">963</span></div><div class="xrow sub"><span class="nm2">Charge Lv.3</span><span class="v1">1,218</span><span class="v2">1,197</span></div><div class="xrow"><span class="nm2">Throw</span><span class="v1">1,087</span><span class="v2">3,995</span></div></div><div class="xgroup kib"><div class="gh">Ki blasts</div><div class="xrow"><span class="nm2">One ki blast</span><span class="v1 held"><i class="arm"></i>211</span><span class="v2">322</span></div><div class="xrow"><span class="nm2">Full volley<small>every shot on armor</small></span><span class="v1 held"><i class="arm"></i>1,055</span><span class="v2">627</span></div><div class="xrow"><span class="nm2">Charged ki blast<small>theirs fires 3 shots</small></span><span class="v1"></span><span class="v2"></span></div><div class="xrow sub"><span class="nm2">Charge Lv.1</span><span class="v1 held"><i class="arm"></i>792</span><span class="v2">428 ×3</span></div><div class="xrow sub"><span class="nm2">Charge Lv.2</span><span class="v1 held"><i class="arm"></i>1,187</span><span class="v2">642 ×3</span></div><div class="xrow sub"><span class="nm2">Charge Lv.3</span><span class="v1 held"><i class="arm"></i>1,583</span><span class="v2">855 ×3</span></div></div><div class="xgroup blast"><div class="gh">Blasts</div><div class="xrow"><span class="nm2">B1 Kamehameha<small>vs Chou Makouhou</small></span><span class="v1">7,289</span><span class="v2">8,024</span></div><div class="xrow"><span class="nm2">B2 Kaioken Attack<small>vs Rapid Cannon</small></span><span class="v1">8,568</span><span class="v2">8,676</span></div></div><div class="xgroup ult"><div class="gh">Ultimate</div><div class="xrow"><span class="nm2">Spirit Bomb<small>vs Illusion Smash</small></span><span class="v1">15,345</span><span class="v2">16,875</span></div></div><div class="xgroup spk"><div class="gh">Sparking! Mode</div><div class="xrow"><span class="nm2">Hyper Smash</span><span class="v1">2,131</span><span class="v2">5,624</span></div></div>
               </div>
             </div>
             <div>
@@ -886,11 +911,11 @@ h1 { font-size: 20px; margin: 0 0 4px; }
               <h5>Damage exchange</h5>
               <div class="xhead"><span></span><span>Deal</span><span>Take</span></div>
               <div class="xgroup melee"><div class="gh">Melee</div>
-                <div class="xrow"><span class="nm2">Rush 5-hit</span><span class="v1">1,812</span><span class="v2">2,306</span></div>
+                <div class="xrow"><span class="nm2">Rush 5-hit<small>breaks armor on hit 5</small></span><span class="v1"><i class="arm brk"></i>1,812</span><span class="v2">2,306</span></div>
                 <div class="xrow"><span class="nm2">Throw</span><span class="v1">1,087</span><span class="v2">3,995</span></div>
               </div>
               <div class="xgroup kib"><div class="gh">Ki blasts</div>
-                <div class="xrow"><span class="nm2">Charged, Lv.3</span><span class="v1">1,583</span><span class="v2">855 ×3</span></div>
+                <div class="xrow"><span class="nm2">Charged, Lv.3</span><span class="v1 held"><i class="arm"></i>1,583</span><span class="v2">855 ×3</span></div>
               </div>
               <div class="xgroup blast"><div class="gh">Blasts</div>
                 <div class="xrow"><span class="nm2">B1 Kamehameha</span><span class="v1">7,289</span><span class="v2">8,024</span></div>
