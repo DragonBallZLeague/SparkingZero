@@ -341,9 +341,17 @@ if (v2) {
   ig('Goku Grand Slash follow-ups', slashOf('0000_00'), 'Tornado Slash, Aerial Slash');
   ig('Tien Grand Slash follow-ups (AirRush: no Aerial Slash)', slashOf('0070_00'), 'Tornado Slash');
   for (const n of ['Krillin', 'Goku (Teen)']) ig(`${n} Grand Slash follow-ups (DragonTornado: no Tornado Slash)`, slashOf(data.characters.find(c => c.name === n)?.id), 'Aerial Slash');
+  // 2026-10-10: armor. Goku's fully charged ki blast breaks base Janemba's Hyper Armor (1,919) but not his Sparking Armor (1,439)
+  const gArmor = data.characters.find(c => c.id === '0000_00')?.armor, jArmor = data.characters.find(c => c.id === '0650_00')?.armor;
+  const gFull = gArmor?.breakLevels?.chargedKiBlast?.[2];
+  ig('Goku full charged ki blast breaks base Janemba (Hyper Armor)', gFull != null && jArmor?.base && gFull >= jArmor.base.level, true);
+  ig('Goku full charged ki blast does not break Sparking Janemba', gFull != null && jArmor?.sparking && gFull < jArmor.sparking.level, true);
+  ig('Janemba Sparking Armor damage rate (1,919 to 1,439)', jArmor?.sparking?.damageRate, 0.75);
+  const abGaps = data.characters.filter(c => c.armor && c.stats.armorBreak != null && c.armor.hyperArmorBreakHits !== c.stats.armorBreak).map(c => c.name);
+  check(!abGaps.length, 'every character\'s armor break (hits to break Hyper Armor) follows from the game\'s armor tables', abGaps);
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains)', game);
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains, armor)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

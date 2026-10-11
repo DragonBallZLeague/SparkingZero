@@ -144,7 +144,7 @@
       ]
     },
     "tables.csv": {
-      "rows": 895,
+      "rows": 1545,
       "columns": [
         "table",
         "key",
@@ -723,6 +723,8 @@
       "AimAngleLimit.Pitch",
       "AimAngleLimit.Roll",
       "AimAngleLimit.Yaw",
+      "Armor",
+      "ArmorHitEffectType",
       "AttackEnergyGainScale",
       "BlastBoostNormalMagnification",
       "BlastBoostSparkingMagnification",
@@ -736,6 +738,8 @@
       "BlastUltimateDamageScale",
       "BodyPitchAngleMaxForGiant",
       "BodyPitchAngleMinForGiant",
+      "BreakLevelForGiant",
+      "BreakLevel[]",
       "BulletChargeScale",
       "BulletExpendEnergyScale",
       "ChangeCharacterCooldown",
@@ -767,6 +771,10 @@
       "EnergyDamageResist",
       "FallRecoveryToLandingBorderDistance",
       "FarVanishingAssaultExpendSp",
+      "ForceEnableAttackActionCategories[]",
+      "ForceEnableAttackActionSubCategories[]",
+      "HitBackRate",
+      "Level",
       "LifeHealMaxAtBench",
       "LifePointScale",
       "LiftRecoveryWaitTime",
@@ -821,6 +829,7 @@
       "SmashLevelGaugeDecrementSpeed",
       "SmashLevelGaugeMax",
       "SmashLevelGaugeThresholds[]",
+      "SortId",
       "SparkingBoostBuff[]",
       "SparkingBoostCost",
       "SparkingBoostEndBuff",
@@ -841,7 +850,9 @@
       "TransitionPossibleTimeFromDashAttackToShortDash",
       "ZCounterInputTime[]",
       "ZCounterPlayRate[]",
-      "bIsConsumeSparkingBoostCostInReservation"
+      "bIncreaseSmashLevelGauge",
+      "bIsConsumeSparkingBoostCostInReservation",
+      "bNotThrowable"
     ]
   }
 }

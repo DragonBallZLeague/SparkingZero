@@ -29,7 +29,10 @@
  *   buff-params.csv        file, field, value: ParameterChanging (non-zero), duration
  *   capsules.csv           capsule id, English name and description, type, category
  *   capsule-effects.csv    capsule id, effect, field, value (non-zero changes, true conditions)
- *   tables.csv             table, key, field, value: classes, DP, the common battle constants
+ *   tables.csv             table, key, field, value: classes, DP, the common battle constants, and armor:
+ *                          armor (type -> DamageRate), armorBreak (an attack's ArmorBreakLevel label ->
+ *                          BreakLevel[DP - 1] and BreakLevelForGiant), armorLevel (each armor situation's
+ *                          Level and armor type, ArmorLevel_Common)
  *   curves.csv             curve, time, value: damage scaling curves, and ki-blast speed curves
  *                          (BulletSpeed_*, linked from bullet-params' MoveParam.SpeedCurve)
  *
@@ -114,8 +117,28 @@ const records = (p) => (p.Records || []).map(r => [r.Key, r.Value]);
 tableFrom('CharacterTypeData', 'class', records);
 tableFrom('DPData', 'dp', records);
 tableFrom('CharacterData', 'battle', p => [['CommonParameter', p.CommonParameter || {}]]);
-tableFrom('ArmorData', 'armor', records);
-tableFrom('ArmorBreakLevelData', 'armorBreak', records);
+// Armor: these two tables hold PtrRecords (one asset per record), not inline Records. Two
+// ArmorBreakLevelData keys repeat, once per charge level, in SortId order; the attack files name
+// them with a suffix ("スマッシュ格闘系(パワー)"), so the repeats get it here.
+const BREAK_SUFFIXES = { 'スマッシュ格闘系': ['', '(パワー)', '(フルパワー)', '(ジャスト)'], 'ラッシュ派生系': ['', '(パワー)', '(フルパワー)'] };
+const ptrRecords = (inner, suffixes = {}) => (p) => {
+  const seen = {};
+  return (p.PtrRecords || []).map(r => {
+    const n = seen[r.Key] = (seen[r.Key] ?? -1) + 1;
+    const key = n ? `${r.Key}${suffixes[r.Key]?.[n] ?? `#${n}`}` : r.Key;
+    return [key, fm.load(r.Value)?.props?.[inner] || {}];
+  });
+};
+tableFrom('ArmorData', 'armor', ptrRecords('ArmorData'));
+tableFrom('ArmorBreakLevelData', 'armorBreak', ptrRecords('ArmorBreakLevelData', BREAK_SUFFIXES));
+{
+  // Armor situations (ArmorLevel_Common, the file every character links): key "<situation>#<n>"
+  const a = fm.load('SS/MasterDataAsset/ArmorLevel/ArmorLevel_Common');
+  if (!a) problems.push('missing SS/MasterDataAsset/ArmorLevel/ArmorLevel_Common.json');
+  else (a.props.Records || []).forEach((rec, i) => {
+    for (const [field, value] of leaves(rec.Value || {})) tableRows.push({ table: 'armorLevel', key: `${rec.Key}#${i}`, field, value: text(value) });
+  });
+}
 
 const curveRows = [];
 for (const f of fm.list('SS/Blueprints', /Curve.*\.json$/)) {

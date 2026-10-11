@@ -105,23 +105,30 @@ what the files can't show: thrown objects don't track and reach less far. Some c
 shots or hit several times. Like blasts, they need hit counts and spot checks before their totals can be
 published (test 2).
 
-## Armor and armor breaking (found 2026-10-10, not in the snapshot yet)
+## Armor and armor breaking (done in the data, 2026-10-10)
 
-The game decides per hit whether armor reduces it:
-- **Armor types and their damage rates** (`MasterDataAsset/ArmorData`): Super Armor 0.5, Hyper Armor 0.9 (the
-  Giants' normal armor: Janemba's 0.1), Sparking Armor 0.75, and several 0 (full) armors for barriers, Vanishing
-  Assault and so on.
-- **Each attack category has a break level** (`ArmorBreakLevelData`, the label every attack file carries): a
-  10-entry `BreakLevel` list plus `BreakLevelForGiant`. Rush hit A1 is [-1,0,0,1,1,1,2,2,2,2] / 4, a smash
-  [-1,3,3,4,4,5,…] / 5, a full-power smash, throw or blast 9, a ki blast [-1,0,…] / 3, and a smash (charged) ki
-  blast 3 throughout.
-- **Measured** (Goku (Z - Early) fully charged ki blast, 1,875): against base Janemba 1,919, which is his 1.023
-  ki-blast defense and no armor, so it breaks Hyper Armor. Against Sparking Janemba 1,439, which also applies the
-  0.75, so it doesn't break Sparking Armor.
-- **To do:** `pull-fmodel.mjs` reads these two tables as inline Records, but they are `PtrRecords` to separate
-  assets, so they are missing from tables.csv. Snapshot them and each character's armor level
-  (`MasterDataAsset/ArmorLevel`), then let the engine decide per attack whether armor applies. Today it only knows
-  the rush combo's hits before the armor break.
+`armor` in `characters.json` (`scripts/lib/armor.mjs`), from three game tables now in the snapshot (tables.csv:
+`armor`, `armorBreak`, `armorLevel`):
+- **Armor types and their damage rates** (`ArmorData`): Super Armor 0.5, Hyper Armor 0.9, Sparking Armor 0.75,
+  and several 0 (full) armors for barriers, Vanishing Assault and so on.
+- **Armor situations** (`ArmorLevel_Common`): a hyper-armor holder has Hyper Armor at level 2, and Sparking Armor at
+  level 4 while Sparking. A character with Sparking armor has it at level 3. Smashing and rush follow-ups give
+  Super Armor at 3; blasts, ultimates and super counters at 9; barriers at 10.
+- **Each attack's break level** (`ArmorBreakLevelData`, the label every attack file carries): its 10-entry
+  `BreakLevel` list is indexed by the attacker's **DP - 1**, and a Giant attacker uses `BreakLevelForGiant`. A
+  charged ki blast's charge levels keep the base label (their `ChangePerChargeLv[].ArmorBreakLevel` is None).
+- **A hit breaks armor when its break level is at least the armor's level.**
+
+Checked:
+- **Every character's published armor break** follows from this. It is the hits to break Hyper Armor: DP 1-4
+  give 5, DP 5 gives 4, DP 6 gives 3, DP 7+ gives 1, and Giants give 1.
+- **The league's measurements:** Goku (Z - Early)'s fully charged ki blast (break level 3) against base Janemba's
+  Hyper Armor (level 2) breaks it (1,919), and against his Sparking Armor (level 4) doesn't (1,439).
+- **Roster:** 185 characters have no armor, 42 Sparking Armor (level 3) in Sparking, and 14 Hyper Armor (level 2)
+  that turns into Sparking Armor (level 4) in Sparking.
+
+Next: the engine (and the Vs opponent view) should use each attack's break level against the opponent's armor,
+instead of only the rush combo's hit count.
 
 ## Burst attacks (measured 2026-10-10)
 
@@ -135,8 +142,12 @@ Kaioken. The files explain why:
   BlastUltimate) and Interrupt (4 buffs; the Interrupt category is the Z and Revenge counters).
 - **Burst Melee Attack and Burst Rush are UniqueMoveDerivation,** a category no channel covers, so no buff raises
   them. They may ignore class and DP too: 1,250 is exactly 1,000 × 1.25, and Goku's multipliers are all 1.
-- **To confirm:** a Burst Melee Attack by Vegeta (Z - Scouter), whose melee is ×0.9 by class, and by a character
-  of another DP. If both deal 1,250, Burst damage is fixed for everyone.
+- **Confirmed fixed by class:** Vegeta (Z - Scouter), whose melee is ×0.9 by class, also deals 1,250 and 1,700.
+- **But one modifier does reach them:** `NormalCombativesDamageScale`, a general melee damage modifier (league,
+  2026-10-10). It raises Burst attacks and most likely every melee attack. Today only capsules outside the league's
+  list use it: Evil Strike and Strike of Justice (+5% per step), Melee Attack Boost Ultra, and Melee Attack Zero.
+  The engine needs an "all melee damage" effect for it, applying to every melee channel and to Burst attacks,
+  before any league capsule or buff uses it.
 
 The engine needs this mapping (category to channel) once the other rush follow-ups and counters are published.
 Not in the published data yet.

@@ -30,6 +30,7 @@ import { loadFmodel } from './lib/fmodelData.mjs';
 import { kiBlastsOf, chargedMeleeOf } from './lib/kiBlasts.mjs';
 import { mobilityOf } from './lib/mobility.mjs';
 import { movesetOf } from './lib/moveset.mjs';
+import { armorOf } from './lib/armor.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -49,7 +50,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], smashFixes: [], unnamedFlags: new Map(), kiBlastTags: { normal: {}, standing: {}, moving: {} } };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], smashFixes: [], unnamedFlags: new Map(), armorBreakGaps: [], armorCounts: {}, kiBlastTags: { normal: {}, standing: {}, moving: {} } };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -554,6 +555,13 @@ for (const rc of ref.characters) {
   const chargedMelee = fm ? chargedMeleeOf(fm, id, { coef, damageConstant: K }) : null;
   const mobility = fm ? mobilityOf(fm, id) : null;
   if (mobility) prov.mobility = 'game';
+  const armor = fm ? armorOf(fm, id, { dp: num(r.DP), giant: key === 'giant', sparkingArmor: sparkingArmorOf(id, rc.name) }) : null;
+  if (armor) {
+    prov.armor = 'game';
+    if (stats.armorBreak != null && armor.hyperArmorBreakHits !== stats.armorBreak) report.armorBreakGaps.push([rc.name, `DP ${num(r.DP)}`, stats.armorBreak, armor.hyperArmorBreakHits ?? 'never']);
+    const k = `${armor.base ? armor.base.type + ' ' + armor.base.level : 'none'} / ${armor.sparking ? armor.sparking.type + ' ' + armor.sparking.level : 'none'} in Sparking`;
+    report.armorCounts[k] = (report.armorCounts[k] || 0) + 1;
+  }
   const moveset = fm ? movesetOf(fm, id) : null;
   if (moveset) {
     prov.moveset = 'game';
@@ -580,6 +588,7 @@ for (const rc of ref.characters) {
     chargedMelee,
     mobility,
     moveset,
+    armor,
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
@@ -1104,6 +1113,15 @@ function reportMd() {
     'Rush Chains, Step-In, Rush-In and counter from ReplaceTransitionAction; follow-ups and unavailable moves from ActionFlags (a flag turns a move off), in the controls guide\'s names (scripts/lib/moveset.mjs). ActionFlags whose in-game name is not known yet:',
     '',
     list([...report.unnamedFlags].map(([f, who]) => `${f}: ${who.length} characters (${who.slice(0, 5).join(', ')}${who.length > 5 ? ', …' : ''})`)),
+    '## Armor',
+    '',
+    'From the game files (scripts/lib/armor.mjs): each character\'s armor normally and in Sparking (level, damage rate), and each attack\'s break level (its ArmorBreakLevel label at the attacker\'s DP - 1, BreakLevelForGiant for a Giant). A hit breaks armor when its break level >= the armor\'s level. Characters per armor:',
+    '',
+    table(['Armor normally / in Sparking', 'Characters'], Object.entries(report.armorCounts).sort((a, b) => b[1] - a[1])),
+    '',
+    report.armorBreakGaps.length ? 'Where the published armor break (hits to break Hyper Armor) differs from the game files:' : 'The published armor break (hits to break Hyper Armor) equals the game files for every character.',
+    '',
+    report.armorBreakGaps.length ? table(['Character', 'DP', 'Published', 'Game files'], report.armorBreakGaps) : '',
     '## Images',
     '',
     `Characters with no face icon in public/char_thumbnails: ${report.images.length ? report.images.join(', ') : 'none'}.`,

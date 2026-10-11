@@ -418,6 +418,20 @@ Rush Chains, Step-In, Rush-In and counter from ReplaceTransitionAction; follow-u
 - RollingHammer: 2 characters (Goku (Mini), Vegeta (Mini) Super Saiyan 3)
 - Explosion: 2 characters (Vegeta (Mini) Super Saiyan 3, Glorio)
 
+## Armor
+
+From the game files (scripts/lib/armor.mjs): each character's armor normally and in Sparking (level, damage rate), and each attack's break level (its ArmorBreakLevel label at the attacker's DP - 1, BreakLevelForGiant for a Giant). A hit breaks armor when its break level >= the armor's level. Characters per armor:
+
+| Armor normally / in Sparking | Characters |
+| --- | --- |
+| none / none in Sparking | 185 |
+| none / Sparking Armor 3 in Sparking | 42 |
+| Hyper Armor 2 / Sparking Armor 4 in Sparking | 14 |
+
+
+The published armor break (hits to break Hyper Armor) equals the game files for every character.
+
+
 ## Images
 
 Characters with no face icon in public/char_thumbnails: none.
