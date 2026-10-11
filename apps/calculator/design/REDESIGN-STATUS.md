@@ -19,7 +19,7 @@ will ship it later, to dev-branch on its own or with the redesign.
   dash ki blasts; smash and Heavy Finish charge levels, Hyper Smash; Mobility; Moveset; Traits), the sheet a
   Charged ki blast tile and a trait chip under the name. After round 6, armor markers (today's calculator's ARM
   badges): shields on armored hits in Vs opponent's Exchange with the rush hit by hit, and a Breaking armor table
-  in Full stats and Compare's All stats (rush hits 1-4, Lv.1 smash and Heavy Finish, ki blast, charged ki blast;
+  in Full stats and Compare's All stats (rush hits 1-4, Lv.1 smash, ki blast, charged ki blast;
   blasts and ultimates always break armor, the league says). The sheet keeps its Armor tile for the character's
   own armor.
 - **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
