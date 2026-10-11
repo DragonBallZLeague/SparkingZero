@@ -266,6 +266,9 @@ Agreed with the league on 2026-10-10.
 5. **Low-health buffs,** shown as a trait.
 6. **The other follow-ups and counters,** in Full stats only, since they are the same for everyone apart from
    class and DP.
+7. **Rush Chain damage in the Moveset (the league's choice, 2026-10-10):** each chain row shows its damage at
+   its charges and its follow-ups' hits, only for the chains the character has. Heavy Finish stays in Melee too.
+   Waits on the Rush Chain tests below.
 
 ## Tests for the league
 
@@ -295,3 +298,32 @@ Results from 2026-10-10:
      else. **The flag means "no Violent Rush"** (confirmed 2026-10-10: Nappa, Chi-Chi, Ma Junior Giant Form,
      Broly (Z) and Broly (Z) Legendary Super Saiyan are flagged and can't; Broly (Z) Super Saiyan isn't and can).
 4. **Goku's fully charged smash: 1,400, and his Hyper Smash: 2,450 (1,960 × 1.25),** both as predicted. The smash charge levels read correctly.
+
+### Rush Chain tests (proposed 2026-10-10, to run)
+
+The league wants every Rush Chain's damage on its row in the Moveset (the chain, then its follow-ups), shown only
+for the chains a character has. The files give each chain's Power at three charges (`act<chain>N/P/F`) and each
+follow-up's hits; these tests settle what the files leave open. For each, note the combo's total before and after
+the chain (as in Tien's Heavy Finish test), on a dummy with no capsules or skills.
+
+1. **Channel, Tien's Ki Blast Cannon** (Rush Chain 1: 1 rush hit, 429, then the cannon). Tien's combo
+   coefficient is 1.1 and his smash 1.0, so the two channels differ. Combo predicts **853 uncharged, 1,472 fully
+   charged**; smash would give 775 and 1,338. Then its follow-up, Ki Blast Cannon Smash: combo 880, smash 800.
+2. **Flying Kicks have no Power in the files** (Goku (Z - Early), Rush Chain 3: 3 rush hits, 1,170, then the
+   kicks). The two kick hits (`actFLK`, `actFLK_2`) carry no Power, so they use the asset's default, which is
+   unknown; the fully charged version (`actFLKF`) is 320, so 400 for Goku. Note each kick's damage, uncharged
+   and fully charged.
+3. **Multi-hit chains, Bardock's Rolling Hammer** (Rush Chain 3: 3 rush hits, 1,170). The files give one hit:
+   **338 uncharged, 425 part, 563 full**. Note how many hits it lands and each hit's damage. Then Rolling
+   Hurricane: 500, then 800.
+4. **Follow-ups and combo scaling, Goku's Heavy Crush** (Rush Chain 1: 1 rush hit, 390, Heavy Finish 675, then
+   Heavy Crush). Predicted **350, 425, 563** for its three presses. Lower numbers mean later hits in a combo are
+   scaled down, which Combo Master and Combo King reduce.
+5. **Ki Blast Cannon Attack** (Goku (Z - Early), Rush Chain 2: 2 rush hits, 780, Ki Blast Cannon 775, then the
+   attack). Predicted **625, 775, 925**.
+6. **Rush Ki Waves and Energy Storm, Piccolo** (Rush Chain 2: 2 rush hits, 780). Uncharged waves: **3 hits of
+   125**; the charged versions have no Power in the files, so note them. Energy Storm: **738, 488, then a ki
+   blast of 157** (if the last hit is a ki blast, as the files say).
+7. **Blaster Wave, Goku (GT)** (Rush Chain 2: 2 rush hits, 820). Predicted **814 uncharged, 1,064 part, 1,405
+   full** (its Power matches Ki Blast Cannon's). Note Blaster Wave Combo's hits too: the files don't tie it to an
+   action yet.
