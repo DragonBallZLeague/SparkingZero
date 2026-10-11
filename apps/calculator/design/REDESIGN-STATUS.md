@@ -23,7 +23,11 @@ will ship it later, to dev-branch on its own or with the redesign.
   charged smash levels, rush follow-ups, movement ki costs, low-health buffs) and four league tests. Decide
   which go in first, so Full stats and the sheet are laid out for them from the start.
 
-Settled (2026-10-10): all 241 card images are cut into `public/char_art/` (11.7 MB, with `sizes.json`). stats on the sheet get a thin bar filled to where the character sits in the roster's range
+Settled (2026-10-10, round 5): the sheet shows the Moveset (four Rush Chains with follow-ups, Step-In, Rush-In,
+Grand Slash, Sparking moves) under the Command list; trait chips under the name for hyper armor, can't fly, ki
+drain, drain immune, can't charge ki (and Goku's low-HP power-up); a non-standard ki blast shows its type in its
+tile (laser, thrown, homing ×3, paralyzing ×2). Compare's and Vs opponent's All stats include Mobility and
+Moveset (Vs also Traits). all 241 card images are cut into `public/char_art/` (11.7 MB, with `sizes.json`). stats on the sheet get a thin bar filled to where the character sits in the roster's range
 (5th to 95th percentile; no average marker), "less is better" stats fill the better the character is, and rates
 (ki charge, ki regen, skill gauge gain) use chevrons that light up with speed. Health, starting ki and
 auto-recharge get no bar. Blasts and ultimates get none either: their types differ too much.
@@ -36,12 +40,6 @@ auto-recharge get no bar. Blasts and ultimates get none either: their types diff
 
 ## 2. Views and interactions not mocked yet
 
-- **Traits for other characters:** the concept shows Goku's one trait (low-HP power-up). Decide which traits earn
-  a chip on the sheet (hyper armor, no Violent Rush, laser or thrown ki blasts, can't fly, ki drain) and which stay in
-  Full stats; and the Moveset on the sheet itself, if at all.
-- **New sections in Compare and Vs All stats:** Mobility and Moveset rows aren't drawn there yet.
-
-- Vs opponent's **All stats** mode. It is described in the concept but not drawn.
 - Compare's **All stats** mode on a phone.
 - **Character picker** (the nameplate's "Change"), on the sheet and on each side of Compare and Vs.
 - **Capsule picker** (the hexes): the ruleset, budget and group caps, the rule warnings, and notes for effects the

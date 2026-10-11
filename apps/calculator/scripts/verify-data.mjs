@@ -331,6 +331,7 @@ if (v2) {
   for (const [cid, want] of [
     ['0000_00', 'Heavy Finishes: Heavy Crush | Ki Blast Cannon: Ki Blast Cannon Attack | Flying Kicks | Heavy Finishes: Heavy Crush'],
     ['0070_00', 'Ki Blast Cannon: Ki Blast Cannon Smash | Flying Kicks | Heavy Finishes: Heavy Crush | Heavy Finishes: Heavy Crush'],
+    [data.characters.find(c => c.name === 'Goku (Mini)')?.id, 'Flying Kicks | Heavy Finishes: Heavy Crush | Heavy Finishes: Heavy Crush | Flying Kicks'],
     [data.characters.find(c => c.name === 'Gamma 1')?.id, 'Flying Kicks | Rolling Hammer: Rolling Hurricane: Rolling Press | Heavy Finishes: Heavy Crush: Delta Heavy Finish | Ki Blast Cannon: Ki Blast Cannon Smash: Ki Blast Cannon Attack'],
     ['0550_00', 'Flying Kicks | Ki Blast Cannon: Ki Blast Cannon Attack | Rush Ki Waves: Energy Storm | Heavy Finishes: Heavy Crush: Delta Heavy Finish'],
     ['0551_00', 'Heavy Finishes: Heavy Crush: Delta Heavy Finish | Rolling Hammer: Rolling Hurricane | Blaster Wave: Blaster Wave Combo | Flying Kicks'],

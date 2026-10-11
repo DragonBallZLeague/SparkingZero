@@ -151,8 +151,10 @@ How the follow-ups are read:
   (Teen) show only Aerial Slash). Gamma 1's in-game list matches too. Roster: both 60, Tornado Slash only
   108, Aerial Slash only 54, neither 16, no Grand Slash 3 (Giants).
 - Flags without a known in-game name (REPORT.md "Moveset"): BlastRepel (Broly (Z) LSS), EnergyWave, RollingHammer,
-  Explosion (only Goku (Mini), Glorio, Vegeta (Mini) Super Saiyan 3). Their in-game lists would name them; the
-  files predict Goku (Mini): Flying Kicks | Heavy Finishes: Heavy Crush | Heavy Finishes: Heavy Crush | Flying Kicks.
+  Explosion (only Goku (Mini), Glorio, Vegeta (Mini) Super Saiyan 3). Goku (Mini)'s in-game list matches the files
+  (Flying Kicks | Heavy Finishes: Heavy Crush | Heavy Finishes: Heavy Crush | Flying Kicks; Grand Slash: Aerial
+  Slash), so his EnergyWave and RollingHammer flags turn off nothing he would otherwise show: most likely chain
+  types he doesn't use (Rush Ki Waves, Rolling Hammer).
 
 ## Move and ability flags
 
