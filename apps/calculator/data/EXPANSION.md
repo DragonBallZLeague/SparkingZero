@@ -131,7 +131,7 @@ A Mobility section would hold the short dash (already shown), these ki costs and
 
 Each character's file sets which moves and abilities it has (`ActionFlag.*`, `AbilityFlag.*` in
 `character-values.csv`). This would give each character a moveset and trait list:
-- **`SparkingRush`**, 50 characters (meaning still open, see test 3): Great Ape Vegeta, Master Roshi Full Power,
+- **`SparkingRush`**, 50 characters, most likely **no Violent Rush** (to confirm, see test 3): Great Ape Vegeta, Master Roshi Full Power,
   Frieza (Z) 2nd Form, Frieza (Z) Full Power, Cell 2nd Form, Majin Buu, Mr. Satan, Chiaotzu, Yajirobe, Eighter,
   Chi-Chi, Nappa, Super Zarbon, Dodoria, Recoome, Guldo, King Cold, Android 16, Android 19, Dr. Gero, Babidi, Frieza
   Force Soldier, the five Broly forms, Super Garlic Jr., Dr. Wheelo, Lord Slug, Lord Slug Giant Form, Cooler Final
@@ -193,5 +193,7 @@ Results from 2026-10-10:
        as the files predict. `BS` in an action name means Burst (`actBSS*` are probably the Burst Smashes).
    - The 50 characters with `ActionFlag.SparkingRush` are **not** the Violent Rush or Burst Rush list: Goku (Z - Early) and Tien
      have the Violent Rush in game but not the flag. The flagged characters have the same action files as everyone
-     else. To find out: what do those 50 have in common in game (a different Sparking rush, perhaps the 360 one)?
-4. **Goku's fully charged smash: 1,400,** as predicted. The smash charge levels read correctly.
+     else. The league's reading (2026-10-10): they are the heavy-set power characters, the Giants and the weak
+     characters, so the flag most likely marks characters who **cannot** do the normal Violent Rush. To confirm: try a
+     Violent Rush with Nappa or Chi-Chi.
+4. **Goku's fully charged smash: 1,400, and his Hyper Smash: 2,450 (1,960 × 1.25),** both as predicted. The smash charge levels read correctly.
