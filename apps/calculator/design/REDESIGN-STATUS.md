@@ -1,8 +1,9 @@
 # Calculator redesign: what is left
 
-The league chose concept B, the in-game character sheet (`concepts/concept-b.html`), on 2026-10-09. It has been
-through six review rounds, the last on 2026-10-10, and the league signed off its four views that day. This file lists what is still open
-before the detailed demo and the rebuild. Update it as items close; delete it with `design/` once the real pages ship.
+The league chose concept B, the in-game character sheet (`concepts/concept-b.html`), on 2026-10-09, signed off its
+four views on 2026-10-10, and signed off everything mocked since (rounds 7 to 18) on 2026-10-11. This file lists
+what is still open before the detailed demo and the rebuild. Update it as items close; delete it with `design/`
+once the real pages ship.
 
 The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its own. None of this blocks it.
 
@@ -10,73 +11,60 @@ The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its
 smash now comes from the game files, measured by the league on 2026-10-10) is on this branch only. The league
 will ship it later, to dev-branch on its own or with the redesign.
 
-## 1. Decisions waiting on the league
+## 1. Signed off
 
-- **Pickers (round 7, 2026-10-10):** the character picker (the roster as the game's face icons with DP, filtered by
-  search, team, class and DP; a preview with art, headline stats and forms before picking; from Compare or Vs it
-  fills one side) and the capsule picker (the build with budget and attack-cap meters showing the hovered capsule,
-  rule warnings and effects the stats can't show; every allowed capsule by category with what it changes on this
-  build, e.g. Rush 5-hit 2,523 → 2,648; In Sparking! and Not in the stats tags; banned hidden behind "Show
-  banned"). In `concepts/concept-b.html#pick`. The league's first review (2026-10-10): every form stays its own face; Ki and Skill became separate capsule groups; faces sit on their class's colour (split tiles for sub-types and close colours). Waiting on the league's look at those changes.
+**2026-10-11, rounds 7 to 18** (the concept's tabs 1 to 7):
+- **Pickers (round 7, `#pick`):** every form its own face, faint class tints (a second colour as a tint on the name
+  strip), class chips carry their colour, Ki and Skill separate capsule groups.
+- **Rush Chains (rounds 8, 16-17):** named Rush Chains, after Melee, rose; each chain type with its charge levels
+  and each follow-up on its own row with its total (Grand Slash and Lift Strike too); the sheet shows full-charge
+  damage and follow-up totals. Combat limits: the follow-up limit and each pursuit.
+- **Command list (rounds 9 to 13, 15 to 17):** Full stats' move cards (Skills, Blasts, Ultimates; up to 3 a row);
+  the sheet's rows show the main type, primary values, then effects and minor tags, a skill's duration in the
+  Damage column. Trait sort: blasts' tiles Clash, Impact power, Speed, Tracking, Lunge speed, Time limit, tags
+  Initial cost, Lock-on required, No Step Back, Unguardable, Cinematic, Chargeable, Audience flees, Destroys map,
+  Targets giants; skills' tiles Activation, Targets, Armor, tags Unguardable, Cutscene, Interrupts; Instant ki,
+  Instant Sparking and stat modifiers in the effect tiles; self-damage a red panel; a Special line; stage buttons
+  only for reactivation stages; Grab and Crash types.
+- **Round 14 views (`#more`):** opponent build editing on Vs (skills and Sparking first, then capsules by category
+  with a points bar, then the league's lineup builds), Compare's All stats on a phone ("Only differences"),
+  breakdowns on touch (bottom sheet), mouse (hover, click pins) and keyboard, Similar fighters (what differs; low
+  priority for space).
+- **Layout (rounds 15 to 18):** two-fighter headers with every head on one line at relative size; names wrap before
+  the parenthesis; the Sheet's order is Toughness, Resources, Command list, Offense, Rush Chains, Sparking! Mode;
+  Full stats puts Resources under Toughness and has collapsible sections (`#r18`: a closed header keeps its
+  headline numbers; desktop open, phone closed but Toughness; remembered per viewer).
 
-- **Round 18 (2026-10-11, `#r18`):** two options beside the current pages, not replacing them. The Sheet with the Command list after Resources, above Offense (first tried at the top; moves set a character apart, and most core stats come from DP and class); the league is hesitant and may keep the current order, which tab 1 still shows. Full stats with collapsible sections: a fold arrow on each header, a closed section keeps its headline numbers in its header, section chips jump to (and open) a section, Collapse all / Expand all; desktop starts all open, a phone starts with all but Toughness closed; open or closed is remembered per viewer; the Sheet stays fully open. Waiting on the league's look.
-- **Round 16-17 (2026-10-11):** Full stats: Resources moved under Toughness (less empty space under Melee), Aerial Slash shows its measured 1,525 (three kicks 1,125, then 400) and Lift Strike was added (675 / 900 / 1,338); the mock rows predated those measurements. Instant ki and Instant Sparking are skill effects, shown in the effect tiles with the stat modifiers (ki yellow, Sparking purple), not as a tile or tag. The opponent's skills and Sparking come before their capsules (many users won't touch the build). Compare's phone bar uses the face avatars, large and cut by the bar. Names wrap before the parenthesis ("Vegeta / (Z - Scouter)"). The sheet's Command list shows each move's main type, primary values, then effects and minor tags, with a skill's duration in the Damage column; the sheet's Rush Chains show full-charge damage and follow-up totals, plus Lift Strike. Waiting on the league's look.
-- **Round 15 (2026-10-11):** the opponent's build reads by capsule category (rows with cost, full name and category in its colour; a bar of the build's points by category; the same colours on the league builds; the current build first, league builds after); skill and Sparking labels keep their width beside toggles; two-fighter headers put every head on one line just inside the top at relative size, so a fighter sits the same in every matchup (replaces the shared floor and round 14's per-pair scale); Compare's phone name bar shows card art cut by the bar. The trait sort is settled: Destroys map and Targets giants are minor tags, Instant ki and skill Armor primary tiles (cards in Full stats' frame of other characters). Capsule categories are assigned by effect in the mock; the data has none yet. Waiting on the league's look.
-- **Round 14 (2026-10-11, `#more`):** first versions of the views not mocked before: editing the opponent's build on Vs opponent (league lineup builds for that fighter first, from the website's lineups; then No capsules or Same as yours, their capsules, skills and Sparking; changed Exchange rows tinted old → new), Compare's All stats on a phone (value | stat | value rows, "Only differences" on, shared stats folded into a "Same for both" line, section chips), breakdowns on touch (a bottom sheet), with a mouse (hover previews, click pins) and a keyboard (every dotted number a Tab stop; Enter or Space opens, Esc closes), and Similar fighters (was Closest fighters; it lists what differs, since the nine core stats come mostly from DP and class and many same-DP fighters are near-identical). Waiting on the league's look.
-- **Round 13 (2026-10-11):** Unguardable back on skills; penalties applied on activation shown with the buff, not as stages; No Step Back; Grand Slash damage. Data published for them (interrupts, stages, noStepBack, crash; Crash confirmed by the league).
-- **Round 12 (2026-10-11):** trimmed traits (Initial cost only when different, Lock-on required only when true, Burst cost only in the cost display, no Unguardable on skills), a Special line for unique rules, stage buttons for multi-stage skills, Interrupts; a frame of other characters' cards. Interrupts, stages and Devilmite Beam's wickedness scaling are published; the Special texts themselves are still to publish.
-- **Round 11 (2026-10-11):** tighter Command list cards (primary values beside the damage, minor traits as small tags); Unguardable once; Speed clash; Grab for throw-type rush blasts; lunge speed only on Rush and Grab. **Settled (2026-10-11):** blasts: tiles Clash, Impact power, Speed, Tracking, Lunge speed, Time limit; tags Initial cost, Lock-on required, No Step Back, Unguardable, Cinematic, Chargeable, Audience flees, Destroys map, Targets giants. Skills: tiles Activation, Targets, Armor; tags Unguardable, Cutscene, Interrupts; Instant ki and Instant Sparking are effects, shown with the stat modifiers.
-- **Round 10 (2026-10-11):** Command list rows (Skills, Blasts, Ultimates; up to 3 a row), wide cards with the main type by the damage, boost labelled "+1 bar", no Lunge Fighting tag; Breaking armor under Ki blasts. Open: how to show the 10 Throw-type rush blasts and the 6 lunging non-rush blasts.
-- **Round 9 (2026-10-11):** Full stats' Command list of move cards (blasts, ultimates, skills with every value the data has); Heavy Finish and Perfect Smash out of Melee. Waiting on the league's look.
-- **Round 8 (2026-10-11):** Rush Chains (renamed from Moveset) after Melee in a rose of its own, with chain and follow-up damage; follow-ups one per line as separate routes; Combat limits per pursuit; class colours inside the picker's class chips. Waiting on the league's look.
+**2026-10-10:** concept B's four views as of round 6 and the armor markers (shields in Vs opponent's Exchange, the
+Breaking armor table in Full stats and Compare's All stats); Giants ×1.3 on their card height; the stat expansion
+in `characters.json` (`data/EXPANSION.md` keeps its open items).
 
-Signed off (2026-10-10): **concept B's four views** as of round 6 and the armor markers. Round 6: Rush Chains drawn as rush-hit pips, the chain, then ▸ follow-ups
-  (sheet, Full stats, Compare, Vs); charge levels tabbed under each attack (Charge Lv.1-3); a Sparking! Mode section
-  for Sparking-only moves and traits; ki blasts in their own red-orange; a Full volley roster bar; Vs All stats as
-  both full sheets side by side and an expanded Exchange (charge levels, charged ki blast, Hyper Smash). Before that, round 5 (2026-10-10): Full stats gained the new game-file data (charged, jump and
-  dash ki blasts; smash and Heavy Finish charge levels, Hyper Smash; Mobility; Moveset; Traits), the sheet a
-  Charged ki blast tile and a trait chip under the name. After round 6, armor markers (today's calculator's ARM
-  badges): shields on armored hits in Vs opponent's Exchange with the rush hit by hit, and a Breaking armor table
-  in Full stats and Compare's All stats (rush hits 1-4, Lv.1 smash, ki blast, charged ki blast;
-  blasts and ultimates always break armor, the league says). The sheet keeps its Armor tile for the character's
-  own armor.
-Also settled: **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
-  cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them (the league
-  approved it on Janemba, 2026-10-10).
-Done (2026-10-10): the stat expansion (charged, jump and dash ki blasts; smash and Heavy Finish charge levels;
-Mobility; Moveset; Traits; armor levels, which the engine now uses) is in `characters.json`, checked against the
-league's measurements, and mocked in rounds 5 and 6. `data/EXPANSION.md` keeps the open items (Burst moves in the
-data, an all-melee effect for `NormalCombativesDamageScale`, the Sparking armor-break bonus test).
+## 2. Open items
 
-Settled (2026-10-10, round 5): the sheet shows the Moveset (four Rush Chains with follow-ups, Step-In, Rush-In,
-Grand Slash, Sparking moves) under the Command list; trait chips under the name for hyper armor, can't fly, ki
-drain, drain immune, can't charge ki (and Goku's low-HP power-up); a non-standard ki blast shows its type in its
-tile (laser, thrown, homing ×3, paralyzing ×2). Compare's and Vs opponent's All stats include Mobility and
-Moveset (Vs also Traits). all 241 card images are cut into `public/char_art/` (11.7 MB, with `sizes.json`). stats on the sheet get a thin bar filled to where the character sits in the roster's range
-(5th to 95th percentile; no average marker), "less is better" stats fill the better the character is, and rates
-(ki charge, ki regen, skill gauge gain) use chevrons that light up with speed. Health, starting ki and
-auto-recharge get no bar. Blasts and ultimates get none either: their types differ too much.
+Data the rebuild needs (none of it blocks the demo; the demo can use the mock's stand-ins):
+- **Capsule categories.** The data has none; the mock assigns them by effect (Melee, Ki blasts, Blasts, Toughness,
+  Ki, Skill, Movement, Sparking!, Team). Add a curated category per capsule (103 capsules) for the build rows,
+  the points bar and the capsule picker's groups.
+- **Special texts** for a move's unique rule (Neo Tri-Beam, Evil Containment Wave, Body Change, Devilmite Beam).
+- **League lineup builds** for the opponent's build: read the website's `public/content/lineups/` in the data
+  build, grouped by matching capsules.
+- **Unknown names** in `data/TESTS.md` (four move flags, the counter's follow-up, the Dragon Dash "BK" cost).
+
+Small decisions, settled by default unless the league says otherwise:
+- **Names with no parenthesis** (141 of 241) or a long form after it (14): break before the form name
+  ("Gotenks / Super Saiyan 3"); names with no form part (Frieza Force Soldier, Spike the Devil Man) wrap normally.
+- **Full stats' Breaking armor** follows Ki blasts in reading order but starts the third column on desktop.
+
+**Planned after the rebuild (the league wants it):** conditions controls, where each side's health, ki bars and
+skill or blast stock can be set, so conditional effects apply with exact numbers: health-step capsules (Fury!,
+Latent Power!) and future capsules that work off blast stock counts or percentages and ki bar amounts. The engine
+notes these effects as "not applied" today.
 
 ### Ideas kept for later
 
 - **"To knock out"** on Vs opponent (rush combos or ultimates each side needs). The league didn't find that
   measure useful, so it was taken out of the mock. Keep the idea of a short "who wins the exchange" summary for
   a later round.
-
-## 2. Views and interactions not mocked yet
-
-All first mocked in round 14 (`#more`), waiting on the league's look:
-- Compare's **All stats** mode on a phone.
-- **Opponent build editing** on Vs opponent: their capsules, skills and Sparking, with the league's lineup builds.
-- **Breakdowns on touch screens**: tap to open and close, and keyboard and screen-reader access.
-- **Similar fighters** (was "Closest fighters"): what differs, same DP first; tapping one fills Compare's right side.
-  The league wants it kept, but it must not take space from more important panels.
-- **Combat limits**: mocked in round 8 (follow-up limit and each pursuit); its wording is waiting on the league.
-
-**Planned (the league wants it, after the rebuild):** conditions controls, where each side's health, ki bars and skill
-or blast stock can be set, so conditional effects apply with their exact numbers: health-step capsules (Fury!,
-Latent Power!, which most of the league's Piccolo builds carry) and future capsules that work off blast stock
-counts or percentages and ki bar amounts. The engine notes these effects as "not applied" today.
 
 ## 3. Build-out
 
