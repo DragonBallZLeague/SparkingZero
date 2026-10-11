@@ -21,10 +21,10 @@ will ship it later, to dev-branch on its own or with the redesign.
 - **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
   cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them (the league
   approved it on Janemba, 2026-10-10).
-- **Stat expansion.** Order agreed: charged ki blast (with archetype tags), jump and dash ki blasts, charged
-  smash levels, then a Mobility section. `data/EXPANSION.md` lists what the game files can add (charged and jump/dash ki blasts,
-  charged smash levels, rush follow-ups, movement ki costs, low-health buffs) and four league tests. Decide
-  which go in first, so Full stats and the sheet are laid out for them from the start.
+Done (2026-10-10): the stat expansion (charged, jump and dash ki blasts; smash and Heavy Finish charge levels;
+Mobility; Moveset; Traits; armor levels, which the engine now uses) is in `characters.json`, checked against the
+league's measurements, and mocked in rounds 5 and 6. `data/EXPANSION.md` keeps the open items (Burst moves in the
+data, an all-melee effect for `NormalCombativesDamageScale`, the Sparking armor-break bonus test).
 
 Settled (2026-10-10, round 5): the sheet shows the Moveset (four Rush Chains with follow-ups, Step-In, Rush-In,
 Grand Slash, Sparking moves) under the Command list; trait chips under the name for hyper armor, can't fly, ki
