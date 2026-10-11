@@ -4,7 +4,8 @@
  *
  *   characters     referencedata/characters.csv: canonical id, name and order
  *   transformations referencedata/transformations.json: forms and fusions by id
- *   capsules       referencedata/capsules.csv rows of Type "Capsule"
+ *   capsules       referencedata/capsules.csv rows of Type "Capsule", each with its build type from
+ *                  referencedata/capsule-types.json (the list the Analyzer reads too)
  *   rules          referencedata/capsule-rules.yaml: rulesets (cost cap, bans, group caps)
  *   teamNames      referencedata/teams.json: display name by website slug
  *   season         apps/website/public/content/teams/<season>.yaml: team pools (master_list)
@@ -28,6 +29,7 @@ export function loadRefdata(root, teamsSeason) {
   const transformations = JSON.parse(fs.readFileSync(ref('transformations.json'), 'utf8'));
   delete transformations._comment;
 
+  const capsuleTypes = JSON.parse(fs.readFileSync(ref('capsule-types.json'), 'utf8'));
   const capsules = readCsv(ref('capsules.csv')).rows
     .filter(r => r.Type.trim() === 'Capsule')
     .map(r => ({
@@ -35,6 +37,7 @@ export function loadRefdata(root, teamsSeason) {
       name: r['Item Names'].trim(),
       cost: Number(r.Cost),
       exclusiveTo: r['Exclusive To'].trim() || null,
+      type: capsuleTypes.capsules[r.ID.trim()]?.type ?? null,
       description: r.Effect.replace(/\s*\r?\n\s*/g, ' ').trim(),
     }));
 

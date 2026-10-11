@@ -3,7 +3,10 @@
  * 
  * Generates initial capsuleMetadata.json from capsules.csv using automated classification.
  * Output requires human review before use in production.
- * 
+ *
+ * Its buildType is no longer used (2026-10-11): each capsule's build type lives in
+ * referencedata/capsule-types.json, shared with the Character Calculator. Edit types there.
+ *
  * Usage: node scripts/generateCapsuleMetadata.js
  * 
  * Created: November 6, 2025

@@ -1,7 +1,8 @@
 /**
  * Capsule Data Processor
  * 
- * Loads capsule data from CSV and enriches it with metadata from capsuleMetadata.json.
+ * Loads capsule data from CSV, with each capsule's build type from referencedata/capsule-types.json (shared with
+ * the Character Calculator) and its effect tags from capsuleMetadata.json.
  * Provides build type classification and effect tags for meta analysis.
  * 
  * Created: November 5, 2025
@@ -9,6 +10,11 @@
  */
 
 import capsuleMetadata from '../config/capsuleMetadata.json';
+// Each capsule's build type, one list shared with the Character Calculator (edit it at the repo root only)
+import capsuleTypes from '../../../../referencedata/capsule-types.json';
+
+/** A capsule's build type ("Melee", "Ki Blast"...), or 'Unknown' for a capsule the shared list lacks. */
+const buildTypeOf = (id) => capsuleTypes.capsules[id]?.type || 'Unknown';
 
 /**
  * Parse CSV text into structured data
@@ -101,49 +107,33 @@ function parseCSVLine(line) {
 }
 
 /**
- * Normalize build type from metadata format to display format
- * Converts "ki-blast" -> "Ki Blast", "ki-efficiency" -> "Ki Efficiency"
- * @param {String} buildType - Build type from metadata (hyphenated, lowercase)
- * @returns {String} Normalized build type (capitalized, spaces)
- */
-function normalizeBuildType(buildType) {
-  if (!buildType) return 'Unknown';
-  
-  // Convert hyphens to spaces and capitalize each word
-  return buildType
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-/**
- * Process capsules with metadata enrichment (build types, effect tags)
+ * Process capsules with their build type (referencedata/capsule-types.json) and metadata (effect tags)
  * @param {Array} capsules - Raw capsule data from CSV
  * @returns {Array} Enriched capsules with metadata
  */
 export function processCapsules(capsules) {
   return capsules.map(capsule => {
     const metadata = capsuleMetadata.capsules[capsule.id];
-    
+    const buildType = buildTypeOf(capsule.id); // "Ki Blast", "Ki Efficiency"
+
     if (metadata) {
-      const normalizedBuildType = normalizeBuildType(metadata.buildType);
       return {
         ...capsule,
         effect: metadata.effect || capsule.effect, // Use metadata effect (has full multi-line text)
-        buildType: normalizedBuildType,  // Normalized: "Ki Blast", "Ki Efficiency"
+        buildType,
         effectTags: metadata.effectTags,
         trackedActions: metadata.trackedActions,
         // Keep archetype for backward compatibility during transition
-        archetype: normalizedBuildType
+        archetype: buildType
       };
     }
-    
+
     return {
       ...capsule,
-      buildType: 'Unknown',
+      buildType,
       effectTags: [],
       trackedActions: [],
-      archetype: 'Unknown'
+      archetype: buildType
     };
   });
 }
@@ -239,7 +229,7 @@ export function loadCapsuleData(csvText) {
 
   // Get build type counts from metadata
   const buildTypeCounts = {};
-  capsuleMetadata.buildTypes.forEach(type => {
+  capsuleTypes.types.forEach(type => {
     buildTypeCounts[type] = processedCapsules.filter(c => c.buildType === type).length;
   });
   buildTypeCounts.Unknown = processedCapsules.filter(c => c.buildType === 'Unknown').length;

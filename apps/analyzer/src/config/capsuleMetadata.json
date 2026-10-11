@@ -2,15 +2,6 @@
   "version": "1.0.0",
   "lastUpdated": "2025-11-07",
   "lastReviewedBy": "automated-initial",
-  "buildTypes": [
-    "melee",
-    "blast",
-    "ki-blast",
-    "defense",
-    "skill",
-    "ki-efficiency",
-    "utility"
-  ],
   "capsules": {
     "00_0_0000": {
       "id": "00_0_0000",
@@ -18,7 +9,6 @@
       "cost": 1,
       "effect": "Increases maximum health by 2,500 HP (1/4 of a bar).",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "health-boost"
       ],
@@ -31,7 +21,6 @@
       "cost": 1,
       "effect": "Increases Rush Attack damage by 2.5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "rush-damage"
       ],
@@ -44,7 +33,6 @@
       "cost": 3,
       "effect": "Increases Rush Attack damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "rush-damage"
       ],
@@ -57,7 +45,6 @@
       "cost": 5,
       "effect": "Increases Rush Attack damage by 7.5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "rush-damage"
       ],
@@ -70,7 +57,6 @@
       "cost": 1,
       "effect": "Increases Smash Attack damage by 2.5%. \r\nIncreases Rush Chain damage by 2.5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "smash-damage",
         "combo-damage",
@@ -85,7 +71,6 @@
       "cost": 3,
       "effect": "Increases Smash Attack damage by 5%. \r\nIncreases Rush Chain damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "smash-damage",
         "combo-damage",
@@ -100,7 +85,6 @@
       "cost": 5,
       "effect": "Increases Smash Attack damage by 7.5%. \r\nIncreases Rush Chain damage by 7.5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "smash-damage",
         "combo-damage",
@@ -115,7 +99,6 @@
       "cost": 1,
       "effect": "Increases Rush Ki Blast damage by 2.5%. \r\nIncreases Smash Ki Blast damage by 2.5%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "blast-damage",
         "ki-blast-damage"
@@ -132,7 +115,6 @@
       "cost": 3,
       "effect": "Increases Rush Ki Blast damage by 5%. \r\nIncreases Smash Ki Blast damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "blast-damage",
         "ki-blast-damage"
@@ -149,7 +131,6 @@
       "cost": 5,
       "effect": "Increases Rush Ki Blast damage by 7.5%. \r\nIncreases Smash Ki Blast damage by 7.5%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "blast-damage",
         "ki-blast-damage"
@@ -166,7 +147,6 @@
       "cost": 2,
       "effect": "Increases Burst Rush damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [],
       "trackedActions": [],
       "notes": ""
@@ -177,7 +157,6 @@
       "cost": 1,
       "effect": "Increases Burst Meteor damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [],
       "trackedActions": [],
       "notes": ""
@@ -188,7 +167,6 @@
       "cost": 1,
       "effect": "Increases ki cost for Blasts by 1 bar. \r\nIncreases Blast damage by 5%. \r\nIncreases Blast Combo damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "combo-damage",
         "blast-damage",
@@ -209,7 +187,6 @@
       "cost": 2,
       "effect": "Increases ki cost for Ultimate Blasts by 1 bar. \r\nCauses stun when Sparking Mode ends after using Ultimate Blast. \r\nIncreases Ultimate Blast damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "blast-damage",
         "ultimate-damage",
@@ -231,7 +208,6 @@
       "cost": 1,
       "effect": "Increases Blast damage by 2.5%. \r\nIncreases Blast Combo damage by 2.5%. \r\nIncreases Ultimate Blast damage by 2.5%.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "combo-damage",
         "blast-damage",
@@ -251,7 +227,6 @@
       "cost": 3,
       "effect": "Increases Blast damage by 5%. \r\nIncreases Blast Combo damage by 5%. \r\nIncreases Ultimate Blast damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "combo-damage",
         "blast-damage",
@@ -271,7 +246,6 @@
       "cost": 5,
       "effect": "Increases Blast damage by 7.5%. \r\nIncreases Blast Combo damage by 7.5%. \r\nIncreases Ultimate Blast damage by 7.5%.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "combo-damage",
         "blast-damage",
@@ -291,7 +265,6 @@
       "cost": 2,
       "effect": "Increases Rush Attack damage by 5% during Sparking Mode.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "rush-damage",
         "sparking-gauge",
@@ -306,7 +279,6 @@
       "cost": 4,
       "effect": "Increases armor break level by 3.\r\nBeats Power body and Light body.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "armor-break",
         "armor"
@@ -320,7 +292,6 @@
       "cost": 4,
       "effect": "Increases bullet armor level by 3.\r\nCannot be flinched by Ki Blasts (Giants and Sparking ignore this capsule).",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "armor"
       ],
@@ -336,7 +307,6 @@
       "cost": 3,
       "effect": "Increases armor break level by 3 against Rush Attack category actions.\r\nBeats Power Body.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "armor-break",
         "armor"
@@ -350,7 +320,6 @@
       "cost": 5,
       "effect": "Reduces Skill Count needed for Super Perceptions by 1 (minimum 1).",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "counter",
         "skill-gauge"
@@ -367,7 +336,6 @@
       "cost": 4,
       "effect": "Increases Blast damage by 5% at 75% HP. \r\nIncreases Blast damage by additional 5% (10% total) at 50% HP. \r\nIncreases Blast damage by additional 5% (15% total) at 25% HP. \r\nIncreases Blast Combo damage by same amounts.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "combo-damage",
         "blast-damage",
@@ -387,7 +355,6 @@
       "cost": 1,
       "effect": "Increases ki gained from landing attacks by 10%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-generation"
       ],
@@ -400,7 +367,6 @@
       "cost": 3,
       "effect": "Increases ki gained from landing attacks by 20%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-generation"
       ],
@@ -413,7 +379,6 @@
       "cost": 2,
       "effect": "Increases health recovery while on standby in Team Battles by 50%.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "health-boost",
         "standby-recovery"
@@ -427,7 +392,6 @@
       "cost": 1,
       "effect": "Increases ki recovery per second while on standby in Team Battles by 50%.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "standby-recovery",
         "ki-generation"
@@ -441,7 +405,6 @@
       "cost": 3,
       "effect": "Reduces ki cost for Z-Burst Dashes by 50%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-cost-reduction",
         "dash"
@@ -457,7 +420,6 @@
       "cost": 5,
       "effect": "Reduces ki cost for Z-Burst Dashes by 100% (free).",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-cost-reduction",
         "dash"
@@ -473,7 +435,6 @@
       "cost": 2,
       "effect": "Switch gauge starts at maximum.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "switch-gauge"
       ],
@@ -486,7 +447,6 @@
       "cost": 3,
       "effect": "Increases skill gauge recovery speed by 25%.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "skill-gauge"
       ],
@@ -499,7 +459,6 @@
       "cost": 1,
       "effect": "Reduces Skill Count needed for Transformations and Fusions by 1 (minimum 1).",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "skill-gauge",
         "transformation"
@@ -515,7 +474,6 @@
       "cost": 5,
       "effect": "Increases Ultimate Blast damage by 5% at 75% HP. \r\nIncreases Ultimate Blast damage by additional 5% (10% total) at 50% HP. \r\nIncreases Ultimate Blast damage by additional 5% (15% total) at 25% HP.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "blast-damage",
         "ultimate-damage",
@@ -535,7 +493,6 @@
       "cost": 3,
       "effect": "Increases Ultimate Blast damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "blast-damage",
         "ultimate-damage"
@@ -554,7 +511,6 @@
       "cost": 3,
       "effect": "Ki gauge starts at maximum.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-starting"
       ],
@@ -567,7 +523,6 @@
       "cost": 5,
       "effect": "Increases all attack damage by 2.5% on Namek map.\r\nIncreases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "throw",
         "environmental"
@@ -584,7 +539,6 @@
       "cost": 5,
       "effect": "Increases all attack damage by 2.5% on Earth maps (excluding City Ruins and Hyperbolic Time Chamber).\r\nIncreases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "throw",
         "environmental"
@@ -601,7 +555,6 @@
       "cost": 5,
       "effect": "Increases all attack damage by 2.5% on Tournament of Power map.\r\nIncreases Rush, Smash, Combo, Ki Blasts, Blasts, Ultimate Blasts, Throws, Parries, Pursuits.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "throw"
       ],
@@ -617,7 +570,6 @@
       "cost": 5,
       "effect": "Take no damage while guarding.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "guard"
       ],
@@ -632,7 +584,6 @@
       "cost": 1,
       "effect": "Reduces ki cost for Short Dashes by 10%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-cost-reduction",
         "dash"
@@ -648,7 +599,6 @@
       "cost": 2,
       "effect": "Increases Switch gauge recovery by 50% in Team Battles.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "switch-gauge"
       ],
@@ -661,7 +611,6 @@
       "cost": 1,
       "effect": "Ki gauge starts with 1 bar extra.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-starting"
       ],
@@ -674,7 +623,6 @@
       "cost": 2,
       "effect": "Ki gauge starts with 2 bars extra.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-starting"
       ],
@@ -687,7 +635,6 @@
       "cost": 1,
       "effect": "Increases all Impact Action damage by 20% per DP advantage enemy has over you (stacks up to 5 times for 100% total). \r\nOnly active when enemy has 1-5 more DP than you.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "conditional"
       ],
@@ -700,7 +647,6 @@
       "cost": 1,
       "effect": "Increases ki damage dealt after successful Guard Clash by 50%.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "guard",
         "ki-generation"
@@ -716,7 +662,6 @@
       "cost": 1,
       "effect": "Regenerates 100 HP per second and 100 ki per second while in water (1 bar of health and ki every 100 seconds).",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "health-regen",
         "environmental"
@@ -730,7 +675,6 @@
       "cost": 1,
       "effect": "Automatically dodges melee attacks when downed (excludes Ki Blasts).",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "dodge",
         "auto-dodge"
@@ -747,7 +691,6 @@
       "cost": 5,
       "effect": "Increases damage resistance by 2.5% at 75% HP. \r\nIncreases damage resistance by additional 5% (7.5% total) at 50% HP. \r\nIncreases damage resistance by additional 7.5% (15% total) at 25% HP.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "damage-reduction",
         "conditional"
@@ -761,7 +704,6 @@
       "cost": 1,
       "effect": "Grants immunity to Guard Clashes.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "guard"
       ],
@@ -776,7 +718,6 @@
       "cost": 1,
       "effect": "Automatically dodges subsequent barrage Blasts after dodging one with High-Speed Movement or High-Speed Evasion.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "dodge",
         "auto-dodge",
@@ -791,7 +732,6 @@
       "cost": 4,
       "effect": "Recovers 5,000 HP (half a bar) every 60 seconds.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "health-regen"
       ],
@@ -804,7 +744,6 @@
       "cost": 3,
       "effect": "Recovers 1 bar of ki every 60 seconds",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-regen"
       ],
@@ -817,7 +756,6 @@
       "cost": 1,
       "effect": "Reduces charging time for Smash Attacks by 2%. \r\nReduces charging time for Rush Chains by 2%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "melee-charge"
       ],
@@ -830,7 +768,6 @@
       "cost": 2,
       "effect": "Reduces charging time for Smash Attacks by 3%. \r\nReduces charging time for Rush Chains by 3%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "melee-charge"
       ],
@@ -843,7 +780,6 @@
       "cost": 3,
       "effect": "Reduces charging time for Smash Attacks by 5%. \r\nReduces charging time for Rush Chains by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "melee-charge"
       ],
@@ -856,7 +792,6 @@
       "cost": 1,
       "effect": "Reduces ki cost for Rush Ki Blasts by 2%. \r\nReduces ki cost for Smash Ki Blasts by 2%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "blast-cost",
         "ki-blast-cost",
@@ -874,7 +809,6 @@
       "cost": 2,
       "effect": "Reduces ki cost for Rush Ki Blasts by 3%. \r\nReduces ki cost for Smash Ki Blasts by 3%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "blast-cost",
         "ki-blast-cost",
@@ -892,7 +826,6 @@
       "cost": 3,
       "effect": "Reduces ki cost for Rush Ki Blasts by 5%. \r\nReduces ki cost for Smash Ki Blasts by 5%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "blast-cost",
         "ki-blast-cost",
@@ -910,7 +843,6 @@
       "cost": 1,
       "effect": "Reduces charging time for Smash Ki Blasts by 2%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "ki-blast-charge"
       ],
@@ -926,7 +858,6 @@
       "cost": 2,
       "effect": "Reduces charging time for Smash Ki Blasts by 3%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "ki-blast-charge"
       ],
@@ -942,7 +873,6 @@
       "cost": 3,
       "effect": "Reduces charging time for Smash Ki Blasts by 5%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "ki-blast-charge"
       ],
@@ -958,7 +888,6 @@
       "cost": 3,
       "effect": "Reduces ki cost for Vanishing Assaults by 15%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "vanishing",
         "ki-cost-reduction"
@@ -975,7 +904,6 @@
       "cost": 5,
       "effect": "Increases combatives armor level by 3. \r\nReduces melee defense by 20%. \r\nReduces blast defense by 10%.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "armor"
       ],
@@ -988,7 +916,6 @@
       "cost": 3,
       "effect": "Reduces ki cost for Short Dashes by 20%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-cost-reduction",
         "dash"
@@ -1004,7 +931,6 @@
       "cost": 1,
       "effect": "Reduces self recovery time when stunned/restrained by 20%. \r\nIncreases enemy recovery time when stunned/restrained by 20%.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [],
       "trackedActions": [],
       "notes": ""
@@ -1015,7 +941,6 @@
       "cost": 3,
       "effect": "Reduces ki cost for Dragon Dashes by 25%. \r\nReduces automatic ki recovery by 5%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-cost-reduction",
         "dash"
@@ -1031,7 +956,6 @@
       "cost": 5,
       "effect": "Reduces ki cost for Dragon Dashes by 25%.",
       "exclusiveTo": "",
-      "buildType": "ki-efficiency",
       "effectTags": [
         "ki-cost-reduction",
         "dash"
@@ -1047,7 +971,6 @@
       "cost": 5,
       "effect": "Activates Sparking Mode on first switch-in. \r\nOnly activates once per team in Team Battles.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "sparking-gauge"
       ],
@@ -1060,7 +983,6 @@
       "cost": 1,
       "effect": "Reduces combo damage scaling by 2.5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "combo-damage"
       ],
@@ -1073,7 +995,6 @@
       "cost": 2,
       "effect": "Reduces combo damage scaling by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "combo-damage"
       ],
@@ -1086,7 +1007,6 @@
       "cost": 5,
       "effect": "Reduces ki cost for Blasts by 50%. \r\nRecovers 1 bar of ki after unsuccessful Blast.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [
         "blast-cost",
         "ki-cost-reduction",
@@ -1106,7 +1026,6 @@
       "cost": 1,
       "effect": "Reduces Sparking Mode gauge decrease speed by 15%. \r\nReduces melee defense by 20%. \r\nReduces blast defense by 10%.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "sparking-gauge"
       ],
@@ -1119,7 +1038,6 @@
       "cost": 2,
       "effect": "Reduces Sparking Mode gauge decrease speed by 15%.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "sparking-gauge"
       ],
@@ -1132,7 +1050,6 @@
       "cost": 2,
       "effect": "Increases Dragon Homing use limit by 1.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [],
       "trackedActions": [],
       "notes": ""
@@ -1143,7 +1060,6 @@
       "cost": 2,
       "effect": "Increases Dragon Smash damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [],
       "trackedActions": [],
       "notes": ""
@@ -1154,7 +1070,6 @@
       "cost": 2,
       "effect": "Increases Vanishing Attack use limit by 1.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "vanishing"
       ],
@@ -1170,7 +1085,6 @@
       "cost": 2,
       "effect": "Increases Vanishing Attack damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "vanishing"
       ],
@@ -1186,7 +1100,6 @@
       "cost": 2,
       "effect": "Grants 1 additional Skill Count.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "skill-gauge"
       ],
@@ -1199,7 +1112,6 @@
       "cost": 1,
       "effect": "Increases Rush Ki Blast speed by 5%.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [],
       "trackedActions": [
         "shotEnergyBulletCount",
@@ -1213,7 +1125,6 @@
       "cost": 1,
       "effect": "Increases Rush Ki Blast maximum count by 2.",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [],
       "trackedActions": [
         "shotEnergyBulletCount",
@@ -1227,7 +1138,6 @@
       "cost": 3,
       "effect": "Increases Rush Attack damage by 5%. \r\nIncreases Smash Attack damage by 5%. \r\nIncreases Rush Chain damage by 5%. \r\nReduces maximum health by 5,000 HP (half a bar).",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "rush-damage",
         "smash-damage",
@@ -1244,7 +1154,6 @@
       "cost": 2,
       "effect": "Increases Rush Ki Blast speed by 5%. \r\nReduces ki cost for Rush Ki Blasts by 5%. \r\nReduces ki cost for Smash Ki Blasts by 5%. \r\nReduces maximum health by 5,000 HP (half a bar).",
       "exclusiveTo": "",
-      "buildType": "ki-blast",
       "effectTags": [
         "blast-cost",
         "ki-blast-cost",
@@ -1263,7 +1172,6 @@
       "cost": 1,
       "effect": "Increases Throw damage by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "throw"
       ],
@@ -1276,7 +1184,6 @@
       "cost": 1,
       "effect": "Reduces Sparking gauge cost for High-Speed Movements by 25%. \r\nReduces all defense by 20%.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "sparking-gauge",
         "movement-speed"
@@ -1290,7 +1197,6 @@
       "cost": 1,
       "effect": "Reduces Sparking gauge cost for High-Speed Movements by 25%.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "sparking-gauge",
         "movement-speed"
@@ -1304,7 +1210,6 @@
       "cost": 1,
       "effect": "Reduces Sparking gauge cost for Super Movements by 25%. \r\nReduces all defense by 20%.",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "sparking-gauge",
         "movement-speed"
@@ -1318,7 +1223,6 @@
       "cost": 1,
       "effect": "Reduces Sparking gauge cost for Super Movements by 25%.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "sparking-gauge",
         "movement-speed"
@@ -1332,7 +1236,6 @@
       "cost": 1,
       "effect": "Increases Blast by 5% for 30 seconds after using an emote for 1.5+ seconds.",
       "exclusiveTo": "",
-      "buildType": "blast",
       "effectTags": [],
       "trackedActions": [
         "useBlastGroupCount",
@@ -1348,7 +1251,6 @@
       "cost": 3,
       "effect": "Recovers 25% of Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement.",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "skill-gauge",
         "ki-regen",
@@ -1368,7 +1270,6 @@
       "cost": 3,
       "effect": "Increases maximum health by 5,000 HP (half a bar).",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "health-boost"
       ],
@@ -1381,7 +1282,6 @@
       "cost": 5,
       "effect": "Increases maximum health by 7,500 HP (3/4 of a bar).",
       "exclusiveTo": "",
-      "buildType": "defense",
       "effectTags": [
         "health-boost"
       ],
@@ -1394,7 +1294,6 @@
       "cost": 5,
       "effect": "Increases Rush Attack damage by 2.5%. \r\nIncreases Smash Attack damage by 2.5%. \r\nIncreases Rush Chain damage by 2.5%. \r\nIncreases Rush Ki Blast damage by 2.5%. \r\nIncreases Smash Ki Blast damage by 2.5%.",
       "exclusiveTo": "",
-      "buildType": "utility",
       "effectTags": [
         "rush-damage",
         "smash-damage",
@@ -1415,7 +1314,6 @@
       "cost": 4,
       "effect": "Increases Rush Attack damage by 5% during Sparking Mode. \r\nReduces Sparking Mode gauge decrease speed by 5%.",
       "exclusiveTo": "",
-      "buildType": "melee",
       "effectTags": [
         "rush-damage",
         "sparking-gauge",
@@ -1430,7 +1328,6 @@
       "cost": 1,
       "effect": "Prevents Transformations and Fusions during battle",
       "exclusiveTo": "",
-      "buildType": "skill",
       "effectTags": [
         "transformation"
       ],

@@ -6,6 +6,7 @@ This directory contains the shared reference data files used by the **Match Buil
 
 - **characters.csv** - List of all characters with their IDs
 - **capsules.csv** - List of all capsules, costumes, AI strategies, and Sparking BGM with their IDs, costs, and effects
+- **capsule-types.json** - Each capsule's build type (Melee, Blast, Ki Blast, Defense, Skill, Ki Efficiency, Utility), keyed by its id in `capsules.csv`: one list for every app, so a capsule is the same type in the Analyzer's build pills, cost bars and Meta tables and in the Character Calculator's build rows. Started 2026-10-11 from the Analyzer's own types (94 capsules) plus the league's 9 custom capsules. A new capsule needs a row here; the calculator's `verify-data` fails without one, and the Analyzer shows it as Unknown. Each app colours the types from its own palette.
 - **capsule-rules.yaml** - Ruleset definitions for capsule restrictions in matches
 - **teams.json** - The league's teams: each team's `tag` (the ASCII identifier in match files, `BR_Data` folders, `tagConfig.js` and the Submit app), its display `name` (the website's spelling, e.g. `Master & Student`, `Sentai Squad`), the analyzer's URL `slug`, the website's `websiteSlug`, the `logo` file in `apps/website/public/images/` and the website's team `color`. **Tags never change**: they are identifiers baked into file paths and shared links. Names are display data, so a rename is a one-line edit here. Consumed by the Analyzer (names in every view, logos via `npm run build-team-logos`).
 
@@ -25,7 +26,7 @@ const response = await fetch("characters.csv");
 ```
 
 ### Character Calculator
-The calculator's data build (`apps/calculator/scripts/build-data.mjs`, run before every calculator dev server and build) reads `characters.csv` (ids, names, order), `transformations.json`, `capsules.csv` (rows of Type `Capsule`) and `capsule-rules.yaml`, and joins its game-data snapshots to them by character id. Renaming a character here renames it in the calculator; add the old name to `apps/calculator/data/curated/aliases.csv` so old share links keep working. See `apps/calculator/data/README.md`.
+The calculator's data build (`apps/calculator/scripts/build-data.mjs`, run before every calculator dev server and build) reads `characters.csv` (ids, names, order), `transformations.json`, `capsules.csv` (rows of Type `Capsule`), `capsule-types.json` and `capsule-rules.yaml`, and joins its game-data snapshots to them by character id. Renaming a character here renames it in the calculator; add the old name to `apps/calculator/data/curated/aliases.csv` so old share links keep working. See `apps/calculator/data/README.md`.
 
 ## Updating Data
 

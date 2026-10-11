@@ -859,7 +859,7 @@ const rulesets = Object.entries(ref.rules.rulesets || {}).map(([name, rs]) => {
 });
 const defaultRuleset = rulesets.find(r => r.name === ref.rules.default) || rulesets[0];
 const capsules = ref.capsules.map(cap => ({
-  id: cap.id, name: cap.name, cost: cap.cost, description: cap.description,
+  id: cap.id, name: cap.name, cost: cap.cost, type: cap.type, description: cap.description,
   exclusiveTo: cap.exclusiveTo,
   effects: capsuleEffects.get(cap.id) || [],
   bannedIn: rulesets.filter(rs => rs.banned.includes(cap.id)).map(rs => rs.name),

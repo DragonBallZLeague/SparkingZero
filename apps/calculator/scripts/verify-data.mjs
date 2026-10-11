@@ -144,6 +144,12 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
   check(!unknown.length, 'every capsule is in referencedata/capsules.csv', unknown);
   const noCost = caps.filter(c => typeof c.cost !== 'number').map(c => c.name);
   check(!noCost.length, 'every capsule has a cost', noCost);
+  if (v2) {
+    // one list of build types for every app (referencedata/capsule-types.json, which the Analyzer reads too)
+    const TYPES = ['Melee', 'Blast', 'Ki Blast', 'Defense', 'Skill', 'Ki Efficiency', 'Utility'];
+    const untyped = caps.filter(c => !TYPES.includes(c.type)).map(c => `${c.name} (${c.type})`);
+    check(!untyped.length, 'every capsule has a build type from referencedata/capsule-types.json', untyped);
+  }
 }
 
 // ------------------------------------------------------------------ curated tables

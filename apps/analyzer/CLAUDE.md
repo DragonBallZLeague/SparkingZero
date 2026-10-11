@@ -438,7 +438,7 @@ The league calls the first slot the **Starter**, never "Lead". **`src/utils/posi
 
 ## Reference data
 
-Imports `characters.csv`/`capsules.csv` directly from `/referencedata/` at build time via Vite's `?raw` import, and `teams.json` (`src/utils/teams.js`) and `transformations.json` (`utils/transformation.js`, `fusionSplit.js`, `formBreakdown.js`) as JSON (see root `CLAUDE.md` — **edit those files at the repo root, never the local `referencedata/` copy that `vite.config.js`'s `copy-shared-referencedata` plugin writes here**, it's overwritten on every build). `src/config/capsule-rules.yaml` encodes capsule-restriction/build-legality rules.
+Imports `characters.csv`/`capsules.csv` directly from `/referencedata/` at build time via Vite's `?raw` import, `capsule-types.json` (each capsule's build type, read by `utils/capsuleDataProcessor.js` and shared with the Calculator since 2026-10-11; `src/config/capsuleMetadata.json` keeps only effect tags and tracked actions), and `teams.json` (`src/utils/teams.js`) and `transformations.json` (`utils/transformation.js`, `fusionSplit.js`, `formBreakdown.js`) as JSON (see root `CLAUDE.md` — **edit those files at the repo root, never the local `referencedata/` copy that `vite.config.js`'s `copy-shared-referencedata` plugin writes here**, it's overwritten on every build). `src/config/capsule-rules.yaml` encodes capsule-restriction/build-legality rules.
 
 ## Gotchas
 
