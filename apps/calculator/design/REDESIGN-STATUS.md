@@ -12,7 +12,9 @@ will ship it later, to dev-branch on its own or with the redesign.
 
 ## 1. Decisions waiting on the league
 
-- **Sign-off on concept B** after round 4 (fill bars under stats, chevron rates on the three meters).
+- **Sign-off on concept B** after round 5 (2026-10-10): Full stats gained the new game-file data (charged, jump and
+  dash ki blasts; smash and Heavy Finish charge levels, Hyper Smash; Mobility; Moveset; Traits), the sheet a
+  Charged ki blast tile and a trait chip under the name.
 - **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
   cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them for now, a
   guess. Per-character tuning can wait until the full art set is cut.
@@ -34,9 +36,10 @@ auto-recharge get no bar. Blasts and ultimates get none either: their types diff
 
 ## 2. Views and interactions not mocked yet
 
-- **Traits on the character page:** the move and ability flags (`data/EXPANSION.md`, "Move and ability flags":
-  hyper armor, cannot fly, thrown ki blasts, no ki blasts, ki drain, special moves) as a quick "what makes this
-  character different" list. The league wants these (2026-10-10).
+- **Traits for other characters:** the concept shows Goku's one trait (low-HP power-up). Decide which traits earn
+  a chip on the sheet (hyper armor, no Violent Rush, laser or thrown ki blasts, can't fly, ki drain) and which stay in
+  Full stats; and the Moveset on the sheet itself, if at all.
+- **New sections in Compare and Vs All stats:** Mobility and Moveset rows aren't drawn there yet.
 
 - Vs opponent's **All stats** mode. It is described in the concept but not drawn.
 - Compare's **All stats** mode on a phone.
