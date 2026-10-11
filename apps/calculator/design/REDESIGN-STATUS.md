@@ -42,23 +42,29 @@ in `characters.json` (`data/EXPANSION.md` keeps its open items).
 ## 2. Open items
 
 Data the rebuild needs (none of it blocks the demo; the demo can use the mock's stand-ins):
-- **Capsule categories.** The data has none; the mock assigns them by effect (Melee, Ki blasts, Blasts, Toughness,
-  Ki, Skill, Movement, Sparking!, Team). Add a curated category per capsule (103 capsules) for the build rows,
-  the points bar and the capsule picker's groups.
-- **Special texts** for a move's unique rule (Neo Tri-Beam, Evil Containment Wave, Body Change, Devilmite Beam).
+- **Capsule types: one list for every app (the league, 2026-10-11).** Start from the Analyzer's build types
+  (`apps/analyzer/src/config/capsuleMetadata.json`: Melee, Blast, Ki Blast, Defense, Skill, Ki Efficiency,
+  Utility), which cover 94 of the 103 capsules; the 9 league-made capsules (DBZL_Cap_*) have none yet. Proposed:
+  move the type into `referencedata/capsules.csv` so the Analyzer and the calculator read the same column.
+  Waiting on the league: the 9 types and whether each app keeps its own colours (the Analyzer's Ki Blast is yellow
+  and Skill purple, which mean ki and Sparking in the calculator).
+- **Special texts.** Neo Tri-Beam and Evil Containment Wave approved as mocked. Body Change and Devilmite Beam:
+  proposals sent 2026-10-11, waiting on the league.
 - **League lineup builds** for the opponent's build: read the website's `public/content/lineups/` in the data
-  build, grouped by matching capsules.
-- **Unknown names** in `data/TESTS.md` (four move flags, the counter's follow-up, the Dragon Dash "BK" cost).
+  build, grouped by matching capsules. Every capsule name in the lineups matches the capsule list.
+- **Unknown names** in `data/TESTS.md`: the four move flags (the league can't find them), and tests for the
+  counter's follow-up (likely the Perception counter) and the Dragon Dash "BK" cost.
 
-Small decisions, settled by default unless the league says otherwise:
-- **Names with no parenthesis** (141 of 241) or a long form after it (14): break before the form name
-  ("Gotenks / Super Saiyan 3"); names with no form part (Frieza Force Soldier, Spike the Devil Man) wrap normally.
-- **Full stats' Breaking armor** follows Ki blasts in reading order but starts the third column on desktop.
+Settled (2026-10-11): names with no parenthesis or a long form after it break before the form name ("Gotenks /
+Super Saiyan 3"; names with no form part wrap normally); Full stats' Breaking armor stays where it is.
 
-**Planned after the rebuild (the league wants it):** conditions controls, where each side's health, ki bars and
-skill or blast stock can be set, so conditional effects apply with exact numbers: health-step capsules (Fury!,
-Latent Power!) and future capsules that work off blast stock counts or percentages and ki bar amounts. The engine
-notes these effects as "not applied" today.
+**Conditions controls, in this rebuild (the league, 2026-10-11; mocked in round 21, `#cond`):** each side's health,
+ki bars and skill gauge, so conditional effects apply with exact numbers: health steps (Latent Power!, Fury!,
+Fighting Spirit), a character's low-health power-up (Goku below 10,000 HP), and capsules that work off ki bars or
+skill stock (Vegeta's Technique, future capsules); the map and timed events only when an equipped capsule needs
+them. The health bar marks where each effect turns on; an "In effect" line names what is on; changed rows tint old
+→ new. The engine needs structured conditions (capsule conditions are free text today; character passives are
+"health below N HP"). Waiting on the league's look.
 
 ### Ideas kept for later
 
