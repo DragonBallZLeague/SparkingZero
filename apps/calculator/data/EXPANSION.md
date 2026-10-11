@@ -338,7 +338,13 @@ Not measured yet: Ki Blast Cannon Smash (`actSCS`, 640), Delta Heavy Finish (`ac
 - **Self-damage:** a blast's attack or projectile file with `bReceiveSelfDamage` gives `SelfDamagePower` (999,999
   knocks the user out) and, for Evil Containment Wave, a DP table (`SelfDamagePowerDpMultiplier`). Published as
   `selfDamage`; every Self-damage blast has one, and Gamma 2's Core Breaker turns up too (a self-KO the curated
-  traits miss). Whether the value is health as is or x1.25 is TESTS.md 2.
+  traits miss). **Confirmed 2026-10-11:** the value is the health lost as is (Neo Tri-Beam 2,000 each shot);
+  Evil Containment Wave uses its hit file's table, 5,000 x [the opponent's DP] (Mr. Satan DP 1: 5,000; Goku
+  (Z - Early) DP 4: 6,500; Goku (Z - End) Super Saiyan 3 DP 7: 9,000); 999,999 takes all the user's health but
+  self-damage can't knock out, so they stay at 0 (Gamma 2's Core Breaker). Speed confirmed too: Goku's
+  Kamehameha (16,000) took about 3 seconds where Vegeta (Z - Scouter)'s Galick Gun (31,000) took just under 2.
+  The speed curve is over time after firing (10,000 at once, 16,000 by 0.83s), not charge: the projectile files
+  have no charge settings.
 
 ### Third round (run 2026-10-11)
 

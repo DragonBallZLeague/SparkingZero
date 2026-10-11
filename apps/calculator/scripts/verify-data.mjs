@@ -373,7 +373,10 @@ if (v2) {
       JSON.stringify([bl('Goku (Z - Early)', 'Kamehameha')?.projectileSpeed, bl('Vegeta (Z - Scouter)', 'Galick Gun')?.projectileSpeed, bl('Goku (Z - Early)', 'Spirit Bomb')?.projectileSpeed]), JSON.stringify([16000, 31000, 10000]));
     const selfDmgTrait = Object.values(data.blasts).flat().filter(b => b.traits.includes('Self-damage') && !b.selfDamage).map(b => b.name);
     check(!selfDmgTrait.length, 'every Self-damage blast has its self-damage amount from the game files', selfDmgTrait);
-    ig('self-damage: Neo Tri-Beam, Final Explosion', JSON.stringify([bl('Tien', 'Neo Tri-Beam')?.selfDamage?.power, bl('Majin Vegeta', 'Final Explosion')?.selfDamage?.knockOut]), JSON.stringify([2000, true]));
+    ig('self-damage: Neo Tri-Beam per shot, Final Explosion takes all health', JSON.stringify([bl('Tien', 'Neo Tri-Beam')?.selfDamage?.power, bl('Majin Vegeta', 'Final Explosion')?.selfDamage?.allHealth]), JSON.stringify([2000, true]));
+    // Evil Containment Wave's self-damage by the opponent's DP (league 2026-10-11: Mr. Satan DP 1, Goku (Z - Early) DP 4, Goku (Z - End) SS3 DP 7)
+    const ecw = bl('Master Roshi', 'Evil Containment Wave')?.selfDamage;
+    ig('Evil Containment Wave self-damage against DP 1, 4, 7', JSON.stringify([1, 4, 7].map(d => Math.round(ecw.power * ecw.dpMultiplier[d]))), JSON.stringify([5000, 6500, 9000]));
   }
   ig('Justice Kick steers but is not a crash; Dodoria Head Ram crashes', JSON.stringify([
     data.blasts[data.characters.find(c => c.name === 'Dyspo')?.id]?.find(b => b.name === 'Justice Kick')?.flags?.includes('crash'),

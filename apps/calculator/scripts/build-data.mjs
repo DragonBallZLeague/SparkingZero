@@ -797,13 +797,16 @@ for (const bm of blastMoves) {
         .map(k => Math.max(...fm.curve(k).map(([, v]) => v))).filter(v => Number.isFinite(v) && v > 1).map(v => Math.round(v));
       if (tops.length) projectileSpeed = Math.max(...tops);
     }
-    // self-damage: a file with bReceiveSelfDamage; SelfDamagePower (999,999: knocks the user out), scaled by
-    // the DP table where one is given (Evil Containment Wave)
-    for (const f of ownFiles) {
-      if (fm.param(f, 'bReceiveSelfDamage') !== 'true') continue;
-      const power = num(fm.param(f, 'SelfDamagePower'));
-      const dp = Array.from({ length: 11 }, (_, i) => num(fm.param(f, `SelfDamagePowerDpMultiplier[${i}]`))).filter(v => v != null);
-      if (!selfDamage || (power ?? 0) > (selfDamage.power ?? 0)) selfDamage = { power, ...(power >= 999999 ? { knockOut: true } : {}), ...(dp.length ? { dpMultiplier: dp } : {}) };
+    // self-damage: a file with bReceiveSelfDamage gives SelfDamagePower, the health lost as is (Tien 2,000 a shot);
+    // 999,999 takes all the user's health, which leaves them at 0 (self-damage can't knock out). A DP table scales
+    // it by the opponent's DP, indexed by DP (Evil Containment Wave: 5,000 x [DP]: 5,000 / 6,500 / 9,000 against
+    // DP 1 / 4 / 7). With several files, the hit's (…HI) wins. League, 2026-10-11.
+    const selfRows = [...fm.attackRowsOf(c.id), ...fm.bulletRowsOf(c.id)].filter(r => actRe.test(r.action) && fm.param(r.file, 'bReceiveSelfDamage') === 'true');
+    const selfRow = selfRows.find(r => /HI$/.test(r.action)) || selfRows.sort((x, y) => (num(fm.param(y.file, 'SelfDamagePower')) ?? 0) - (num(fm.param(x.file, 'SelfDamagePower')) ?? 0))[0];
+    if (selfRow) {
+      const power = num(fm.param(selfRow.file, 'SelfDamagePower'));
+      const dp = Array.from({ length: 11 }, (_, i) => num(fm.param(selfRow.file, `SelfDamagePowerDpMultiplier[${i}]`)));
+      selfDamage = { power, ...(power >= 999999 ? { allHealth: true } : {}), ...(dp.some(v => v != null) ? { dpMultiplier: dp } : {}) };
     }
     // damage scaled by the opponent's wickedness (ExParam, 0 to 20): Devilmite Beam
     if (fm.param(gm.file, 'BlastUltimateParamData.bExScale') === 'true' || fm.param(gm.file, 'BlastSkillParamData.bExScale') === 'true') add('wickednessScaled');
