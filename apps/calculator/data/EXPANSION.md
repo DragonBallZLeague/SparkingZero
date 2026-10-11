@@ -167,15 +167,19 @@ Agreed with the league on 2026-10-10.
    none). The snapshot has the speed curves since 2026-10-10 (`MoveParam.SpeedCurve` in bullet-params, keys in
    curves.csv).
 2. **Jump and dash ki blasts: done in the data** (`kiBlasts.jump`, `kiBlasts.dash`: damage, count, cost, tags).
-   The jump ki blast's file (`actJRB`) has no Power, so its damage is null until one is measured: **Goku's jump
-   ki blast damage** gives the game's default Power, which also fills the ten multi-shot charged ki blasts.
+   A file without Power uses the game's default, **250**: Goku's jump ki blast (its file has none) measured 313
+   (2026-10-10; it fires a volley of 5 on one press). The same default fills the ten multi-shot charged ki blasts.
 3. **Charged smash levels and Heavy Finish.** Test 1 settled the channel: rush follow-ups use combo.
 4. **A Mobility section: done in the data** (`mobility` in `characters.json`, `scripts/lib/mobility.mjs`): can
    fly, slower short dash, step-cancel cost, and the start and per-second ki costs of Dragon Dash, Z Burst Dash,
    dash up and down, and Dragon Homing. To confirm in game: that `LP` costs are per second, and what Dragon
    Dash's `BK` cost is (published as `boost`).
-   Also done: **charged smash levels, hyper smash and Heavy Finish** (`chargedMelee`). The Giants' published smash
-   is 675 above the files' normal smash: one Giant smash measured in game says which is right.
+   The second Dragon Dash loop cost is the **High-Speed Dragon Dash** (a Dragon Dash started with no direction);
+   `SpCostBK` (published as `bk`) is still unknown.
+   Also done: **charged smash levels, hyper smash and Heavy Finish** (`chargedMelee`). **The Giants' smash: the game
+   files are right.** Measured Great Ape Vegeta 1,722 / 3,570 and Ma Junior Giant Form 1,688 / 3,500 (normal /
+   full charge); Capsule Corp's smash was 675 too high for all 11 Giants, and the published smash now comes from
+   the files.
 5. **Low-health buffs,** shown as a trait.
 6. **The other follow-ups and counters,** in Full stats only, since they are the same for everyone apart from
    class and DP.

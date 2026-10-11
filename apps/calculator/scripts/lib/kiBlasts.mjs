@@ -14,10 +14,12 @@
  * a costume the league doesn't use, and he shoots with the other one.
  *
  * Jump (actJRB, actJSBN) and dash (actDRSB, actDSMBN) ki blasts follow the same rules, with their
- * counts from the character's Numeric file. A file without Power uses the game's default Power, which
- * the export doesn't show (the jump ki blast's file has none): such damage is null until measured.
+ * counts from the character's Numeric file. A file without Power uses the game's default Power, 250:
+ * Goku's jump ki blast (whose file has none) measured 313 = 250 x 1.25 (2026-10-10).
  */
 import { finalDamage, num, round } from './fields.mjs';
+
+export const DEFAULT_BULLET_POWER = 250;
 
 const curveTags = (curve) => {
   const c = String(curve || '');
@@ -50,9 +52,9 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
     if (kiBlastLimit === 0) return null;
     const files = fm.bulletFiles(id, action);
     if (!files.length) return null;
-    const power = num(fm.param(files[0], 'Power'));
+    const power = num(fm.param(files[0], 'Power')) ?? DEFAULT_BULLET_POWER;
     const cost = num(fm.param(files[0], 'ExpendEnergy'));
-    if (power == null) notes.push(`${action}: no Power in ${files[0]} (the game's default, unknown); damage left out`);
+    if (fm.param(files[0], 'Power') === undefined) notes.push(`${action}: ${files[0]} uses the default Power (250)`);
     return {
       damage: power == null ? null : finalDamage(power, coef.kiBlast, damageConstant),
       count,
@@ -65,7 +67,7 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
     const files = fm.bulletFiles(id, action);
     if (!files.length) return null;
     const f = files[0];
-    const power = num(fm.param(f, 'Power'));
+    const power = num(fm.param(f, 'Power')) ?? DEFAULT_BULLET_POWER;
     const shots = files.length > 1 ? files.length : (num(fm.param(f, 'FireNum')) || 1);
     const rates = [1, num(fm.param(f, 'ChangePerChargeLv[0].DamageRate')) ?? 1.5, num(fm.param(f, 'ChangePerChargeLv[1].DamageRate')) ?? 2];
     const cost = num(fm.param(f, 'ExpendEnergy'));
@@ -73,7 +75,7 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
     if (/NumbBullet/.test(fm.param(f, 'CategoryType') ?? '')) tags.add('paralyzing');
     if (shots > 1) tags.add('multi-shot');
     if (thrown) tags.add('thrown');
-    if (power == null) notes.push(`${action}: no Power in ${f} (the game's default, unknown); damage left out`);
+    if (fm.param(f, 'Power') === undefined) notes.push(`${action}: ${f} uses the default Power (250)`);
     if (files.length > 1) notes.push(`${action}: ${files.length} parts (${files.join(', ')}); the first part's values are used`);
     return {
       // per shot, at no charge / the first charge level / full charge

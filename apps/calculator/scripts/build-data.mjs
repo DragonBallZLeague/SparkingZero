@@ -48,7 +48,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], kiBlastTags: { normal: {}, standing: {}, moving: {} } };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], smashFixes: [], kiBlastTags: { normal: {}, standing: {}, moving: {} } };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -464,6 +464,13 @@ for (const rc of ref.characters) {
     if (P == null) continue;
     const want = finalDamage(P, c, K);
     if (finals[f] == null) { finals[f] = want; prov[f] = 'formula'; continue; }
+    // The smash is the game's neutral smash; Capsule Corp's Giant smash was 675 too high (league, 2026-10-10)
+    if (f === 'smash' && Math.abs(finals[f] - want) > 1) {
+      report.smashFixes.push([rc.name, finals[f], want]);
+      finals[f] = want;
+      prov[f] = 'game formula (Capsule Corp differs)';
+      continue;
+    }
     if (Math.abs(finals[f] - want) > 1) report.specials.push([rc.name, f, finals[f], want, prov[f]]);
   }
 
@@ -1074,14 +1081,16 @@ function reportMd() {
     '',
     table(['Ki blast', 'Tags'], Object.entries(report.kiBlastTags).map(([k, m]) => [k, Object.entries(m).sort((a, b) => b[1] - a[1]).map(([t, n]) => `${t} ${n}`).join(', ')])),
     '',
-    report.kiBlasts.size ? 'Gaps (by file, with the characters it affects):' : 'Gaps: none.',
+    report.kiBlasts.size ? 'Notes (by file, with the characters it affects):' : 'Notes: none.',
     '',
     list([...report.kiBlasts].map(([n, who]) => `${n}: ${who.length > 6 ? `${who.length} characters (${who.slice(0, 4).join(', ')}, …)` : who.join(', ')}`)),
     '## Charged melee',
     '',
-    "Smash (neutral, actSMM*) at normal / part / full charge, just-timed and hyper, through the smash channel; Heavy Finish (actHF*) at the three charges through the combo channel. Where the published smash differs from the files' normal smash (the published one is kept; it may be a different move):",
+    "Smash (neutral, actSMM*) at normal / part / full charge, just-timed and hyper, through the smash channel; Heavy Finish (actHF*) at the three charges through the combo channel.",
     '',
-    table(['Character', 'Published smash', "Files' normal smash"], report.meleeGaps),
+    "The published smash is the game's neutral smash. Capsule Corp's value differed for these characters and was replaced (the league measured Great Ape Vegeta 1,722 / 3,570 and Ma Junior Giant Form 1,688 / 3,500, 2026-10-10, as the files give):",
+    '',
+    table(['Character', 'Capsule Corp', 'Published (game)'], report.smashFixes),
     '## Images',
     '',
     `Characters with no face icon in public/char_thumbnails: ${report.images.length ? report.images.join(', ') : 'none'}.`,

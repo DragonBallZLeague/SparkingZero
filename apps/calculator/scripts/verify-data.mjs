@@ -321,9 +321,13 @@ if (v2) {
   ig('Goku full charged smash', cm('0000_00')?.smash?.[2], 1400);
   ig('Goku hyper smash', cm('0000_00')?.hyperSmash, 2450);
   ig('Tien Heavy Finish (combo channel)', cm('0070_00')?.heavyFinish?.[0], 743);
+  ig('Great Ape Vegeta smash, normal / full', cm('0023_00')?.smash ? `${cm('0023_00').smash[0]} / ${cm('0023_00').smash[2]}` : null, '1722 / 3570');
+  ig('Ma Junior Giant Form smash, normal / full', cm('3310_10')?.smash ? `${cm('3310_10').smash[0]} / ${cm('3310_10').smash[2]}` : null, '1688 / 3500');
+  ig('Great Ape Vegeta published smash is the game smash', data.characters.find(c => c.id === '0023_00')?.stats.smash, 1722);
+  ig('Goku jump ki blast, first shot (default Power 250)', data.characters.find(c => c.id === '0000_00')?.kiBlasts?.jump?.normal?.damage, 313);
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, charged smash, Heavy Finish)', game);
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

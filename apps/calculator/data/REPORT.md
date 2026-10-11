@@ -162,13 +162,12 @@ Damage cannot be zero or negative. Capsule Corp's sheet goes negative for very l
 | Mr. Satan | smash | -14 | 156 | 540 |
 | Mr. Satan | pursuit | -25 | 288 | 1000 |
 
-## Finals that differ from the base formula (20)
+## Finals that differ from the base formula (9)
 
 ceil(raw Power x 1.25 x coefficient) on the first rush hit, throw, ki blast, neutral smash (actSMMN) and vanish follow-up (actBSSM). Kept as published (special moves or data to check).
 
 | Character | Field | Value | Formula | Source |
 | --- | --- | --- | --- | --- |
-| Great Ape Vegeta | smash | 2397 | 1722 | capsulecorp |
 | Trunks (Kid) Super Saiyan | hit1 | 488 | 457 | capsulecorp |
 | Gogeta (GT) Super Saiyan 4 | hit1 | 644 | 322 | capsulecorp |
 | Kid Buu | hit1 | 564 | 188 | capsulecorp |
@@ -176,18 +175,8 @@ ceil(raw Power x 1.25 x coefficient) on the first rush hit, throw, ki blast, neu
 | Broly (Super) | kiBlastDamage | 263 | 132 | capsulecorp |
 | Broly (Super) Super Saiyan | kiBlastDamage | 250 | 125 | capsulecorp |
 | Broly (Super) Super Saiyan (Full Power) | kiBlastDamage | 338 | 169 | capsulecorp |
-| Dr. Wheelo | smash | 2363 | 1688 | capsulecorp |
-| Lord Slug Giant Form | smash | 2430 | 1755 | capsulecorp |
-| Janemba | smash | 2397 | 1722 | capsulecorp |
-| Hirudegarn | smash | 2430 | 1755 | capsulecorp |
-| Great Ape Baby (GT) | smash | 2464 | 1789 | capsulecorp |
-| Anilaza | smash | 2498 | 1823 | capsulecorp |
 | Orange Piccolo Giant Form | hit1 | 736 | 683 | capsulecorp |
-| Orange Piccolo Giant Form | smash | 2498 | 1823 | capsulecorp |
 | Cell Max | hit1 | 762 | 709 | capsulecorp |
-| Cell Max | smash | 2532 | 1857 | capsulecorp |
-| Giant Gomah | smash | 2498 | 1823 | capsulecorp |
-| Ma Junior Giant Form | smash | 2363 | 1688 | capsulecorp |
 
 ## Short-dash ki cost (curated/short-dash-cost.csv: 0 characters)
 
@@ -385,26 +374,28 @@ From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per s
 | moving | standard 137, multi-shot 67, homing 42, short range 33, paralyzing 13, giant 11, thrown 2 |
 
 
-Gaps (by file, with the characters it affects):
+Notes (by file, with the characters it affects):
 
-- actJRB: no Power in BulletParam_Common_actJRB (the game's default, unknown); damage left out: 171 characters (Goku (Z - Early), Goku (Z - Mid), Goku (Z - Mid) Super Saiyan, Goku (Z - End), …)
-- actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (the game's default, unknown); damage left out: 7 characters (Goku (GT) Super Saiyan 4, Goku (Super) Super Saiyan God Super Saiyan, Trunks (Melee), Trunks (Melee) Super Saiyan, …)
-- actJRB: no Power in BulletParam_Common_actJRB_0020 (the game's default, unknown); damage left out: 21 characters (Vegeta (Z - Scouter), Vegeta (Z - Early), Vegeta (Z - Early) Super Saiyan, Vegeta (Z - End), …)
-- actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3_L (the game's default, unknown); damage left out: Vegeta (Super) Super Saiyan God Super Saiyan, Vegeta (Mini)
-- actJRB: no Power in BulletParam_Common_actJRB_Huge (the game's default, unknown); damage left out: 11 characters (Great Ape Vegeta, Dr. Wheelo, Lord Slug Giant Form, Janemba, …)
-- actJRB: no Power in BulletParam_Common_actJRB_lit (the game's default, unknown); damage left out: 14 characters (Super Vegito, Vegito Super Saiyan God Super Saiyan, Gogeta (Super) Super Saiyan, Gogeta (GT) Super Saiyan 4, …)
+- actJRB: BulletParam_Common_actJRB uses the default Power (250): 171 characters (Goku (Z - Early), Goku (Z - Mid), Goku (Z - Mid) Super Saiyan, Goku (Z - End), …)
+- actSTDSMBN: BulletParam_Common_actSTDSMBN3_Shots3 uses the default Power (250): 7 characters (Goku (GT) Super Saiyan 4, Goku (Super) Super Saiyan God Super Saiyan, Trunks (Melee), Trunks (Melee) Super Saiyan, …)
+- actJRB: BulletParam_Common_actJRB_0020 uses the default Power (250): 21 characters (Vegeta (Z - Scouter), Vegeta (Z - Early), Vegeta (Z - Early) Super Saiyan, Vegeta (Z - End), …)
+- actSTDSMBN: BulletParam_Common_actSTDSMBN3_Shots3_L uses the default Power (250): Vegeta (Super) Super Saiyan God Super Saiyan, Vegeta (Mini)
+- actJRB: BulletParam_Common_actJRB_Huge uses the default Power (250): 11 characters (Great Ape Vegeta, Dr. Wheelo, Lord Slug Giant Form, Janemba, …)
+- actJRB: BulletParam_Common_actJRB_lit uses the default Power (250): 14 characters (Super Vegito, Vegito Super Saiyan God Super Saiyan, Gogeta (Super) Super Saiyan, Gogeta (GT) Super Saiyan 4, …)
 - actSTDSMBN: 3 parts (BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid); the first part's values are used: Gogeta (Super) Super Saiyan God Super Saiyan
-- actJRB: no Power in BulletParam_Common_actJRB_laser (the game's default, unknown); damage left out: 13 characters (Frieza (Z) 1st Form, Frieza (Z) 2nd Form, Frieza (Z) 4th Form, Mecha Frieza, …)
-- actJRB: no Power in BulletParam_Common_actJRB_laser_lit (the game's default, unknown); damage left out: Frieza (Z) 3rd Form
-- actJRB: no Power in BulletParam_Common_actJRB_stone (the game's default, unknown); damage left out: Mr. Satan, Yajirobe
-- actSMBN: no Power in BulletParam_Common_actSMBN3_Shots4 (the game's default, unknown); damage left out: Fasha
-- actDSMBN: no Power in BulletParam_Common_actDSMBN3_Shots4 (the game's default, unknown); damage left out: Fasha
+- actJRB: BulletParam_Common_actJRB_laser uses the default Power (250): 13 characters (Frieza (Z) 1st Form, Frieza (Z) 2nd Form, Frieza (Z) 4th Form, Mecha Frieza, …)
+- actJRB: BulletParam_Common_actJRB_laser_lit uses the default Power (250): Frieza (Z) 3rd Form
+- actJRB: BulletParam_Common_actJRB_stone uses the default Power (250): Mr. Satan, Yajirobe
+- actSMBN: BulletParam_Common_actSMBN3_Shots4 uses the default Power (250): Fasha
+- actDSMBN: BulletParam_Common_actDSMBN3_Shots4 uses the default Power (250): Fasha
 
 ## Charged melee
 
-Smash (neutral, actSMM*) at normal / part / full charge, just-timed and hyper, through the smash channel; Heavy Finish (actHF*) at the three charges through the combo channel. Where the published smash differs from the files' normal smash (the published one is kept; it may be a different move):
+Smash (neutral, actSMM*) at normal / part / full charge, just-timed and hyper, through the smash channel; Heavy Finish (actHF*) at the three charges through the combo channel.
 
-| Character | Published smash | Files' normal smash |
+The published smash is the game's neutral smash. Capsule Corp's value differed for these characters and was replaced (the league measured Great Ape Vegeta 1,722 / 3,570 and Ma Junior Giant Form 1,688 / 3,500, 2026-10-10, as the files give):
+
+| Character | Capsule Corp | Published (game) |
 | --- | --- | --- |
 | Great Ape Vegeta | 2397 | 1722 |
 | Dr. Wheelo | 2363 | 1688 |

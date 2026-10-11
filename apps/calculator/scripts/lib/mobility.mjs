@@ -22,7 +22,10 @@ export function mobilityOf(fm, id) {
     slowShortDash: accel < 60000,
     stepCancelCost: bars('Steps', 'StepCancelShortDash.SpCost'),
     dragonDash: { start: bars('DragonDash', 'SpCostIN'), perSecond: bars('DragonDash', 'SpCostLP'),
-      highSpeedPerSecond: bars('DragonDash', 'HighSpeedSpCostLP'), boost: bars('DragonDash', 'SpCostBK') },
+      // High-Speed Dragon Dash: a Dragon Dash started with no direction rushes at the opponent
+      highSpeedPerSecond: bars('DragonDash', 'HighSpeedSpCostLP'),
+      // the file's SpCostBK; what it charges for is not known yet
+      bk: bars('DragonDash', 'SpCostBK') },
     zBurstDash: { start: bars('ZBurstDash', 'SpCostIN'), perSecond: bars('ZBurstDash', 'SpCostLP'),
       burstSmashPerSecond: bars('ZBurstDash', 'BurstSmashSpCostLP') },
     dashUp: { start: bars('DashUpDown', 'SpCostUpIN'), perSecond: bars('DashUpDown', 'SpCostUpLP') },
