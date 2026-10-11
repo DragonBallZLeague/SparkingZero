@@ -1666,12 +1666,12 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
   <!-- ============================================================ ORDER AND COLLAPSING (round 18) -->
   <section class="view" id="r18">
     <div class="about">
-      <div><b>Sheet order (an option)</b>The Command list moves to the top of the sheet, above Toughness, Resources and Offense, since a character's moves are what set it apart (most core stats come from DP and class). The current sheet (tab 1) is unchanged, so either order can be kept. Rush Chains and Sparking! Mode stay below Offense.</div>
+      <div><b>Sheet order (an option)</b>The Command list moves up to right after Resources, above Offense, since a character's moves are what set it apart (most core stats come from DP and class). The current sheet (tab 1) is unchanged, so either order can be kept. Rush Chains and Sparking! Mode stay below Offense.</div>
       <div><b>Collapsible sections</b>Every Full stats section header gets a fold arrow, and a collapsed section keeps its headline numbers in its header, so a closed page still answers the quick questions. Section chips jump to a section (and open it). Desktop starts with everything open; a phone starts with everything but Toughness closed; Collapse all / Expand all sit by the chips. What each viewer opens or closes is remembered for them. The Sheet stays fully open (it is the quick view), and Compare's All stats keeps "Only differences" instead.</div>
     </div>
     <div class="frames">
       <div>
-        <p class="frame-lbl">Desktop 1180px, Sheet with the Command list first</p>
+        <p class="frame-lbl">Desktop 1180px, Sheet with the Command list after Resources</p>
         <div class="desk" style="height:1350px"><div class="B">
           <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span class="on">Sheet</span><span>Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
           <div class="cols">
@@ -1691,15 +1691,6 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
               </div>
             </div>
             <div class="sheet">
-              <div class="plate cmd">
-                <h5>Command list</h5>
-                <div class="cmdhead"><span></span><span>Move</span><span>Type and traits</span><span class="r">Damage</span><span class="r">Cost</span></div>
-                <div class="cmdrow"><span class="slot b">B1</span><span class="mvn">Kamehameha</span><span class="tcell"><span class="tline"><span class="ttype">Beam</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>5</span><span class="pv"><i>Speed</i>16,000</span></span><span class="tline"><span class="mn">Chargeable</span></span></span><span class="dmg up tap">7,481</span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
-                <div class="cmdrow"><span class="slot b">B2</span><span class="mvn">Kaioken Attack</span><span class="tcell"><span class="tline"><span class="ttype">Rush</span><span class="pv"><i>Clash</i>Speed</span><span class="pv"><i>Tracking</i>Homing</span><span class="pv"><i>Lunge</i>8,750</span><span class="pv"><i>Time limit</i>2s</span></span><span class="tline"><span class="mn">Initial cost 1.5 bars</span><span class="mn">Lock-on required</span><span class="mn">Cinematic</span></span></span><span class="dmg up tap">8,794</span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
-                <div class="cmdrow"><span class="slot u">ULT</span><span class="mvn">Spirit Bomb</span><span class="tcell"><span class="tline"><span class="ttype">Fire</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>12</span><span class="pv"><i>Speed</i>10,000</span></span><span class="tline"><span class="mn">Unguardable</span><span class="mn">Cinematic</span><span class="mn">Audience flees</span></span></span><span class="dmg up tap">15,750</span><span class="cost"><i class="spark"></i><em>Sparking</em></span></div>
-                <div class="cmdrow"><span class="slot s">S1</span><span class="mvn">Solar Flare</span><span class="tcell"><span class="tline"><span class="ttype">Blind</span><span class="pv"><i>Activation</i>Instant</span><span class="pv"><i>Targets</i>Opponent</span></span><span class="tline"><span class="mn">Unguardable</span><span class="mn">Cutscene</span></span></span><span class="dmg dur">5s</span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
-                <div class="cmdrow"><span class="slot s">S2</span><span class="mvn">Kaioken</span><span class="tcell"><span class="tline"><span class="ttype">Buff</span><span class="pv"><i>Activation</i>Instant</span><span class="pv"><i>Targets</i>Self</span></span><span class="tline"><span class="ef">Melee +10%</span><span class="ef">Ki blasts +10%</span><span class="ef">Defense +10%</span><span class="mn">Cutscene</span></span></span><span class="dmg dur">25s</span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
-              </div>
               <div class="plate">
                 <h5>Toughness</h5>
                 <div class="grow"><span class="k">Health</span><span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="cap"></i></span><span class="v tap">40,000<small>4 bars</small></span></div>
@@ -1726,6 +1717,15 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
                   <div class="meter"><div class="h"><span>Ki regen</span><b class="tap">0.175<small>bars/s</small></b></div><div class="rsegs"><i></i><i></i></div><div class="chev rg"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i><i></i></div><div class="note">5.7s per bar</div></div>
                   <div class="meter skill"><div class="h"><span>Skill gauge</span><b class="tap">0<small>of 6</small></b></div><div class="pips"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="chev sk"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="note">+3.65 per minute</div></div>
                 </div>
+              </div>
+              <div class="plate cmd">
+                <h5>Command list</h5>
+                <div class="cmdhead"><span></span><span>Move</span><span>Type and traits</span><span class="r">Damage</span><span class="r">Cost</span></div>
+                <div class="cmdrow"><span class="slot b">B1</span><span class="mvn">Kamehameha</span><span class="tcell"><span class="tline"><span class="ttype">Beam</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>5</span><span class="pv"><i>Speed</i>16,000</span></span><span class="tline"><span class="mn">Chargeable</span></span></span><span class="dmg up tap">7,481</span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
+                <div class="cmdrow"><span class="slot b">B2</span><span class="mvn">Kaioken Attack</span><span class="tcell"><span class="tline"><span class="ttype">Rush</span><span class="pv"><i>Clash</i>Speed</span><span class="pv"><i>Tracking</i>Homing</span><span class="pv"><i>Lunge</i>8,750</span><span class="pv"><i>Time limit</i>2s</span></span><span class="tline"><span class="mn">Initial cost 1.5 bars</span><span class="mn">Lock-on required</span><span class="mn">Cinematic</span></span></span><span class="dmg up tap">8,794</span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
+                <div class="cmdrow"><span class="slot u">ULT</span><span class="mvn">Spirit Bomb</span><span class="tcell"><span class="tline"><span class="ttype">Fire</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>12</span><span class="pv"><i>Speed</i>10,000</span></span><span class="tline"><span class="mn">Unguardable</span><span class="mn">Cinematic</span><span class="mn">Audience flees</span></span></span><span class="dmg up tap">15,750</span><span class="cost"><i class="spark"></i><em>Sparking</em></span></div>
+                <div class="cmdrow"><span class="slot s">S1</span><span class="mvn">Solar Flare</span><span class="tcell"><span class="tline"><span class="ttype">Blind</span><span class="pv"><i>Activation</i>Instant</span><span class="pv"><i>Targets</i>Opponent</span></span><span class="tline"><span class="mn">Unguardable</span><span class="mn">Cutscene</span></span></span><span class="dmg dur">5s</span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
+                <div class="cmdrow"><span class="slot s">S2</span><span class="mvn">Kaioken</span><span class="tcell"><span class="tline"><span class="ttype">Buff</span><span class="pv"><i>Activation</i>Instant</span><span class="pv"><i>Targets</i>Self</span></span><span class="tline"><span class="ef">Melee +10%</span><span class="ef">Ki blasts +10%</span><span class="ef">Defense +10%</span><span class="mn">Cutscene</span></span></span><span class="dmg dur">25s</span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
               </div>
               <div class="plate off">
                 <h5>Offense</h5>
@@ -1764,7 +1764,7 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
         </div></div>
       </div>
       <div>
-        <p class="frame-lbl">Phone 390px, Sheet with the Command list first (scrolls)</p>
+        <p class="frame-lbl">Phone 390px, Sheet with the Command list after Resources (scrolls)</p>
         <div class="phone"><div class="B ph">
           <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
           <div class="cols">
@@ -1777,12 +1777,6 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
               </div>
             </div>
             <div class="sheet">
-              <div class="plate cmd">
-                <h5>Command list</h5>
-                <div class="cmdrow"><span class="slot b">B1</span><span class="mvn">Kamehameha</span><span class="dmg up">7,481</span><span class="tcell"><span class="tline"><span class="ttype">Beam</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>5</span><span class="pv"><i>Speed</i>16,000</span></span><span class="tline"><span class="mn">Chargeable</span></span></span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
-                <div class="cmdrow"><span class="slot u">ULT</span><span class="mvn">Spirit Bomb</span><span class="dmg up">15,750</span><span class="tcell"><span class="tline"><span class="ttype">Fire</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>12</span><span class="pv"><i>Speed</i>10,000</span></span><span class="tline"><span class="mn">Unguardable</span><span class="mn">Cinematic</span><span class="mn">Audience flees</span></span></span><span class="cost"><i class="spark"></i><em>Sparking</em></span></div>
-                <div class="cmdrow"><span class="slot s">S2</span><span class="mvn">Kaioken</span><span class="dmg dur">25s</span><span class="tcell"><span class="tline"><span class="ttype">Buff</span><span class="pv"><i>Activation</i>Instant</span><span class="pv"><i>Targets</i>Self</span></span><span class="tline"><span class="ef">Melee +10%</span><span class="ef">Ki blasts +10%</span><span class="ef">Defense +10%</span><span class="mn">Cutscene</span></span></span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
-              </div>
               <div class="plate">
                 <h5>Toughness</h5>
                 <div class="grow"><span class="k">Health</span><span class="bars hp"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="cap"></i></span><span class="v">40,000</span></div>
@@ -1796,6 +1790,12 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
                   <div class="meter"><div class="h"><span>Ki regen</span><b>0.175<small>bars/s</small></b></div><div class="rsegs"><i></i><i></i></div><div class="chev rg"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i><i></i></div><div class="note">5.7s per bar</div></div>
                   <div class="meter skill"><div class="h"><span>Skill gauge</span><b>0<small>of 6</small></b></div><div class="pips"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="chev sk"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="note">+3.65 per minute</div></div>
                 </div>
+              </div>
+              <div class="plate cmd">
+                <h5>Command list</h5>
+                <div class="cmdrow"><span class="slot b">B1</span><span class="mvn">Kamehameha</span><span class="dmg up">7,481</span><span class="tcell"><span class="tline"><span class="ttype">Beam</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>5</span><span class="pv"><i>Speed</i>16,000</span></span><span class="tline"><span class="mn">Chargeable</span></span></span><span class="cost"><i></i><i></i><i></i><i class="add"></i><em>4 bars</em></span></div>
+                <div class="cmdrow"><span class="slot u">ULT</span><span class="mvn">Spirit Bomb</span><span class="dmg up">15,750</span><span class="tcell"><span class="tline"><span class="ttype">Fire</span><span class="pv"><i>Clash</i>Beam</span><span class="pv"><i>Impact</i>12</span><span class="pv"><i>Speed</i>10,000</span></span><span class="tline"><span class="mn">Unguardable</span><span class="mn">Cinematic</span><span class="mn">Audience flees</span></span></span><span class="cost"><i class="spark"></i><em>Sparking</em></span></div>
+                <div class="cmdrow"><span class="slot s">S2</span><span class="mvn">Kaioken</span><span class="dmg dur">25s</span><span class="tcell"><span class="tline"><span class="ttype">Buff</span><span class="pv"><i>Activation</i>Instant</span><span class="pv"><i>Targets</i>Self</span></span><span class="tline"><span class="ef">Melee +10%</span><span class="ef">Ki blasts +10%</span><span class="ef">Defense +10%</span><span class="mn">Cutscene</span></span></span><span class="cost"><i class="pt"></i><i class="pt"></i><em>2 points</em></span></div>
               </div>
               <div class="plate off">
                 <h5>Offense</h5>
