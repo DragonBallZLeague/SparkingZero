@@ -14,8 +14,12 @@
  *   Tapion 4, Gogeta (Super) Super Saiyan 5, measured 2026-10-11); hits named twice count once.
  * - Rolling Press's first press is the 190 hit four times, then the 600 one (Gamma 1: 1,788, 2026-10-11).
  * - Grand Slash and Tornado Slash: Goku 625 / 1,263, then 450, 363, 525 (2026-10-11).
- * Energy Storm ends in a flurry of 9 ki blasts that doesn't count as combo hits; the league measured 224 in all
- * for Piccolo (about 25 a shot), not the bullet file's Power (125, so 157), so it is published as measured.
+ * - Rush Ki Waves part charged: 1,625 for Piccolo (5 hits of 260 Power; the files give none) (2026-10-11).
+ * - Aerial Slash: the Flying Kicks animation: three kicks in one press, then the finisher (Goku 1,125, 400).
+ * - Lift Strike: Goku 675 / 900 / 1,338, as the files say; every character has it unless a flag turns it off.
+ * Energy Storm ends in a flurry of 9 ki blasts that doesn't count as combo hits. The target is falling, so each
+ * shot deals its shave damage (Shave 25: 32 for Piccolo), not its Power: the league saw 32 a shot and 224 in all
+ * (7 shots landing). The league's reading, 2026-10-11.
  */
 import { finalDamage, num } from './fields.mjs';
 
@@ -37,10 +41,11 @@ const CHAIN_DEF = {
     'Rolling Press': { actions: [{ action: 'actPP1A', pattern: [[0, 4], [1, 1]] }, 'actPP2'] } } },
   'Blaster Wave': { charge: ['actBWN', 'actBWP', 'actBWF'], followUps: {
     'Blaster Wave Combo': { actions: ['actBC1', 'actBC2'], needsFull: true } } },
-  'Rush Ki Waves': { charge: ['actRWN', 'actRWP', 'actRWF'], hits: 5, followUps: {
-    'Energy Storm': { actions: ['actES1', 'actES2'], needsFull: true, flurry: { shots: 9, measured: { character: '0040_00', total: 224 } } } } },
+  'Rush Ki Waves': { charge: ['actRWN', { action: 'actRWP', power: 260 }, 'actRWF'], hits: 5, followUps: {
+    'Energy Storm': { actions: ['actES1', 'actES2'], needsFull: true, flurry: { action: 'actES3', shots: 9, measured: { character: '0040_00', total: 224, shots: 7 } } } } },
   'Grand Slash': { charge: ['actGSN', 'actGSP', 'actGSF'], followUps: {
-    'Tornado Slash': { actions: ['actDT1', 'actDT2', 'actDT3'] } } },
+    'Tornado Slash': { actions: ['actDT1', 'actDT2', 'actDT3'] },
+    'Aerial Slash': { actions: [{ action: 'actFLK', pattern: [[0, 3]] }, 'actFLKF'] } } },
   'Lift Strike': { charge: ['actLFN', 'actLFP', 'actLFF'], followUps: {} },
 };
 
@@ -65,7 +70,7 @@ export function rushChainsOf(fm, id, { coef, damageConstant, moveset }) {
     const files = fm.attackFiles(id, action);
     if (!files.length) return null;
     if (spec.pattern) return spec.pattern.flatMap(([i, n]) => Array(n).fill(dmg(power(files[i]))));
-    if (hits) return Array(hits).fill(dmg(power(files[0])));
+    if (hits) return Array(hits).fill(dmg(spec.power ?? power(files[0])));
     if (ranged) {
       const byHit = new Map();
       for (const f of files) for (const h of hitIndices(f, action) || []) if (!byHit.has(h)) byHit.set(h, dmg(power(f)));
@@ -74,9 +79,17 @@ export function rushChainsOf(fm, id, { coef, damageConstant, moveset }) {
     return files.map(f => dmg(power(f))).filter(d => d > 0);
   };
   const total = (h) => (h ? h.reduce((t, d) => t + d, 0) : null);
-  const types = [...new Set([...(moveset.rushChains || []).map(c => c.type), moveset.stepInChain, moveset.rushInAttack, moveset.grandSlash ? 'Grand Slash' : null].filter(Boolean))];
+  const types = [...new Set([...(moveset.rushChains || []).map(c => c.type), moveset.stepInChain, moveset.rushInAttack, moveset.grandSlash ? 'Grand Slash' : null,
+    (moveset.unavailable || []).includes('Lift Strike') ? null : 'Lift Strike'].filter(Boolean))];
   const followUpsHad = (type) => new Set(type === 'Grand Slash' ? (moveset.grandSlash?.followUps || [])
     : (moveset.rushChains || []).filter(c => c.type === type).flatMap(c => c.followUps));
+  // Energy Storm's flurry: each shot deals its shave damage (the target is falling), at the ki blast channel
+  const flurryOf = (fl) => {
+    const file = fm.bulletFiles(id, fl.action)[0];
+    const shave = num(fm.param(file, 'Shave'));
+    return { shots: fl.shots, perShot: shave == null ? null : finalDamage(shave, coef.kiBlast, damageConstant),
+      ...(id === fl.measured.character ? { measured: { total: fl.measured.total, shotsLanded: fl.measured.shots } } : {}) };
+  };
   const out = {};
   for (const type of types) {
     const def = CHAIN_DEF[type];
@@ -93,7 +106,7 @@ export function rushChainsOf(fm, id, { coef, damageConstant, moveset }) {
         hits,
         total: total(hits),
         ...(f.needsFull ? { needsFullCharge: true } : {}),
-        ...(f.flurry ? { kiBlastFlurry: { shots: f.flurry.shots, ...(id === f.flurry.measured.character ? { measuredTotal: f.flurry.measured.total } : {}) } } : {}),
+        ...(f.flurry ? { kiBlastFlurry: flurryOf(f.flurry) } : {}),
       };
     }
     out[type] = {

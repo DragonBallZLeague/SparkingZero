@@ -325,6 +325,20 @@ Results, now in `characters.json` `rushChainDamage` (`scripts/lib/rushChains.mjs
 Not measured yet: Ki Blast Cannon Smash (`actSCS`, 640), Delta Heavy Finish (`actDS1`-`3`), Rolling Press
 (`actPP1A`, `actPP2`), and characters with their own chain files (Flying Kicks for about 5 characters).
 
+### Third round (run 2026-10-11)
+
+- **Rush Ki Waves part charged:** 1,625 for Piccolo (5 hits of 260 Power; the files give none).
+- **Aerial Slash** is the Flying Kicks animation: three kicks in one press (Goku 1,125), then the finisher (400).
+- **Lift Strike:** Goku 675 / 900 / 1,338, as the files predicted.
+- **Energy Storm's flurry:** the target is falling, so each shot deals its shave damage (the bullet's Shave 25:
+  32 a shot for Piccolo), not its Power; 224 was 7 shots landing (the league's reading, which the numbers fit).
+- **Devilmite Beam** deals its damage x the opponent's wickedness / 20. Wickedness is the game's per-character
+  ExParam (0 to 20; none given is 0; published as `wickedness`): Goku (Z - Early) 0 took 0; Frieza (Z) 1st Form 16
+  took 28,350 (33,750 x 16/20, x his 1.05 blast defense). Only Devilmite Beam has the flag (bExScale).
+- **Rush tracking:** 134 rush blasts home (`homing`, the files' ControllableTarget), 14 steer (`steering`,
+  ControllableTurn). Of the steering ones, Justice Kick is a cinematic rush once it connects; the other 13 crash
+  (`crash`: no cinematic). 115 give no value (the game's default, probably non-homing; TESTS.md 1).
+
 ### Second round (run 2026-10-11)
 
 All in the data and checked by verify-data:

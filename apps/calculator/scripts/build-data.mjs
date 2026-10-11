@@ -601,6 +601,8 @@ for (const rc of ref.characters) {
     kiBlasts,
     chargedMelee,
     rushChainDamage: rushChains,
+    // wickedness (the game's ExParam, 0 to 20; none given is 0): Devilmite Beam deals its damage x wickedness / 20
+    wickedness: fm ? Number(fm.raw(id, 'Numeric', 'ExParam') ?? 0) : null,
     mobility,
     moveset,
     armor,
@@ -775,7 +777,13 @@ for (const bm of blastMoves) {
   if (gm) {
     const add = (f) => { if (!det.flags.includes(f)) det.flags = [...det.flags, f]; };
     if (fm.param(gm.file, 'BlastSkillParamData.bBackstepWhenNearMode') === 'false' || fm.param(gm.file, 'BlastUltimateParamData.bBackstepWhenNearMode') === 'false') add('noStepBack');
-    if (/ControllableTurn/.test((fm.param(gm.file, 'BlastSkillParamData.MoveType') ?? fm.param(gm.file, 'BlastUltimateParamData.MoveType')) || '')) add('crash');
+    // a rush's tracking: homing (follows the target) or steering (turned by the player); none given is the game's
+    // default, to check (league 2026-10-11: Justice Kick steers but is a cinematic rush; the others steer and crash)
+    const moveType = (fm.param(gm.file, 'BlastSkillParamData.MoveType') ?? fm.param(gm.file, 'BlastUltimateParamData.MoveType')) || '';
+    if (/ControllableTarget/.test(moveType)) add('homing');
+    if (/ControllableTurn/.test(moveType)) { add('steering'); if (!det.traits.includes('Cinematic')) add('crash'); }
+    // damage scaled by the opponent's wickedness (ExParam, 0 to 20): Devilmite Beam
+    if (fm.param(gm.file, 'BlastUltimateParamData.bExScale') === 'true' || fm.param(gm.file, 'BlastSkillParamData.bExScale') === 'true') add('wickednessScaled');
   }
   (blasts[c.id] ??= []).push({
     slot: m.Slot, variant: m.Variant || '', name: m.Move,

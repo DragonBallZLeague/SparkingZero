@@ -347,7 +347,23 @@ if (v2) {
     ig(`${n} Flying Kicks (total, hits)`, j([fk?.damage?.[0], fk?.hits?.[0]?.length]), j(want));
   }
   ig('Goku Grand Slash uncharged and full, then Tornado Slash', j([rcd('0000_00', 'Grand Slash')?.damage?.[0], rcd('0000_00', 'Grand Slash')?.damage?.[2], ...(rcd('0000_00', 'Grand Slash')?.followUps?.['Tornado Slash']?.hits || [])]), j([625, 1263, 450, 363, 525]));
-  ig('Piccolo Energy Storm ki blast flurry (shots, measured)', j(rcd('0040_00', 'Rush Ki Waves')?.followUps?.['Energy Storm']?.kiBlastFlurry), j({ shots: 9, measuredTotal: 224 }));
+  // 2026-10-11, third round
+  ig('Piccolo Rush Ki Waves at each charge', j(rcd('0040_00', 'Rush Ki Waves')?.damage), j([625, 1625, 1875]));
+  ig('Goku Aerial Slash (three kicks, then the finisher)', j(rcd('0000_00', 'Grand Slash')?.followUps?.['Aerial Slash']?.hits), j([1125, 400]));
+  ig('Goku Lift Strike at each charge', j(rcd('0000_00', 'Lift Strike')?.damage), j([675, 900, 1338]));
+  ig('Piccolo Energy Storm flurry shot (shave damage) and its measurement', j(rcd('0040_00', 'Rush Ki Waves')?.followUps?.['Energy Storm']?.kiBlastFlurry), j({ shots: 9, perShot: 32, measured: { total: 224, shotsLanded: 7 } }));
+  {
+    // Devilmite Beam: its damage x the opponent's wickedness / 20 (Goku 0: 0 damage; Frieza (Z) 1st Form 16: 28,350)
+    const devil = data.characters.find(c => c.name === 'Spike the Devil Man');
+    const beam = data.blasts[devil?.id]?.find(b => b.name === 'Devilmite Beam');
+    const on = (n) => { const c = data.characters.find(x => x.name === n); const o = run(c.id); return damageTaken(beam.damage * c.wickedness / 20, o.blastDefense); };
+    ig('Devilmite Beam is wickedness-scaled', beam?.flags?.includes('wickednessScaled'), true);
+    ig('Devilmite Beam on Goku (Z - Early)', on('Goku (Z - Early)'), 0);
+    ig('Devilmite Beam on Frieza (Z) 1st Form', on('Frieza (Z) 1st Form'), 28350);
+  }
+  ig('Justice Kick steers but is not a crash; Dodoria Head Ram crashes', JSON.stringify([
+    data.blasts[data.characters.find(c => c.name === 'Dyspo')?.id]?.find(b => b.name === 'Justice Kick')?.flags?.includes('crash'),
+    data.blasts[data.characters.find(c => c.name === 'Dodoria')?.id]?.find(b => b.name === 'Dodoria Head Ram')?.flags?.includes('crash')]), JSON.stringify([false, true]));
   ig('Vegeta (Z - Scouter) Explosive Wave interrupts', data.skills['0020_00:1']?.display?.interrupts, true);
   const stageGaps = Object.values(data.skills).filter(k => k.phases.every(p => p.list != null) && !!k.stages !== k.phases.some(p => p.stage > 1)).map(k => k.id);
   check(!stageGaps.length, "skill stages (same effects in every phase) match the game's buff stages; other phases apply together", stageGaps);

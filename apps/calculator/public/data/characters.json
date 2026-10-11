@@ -71,8 +71,10 @@
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Attack":{"hits":[625,775,925],"total":2325,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338},"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -272,8 +274,10 @@
         }
       },
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -455,8 +459,10 @@
           "Ki Blast Cannon Attack": {"hits":[763,946,1129],"total":2838,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633},"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -631,8 +637,10 @@
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -808,8 +816,10 @@
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586}}},
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633},"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -984,8 +994,10 @@
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633},"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -1161,8 +1173,10 @@
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[858,1429,1778],"followUps":{"Delta Heavy Finish":{"hits":[572,461,667],"total":1700}}},
       "Rolling Hammer": {"damage":[429,540,715],"followUps":{"Rolling Hurricane":{"hits":[635,1016],"total":1651}}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700},"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -1344,8 +1358,10 @@
         "followUps": {"Heavy Crush":{"hits":[463,561,743],"total":1767},"Delta Heavy Finish":{"hits":[594,479,693],"total":1766}}
       },
       "Ki Blast Cannon": {"damage":[1024,1337,1766],"followUps":{"Ki Blast Cannon Attack":{"hits":[826,1024,1221],"total":3071,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}}
+      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766},"Aerial Slash":{"hits":[1488,528],"total":2016}}},
+      "Lift Strike": {"damage":[892,1188,1766],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -1529,8 +1545,10 @@
         }
       },
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -1715,8 +1733,10 @@
           "Ki Blast Cannon Attack": {"hits":[763,946,1129],"total":2838,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633},"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -1904,8 +1924,10 @@
           "Ki Blast Cannon Attack": {"hits":[826,1024,1221],"total":3071,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}}
+      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766},"Aerial Slash":{"hits":[1488,528],"total":2016}}},
+      "Lift Strike": {"damage":[892,1188,1766],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -2089,8 +2111,10 @@
         }
       },
       "Flying Kicks": {"damage":[1554],"hits":[[507,507,540]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[844,1047,1705],"followUps":{"Tornado Slash":{"hits":[608,490,709],"total":1807}}}
+      "Grand Slash": {"damage":[844,1047,1705],"followUps":{"Tornado Slash":{"hits":[608,490,709],"total":1807},"Aerial Slash":{"hits":[1521,540],"total":2061}}},
+      "Lift Strike": {"damage":[912,1215,1806],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -2275,8 +2299,10 @@
           "Ki Blast Cannon Attack": {"hits":[875,1085,1295],"total":3255,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[875,1085,1768],"followUps":{"Tornado Slash":{"hits":[630,508,735],"total":1873}}}
+      "Grand Slash": {"damage":[875,1085,1768],"followUps":{"Tornado Slash":{"hits":[630,508,735],"total":1873},"Aerial Slash":{"hits":[1575,560],"total":2135}}},
+      "Lift Strike": {"damage":[945,1260,1873],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -2461,8 +2487,10 @@
         "damage": [858,1429,1778],
         "followUps": {"Heavy Crush":{"hits":[445,540,715],"total":1700},"Delta Heavy Finish":{"hits":[572,461,667],"total":1700}}
       },
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700},"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -2637,8 +2665,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Blaster Wave": {"damage":[814,1064,1405],"followUps":{"Blaster Wave Combo":{"hits":[657,814],"total":1471,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -2813,8 +2843,10 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Blaster Wave": {"damage":[946,1236,1632],"followUps":{"Blaster Wave Combo":{"hits":[763,946],"total":1709,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -2990,8 +3022,10 @@
       "Blaster Wave": {"damage":[985,1286,1699],"followUps":{"Blaster Wave Combo":{"hits":[794,985],"total":1779,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[858,1429,1778],"followUps":{"Delta Heavy Finish":{"hits":[572,461,667],"total":1700}}},
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -3165,8 +3199,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -3348,12 +3384,14 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [565,1690,1690],
-        "hits": [[113,113,113,113,113],[338,338,338,338,338],[338,338,338,338,338]],
-        "followUps": {"Energy Storm":{"hits":[664,439],"total":1103,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [565,1465,1690],
+        "hits": [[113,113,113,113,113],[293,293,293,293,293],[338,338,338,338,338]],
+        "followUps": {"Energy Storm":{"hits":[664,439],"total":1103,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":29}}}
       },
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -3527,14 +3565,16 @@
     "rushChainDamage": {
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -3710,12 +3750,14 @@
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -3889,13 +3931,15 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -4070,13 +4114,15 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -4251,13 +4297,15 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Heavy Crush":{"hits":[427,519,687],"total":1633}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -4432,12 +4480,14 @@
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
       "Ki Blast Cannon": {"damage":[969,1266,1672],"followUps":{"Ki Blast Cannon Smash":{"hits":[1000],"total":1000,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [785,2345,2345],
-        "hits": [[157,157,157,157,157],[469,469,469,469,469],[469,469,469,469,469]],
-        "followUps": {"Energy Storm":{"hits":[922,610],"total":1532,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [785,2035,2345],
+        "hits": [[157,157,157,157,157],[407,407,407,407,407],[469,469,469,469,469]],
+        "followUps": {"Energy Storm":{"hits":[922,610],"total":1532,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":33}}}
       },
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -4629,15 +4679,17 @@
     "chargedMelee": {"smash":[892,1485,1849],"smashJust":1849,"hyperSmash":3235,"heavyFinish":[892,1485,1849]},
     "rushChainDamage": {
       "Rush Ki Waves": {
-        "damage": [825,2480,2480],
-        "hits": [[165,165,165,165,165],[496,496,496,496,496],[496,496,496,496,496]],
-        "followUps": {"Energy Storm":{"hits":[974,644],"total":1618,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [825,2150,2480],
+        "hits": [[165,165,165,165,165],[430,430,430,430,430],[496,496,496,496,496]],
+        "followUps": {"Energy Storm":{"hits":[974,644],"total":1618,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
       "Rolling Hammer": {"damage":[446,561,743],"followUps":{"Rolling Hurricane":{"hits":[660,1056],"total":1716}}},
       "Ki Blast Cannon": {"damage":[1024,1337,1766],"followUps":{"Ki Blast Cannon Smash":{"hits":[1056],"total":1056,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[892,1485,1849],"followUps":{"Delta Heavy Finish":{"hits":[594,479,693],"total":1766}}},
-      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}}
+      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}},
+      "Lift Strike": {"damage":[892,1188,1766],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -4819,12 +4871,14 @@
       },
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -5004,13 +5058,15 @@
         "followUps": {"Heavy Crush":{"hits":[427,519,687],"total":1633},"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}
       },
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -5194,12 +5250,14 @@
         "followUps": {"Heavy Crush":{"hits":[463,561,743],"total":1767},"Delta Heavy Finish":{"hits":[594,479,693],"total":1766}}
       },
       "Rush Ki Waves": {
-        "damage": [825,2480,2480],
-        "hits": [[165,165,165,165,165],[496,496,496,496,496],[496,496,496,496,496]],
-        "followUps": {"Energy Storm":{"hits":[974,644],"total":1618,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [825,2150,2480],
+        "hits": [[165,165,165,165,165],[430,430,430,430,430],[496,496,496,496,496]],
+        "followUps": {"Energy Storm":{"hits":[974,644],"total":1618,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
-      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}}
+      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}},
+      "Lift Strike": {"damage":[892,1188,1766],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -5374,13 +5432,15 @@
       "Blaster Wave": {"damage":[946,1236,1632],"followUps":{"Blaster Wave Combo":{"hits":[763,946],"total":1709,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Press":{"hits":[2075,915],"total":2990}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Heavy Crush":{"hits":[427,519,687],"total":1633}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -5558,13 +5618,15 @@
         "followUps": {"Heavy Crush":{"hits":[445,540,715],"total":1700},"Delta Heavy Finish":{"hits":[572,461,667],"total":1700}}
       },
       "Rush Ki Waves": {
-        "damage": [795,2385,2385],
-        "hits": [[159,159,159,159,159],[477,477,477,477,477],[477,477,477,477,477]],
-        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [795,2065,2385],
+        "hits": [[159,159,159,159,159],[413,413,413,413,413],[477,477,477,477,477]],
+        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":34}}}
       },
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Smash":{"hits":[1016],"total":1016,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -5739,8 +5801,10 @@
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Press":{"hits":[1617,713],"total":2330}}},
       "Blaster Wave": {"damage":[737,962,1271],"followUps":{"Blaster Wave Combo":{"hits":[594,737],"total":1331,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -5915,8 +5979,10 @@
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -6096,8 +6162,10 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -6272,8 +6340,10 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -6452,8 +6522,10 @@
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Smash":{"hits":[1016],"total":1016,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[429,540,715],"followUps":{"Rolling Hurricane":{"hits":[635,1016],"total":1651}}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -6632,8 +6704,10 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -6808,8 +6882,10 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Heavy Crush":{"hits":[427,519,687],"total":1633}}},
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -6985,8 +7061,10 @@
       "Rolling Hammer": {"damage":[429,540,715],"followUps":{"Rolling Hurricane":{"hits":[635,1016],"total":1651}}},
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Smash":{"hits":[1016],"total":1016,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[858,1429,1778],"followUps":{"Heavy Crush":{"hits":[445,540,715],"total":1700}}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -7150,8 +7228,10 @@
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -7327,8 +7407,10 @@
       "Ki Blast Cannon": {"damage":[969,1266,1672],"followUps":{"Ki Blast Cannon Smash":{"hits":[1000],"total":1000,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Hurricane":{"hits":[625,1000],"total":1625}}},
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -7504,8 +7586,10 @@
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -7703,12 +7787,14 @@
       },
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":39}}}
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -7889,14 +7975,18 @@
     "rushChainDamage": {
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [625,1875,1875],
-        "hits": [[125,125,125,125,125],[375,375,375,375,375],[375,375,375,375,375]],
-        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"measuredTotal":224}}}
+        "damage": [625,1625,1875],
+        "hits": [[125,125,125,125,125],[325,325,325,325,325],[375,375,375,375,375]],
+        "followUps": {
+          "Energy Storm": {"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32,"measured":{"total":224,"shotsLanded":7}}}
+        }
       },
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338},"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -8072,8 +8162,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -8237,12 +8329,14 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
       "Rush Ki Waves": {
-        "damage": [625,1875,1875],
-        "hits": [[125,125,125,125,125],[375,375,375,375,375],[375,375,375,375,375]],
-        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [625,1625,1875],
+        "hits": [[125,125,125,125,125],[325,325,325,325,325],[375,375,375,375,375]],
+        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338},"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -8417,8 +8511,10 @@
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -8594,8 +8690,10 @@
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Hurricane":{"hits":[475,760],"total":1235}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -8770,8 +8868,10 @@
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Smash":{"hits":[880],"total":880,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -8934,8 +9034,10 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Attack":{"hits":[625,775,925],"total":2325,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -9113,8 +9215,10 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Attack":{"hits":[763,946,1129],"total":2838,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -9295,8 +9399,10 @@
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
       "Blaster Wave": {"damage":[814,1064,1405],"followUps":{"Blaster Wave Combo":{"hits":[657,814],"total":1471,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -9477,8 +9583,10 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Blaster Wave": {"damage":[946,1236,1632],"followUps":{"Blaster Wave Combo":{"hits":[763,946],"total":1709,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633},"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -9656,8 +9764,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -9854,12 +9964,14 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":39}}}
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -10059,8 +10171,10 @@
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Press":{"hits":[2126,938],"total":3064}}},
       "Blaster Wave": {"damage":[969,1266,1672],"followUps":{"Blaster Wave Combo":{"hits":[782,969],"total":1751,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -10226,8 +10340,10 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -10405,8 +10521,10 @@
       "Flying Kicks": {"damage":[1346],"hits":[[439,439,468]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[790,1317,1638],"followUps":{"Delta Heavy Finish":{"hits":[527,425,615],"total":1567}}},
       "Ki Blast Cannon": {"damage":[907,1185,1565],"followUps":{"Ki Blast Cannon Smash":{"hits":[936],"total":936,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Tornado Slash":{"hits":[527,425,615],"total":1567}}}
+      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Tornado Slash":{"hits":[527,425,615],"total":1567}}},
+      "Lift Strike": {"damage":[790,1053,1565],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -10572,8 +10690,10 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Attack":{"hits":[625,775,925],"total":2325,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -10751,8 +10871,10 @@
       "Flying Kicks": {"damage":[1346],"hits":[[439,439,468]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[907,1185,1565],"followUps":{"Ki Blast Cannon Attack":{"hits":[732,907,1083],"total":2722,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[790,1317,1638],"followUps":{"Delta Heavy Finish":{"hits":[527,425,615],"total":1567}}},
-      "Grand Slash": {"damage":[732,907,1478],"followUps":{}}
+      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Aerial Slash":{"hits":[1317,468],"total":1785}}},
+      "Lift Strike": {"damage":[790,1053,1565],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -10933,8 +11055,10 @@
       "Heavy Finishes": {"damage":[864,1440,1792],"followUps":{"Delta Heavy Finish":{"hits":[576,464,672],"total":1712}}},
       "Rolling Hammer": {"damage":[432,544,720],"followUps":{"Rolling Hurricane":{"hits":[640,1024],"total":1664}}},
       "Ki Blast Cannon": {"damage":[992,1296,1712],"followUps":{"Ki Blast Cannon Smash":{"hits":[1024],"total":1024,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Tornado Slash":{"hits":[576,464,672],"total":1712}}}
+      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Tornado Slash":{"hits":[576,464,672],"total":1712}}},
+      "Lift Strike": {"damage":[864,1152,1712],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -11113,9 +11237,9 @@
     "chargedMelee": {"smash":[898,1497,1862],"smashJust":1862,"hyperSmash":3259,"heavyFinish":[898,1497,1862]},
     "rushChainDamage": {
       "Rush Ki Waves": {
-        "damage": [835,2495,2495],
-        "hits": [[167,167,167,167,167],[499,499,499,499,499],[499,499,499,499,499]],
-        "followUps": {"Energy Storm":{"hits":[981,649],"total":1630,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [835,2165,2495],
+        "hits": [[167,167,167,167,167],[433,433,433,433,433],[499,499,499,499,499]],
+        "followUps": {"Energy Storm":{"hits":[981,649],"total":1630,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":42}}}
       },
       "Rolling Hammer": {"damage":[449,566,749],"followUps":{"Rolling Hurricane":{"hits":[665,1064],"total":1729}}},
       "Ki Blast Cannon": {
@@ -11129,8 +11253,10 @@
         "damage": [898,1497,1862],
         "followUps": {"Heavy Crush":{"hits":[466,566,749],"total":1781},"Delta Heavy Finish":{"hits":[599,483,699],"total":1781}}
       },
-      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781}}}
+      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781}}},
+      "Lift Strike": {"damage":[898,1197,1779],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -11309,9 +11435,9 @@
     "chargedMelee": {"smash":[966,1609,2002],"smashJust":2002,"hyperSmash":3504,"heavyFinish":[966,1609,2002]},
     "rushChainDamage": {
       "Rush Ki Waves": {
-        "damage": [895,2685,2685],
-        "hits": [[179,179,179,179,179],[537,537,537,537,537],[537,537,537,537,537]],
-        "followUps": {"Energy Storm":{"hits":[1055,698],"total":1753,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [895,2325,2685],
+        "hits": [[179,179,179,179,179],[465,465,465,465,465],[537,537,537,537,537]],
+        "followUps": {"Energy Storm":{"hits":[1055,698],"total":1753,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":45}}}
       },
       "Rolling Hammer": {"damage":[483,608,805],"followUps":{"Rolling Hurricane":{"hits":[715,1144],"total":1859}}},
       "Ki Blast Cannon": {
@@ -11325,8 +11451,10 @@
         "damage": [966,1609,2002],
         "followUps": {"Heavy Crush":{"hits":[501,608,805],"total":1914},"Delta Heavy Finish":{"hits":[644,519,751],"total":1914}}
       },
-      "Grand Slash": {"damage":[894,1109,1806],"followUps":{"Tornado Slash":{"hits":[644,519,751],"total":1914}}}
+      "Grand Slash": {"damage":[894,1109,1806],"followUps":{"Tornado Slash":{"hits":[644,519,751],"total":1914}}},
+      "Lift Strike": {"damage":[966,1287,1913],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -11508,8 +11636,10 @@
       "Heavy Finishes": {"damage":[864,1440,1792],"followUps":{"Delta Heavy Finish":{"hits":[576,464,672],"total":1712}}},
       "Rolling Hammer": {"damage":[432,544,720],"followUps":{"Rolling Hurricane":{"hits":[640,1024],"total":1664}}},
       "Flying Kicks": {"damage":[2112],"hits":[[400,400,400,400,512]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Tornado Slash":{"hits":[576,464,672],"total":1712}}}
+      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Tornado Slash":{"hits":[576,464,672],"total":1712},"Aerial Slash":{"hits":[1200,512],"total":1712}}},
+      "Lift Strike": {"damage":[864,1152,1712],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -11694,8 +11824,10 @@
       "Blaster Wave": {"damage":[1031,1347,1779],"followUps":{"Blaster Wave Combo":{"hits":[832,1031],"total":1863,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[449,566,749],"followUps":{"Rolling Hurricane":{"hits":[665,1064],"total":1729}}},
       "Flying Kicks": {"damage":[2196],"hits":[[416,416,416,416,532]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781}}}
+      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781},"Aerial Slash":{"hits":[1248,532],"total":1780}}},
+      "Lift Strike": {"damage":[898,1197,1779],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -11880,8 +12012,10 @@
       },
       "Ki Blast Cannon": {"damage":[1109,1448,1913],"followUps":{"Ki Blast Cannon Attack":{"hits":[894,1109,1323],"total":3326,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[483,608,805],"followUps":{"Rolling Hurricane":{"hits":[715,1144],"total":1859}}},
-      "Grand Slash": {"damage":[894,1109,1806],"followUps":{"Tornado Slash":{"hits":[644,519,751],"total":1914}}}
+      "Grand Slash": {"damage":[894,1109,1806],"followUps":{"Tornado Slash":{"hits":[644,519,751],"total":1914},"Aerial Slash":{"hits":[1341,572],"total":1913}}},
+      "Lift Strike": {"damage":[966,1287,1913],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -12063,8 +12197,10 @@
       },
       "Rolling Hammer": {"damage":[483,608,805],"followUps":{"Rolling Hurricane":{"hits":[715,1144],"total":1859}}},
       "Flying Kicks": {"damage":[2360],"hits":[[447,447,447,447,572]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[894,1109,1806],"followUps":{"Tornado Slash":{"hits":[644,519,751],"total":1914}}}
+      "Grand Slash": {"damage":[894,1109,1806],"followUps":{"Tornado Slash":{"hits":[644,519,751],"total":1914},"Aerial Slash":{"hits":[1341,572],"total":1913}}},
+      "Lift Strike": {"damage":[966,1287,1913],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -12249,8 +12385,10 @@
       },
       "Ki Blast Cannon": {"damage":[1031,1347,1779],"followUps":{"Ki Blast Cannon Attack":{"hits":[832,1031,1231],"total":3094,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[449,566,749],"followUps":{"Rolling Hurricane":{"hits":[665,1064],"total":1729}}},
-      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781}}}
+      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781},"Aerial Slash":{"hits":[1248,532],"total":1780}}},
+      "Lift Strike": {"damage":[898,1197,1779],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -12425,8 +12563,10 @@
       "Flying Kicks": {"damage":[1416],"hits":[[462,462,492]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[954,1246,1646],"followUps":{"Ki Blast Cannon Attack":{"hits":[769,954,1138],"total":2861,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[831,1384,1722],"followUps":{"Delta Heavy Finish":{"hits":[554,446,646],"total":1646}}},
-      "Grand Slash": {"damage":[769,954,1553],"followUps":{}}
+      "Grand Slash": {"damage":[769,954,1553],"followUps":{"Aerial Slash":{"hits":[1386,492],"total":1878}}},
+      "Lift Strike": {"damage":[831,1107,1646],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -12601,8 +12741,10 @@
       "Flying Kicks": {"damage":[1472],"hits":[[480,480,512]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[992,1296,1712],"followUps":{"Ki Blast Cannon Attack":{"hits":[800,992,1184],"total":2976,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[864,1440,1792],"followUps":{"Delta Heavy Finish":{"hits":[576,464,672],"total":1712}}},
-      "Grand Slash": {"damage":[800,992,1616],"followUps":{}}
+      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Aerial Slash":{"hits":[1440,512],"total":1952}}},
+      "Lift Strike": {"damage":[864,1152,1712],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -12777,13 +12919,15 @@
       "Ki Blast Cannon": {"damage":[1031,1347,1779],"followUps":{"Ki Blast Cannon Attack":{"hits":[832,1031,1231],"total":3094,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[898,1497,1862],"followUps":{"Delta Heavy Finish":{"hits":[599,483,699],"total":1781}}},
       "Rush Ki Waves": {
-        "damage": [835,2495,2495],
-        "hits": [[167,167,167,167,167],[499,499,499,499,499],[499,499,499,499,499]],
-        "followUps": {"Energy Storm":{"hits":[981,649],"total":1630,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [835,2165,2495],
+        "hits": [[167,167,167,167,167],[433,433,433,433,433],[499,499,499,499,499]],
+        "followUps": {"Energy Storm":{"hits":[981,649],"total":1630,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":42}}}
       },
       "Flying Kicks": {"damage":[1530],"hits":[[499,499,532]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[832,1031,1680],"followUps":{}}
+      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Aerial Slash":{"hits":[1497,532],"total":2029}}},
+      "Lift Strike": {"damage":[898,1197,1779],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -12958,13 +13102,15 @@
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Attack":{"hits":[594,737,879],"total":2210,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -13140,8 +13286,10 @@
       "Rolling Hammer": {"damage":[304,383,507],"followUps":{"Rolling Hurricane":{"hits":[450,720],"total":1170}}},
       "Ki Blast Cannon": {"damage":[698,912,1204],"followUps":{}},
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Aerial Slash":{"hits":[1014,360],"total":1374}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -13326,8 +13474,10 @@
       "Flying Kicks": {"damage":[898],"hits":[[293,293,312]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[605,790,1044],"followUps":{"Ki Blast Cannon Smash":{"hits":[624],"total":624,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{"Delta Heavy Finish":{"hits":[351,283,410],"total":1044}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{"Aerial Slash":{"hits":[879,312],"total":1191}}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -13501,8 +13651,10 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Press":{"hits":[1788,788],"total":2576}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": false,
       "slowShortDash": true,
@@ -13677,8 +13829,10 @@
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Attack":{"hits":[594,737,879],"total":2210,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -13841,8 +13995,10 @@
       "Heavy Finishes": {"damage":[811,1350,1681],"followUps":{"Heavy Crush":{"hits":[421,511,675],"total":1607}}},
       "Blaster Wave": {"damage":[931,1215,1606],"followUps":{"Blaster Wave Combo":{"hits":[750,931],"total":1681,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[406,511,675],"followUps":{"Rolling Hurricane":{"hits":[600,961],"total":1561}}},
-      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}}
+      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}},
+      "Lift Strike": {"damage":[811,1080,1606],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -14020,8 +14176,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -14202,8 +14360,10 @@
       },
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Attack":{"hits":[688,853,1018],"total":2559,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472},"Aerial Slash":{"hits":[1239,440],"total":1679}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -14368,8 +14528,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 17,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -14551,8 +14713,10 @@
       },
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Attack":{"hits":[688,853,1018],"total":2559,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Hurricane":{"hits":[550,880],"total":1430}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472},"Aerial Slash":{"hits":[1239,440],"total":1679}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -14730,8 +14894,10 @@
       },
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Press":{"hits":[1959,863],"total":2822}}},
       "Blaster Wave": {"damage":[892,1165,1539],"followUps":{"Blaster Wave Combo":{"hits":[719,892],"total":1611,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -14913,8 +15079,10 @@
         "damage": [878,1463,1820],
         "followUps": {"Heavy Crush":{"hits":[455,553,732],"total":1740},"Delta Heavy Finish":{"hits":[585,472,683],"total":1740}}
       },
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740},"Aerial Slash":{"hits":[1464,520],"total":1984}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 17,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -15089,8 +15257,10 @@
       "Blaster Wave": {"damage":[814,1064,1405],"followUps":{"Blaster Wave Combo":{"hits":[657,814],"total":1471,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -15265,8 +15435,10 @@
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Blaster Wave": {"damage":[814,1064,1405],"followUps":{"Blaster Wave Combo":{"hits":[657,814],"total":1471,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -15444,8 +15616,10 @@
         "damage": [743,1238,1540],
         "followUps": {"Heavy Crush":{"hits":[385,468,619],"total":1472},"Delta Heavy Finish":{"hits":[495,399,578],"total":1472}}
       },
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472},"Aerial Slash":{"hits":[1239,440],"total":1679}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -15624,8 +15798,10 @@
       },
       "Ki Blast Cannon": {"damage":[969,1266,1672],"followUps":{"Ki Blast Cannon Smash":{"hits":[1000],"total":1000,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Hurricane":{"hits":[625,1000],"total":1625}}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674},"Aerial Slash":{"hits":[1407,500],"total":1907}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -15800,8 +15976,10 @@
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -15979,8 +16157,10 @@
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Press":{"hits":[2126,938],"total":3064}}},
       "Ki Blast Cannon": {"damage":[969,1266,1672],"followUps":{"Ki Blast Cannon Attack":{"hits":[782,969,1157],"total":2908,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -16146,13 +16326,15 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Ki Blast Cannon": {"damage":[698,912,1204],"followUps":{"Ki Blast Cannon Smash":{"hits":[720],"total":720,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [565,1690,1690],
-        "hits": [[113,113,113,113,113],[338,338,338,338,338],[338,338,338,338,338]],
-        "followUps": {"Energy Storm":{"hits":[664,439],"total":1103,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [565,1465,1690],
+        "hits": [[113,113,113,113,113],[293,293,293,293,293],[338,338,338,338,338]],
+        "followUps": {"Energy Storm":{"hits":[664,439],"total":1103,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205},"Aerial Slash":{"hits":[1014,360],"total":1374}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -16328,8 +16510,10 @@
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Smash":{"hits":[880],"total":880,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Hurricane":{"hits":[550,880],"total":1430}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -16504,8 +16688,10 @@
       "Ki Blast Cannon": {"damage":[969,1266,1672],"followUps":{"Ki Blast Cannon Smash":{"hits":[1000],"total":1000,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1438],"hits":[[469,469,500]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -16684,8 +16870,10 @@
       "Flying Kicks": {"damage":[1438],"hits":[[469,469,500]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Hurricane":{"hits":[625,1000],"total":1625}}},
       "Ki Blast Cannon": {"damage":[969,1266,1672],"followUps":{}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -16863,8 +17051,10 @@
         "damage": [844,1407,1750],
         "followUps": {"Heavy Crush":{"hits":[438,532,704],"total":1674},"Delta Heavy Finish":{"hits":[563,454,657],"total":1674}}
       },
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Aerial Slash":{"hits":[1407,500],"total":1907}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -17038,8 +17228,10 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[156,259,322],"followUps":{}},
       "Ki Blast Cannon": {"damage":[179,233,308],"followUps":{}},
-      "Grand Slash": {"damage":[144,179,291],"followUps":{}}
+      "Grand Slash": {"damage":[144,179,291],"followUps":{}},
+      "Lift Strike": {"damage":[156,207,308],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -17227,8 +17419,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[920],"hits":[[300,300,320]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[540,900,1120],"followUps":{"Delta Heavy Finish":{"hits":[360,290,420],"total":1070}}},
-      "Grand Slash": {"damage":[500,620,1010],"followUps":{}}
+      "Grand Slash": {"damage":[500,620,1010],"followUps":{"Aerial Slash":{"hits":[900,320],"total":1220}}},
+      "Lift Strike": {"damage":[540,720,1070],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -17402,8 +17596,10 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{"Heavy Crush":{"hits":[273,332,439],"total":1044}}},
       "Rolling Hammer": {"damage":[264,332,439],"followUps":{"Rolling Hurricane":{"hits":[390,624],"total":1014}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -17578,8 +17774,10 @@
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Delta Heavy Finish":{"hits":[495,399,578],"total":1472}}},
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Smash":{"hits":[880],"total":880,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472},"Aerial Slash":{"hits":[1239,440],"total":1679}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -17753,8 +17951,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -17917,8 +18117,10 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -18113,8 +18315,10 @@
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Smash":{"hits":[880],"total":880,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Aerial Slash":{"hits":[1239,440],"total":1679}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -18289,8 +18493,10 @@
       "Flying Kicks": {"damage":[898],"hits":[[293,293,312]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{"Delta Heavy Finish":{"hits":[351,283,410],"total":1044}}},
       "Ki Blast Cannon": {"damage":[605,790,1044],"followUps":{"Ki Blast Cannon Attack":{"hits":[488,605,722],"total":1815,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{"Aerial Slash":{"hits":[879,312],"total":1191}}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -18461,8 +18667,10 @@
       "Flying Kicks": {"damage":[898],"hits":[[293,293,312]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[605,790,1044],"followUps":{"Ki Blast Cannon Attack":{"hits":[488,605,722],"total":1815,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{"Delta Heavy Finish":{"hits":[351,283,410],"total":1044}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{"Tornado Slash":{"hits":[351,283,410],"total":1044}}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{"Tornado Slash":{"hits":[351,283,410],"total":1044}}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -18633,8 +18841,10 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Blaster Wave": {"damage":[698,912,1204],"followUps":{"Blaster Wave Combo":{"hits":[563,698],"total":1261,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[304,383,507],"followUps":{"Rolling Press":{"hits":[1531,675],"total":2206}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -18805,8 +19015,10 @@
       "Flying Kicks": {"damage":[898],"hits":[[293,293,312]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{"Delta Heavy Finish":{"hits":[351,283,410],"total":1044}}},
       "Ki Blast Cannon": {"damage":[605,790,1044],"followUps":{"Ki Blast Cannon Attack":{"hits":[488,605,722],"total":1815,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{"Aerial Slash":{"hits":[879,312],"total":1191}}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -18970,8 +19182,10 @@
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -19172,8 +19386,10 @@
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586},"Rolling Press":{"hits":[2075,915],"total":2990}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -19368,8 +19584,10 @@
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Blaster Wave": {"damage":[737,962,1271],"followUps":{"Blaster Wave Combo":{"hits":[594,737],"total":1331,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Hurricane":{"hits":[475,760],"total":1235}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -19544,8 +19762,10 @@
       "Blaster Wave": {"damage":[698,912,1204],"followUps":{"Blaster Wave Combo":{"hits":[563,698],"total":1261,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Delta Heavy Finish":{"hits":[405,327,473],"total":1205}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Aerial Slash":{"hits":[1014,360],"total":1374}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -19723,8 +19943,10 @@
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Hurricane":{"hits":[550,880],"total":1430}}},
       "Blaster Wave": {"damage":[853,1114,1472],"followUps":{"Blaster Wave Combo":{"hits":[688,853],"total":1541,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -19899,8 +20121,10 @@
       "Heavy Finishes": {"damage":[507,844,1050],"followUps":{"Delta Heavy Finish":{"hits":[338,272,394],"total":1004}}},
       "Ki Blast Cannon": {"damage":[582,760,1004],"followUps":{"Ki Blast Cannon Smash":{"hits":[600],"total":600,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[864],"hits":[[282,282,300]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[469,582,947],"followUps":{"Tornado Slash":{"hits":[338,272,394],"total":1004}}}
+      "Grand Slash": {"damage":[469,582,947],"followUps":{"Tornado Slash":{"hits":[338,272,394],"total":1004},"Aerial Slash":{"hits":[846,300],"total":1146}}},
+      "Lift Strike": {"damage":[507,675,1004],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -20075,8 +20299,10 @@
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
       "Blaster Wave": {"damage":[853,1114,1472],"followUps":{"Blaster Wave Combo":{"hits":[688,853],"total":1541,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Press":{"hits":[1873,825],"total":2698}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -20251,8 +20477,10 @@
       "Blaster Wave": {"damage":[853,1114,1472],"followUps":{"Blaster Wave Combo":{"hits":[688,853],"total":1541,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Press":{"hits":[1873,825],"total":2698}}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -20427,8 +20655,10 @@
       "Blaster Wave": {"damage":[737,962,1271],"followUps":{"Blaster Wave Combo":{"hits":[594,737],"total":1331,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -20594,8 +20824,10 @@
       },
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -20770,8 +21002,10 @@
       "Blaster Wave": {"damage":[853,1114,1472],"followUps":{"Blaster Wave Combo":{"hits":[688,853],"total":1541,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Press":{"hits":[1873,825],"total":2698}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -20947,8 +21181,10 @@
       "Flying Kicks": {"damage":[864],"hits":[[141,141,141,141,300]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[582,760,1004],"followUps":{"Ki Blast Cannon Smash":{"hits":[600],"total":600,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[254,319,422],"followUps":{"Rolling Hurricane":{"hits":[375,600],"total":975}}},
-      "Grand Slash": {"damage":[376,470,845],"hits":[[94,94,94,94],[94,94,94,188],[94,94,94,563]],"followUps":{}}
+      "Grand Slash": {"damage":[376,470,845],"hits":[[94,94,94,94],[94,94,94,188],[94,94,94,563]],"followUps":{"Aerial Slash":{"hits":[423,300],"total":723}}},
+      "Lift Strike": {"damage":[507,675,1004],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -21124,8 +21360,10 @@
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Attack":{"hits":[594,737,879],"total":2210,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -21310,8 +21548,10 @@
         "followUps": {"Heavy Crush":{"hits":[315,383,507],"total":1205},"Delta Heavy Finish":{"hits":[405,327,473],"total":1205}}
       },
       "Ki Blast Cannon": {"damage":[698,912,1204],"followUps":{"Ki Blast Cannon Smash":{"hits":[720],"total":720,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -21486,8 +21726,10 @@
       "Heavy Finishes": {"damage":[777,1294,1610],"followUps":{"Heavy Crush":{"hits":[403,489,647],"total":1539}}},
       "Ki Blast Cannon": {"damage":[892,1165,1539],"followUps":{"Ki Blast Cannon Smash":{"hits":[920],"total":920,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Hurricane":{"hits":[575,920],"total":1495}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 17,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -21650,8 +21892,10 @@
       "Heavy Finishes": {"damage":[811,1350,1681],"followUps":{"Heavy Crush":{"hits":[421,511,675],"total":1607}}},
       "Rolling Hammer": {"damage":[406,511,675],"followUps":{"Rolling Press":{"hits":[2041,901],"total":2942}}},
       "Blaster Wave": {"damage":[931,1215,1606],"followUps":{"Blaster Wave Combo":{"hits":[750,931],"total":1681,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}}
+      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}},
+      "Lift Strike": {"damage":[811,1080,1606],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -21826,8 +22070,10 @@
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Hurricane":{"hits":[475,760],"total":1235}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -21990,8 +22236,10 @@
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -22170,8 +22418,10 @@
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Hurricane":{"hits":[550,880],"total":1430}}},
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -22346,8 +22596,10 @@
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Hurricane":{"hits":[475,760],"total":1235}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -22521,8 +22773,10 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[777,1294,1610],"followUps":{"Heavy Crush":{"hits":[403,489,647],"total":1539}}},
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Press":{"hits":[1959,863],"total":2822}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 11,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -22684,8 +22938,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -22863,12 +23119,14 @@
       "Flying Kicks": {"damage":[978],"hits":[[319,319,340]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[659,861,1137],"followUps":{"Ki Blast Cannon Attack":{"hits":[532,659,787],"total":1978,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [535,1595,1595],
-        "hits": [[107,107,107,107,107],[319,319,319,319,319],[319,319,319,319,319]],
-        "followUps": {"Energy Storm":{"hits":[627,415],"total":1042,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [535,1385,1595],
+        "hits": [[107,107,107,107,107],[277,277,277,277,277],[319,319,319,319,319]],
+        "followUps": {"Energy Storm":{"hits":[627,415],"total":1042,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
-      "Grand Slash": {"damage":[532,659,1074],"followUps":{}}
+      "Grand Slash": {"damage":[532,659,1074],"followUps":{}},
+      "Lift Strike": {"damage":[574,765,1137],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -23044,12 +23302,14 @@
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Hurricane":{"hits":[550,880],"total":1430}}},
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Smash":{"hits":[880],"total":880,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [690,2065,2065],
-        "hits": [[138,138,138,138,138],[413,413,413,413,413],[413,413,413,413,413]],
-        "followUps": {"Energy Storm":{"hits":[812,537],"total":1349,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [690,1790,2065],
+        "hits": [[138,138,138,138,138],[358,358,358,358,358],[413,413,413,413,413]],
+        "followUps": {"Energy Storm":{"hits":[812,537],"total":1349,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 18,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -23211,14 +23471,16 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [625,1875,1875],
-        "hits": [[125,125,125,125,125],[375,375,375,375,375],[375,375,375,375,375]],
-        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [625,1625,1875],
+        "hits": [[125,125,125,125,125],[325,325,325,325,325],[375,375,375,375,375]],
+        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -23392,8 +23654,10 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -23568,16 +23832,18 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [660,1970,1970],
-        "hits": [[132,132,132,132,132],[394,394,394,394,394],[394,394,394,394,394]],
-        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [660,1710,1970],
+        "hits": [[132,132,132,132,132],[342,342,342,342,342],[394,394,394,394,394]],
+        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":33}}}
       },
       "Heavy Finishes": {
         "damage": [709,1182,1470],
         "followUps": {"Heavy Crush":{"hits":[368,447,591],"total":1406},"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}
       },
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -23756,8 +24022,10 @@
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Hurricane":{"hits":[650,1040],"total":1690}}},
       "Blaster Wave": {"damage":[1008,1317,1739],"followUps":{"Blaster Wave Combo":{"hits":[813,1008],"total":1821,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1496],"hits":[[488,488,520]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -23933,12 +24201,14 @@
       "Rolling Hammer": {"damage":[540,680,900],"followUps":{"Rolling Press":{"hits":[2720,1200],"total":3920}}},
       "Blaster Wave": {"damage":[1240,1620,2140],"followUps":{"Blaster Wave Combo":{"hits":[1000,1240],"total":2240,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [1000,3000,3000],
-        "hits": [[200,200,200,200,200],[600,600,600,600,600],[600,600,600,600,600]],
-        "followUps": {"Energy Storm":{"hits":[1180,780],"total":1960,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [1000,2600,3000],
+        "hits": [[200,200,200,200,200],[520,520,520,520,520],[600,600,600,600,600]],
+        "followUps": {"Energy Storm":{"hits":[1180,780],"total":1960,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":43}}}
       },
-      "Grand Slash": {"damage":[1000,1240,2020],"followUps":{"Tornado Slash":{"hits":[720,580,840],"total":2140}}}
+      "Grand Slash": {"damage":[1000,1240,2020],"followUps":{"Tornado Slash":{"hits":[720,580,840],"total":2140}}},
+      "Lift Strike": {"damage":[1080,1440,2140],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -24119,12 +24389,14 @@
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
       "Rush Ki Waves": {
-        "damage": [660,1970,1970],
-        "hits": [[132,132,132,132,132],[394,394,394,394,394],[394,394,394,394,394]],
-        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [660,1710,1970],
+        "hits": [[132,132,132,132,132],[342,342,342,342,342],[394,394,394,394,394]],
+        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":33}}}
       },
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -24305,8 +24577,10 @@
       "Heavy Finishes": {"damage":[878,1463,1820],"followUps":{"Heavy Crush":{"hits":[455,553,732],"total":1740}}},
       "Ki Blast Cannon": {"damage":[1008,1317,1739],"followUps":{"Ki Blast Cannon Smash":{"hits":[1040],"total":1040,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Hurricane":{"hits":[650,1040],"total":1690}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -24487,8 +24761,10 @@
       "Heavy Finishes": {"damage":[1080,1800,2240],"followUps":{"Heavy Crush":{"hits":[560,680,900],"total":2140}}},
       "Rolling Hammer": {"damage":[540,680,900],"followUps":{"Rolling Press":{"hits":[2720,1200],"total":3920}}},
       "Blaster Wave": {"damage":[1240,1620,2140],"followUps":{"Blaster Wave Combo":{"hits":[1000,1240],"total":2240,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[1000,1240,2020],"followUps":{"Tornado Slash":{"hits":[720,580,840],"total":2140}}}
+      "Grand Slash": {"damage":[1000,1240,2020],"followUps":{"Tornado Slash":{"hits":[720,580,840],"total":2140}}},
+      "Lift Strike": {"damage":[1080,1440,2140],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -24663,8 +24939,10 @@
       "Heavy Finishes": {"damage":[777,1294,1610],"followUps":{"Heavy Crush":{"hits":[403,489,647],"total":1539}}},
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Press":{"hits":[1959,863],"total":2822}}},
       "Ki Blast Cannon": {"damage":[892,1165,1539],"followUps":{"Ki Blast Cannon Smash":{"hits":[920],"total":920,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -24842,8 +25120,10 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Blaster Wave": {"damage":[698,912,1204],"followUps":{"Blaster Wave Combo":{"hits":[563,698],"total":1261,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[304,383,507],"followUps":{"Rolling Press":{"hits":[1531,675],"total":2206}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -25023,8 +25303,10 @@
         "followUps": {"Heavy Crush":{"hits":[315,383,507],"total":1205},"Delta Heavy Finish":{"hits":[405,327,473],"total":1205}}
       },
       "Blaster Wave": {"damage":[698,912,1204],"followUps":{"Blaster Wave Combo":{"hits":[563,698],"total":1261,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -25202,8 +25484,10 @@
       "Heavy Finishes": {"damage":[777,1294,1610],"followUps":{"Heavy Crush":{"hits":[403,489,647],"total":1539}}},
       "Blaster Wave": {"damage":[892,1165,1539],"followUps":{"Blaster Wave Combo":{"hits":[719,892],"total":1611,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Hurricane":{"hits":[575,920],"total":1495}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -25366,8 +25650,10 @@
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Press":{"hits":[1702,750],"total":2452}}},
       "Blaster Wave": {"damage":[775,1013,1338],"followUps":{"Blaster Wave Combo":{"hits":[625,775],"total":1400,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -25548,12 +25834,14 @@
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Delta Heavy Finish":{"hits":[495,399,578],"total":1472}}},
       "Rush Ki Waves": {
-        "damage": [690,2065,2065],
-        "hits": [[138,138,138,138,138],[413,413,413,413,413],[413,413,413,413,413]],
-        "followUps": {"Energy Storm":{"hits":[812,537],"total":1349,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [690,1790,2065],
+        "hits": [[138,138,138,138,138],[358,358,358,358,358],[413,413,413,413,413]],
+        "followUps": {"Energy Storm":{"hits":[812,537],"total":1349,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Aerial Slash":{"hits":[1239,440],"total":1679}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -25737,13 +26025,15 @@
       },
       "Flying Kicks": {"damage":[1324],"hits":[[432,432,460]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [720,2160,2160],
-        "hits": [[144,144,144,144,144],[432,432,432,432,432],[432,432,432,432,432]],
-        "followUps": {"Energy Storm":{"hits":[849,561],"total":1410,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [720,1870,2160],
+        "hits": [[144,144,144,144,144],[374,374,374,374,374],[432,432,432,432,432]],
+        "followUps": {"Energy Storm":{"hits":[849,561],"total":1410,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":36}}}
       },
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Hurricane":{"hits":[575,920],"total":1495}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539}}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Tornado Slash":{"hits":[518,417,604],"total":1539},"Aerial Slash":{"hits":[1296,460],"total":1756}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -25928,8 +26218,10 @@
         "damage": [878,1463,1820],
         "followUps": {"Heavy Crush":{"hits":[455,553,732],"total":1740},"Delta Heavy Finish":{"hits":[585,472,683],"total":1740}}
       },
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -26095,12 +26387,14 @@
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
       "Rush Ki Waves": {
-        "damage": [625,1875,1875],
-        "hits": [[125,125,125,125,125],[375,375,375,375,375],[375,375,375,375,375]],
-        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [625,1625,1875],
+        "hits": [[125,125,125,125,125],[325,325,325,325,325],[375,375,375,375,375]],
+        "followUps": {"Energy Storm":{"hits":[738,488],"total":1226,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -26277,8 +26571,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -26455,8 +26751,10 @@
     "rushChainDamage": {
       "Heavy Finishes": {"damage":[878,1463,1820],"followUps":{"Heavy Crush":{"hits":[455,553,732],"total":1740}}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Press":{"hits":[2211,975],"total":3186}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -26625,8 +26923,10 @@
       "Ki Blast Cannon": {"damage":[931,1215,1606],"followUps":{"Ki Blast Cannon Smash":{"hits":[961],"total":961,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[811,1350,1681],"followUps":{"Heavy Crush":{"hits":[421,511,675],"total":1607}}},
       "Rolling Hammer": {"damage":[406,511,675],"followUps":{"Rolling Hurricane":{"hits":[600,961],"total":1561}}},
-      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}}
+      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}},
+      "Lift Strike": {"damage":[811,1080,1606],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -26807,8 +27107,10 @@
       "Blaster Wave": {"damage":[1008,1317,1739],"followUps":{"Blaster Wave Combo":{"hits":[813,1008],"total":1821,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Press":{"hits":[2211,975],"total":3186}}},
       "Heavy Finishes": {"damage":[878,1463,1820],"followUps":{"Heavy Crush":{"hits":[455,553,732],"total":1740}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -26974,8 +27276,10 @@
       "Heavy Finishes": {"damage":[540,900,1120],"followUps":{"Delta Heavy Finish":{"hits":[360,290,420],"total":1070}}},
       "Ki Blast Cannon": {"damage":[620,810,1070],"followUps":{"Ki Blast Cannon Smash":{"hits":[640],"total":640,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[920],"hits":[[300,300,320]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[500,620,1010],"followUps":{}}
+      "Grand Slash": {"damage":[500,620,1010],"followUps":{"Aerial Slash":{"hits":[900,320],"total":1220}}},
+      "Lift Strike": {"damage":[540,720,1070],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -27156,8 +27460,10 @@
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
       "Blaster Wave": {"damage":[737,962,1271],"followUps":{"Blaster Wave Combo":{"hits":[594,737],"total":1331,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Press":{"hits":[1617,713],"total":2330}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -27332,13 +27638,15 @@
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Hurricane":{"hits":[625,1000],"total":1625}}},
       "Flying Kicks": {"damage":[1438],"hits":[[469,469,500]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [785,2345,2345],
-        "hits": [[157,157,157,157,157],[469,469,469,469,469],[469,469,469,469,469]],
-        "followUps": {"Energy Storm":{"hits":[922,610],"total":1532,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [785,2035,2345],
+        "hits": [[157,157,157,157,157],[407,407,407,407,407],[469,469,469,469,469]],
+        "followUps": {"Energy Storm":{"hits":[922,610],"total":1532,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":40}}}
       },
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674},"Aerial Slash":{"hits":[1407,500],"total":1907}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -27502,8 +27810,10 @@
       "Flying Kicks": {"damage":[770],"hits":[[150,150,150,320]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[620,810,1070],"followUps":{"Ki Blast Cannon Attack":{"hits":[500,620,740],"total":1860,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[270,340,450],"followUps":{"Rolling Hurricane":{"hits":[400,640],"total":1040}}},
-      "Grand Slash": {"damage":[500,620,1010],"followUps":{"Tornado Slash":{"hits":[360,290,420],"total":1070}}}
+      "Grand Slash": {"damage":[500,620,1010],"followUps":{"Tornado Slash":{"hits":[360,290,420],"total":1070}}},
+      "Lift Strike": {"damage":[540,720,1070],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -27666,8 +27976,10 @@
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Press":{"hits":[1702,750],"total":2452}}},
       "Blaster Wave": {"damage":[775,1013,1338],"followUps":{"Blaster Wave Combo":{"hits":[625,775],"total":1400,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -27842,13 +28154,15 @@
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -28007,14 +28321,16 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1266],"hits":[[413,413,440]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [690,2065,2065],
-        "hits": [[138,138,138,138,138],[413,413,413,413,413],[413,413,413,413,413]],
-        "followUps": {"Energy Storm":{"hits":[812,537],"total":1349,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [690,1790,2065],
+        "hits": [[138,138,138,138,138],[358,358,358,358,358],[413,413,413,413,413]],
+        "followUps": {"Energy Storm":{"hits":[812,537],"total":1349,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":35}}}
       },
       "Ki Blast Cannon": {"damage":[853,1114,1472],"followUps":{"Ki Blast Cannon Smash":{"hits":[880],"total":880,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{"Tornado Slash":{"hits":[495,399,578],"total":1472}}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -28190,12 +28506,14 @@
       "Heavy Finishes": {"damage":[844,1407,1750],"followUps":{"Heavy Crush":{"hits":[438,532,704],"total":1674}}},
       "Rolling Hammer": {"damage":[422,532,704],"followUps":{"Rolling Hurricane":{"hits":[625,1000],"total":1625}}},
       "Rush Ki Waves": {
-        "damage": [785,2345,2345],
-        "hits": [[157,157,157,157,157],[469,469,469,469,469],[469,469,469,469,469]],
-        "followUps": {"Energy Storm":{"hits":[922,610],"total":1532,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [785,2035,2345],
+        "hits": [[157,157,157,157,157],[407,407,407,407,407],[469,469,469,469,469]],
+        "followUps": {"Energy Storm":{"hits":[922,610],"total":1532,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":40}}}
       },
-      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}}
+      "Grand Slash": {"damage":[782,969,1579],"followUps":{"Tornado Slash":{"hits":[563,454,657],"total":1674}}},
+      "Lift Strike": {"damage":[844,1125,1672],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -28370,8 +28688,10 @@
       "Blaster Wave": {"damage":[814,1064,1405],"followUps":{"Blaster Wave Combo":{"hits":[657,814],"total":1471,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Press":{"hits":[1788,788],"total":2576}}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 18,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -28552,13 +28872,15 @@
         }
       },
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":36}}}
       },
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -28733,12 +29055,14 @@
       "Heavy Finishes": {"damage":[878,1463,1820],"followUps":{"Heavy Crush":{"hits":[455,553,732],"total":1740}}},
       "Blaster Wave": {"damage":[1008,1317,1739],"followUps":{"Blaster Wave Combo":{"hits":[813,1008],"total":1821,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [815,2440,2440],
-        "hits": [[163,163,163,163,163],[488,488,488,488,488],[488,488,488,488,488]],
-        "followUps": {"Energy Storm":{"hits":[959,634],"total":1593,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [815,2115,2440],
+        "hits": [[163,163,163,163,163],[423,423,423,423,423],[488,488,488,488,488]],
+        "followUps": {"Energy Storm":{"hits":[959,634],"total":1593,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -28914,12 +29238,14 @@
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Hurricane":{"hits":[650,1040],"total":1690}}},
       "Blaster Wave": {"damage":[1008,1317,1739],"followUps":{"Blaster Wave Combo":{"hits":[813,1008],"total":1821,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [815,2440,2440],
-        "hits": [[163,163,163,163,163],[488,488,488,488,488],[488,488,488,488,488]],
-        "followUps": {"Energy Storm":{"hits":[959,634],"total":1593,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [815,2115,2440],
+        "hits": [[163,163,163,163,163],[423,423,423,423,423],[488,488,488,488,488]],
+        "followUps": {"Energy Storm":{"hits":[959,634],"total":1593,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":41}}}
       },
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -29094,8 +29420,10 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[698,912,1204],"followUps":{"Ki Blast Cannon Smash":{"hits":[720],"total":720,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -29266,8 +29594,10 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Blaster Wave": {"damage":[698,912,1204],"followUps":{"Blaster Wave Combo":{"hits":[563,698],"total":1261,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 10,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -29442,8 +29772,10 @@
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[698,912,1204],"followUps":{"Ki Blast Cannon Smash":{"hits":[720],"total":720,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Delta Heavy Finish":{"hits":[405,327,473],"total":1205}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Aerial Slash":{"hits":[1014,360],"total":1374}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -29618,8 +29950,10 @@
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Press":{"hits":[1788,788],"total":2576}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 14,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -29798,8 +30132,10 @@
         "followUps": {"Heavy Crush":{"hits":[508,617,816],"total":1941},"Delta Heavy Finish":{"hits":[653,526,762],"total":1941}}
       },
       "Flying Kicks": {"damage":[1668],"hits":[[544,544,580]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[907,1124,1831],"followUps":{"Tornado Slash":{"hits":[653,526,762],"total":1941}}}
+      "Grand Slash": {"damage":[907,1124,1831],"followUps":{"Tornado Slash":{"hits":[653,526,762],"total":1941},"Aerial Slash":{"hits":[1632,580],"total":2212}}},
+      "Lift Strike": {"damage":[979,1305,1940],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -29977,8 +30313,10 @@
         "damage": [979,1632,2031],
         "followUps": {"Heavy Crush":{"hits":[508,617,816],"total":1941},"Delta Heavy Finish":{"hits":[653,526,762],"total":1941}}
       },
-      "Grand Slash": {"damage":[907,1124,1831],"followUps":{"Tornado Slash":{"hits":[653,526,762],"total":1941}}}
+      "Grand Slash": {"damage":[907,1124,1831],"followUps":{"Tornado Slash":{"hits":[653,526,762],"total":1941}}},
+      "Lift Strike": {"damage":[979,1305,1940],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -30156,8 +30494,10 @@
       },
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -30355,12 +30695,14 @@
       },
       "Rolling Hammer": {"damage":[446,561,743],"followUps":{"Rolling Hurricane":{"hits":[660,1056],"total":1716}}},
       "Rush Ki Waves": {
-        "damage": [825,2480,2480],
-        "hits": [[165,165,165,165,165],[496,496,496,496,496],[496,496,496,496,496]],
-        "followUps": {"Energy Storm":{"hits":[974,644],"total":1618,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [825,2150,2480],
+        "hits": [[165,165,165,165,165],[430,430,430,430,430],[496,496,496,496,496]],
+        "followUps": {"Energy Storm":{"hits":[974,644],"total":1618,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":42}}}
       },
-      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}}
+      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766},"Aerial Slash":{"hits":[1488,528],"total":2016}}},
+      "Lift Strike": {"damage":[892,1188,1766],"followUps":{}}
     },
+    "wickedness": 17,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -30555,8 +30897,10 @@
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -30744,8 +31088,10 @@
       },
       "Flying Kicks": {"damage":[1383],"hits":[[451,451,481]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[406,511,675],"followUps":{"Rolling Hurricane":{"hits":[600,961],"total":1561}}},
-      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}}
+      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}},
+      "Lift Strike": {"damage":[811,1080,1606],"followUps":{}}
     },
+    "wickedness": 18,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -30921,8 +31267,10 @@
       "Heavy Finishes": {"damage":[945,1575,1960],"followUps":{"Heavy Crush":{"hits":[490,595,788],"total":1873}}},
       "Rolling Hammer": {"damage":[473,595,788],"followUps":{"Rolling Press":{"hits":[2382,1050],"total":3432}}},
       "Ki Blast Cannon": {"damage":[1085,1418,1873],"followUps":{"Ki Blast Cannon Smash":{"hits":[1120],"total":1120,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[875,1085,1768],"followUps":{"Tornado Slash":{"hits":[630,508,735],"total":1873}}}
+      "Grand Slash": {"damage":[875,1085,1768],"followUps":{"Tornado Slash":{"hits":[630,508,735],"total":1873}}},
+      "Lift Strike": {"damage":[945,1260,1873],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -31092,8 +31440,10 @@
         "followUps": {"Heavy Crush":{"hits":[315,383,507],"total":1205},"Delta Heavy Finish":{"hits":[405,327,473],"total":1205}}
       },
       "Rolling Hammer": {"damage":[304,383,507],"followUps":{"Rolling Hurricane":{"hits":[450,720],"total":1170}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205},"Aerial Slash":{"hits":[1014,360],"total":1374}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -31272,8 +31622,10 @@
       },
       "Flying Kicks": {"damage":[978],"hits":[[319,319,340]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[287,362,479],"followUps":{"Rolling Hurricane":{"hits":[425,680],"total":1105}}},
-      "Grand Slash": {"damage":[532,659,1074],"followUps":{}}
+      "Grand Slash": {"damage":[532,659,1074],"followUps":{"Aerial Slash":{"hits":[957,340],"total":1297}}},
+      "Lift Strike": {"damage":[574,765,1137],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -31452,8 +31804,10 @@
         "damage": [878,1463,1820],
         "followUps": {"Heavy Crush":{"hits":[455,553,732],"total":1740},"Delta Heavy Finish":{"hits":[585,472,683],"total":1740}}
       },
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -31626,8 +31980,10 @@
         "followUps": {"Heavy Crush":{"hits":[350,425,563],"total":1338},"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}
       },
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338},"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -31805,8 +32161,10 @@
         "followUps": {"Heavy Crush":{"hits":[368,447,591],"total":1406},"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}
       },
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -31981,16 +32339,18 @@
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":39}}}
       },
       "Heavy Finishes": {
         "damage": [824,1373,1708],
         "followUps": {"Heavy Crush":{"hits":[427,519,687],"total":1633},"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -32168,13 +32528,15 @@
       },
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Smash":{"hits":[1016],"total":1016,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [795,2385,2385],
-        "hits": [[159,159,159,159,159],[477,477,477,477,477],[477,477,477,477,477]],
-        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [795,2065,2385],
+        "hits": [[159,159,159,159,159],[413,413,413,413,413],[477,477,477,477,477]],
+        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":40}}}
       },
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -32359,8 +32721,10 @@
       },
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -32545,8 +32909,10 @@
       },
       "Rolling Hammer": {"damage":[429,540,715],"followUps":{"Rolling Hurricane":{"hits":[635,1016],"total":1651}}},
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700},"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -32721,8 +33087,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -32904,8 +33272,10 @@
       "Flying Kicks": {"damage":[1726],"hits":[[563,563,600]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[507,638,844],"followUps":{"Rolling Press":{"hits":[2553,1125],"total":3678}}},
       "Heavy Finishes": {"damage":[1013,1688,2100],"followUps":{"Heavy Crush":{"hits":[525,638,844],"total":2007}}},
-      "Grand Slash": {"damage":[938,1163,1894],"followUps":{"Tornado Slash":{"hits":[675,544,788],"total":2007}}}
+      "Grand Slash": {"damage":[938,1163,1894],"followUps":{"Tornado Slash":{"hits":[675,544,788],"total":2007}}},
+      "Lift Strike": {"damage":[1013,1350,2007],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -33083,8 +33453,10 @@
       },
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586}}},
       "Blaster Wave": {"damage":[946,1236,1632],"followUps":{"Blaster Wave Combo":{"hits":[763,946],"total":1709,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -33259,8 +33631,10 @@
       "Heavy Finishes": {"damage":[831,1384,1722],"followUps":{"Delta Heavy Finish":{"hits":[554,446,646],"total":1646}}},
       "Flying Kicks": {"damage":[1416],"hits":[[462,462,492]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[954,1246,1646],"followUps":{"Ki Blast Cannon Smash":{"hits":[984],"total":984,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[769,954,1553],"followUps":{"Tornado Slash":{"hits":[554,446,646],"total":1646}}}
+      "Grand Slash": {"damage":[769,954,1553],"followUps":{"Tornado Slash":{"hits":[554,446,646],"total":1646},"Aerial Slash":{"hits":[1386,492],"total":1878}}},
+      "Lift Strike": {"damage":[831,1107,1646],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -33451,8 +33825,10 @@
         }
       },
       "Rolling Hammer": {"damage":[432,544,720],"followUps":{"Rolling Hurricane":{"hits":[640,1024],"total":1664}}},
-      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Tornado Slash":{"hits":[576,464,672],"total":1712}}}
+      "Grand Slash": {"damage":[800,992,1616],"followUps":{"Tornado Slash":{"hits":[576,464,672],"total":1712},"Aerial Slash":{"hits":[1440,512],"total":1952}}},
+      "Lift Strike": {"damage":[864,1152,1712],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -33634,8 +34010,10 @@
       "Rolling Hammer": {"damage":[449,566,749],"followUps":{"Rolling Hurricane":{"hits":[665,1064],"total":1729}}},
       "Flying Kicks": {"damage":[1530],"hits":[[499,499,532]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[1031,1347,1779],"followUps":{}},
-      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781}}}
+      "Grand Slash": {"damage":[832,1031,1680],"followUps":{"Tornado Slash":{"hits":[599,483,699],"total":1781},"Aerial Slash":{"hits":[1497,532],"total":2029}}},
+      "Lift Strike": {"damage":[898,1197,1779],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -33820,8 +34198,10 @@
       },
       "Flying Kicks": {"damage":[1496],"hits":[[488,488,520]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Hurricane":{"hits":[650,1040],"total":1690}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -34006,8 +34386,10 @@
       },
       "Flying Kicks": {"damage":[1554],"hits":[[507,507,540]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[456,574,760],"followUps":{"Rolling Press":{"hits":[2297,1013],"total":3310}}},
-      "Grand Slash": {"damage":[844,1047,1705],"followUps":{"Tornado Slash":{"hits":[608,490,709],"total":1807}}}
+      "Grand Slash": {"damage":[844,1047,1705],"followUps":{"Tornado Slash":{"hits":[608,490,709],"total":1807}}},
+      "Lift Strike": {"damage":[912,1215,1806],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -34183,8 +34565,10 @@
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -34363,8 +34747,10 @@
       "Flying Kicks": {"damage":[1554],"hits":[[507,507,540]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[456,574,760],"followUps":{"Rolling Press":{"hits":[2297,1013],"total":3310}}},
       "Heavy Finishes": {"damage":[912,1519,1890],"followUps":{"Heavy Crush":{"hits":[473,574,760],"total":1807}}},
-      "Grand Slash": {"damage":[844,1047,1705],"followUps":{"Tornado Slash":{"hits":[608,490,709],"total":1807}}}
+      "Grand Slash": {"damage":[844,1047,1705],"followUps":{"Tornado Slash":{"hits":[608,490,709],"total":1807}}},
+      "Lift Strike": {"damage":[912,1215,1806],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -34527,8 +34913,10 @@
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[698,912,1204],"followUps":{"Ki Blast Cannon Smash":{"hits":[720],"total":720,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Delta Heavy Finish":{"hits":[405,327,473],"total":1205}}},
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205},"Aerial Slash":{"hits":[1014,360],"total":1374}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -34707,8 +35095,10 @@
       "Ki Blast Cannon": {"damage":[1124,1469,1940],"followUps":{"Ki Blast Cannon Smash":{"hits":[1160],"total":1160,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1668],"hits":[[544,544,580]],"chargeable":false,"followUps":{}},
       "Rolling Hammer": {"damage":[490,617,816],"followUps":{"Rolling Hurricane":{"hits":[725,1160],"total":1885}}},
-      "Grand Slash": {"damage":[907,1124,1831],"followUps":{"Tornado Slash":{"hits":[653,526,762],"total":1941}}}
+      "Grand Slash": {"damage":[907,1124,1831],"followUps":{"Tornado Slash":{"hits":[653,526,762],"total":1941}}},
+      "Lift Strike": {"damage":[979,1305,1940],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -34882,14 +35272,16 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [660,1970,1970],
-        "hits": [[132,132,132,132,132],[394,394,394,394,394],[394,394,394,394,394]],
-        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [660,1710,1970],
+        "hits": [[132,132,132,132,132],[342,342,342,342,342],[394,394,394,394,394]],
+        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":33}}}
       },
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 11,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -35058,8 +35450,10 @@
       "Ki Blast Cannon": {"damage":[931,1215,1606],"followUps":{"Ki Blast Cannon Attack":{"hits":[750,931,1110],"total":2791,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[811,1350,1681],"followUps":{"Heavy Crush":{"hits":[421,511,675],"total":1607}}},
       "Rolling Hammer": {"damage":[406,511,675],"followUps":{"Rolling Hurricane":{"hits":[600,961],"total":1561}}},
-      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}}
+      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}},
+      "Lift Strike": {"damage":[811,1080,1606],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -35238,8 +35632,10 @@
         "damage": [574,957,1190],
         "followUps": {"Heavy Crush":{"hits":[298,362,479],"total":1139},"Delta Heavy Finish":{"hits":[383,309,447],"total":1139}}
       },
-      "Grand Slash": {"damage":[532,659,1074],"followUps":{"Tornado Slash":{"hits":[383,309,447],"total":1139}}}
+      "Grand Slash": {"damage":[532,659,1074],"followUps":{"Tornado Slash":{"hits":[383,309,447],"total":1139},"Aerial Slash":{"hits":[957,340],"total":1297}}},
+      "Lift Strike": {"damage":[574,765,1137],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -35417,8 +35813,10 @@
         "damage": [642,1069,1330],
         "followUps": {"Heavy Crush":{"hits":[333,404,535],"total":1272},"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}
       },
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -35599,8 +35997,10 @@
         }
       },
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -35775,8 +36175,10 @@
       "Heavy Finishes": {"damage":[561,934,1162],"followUps":{}},
       "Flying Kicks": {"damage":[956],"hits":[[312,312,332]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[644,841,1111],"followUps":{}},
-      "Grand Slash": {"damage":[519,644,1048],"followUps":{}}
+      "Grand Slash": {"damage":[519,644,1048],"followUps":{}},
+      "Lift Strike": {"damage":[561,747,1111],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -35960,8 +36362,10 @@
           "Ki Blast Cannon Attack": {"hits":[625,775,925],"total":2325,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338},"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -36145,8 +36549,10 @@
           "Ki Blast Cannon Attack": {"hits":[763,946,1129],"total":2838,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633},"Aerial Slash":{"hits":[1374,488],"total":1862}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -36331,8 +36737,10 @@
         "damage": [878,1463,1820],
         "followUps": {"Heavy Crush":{"hits":[455,553,732],"total":1740},"Delta Heavy Finish":{"hits":[585,472,683],"total":1740}}
       },
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740},"Aerial Slash":{"hits":[1464,520],"total":1984}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -36517,8 +36925,10 @@
         "damage": [945,1575,1960],
         "followUps": {"Heavy Crush":{"hits":[490,595,788],"total":1873},"Delta Heavy Finish":{"hits":[630,508,735],"total":1873}}
       },
-      "Grand Slash": {"damage":[875,1085,1768],"followUps":{"Tornado Slash":{"hits":[630,508,735],"total":1873}}}
+      "Grand Slash": {"damage":[875,1085,1768],"followUps":{"Tornado Slash":{"hits":[630,508,735],"total":1873},"Aerial Slash":{"hits":[1575,560],"total":2135}}},
+      "Lift Strike": {"damage":[945,1260,1873],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -36694,8 +37104,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}},
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -36870,8 +37282,10 @@
       "Heavy Finishes": {"damage":[811,1350,1681],"followUps":{"Delta Heavy Finish":{"hits":[540,436,630],"total":1606}}},
       "Ki Blast Cannon": {"damage":[931,1215,1606],"followUps":{"Ki Blast Cannon Smash":{"hits":[961],"total":961,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[406,511,675],"followUps":{"Rolling Press":{"hits":[2041,901],"total":2942}}},
-      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}}
+      "Grand Slash": {"damage":[750,931,1515],"followUps":{"Tornado Slash":{"hits":[540,436,630],"total":1606}}},
+      "Lift Strike": {"damage":[811,1080,1606],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -37047,8 +37461,10 @@
       "Blaster Wave": {"damage":[1008,1317,1739],"followUps":{"Blaster Wave Combo":{"hits":[813,1008],"total":1821,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Press":{"hits":[2211,975],"total":3186}}},
       "Ki Blast Cannon": {"damage":[1008,1317,1739],"followUps":{"Ki Blast Cannon Smash":{"hits":[1040],"total":1040,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -37224,6 +37640,7 @@
       "Blaster Wave": {"damage":[853,1114,1472],"followUps":{"Blaster Wave Combo":{"hits":[688,853],"total":1541,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -37408,8 +37825,10 @@
           "Ki Blast Cannon Attack": {"hits":[657,814,972],"total":2443,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -37600,8 +38019,10 @@
       },
       "Rolling Hammer": {"damage":[355,447,591],"followUps":{"Rolling Hurricane":{"hits":[525,840],"total":1365},"Rolling Press":{"hits":[1788,788],"total":2576}}},
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406},"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -37777,6 +38198,7 @@
       "Rolling Hammer": {"damage":[389,489,647],"followUps":{"Rolling Press":{"hits":[1959,863],"total":2822}}},
       "Heavy Finishes": {"damage":[777,1294,1610],"followUps":{"Heavy Crush":{"hits":[403,489,647],"total":1539}}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -37938,8 +38360,10 @@
     "rushChainDamage": {
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -38117,8 +38541,10 @@
       "Flying Kicks": {"damage":[1346],"hits":[[439,439,468]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[790,1317,1638],"followUps":{"Heavy Crush":{"hits":[410,498,659],"total":1567}}},
       "Blaster Wave": {"damage":[907,1185,1565],"followUps":{"Blaster Wave Combo":{"hits":[732,907],"total":1639,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[732,907,1478],"followUps":{}}
+      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Aerial Slash":{"hits":[1317,468],"total":1785}}},
+      "Lift Strike": {"damage":[790,1053,1565],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -38293,8 +38719,10 @@
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[858,1429,1778],"followUps":{"Heavy Crush":{"hits":[445,540,715],"total":1700}}},
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Attack":{"hits":[794,985,1175],"total":2954,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -38464,12 +38892,14 @@
       "Heavy Finishes": {"damage":[608,1013,1260],"followUps":{"Heavy Crush":{"hits":[315,383,507],"total":1205}}},
       "Flying Kicks": {"damage":[1036],"hits":[[338,338,360]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [565,1690,1690],
-        "hits": [[113,113,113,113,113],[338,338,338,338,338],[338,338,338,338,338]],
-        "followUps": {"Energy Storm":{"hits":[664,439],"total":1103,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [565,1465,1690],
+        "hits": [[113,113,113,113,113],[293,293,293,293,293],[338,338,338,338,338]],
+        "followUps": {"Energy Storm":{"hits":[664,439],"total":1103,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":29}}}
       },
-      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}}
+      "Grand Slash": {"damage":[563,698,1137],"followUps":{"Tornado Slash":{"hits":[405,327,473],"total":1205}}},
+      "Lift Strike": {"damage":[608,810,1204],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -38642,15 +39072,17 @@
     "chargedMelee": {"smash":[790,1317,1638],"smashJust":1638,"hyperSmash":2867,"heavyFinish":[790,1317,1638]},
     "rushChainDamage": {
       "Rush Ki Waves": {
-        "damage": [735,2195,2195],
-        "hits": [[147,147,147,147,147],[439,439,439,439,439],[439,439,439,439,439]],
-        "followUps": {"Energy Storm":{"hits":[863,571],"total":1434,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [735,1905,2195],
+        "hits": [[147,147,147,147,147],[381,381,381,381,381],[439,439,439,439,439]],
+        "followUps": {"Energy Storm":{"hits":[863,571],"total":1434,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":31}}}
       },
       "Heavy Finishes": {"damage":[790,1317,1638],"followUps":{"Delta Heavy Finish":{"hits":[527,425,615],"total":1567}}},
       "Flying Kicks": {"damage":[1346],"hits":[[439,439,468]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[907,1185,1565],"followUps":{"Ki Blast Cannon Smash":{"hits":[936],"total":936,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Tornado Slash":{"hits":[527,425,615],"total":1567}}}
+      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Tornado Slash":{"hits":[527,425,615],"total":1567}}},
+      "Lift Strike": {"damage":[790,1053,1565],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -38823,15 +39255,17 @@
     "chargedMelee": {"smash":[824,1373,1708],"smashJust":1708,"hyperSmash":2989,"heavyFinish":[824,1373,1708]},
     "rushChainDamage": {
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Ki Blast Cannon": {"damage":[946,1236,1632],"followUps":{"Ki Blast Cannon Smash":{"hits":[976],"total":976,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1404],"hits":[[458,458,488]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{"Tornado Slash":{"hits":[549,443,641],"total":1633}}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -39010,12 +39444,14 @@
       "Flying Kicks": {"damage":[1462],"hits":[[477,477,508]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Smash":{"hits":[1016],"total":1016,"needsFullCharge":true}}},
       "Rush Ki Waves": {
-        "damage": [795,2385,2385],
-        "hits": [[159,159,159,159,159],[477,477,477,477,477],[477,477,477,477,477]],
-        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [795,2065,2385],
+        "hits": [[159,159,159,159,159],[413,413,413,413,413],[477,477,477,477,477]],
+        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":34}}}
       },
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Tornado Slash":{"hits":[572,461,667],"total":1700}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -39179,8 +39615,10 @@
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[338,425,563],"followUps":{"Rolling Hurricane":{"hits":[500,800],"total":1300}}},
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Heavy Crush":{"hits":[350,425,563],"total":1338}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -39358,8 +39796,10 @@
       "Heavy Finishes": {"damage":[878,1463,1820],"followUps":{"Heavy Crush":{"hits":[455,553,732],"total":1740}}},
       "Blaster Wave": {"damage":[1008,1317,1739],"followUps":{"Blaster Wave Combo":{"hits":[813,1008],"total":1821,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Press":{"hits":[2211,975],"total":3186}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 18,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -39534,13 +39974,15 @@
       "Heavy Finishes": {"damage":[858,1429,1778],"followUps":{"Heavy Crush":{"hits":[445,540,715],"total":1700}}},
       "Rolling Hammer": {"damage":[429,540,715],"followUps":{"Rolling Hurricane":{"hits":[635,1016],"total":1651}}},
       "Rush Ki Waves": {
-        "damage": [795,2385,2385],
-        "hits": [[159,159,159,159,159],[477,477,477,477,477],[477,477,477,477,477]],
-        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [795,2065,2385],
+        "hits": [[159,159,159,159,159],[413,413,413,413,413],[477,477,477,477,477]],
+        "followUps": {"Energy Storm":{"hits":[937,620],"total":1557,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":34}}}
       },
       "Ki Blast Cannon": {"damage":[985,1286,1699],"followUps":{"Ki Blast Cannon Smash":{"hits":[1016],"total":1016,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[794,985,1604],"followUps":{}}
+      "Grand Slash": {"damage":[794,985,1604],"followUps":{"Aerial Slash":{"hits":[1431,508],"total":1939}}},
+      "Lift Strike": {"damage":[858,1143,1699],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -39718,8 +40160,10 @@
         "damage": [709,1182,1470],
         "followUps": {"Heavy Crush":{"hits":[368,447,591],"total":1406},"Delta Heavy Finish":{"hits":[473,381,552],"total":1406}}
       },
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -39894,8 +40338,10 @@
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{}},
       "Flying Kicks": {"damage":[898],"hits":[[293,293,312]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[605,790,1044],"followUps":{"Ki Blast Cannon Smash":{"hits":[624],"total":624,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{"Aerial Slash":{"hits":[879,312],"total":1191}}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 2,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -40086,8 +40532,10 @@
         "damage": [892,1485,1849],
         "followUps": {"Heavy Crush":{"hits":[463,561,743],"total":1767},"Delta Heavy Finish":{"hits":[594,479,693],"total":1766}}
       },
-      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766}}}
+      "Grand Slash": {"damage":[826,1024,1667],"followUps":{"Tornado Slash":{"hits":[594,479,693],"total":1766},"Aerial Slash":{"hits":[1488,528],"total":2016}}},
+      "Lift Strike": {"damage":[892,1188,1766],"followUps":{}}
     },
+    "wickedness": 1,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -40268,8 +40716,10 @@
       "Heavy Finishes": {"damage":[878,1463,1820],"followUps":{"Heavy Crush":{"hits":[455,553,732],"total":1740}}},
       "Rolling Hammer": {"damage":[439,553,732],"followUps":{"Rolling Press":{"hits":[2211,975],"total":3186}}},
       "Ki Blast Cannon": {"damage":[1008,1317,1739],"followUps":{"Ki Blast Cannon Attack":{"hits":[813,1008,1203],"total":3024,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}}
+      "Grand Slash": {"damage":[813,1008,1642],"followUps":{"Tornado Slash":{"hits":[585,472,683],"total":1740}}},
+      "Lift Strike": {"damage":[878,1170,1739],"followUps":{}}
     },
+    "wickedness": 8,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -40447,8 +40897,10 @@
       "Blaster Wave": {"damage":[853,1114,1472],"followUps":{"Blaster Wave Combo":{"hits":[688,853],"total":1541,"needsFullCharge":true}}},
       "Rolling Hammer": {"damage":[372,468,619],"followUps":{"Rolling Press":{"hits":[1873,825],"total":2698}}},
       "Heavy Finishes": {"damage":[743,1238,1540],"followUps":{"Heavy Crush":{"hits":[385,468,619],"total":1472}}},
-      "Grand Slash": {"damage":[688,853,1389],"followUps":{}}
+      "Grand Slash": {"damage":[688,853,1389],"followUps":{}},
+      "Lift Strike": {"damage":[743,990,1472],"followUps":{}}
     },
+    "wickedness": 18,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -40630,12 +41082,14 @@
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Attack":{"hits":[657,814,972],"total":2443,"needsFullCharge":true}}},
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Rush Ki Waves": {
-        "damage": [660,1970,1970],
-        "hits": [[132,132,132,132,132],[394,394,394,394,394],[394,394,394,394,394]],
-        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [660,1710,1970],
+        "hits": [[132,132,132,132,132],[342,342,342,342,342],[394,394,394,394,394]],
+        "followUps": {"Energy Storm":{"hits":[775,512],"total":1287,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":33}}}
       },
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 6,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -40829,8 +41283,10 @@
       "Flying Kicks": {"damage":[1324],"hits":[[432,432,460]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[892,1165,1539],"followUps":{"Ki Blast Cannon Attack":{"hits":[719,892,1064],"total":2675,"needsFullCharge":true}}},
       "Heavy Finishes": {"damage":[777,1294,1610],"followUps":{"Delta Heavy Finish":{"hits":[518,417,604],"total":1539}}},
-      "Grand Slash": {"damage":[719,892,1452],"followUps":{}}
+      "Grand Slash": {"damage":[719,892,1452],"followUps":{"Aerial Slash":{"hits":[1296,460],"total":1756}}},
+      "Lift Strike": {"damage":[777,1035,1539],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -41014,8 +41470,10 @@
         }
       },
       "Heavy Finishes": {"damage":[507,844,1050],"followUps":{"Delta Heavy Finish":{"hits":[338,272,394],"total":1004}}},
-      "Grand Slash": {"damage":[469,582,947],"followUps":{}}
+      "Grand Slash": {"damage":[469,582,947],"followUps":{"Aerial Slash":{"hits":[846,300],"total":1146}}},
+      "Lift Strike": {"damage":[507,675,1004],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": true,
@@ -41207,15 +41665,17 @@
     "chargedMelee": {"smash":[642,1069,1330],"smashJust":1330,"hyperSmash":2328,"heavyFinish":[642,1069,1330]},
     "rushChainDamage": {
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Ki Blast Cannon": {"damage":[737,962,1271],"followUps":{"Ki Blast Cannon Smash":{"hits":[760],"total":760,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -41394,12 +41854,14 @@
       "Rolling Hammer": {"damage":[412,519,687],"followUps":{"Rolling Hurricane":{"hits":[610,976],"total":1586}}},
       "Heavy Finishes": {"damage":[824,1373,1708],"followUps":{"Delta Heavy Finish":{"hits":[549,443,641],"total":1633}}},
       "Rush Ki Waves": {
-        "damage": [765,2290,2290],
-        "hits": [[153,153,153,153,153],[458,458,458,458,458],[458,458,458,458,458]],
-        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [765,1985,2290],
+        "hits": [[153,153,153,153,153],[397,397,397,397,397],[458,458,458,458,458]],
+        "followUps": {"Energy Storm":{"hits":[900,595],"total":1495,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":32}}}
       },
-      "Grand Slash": {"damage":[763,946,1541],"followUps":{}}
+      "Grand Slash": {"damage":[763,946,1541],"followUps":{}},
+      "Lift Strike": {"damage":[824,1098,1632],"followUps":{}}
     },
+    "wickedness": 5,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -41559,8 +42021,10 @@
       "Heavy Finishes": {"damage":[675,1125,1400],"followUps":{"Delta Heavy Finish":{"hits":[450,363,525],"total":1338}}},
       "Flying Kicks": {"damage":[1150],"hits":[[375,375,400]],"chargeable":false,"followUps":{}},
       "Ki Blast Cannon": {"damage":[775,1013,1338],"followUps":{"Ki Blast Cannon Smash":{"hits":[800],"total":800,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338}}}
+      "Grand Slash": {"damage":[625,775,1263],"followUps":{"Tornado Slash":{"hits":[450,363,525],"total":1338},"Aerial Slash":{"hits":[1125,400],"total":1525}}},
+      "Lift Strike": {"damage":[675,900,1338],"followUps":{}}
     },
+    "wickedness": 3,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -41738,8 +42202,10 @@
         "followUps": {"Heavy Crush":{"hits":[410,498,659],"total":1567},"Delta Heavy Finish":{"hits":[527,425,615],"total":1567}}
       },
       "Ki Blast Cannon": {"damage":[907,1185,1565],"followUps":{"Ki Blast Cannon Smash":{"hits":[936],"total":936,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Tornado Slash":{"hits":[527,425,615],"total":1567}}}
+      "Grand Slash": {"damage":[732,907,1478],"followUps":{"Tornado Slash":{"hits":[527,425,615],"total":1567},"Aerial Slash":{"hits":[1317,468],"total":1785}}},
+      "Lift Strike": {"damage":[790,1053,1565],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -41920,8 +42386,10 @@
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Hurricane":{"hits":[475,760],"total":1235}}},
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Heavy Crush":{"hits":[333,404,535],"total":1272}}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 12,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -42102,8 +42570,10 @@
           "Ki Blast Cannon Attack": {"hits":[594,737,879],"total":2210,"needsFullCharge":true}
         }
       },
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -42304,8 +42774,10 @@
       },
       "Heavy Finishes": {"damage":[642,1069,1330],"followUps":{"Delta Heavy Finish":{"hits":[428,345,499],"total":1272}}},
       "Flying Kicks": {"damage":[1094],"hits":[[357,357,380]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Aerial Slash":{"hits":[1071,380],"total":1451}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -42484,6 +42956,7 @@
       },
       "Blaster Wave": {"damage":[698,912,1204],"followUps":{"Blaster Wave Combo":{"hits":[563,698],"total":1261,"needsFullCharge":true}}}
     },
+    "wickedness": 20,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -42658,8 +43131,10 @@
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
       "Heavy Finishes": {"damage":[709,1182,1470],"followUps":{"Heavy Crush":{"hits":[368,447,591],"total":1406}}},
       "Ki Blast Cannon": {"damage":[814,1064,1405],"followUps":{"Ki Blast Cannon Smash":{"hits":[840],"total":840,"needsFullCharge":true}}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Aerial Slash":{"hits":[1182,420],"total":1602}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 4,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -42836,8 +43311,10 @@
         }
       },
       "Heavy Finishes": {"damage":[527,878,1092],"followUps":{"Delta Heavy Finish":{"hits":[351,283,410],"total":1044}}},
-      "Grand Slash": {"damage":[488,605,985],"followUps":{"Tornado Slash":{"hits":[351,283,410],"total":1044}}}
+      "Grand Slash": {"damage":[488,605,985],"followUps":{"Tornado Slash":{"hits":[351,283,410],"total":1044}}},
+      "Lift Strike": {"damage":[527,702,1044],"followUps":{}}
     },
+    "wickedness": 0,
     "mobility": {
       "canFly": false,
       "slowShortDash": false,
@@ -43035,12 +43512,14 @@
       },
       "Rolling Hammer": {"damage":[321,404,535],"followUps":{"Rolling Hurricane":{"hits":[475,760],"total":1235}}},
       "Rush Ki Waves": {
-        "damage": [595,1785,1785],
-        "hits": [[119,119,119,119,119],[357,357,357,357,357],[357,357,357,357,357]],
-        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9}}}
+        "damage": [595,1545,1785],
+        "hits": [[119,119,119,119,119],[309,309,309,309,309],[357,357,357,357,357]],
+        "followUps": {"Energy Storm":{"hits":[701,464],"total":1165,"needsFullCharge":true,"kiBlastFlurry":{"shots":9,"perShot":30}}}
       },
-      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}}
+      "Grand Slash": {"damage":[594,737,1200],"followUps":{"Tornado Slash":{"hits":[428,345,499],"total":1272}}},
+      "Lift Strike": {"damage":[642,855,1271],"followUps":{}}
     },
+    "wickedness": 7,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
@@ -43240,8 +43719,10 @@
         }
       },
       "Flying Kicks": {"damage":[1208],"hits":[[394,394,420]],"chargeable":false,"followUps":{}},
-      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}}
+      "Grand Slash": {"damage":[657,814,1326],"followUps":{"Tornado Slash":{"hits":[473,381,552],"total":1406}}},
+      "Lift Strike": {"damage":[709,945,1405],"followUps":{}}
     },
+    "wickedness": 16,
     "mobility": {
       "canFly": true,
       "slowShortDash": false,
