@@ -774,6 +774,7 @@ for (const bm of blastMoves) {
   // Game-file traits (2026-10-11): no step back (bBackstepWhenNearMode off: fired point-blank, no backstep) and
   // crash rushes (MoveType ControllableTurn: steered, they crash into the opponent; the league's reading, to confirm)
   const gm = fm ? fm.movesOf(c.id).find(g => MOVE_SLOT[g.slot] === m.Slot && g.name === m.Move) : null;
+  let projectileSpeed = null, selfDamage = null;
   if (gm) {
     const add = (f) => { if (!det.flags.includes(f)) det.flags = [...det.flags, f]; };
     if (fm.param(gm.file, 'BlastSkillParamData.bBackstepWhenNearMode') === 'false' || fm.param(gm.file, 'BlastUltimateParamData.bBackstepWhenNearMode') === 'false') add('noStepBack');
@@ -785,6 +786,25 @@ for (const bm of blastMoves) {
     // no tracking value: a straight rush (heads for where the opponent was, no homing or steering; league
     // 2026-10-11: Final Galick Cannon and Gigantic Swing go straight, Kaioken Attack and Piccolo's home)
     if (det.category === 'Rush' && !moveType) add('straight');
+    // the blast's own attack and projectile files: by slot (actSPM1, actSPM2, actULT) or variant (ULT2: 07_actULT2)
+    const vn = /(\d)$/.exec(m.Variant || '')?.[1];
+    const actRe = m.Variant && /ULT/.test(m.Variant) ? new RegExp(`^(07_)?actULT${vn}`) : m.Variant && /SPM/.test(m.Variant) ? new RegExp(`^actSPM${vn}`)
+      : m.Slot === 'Super 1' ? /^actSPM1/ : m.Slot === 'Super 2' ? /^actSPM2/ : /^actULT(?!\d)/;
+    const ownFiles = [...new Set([...fm.attackRowsOf(c.id), ...fm.bulletRowsOf(c.id)].filter(r => actRe.test(r.action)).map(r => r.file))];
+    // energy attack speed: the top of each projectile's speed curve (game units per second, as lunge speed)
+    if (det.category !== 'Rush') {
+      const tops = [...new Set(fm.bulletRowsOf(c.id).filter(r => actRe.test(r.action)).map(r => fm.param(r.file, 'MoveParam.SpeedCurve')).filter(Boolean))]
+        .map(k => Math.max(...fm.curve(k).map(([, v]) => v))).filter(v => Number.isFinite(v) && v > 1).map(v => Math.round(v));
+      if (tops.length) projectileSpeed = Math.max(...tops);
+    }
+    // self-damage: a file with bReceiveSelfDamage; SelfDamagePower (999,999: knocks the user out), scaled by
+    // the DP table where one is given (Evil Containment Wave)
+    for (const f of ownFiles) {
+      if (fm.param(f, 'bReceiveSelfDamage') !== 'true') continue;
+      const power = num(fm.param(f, 'SelfDamagePower'));
+      const dp = Array.from({ length: 11 }, (_, i) => num(fm.param(f, `SelfDamagePowerDpMultiplier[${i}]`))).filter(v => v != null);
+      if (!selfDamage || (power ?? 0) > (selfDamage.power ?? 0)) selfDamage = { power, ...(power >= 999999 ? { knockOut: true } : {}), ...(dp.length ? { dpMultiplier: dp } : {}) };
+    }
     // damage scaled by the opponent's wickedness (ExParam, 0 to 20): Devilmite Beam
     if (fm.param(gm.file, 'BlastUltimateParamData.bExScale') === 'true' || fm.param(gm.file, 'BlastSkillParamData.bExScale') === 'true') add('wickednessScaled');
   }
@@ -800,6 +820,7 @@ for (const bm of blastMoves) {
     flags: det.flags,
     lungeSpeed: det.lungeSpeed,
     moveLimitTime: cur ? num(cur.moveLimitTime) : null,
+    projectileSpeed, selfDamage,
     detailsSource: det.source,
   });
 }

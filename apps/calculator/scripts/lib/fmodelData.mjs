@@ -51,6 +51,10 @@ export function loadFmodel(dataDir) {
   }
 
   const buffs = group(rows('buffs.csv'), r => r.id);
+  // a character's own attack and bullet rows (action, file), and the speed curves' keys
+  const ownAttacks = group(rows('combatives.csv'), r => r.id);
+  const ownBullets = group(rows('bullets.csv'), r => r.id);
+  const curves = group(fs.existsSync(path.join(dir, 'curves.csv')) ? rows('curves.csv') : [], r => r.curve);
   const moves = group(rows('moves.csv'), r => r.id);
   const capsuleEffects = group(rows('capsule-effects.csv'), r => r.id);
 
@@ -73,6 +77,11 @@ export function loadFmodel(dataDir) {
     param,
     paramsOf: (file) => params.get(file) || [],
     buffsOf: (id) => buffs.get(id) || [],
+    /** The character's own attack / bullet rows ({ action, file }), for actions the defaults don't cover. */
+    attackRowsOf: (id) => ownAttacks.get(id) || [],
+    bulletRowsOf: (id) => ownBullets.get(id) || [],
+    /** A curve's keys as [time, value] (e.g. a bullet's MoveParam.SpeedCurve). */
+    curve: (name) => (curves.get(name) || []).map(r => [Number(r.time), Number(r.value)]),
     movesOf: (id) => moves.get(id) || [],
     capsules: new Map(rows('capsules.csv').map(r => [r.id, r])),
     capsuleEffectsOf: (id) => capsuleEffects.get(id) || [],

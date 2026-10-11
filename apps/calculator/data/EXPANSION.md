@@ -325,6 +325,21 @@ Results, now in `characters.json` `rushChainDamage` (`scripts/lib/rushChains.mjs
 Not measured yet: Ki Blast Cannon Smash (`actSCS`, 640), Delta Heavy Finish (`actDS1`-`3`), Rolling Press
 (`actPP1A`, `actPP2`), and characters with their own chain files (Flying Kicks for about 5 characters).
 
+### Energy attack speed and self-damage (game files, 2026-10-11)
+
+- **Speed:** a blast's projectiles are the character's bullet rows for its action (`actSPM1SI`, `actSPM2SI`,
+  `actULTSI`, `07_actULT2SI`, …); each projectile's `MoveParam.SpeedCurve` gives its speed over time. The top of
+  the curve is published as `projectileSpeed` (game units per second, as lunge speed): 421 of the 475 non-rush
+  blasts. Shared templates: beams 31,000 (a piercing variant 37,000), ultimate beams 25,000, rapid beams and
+  barrages 20,000, ultimate energy balls 15,000, energy balls 12,500, homing balls 3,650; some characters have
+  their own (Goku (Z - Early)'s Kamehameha 16,000, Spirit Bomb 10,000). Explosive Wave, Short-Range and Lock-On
+  Explosion blasts have no speed curve (they don't travel). The montages that spawn the projectiles aren't in the
+  export, but the bullet rows already tie each blast to its projectile.
+- **Self-damage:** a blast's attack or projectile file with `bReceiveSelfDamage` gives `SelfDamagePower` (999,999
+  knocks the user out) and, for Evil Containment Wave, a DP table (`SelfDamagePowerDpMultiplier`). Published as
+  `selfDamage`; every Self-damage blast has one, and Gamma 2's Core Breaker turns up too (a self-KO the curated
+  traits miss). Whether the value is health as is or x1.25 is TESTS.md 2.
+
 ### Third round (run 2026-10-11)
 
 - **Rush Ki Waves part charged:** 1,625 for Piccolo (5 hits of 260 Power; the files give none).

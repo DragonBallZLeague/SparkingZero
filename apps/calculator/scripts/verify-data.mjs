@@ -366,6 +366,15 @@ if (v2) {
     ig('rush tracking (league 2026-10-11)', JSON.stringify([tr('Vegeta (Z - Scouter)', 'Final Galick Cannon'), tr('Kefla', 'Gigantic Swing'), tr('Goku (Z - Early)', 'Kaioken Attack'), tr('Piccolo', 'Explosive Breath Cannon')]),
       JSON.stringify(['straight', 'straight', 'homing', 'homing']));
   }
+  {
+    // Game files (2026-10-11): energy attack speed (top of the projectile's speed curve) and self-damage
+    const bl = (n, mv) => data.blasts[data.characters.find(c => c.name === n)?.id]?.find(b => b.name === mv);
+    ig('blast speed: Goku Kamehameha, Vegeta (Z - Scouter) Galick Gun, Goku Spirit Bomb',
+      JSON.stringify([bl('Goku (Z - Early)', 'Kamehameha')?.projectileSpeed, bl('Vegeta (Z - Scouter)', 'Galick Gun')?.projectileSpeed, bl('Goku (Z - Early)', 'Spirit Bomb')?.projectileSpeed]), JSON.stringify([16000, 31000, 10000]));
+    const selfDmgTrait = Object.values(data.blasts).flat().filter(b => b.traits.includes('Self-damage') && !b.selfDamage).map(b => b.name);
+    check(!selfDmgTrait.length, 'every Self-damage blast has its self-damage amount from the game files', selfDmgTrait);
+    ig('self-damage: Neo Tri-Beam, Final Explosion', JSON.stringify([bl('Tien', 'Neo Tri-Beam')?.selfDamage?.power, bl('Majin Vegeta', 'Final Explosion')?.selfDamage?.knockOut]), JSON.stringify([2000, true]));
+  }
   ig('Justice Kick steers but is not a crash; Dodoria Head Ram crashes', JSON.stringify([
     data.blasts[data.characters.find(c => c.name === 'Dyspo')?.id]?.find(b => b.name === 'Justice Kick')?.flags?.includes('crash'),
     data.blasts[data.characters.find(c => c.name === 'Dodoria')?.id]?.find(b => b.name === 'Dodoria Head Ram')?.flags?.includes('crash')]), JSON.stringify([false, true]));

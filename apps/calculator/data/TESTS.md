@@ -9,12 +9,18 @@ Last updated 2026-10-11 (third round of results recorded in EXPANSION.md).
 
 ## Blasts and skills
 
-1. **Energy attack speed (file digging first, by Claude).** Blasts have no travel speed in the data. The game files
-   hold speed curves for some blast projectiles (33 curves in `BulletSetting/SpeedCurve`, 149 blast projectile
-   files in `BulletSetting/BulletParam`; Goku's beam curve `BulletSpeed_0000_00_actSPM_BEAM` goes 10,000 to 16,000),
-   but most blasts don't link to a projectile file yet (the link probably runs through the blast's montage or
-   action assets). Once linked, a test can confirm it: two beams fired from the same distance at a still
-   opponent, timed on a 60 fps recording from firing to impact; the faster one should match the higher curve.
+1. **Energy attack speed (files read; one check).** Each blast's projectile has a speed curve; its top speed is
+   published as `projectileSpeed` (421 of 475 non-rush blasts; explosions and short-range attacks don't travel).
+   Most beams are 31,000, ultimate beams 25,000, energy balls 12,500 to 15,000; but Goku (Z - Early)'s Kamehameha
+   has its own, slower beam (10,000 rising to 16,000) and Spirit Bomb travels at 10,000. Check: Goku's Kamehameha
+   and Vegeta (Z - Scouter)'s Galick Gun (31,000) from the same distance at a still dummy, timed on a recording;
+   the Galick Gun should arrive in about half the time.
+2. **Self-damage amounts.** The files give each self-damage blast a SelfDamagePower: is it the health lost as is,
+   or x1.25 like attack Power?
+   - Tien's Neo Tri-Beam: predicted **2,000** health lost per use (2,500 if x1.25).
+   - Master Roshi's Evil Containment Wave: 7,500 x a DP table (x1 at DP 1 to x1.45 at DP 10); against a DP 5
+     opponent predicted **9,000** (a second file gives 5,000 x up to 3 instead; note which one it is).
+   - Gamma 2's Core Breaker: the files knock the user out (999,999), but it isn't marked Self-damage; confirm.
 
 ## Names still unknown
 
