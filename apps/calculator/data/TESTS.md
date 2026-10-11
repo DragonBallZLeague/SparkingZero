@@ -34,26 +34,45 @@ Last updated 2026-10-11.
    **1,263** full; then Tornado Slash: **450, 363, 525**. Also confirm that Tornado Slash and Aerial Slash are
    two separate routes off Grand Slash (not one leading into the other).
 
+## Blasts and skills
+
+9. **Energy attack speed (file digging first, by Claude).** Blasts have no travel speed in the data. The game files
+   hold speed curves for some blast projectiles (33 curves in `BulletSetting/SpeedCurve`, 149 blast projectile
+   files in `BulletSetting/BulletParam`; Goku's beam curve `BulletSpeed_0000_00_actSPM_BEAM` goes 10,000 to 16,000),
+   but most blasts don't link to a projectile file yet (the link probably runs through the blast's montage or
+   action assets). Once linked, a test can confirm it: two beams fired from the same distance at a still
+   opponent, timed on a 60 fps recording from firing to impact; the faster one should match the higher curve.
+10. **Devilmite Beam's wickedness rule.** Devilman's ultimate deals damage by the opponent's wickedness. No
+    per-character wickedness value is in the character files (only dialogue mentions "evil"), so it is probably in
+    the beam's own data (to dig). A test: Devilmite Beam on a hero (Goku (Z - Early)) and on a villain (Frieza (Z)
+    1st Form), same build, and note both.
+11. **Multi-stage skills.** How does a skill move to its next stage? Goku (Z - Mid)'s Give Me Your Energy! has three
+    stages (ultimate damage +20%, +40%, +60%, 100s each); skills like Now I'm Angry! have a buff stage (15s) then a
+    penalty stage (30s, 20% less defense). Note what moves Give Me Your Energy! from stage 1 to 2.
+12. **Interrupts.** The files mark 77 Explosive Wave and Barrier skills (and Vegeta (Super) Super Saiyan's Saiyan
+    Spirit) as usable while being hit. Confirm one: Vegeta (Z - Scouter)'s Explosive Wave in the middle of an
+    opponent's rush.
+
 ## Armor
 
-9. **The Sparking armor-break bonus.** Goku (Z - Early) **in Sparking**, a fully charged ki blast against Sparking
+13. **The Sparking armor-break bonus.** Goku (Z - Early) **in Sparking**, a fully charged ki blast against Sparking
    Janemba. The game's common Sparking buff gives +3 break level, which should break Janemba's Sparking Armor:
    predicted **1,919** (1,439 if it doesn't break). His first rush hit in Sparking should break it too.
 
 ## Follow-up (pursuit) limits
 
-10. **Videl and Mr. Satan.** The files turn off their Vanishing Attack and Lightning Attack and leave Dragon
+14. **Videl and Mr. Satan.** The files turn off their Vanishing Attack and Lightning Attack and leave Dragon
     Homing on; Videl's Dragon Homing has its own limit of 2. Confirm, and count how many follow-ups each can do
     in one combo: neither has a general follow-up limit in the files (nor do Cheelai and Panzy).
 
 ## Names still unknown
 
-11. **Four move flags.** Each turns a move off for a few characters; check their in-game controls list for the
+15. **Four move flags.** Each turns a move off for a few characters; check their in-game controls list for the
     missing move:
     - BlastRepel: Broly (Z) Legendary Super Saiyan.
     - EnergyWave: Goku (Mini), Glorio.
     - RollingHammer: Goku (Mini), Vegeta (Mini) Super Saiyan 3.
     - Explosion: Vegeta (Mini) Super Saiyan 3, Glorio.
-12. **The counter's follow-up.** The files give every character a counter entry (the standard counter attack for
+16. **The counter's follow-up.** The files give every character a counter entry (the standard counter attack for
     most); what it leads to in game isn't checked yet.
-13. **Dragon Dash's "BK" cost** (`SpCostBK`, published as `mobility.dragonDash.bk`): which dash it is.
+17. **Dragon Dash's "BK" cost** (`SpCostBK`, published as `mobility.dragonDash.bk`): which dash it is.
