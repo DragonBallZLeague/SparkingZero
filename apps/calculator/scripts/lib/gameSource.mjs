@@ -110,7 +110,7 @@ export function gameSkillValues(fm, id) {
     if (!/^actEXA/.test(b.action)) continue;
     const params = fm.paramsOf(b.file);
     const time = params.find(p => p.field === 'EffectiveTime')?.value ?? '0';
-    out.push({ 'Character ID': id, Action: b.action, Field: 'EffectiveTime', 'Numeric value': time, 'Duration (s)': time });
+    out.push({ 'Character ID': id, Action: b.action, Field: 'EffectiveTime', 'Numeric value': time, 'Duration (s)': time, List: b.list, Phase: b.phase });
     for (const p of params) {
       if (p.field === 'EffectiveTime') continue;
       out.push({ 'Character ID': id, Action: b.action, Field: p.field, 'Numeric value': Number.isFinite(Number(p.value)) ? p.value : '', 'Duration (s)': time });

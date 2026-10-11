@@ -1021,7 +1021,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -1245,7 +1245,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -1731,7 +1731,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2199,7 +2199,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2293,7 +2293,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2368,7 +2368,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2424,7 +2424,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2554,7 +2554,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2648,7 +2648,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -2816,7 +2816,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -3332,7 +3332,7 @@
       "variant": "",
       "name": "Final Flash",
       "kiCost": 40000,
-      "triggerKi": 30000,
+      "triggerKi": 40000,
       "damage": 12825,
       "damageStatus": "measured",
       "boostedDamage": 15390,
@@ -3414,7 +3414,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -3844,7 +3844,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -4892,7 +4892,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","crash"],
       "lungeSpeed": 10000,
       "moveLimitTime": 2,
       "detailsSource": "curated"
@@ -5134,7 +5134,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -5340,7 +5340,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["unblockable","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -5773,7 +5773,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable","crash"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -5923,7 +5923,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -6076,7 +6076,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable","crash"],
       "lungeSpeed": 11700,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6116,7 +6116,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable","crash"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6134,7 +6134,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -6606,7 +6606,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.5,
       "detailsSource": "curated"
@@ -6644,7 +6644,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","crash"],
       "lungeSpeed": 11700,
       "moveLimitTime": 1.5,
       "detailsSource": "curated"
@@ -6777,7 +6777,7 @@
         "Switch body",
         "Unguardable",
         "Cinematic",
-        "When you and your opponent switch bodies, you cannot use\nTransformation, Switch, skills, Blasts, or Ultimate Blasts."
+        "When you and your opponent switch bodies, you cannot use\r\nTransformation, Switch, skills, Blasts, or Ultimate Blasts."
       ],
       "flags": ["lockOnNeeded"],
       "lungeSpeed": null,
@@ -6835,7 +6835,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -7041,7 +7041,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -7097,7 +7097,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.12,
       "detailsSource": "curated"
@@ -7584,7 +7584,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["unblockable"],
+      "flags": ["unblockable","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -7716,7 +7716,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","crash"],
       "lungeSpeed": 8750,
       "moveLimitTime": 1,
       "detailsSource": "curated"
@@ -7772,7 +7772,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -7866,7 +7866,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.25,
       "detailsSource": "curated"
@@ -7922,7 +7922,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.5,
       "detailsSource": "curated"
@@ -8034,7 +8034,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -8090,7 +8090,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.12,
       "detailsSource": "curated"
@@ -8146,7 +8146,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","unblockable"],
+      "flags": ["lockOnNeeded","unblockable","crash"],
       "lungeSpeed": 11700,
       "moveLimitTime": 1.5,
       "detailsSource": "curated"
@@ -8314,7 +8314,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -8652,7 +8652,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -8670,7 +8670,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.12,
       "detailsSource": "curated"
@@ -9045,7 +9045,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -9325,7 +9325,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["dashClashCapable","lockOnNeeded","unblockable"],
+      "flags": ["dashClashCapable","lockOnNeeded","unblockable","crash"],
       "lungeSpeed": 8750,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -9650,7 +9650,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","crash"],
       "lungeSpeed": 8750,
       "moveLimitTime": 1,
       "detailsSource": "curated"
@@ -9780,7 +9780,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -10511,7 +10511,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -10679,7 +10679,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable"],
+      "flags": ["lockOnNeeded","dashClashCapable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.5,
       "detailsSource": "curated"
@@ -10697,7 +10697,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees","destroyMap"],
+      "flags": ["audienceFlees","destroyMap","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -10735,7 +10735,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -10791,7 +10791,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable"],
+      "flags": ["lockOnNeeded","dashClashCapable","noStepBack"],
       "lungeSpeed": 8750,
       "moveLimitTime": 0.5,
       "detailsSource": "curated"
@@ -10809,7 +10809,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -10921,7 +10921,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["audienceFlees","destroyMap"],
+      "flags": ["audienceFlees","destroyMap","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -11015,7 +11015,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": ["audienceFlees"],
+      "flags": ["audienceFlees","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -11183,7 +11183,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": ["lockOnNeeded","dashClashCapable"],
+      "flags": ["lockOnNeeded","dashClashCapable","crash"],
       "lungeSpeed": 11700,
       "moveLimitTime": 1,
       "detailsSource": "curated"
@@ -11239,7 +11239,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -11352,7 +11352,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","crash"],
       "lungeSpeed": 10000,
       "moveLimitTime": 2,
       "detailsSource": "curated"
@@ -11390,7 +11390,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","dashClashCapable","unblockable"],
+      "flags": ["lockOnNeeded","dashClashCapable","unblockable","crash"],
       "lungeSpeed": 11700,
       "moveLimitTime": 1.5,
       "detailsSource": "curated"
@@ -12028,7 +12028,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","unblockable"],
+      "flags": ["lockOnNeeded","unblockable","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12046,7 +12046,7 @@
       "type": "Throw",
       "impactPower": 9,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","unblockable"],
+      "flags": ["lockOnNeeded","unblockable","noStepBack"],
       "lungeSpeed": 6750,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -12196,7 +12196,7 @@
       "type": "Throw",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["lockOnNeeded","unblockable"],
+      "flags": ["lockOnNeeded","unblockable","noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated + neo"
@@ -12289,7 +12289,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -12831,7 +12831,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["dashClashCapable","unblockable"],
+      "flags": ["dashClashCapable","unblockable","crash"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -12999,7 +12999,7 @@
       "type": "Lunge Fighting",
       "impactPower": null,
       "traits": ["Unguardable"],
-      "flags": ["dashClashCapable","unblockable"],
+      "flags": ["dashClashCapable","unblockable","crash"],
       "lungeSpeed": 10000,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -13055,7 +13055,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -13365,7 +13365,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -13404,7 +13404,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13653,7 +13653,7 @@
       "type": null,
       "impactPower": null,
       "traits": ["Cinematic"],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -13692,7 +13692,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"
@@ -13711,7 +13711,7 @@
       "type": "Throw",
       "impactPower": 9,
       "traits": ["Unguardable","Cinematic"],
-      "flags": ["lockOnNeeded","unblockable"],
+      "flags": ["lockOnNeeded","unblockable","noStepBack"],
       "lungeSpeed": 6750,
       "moveLimitTime": null,
       "detailsSource": "curated"
@@ -13788,7 +13788,7 @@
       "type": null,
       "impactPower": null,
       "traits": [],
-      "flags": [],
+      "flags": ["noStepBack"],
       "lungeSpeed": null,
       "moveLimitTime": null,
       "detailsSource": "neo"

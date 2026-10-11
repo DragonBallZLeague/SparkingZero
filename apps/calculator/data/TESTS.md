@@ -5,74 +5,45 @@ with no capsules or skills unless a test says otherwise, and note the combo's to
 (as in the Rush Chain tests). When a test is done, move its result to `EXPANSION.md` (or the right section of
 `README.md`), add a check to `scripts/verify-data.mjs`, and delete it here.
 
-Last updated 2026-10-11.
+Last updated 2026-10-11 (second round of results recorded in EXPANSION.md).
 
 ## Rush Chains
 
-1. **Bardock's Rolling Hammer, fully charged (re-test).** Rush Chain 3, after 3 rush hits (1,170). The files
-   give one hit of **563** fully charged and **425** part charged. The earlier test measured 1,150, which is
-   exactly Bardock's Flying Kicks (his Rush Chain 4), so it may have been the wrong chain. Note the total and how
-   many hits it lands, at part and full charge.
-2. **Energy Storm's ki blast flurry.** Piccolo, Rush Chain 2 (2 rush hits, 780), fully charged Rush Ki Waves
-   (1,875), Energy Storm's first press (738 + 488), then the flurry (224 last time). **Count the shots that
-   land.** Each shot should be 157 at most; fewer shots, or less per shot, tells us whether later hits in a long
-   combo do less damage.
-3. **Rush Ki Waves, part charged.** Piccolo, Rush Chain 2. The files have no damage for it, so the data assumes
-   **1,875** (5 hits of 375, like the full charge).
-4. **Ki Blast Cannon Smash.** Tien, Rush Chain 1 (1 rush hit, 429), Ki Blast Cannon, then Ki Blast Cannon Smash:
-   predicted **880**. Note whether it needs the cannon fully charged, like Ki Blast Cannon Attack.
-5. **Delta Heavy Finish.** Goku (GT), Rush Chain 3 (3 rush hits: 410, 410, 474), Heavy Finish (709 uncharged),
-   then Delta Heavy Finish: predicted **473, 381, 552**. Note whether it needs a full charge.
-6. **Rolling Press.** Gamma 1, Rush Chain 2 (2 rush hits, 820), Rolling Hammer (355 uncharged), then Rolling
-   Press: predicted **1,288** for its first press (three hits: 250, 788, 250) and **788** for the second.
-7. **Characters with their own Flying Kicks.** The files name some kicks as ranges ("hits 2-4"), so the hit
-   count is a guess:
-   - Burter, Rush Chain 2 (2 rush hits, 812): predicted 582 (141, 141, 300), more if the range means 4 kicks.
-   - Tapion, Rush Chain 2 (2 rush hits, 742): predicted 620 (150, 150, 320).
-   - Gogeta (Super) Super Saiyan, Rush Chain 4 (4 rush hits, 2,357): predicted 1,780 (416 ×3, 532).
-8. **Grand Slash and Tornado Slash.** Goku (Z - Early), Grand Slash: predicted **625** uncharged, **775** part,
-   **1,263** full; then Tornado Slash: **450, 363, 525**. Also confirm that Tornado Slash and Aerial Slash are
-   two separate routes off Grand Slash (not one leading into the other).
+1. **Rush Ki Waves, part charged.** Piccolo, Rush Chain 2 (2 rush hits, 780). The files have no damage for it, so
+   the data assumes **1,875** (5 hits of 375, like the full charge).
+2. **Aerial Slash.** Goku (Z - Early), Grand Slash (625 uncharged) then Aerial Slash: the files don't tie it to an
+   action yet, so note each hit.
+3. **Lift Strike** (a Step-In or Rush-In chain for some characters): predicted at Goku's coefficient **675**
+   uncharged, **900** part, **1,338** full. Note it for any character that has it.
 
 ## Blasts and skills
 
-9. **Energy attack speed (file digging first, by Claude).** Blasts have no travel speed in the data. The game files
+4. **Crash rushes.** The 14 steerable rush blasts (Nova Strike, Hyper Tornado, Cross Arm Hurricane, Eighter Attack,
+   Dodoria Head Ram, Life-Risking Blow!, Gigantic Bomber, Burning Tornado, Berserker Crash, Justice Kick, Maiden's
+   Charge, Primal Charge, Majin Corkscrew Attack, Rolling Attack) would show the type **Crash**: they hit on contact
+   with no cinematic. 13 are Unguardable with no cinematic in the data; **Dyspo's Justice Kick** is marked
+   Cinematic, so check that one (and one other, e.g. Dodoria Head Ram) in game.
+5. **Energy attack speed (file digging first, by Claude).** Blasts have no travel speed in the data. The game files
    hold speed curves for some blast projectiles (33 curves in `BulletSetting/SpeedCurve`, 149 blast projectile
    files in `BulletSetting/BulletParam`; Goku's beam curve `BulletSpeed_0000_00_actSPM_BEAM` goes 10,000 to 16,000),
    but most blasts don't link to a projectile file yet (the link probably runs through the blast's montage or
    action assets). Once linked, a test can confirm it: two beams fired from the same distance at a still
    opponent, timed on a 60 fps recording from firing to impact; the faster one should match the higher curve.
-10. **Devilmite Beam's wickedness rule.** Devilman's ultimate deals damage by the opponent's wickedness. No
-    per-character wickedness value is in the character files (only dialogue mentions "evil"), so it is probably in
-    the beam's own data (to dig). A test: Devilmite Beam on a hero (Goku (Z - Early)) and on a villain (Frieza (Z)
-    1st Form), same build, and note both.
-11. **Multi-stage skills.** How does a skill move to its next stage? Goku (Z - Mid)'s Give Me Your Energy! has three
-    stages (ultimate damage +20%, +40%, +60%, 100s each); skills like Now I'm Angry! have a buff stage (15s) then a
-    penalty stage (30s, 20% less defense). Note what moves Give Me Your Energy! from stage 1 to 2.
-12. **Interrupts.** The files mark 77 Explosive Wave and Barrier skills (and Vegeta (Super) Super Saiyan's Saiyan
-    Spirit) as usable while being hit. Confirm one: Vegeta (Z - Scouter)'s Explosive Wave in the middle of an
-    opponent's rush.
-
-## Armor
-
-13. **The Sparking armor-break bonus.** Goku (Z - Early) **in Sparking**, a fully charged ki blast against Sparking
-   Janemba. The game's common Sparking buff gives +3 break level, which should break Janemba's Sparking Armor:
-   predicted **1,919** (1,439 if it doesn't break). His first rush hit in Sparking should break it too.
-
-## Follow-up (pursuit) limits
-
-14. **Videl and Mr. Satan.** The files turn off their Vanishing Attack and Lightning Attack and leave Dragon
-    Homing on; Videl's Dragon Homing has its own limit of 2. Confirm, and count how many follow-ups each can do
-    in one combo: neither has a general follow-up limit in the files (nor do Cheelai and Panzy).
+6. **Devilmite Beam's wickedness rule.** Devilman's ultimate deals damage by the opponent's wickedness. No
+   per-character wickedness value is in the character files (only dialogue mentions "evil"), so it is probably in
+   the beam's own data (to dig). A test: Devilmite Beam on a hero (Goku (Z - Early)) and on a villain (Frieza (Z)
+   1st Form), same build, and note both.
+7. **Energy Storm's flurry, per shot (optional).** 9 shots made 224 for Piccolo (about 25 a shot), but the bullet
+   file says Power 125 (157 a shot). If a single shot can be isolated, its damage tells which value the game uses.
 
 ## Names still unknown
 
-15. **Four move flags.** Each turns a move off for a few characters; check their in-game controls list for the
-    missing move:
-    - BlastRepel: Broly (Z) Legendary Super Saiyan.
-    - EnergyWave: Goku (Mini), Glorio.
-    - RollingHammer: Goku (Mini), Vegeta (Mini) Super Saiyan 3.
-    - Explosion: Vegeta (Mini) Super Saiyan 3, Glorio.
-16. **The counter's follow-up.** The files give every character a counter entry (the standard counter attack for
-    most); what it leads to in game isn't checked yet.
-17. **Dragon Dash's "BK" cost** (`SpCostBK`, published as `mobility.dragonDash.bk`): which dash it is.
+8. **Four move flags.** Each turns a move off for a few characters; check their in-game controls list for the
+   missing move:
+   - BlastRepel: Broly (Z) Legendary Super Saiyan.
+   - EnergyWave: Goku (Mini), Glorio.
+   - RollingHammer: Goku (Mini), Vegeta (Mini) Super Saiyan 3.
+   - Explosion: Vegeta (Mini) Super Saiyan 3, Glorio.
+9. **The counter's follow-up.** The files give every character a counter entry (the standard counter attack for
+   most); what it leads to in game isn't checked yet.
+10. **Dragon Dash's "BK" cost** (`SpCostBK`, published as `mobility.dragonDash.bk`): which dash it is.

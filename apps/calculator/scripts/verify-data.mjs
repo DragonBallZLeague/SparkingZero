@@ -324,7 +324,7 @@ if (v2) {
   // Pursuits (game files, 2026-10-11): Videl and Mr. Satan have no Vanishing Attack or Lightning Attack, but Dragon Homing
   const pu = (name) => data.characters.find(c => c.name === name)?.moveset?.pursuits;
   ig('Videl pursuits', JSON.stringify([pu('Videl')?.vanishingAttack, pu('Videl')?.lightningAttack, pu('Videl')?.dragonHoming]), JSON.stringify([false, false, { limit: 2 }]));
-  ig('Mr. Satan pursuits', JSON.stringify([pu('Mr. Satan')?.vanishingAttack, pu('Mr. Satan')?.lightningAttack, pu('Mr. Satan')?.dragonHoming]), JSON.stringify([false, false, true]));
+  ig('Mr. Satan pursuits', JSON.stringify([pu('Mr. Satan')?.vanishingAttack, pu('Mr. Satan')?.lightningAttack, pu('Mr. Satan')?.dragonHoming]), JSON.stringify([false, false, false]));
   ig('Goku (Z - Early) follow-up limit, and in Sparking', JSON.stringify([pu('Goku (Z - Early)')?.limit, pu('Goku (Z - Early)')?.sparkingAdd]), JSON.stringify([2, 2]));
   // Rush Chains (2026-10-11): totals before and after each chain, on a dummy with no capsules or skills
   const rcd = (cid, type) => data.characters.find(c => c.id === cid)?.rushChainDamage?.[type];
@@ -336,6 +336,21 @@ if (v2) {
   ig('Bardock Rolling Hammer uncharged, then Rolling Hurricane', j([rcd('0310_00', 'Rolling Hammer')?.damage?.[0], ...(rcd('0310_00', 'Rolling Hammer')?.followUps?.['Rolling Hurricane']?.hits || [])]), j([338, 500, 800]));
   ig('Piccolo Rush Ki Waves uncharged and full (5 hits)', j([rcd('0040_00', 'Rush Ki Waves')?.damage?.[0], rcd('0040_00', 'Rush Ki Waves')?.damage?.[2]]), j([625, 1875]));
   ig('Piccolo Energy Storm (its first press, two hits)', rcd('0040_00', 'Rush Ki Waves')?.followUps?.['Energy Storm']?.total, 1226);
+  // 2026-10-11, second round
+  ig('Bardock Rolling Hammer at each charge (one hit)', j(rcd('0310_00', 'Rolling Hammer')?.damage), j([338, 425, 563]));
+  ig('Tien Ki Blast Cannon Smash (after a full charge)', j([rcd('0070_00', 'Ki Blast Cannon')?.followUps?.['Ki Blast Cannon Smash']?.total, rcd('0070_00', 'Ki Blast Cannon')?.followUps?.['Ki Blast Cannon Smash']?.needsFullCharge]), j([880, true]));
+  ig('Goku (GT) Heavy Finish, then Delta Heavy Finish', j([rcd('0002_30', 'Heavy Finishes')?.damage?.[0], rcd('0002_30', 'Heavy Finishes')?.damage?.[2], ...(rcd('0002_30', 'Heavy Finishes')?.followUps?.['Delta Heavy Finish']?.hits || [])]), j([709, 1470, 473, 381, 552]));
+  const g1 = data.characters.find(c => c.name === 'Gamma 1')?.id;
+  ig('Gamma 1 Rolling Hammer, then Rolling Press', j([rcd(g1, 'Rolling Hammer')?.damage?.[0], ...(rcd(g1, 'Rolling Hammer')?.followUps?.['Rolling Press']?.hits || [])]), j([355, 1788, 788]));
+  for (const [n, want] of [['Burter', [864, 5]], ['Tapion', [770, 4]], ['Gogeta (Super) Super Saiyan', [2196, 5]]]) {
+    const fk = rcd(data.characters.find(c => c.name === n)?.id, 'Flying Kicks');
+    ig(`${n} Flying Kicks (total, hits)`, j([fk?.damage?.[0], fk?.hits?.[0]?.length]), j(want));
+  }
+  ig('Goku Grand Slash uncharged and full, then Tornado Slash', j([rcd('0000_00', 'Grand Slash')?.damage?.[0], rcd('0000_00', 'Grand Slash')?.damage?.[2], ...(rcd('0000_00', 'Grand Slash')?.followUps?.['Tornado Slash']?.hits || [])]), j([625, 1263, 450, 363, 525]));
+  ig('Piccolo Energy Storm ki blast flurry (shots, measured)', j(rcd('0040_00', 'Rush Ki Waves')?.followUps?.['Energy Storm']?.kiBlastFlurry), j({ shots: 9, measuredTotal: 224 }));
+  ig('Vegeta (Z - Scouter) Explosive Wave interrupts', data.skills['0020_00:1']?.display?.interrupts, true);
+  const stageGaps = Object.values(data.skills).filter(k => k.phases.every(p => p.list != null) && !!k.stages !== k.phases.some(p => p.stage > 1)).map(k => k.id);
+  check(!stageGaps.length, "skill stages (same effects in every phase) match the game's buff stages; other phases apply together", stageGaps);
   ig('Goku (GT) Blaster Wave uncharged and full, then Blaster Wave Combo', j([rcd('0002_30', 'Blaster Wave')?.damage?.[0], rcd('0002_30', 'Blaster Wave')?.damage?.[2], ...(rcd('0002_30', 'Blaster Wave')?.followUps?.['Blaster Wave Combo']?.hits || [])]), j([814, 1405, 657, 814]));
   ig('Great Ape Vegeta smash, normal / full', cm('0023_00')?.smash ? `${cm('0023_00').smash[0]} / ${cm('0023_00').smash[2]}` : null, '1722 / 3570');
   ig('Ma Junior Giant Form smash, normal / full', cm('3310_10')?.smash ? `${cm('3310_10').smash[0]} / ${cm('3310_10').smash[2]}` : null, '1688 / 3500');
@@ -380,6 +395,11 @@ if (v2) {
     // the rush combo: Goku's hits 1-4 don't break Janemba's Sparking Armor, hit 5 does (as the hit count said)
     const combo = calcOutgoingCombo(g, run('0650_00', { sparking: true }));
     ig('Goku rush vs Sparking Janemba: armored hits', combo?.perHit?.map(h => h.armorReduced).join(','), 'true,true,true,true,false');
+    // 2026-10-11: in Sparking, the common Sparking buff's +3 break level breaks Sparking Janemba's armor: the fully
+    // charged ki blast lands in full (1,919) and so does the first rush hit
+    const gs = run('0000_00', { sparking: true }), js = run('0650_00', { sparking: true });
+    ig('Sparking Goku full charged ki blast vs Sparking Janemba', damageTaken(full, js.energy, armorFactor(gs.breakLevels?.chargedKiBlast?.[2], js)), 1919);
+    ig('Sparking Goku rush hit 1 breaks Sparking Janemba', calcOutgoingCombo(gs, js)?.perHit?.[0]?.armorReduced, false);
   }
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));

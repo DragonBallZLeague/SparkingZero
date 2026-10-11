@@ -325,6 +325,32 @@ Results, now in `characters.json` `rushChainDamage` (`scripts/lib/rushChains.mjs
 Not measured yet: Ki Blast Cannon Smash (`actSCS`, 640), Delta Heavy Finish (`actDS1`-`3`), Rolling Press
 (`actPP1A`, `actPP2`), and characters with their own chain files (Flying Kicks for about 5 characters).
 
+### Second round (run 2026-10-11)
+
+All in the data and checked by verify-data:
+
+- **Bardock's Rolling Hammer** is one hit at every charge: 338, 425, 563 (the earlier 1,150 was the wrong chain).
+- **Ki Blast Cannon Smash** needs a full charge: Tien 880. **Delta Heavy Finish** doesn't: Goku (GT) 473, 381, 552
+  after an uncharged Heavy Finish (709; 1,470 fully charged).
+- **Rolling Press**'s first press is several hits on one button: the 190 hit four times and the 600 one (Gamma 1:
+  1,788), then 788.
+- **Flying Kicks with their own files:** a file name can cover several hits ("actFLK_2-4" is kicks 2 to 4):
+  Burter 864 in 5 hits, Tapion 770 in 4, Gogeta (Super) Super Saiyan 2,196 in 5.
+- **Grand Slash** 625 uncharged, 1,263 fully charged; **Tornado Slash** 450, 363, 525.
+- **Energy Storm's flurry** is 9 ki blasts that don't count as combo hits: 224 in all for Piccolo (about 25 a shot,
+  not the bullet file's 125 Power); published as measured.
+- **Follow-up limits:** no general limit in the files means 0. Videl can do only her 2 Dragon Homings; Mr. Satan
+  none at all.
+- **Interrupts** work while being hit (the 77 skills with the explosion and barrier interrupt flags).
+- **The Sparking armor-break bonus:** Goku (Z - Early) in Sparking breaks Sparking Janemba's armor with his first
+  rush hit and with a fully charged ki blast (1,919), as the common Sparking buff's +3 predicts.
+- **Skills:** a skill's buffs come in lists of stages. Stages of one list follow each other (Give Me Your Energy!
+  moves up when it is used again); buffs in other lists apply together on activation, like Instant Sparking's
+  defense penalty, so they are not stages.
+- **Blasts:** Future Trunks' Final Flash has no initial cost in game (the file's 3 bars are overridden in
+  `curated/blasts.csv`); Panzy's Last Chance Shock does. The 34 point-blank blasts with backstep off get "No Step
+  Back" (`noStepBack`, 51 blasts across forms); the 14 steerable rushes are flagged `crash` (to confirm).
+
 ### Rush Chain tests (proposed 2026-10-10)
 
 The league wants every Rush Chain's damage on its row in the Moveset (the chain, then its follow-ups), shown only

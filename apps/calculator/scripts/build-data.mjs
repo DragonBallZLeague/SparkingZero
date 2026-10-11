@@ -199,8 +199,9 @@ for (const m of moveList) {
 }
 // Move names and ki costs from the game's move files (BlastSkill/BlastForte/BlastUltimate), matched by slot
 // and name; the map's Move List keeps the variant codes, skill stock costs and moves the files lack.
+const MOVE_SLOT = { BlastSkill1: 'Super 1', BlastSkill2: 'Super 2', BlastForte1: 'Skill 1', BlastForte2: 'Skill 2', BlastUltimate: 'Ultimate' };
 if (fm) {
-  const SLOT = { BlastSkill1: 'Super 1', BlastSkill2: 'Super 2', BlastForte1: 'Skill 1', BlastForte2: 'Skill 2', BlastUltimate: 'Ultimate' };
+  const SLOT = MOVE_SLOT;
   for (const [id, list] of movesById) {
     for (const g of fm.movesOf(id)) {
       const i = list.findIndex(m => m.Slot === SLOT[g.slot] && m.Move === g.name);
@@ -253,7 +254,13 @@ function skillPhases(id, slot, byChar = svByChar) {
   const phases = [];
   let cur = null;
   for (const r of rows) {
-    if (r.Field === 'EffectiveTime') { cur = { duration: num(r['Numeric value']) ?? 0, effects: [] }; phases.push(cur); continue; }
+    if (r.Field === 'EffectiveTime') {
+      cur = { duration: num(r['Numeric value']) ?? 0, effects: [] };
+      // the game's buff list and stage: buffs in different lists apply together on activation (a skill's
+      // penalty); stages of one list follow each other (reactivating the skill moves to the next)
+      if (r.List != null) { cur.list = Number(r.List); cur.stage = Number(r.Phase) + 1; }
+      phases.push(cur); continue;
+    }
     if (r.Field === 'EffectiveTermType') { if (live) expiryRules.add(`${id}:${slot}`, num(r['Numeric value'])); continue; }
     const v = num(r['Numeric value']);
     if (v === null) continue;
@@ -310,7 +317,8 @@ function buildSkills(id, cc) {
     const phases = skillPhases(id, slot);
     if (fm && mapSvByChar.has(id)) {
       const mapPhases = skillPhases(id, slot, mapSvByChar);
-      if (JSON.stringify(mapPhases) !== JSON.stringify(phases)) sourceGaps.push([refById.get(id).name, `skill ${slot} ${m.Move} phases`, JSON.stringify(mapPhases), JSON.stringify(phases)]);
+      const bare = (ps) => JSON.stringify(ps.map(({ list, stage, ...p }) => p));
+      if (bare(mapPhases) !== bare(phases)) sourceGaps.push([refById.get(id).name, `skill ${slot} ${m.Move} phases`, JSON.stringify(mapPhases), JSON.stringify(phases)]);
     }
     phases.forEach((p, i) => p.effects.forEach(e => { if (targetOf(key, i, e.key) === 'opponent') e.target = 'opponent'; }));
     const summary = (summaryByChar.get(id) || []).find(r => r.Type === m.Slot);
@@ -330,6 +338,9 @@ function buildSkills(id, cc) {
       kiAmount: num(disp.kiAmount),
       ...(disp.note ? { note: disp.note } : {}),
     } : inferDisplay(phases, damage);
+    // Interrupts: usable while being hit (the game's explosion and barrier interrupt flags, confirmed 2026-10-11)
+    const gm = fm ? fm.movesOf(id).find(g => g.slot === `BlastForte${slot}`) : null;
+    if (gm && ['BlastForteParamData.bInterruptibleExplosion', 'BlastForteParamData.bInterruptibleBarrier'].some(f => fm.param(gm.file, f) === 'true')) display.interrupts = true;
     // Skills that act on the opponent do it through their damage and behaviour, not stat effects
     display.affectsOpponent = (display.type || '').split('/').some(t => OPPONENT_SKILL_TYPES.has(t));
     if (!disp) report.inferredSkills.push(`${refById.get(id).name} — ${m.Move}: ${display.type ?? 'no type'}`);
@@ -757,6 +768,14 @@ for (const bm of blastMoves) {
       if (clash(curDet) !== clash(neo)) neoBlastGaps.push([...where, 'can clash', clash(curDet), clash(neo)]);
       if (has(curDet, 'lockOnNeeded') !== has(neo, 'lockOnNeeded')) neoBlastGaps.push([...where, 'needs lock-on', has(curDet, 'lockOnNeeded') ? 'yes' : 'no', has(neo, 'lockOnNeeded') ? 'yes' : 'no']);
     }
+  }
+  // Game-file traits (2026-10-11): no step back (bBackstepWhenNearMode off: fired point-blank, no backstep) and
+  // crash rushes (MoveType ControllableTurn: steered, they crash into the opponent; the league's reading, to confirm)
+  const gm = fm ? fm.movesOf(c.id).find(g => MOVE_SLOT[g.slot] === m.Slot && g.name === m.Move) : null;
+  if (gm) {
+    const add = (f) => { if (!det.flags.includes(f)) det.flags = [...det.flags, f]; };
+    if (fm.param(gm.file, 'BlastSkillParamData.bBackstepWhenNearMode') === 'false' || fm.param(gm.file, 'BlastUltimateParamData.bBackstepWhenNearMode') === 'false') add('noStepBack');
+    if (/ControllableTurn/.test((fm.param(gm.file, 'BlastSkillParamData.MoveType') ?? fm.param(gm.file, 'BlastUltimateParamData.MoveType')) || '')) add('crash');
   }
   (blasts[c.id] ??= []).push({
     slot: m.Slot, variant: m.Variant || '', name: m.Move,

@@ -7,7 +7,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -45,7 +45,9 @@
           {"key":"physicalResist","value":0.1},
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -71,9 +73,9 @@
     "damage": 0,
     "duration": 100,
     "phases": [
-      {"duration":100,"effects":[{"key":"ultimateDamage","value":0.2}]},
-      {"duration":100,"effects":[{"key":"ultimateDamage","value":0.4}]},
-      {"duration":100,"effects":[{"key":"ultimateDamage","value":0.6}]}
+      {"duration":100,"effects":[{"key":"ultimateDamage","value":0.2}],"list":0,"stage":1},
+      {"duration":100,"effects":[{"key":"ultimateDamage","value":0.4}],"list":0,"stage":2},
+      {"duration":100,"effects":[{"key":"ultimateDamage","value":0.6}],"list":0,"stage":3}
     ],
     "stages": true,
     "expiryRule": 64,
@@ -117,7 +119,9 @@
           {"key":"energyResist","value":0.05},
           {"key":"guardResist","value":0.05},
           {"key":"moveSpeed","value":0.25}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -142,7 +146,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -180,7 +184,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -189,7 +195,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -214,7 +222,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -237,7 +245,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -261,7 +269,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -300,7 +308,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -325,7 +335,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -356,7 +366,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -381,7 +393,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -412,7 +424,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -437,7 +451,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -474,7 +488,9 @@
           {"key":"chargedKiBlastDamage","value":0.4},
           {"key":"superDamage","value":0.4},
           {"key":"ultimateDamage","value":0.4}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 25,
@@ -483,7 +499,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -508,7 +526,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -539,7 +557,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -564,7 +584,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -603,7 +623,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"guardResist","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 25,
@@ -612,7 +634,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -637,7 +661,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -674,7 +698,9 @@
           {"key":"chargedKiBlastDamage","value":0.2},
           {"key":"superDamage","value":0.2},
           {"key":"ultimateDamage","value":0.2}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -711,7 +737,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"guardResist","value":0.1},
           {"key":"moveSpeed","value":0.25}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 25,
@@ -720,7 +748,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -753,7 +783,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -762,7 +794,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -787,7 +821,7 @@
     "stockCost": 2,
     "damage": 3430,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -826,7 +860,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -835,7 +871,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -860,7 +898,7 @@
     "stockCost": 2,
     "damage": 781.25,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -899,7 +937,9 @@
           {"key":"physicalResist","value":0.1},
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -924,7 +964,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -947,7 +987,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -970,7 +1010,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -1002,7 +1042,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -1042,7 +1084,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1083,7 +1127,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1108,7 +1154,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -1134,7 +1180,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1170,6 +1218,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1195,7 +1244,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1231,6 +1282,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1251,7 +1303,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -1287,6 +1341,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1313,7 +1368,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1338,7 +1395,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -1376,7 +1433,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1412,6 +1471,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1438,7 +1498,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1474,6 +1536,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1486,7 +1549,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -1510,7 +1573,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 15,
-    "phases": [{"duration":15,"effects":[{"key":"kiRecovery","value":0.1},{"key":"armorLevel","value":3}]}],
+    "phases": [{"duration":15,"effects":[{"key":"kiRecovery","value":0.1},{"key":"armorLevel","value":3}],"list":0,"stage":1}],
     "display": {
       "type": "Buff",
       "instantSparking": false,
@@ -1534,7 +1597,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]},
+      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -1542,7 +1605,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -1578,6 +1643,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1604,7 +1670,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1640,6 +1708,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1660,7 +1729,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -1700,7 +1771,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1713,6 +1786,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": false
     },
     "armor": false
@@ -1733,7 +1807,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -1772,7 +1848,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1811,7 +1889,9 @@
           {"key":"chargedKiBlastDamage","value":0.2},
           {"key":"superDamage","value":0.2},
           {"key":"ultimateDamage","value":0.2}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "expiryRule": 1,
@@ -1848,6 +1928,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1861,7 +1942,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]},
+      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -1869,7 +1950,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -1905,6 +1988,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1932,7 +2016,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -1968,6 +2054,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -1992,7 +2079,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -2001,7 +2090,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2034,7 +2125,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2059,7 +2152,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -2082,7 +2175,7 @@
     "stockCost": 2,
     "damage": 1400,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -2114,7 +2207,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2150,6 +2245,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -2170,7 +2266,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2206,6 +2304,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -2226,7 +2325,9 @@
           {"key":"smashDamage","value":0.05},
           {"key":"kiBlastDamage","value":0.05},
           {"key":"chargedKiBlastDamage","value":0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -2235,7 +2336,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2260,7 +2363,7 @@
     "stockCost": 2,
     "damage": 1400,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -2292,7 +2395,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2328,6 +2433,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -2348,7 +2454,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2384,6 +2492,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -2404,7 +2513,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2441,7 +2552,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -2466,7 +2579,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 25,
-    "phases": [{"duration":25,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]}],
+    "phases": [{"duration":25,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}],"list":0,"stage":1}],
     "display": {
       "type": "Buff",
       "instantSparking": false,
@@ -2489,7 +2602,7 @@
     "stockCost": 2,
     "damage": 1750,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -2521,7 +2634,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2546,7 +2661,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -2578,7 +2693,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2614,6 +2731,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -2641,7 +2759,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -2650,7 +2770,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2675,7 +2797,7 @@
     "stockCost": 2,
     "damage": 625,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -2707,7 +2829,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2732,7 +2856,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -2759,7 +2883,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -2787,7 +2913,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -2820,7 +2948,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2845,7 +2975,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -2868,7 +2998,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -2891,7 +3021,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -2930,7 +3060,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"moveSpeed","value":0.25}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -2939,7 +3071,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -2964,7 +3098,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -2987,7 +3121,7 @@
     "stockCost": 2,
     "damage": 1400,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -3011,7 +3145,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -3049,7 +3183,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -3058,7 +3194,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3094,6 +3232,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3107,7 +3246,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]},
+      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -3115,7 +3254,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3151,6 +3292,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3163,7 +3305,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -3198,6 +3340,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3224,7 +3367,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3249,7 +3394,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -3272,7 +3417,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -3307,6 +3452,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3333,7 +3479,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -3342,7 +3490,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3378,6 +3528,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3402,7 +3553,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -3411,7 +3564,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3436,7 +3591,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -3474,7 +3629,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3510,6 +3667,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3534,7 +3692,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -3543,7 +3703,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3568,7 +3730,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -3592,7 +3754,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -3615,7 +3777,7 @@
     "stockCost": 2,
     "damage": 1638,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -3642,7 +3804,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3678,6 +3842,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -3704,7 +3869,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3729,7 +3896,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -3766,7 +3933,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3805,7 +3974,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3838,7 +4009,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3863,7 +4036,7 @@
     "stockCost": 2,
     "damage": 1792,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -3902,7 +4075,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -3911,7 +4086,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -3936,7 +4113,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -3973,7 +4150,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -3998,7 +4177,7 @@
     "stockCost": 2,
     "damage": 2002,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -4036,7 +4215,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -4045,7 +4226,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -4070,7 +4253,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -4119,7 +4302,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4158,7 +4343,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4183,7 +4370,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -4223,7 +4410,9 @@
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1},
           {"key":"armorLevel","value":3}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4264,7 +4453,9 @@
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1},
           {"key":"armorLevel","value":3}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4302,7 +4493,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 25,
@@ -4311,7 +4504,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -4336,7 +4531,7 @@
     "stockCost": 2,
     "damage": 812.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -4374,7 +4569,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.15},
           {"key":"ultimateDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4402,7 +4599,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4441,7 +4640,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4466,7 +4667,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -4501,7 +4702,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -4510,7 +4713,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -4535,7 +4740,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -4561,7 +4766,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4589,7 +4796,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4627,7 +4836,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4652,7 +4863,7 @@
     "stockCost": 2,
     "damage": 656.25,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -4689,7 +4900,9 @@
           {"key":"followUpDamage","value":0.15},
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4725,6 +4938,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -4751,7 +4965,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.15},
           {"key":"ultimateDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4787,6 +5003,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -4813,7 +5030,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4838,7 +5057,7 @@
     "stockCost": 2,
     "damage": 750,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -4870,7 +5089,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -4895,7 +5116,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -4933,7 +5154,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -4958,7 +5181,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -4997,7 +5220,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5022,7 +5247,7 @@
     "stockCost": 2,
     "damage": 781.25,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -5054,7 +5279,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -5079,7 +5306,7 @@
     "stockCost": 2,
     "damage": 1820,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -5111,7 +5338,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -5136,7 +5365,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -5159,7 +5388,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -5183,7 +5412,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -5219,7 +5448,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5255,6 +5486,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -5267,7 +5499,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -5291,7 +5523,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -5314,7 +5546,7 @@
     "stockCost": 2,
     "damage": 1750,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -5338,7 +5570,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -5372,6 +5604,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -5384,7 +5617,7 @@
     "stockCost": 2,
     "damage": 656.25,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -5408,7 +5641,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -5431,7 +5664,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -5478,7 +5711,7 @@
     "stockCost": 2,
     "damage": 750,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -5502,7 +5735,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -5536,6 +5769,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -5548,7 +5782,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -5571,7 +5805,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -5611,7 +5845,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5636,7 +5872,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -5659,7 +5895,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -5685,7 +5921,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5728,7 +5966,9 @@
           {"key":"physicalResist","value":0.1},
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5753,7 +5993,7 @@
     "stockCost": 2,
     "damage": 562.5,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -5777,7 +6017,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -5813,7 +6053,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -5822,7 +6064,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -5870,7 +6114,7 @@
     "stockCost": 2,
     "damage": 1540,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -5910,7 +6154,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5935,7 +6181,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -5974,7 +6220,9 @@
           {"key":"ultimateDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -5999,7 +6247,7 @@
     "stockCost": 2,
     "damage": 1400,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -6024,7 +6272,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[]},
+      {"duration":15,"effects":[],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -6032,7 +6280,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6057,7 +6307,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -6104,7 +6354,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -6127,7 +6377,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -6150,7 +6400,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -6175,7 +6425,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"guardResist","value":0.1}]},
+      {"duration":15,"effects":[{"key":"guardResist","value":0.1}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -6183,7 +6433,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6211,7 +6463,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6246,7 +6500,9 @@
           {"key":"throwDamage","value":0.1},
           {"key":"counterDamage","value":0.1},
           {"key":"followUpDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -6255,7 +6511,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6288,7 +6546,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6313,7 +6573,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 15,
-    "phases": [{"duration":15,"effects":[{"key":"kiRecovery","value":0.15}]}],
+    "phases": [{"duration":15,"effects":[{"key":"kiRecovery","value":0.15}],"list":0,"stage":1}],
     "display": {
       "type": "Buff",
       "instantSparking": false,
@@ -6344,7 +6604,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6357,6 +6619,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -6382,7 +6645,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6415,7 +6680,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6428,6 +6695,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -6455,7 +6723,9 @@
           {"key":"skillDamage","value":0.2},
           {"key":"superDamage","value":0.2},
           {"key":"ultimateDamage","value":0.2}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6496,7 +6766,9 @@
           {"key":"ultimateDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6529,7 +6801,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6554,7 +6828,7 @@
     "stockCost": 2,
     "damage": 562.5,
     "duration": 1.5,
-    "phases": [{"duration":1.5,"effects":[]}],
+    "phases": [{"duration":1.5,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -6578,7 +6852,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -6618,7 +6892,9 @@
           {"key":"ultimateDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6656,7 +6932,9 @@
           {"key":"followUpDamage","value":0.15},
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6681,7 +6959,7 @@
     "stockCost": 2,
     "damage": 1050,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -6713,7 +6991,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6741,7 +7021,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6782,7 +7064,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6810,7 +7094,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6848,7 +7134,9 @@
           {"key":"followUpDamage","value":0.15},
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6876,7 +7164,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -6901,7 +7191,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -6932,7 +7222,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -6972,7 +7264,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"healthRestore","value":-3000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7000,7 +7294,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7033,7 +7329,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7058,7 +7356,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -7090,7 +7388,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7126,6 +7426,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7146,7 +7447,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7171,7 +7474,7 @@
     "stockCost": 2,
     "damage": 562.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -7203,7 +7506,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7239,6 +7544,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7265,7 +7571,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7301,6 +7609,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7326,7 +7635,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7362,6 +7673,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7388,7 +7700,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7424,6 +7738,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7451,7 +7766,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"moveSpeed","value":0.25}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -7460,7 +7777,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7496,6 +7815,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7521,7 +7841,9 @@
           {"key":"followUpDamage","value":0.15},
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7557,6 +7879,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7581,7 +7904,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -7590,7 +7915,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7618,7 +7945,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7656,7 +7985,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7697,7 +8028,9 @@
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1},
           {"key":"armorLevel","value":3}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7736,7 +8069,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7761,7 +8096,7 @@
     "stockCost": 2,
     "damage": 593.75,
     "duration": 4,
-    "phases": [{"duration":4,"effects":[]}],
+    "phases": [{"duration":4,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -7796,6 +8131,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7831,7 +8167,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -7865,6 +8201,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -7893,7 +8230,9 @@
           {"key":"ultimateDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -7926,7 +8265,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -7951,7 +8292,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -7974,7 +8315,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -8006,7 +8347,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8045,7 +8388,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8078,7 +8423,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8114,6 +8461,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8138,7 +8486,9 @@
           {"key":"followUpDamage","value":0.15},
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -8147,7 +8497,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8180,7 +8532,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8213,7 +8567,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8253,7 +8609,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8290,7 +8648,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -8299,7 +8659,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8324,7 +8686,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -8361,7 +8723,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -8370,7 +8734,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8395,7 +8761,7 @@
     "stockCost": 2,
     "damage": 594,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -8437,7 +8803,9 @@
           {"key":"guardResist","value":0.1},
           {"key":"moveSpeed","value":0.25},
           {"key":"healthRestoreFraction","value":10}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8473,6 +8841,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8493,7 +8862,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -8529,6 +8900,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8560,7 +8932,9 @@
           {"key":"energyResist","value":0.15},
           {"key":"guardResist","value":0.15},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8596,6 +8970,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8624,7 +8999,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8660,6 +9037,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8685,7 +9063,9 @@
           {"key":"followUpDamage","value":0.15},
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8710,7 +9090,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -8734,7 +9114,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -8758,7 +9138,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -8781,7 +9161,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -8804,7 +9184,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -8839,6 +9219,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8862,6 +9243,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8874,7 +9256,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 25,
-    "phases": [{"duration":25,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]}],
+    "phases": [{"duration":25,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}],"list":0,"stage":1}],
     "display": {
       "type": "Buff",
       "instantSparking": false,
@@ -8897,7 +9279,7 @@
     "stockCost": 2,
     "damage": 1330,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -8935,7 +9317,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -8971,6 +9355,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -8996,7 +9381,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9032,6 +9419,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9052,7 +9440,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -9088,6 +9478,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9113,7 +9504,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9138,7 +9531,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -9162,7 +9555,7 @@
     "stockCost": 2,
     "damage": 1120,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -9221,7 +9614,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -9230,7 +9625,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -9278,7 +9675,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -9312,6 +9709,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9324,7 +9722,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -9359,6 +9757,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9371,7 +9770,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -9406,6 +9805,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9432,7 +9832,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9457,7 +9859,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -9495,7 +9897,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9531,6 +9935,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9551,7 +9956,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -9587,6 +9994,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9611,7 +10019,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -9620,7 +10030,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -9645,7 +10057,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -9679,6 +10091,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9702,6 +10115,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -9737,7 +10151,7 @@
     "stockCost": 2,
     "damage": 1820,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -9776,7 +10190,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -9785,7 +10201,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -9813,7 +10231,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9838,7 +10258,7 @@
     "stockCost": 2,
     "damage": 1260,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -9862,7 +10282,7 @@
     "stockCost": 2,
     "damage": 562.5,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -9900,7 +10320,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9925,7 +10347,7 @@
     "stockCost": 2,
     "damage": 562.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -9952,7 +10374,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -9993,7 +10417,9 @@
           {"key":"physicalResist","value":0.05},
           {"key":"energyResist","value":0.05},
           {"key":"guardResist","value":0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -10018,7 +10444,14 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 25,
-    "phases": [{"duration":25,"effects":[{"key":"physicalResist","value":0.15},{"key":"energyResist","value":0.15},{"key":"guardResist","value":0.15}]}],
+    "phases": [
+      {
+        "duration": 25,
+        "effects": [{"key":"physicalResist","value":0.15},{"key":"energyResist","value":0.15},{"key":"guardResist","value":0.15}],
+        "list": 0,
+        "stage": 1
+      }
+    ],
     "display": {
       "type": "Buff",
       "instantSparking": false,
@@ -10041,7 +10474,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -10072,7 +10505,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10108,6 +10543,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -10120,7 +10556,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -10143,7 +10579,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -10181,7 +10617,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -10206,7 +10644,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -10237,7 +10675,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10262,7 +10702,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -10285,7 +10725,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -10308,7 +10748,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -10339,7 +10779,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10375,6 +10817,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -10402,7 +10845,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -10427,7 +10872,7 @@
     "stockCost": 2,
     "damage": 625,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -10459,7 +10904,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10484,7 +10931,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -10515,7 +10962,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10540,7 +10989,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -10564,7 +11013,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0.4,
-    "phases": [{"duration":0.4,"effects":[]}],
+    "phases": [{"duration":0.4,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Teleport",
       "instantSparking": false,
@@ -10598,6 +11047,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -10618,7 +11068,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10654,6 +11106,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -10674,7 +11127,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10710,6 +11165,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -10722,7 +11178,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -10757,6 +11213,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -10777,7 +11234,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10805,7 +11264,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -10830,7 +11291,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -10854,7 +11315,7 @@
     "stockCost": 2,
     "damage": 1778,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -10886,7 +11347,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10919,7 +11382,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10952,7 +11417,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -10977,7 +11444,7 @@
     "stockCost": 2,
     "damage": 781.25,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -11011,7 +11478,9 @@
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"superDamage","value":0.15},
           {"key":"ultimateDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -11020,7 +11489,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11045,7 +11516,7 @@
     "stockCost": 2,
     "damage": 1708,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -11082,7 +11553,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"meleeCharge","value":0.1},
           {"key":"kiShotCharge","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11107,7 +11580,7 @@
     "stockCost": 2,
     "damage": 1722,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -11145,7 +11618,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11173,7 +11648,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11212,7 +11689,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11252,7 +11731,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11289,7 +11770,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -11298,7 +11781,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11334,6 +11819,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -11346,7 +11832,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -11380,6 +11866,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -11407,7 +11894,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -11416,7 +11905,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11451,7 +11942,9 @@
           {"key":"preSparkingDrain","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11477,7 +11970,12 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"kiRecovery","value":0.05},{"key":"superDamage","value":0.05},{"key":"ultimateDamage","value":0.05}]},
+      {
+        "duration": 15,
+        "effects": [{"key":"kiRecovery","value":0.05},{"key":"superDamage","value":0.05},{"key":"ultimateDamage","value":0.05}],
+        "list": 0,
+        "stage": 1
+      },
       {
         "duration": 30,
         "effects": [
@@ -11485,7 +11983,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11524,7 +12024,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11560,6 +12062,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -11572,7 +12075,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 25,
-    "phases": [{"duration":25,"effects":[{"key":"shortDashCost","value":-0.3},{"key":"moveSpeed","value":0.5}]}],
+    "phases": [{"duration":25,"effects":[{"key":"shortDashCost","value":-0.3},{"key":"moveSpeed","value":0.5}],"list":0,"stage":1}],
     "display": {
       "type": "Speed Buff",
       "instantSparking": false,
@@ -11607,7 +12110,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -11616,7 +12121,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11641,7 +12148,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -11672,7 +12179,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11709,7 +12218,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -11718,7 +12229,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11760,7 +12273,9 @@
           {"key":"physicalResist","value":0.1},
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -11785,7 +12300,7 @@
     "stockCost": 2,
     "damage": 937,
     "duration": 4,
-    "phases": [{"duration":4,"effects":[]}],
+    "phases": [{"duration":4,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -11817,7 +12332,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11842,7 +12359,7 @@
     "stockCost": 2,
     "damage": 1190,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -11874,7 +12391,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11907,7 +12426,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11940,7 +12461,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -11965,7 +12488,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -12001,7 +12524,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -12010,7 +12535,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12035,7 +12562,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -12061,7 +12588,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12086,7 +12615,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -12118,7 +12647,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12154,6 +12685,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -12174,7 +12706,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12199,7 +12733,7 @@
     "stockCost": 2,
     "damage": 1820,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -12238,7 +12772,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12264,7 +12800,7 @@
     "damage": 1960,
     "duration": 5,
     "phases": [
-      {"duration":0,"effects":[{"key":"useCount","value":1}]},
+      {"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1},
       {
         "duration": 5,
         "effects": [
@@ -12274,7 +12810,9 @@
           {"key":"throwDamage","value":0.1},
           {"key":"counterDamage","value":0.1},
           {"key":"followUpDamage","value":0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "expiryRule": 8,
@@ -12312,7 +12850,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -12321,7 +12861,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12346,7 +12888,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -12373,7 +12915,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12398,7 +12942,7 @@
     "stockCost": 2,
     "damage": 1540,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -12439,7 +12983,9 @@
           {"key":"physicalResist","value":0.1},
           {"key":"energyResist","value":0.1},
           {"key":"guardResist","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12477,7 +13023,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12510,7 +13058,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12546,6 +13096,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -12570,7 +13121,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -12579,7 +13132,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12619,7 +13174,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12655,6 +13212,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -12682,7 +13240,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12718,6 +13278,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -12741,6 +13302,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -12765,7 +13327,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -12774,7 +13338,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12799,7 +13365,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":30}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -12835,7 +13401,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"comboScaling","value":-0.05}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -12860,7 +13428,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -12892,7 +13460,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12917,7 +13487,7 @@
     "stockCost": 2,
     "damage": 1778,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -12951,7 +13521,9 @@
           {"key":"throwDamage","value":0.15},
           {"key":"counterDamage","value":0.15},
           {"key":"followUpDamage","value":0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -12960,7 +13532,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -12985,7 +13559,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":40}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -13008,7 +13582,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -13046,7 +13620,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13071,7 +13647,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -13106,6 +13682,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -13118,7 +13695,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -13141,7 +13718,7 @@
     "stockCost": 2,
     "damage": 1778,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -13166,7 +13743,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}]},
+      {"duration":15,"effects":[{"key":"superDamage","value":0.1},{"key":"ultimateDamage","value":0.1}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -13174,7 +13751,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -13199,7 +13778,7 @@
     "stockCost": 2,
     "damage": 625,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -13239,7 +13818,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13264,7 +13845,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -13299,6 +13880,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -13320,7 +13902,9 @@
           {"key":"skillDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13333,6 +13917,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -13346,7 +13931,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"kiBlastDamage","value":0.15},{"key":"chargedKiBlastDamage","value":0.15}]},
+      {"duration":15,"effects":[{"key":"kiBlastDamage","value":0.15},{"key":"chargedKiBlastDamage","value":0.15}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -13354,7 +13939,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -13379,7 +13966,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -13416,7 +14003,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13441,7 +14030,7 @@
     "stockCost": 2,
     "damage": 562.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -13477,7 +14066,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -13486,7 +14077,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -13524,7 +14117,9 @@
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"skillDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13537,6 +14132,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -13550,7 +14146,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"superDamage","value":0.15},{"key":"ultimateDamage","value":0.15}]},
+      {"duration":15,"effects":[{"key":"superDamage","value":0.15},{"key":"ultimateDamage","value":0.15}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -13558,7 +14154,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -13583,7 +14181,7 @@
     "stockCost": 2,
     "damage": 687.5,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -13607,7 +14205,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -13630,7 +14228,7 @@
     "stockCost": 4,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}]}],
+    "phases": [{"duration":0,"effects":[{"key":"healthRestoreFraction","value":20}],"list":0,"stage":1}],
     "display": {
       "type": "Health",
       "instantSparking": false,
@@ -13661,7 +14259,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -13686,7 +14286,7 @@
     "stockCost": 2,
     "damage": 1470,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -13726,7 +14326,9 @@
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1},
           {"key":"kiRestore","value":20000}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13751,7 +14353,7 @@
     "stockCost": 3,
     "damage": 0,
     "duration": 10,
-    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}]}],
+    "phases": [{"duration":10,"effects":[{"key":"useCount","value":10}],"list":0,"stage":1}],
     "display": {
       "type": "Multi-Evade",
       "instantSparking": false,
@@ -13774,7 +14376,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -13798,7 +14400,7 @@
     "stockCost": 2,
     "damage": 1050,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -13836,7 +14438,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13872,6 +14476,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -13887,7 +14492,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -13912,7 +14519,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -13944,7 +14551,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -13969,7 +14578,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade",
@@ -14007,7 +14616,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -14043,6 +14654,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -14069,7 +14681,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       },
       {
         "duration": 30,
@@ -14078,7 +14692,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -14114,6 +14730,7 @@
       "mobilePenalty": null,
       "healthAmount": null,
       "kiAmount": null,
+      "interrupts": true,
       "affectsOpponent": true
     },
     "armor": false
@@ -14140,7 +14757,9 @@
           {"key":"followUpDamage","value":0.1},
           {"key":"kiBlastDamage","value":0.1},
           {"key":"chargedKiBlastDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -14165,7 +14784,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -14188,7 +14807,7 @@
     "stockCost": 2,
     "damage": 1330,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -14212,7 +14831,7 @@
     "stockCost": 2,
     "damage": 656.25,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -14236,7 +14855,7 @@
     "stockCost": 2,
     "damage": 1330,
     "duration": 0,
-    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}]}],
+    "phases": [{"duration":0,"effects":[{"key":"useCount","value":1}],"list":0,"stage":1}],
     "expiryRule": 8,
     "display": {
       "type": "Evade/Counter",
@@ -14268,7 +14887,9 @@
           {"key":"energyResist","value":-0.1},
           {"key":"blastResist","value":-0.1},
           {"key":"guardResist","value":-0.1}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -14306,7 +14927,9 @@
           {"key":"kiBlastDamage","value":0.15},
           {"key":"chargedKiBlastDamage","value":0.15},
           {"key":"moveSpeed","value":-0.15}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -14331,7 +14954,7 @@
     "stockCost": 2,
     "damage": 0,
     "duration": 5,
-    "phases": [{"duration":5,"effects":[]}],
+    "phases": [{"duration":5,"effects":[],"list":0,"stage":1}],
     "display": {
       "type": "Blind",
       "instantSparking": false,
@@ -14368,7 +14991,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -14396,7 +15021,9 @@
     "phases": [
       {
         "duration": 10,
-        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}]
+        "effects": [{"key":"physicalResist","value":0.1},{"key":"energyResist","value":0.1},{"key":"guardResist","value":0.1},{"key":"armorLevel","value":3}],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -14422,7 +15049,7 @@
     "damage": 0,
     "duration": 30,
     "phases": [
-      {"duration":15,"effects":[{"key":"sparkingDrain","value":0.3}]},
+      {"duration":15,"effects":[{"key":"sparkingDrain","value":0.3}],"list":0,"stage":1},
       {
         "duration": 30,
         "effects": [
@@ -14430,7 +15057,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "expiryRule": 16,
@@ -14464,7 +15093,9 @@
           {"key":"energyResist","value":-0.2},
           {"key":"blastResist","value":-0.2},
           {"key":"guardResist","value":-0.2}
-        ]
+        ],
+        "list": 1,
+        "stage": 1
       }
     ],
     "display": {
@@ -14503,7 +15134,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
@@ -14528,7 +15161,7 @@
     "stockCost": 2,
     "damage": 718.75,
     "duration": 3,
-    "phases": [{"duration":3,"effects":[]}],
+    "phases": [{"duration":3,"effects":[],"list":0,"stage":1}],
     "expiryRule": 34,
     "display": {
       "type": "Bind",
@@ -14566,7 +15199,9 @@
           {"key":"chargedKiBlastDamage","value":0.1},
           {"key":"superDamage","value":0.1},
           {"key":"ultimateDamage","value":0.1}
-        ]
+        ],
+        "list": 0,
+        "stage": 1
       }
     ],
     "display": {
