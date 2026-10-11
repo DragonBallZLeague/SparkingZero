@@ -330,10 +330,14 @@ if (v2) {
     .map(r => [r.type, ...r.followUps].join(': ')).join(' | ');
   for (const [cid, want] of [
     ['0000_00', 'Heavy Finishes: Heavy Crush | Ki Blast Cannon: Ki Blast Cannon Attack | Flying Kicks | Heavy Finishes: Heavy Crush'],
+    ['0070_00', 'Ki Blast Cannon: Ki Blast Cannon Smash | Flying Kicks | Heavy Finishes: Heavy Crush | Heavy Finishes: Heavy Crush'],
     ['0550_00', 'Flying Kicks | Ki Blast Cannon: Ki Blast Cannon Attack | Rush Ki Waves: Energy Storm | Heavy Finishes: Heavy Crush: Delta Heavy Finish'],
     ['0551_00', 'Heavy Finishes: Heavy Crush: Delta Heavy Finish | Rolling Hammer: Rolling Hurricane | Blaster Wave: Blaster Wave Combo | Flying Kicks'],
     ['0552_00', 'Heavy Finishes: Heavy Crush | Rolling Hammer: Rolling Press | Blaster Wave: Blaster Wave Combo | Rush Ki Waves: Energy Storm'],
   ]) ig(`${data.characters.find(c => c.id === cid)?.name} Rush Chains`, chainsOf(cid), want);
+  const slashOf = (cid) => data.characters.find(c => c.id === cid)?.moveset?.grandSlash?.followUps?.join(', ');
+  ig('Goku Grand Slash follow-ups', slashOf('0000_00'), 'Tornado Slash, Aerial Slash');
+  ig('Tien Grand Slash follow-ups (AirRush: no Aerial Slash)', slashOf('0070_00'), 'Tornado Slash');
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
   check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains)', game);

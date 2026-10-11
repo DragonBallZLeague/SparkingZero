@@ -6,13 +6,15 @@
  * Rush Chains come from ReplaceTransitionAction_<id> (snapshotted as character-values rows,
  * asset "RushChain"): four "ラッシュ派生" records in chain order, then "ステップイン派生" (Step-In Chain),
  * "ラッシュイン派生" (Rush-In Attack) and "当身" (the counter). Each chain type has fixed follow-ups;
- * an ActionFlag turns one off. Checked against the in-game lists on 2026-10-10: Goku (Z - Early), Tien
- * (follow-ups), Broly (Z), Broly (Z) Super Saiyan, Broly (Z) Legendary Super Saiyan.
+ * an ActionFlag turns one off. Checked against the in-game lists on 2026-10-10: Goku (Z - Early), Tien,
+ * Broly (Z), Broly (Z) Super Saiyan, Broly (Z) Legendary Super Saiyan.
  *
  * ActionFlags turn moves OFF (confirmed: SparkingRush = no Violent Rush; DeltaStorm = no Delta
  * Heavy Finish; CannonCombo = no Ki Blast Cannon Smash; TriAttack = no Ki Blast Cannon Attack;
- * PowerPress = no Rolling Press; RollingHurricane = no Rolling Hurricane). Flags whose in-game name
- * is not known yet are listed under `unavailableUnnamed`.
+ * PowerPress = no Rolling Press; RollingHurricane = no Rolling Hurricane). Grand Slash's two follow-ups
+ * (the guide's GsRushDerivedCombo1 and 2): AirRush = no Aerial Slash (Tien has the flag and only Tornado
+ * Slash, Goku has neither flag and both), and by the same pattern DragonTornado = no Tornado Slash (not
+ * yet seen in game). Flags whose in-game name is not known yet are listed under `unavailableUnnamed`.
  */
 
 export const CHAINS = {
@@ -27,7 +29,9 @@ const FOLLOW_UPS = {
   'Blaster Wave': [['Blaster Wave Combo', 'ExplosionCombo']],
   'Rush Ki Waves': [['Energy Storm', 'EnergyStorm']],
 };
-const FOLLOW_UP_FLAGS = new Set(Object.values(FOLLOW_UPS).flat().map(([, f]) => f));
+// Grand Slash (a move every character has unless GrandSlash turns it off) and its follow-ups
+const GRAND_SLASH = [['Tornado Slash', 'DragonTornado'], ['Aerial Slash', 'AirRush']];
+const FOLLOW_UP_FLAGS = new Set([...Object.values(FOLLOW_UPS).flat(), ...GRAND_SLASH].map(([, f]) => f));
 // other ActionFlags and the move each turns off (controls guide names)
 const OFF = {
   SparkingRush: 'Violent Rush', VanishingAttack: 'Vanishing Attack', LightningAttack: 'Lightning Attack',
@@ -58,6 +62,7 @@ export function movesetOf(fm, id) {
       const type = action(v);
       return { type, followUps: (FOLLOW_UPS[type] || []).filter(([, flag]) => !on(flag)).map(([name]) => name) };
     }),
+    grandSlash: on('GrandSlash') ? null : { followUps: GRAND_SLASH.filter(([, flag]) => !on(flag)).map(([name]) => name) },
     stepInChain: action(kind('stepIn')[0]),
     rushInAttack: action(kind('rushIn')[0]),
     // the counter's follow-up: a chain type, or the standard counter attack (actCOA0); not yet checked in game

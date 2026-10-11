@@ -84,6 +84,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -254,6 +255,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -405,6 +407,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Ki Blast Cannon",
@@ -556,6 +559,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -707,6 +711,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
@@ -858,6 +863,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
@@ -1009,6 +1015,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Standard",
@@ -1163,6 +1170,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
@@ -1314,6 +1322,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -1465,6 +1474,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
@@ -1619,6 +1629,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -1770,6 +1781,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
@@ -1921,6 +1933,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -2072,6 +2085,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -2223,11 +2237,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Heavy Finishes",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0002_30:1","0002_30:2"],
@@ -2374,11 +2389,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0002_31:1","0002_31:2"],
@@ -2525,11 +2541,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0002_32:1","0002_32:2"],
@@ -2676,11 +2693,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0002_50:1","0002_50:2"],
@@ -2834,11 +2852,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_00:1","0020_00:2"],
@@ -2985,11 +3004,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_10:1","0020_10:2"],
@@ -3136,11 +3156,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_11:1","0020_11:2"],
@@ -3287,11 +3308,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_30:1","0020_30:2"],
@@ -3438,11 +3460,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_31:1","0020_31:2"],
@@ -3589,11 +3612,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_32:1","0020_32:2"],
@@ -3740,11 +3764,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_40:1","0020_40:2"],
@@ -3910,11 +3935,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_50:1","0020_50:2"],
@@ -4064,11 +4090,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_60:1","0020_60:2"],
@@ -4218,11 +4245,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_61:1","0020_61:2"],
@@ -4375,11 +4403,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0020_63:1","0020_63:2"],
@@ -4526,11 +4555,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0021_20:1","0021_20:2"],
@@ -4677,11 +4707,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0022_62:1","0022_62:2"],
@@ -4828,11 +4859,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["0023_00:1","0023_00:2"],
@@ -4979,11 +5011,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0030_00:1","0030_00:2"],
@@ -5135,11 +5168,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0031_00:1","0031_00:2"],
@@ -5286,11 +5320,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0031_01:1","0031_01:2"],
@@ -5437,11 +5472,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0031_02:1","0031_02:2"],
@@ -5592,11 +5628,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0032_00:1","0032_00:2"],
@@ -5743,11 +5780,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0032_01:1","0032_01:2"],
@@ -5894,11 +5932,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0032_02:1","0032_02:2"],
@@ -6033,11 +6072,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0032_10:1","0032_10:2"],
@@ -6184,11 +6224,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0032_20:1","0032_20:2"],
@@ -6335,11 +6376,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Power Impact"]
     },
     "skills": ["0032_30:1","0032_30:2"],
@@ -6505,11 +6547,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Power Impact"]
     },
     "skills": ["0032_31:1","0032_31:2"],
@@ -6663,6 +6706,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -6814,6 +6858,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -6953,6 +6998,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -7104,11 +7150,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0050_00:1","0050_00:2"],
@@ -7255,11 +7302,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Ground Throw","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0060_00:1","0060_00:2"],
@@ -7406,11 +7454,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0070_00:1","0070_00:2"],
@@ -7545,11 +7594,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
       "unavailable": ["Ground Throw","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0080_00:1","0080_00:2"],
@@ -7699,11 +7749,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0080_01:1","0080_01:2"],
@@ -7856,6 +7907,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -8013,6 +8065,7 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -8167,11 +8220,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0080_30:1","0080_30:2"],
@@ -8340,11 +8394,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0080_31:1","0080_31:2"],
@@ -8516,11 +8571,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0081_20:1","0081_20:2"],
@@ -8658,11 +8714,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0082_00:1","0082_00:2"],
@@ -8812,11 +8869,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0082_01:1","0082_01:2"],
@@ -8954,11 +9012,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0090_00:1","0090_00:2"],
@@ -9108,11 +9167,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0090_01:1","0090_01:2"],
@@ -9265,11 +9325,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0100_00:1","0100_00:2"],
@@ -9422,11 +9483,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0100_01:1","0100_01:2"],
@@ -9579,11 +9641,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0100_02:1","0100_02:2"],
@@ -9736,6 +9799,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
@@ -9893,6 +9957,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
@@ -10050,6 +10115,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -10204,6 +10270,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
@@ -10361,6 +10428,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
@@ -10512,11 +10580,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0120_00:1","0120_00:2"],
@@ -10663,11 +10732,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0120_01:1","0120_01:2"],
@@ -10814,11 +10884,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0120_02:1","0120_02:2"],
@@ -10965,11 +11036,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": ["Ground Throw","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0121_00:1","0121_00:2"],
@@ -11116,6 +11188,7 @@
         {"type":"Ki Blast Cannon","followUps":[]},
         {"type":"Heavy Finishes","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
@@ -11130,7 +11203,7 @@
         "Dash Rising",
         "Dash Blow"
       ],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0130_00:1","0130_00:2"],
@@ -11277,11 +11350,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0140_00:1","0140_00:2"],
@@ -11428,11 +11502,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Dash Rising","Dash Blow"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0141_00:1","0141_00:2"],
@@ -11579,11 +11654,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0150_00:1","0150_00:2"],
@@ -11718,11 +11794,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0151_00:1","0151_00:2"],
@@ -11872,6 +11949,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
@@ -12026,6 +12104,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
@@ -12168,11 +12247,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0153_10:1","0153_10:2"],
@@ -12322,6 +12402,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
@@ -12473,11 +12554,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0154_00:1","0154_00:2"],
@@ -12627,6 +12709,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
@@ -12778,11 +12861,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0160_00:1","0160_00:2"],
@@ -12929,11 +13013,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": ["Violent Rush","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0161_00:1","0161_00:2"],
@@ -13080,6 +13165,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
@@ -13231,6 +13317,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -13382,11 +13469,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0163_00:1","0163_00:2"],
@@ -13536,11 +13624,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0170_00:1","0170_00:2"],
@@ -13678,6 +13767,7 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
@@ -13829,11 +13919,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0172_00:1","0172_00:2"],
@@ -13980,11 +14071,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0172_10:1","0172_10:2"],
@@ -14134,11 +14226,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0172_11:1","0172_11:2"],
@@ -14285,11 +14378,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0173_00:1","0173_00:2"],
@@ -14436,6 +14530,7 @@
         {"type":"Heavy Finishes","followUps":[]},
         {"type":"Heavy Finishes","followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -14451,7 +14546,7 @@
         "Dash Rising",
         "Dash Blow"
       ],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Crash Impact","No Power Impact","Thrown ki blasts"]
     },
     "skills": ["0180_00:1","0180_00:2"],
@@ -14601,11 +14696,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": ["Violent Rush","Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0190_00:1","0190_00:2"],
@@ -14752,11 +14848,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Ground Throw","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Thrown ki blasts"]
     },
     "skills": ["0210_00:1","0210_00:2"],
@@ -14903,6 +15000,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -15054,11 +15152,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0230_00:1","0230_00:2"],
@@ -15193,11 +15292,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0240_00:1","0240_00:2"],
@@ -15364,11 +15464,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0240_01:1","0240_01:2"],
@@ -15515,11 +15616,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0260_00:1","0260_00:2"],
@@ -15662,11 +15764,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0270_00:1","0270_00:2"],
@@ -15809,11 +15912,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["0280_00:1","0280_00:2"],
@@ -15956,11 +16060,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": ["Violent Rush","Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0301_00:1","0301_00:2"],
@@ -16095,11 +16200,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0310_00:1","0310_00:2"],
@@ -16268,11 +16374,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane","Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0310_01:1","0310_01:2"],
@@ -16438,11 +16545,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0320_00:1","0320_00:2"],
@@ -16589,11 +16697,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0330_00:1","0330_00:2"],
@@ -16743,11 +16852,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0340_00:1","0340_00:2"],
@@ -16894,6 +17004,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
@@ -17045,11 +17156,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0351_00:1","0351_00:2"],
@@ -17196,11 +17308,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0360_00:1","0360_00:2"],
@@ -17347,11 +17460,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0370_00:1","0370_00:2"],
@@ -17486,11 +17600,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0380_00:1","0380_00:2"],
@@ -17637,11 +17752,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0390_00:1","0390_00:2"],
@@ -17788,11 +17904,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0400_00:1","0400_00:2"],
@@ -17939,11 +18056,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0410_00:1","0410_00:2"],
@@ -18096,11 +18214,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": ["Violent Rush","Ground Throw","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Crash Impact","No Power Impact"]
     },
     "skills": ["0420_00:1","0420_00:2"],
@@ -18247,11 +18366,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0430_00:1","0430_00:2"],
@@ -18386,11 +18506,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Immune to ki drain","Cannot charge ki"]
     },
     "skills": ["0440_00:1","0440_00:2"],
@@ -18537,11 +18658,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["0450_00:1","0450_00:2"],
@@ -18676,11 +18798,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["0450_10:1","0450_10:2"],
@@ -18830,11 +18953,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Ki absorption","Immune to ki drain","Cannot charge ki"]
     },
     "skills": ["0451_00:1","0451_00:2"],
@@ -18981,11 +19105,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["0460_00:1","0460_00:2"],
@@ -19132,11 +19257,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Violent Rush","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Ki absorption","Immune to ki drain","Cannot charge ki"]
     },
     "skills": ["0470_00:1","0470_00:2"],
@@ -19271,11 +19397,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Violent Rush","Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["Ki absorption","Immune to ki drain","Cannot charge ki"]
     },
     "skills": ["0480_00:1","0480_00:2"],
@@ -19425,11 +19552,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Ki Blast Cannon",
       "unavailable": ["Violent Rush","Ground Throw","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Crash Impact","No Power Impact"]
     },
     "skills": ["0490_00:1","0490_00:2"],
@@ -19576,11 +19704,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0500_00:1","0500_00:2"],
@@ -19715,11 +19844,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0510_00:1","0510_00:2"],
@@ -19866,11 +19996,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Violent Rush","Ground Throw","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0540_00:1","0540_00:2"],
@@ -20017,6 +20148,7 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
@@ -20168,11 +20300,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0551_00:1","0551_00:2"],
@@ -20319,11 +20452,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush","BlastRepel"],
+      "unavailableUnnamed": ["BlastRepel"],
       "abilities": ["Hyper armor"]
     },
     "skills": ["0552_00:1","0552_00:2"],
@@ -20476,11 +20610,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0553_00:1","0553_00:2"],
@@ -20633,11 +20768,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0554_00:1","0554_00:2"],
@@ -20790,11 +20926,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Blaster Wave",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor"]
     },
     "skills": ["0555_00:1","0555_00:2"],
@@ -20941,11 +21078,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0561_00:1","0561_00:2"],
@@ -21095,11 +21233,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","Immune to ki drain","Cannot charge ki","No Crash Impact"]
     },
     "skills": ["0570_00:1","0570_00:2"],
@@ -21249,11 +21388,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0580_00:1","0580_00:2"],
@@ -21403,11 +21543,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0590_00:1","0590_00:2"],
@@ -21542,11 +21683,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["0591_00:1","0591_00:2"],
@@ -21699,11 +21841,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0600_00:1","0600_00:2"],
@@ -21856,6 +21999,7 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -22013,11 +22157,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0601_00:1","0601_00:2"],
@@ -22155,11 +22300,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0610_00:1","0610_00:2"],
@@ -22309,11 +22455,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["0620_00:1","0620_00:2"],
@@ -22463,11 +22610,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["0621_00:1","0621_00:2"],
@@ -22608,11 +22756,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0630_00:1","0630_00:2"],
@@ -22765,11 +22914,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Blaster Wave",
       "unavailable": ["Violent Rush","Throw Evasion"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0631_00:1","0631_00:2"],
@@ -22907,11 +23057,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0640_00:1","0640_00:2"],
@@ -23064,11 +23215,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["0650_00:1","0650_00:2"],
@@ -23215,6 +23367,7 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -23354,11 +23507,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0660_00:1","0660_00:2"],
@@ -23493,11 +23647,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Dash Rising","Dash Blow","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["0670_00:1","0670_00:2"],
@@ -23644,11 +23799,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0680_00:1","0680_00:2"],
@@ -23779,11 +23935,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0680_01:1","0680_01:2"],
@@ -23930,11 +24087,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0680_02:1","0680_02:2"],
@@ -24081,11 +24239,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["0681_00:1","0681_00:2"],
@@ -24232,11 +24391,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0690_00:1","0690_00:2"],
@@ -24383,11 +24543,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0700_00:1","0700_00:2"],
@@ -24534,11 +24695,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0700_01:1","0700_01:2"],
@@ -24685,11 +24847,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0710_00:1","0710_00:2"],
@@ -24832,11 +24995,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0720_00:1","0720_00:2"],
@@ -24983,11 +25147,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0730_00:1","0730_00:2"],
@@ -25134,11 +25299,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0760_00:1","0760_00:2"],
@@ -25285,6 +25451,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Ki Blast Cannon",
@@ -25436,11 +25603,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Auto-dodge (selfishness)"]
     },
     "skills": ["0790_00:1","0790_00:2"],
@@ -25587,6 +25755,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -25757,6 +25926,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -25927,11 +26097,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0810_00:1","0810_00:2"],
@@ -26081,11 +26252,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0810_01:1","0810_01:2"],
@@ -26232,11 +26404,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Crash Impact","No Power Impact"]
     },
     "skills": ["0811_00:1","0811_00:2"],
@@ -26382,6 +26555,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -26533,11 +26707,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
       "unavailable": ["Violent Rush","Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0830_00:1","0830_00:2"],
@@ -26684,11 +26859,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0870_00:1","0870_00:2"],
@@ -26829,6 +27005,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -26980,11 +27157,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0890_00:1","0890_00:2"],
@@ -27131,11 +27309,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0890_01:1","0890_01:2"],
@@ -27282,11 +27461,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0890_02:1","0890_02:2"],
@@ -27439,6 +27619,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -27596,6 +27777,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -27747,6 +27929,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
@@ -27904,11 +28087,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor"]
     },
     "skills": ["0911_00:1","0911_00:2"],
@@ -28055,11 +28239,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0912_00:1","0912_00:2"],
@@ -28206,6 +28391,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -28363,6 +28549,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
@@ -28520,6 +28707,7 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Heavy Finishes",
@@ -28671,11 +28859,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0930_00:1","0930_00:2"],
@@ -28828,11 +29017,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0931_00:1","0931_00:2"],
@@ -28979,11 +29169,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0940_00:1","0940_00:2"],
@@ -29133,11 +29324,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Violent Rush","Throw Evasion","Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["0941_00:1","0941_00:2"],
@@ -29272,6 +29464,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
@@ -29423,11 +29616,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["1000_00:1","1000_00:2"],
@@ -29574,6 +29768,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -29719,11 +29914,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["1321_00:1","1321_00:2"],
@@ -29870,6 +30066,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
@@ -30021,11 +30218,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["1341_00:1","1341_00:2"],
@@ -30172,11 +30370,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Super Perception","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["1500_00:1","1500_00:2"],
@@ -30323,6 +30522,7 @@
         {"type":"Heavy Finishes","followUps":[]},
         {"type":"Ki Blast Cannon","followUps":[]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Ki Blast Cannon",
@@ -30339,7 +30539,7 @@
         "Dash Rising",
         "Dash Blow"
       ],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["No Crash Impact","No Power Impact"]
     },
     "skills": ["1960_00:1","1960_00:2"],
@@ -30474,6 +30674,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
@@ -30625,6 +30826,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
@@ -30776,6 +30978,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -30927,6 +31130,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
@@ -31078,6 +31282,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
@@ -31229,11 +31434,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Rolling Hammer","followUps":["Rolling Press"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3010_01:1","3010_01:2"],
@@ -31380,11 +31586,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Spiral Slash"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3011_00:1","3011_00:2"],
@@ -31531,11 +31738,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": null,
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Violent Rush","Lightning Attack","Super Perception","Spiral Slash","Grand Slash","Lift Strike"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["3012_00:1","3012_00:2"],
@@ -31682,6 +31890,7 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
@@ -31839,6 +32048,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane","Rolling Press"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Flying Kicks",
@@ -31990,11 +32200,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": null,
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": ["Violent Rush","Lightning Attack","Super Perception","Spiral Slash","Grand Slash","Lift Strike"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["3040_00:1","3040_00:2"],
@@ -32129,11 +32340,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["EnergyWave","RollingHammer","DragonTornado"],
+      "unavailableUnnamed": ["EnergyWave","RollingHammer"],
       "abilities": []
     },
     "skills": ["3050_00:1","3050_00:2"],
@@ -32283,11 +32495,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Blaster Wave",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3050_01:1","3050_01:2"],
@@ -32434,11 +32647,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3050_14:1","3050_14:2"],
@@ -32579,11 +32793,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3060_00:1","3060_00:2"],
@@ -32730,11 +32945,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3060_01:1","3060_01:2"],
@@ -32881,11 +33097,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3060_02:1","3060_02:2"],
@@ -33035,11 +33252,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Ki Blast Cannon",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["Explosion","RollingHammer","AirRush"],
+      "unavailableUnnamed": ["Explosion","RollingHammer"],
       "abilities": []
     },
     "skills": ["3060_03:1","3060_03:2"],
@@ -33174,11 +33392,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["Explosion","EnergyWave","DragonTornado"],
+      "unavailableUnnamed": ["Explosion","EnergyWave"],
       "abilities": []
     },
     "skills": ["3070_00:1","3070_00:2"],
@@ -33328,11 +33547,12 @@
         {"type":"Rolling Hammer","followUps":["Rolling Press"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Blaster Wave",
       "unavailable": ["Throw Evasion"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3080_00:1","3080_00:2"],
@@ -33479,11 +33699,12 @@
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3100_03:1","3100_03:2"],
@@ -33630,11 +33851,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3110_00:1","3110_00:2"],
@@ -33781,6 +34003,7 @@
         {"type":"Heavy Finishes","followUps":[]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Standard",
@@ -33797,7 +34020,7 @@
         "Dash Blow",
         "Spiral Slash"
       ],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["No Crash Impact","No Power Impact"]
     },
     "skills": ["3130_00:1","3130_00:2"],
@@ -33944,6 +34167,7 @@
         {"type":"Rolling Hammer","followUps":["Rolling Hurricane"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
@@ -34101,11 +34325,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Heavy Finishes",
       "unavailable": ["Throw Evasion"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3140_00:1","3140_00:2"],
@@ -34255,11 +34480,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": ["Violent Rush","Super Perception","Spiral Slash"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["3150_00:1","3150_00:2"],
@@ -34409,11 +34635,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3160_00:1","3160_00:2"],
@@ -34579,11 +34806,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Ki Blast Cannon",
       "rushInAttack": "Ki Blast Cannon",
       "counter": "Ki Blast Cannon",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3170_00:1","3170_00:2"],
@@ -34733,11 +34961,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3190_00:1","3190_00:2"],
@@ -34903,11 +35132,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3270_00:1","3270_00:2"],
@@ -35057,11 +35287,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":[]},
       "stepInChain": "Rush Ki Waves",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3270_01:1","3270_01:2"],
@@ -35193,6 +35424,7 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -35344,6 +35576,7 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash","Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Heavy Finishes",
@@ -35501,11 +35734,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": ["Cannot charge ki"]
     },
     "skills": ["3290_00:1","3290_00:2"],
@@ -35652,11 +35886,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3300_00:1","3300_00:2"],
@@ -35822,11 +36057,12 @@
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]},
         {"type":"Flying Kicks","followUps":[]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3310_00:1","3310_00:2"],
@@ -35973,11 +36209,12 @@
         {"type":"Blaster Wave","followUps":["Blaster Wave Combo"]},
         {"type":null,"followUps":[]}
       ],
+      "grandSlash": null,
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": null,
       "unavailable": ["Violent Rush","Lightning Attack","Super Perception","Spiral Slash","Grand Slash","Lift Strike"],
-      "unavailableUnnamed": ["DragonTornado","AirRush"],
+      "unavailableUnnamed": [],
       "abilities": ["Hyper armor","No Crash Impact"]
     },
     "skills": ["3310_10:1","3310_10:2"],
@@ -36124,11 +36361,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush"]},
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash"]}
       ],
+      "grandSlash": {"followUps":["Aerial Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["DragonTornado"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3320_00:1","3320_00:2"],
@@ -36271,11 +36509,12 @@
         {"type":"Ki Blast Cannon","followUps":["Ki Blast Cannon Smash","Ki Blast Cannon Attack"]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Flying Kicks",
       "rushInAttack": "Flying Kicks",
       "counter": "Ki Blast Cannon",
       "unavailable": ["Ground Throw"],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3330_00:1","3330_00:2"],
@@ -36442,11 +36681,12 @@
         {"type":"Heavy Finishes","followUps":["Heavy Crush","Delta Heavy Finish"]},
         {"type":"Rush Ki Waves","followUps":["Energy Storm"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Rolling Hammer",
       "rushInAttack": "Rolling Hammer",
       "counter": "Standard",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3350_00:1","3350_00:2"],
@@ -36612,11 +36852,12 @@
         {"type":"Flying Kicks","followUps":[]},
         {"type":"Heavy Finishes","followUps":["Delta Heavy Finish"]}
       ],
+      "grandSlash": {"followUps":["Tornado Slash"]},
       "stepInChain": "Heavy Finishes",
       "rushInAttack": "Heavy Finishes",
       "counter": "Flying Kicks",
       "unavailable": [],
-      "unavailableUnnamed": ["AirRush"],
+      "unavailableUnnamed": [],
       "abilities": []
     },
     "skills": ["3360_00:1","3360_00:2"],

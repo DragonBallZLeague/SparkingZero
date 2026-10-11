@@ -413,8 +413,6 @@ The published smash is the game's neutral smash. Capsule Corp's value differed f
 
 Rush Chains, Step-In, Rush-In and counter from ReplaceTransitionAction; follow-ups and unavailable moves from ActionFlags (a flag turns a move off), in the controls guide's names (scripts/lib/moveset.mjs). ActionFlags whose in-game name is not known yet:
 
-- DragonTornado: 73 characters (Goku (GT), Goku (GT) Super Saiyan, Goku (GT) Super Saiyan 3, Goku (Teen), Great Ape Vegeta, …)
-- AirRush: 127 characters (Vegeta (Z - Scouter), Vegeta (Z - Early), Vegeta (Z - Early) Super Saiyan, Vegeta (Z - End), Vegeta (Z - End) Super Saiyan, …)
 - BlastRepel: 1 characters (Broly (Z) Legendary Super Saiyan)
 - EnergyWave: 2 characters (Goku (Mini), Glorio)
 - RollingHammer: 2 characters (Goku (Mini), Vegeta (Mini) Super Saiyan 3)
