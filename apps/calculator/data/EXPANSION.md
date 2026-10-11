@@ -125,10 +125,21 @@ The game decides per hit whether armor reduces it:
 
 ## Burst attacks (measured 2026-10-10)
 
-The Burst Melee Attack (`actBSA`, 1,000 Power) deals 1,250 and the first Burst Rush hit 450, with or without
-Kaioken. Kaioken raises every damage channel except skill, super and ultimate, so Burst attacks don't use the
-melee channels; they may be unscaled. A Vegeta (Z - Scouter) Burst Melee Attack (his melee channels are ×0.9)
-would show whether class and DP apply: 1,250 means unscaled. Not in the published data yet.
+The Burst Melee Attack (`actBSA`, 1,000 Power) deals 1,250, and the first Burst Rush hit 450, with or without
+Kaioken. The files explain why:
+- **Buffs raise damage by channel,** and a channel follows the attack's category (`ActionCategoryType` in
+  `MasterDataAsset/Action`). Kaioken's buff (`Buff_0000_00_actEXA2_S11`) raises eight channels by 10%: Rush,
+  Smash, ComboAttack (rush follow-ups), Throw, Parry (counters), Pursuit, RushBullet and SmashBullet (ki blasts).
+  It also adds 10% Combatives, Energy and Shave damage resistance.
+- **The game's buffs use 12 damage channels in all:** those eight, the three blast ones (BlastForte, Blast,
+  BlastUltimate) and Interrupt (4 buffs; the Interrupt category is the Z and Revenge counters).
+- **Burst Melee Attack and Burst Rush are UniqueMoveDerivation,** a category no channel covers, so no buff raises
+  them. They may ignore class and DP too: 1,250 is exactly 1,000 × 1.25, and Goku's multipliers are all 1.
+- **To confirm:** a Burst Melee Attack by Vegeta (Z - Scouter), whose melee is ×0.9 by class, and by a character
+  of another DP. If both deal 1,250, Burst damage is fixed for everyone.
+
+The engine needs this mapping (category to channel) once the other rush follow-ups and counters are published.
+Not in the published data yet.
 
 ## Mobility
 
