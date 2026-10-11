@@ -20,7 +20,7 @@ will ship it later, to dev-branch on its own or with the redesign.
   and each follow-up on its own row with its total (Grand Slash and Lift Strike too); the sheet shows full-charge
   damage and follow-up totals. Combat limits: the follow-up limit and each pursuit.
 - **Command list (rounds 9 to 13, 15 to 17):** Full stats' move cards (Skills, Blasts, Ultimates; up to 3 a row);
-  the sheet's rows show the main type, primary values, then effects and minor tags, a skill's duration in the
+  the sheet's rows show the main type, primary values and a skill's effects (minor tags only in Full stats, since the Sheet is the slim view), a skill's duration in the
   Damage column. Trait sort: blasts' tiles Clash, Impact power, Speed, Tracking, Lunge speed, Time limit, tags
   Initial cost, Lock-on required, No Step Back, Unguardable, Cinematic, Chargeable, Audience flees, Destroys map,
   Targets giants; skills' tiles Activation, Targets, Armor, tags Unguardable, Cutscene, Interrupts; Instant ki,
