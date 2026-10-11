@@ -105,6 +105,31 @@ what the files can't show: thrown objects don't track and reach less far. Some c
 shots or hit several times. Like blasts, they need hit counts and spot checks before their totals can be
 published (test 2).
 
+## Armor and armor breaking (found 2026-10-10, not in the snapshot yet)
+
+The game decides per hit whether armor reduces it:
+- **Armor types and their damage rates** (`MasterDataAsset/ArmorData`): Super Armor 0.5, Hyper Armor 0.9 (the
+  Giants' normal armor: Janemba's 0.1), Sparking Armor 0.75, and several 0 (full) armors for barriers, Vanishing
+  Assault and so on.
+- **Each attack category has a break level** (`ArmorBreakLevelData`, the label every attack file carries): a
+  10-entry `BreakLevel` list plus `BreakLevelForGiant`. Rush hit A1 is [-1,0,0,1,1,1,2,2,2,2] / 4, a smash
+  [-1,3,3,4,4,5,…] / 5, a full-power smash, throw or blast 9, a ki blast [-1,0,…] / 3, and a smash (charged) ki
+  blast 3 throughout.
+- **Measured** (Goku (Z - Early) fully charged ki blast, 1,875): against base Janemba 1,919, which is his 1.023
+  ki-blast defense and no armor, so it breaks Hyper Armor. Against Sparking Janemba 1,439, which also applies the
+  0.75, so it doesn't break Sparking Armor.
+- **To do:** `pull-fmodel.mjs` reads these two tables as inline Records, but they are `PtrRecords` to separate
+  assets, so they are missing from tables.csv. Snapshot them and each character's armor level
+  (`MasterDataAsset/ArmorLevel`), then let the engine decide per attack whether armor applies. Today it only knows
+  the rush combo's hits before the armor break.
+
+## Burst attacks (measured 2026-10-10)
+
+The Burst Melee Attack (`actBSA`, 1,000 Power) deals 1,250 and the first Burst Rush hit 450, with or without
+Kaioken. Kaioken raises every damage channel except skill, super and ultimate, so Burst attacks don't use the
+melee channels; they may be unscaled. A Vegeta (Z - Scouter) Burst Melee Attack (his melee channels are ×0.9)
+would show whether class and DP apply: 1,250 means unscaled. Not in the published data yet.
+
 ## Mobility
 
 **Movement speed is the same for everyone:** walk, run, fly, Dragon Dash and vanish speeds are identical in every
