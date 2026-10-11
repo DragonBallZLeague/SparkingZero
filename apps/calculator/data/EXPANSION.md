@@ -131,17 +131,16 @@ A Mobility section would hold the short dash (already shown), these ki costs and
 
 Each character's file sets which moves and abilities it has (`ActionFlag.*`, `AbilityFlag.*` in
 `character-values.csv`). This would give each character a moveset and trait list:
-- **Violent Rush** (`SparkingRush`), 50 characters: Great Ape Vegeta, Master Roshi Full Power, Frieza (Z) 2nd Form,
-  Frieza (Z) Full Power, Cell 2nd Form, Majin Buu, Mr. Satan, Chiaotzu, Yajirobe, Eighter, Chi-Chi, Nappa, Super
-  Zarbon, Dodoria, Recoome, Guldo, King Cold, Android 16, Android 19, Dr. Gero, Babidi, Frieza Force Soldier, Broly
-  (Z), Broly (Z) Legendary Super Saiyan, Broly (Super), Broly (Super) Super Saiyan, Broly (Super) Super Saiyan
-  (Full Power), Super Garlic Jr., Dr. Wheelo, Lord Slug, Lord Slug Giant Form, Cooler Final Form, Fusion Android
-  13, Full-Power Bojack, Janemba, Hirudegarn, Great Ape Baby (GT), Spopovich, Fused Zamasu Half-Corrupted, Jaco,
-  Kale, Kale Super Saiyan (Berserk), Toppo God of Destruction, Anilaza, Cheelai, Orange Piccolo Giant Form, Cell
-  Max, Panzy, Giant Gomah, Ma Junior Giant Form.
+- **`SparkingRush`**, 50 characters (meaning still open, see test 3): Great Ape Vegeta, Master Roshi Full Power,
+  Frieza (Z) 2nd Form, Frieza (Z) Full Power, Cell 2nd Form, Majin Buu, Mr. Satan, Chiaotzu, Yajirobe, Eighter,
+  Chi-Chi, Nappa, Super Zarbon, Dodoria, Recoome, Guldo, King Cold, Android 16, Android 19, Dr. Gero, Babidi, Frieza
+  Force Soldier, the five Broly forms, Super Garlic Jr., Dr. Wheelo, Lord Slug, Lord Slug Giant Form, Cooler Final
+  Form, Fusion Android 13, Full-Power Bojack, Janemba, Hirudegarn, Great Ape Baby (GT), Spopovich, Fused Zamasu
+  Half-Corrupted, Jaco, Kale, Kale Super Saiyan (Berserk), Toppo God of Destruction, Anilaza, Cheelai, Orange
+  Piccolo Giant Form, Cell Max, Panzy, Giant Gomah, Ma Junior Giant Form.
 - **No ki blasts** (`CannotShoot`, a Heavy Finish replaces them): Nam, Eighter, Chi-Chi, General Blue, Goku (Mini),
-  Uub (Kid). Goku (Mini) is a data issue today: the calculator publishes a ki blast limit of 5 for him from
-  `BulletNum`, but the flag says he cannot shoot.
+  Uub (Kid). Goku (Mini)'s flag is for his first costume, a power-restricted version the league doesn't use; with
+  his second costume he shoots. Keep showing his ki blasts (limit 5) and ignore the flag for him.
 - **Thrown ki blasts** (`StoneKidan`; they can't be fired while moving): Mr. Satan, Yajirobe.
 - **Hyper armor:** the 11 Giants, Broly (Z) Legendary Super Saiyan, Broly (Super) Super Saiyan (Full Power), Kale
   Super Saiyan (Berserk).
@@ -185,8 +184,12 @@ Results from 2026-10-10:
    - The rush **B chain** is the combo B that continues after a step-in mid-combo. This fits the files: it is a
      second 5-hit Rush chain, separate from the follow-up chains. Heavy Finish into Heavy Crush is a rush
      follow-up: Heavy Crush is `actHC1`-`HC3`.
-   - **激烈ラッシュ ("Furious Rush") is the Violent Rush**, the normal rush combo on a loop with no damage modifier.
-     The 50 characters with `ActionFlag.SparkingRush` are the ones who have it (listed under "Move and ability
-     flags"). The rush-category `actRSHS*` family has the same Power as rush A and B, which fits. `actBSR*` (360 a
-     hit) shares the label, and what it is remains open.
+   - **激烈ラッシュ ("Furious Rush"):** two groups of game actions carry this label, and every character has both:
+     - `actRSHSA1`-`A4` and `actRSHSB1`-`B4`: rush category, with the same Power as the normal rush hits (312, 312,
+       312, 432 for A). This fits the Violent Rush: the normal rush combo on a loop with no damage modifier.
+     - `actBSRA1`-`A4` and `actBSRB1`-`B4`: "unique move" category, 360 a hit (450 for Goku). It is not the Violent
+       Rush, and what it is remains open.
+   - The 50 characters with `ActionFlag.SparkingRush` are **not** the Violent Rush list: Goku (Z - Early) and Tien
+     have the Violent Rush in game but not the flag. The flagged characters have the same action files as everyone
+     else. To find out: what do those 50 have in common in game (a different Sparking rush, perhaps the 360 one)?
 4. **Goku's fully charged smash: 1,400,** as predicted. The smash charge levels read correctly.

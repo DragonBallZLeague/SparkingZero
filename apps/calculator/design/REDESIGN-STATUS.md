@@ -30,6 +30,10 @@ auto-recharge get no bar. Blasts and ultimates get none either: their types diff
 
 ## 2. Views and interactions not mocked yet
 
+- **Traits on the character page:** the move and ability flags (`data/EXPANSION.md`, "Move and ability flags":
+  hyper armor, cannot fly, thrown ki blasts, no ki blasts, ki drain, special moves) as a quick "what makes this
+  character different" list. The league wants these (2026-10-10).
+
 - Vs opponent's **All stats** mode. It is described in the concept but not drawn.
 - Compare's **All stats** mode on a phone.
 - **Character picker** (the nameplate's "Change"), on the sheet and on each side of Compare and Vs.
