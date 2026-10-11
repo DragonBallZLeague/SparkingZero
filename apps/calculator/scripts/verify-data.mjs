@@ -405,6 +405,11 @@ if (v2) {
   ig('Goku Grand Slash follow-ups', slashOf('0000_00'), 'Tornado Slash, Aerial Slash');
   ig('Tien Grand Slash follow-ups (AirRush: no Aerial Slash)', slashOf('0070_00'), 'Tornado Slash');
   for (const n of ['Krillin', 'Goku (Teen)']) ig(`${n} Grand Slash follow-ups (DragonTornado: no Tornado Slash)`, slashOf(data.characters.find(c => c.name === n)?.id), 'Aerial Slash');
+  // 2026-10-11: moveset.counter is the attack after a successful Perception; the league landed one with each
+  for (const [n, want] of [['Goku (Z - Early)', 'Standard'], ['Goku (Z - Mid)', 'Heavy Finishes'], ['Gohan (Teen)', 'Flying Kicks'],
+    ['Goku (Z - Mid) Super Saiyan', 'Ki Blast Cannon'], ['Cell 2nd Form', 'Blaster Wave'], ['Janemba', null]]) {
+    ig(`${n} Perception counter`, data.characters.find(c => c.name === n)?.moveset?.counter ?? null, want);
+  }
   // 2026-10-10: armor. Goku's fully charged ki blast breaks base Janemba's Hyper Armor (1,919) but not his Sparking Armor (1,439)
   const gArmor = data.characters.find(c => c.id === '0000_00')?.armor, jArmor = data.characters.find(c => c.id === '0650_00')?.armor;
   const gFull = gArmor?.breakLevels?.chargedKiBlast?.[2];

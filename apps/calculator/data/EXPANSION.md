@@ -187,7 +187,11 @@ A Mobility section would hold the short dash (already shown), these ki costs and
 (`MasterDataAsset/OperationGuide`):
 - **Rush Chains:** the four chain types in order (Heavy Finishes, Ki Blast Cannon, Flying Kicks, Rolling Hammer,
   Blaster Wave, Rush Ki Waves), from `ReplaceTransitionAction_<id>`, each with its follow-ups.
-- **Step-In Chain, Rush-In Attack and the counter's follow-up.** The counter's meaning is unchecked.
+- **Step-In Chain, Rush-In Attack and the Perception counter.** The counter entry (当身, `moveset.counter`) is the
+  attack after a successful Perception: the standard counter strike (`Standard`, 91 characters), a chain type
+  (142: Heavy Finishes 74, Flying Kicks 34, Ki Blast Cannon 23, Blaster Wave 11), or none (8 Giants). Confirmed by
+  the league on 2026-10-11 with Goku (Z - Early), Goku (Z - Mid), Gohan (Teen), Goku (Z - Mid) Super Saiyan, Cell
+  2nd Form and Janemba, all as the files predicted.
 - **Moves the character lacks, and its abilities.**
 
 How the follow-ups are read:

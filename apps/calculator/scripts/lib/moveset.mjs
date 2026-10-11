@@ -65,7 +65,8 @@ export function movesetOf(fm, id) {
     grandSlash: on('GrandSlash') ? null : { followUps: GRAND_SLASH.filter(([, flag]) => !on(flag)).map(([name]) => name) },
     stepInChain: action(kind('stepIn')[0]),
     rushInAttack: action(kind('rushIn')[0]),
-    // the counter's follow-up: a chain type, or the standard counter attack (actCOA0); not yet checked in game
+    // the Perception counter: the attack after a successful Perception, a chain type or the standard counter
+    // strike (actCOA0); none for some Giants. Confirmed in game by the league, 2026-10-11
     counter: kind('counter')[0] === 'actCOA0' ? 'Standard' : action(kind('counter')[0]),
     unavailable: Object.entries(OFF).filter(([flag]) => on(flag)).map(([, name]) => name),
     unavailableUnnamed: unnamed,
