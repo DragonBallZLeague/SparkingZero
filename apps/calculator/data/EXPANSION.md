@@ -166,7 +166,9 @@ Agreed with the league on 2026-10-10.
    homing, multi-shot, paralyzing, thrown, none). Give the normal ki blast its archetype too (laser, thrown,
    none). The snapshot has the speed curves since 2026-10-10 (`MoveParam.SpeedCurve` in bullet-params, keys in
    curves.csv).
-2. **Jump and dash ki blasts.**
+2. **Jump and dash ki blasts: done in the data** (`kiBlasts.jump`, `kiBlasts.dash`: damage, count, cost, tags).
+   The jump ki blast's file (`actJRB`) has no Power, so its damage is null until one is measured: **Goku's jump
+   ki blast damage** gives the game's default Power, which also fills the ten multi-shot charged ki blasts.
 3. **Charged smash levels and Heavy Finish.** Test 1 settled the channel: rush follow-ups use combo.
 4. **A Mobility section:** movement ki costs and the slower short dash.
 5. **Low-health buffs,** shown as a trait.

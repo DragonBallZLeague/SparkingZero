@@ -376,7 +376,7 @@ _None._
 
 ## Ki blasts
 
-From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per shot at no charge / first level / full charge; standing reads actSTDSMBN, moving actSMBN. Characters per tag (no tag = standard):
+From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per shot at no charge / first level / full charge; standing reads actSTDSMBN, moving actSMBN, jump actJSBN, dash actDSMBN; the jump and dash ki blasts read actJRB and actDRSB. Characters per tag (no tag = standard):
 
 | Ki blast | Tags |
 | --- | --- |
@@ -385,19 +385,20 @@ From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per s
 | moving | standard 137, multi-shot 67, homing 42, short range 33, paralyzing 13, giant 11, thrown 2 |
 
 
-Gaps:
+Gaps (by file, with the characters it affects):
 
-- Goku (GT) Super Saiyan 4: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Goku (Super) Super Saiyan God Super Saiyan: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Vegeta (Super) Super Saiyan God Super Saiyan: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3_L (Unreal's default, unknown); damage left out
-- Trunks (Melee): actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Trunks (Melee) Super Saiyan: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Super Trunks: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Gogeta (Super) Super Saiyan God Super Saiyan: actSTDSMBN: 3 parts (BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid); the first part's values are used
-- Caulifla: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Vegeta (Mini): actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3_L (Unreal's default, unknown); damage left out
-- Shallot: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
-- Fasha: actSMBN: no Power in BulletParam_Common_actSMBN3_Shots4 (Unreal's default, unknown); damage left out
+- actJRB: no Power in BulletParam_Common_actJRB (the game's default, unknown); damage left out: 171 characters (Goku (Z - Early), Goku (Z - Mid), Goku (Z - Mid) Super Saiyan, Goku (Z - End), …)
+- actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (the game's default, unknown); damage left out: 7 characters (Goku (GT) Super Saiyan 4, Goku (Super) Super Saiyan God Super Saiyan, Trunks (Melee), Trunks (Melee) Super Saiyan, …)
+- actJRB: no Power in BulletParam_Common_actJRB_0020 (the game's default, unknown); damage left out: 21 characters (Vegeta (Z - Scouter), Vegeta (Z - Early), Vegeta (Z - Early) Super Saiyan, Vegeta (Z - End), …)
+- actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3_L (the game's default, unknown); damage left out: Vegeta (Super) Super Saiyan God Super Saiyan, Vegeta (Mini)
+- actJRB: no Power in BulletParam_Common_actJRB_Huge (the game's default, unknown); damage left out: 11 characters (Great Ape Vegeta, Dr. Wheelo, Lord Slug Giant Form, Janemba, …)
+- actJRB: no Power in BulletParam_Common_actJRB_lit (the game's default, unknown); damage left out: 14 characters (Super Vegito, Vegito Super Saiyan God Super Saiyan, Gogeta (Super) Super Saiyan, Gogeta (GT) Super Saiyan 4, …)
+- actSTDSMBN: 3 parts (BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid); the first part's values are used: Gogeta (Super) Super Saiyan God Super Saiyan
+- actJRB: no Power in BulletParam_Common_actJRB_laser (the game's default, unknown); damage left out: 13 characters (Frieza (Z) 1st Form, Frieza (Z) 2nd Form, Frieza (Z) 4th Form, Mecha Frieza, …)
+- actJRB: no Power in BulletParam_Common_actJRB_laser_lit (the game's default, unknown); damage left out: Frieza (Z) 3rd Form
+- actJRB: no Power in BulletParam_Common_actJRB_stone (the game's default, unknown); damage left out: Mr. Satan, Yajirobe
+- actSMBN: no Power in BulletParam_Common_actSMBN3_Shots4 (the game's default, unknown); damage left out: Fasha
+- actDSMBN: no Power in BulletParam_Common_actDSMBN3_Shots4 (the game's default, unknown); damage left out: Fasha
 
 ## Images
 

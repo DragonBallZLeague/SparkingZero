@@ -47,7 +47,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: [], kiBlastTags: { normal: {}, standing: {}, moving: {} } };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), kiBlastTags: { normal: {}, standing: {}, moving: {} } };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -534,8 +534,8 @@ for (const rc of ref.characters) {
   let kiBlasts = null;
   if (fm) {
     const kb = kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit: stats.kiBlastLimit, damageConstant: K });
-    kiBlasts = { normal: kb.normal, charged: kb.charged };
-    for (const n of kb.notes) report.kiBlasts.push(`${rc.name}: ${n}`);
+    kiBlasts = { normal: kb.normal, charged: kb.charged, jump: kb.jump, dash: kb.dash };
+    for (const n of kb.notes) { if (!report.kiBlasts.has(n)) report.kiBlasts.set(n, []); report.kiBlasts.get(n).push(rc.name); }
     const count = (m, tags) => { for (const t of tags.length ? tags : ['standard']) m[t] = (m[t] || 0) + 1; };
     count(report.kiBlastTags.normal, kb.normal.tags);
     if (kb.charged.standing) count(report.kiBlastTags.standing, kb.charged.standing.tags);
@@ -1060,13 +1060,13 @@ function reportMd() {
     list(report.teams),
     '## Ki blasts',
     '',
-    'From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per shot at no charge / first level / full charge; standing reads actSTDSMBN, moving actSMBN. Characters per tag (no tag = standard):',
+    'From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per shot at no charge / first level / full charge; standing reads actSTDSMBN, moving actSMBN, jump actJSBN, dash actDSMBN; the jump and dash ki blasts read actJRB and actDRSB. Characters per tag (no tag = standard):',
     '',
     table(['Ki blast', 'Tags'], Object.entries(report.kiBlastTags).map(([k, m]) => [k, Object.entries(m).sort((a, b) => b[1] - a[1]).map(([t, n]) => `${t} ${n}`).join(', ')])),
     '',
-    report.kiBlasts.length ? 'Gaps:' : 'Gaps: none.',
+    report.kiBlasts.size ? 'Gaps (by file, with the characters it affects):' : 'Gaps: none.',
     '',
-    list(report.kiBlasts),
+    list([...report.kiBlasts].map(([n, who]) => `${n}: ${who.length > 6 ? `${who.length} characters (${who.slice(0, 4).join(', ')}, …)` : who.join(', ')}`)),
     '## Images',
     '',
     `Characters with no face icon in public/char_thumbnails: ${report.images.length ? report.images.join(', ') : 'none'}.`,

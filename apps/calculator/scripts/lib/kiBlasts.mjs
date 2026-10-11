@@ -12,6 +12,10 @@
  *   charged: homing (slow, tracking), multi-shot, paralyzing, slash, rapid, giant, thrown
  * "none" comes from the ki-blast count (0), not the CannotShoot flag: Goku (Mini)'s flag belongs to
  * a costume the league doesn't use, and he shoots with the other one.
+ *
+ * Jump (actJRB, actJSBN) and dash (actDRSB, actDSMBN) ki blasts follow the same rules, with their
+ * counts from the character's Numeric file. A file without Power uses the game's default Power, which
+ * the export doesn't show (the jump ki blast's file has none): such damage is null until measured.
  */
 import { finalDamage, num, round } from './fields.mjs';
 
@@ -41,6 +45,21 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
   const normalTags = kiBlastLimit === 0 ? ['none']
     : [...new Set([...(thrown ? ['thrown'] : []), ...curveTags(fm.param(normalFiles[0], 'MoveParam.SpeedCurve'))])];
 
+  const field = (name) => { try { return fm.field(id, name); } catch { return null; } };
+  const single = (action, count) => {
+    if (kiBlastLimit === 0) return null;
+    const files = fm.bulletFiles(id, action);
+    if (!files.length) return null;
+    const power = num(fm.param(files[0], 'Power'));
+    const cost = num(fm.param(files[0], 'ExpendEnergy'));
+    if (power == null) notes.push(`${action}: no Power in ${files[0]} (the game's default, unknown); damage left out`);
+    return {
+      damage: power == null ? null : finalDamage(power, coef.kiBlast, damageConstant),
+      count,
+      cost: cost == null ? null : round(cost * (1 + classCoef.kiBlastCost) / 10000),
+      tags: curveTags(fm.param(files[0], 'MoveParam.SpeedCurve')),
+    };
+  };
   const charged = (action) => {
     if (kiBlastLimit === 0) return null;
     const files = fm.bulletFiles(id, action);
@@ -54,7 +73,7 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
     if (/NumbBullet/.test(fm.param(f, 'CategoryType') ?? '')) tags.add('paralyzing');
     if (shots > 1) tags.add('multi-shot');
     if (thrown) tags.add('thrown');
-    if (power == null) notes.push(`${action}: no Power in ${f} (Unreal's default, unknown); damage left out`);
+    if (power == null) notes.push(`${action}: no Power in ${f} (the game's default, unknown); damage left out`);
     if (files.length > 1) notes.push(`${action}: ${files.length} parts (${files.join(', ')}); the first part's values are used`);
     return {
       // per shot, at no charge / the first charge level / full charge
@@ -64,5 +83,11 @@ export function kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit, damageConsta
       tags: [...tags],
     };
   };
-  return { normal: { tags: normalTags }, charged: { standing: charged('actSTDSMBN'), moving: charged('actSMBN') }, notes };
+  return {
+    normal: { tags: normalTags },
+    charged: { standing: charged('actSTDSMBN'), moving: charged('actSMBN'), limit: kiBlastLimit === 0 ? 0 : field('chargedKiBlastLimit') },
+    jump: { normal: single('actJRB', field('jumpKiBlastCount')), charged: charged('actJSBN') },
+    dash: { normal: single('actDRSB', field('dashKiBlastCount')), charged: charged('actDSMBN') },
+    notes,
+  };
 }
