@@ -56,6 +56,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_00:1","0000_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -112,7 +116,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -187,6 +192,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_10:1","0000_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -224,7 +233,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -299,6 +309,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_11:1","0000_11:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -336,7 +350,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -411,6 +426,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_20:1","0000_20:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -448,7 +467,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -523,6 +543,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_21:1","0000_21:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -560,7 +584,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_21)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -635,6 +660,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_22:1","0000_22:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -672,7 +701,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_22)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -747,6 +777,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_23:1","0000_23:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -784,7 +818,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_23)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -859,6 +894,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[446,535,802],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0000_33:1","0000_33:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -896,7 +938,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_33)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -971,6 +1014,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_40:1","0000_40:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1008,7 +1055,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_40)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1083,6 +1131,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_41:1","0000_41:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1120,7 +1172,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_41)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1195,6 +1248,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[446,535,802],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0000_43:1","0000_43:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1232,7 +1292,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_43)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1307,6 +1368,10 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1200,1801,2400],"shots":1,"cost":0.5,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_50:1","0000_50:2"],
     "traits": ["Auto Dodge","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1344,7 +1409,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_50)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1419,6 +1485,10 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1250,1875,2500],"shots":1,"cost":0.5,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0000_51:1","0000_51:2"],
     "traits": ["Auto Dodge","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1456,7 +1526,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_51)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1531,6 +1602,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1350,2025,2699],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1270,1905,2540],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0001_42:1","0001_42:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1568,7 +1646,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0001_42)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1643,6 +1722,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0002_30:1","0002_30:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1680,7 +1763,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0002_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1755,6 +1839,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0002_31:1","0002_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1792,7 +1880,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0002_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1867,6 +1956,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0002_32:1","0002_32:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -1904,7 +1997,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0002_32)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -1979,6 +2073,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0002_50:1","0002_50:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2035,7 +2133,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0002_50)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2098,6 +2197,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1079,1618,2157],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1007,1510,2013],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0020_00:1","0020_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2135,7 +2238,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2210,6 +2314,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0020_10:1","0020_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2247,7 +2355,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2322,6 +2431,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0020_11:1","0020_11:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2359,7 +2472,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2434,6 +2548,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0020_30:1","0020_30:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2471,7 +2589,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2546,6 +2665,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0020_31:1","0020_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2583,7 +2706,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2658,6 +2782,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0020_32:1","0020_32:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2695,7 +2823,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_32)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2770,6 +2899,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1172,1758,2344],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0020_40:1","0020_40:2"],
     "traits": ["Sparking Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -2826,7 +2959,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_40)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -2901,6 +3035,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1238,1857,2475],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0020_50:1","0020_50:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -2938,7 +3076,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_50)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3013,6 +3152,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0020_60:1","0020_60:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3050,7 +3193,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_60)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3125,6 +3269,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0020_61:1","0020_61:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3162,7 +3310,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_61)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3237,6 +3386,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[446,535,802],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0020_63:1","0020_63:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3274,7 +3430,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_63)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3349,6 +3506,10 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0021_20:1","0021_20:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -3386,7 +3547,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0021_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3461,6 +3623,10 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0022_62:1","0022_62:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3498,7 +3664,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0022_62)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3573,6 +3740,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1188,1782,2375],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1188,1782,2375],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["0023_00:1","0023_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -3610,7 +3784,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0023_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3685,6 +3860,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0030_00:1","0030_00:2"],
     "traits": [],
     "sparking": {
@@ -3739,7 +3918,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0030_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3802,6 +3982,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0031_00:1","0031_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3839,7 +4023,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0031_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -3914,6 +4099,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0031_01:1","0031_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3951,7 +4140,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0031_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4026,6 +4216,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0031_02:1","0031_02:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {
@@ -4079,7 +4273,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0031_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4142,6 +4337,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0032_00:1","0032_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4179,7 +4378,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4254,6 +4454,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0032_01:1","0032_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4291,7 +4495,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4366,6 +4571,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0032_02:1","0032_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4403,7 +4612,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4466,6 +4676,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1063,1594,2125],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1000,1500,2000],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0032_10:1","0032_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4503,7 +4720,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4578,6 +4796,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1172,1758,2344],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0032_20:1","0032_20:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4615,7 +4837,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4690,6 +4913,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0032_30:1","0032_30:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4746,7 +4973,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4821,6 +5049,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0032_31:1","0032_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4877,7 +5109,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0032_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -4940,6 +5173,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1063,1594,2125],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1000,1500,2000],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0040_00:1","0040_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4977,7 +5217,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5052,6 +5293,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[552,827,1103],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[525,788,1050],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0040_10:1","0040_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5089,7 +5337,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0040_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5152,6 +5401,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[525,788,1050],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[500,750,1000],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0040_20:1","0040_20:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5189,7 +5445,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5264,6 +5521,13 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1010,1515,2019],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[950,1425,1900],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0050_00:1","0050_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5301,7 +5565,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0050_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5376,6 +5641,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1010,1515,2019],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[950,1425,1900],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0060_00:1","0060_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5413,7 +5685,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0060_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5488,6 +5761,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0070_00:1","0070_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5525,7 +5802,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0070_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5588,6 +5866,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1188,1425,1663],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0080_00:1","0080_00:2"],
     "traits": ["Sword"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5625,7 +5910,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5700,6 +5986,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1449,1739,2029],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0080_01:1","0080_01:2"],
     "traits": ["Sword"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5737,7 +6030,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5812,6 +6106,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[355,426,638],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0080_10:1","0080_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5849,7 +6150,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -5924,6 +6226,13 @@
     },
     "incomingDamage": 0.94,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[412,495,742],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0080_11:1","0080_11:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -5961,7 +6270,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6036,6 +6346,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1247,1497,1746],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0080_30:1","0080_30:2"],
     "traits": ["Sword"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6092,7 +6409,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_30)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6167,6 +6485,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1449,1739,2029],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0080_31:1","0080_31:2"],
     "traits": ["Sword","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6223,7 +6548,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6298,6 +6624,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[321,385,578],"shots":3,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0081_20:1","0081_20:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -6335,7 +6668,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0081_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6398,6 +6732,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0082_00:1","0082_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6435,7 +6773,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6510,6 +6849,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1097,1646,2194],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0082_01:1","0082_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6547,7 +6890,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6610,6 +6954,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0090_00:1","0090_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6647,7 +6995,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0090_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6722,6 +7071,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1097,1646,2194],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0090_01:1","0090_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6759,7 +7112,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0090_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6834,6 +7188,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[336,387,588],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[352,405,616],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0100_00:1","0100_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6871,7 +7232,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0100_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -6946,6 +7308,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[350,402,611],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[366,421,641],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0100_01:1","0100_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -6983,7 +7352,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0100_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7058,6 +7428,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[376,432,657],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[394,453,689],"shots":5,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0100_02:1","0100_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -7095,7 +7472,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0100_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7170,6 +7548,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[288,332,504],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[272,313,476],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0110_00:1","0110_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7207,7 +7592,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0110_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7282,6 +7668,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[183,211,321],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[167,192,291],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0110_01:1","0110_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7319,7 +7712,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0110_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7394,6 +7788,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":180,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[197,227,345],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[179,206,313],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0110_02:1","0110_02:2"],
     "traits": ["Super Movement","High-Speed Movement","Multi-Hit Rushes"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7431,7 +7832,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0110_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7506,6 +7908,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[322,387,515],"shots":3,"cost":0.088,"tags":["rapid","multi-shot"]},
+        "moving": {"damage":[1252,1877,2503],"shots":1,"cost":0.33,"tags":[]}
+      }
+    },
     "skills": ["0110_03:1","0110_03:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -7543,7 +7952,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0110_03)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7618,6 +8028,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[183,211,321],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[167,192,291],"shots":8,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0110_04:1","0110_04:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -7655,7 +8072,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0110_04)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7730,6 +8148,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1154,1730,2307],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[1077,1615,2153],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0120_00:1","0120_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7767,7 +8189,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0120_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7842,6 +8265,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1200,1800,2400],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[1120,1680,2240],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0120_01:1","0120_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7879,7 +8306,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0120_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -7954,6 +8382,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1247,1871,2494],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[1164,1746,2328],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0120_02:1","0120_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -7991,7 +8423,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0120_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8066,6 +8499,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0121_00:1","0121_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8103,7 +8540,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0121_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8178,6 +8616,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[844,1266,1688],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0130_00:1","0130_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8215,7 +8657,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0130_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8290,6 +8733,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[829,1244,1658],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[780,1170,1560],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0140_00:1","0140_00:2"],
     "traits": ["Grounded"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8327,7 +8777,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0140_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8402,6 +8853,10 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[704,1055,1407],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[657,985,1313],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0141_00:1","0141_00:2"],
     "traits": ["Grounded"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -8439,7 +8894,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0141_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8514,6 +8970,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0150_00:1","0150_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8551,7 +9011,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0150_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8614,6 +9075,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[844,1266,1688],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[788,1182,1575],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0151_00:1","0151_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -8651,7 +9116,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0151_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8726,6 +9192,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[276,317,483],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[289,333,506],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0152_00:1","0152_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8763,7 +9236,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0152_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8838,6 +9312,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0153_00:1","0153_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8875,7 +9353,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0153_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -8938,6 +9417,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[657,985,1313],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[625,938,1250],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0153_10:1","0153_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -8975,7 +9461,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0153_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9050,6 +9537,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0153_20:1","0153_20:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9087,7 +9578,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0153_20)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9162,6 +9654,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[604,906,1208],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[575,863,1150],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0154_00:1","0154_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -9199,7 +9698,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0154_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9274,6 +9774,10 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[1219,1829,2438],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0155_00:1","0155_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9311,7 +9815,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0155_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9386,6 +9891,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":null,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0160_00:1","0160_00:2"],
     "traits": ["HP Drain Grab"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9423,7 +9932,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0160_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9498,6 +10008,10 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":null,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0161_00:1","0161_00:2"],
     "traits": ["HP Drain Grab"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -9535,7 +10049,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0161_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9610,6 +10125,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0162_00:1","0162_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9647,7 +10166,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0162_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9722,6 +10242,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[1172,1758,2344],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0162_01:1","0162_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9759,7 +10283,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0162_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9834,6 +10359,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0163_00:1","0163_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -9871,7 +10400,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0163_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -9946,6 +10476,13 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[173,199,302],"shots":7,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[185,212,323],"shots":7,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0170_00:1","0170_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -9983,7 +10520,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0170_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10046,6 +10584,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.36,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.36,"tags":[]}}
+    },
     "skills": ["0171_00:1","0171_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10083,7 +10625,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0171_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10158,6 +10701,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1169,1754,2338],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1100,1650,2200],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0172_00:1","0172_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10195,7 +10745,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0172_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10270,6 +10821,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1329,1993,2657],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1250,1875,2500],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0172_10:1","0172_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10307,7 +10865,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0172_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10382,6 +10941,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[282,324,493],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[266,306,465],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0172_11:1","0172_11:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10419,7 +10985,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0172_11)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10494,6 +11061,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":120,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1329,1993,2657],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1250,1875,2500],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0173_00:1","0173_00:2"],
     "traits": ["Super Movement","High-Speed Movement","Multi-Hit Rushes"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10531,7 +11105,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0173_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10606,6 +11181,13 @@
     },
     "incomingDamage": 1.17,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["thrown"]},
+      "charged": {
+        "standing": {"damage":[216,324,432],"shots":1,"cost":0.2,"tags":["thrown"]},
+        "moving": {"damage":[87,130,173],"shots":1,"cost":0.2,"tags":["thrown"]}
+      }
+    },
     "skills": ["0180_00:1","0180_00:2"],
     "traits": ["Grounded"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":1},
@@ -10640,7 +11222,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0180_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10715,6 +11298,13 @@
     },
     "incomingDamage": 1.15,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[867,910,953],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[840,882,924],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0190_00:1","0190_00:2"],
     "traits": ["High-Speed Movement","Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10752,7 +11342,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0190_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10827,6 +11418,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["thrown"]},
+      "charged": {
+        "standing": {"damage":[927,1112,1297],"shots":1,"cost":0.6,"tags":["slash","thrown"]},
+        "moving": {"damage":[293,439,585],"shots":1,"cost":0.2,"tags":["thrown"]}
+      }
+    },
     "skills": ["0210_00:1","0210_00:2"],
     "traits": ["Grounded","Sword"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -10864,7 +11462,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0210_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -10939,6 +11538,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0220_00:1","0220_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -10976,7 +11579,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0220_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11051,6 +11655,10 @@
     },
     "incomingDamage": 1.12,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0230_00:1","0230_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11088,7 +11696,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0230_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11151,6 +11760,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[525,788,1050],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[500,750,1000],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0240_00:1","0240_00:2"],
     "traits": [],
     "sparking": {
@@ -11205,7 +11821,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0240_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11280,6 +11897,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[248,285,434],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[234,269,410],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0240_01:1","0240_01:2"],
     "traits": ["Super Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11317,7 +11941,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0240_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11392,6 +12017,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[732,1097,1463],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0260_00:1","0260_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11429,7 +12058,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0260_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11504,6 +12134,7 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {"normal":{"tags":["none"]},"charged":{"standing":null,"moving":null}},
     "skills": ["0270_00:1","0270_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11541,7 +12172,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0270_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11616,6 +12248,7 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {"normal":{"tags":["none"]},"charged":{"standing":null,"moving":null}},
     "skills": ["0280_00:1","0280_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -11653,7 +12286,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0280_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11728,6 +12362,7 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {"normal":{"tags":["none"]},"charged":{"standing":null,"moving":null}},
     "skills": ["0301_00:1","0301_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -11765,7 +12400,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0301_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11828,6 +12464,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0310_00:1","0310_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -11884,7 +12524,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0310_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -11959,6 +12600,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0310_01:1","0310_01:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -12015,7 +12660,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0310_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12090,6 +12736,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0320_00:1","0320_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12127,7 +12777,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0320_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12202,6 +12853,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[844,1266,1688],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0330_00:1","0330_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12239,7 +12894,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0330_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12314,6 +12970,10 @@
     },
     "incomingDamage": 0.92,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[750,1125,1500],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0340_00:1","0340_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -12351,7 +13011,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0340_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12426,6 +13087,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.36,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}}
+    },
     "skills": ["0350_00:1","0350_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12463,7 +13128,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0350_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12538,6 +13204,10 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[750,1125,1500],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0351_00:1","0351_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -12575,7 +13245,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0351_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12650,6 +13321,10 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[750,1125,1500],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0360_00:1","0360_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -12687,7 +13362,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0360_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12762,6 +13438,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0370_00:1","0370_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12799,7 +13479,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0370_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12862,6 +13543,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0380_00:1","0380_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -12899,7 +13584,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0380_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -12974,6 +13660,10 @@
     },
     "incomingDamage": 0.9,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[750,1125,1500],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[700,1050,1400],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0390_00:1","0390_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -13011,7 +13701,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0390_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13086,6 +13777,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":180,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.36,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.36,"tags":[]}}
+    },
     "skills": ["0400_00:1","0400_00:2"],
     "traits": ["Scouter","Super Movement","High-Speed Movement","Multi-Hit Rushes"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13123,7 +13818,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0400_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13198,6 +13894,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1010,1515,2019],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[950,1425,1900],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0410_00:1","0410_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13235,7 +13938,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0410_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13310,6 +14014,13 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[743,780,817],"shots":2,"cost":1,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[720,756,792],"shots":2,"cost":1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0420_00:1","0420_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13347,7 +14058,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0420_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13422,6 +14134,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {"standing":{"damage":[797,1196,1594],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0430_00:1","0430_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13459,7 +14175,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0430_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13522,6 +14239,10 @@
     },
     "incomingDamage": 0.92,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[844,1266,1688],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[788,1182,1575],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0440_00:1","0440_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -13559,7 +14280,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0440_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13634,6 +14356,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0450_00:1","0450_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13671,7 +14397,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0450_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13734,6 +14461,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1172,1758,2344],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0450_10:1","0450_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13771,7 +14502,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0450_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13846,6 +14578,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[709,1064,1418],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[675,1013,1350],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0451_00:1","0451_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13883,7 +14622,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0451_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -13958,6 +14698,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0460_00:1","0460_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13995,7 +14739,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0460_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14070,6 +14815,10 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":null,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[797,1196,1594],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[744,1116,1488],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0470_00:1","0470_00:2"],
     "traits": ["HP Drain Grab","Free Dragon Dash"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14107,7 +14856,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0470_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14170,6 +14920,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":null,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0480_00:1","0480_00:2"],
     "traits": ["HP Drain Grab","Free Dragon Dash","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14207,7 +14961,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0480_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14282,6 +15037,13 @@
     },
     "incomingDamage": 1.2,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[908,953,999],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[880,924,968],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0490_00:1","0490_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14319,7 +15081,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0490_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14394,6 +15157,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1307,1568,1829],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0500_00:1","0500_00:2"],
     "traits": ["Sword","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14431,7 +15201,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0500_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14494,6 +15265,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0510_00:1","0510_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14531,7 +15306,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0510_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14606,6 +15382,10 @@
     },
     "incomingDamage": 1.2,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[844,1266,1688],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0540_00:1","0540_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14643,7 +15423,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0540_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14718,6 +15499,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0550_00:1","0550_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14755,7 +15540,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0550_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14830,6 +15616,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[588,882,1175],"shots":3,"cost":0.33,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[500,750,1000],"shots":3,"cost":0.66,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0551_00:1","0551_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -14867,7 +15660,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0551_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -14942,6 +15736,13 @@
     },
     "incomingDamage": 0.9,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[709,1064,1418],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[675,1013,1350],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0552_00:1","0552_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -14979,7 +15780,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0552_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15054,6 +15856,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":100},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[276,317,483],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[289,333,506],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0553_00:1","0553_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15091,7 +15900,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0553_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15166,6 +15976,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":100},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[225,259,394],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[213,245,372],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0554_00:1","0554_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15203,7 +16020,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0554_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15278,6 +16096,13 @@
     },
     "incomingDamage": 0.9,
     "power": {"rush":312,"throw":1000,"kiBlast":100},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[245,282,429],"shots":7,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[262,301,458],"shots":7,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0555_00:1","0555_00:2"],
     "traits": ["Super Armor","Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15315,7 +16140,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0555_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15390,6 +16216,13 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[904,1355,1807],"shots":1,"cost":0.33,"tags":["homing"]},
+        "moving": {"damage":[850,1275,1700],"shots":1,"cost":0.33,"tags":["homing"]}
+      }
+    },
     "skills": ["0561_00:1","0561_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15427,7 +16260,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0561_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15502,6 +16336,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[450,675,900],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]},
+        "moving": {"damage":[450,675,900],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]}
+      }
+    },
     "skills": ["0570_00:1","0570_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15539,7 +16380,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0570_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15614,6 +16456,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[604,906,1208],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[575,863,1150],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0580_00:1","0580_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15651,7 +16500,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0580_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15726,6 +16576,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[702,737,772],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[680,714,748],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0590_00:1","0590_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15763,7 +16620,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0590_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15826,6 +16684,13 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1250,1875,2500],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1250,1875,2500],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["0591_00:1","0591_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -15863,7 +16728,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0591_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -15938,6 +16804,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[908,953,999],"shots":2,"cost":1,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[880,924,968],"shots":2,"cost":1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0600_00:1","0600_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -15975,7 +16848,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0600_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16050,6 +16924,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[302,348,529],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[317,364,554],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0600_10:1","0600_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16087,7 +16968,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0600_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16162,6 +17044,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[825,867,908],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[800,840,880],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0601_00:1","0601_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16199,7 +17088,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0601_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16262,6 +17152,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[263,302,460],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[275,317,482],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0610_00:1","0610_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16299,7 +17196,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0610_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16374,6 +17272,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1275,1913,2550],"shots":1,"cost":0.24,"tags":["homing"]},
+        "moving": {"damage":[1200,1801,2400],"shots":1,"cost":0.24,"tags":["homing"]}
+      }
+    },
     "skills": ["0620_00:1","0620_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16411,7 +17316,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0620_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16486,6 +17392,13 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1063,1594,2125],"shots":1,"cost":0.33,"tags":["homing"]},
+        "moving": {"damage":[1000,1500,2000],"shots":1,"cost":0.33,"tags":["homing"]}
+      }
+    },
     "skills": ["0621_00:1","0621_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16523,7 +17436,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0621_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16586,6 +17500,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[315,378,567],"shots":2,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[338,405,608],"shots":2,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0630_00:1","0630_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16623,7 +17544,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0630_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16698,6 +17620,13 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[825,867,908],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[800,840,880],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0631_00:1","0631_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16735,7 +17664,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0631_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16798,6 +17728,13 @@
     },
     "incomingDamage": 1.12,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[825,867,908],"shots":2,"cost":1.2,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[800,840,880],"shots":2,"cost":1.2,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0640_00:1","0640_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -16835,7 +17772,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0640_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -16910,6 +17848,13 @@
     },
     "incomingDamage": 0.93,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[475,713,950],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]},
+        "moving": {"damage":[475,713,950],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]}
+      }
+    },
     "skills": ["0650_00:1","0650_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -16947,7 +17892,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0650_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17022,6 +17968,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1485,1782,2079],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0651_00:1","0651_00:2"],
     "traits": ["Sword","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17059,7 +18012,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0651_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17122,6 +18076,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1188,1425,1663],"shots":1,"cost":0.72,"tags":["slash"]},
+        "moving": {"damage":[875,1313,1750],"shots":1,"cost":0.36,"tags":[]}
+      }
+    },
     "skills": ["0660_00:1","0660_00:2"],
     "traits": ["Sword","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17159,7 +18120,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0660_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17222,6 +18184,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},
+        "moving": {"damage":[1250,1875,2500],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["0670_00:1","0670_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -17259,7 +18228,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0670_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17334,6 +18304,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[630,946,1260],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[600,901,1200],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0680_00:1","0680_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17352,7 +18329,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0680_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17427,6 +18405,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[578,867,1155],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[550,825,1100],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0680_01:1","0680_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17464,7 +18449,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0680_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17539,6 +18525,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1172,1758,2344],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0680_02:1","0680_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17576,7 +18566,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0680_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17651,6 +18642,13 @@
     },
     "incomingDamage": 0.9,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1313,1969,2625],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1313,1969,2625],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["0681_00:1","0681_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -17688,7 +18686,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0681_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17763,6 +18762,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[604,906,1208],"shots":3,"cost":0.72,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[575,863,1150],"shots":3,"cost":0.72,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0690_00:1","0690_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17800,7 +18806,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0690_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17875,6 +18882,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[525,788,1050],"shots":3,"cost":0.66,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[500,750,1000],"shots":3,"cost":0.66,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0700_00:1","0700_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -17912,7 +18926,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0700_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -17987,6 +19002,13 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[683,1024,1365],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[650,975,1300],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0700_01:1","0700_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -18024,7 +19046,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0700_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18099,6 +19122,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[844,1266,1688],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[788,1182,1575],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0710_00:1","0710_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18136,7 +19163,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0710_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18211,6 +19239,7 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {"normal":{"tags":["none"]},"charged":{"standing":null,"moving":null}},
     "skills": ["0720_00:1","0720_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18248,7 +19277,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0720_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18323,6 +19353,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[473,709,945],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[450,675,900],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["0730_00:1","0730_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18360,7 +19397,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0730_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18435,6 +19473,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[704,1055,1407],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[657,985,1313],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0760_00:1","0760_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18472,7 +19514,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0760_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18547,6 +19590,10 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1313,1969,2625],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1225,1838,2450],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0780_00:1","0780_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18584,7 +19631,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0780_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18659,6 +19707,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1488,2232,2975],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1400,2100,2800],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0790_00:1","0790_00:2"],
     "traits": ["Auto Dodge","Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18696,7 +19751,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0790_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18771,6 +19827,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0800_00:1","0800_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18827,7 +19887,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0800_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -18902,6 +19963,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1568,1882,2195],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0800_01:1","0800_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18958,7 +20026,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0800_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19033,6 +20102,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1247,1497,1746],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[1050,1575,2100],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0810_00:1","0810_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19070,7 +20146,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0810_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19145,6 +20222,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1425,1711,1996],"shots":1,"cost":0.6,"tags":["slash"]},
+        "moving": {"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["0810_01:1","0810_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19182,7 +20266,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0810_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19257,6 +20342,10 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1100,1650,2200],"shots":1,"cost":0.55,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0811_00:1","0811_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -19290,7 +20379,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0811_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19365,6 +20455,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1222,1833,2444],"shots":1,"cost":0.24,"tags":["homing"]},
+        "moving": {"damage":[1150,1725,2300],"shots":1,"cost":0.24,"tags":["homing"]}
+      }
+    },
     "skills": ["0820_00:1","0820_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19402,7 +20499,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0820_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19477,6 +20575,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0830_00:1","0830_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19514,7 +20616,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0830_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19589,6 +20692,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0870_00:1","0870_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19626,7 +20733,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0870_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19689,6 +20797,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":["laser"]},
+      "charged": {
+        "standing": {"damage":[1032,1083,1135],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[1000,1050,1100],"shots":2,"cost":0.8,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["0881_00:1","0881_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19726,7 +20841,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0881_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19801,6 +20917,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0890_00:1","0890_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19838,7 +20958,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0890_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -19913,6 +21034,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0890_01:1","0890_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19950,7 +21075,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0890_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20025,6 +21151,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0890_02:1","0890_02:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20062,7 +21192,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0890_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20137,6 +21268,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[355,426,638],"shots":3,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0900_00:1","0900_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20174,7 +21312,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0900_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20249,6 +21388,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[334,384,584],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[350,402,612],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0900_02:1","0900_02:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20286,7 +21432,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0900_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20361,6 +21508,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0910_00:1","0910_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20398,7 +21549,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0910_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20473,6 +21625,13 @@
     },
     "incomingDamage": 0.9,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[282,324,493],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[266,306,465],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0911_00:1","0911_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -20510,7 +21669,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0911_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20585,6 +21745,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0912_00:1","0912_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20622,7 +21786,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0912_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20697,6 +21862,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1154,1730,2307],"shots":1,"cost":0.33,"tags":[]},"moving":{"damage":[1077,1615,2153],"shots":1,"cost":0.33,"tags":[]}}
+    },
     "skills": ["0920_00:1","0920_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20734,7 +21903,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0920_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20809,6 +21979,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[288,332,504],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[272,313,476],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0920_01:1","0920_01:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20846,7 +22023,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0920_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -20921,6 +22099,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[300,345,524],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[283,326,495],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0920_02:1","0920_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -20958,7 +22143,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0920_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21033,6 +22219,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["0930_00:1","0930_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21070,7 +22260,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0930_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21145,6 +22336,13 @@
     },
     "incomingDamage": 0.97,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[304,350,532],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[287,330,503],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["0931_00:1","0931_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -21182,7 +22380,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0931_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21257,6 +22456,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1219,1829,2438],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["0940_00:1","0940_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21294,7 +22497,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0940_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21369,6 +22573,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1382,2072,2763],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1300,1950,2600],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["0941_00:1","0941_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -21406,7 +22617,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0941_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21469,6 +22681,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1032,1547,2063],"shots":1,"cost":0.36,"tags":[]},"moving":{"damage":[963,1444,1925],"shots":1,"cost":0.36,"tags":[]}}
+    },
     "skills": ["0950_00:1","0950_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21506,7 +22722,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0950_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21581,6 +22798,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[735,1103,1470],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[700,1050,1400],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["1000_00:1","1000_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21618,7 +22842,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21693,6 +22918,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["1190_00:1","1190_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -21730,7 +22959,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1190_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21793,6 +23023,13 @@
     },
     "incomingDamage": 1.05,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[743,780,817],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]},
+        "moving": {"damage":[720,756,792],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["1321_00:1","1321_00:2"],
     "traits": ["Paralyze Ki-Blast"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21830,7 +23067,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1321_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -21905,6 +23143,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[985,1477,1969],"shots":1,"cost":0.36,"tags":[]},"moving":{"damage":[919,1379,1838],"shots":1,"cost":0.36,"tags":[]}}
+    },
     "skills": ["1331_00:1","1331_00:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -21942,7 +23184,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1331_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22017,6 +23260,13 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[630,946,1260],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[600,901,1200],"shots":3,"cost":0.48,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["1341_00:1","1341_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22054,7 +23304,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1341_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22129,6 +23380,13 @@
     },
     "incomingDamage": 0.93,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["1500_00:1","1500_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22166,7 +23424,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1500_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22241,6 +23500,10 @@
     },
     "incomingDamage": 1.2,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[779,1168,1557],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[727,1090,1453],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["1960_00:1","1960_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22278,7 +23541,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_1960_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22341,6 +23605,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3000_00:1","3000_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22378,7 +23646,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22453,6 +23722,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3000_01:1","3000_01:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22490,7 +23763,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3000_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22565,6 +23839,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1219,1829,2438],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1138,1707,2275],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3000_02:1","3000_02:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22602,7 +23880,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3000_02)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22677,6 +23956,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1172,1758,2344],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1094,1641,2188],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3000_03:1","3000_03:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22714,7 +23997,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3000_03)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22789,6 +24073,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[552,827,1103],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[525,788,1050],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["3010_00:1","3010_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22826,7 +24117,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0040_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -22901,6 +24193,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[578,867,1155],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[550,825,1100],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["3010_01:1","3010_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -22938,7 +24237,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3010_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23013,6 +24313,13 @@
     },
     "incomingDamage": 0.98,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[683,1024,1365],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[650,975,1300],"shots":3,"cost":0.6,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["3011_00:1","3011_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23050,7 +24357,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3011_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23125,6 +24433,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["3012_00:1","3012_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23162,7 +24477,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3012_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23237,6 +24553,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1219,1829,2438],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["3020_00:1","3020_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23274,7 +24594,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3020_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23349,6 +24670,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[342,393,598],"shots":5,"cost":0.24,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[1138,1707,2275],"shots":1,"cost":0.24,"tags":[]}
+      }
+    },
     "skills": ["3030_00:1","3030_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23386,7 +24714,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3030_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23461,6 +24790,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1438,2157,2875],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1438,2157,2875],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["3040_00:1","3040_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23498,7 +24834,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23561,6 +24898,10 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3050_00:1","3050_00:2"],
     "traits": ["High-Speed Movement"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -23598,7 +24939,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23673,6 +25015,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1097,1646,2194],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3050_01:1","3050_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23710,7 +25056,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23785,6 +25132,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3050_14:1","3050_14:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23822,7 +25173,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23885,6 +25237,13 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.24,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[389,466,699],"shots":3,"cost":0.24,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["3060_00:1","3060_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23922,7 +25281,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -23997,6 +25357,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1097,1646,2194],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3060_01:1","3060_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24034,7 +25398,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24109,6 +25474,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1297,1945,2593],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[1220,1830,2440],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["3060_02:1","3060_02:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24146,7 +25518,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24221,6 +25594,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[286,329,501],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[270,311,473],"shots":6,"cost":0.3,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["3060_03:1","3060_03:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24258,7 +25638,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24321,6 +25702,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[838,1257,1675],"shots":1,"cost":1,"tags":["paralyzing"]},
+        "moving": {"damage":[800,1200,1600],"shots":1,"cost":1,"tags":["paralyzing"]}
+      }
+    },
     "skills": ["3070_00:1","3070_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24358,7 +25746,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0080_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24433,6 +25822,13 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[225,259,394],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[800,840,880],"shots":2,"cost":1.1,"tags":["paralyzing","multi-shot"]}
+      }
+    },
     "skills": ["3080_00:1","3080_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -24470,7 +25866,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3080_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24545,6 +25942,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1191,1786,2382],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1112,1667,2223],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3100_03:1","3100_03:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24582,7 +25983,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24657,6 +26059,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[276,317,483],"shots":5,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["3110_00:1","3110_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24694,7 +26103,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0082_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24769,6 +26179,10 @@
     },
     "incomingDamage": 1.2,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[732,1097,1463],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[683,1024,1365],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3130_00:1","3130_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24806,7 +26220,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3130_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24881,6 +26296,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1238,1857,2475],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1155,1733,2310],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3120_04:1","3120_04:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -24918,7 +26337,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -24993,6 +26413,13 @@
     },
     "incomingDamage": 0.96,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1063,1594,2125],"shots":1,"cost":0.33,"tags":["homing"]},
+        "moving": {"damage":[213,245,372],"shots":6,"cost":0.33,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["3140_00:1","3140_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25030,7 +26457,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3140_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25105,6 +26533,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[550,825,1100],"shots":3,"cost":0.45,"tags":["homing","giant","multi-shot"]},
+        "moving": {"damage":[1375,2063,2750],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["3150_00:1","3150_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -25142,7 +26577,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3150_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25217,6 +26653,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":null,"shots":3,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["3160_00:1","3160_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25273,7 +26716,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3160_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25348,6 +26792,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[922,1382,1843],"shots":1,"cost":1,"tags":["paralyzing"]},
+        "moving": {"damage":[963,1444,1925],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["3170_00:1","3170_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25385,7 +26836,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3170_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25460,6 +26912,13 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[285,342,513],"shots":4,"cost":0.36,"tags":["short range","multi-shot"]},
+        "moving": {"damage":null,"shots":4,"cost":0.36,"tags":["short range","multi-shot"]}
+      }
+    },
     "skills": ["3190_00:1","3190_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25516,7 +26975,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3190_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25591,6 +27051,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},"moving":{"damage":[1050,1576,2100],"shots":1,"cost":0.24,"tags":[]}}
+    },
     "skills": ["3270_00:1","3270_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25628,7 +27092,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25703,6 +27168,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[1144,1716,2288],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[1068,1602,2135],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3270_01:1","3270_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25737,7 +27206,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0020_31)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25800,6 +27270,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[938,1407,1875],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[875,1313,1750],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3280_00:1","3280_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25837,7 +27311,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3280_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -25912,6 +27387,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[351,422,632],"shots":4,"cost":0.3,"tags":["short range","multi-shot"]},
+        "moving": {"damage":[1024,1536,2048],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["3280_01:1","3280_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25949,7 +27431,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3280_01)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26024,6 +27507,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1125,1688,2250],"shots":1,"cost":0.24,"tags":[]},
+        "moving": {"damage":[600,901,1200],"shots":2,"cost":0.32,"tags":["homing","multi-shot"]}
+      }
+    },
     "skills": ["3290_00:1","3290_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26061,7 +27551,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3290_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26136,6 +27627,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3300_00:1","3300_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26192,7 +27687,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3300_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26267,6 +27763,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[1010,1515,2019],"shots":1,"cost":0.3,"tags":["homing"]},
+        "moving": {"damage":[760,1140,1520],"shots":1,"cost":1,"tags":["paralyzing"]}
+      }
+    },
     "skills": ["3310_00:1","3310_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26304,7 +27807,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0040_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26379,6 +27883,13 @@
     },
     "incomingDamage": 0.95,
     "power": {"rush":420,"throw":1000,"kiBlast":300},
+    "kiBlasts": {
+      "normal": {"tags":["giant"]},
+      "charged": {
+        "standing": {"damage":[1125,1688,2250],"shots":1,"cost":0.45,"tags":["giant"]},
+        "moving": {"damage":[1125,1688,2250],"shots":1,"cost":0.45,"tags":["giant"]}
+      }
+    },
     "skills": ["3310_10:1","3310_10:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -26416,7 +27927,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3310_10)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26491,6 +28003,10 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {"standing":{"damage":[891,1336,1782],"shots":1,"cost":0.3,"tags":[]},"moving":{"damage":[832,1247,1663],"shots":1,"cost":0.3,"tags":[]}}
+    },
     "skills": ["3320_00:1","3320_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26528,7 +28044,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0070_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26603,6 +28120,7 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {"normal":{"tags":["none"]},"charged":{"standing":null,"moving":null}},
     "skills": ["3330_00:1","3330_00:2"],
     "traits": [],
     "sparking": {
@@ -26657,7 +28175,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0000_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26732,6 +28251,13 @@
     },
     "incomingDamage": 1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[499,749,998],"shots":2,"cost":0.4,"tags":["homing","multi-shot"]},
+        "moving": {"damage":[950,1425,1900],"shots":1,"cost":0.3,"tags":["homing"]}
+      }
+    },
     "skills": ["3350_00:1","3350_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26788,7 +28314,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_0320_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]
@@ -26863,6 +28390,13 @@
     },
     "incomingDamage": 1.1,
     "power": {"rush":312,"throw":1000,"kiBlast":200},
+    "kiBlasts": {
+      "normal": {"tags":[]},
+      "charged": {
+        "standing": {"damage":[880,1320,1759],"shots":1,"cost":1,"tags":["paralyzing"]},
+        "moving": {"damage":[919,1379,1838],"shots":1,"cost":0.3,"tags":[]}
+      }
+    },
     "skills": ["3360_00:1","3360_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -26900,7 +28434,8 @@
         "kiRegenRange",
         "skillStart",
         "skillLimit",
-        "sparkCharge"
+        "sparkCharge",
+        "kiBlasts"
       ],
       "game files (steps Steps_3360_00)": ["shortDashCost"],
       "game formula": ["kiBlastCost","attackKiGain","kiRegen"]

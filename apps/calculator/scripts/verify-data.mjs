@@ -313,9 +313,13 @@ if (v2) {
   ig('Ki blast volley, 5 x 250 with falloff', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 5 }), 1125);
   ig('Ki blast volley, 20 x 250, falloff held at 40% from shot 13 (game curve)', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 20 }), 2975);
   ig('Ki blast volley, 5 x 250 into 25% armor (no falloff)', kiBlastVolley({ kiBlastDmg: 250, kiBlastLimit: 5 }, { opponentStats: { energy: 1, armor: 0.25 } }), 940);
+  // 2026-10-10: Goku (Z - Early)'s charged ki blast, standing at three charge levels and moving
+  const gokuKb = data.characters.find(c => c.id === '0000_00')?.kiBlasts?.charged;
+  ig('Goku charged ki blast standing, no / first / full charge', gokuKb?.standing?.damage?.join(' / '), '938 / 1407 / 1875');
+  ig('Goku charged ki blast moving, no charge', gokuKb?.moving?.damage?.[0], 875);
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff)', game);
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

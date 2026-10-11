@@ -374,6 +374,31 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 
 _None._
 
+## Ki blasts
+
+From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per shot at no charge / first level / full charge; standing reads actSTDSMBN, moving actSMBN. Characters per tag (no tag = standard):
+
+| Ki blast | Tags |
+| --- | --- |
+| normal | standard 209, laser 14, giant 11, none 5, thrown 2 |
+| standing | standard 123, multi-shot 72, homing 43, short range 37, paralyzing 13, slash 11, giant 10, thrown 2, rapid 1 |
+| moving | standard 137, multi-shot 67, homing 42, short range 33, paralyzing 13, giant 11, thrown 2 |
+
+
+Gaps:
+
+- Goku (GT) Super Saiyan 4: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Goku (Super) Super Saiyan God Super Saiyan: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Vegeta (Super) Super Saiyan God Super Saiyan: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3_L (Unreal's default, unknown); damage left out
+- Trunks (Melee): actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Trunks (Melee) Super Saiyan: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Super Trunks: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Gogeta (Super) Super Saiyan God Super Saiyan: actSTDSMBN: 3 parts (BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid, BulletParam_Common_actSTDSMBN5_Rapid); the first part's values are used
+- Caulifla: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Vegeta (Mini): actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3_L (Unreal's default, unknown); damage left out
+- Shallot: actSTDSMBN: no Power in BulletParam_Common_actSTDSMBN3_Shots3 (Unreal's default, unknown); damage left out
+- Fasha: actSMBN: no Power in BulletParam_Common_actSMBN3_Shots4 (Unreal's default, unknown); damage left out
+
 ## Images
 
 Characters with no face icon in public/char_thumbnails: none.

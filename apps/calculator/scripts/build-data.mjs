@@ -27,6 +27,7 @@ import { moveParts, family, RECIPES, blastCoef, evaluate, calibrate, application
 import { table, list, pct, fmt, compactJson } from './lib/report.mjs';
 import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
 import { loadFmodel } from './lib/fmodelData.mjs';
+import { kiBlastsOf } from './lib/kiBlasts.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -46,7 +47,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [] };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: [], kiBlastTags: { normal: {}, standing: {}, moving: {} } };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -529,6 +530,19 @@ for (const rc of ref.characters) {
     if (!image) report.images.push(`${rc.name} (${id})`);
   }
 
+  // Ki blasts: behaviour tags, and the charged ki blast standing and moving (game files only)
+  let kiBlasts = null;
+  if (fm) {
+    const kb = kiBlastsOf(fm, id, { coef, classCoef, kiBlastLimit: stats.kiBlastLimit, damageConstant: K });
+    kiBlasts = { normal: kb.normal, charged: kb.charged };
+    for (const n of kb.notes) report.kiBlasts.push(`${rc.name}: ${n}`);
+    const count = (m, tags) => { for (const t of tags.length ? tags : ['standard']) m[t] = (m[t] || 0) + 1; };
+    count(report.kiBlastTags.normal, kb.normal.tags);
+    if (kb.charged.standing) count(report.kiBlastTags.standing, kb.charged.standing.tags);
+    if (kb.charged.moving) count(report.kiBlastTags.moving, kb.charged.moving.tags);
+    prov.kiBlasts = 'game';
+  }
+
   const pas = passives(id);
   const sparkingPassive = pas.find(p => p.condition === 'sparking');
   const c = {
@@ -540,6 +554,7 @@ for (const rc of ref.characters) {
     stats, coef, classCoef, incomingDamage: incoming,
     // raw Power behind the first rush hit, the throw and the normal ki blast (the engine's exact formula)
     power: { rush: num(r['Rush A first hit: Power']), throw: num(r['Throw: Power']), kiBlast: num(r['Normal Ki: Power']) },
+    kiBlasts,
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
@@ -1043,6 +1058,15 @@ function reportMd() {
     '## Teams',
     '',
     list(report.teams),
+    '## Ki blasts',
+    '',
+    'From the game files (scripts/lib/kiBlasts.mjs). Charged ki blast damage is per shot at no charge / first level / full charge; standing reads actSTDSMBN, moving actSMBN. Characters per tag (no tag = standard):',
+    '',
+    table(['Ki blast', 'Tags'], Object.entries(report.kiBlastTags).map(([k, m]) => [k, Object.entries(m).sort((a, b) => b[1] - a[1]).map(([t, n]) => `${t} ${n}`).join(', ')])),
+    '',
+    report.kiBlasts.length ? 'Gaps:' : 'Gaps: none.',
+    '',
+    list(report.kiBlasts),
     '## Images',
     '',
     `Characters with no face icon in public/char_thumbnails: ${report.images.length ? report.images.join(', ') : 'none'}.`,
