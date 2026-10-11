@@ -29,7 +29,8 @@
  *   capsules.csv           capsule id, English name and description, type, category
  *   capsule-effects.csv    capsule id, effect, field, value (non-zero changes, true conditions)
  *   tables.csv             table, key, field, value: classes, DP, the common battle constants
- *   curves.csv             curve, time, value: damage scaling curves
+ *   curves.csv             curve, time, value: damage scaling curves, and ki-blast speed curves
+ *                          (BulletSpeed_*, linked from bullet-params' MoveParam.SpeedCurve)
  *
  * Usage: node scripts/pull-fmodel.mjs <export folder> [--accept-layout]
  *        (the folder holding Content/, e.g. FModel/Output/Exports/SparkingZERO)
@@ -125,6 +126,7 @@ if (!curveRows.some(r => r.curve === 'ComboRushBulletDamageScalingCurve')) probl
 // ---- characters -------------------------------------------------------------------
 const charRows = [], valueRows = [], moveRows = [], combativeRows = [], bulletRows = [], buffRows = [];
 const moveValues = new Map(), combativeParams = new Map(), bulletParams = new Map(), buffParams = new Map();
+const speedCurves = new Set();
 
 function paramsOnce(store, asset, opts) {
   if (!asset || store.has(asset.name)) return;
@@ -187,6 +189,18 @@ for (const { id, name } of ref.characters) {
 
   // Attacks and bullets: every action's parameter file (and a sub-parameter file that holds more
   // than the hit direction). Rows equal to the usual file for that action are folded below.
+  // A bullet's speed is a curve asset its parameter file links to; the link is kept as a field and
+  // the curve's keys go to curves.csv (the generic flattening drops object links).
+  const bulletSpeed = (asset) => {
+    const link = asset?.props?.MoveParam?.SpeedCurve;
+    const curve = refName(link);
+    if (!curve) return;
+    const fields = bulletParams.get(asset.name);
+    if (fields && !fields.some(f => f.field === 'MoveParam.SpeedCurve')) fields.push({ file: asset.name, field: 'MoveParam.SpeedCurve', value: curve });
+    if (speedCurves.has(curve)) return;
+    speedCurves.add(curve);
+    for (const k of fm.load(link)?.props?.FloatCurve?.Keys || []) curveRows.push({ curve, time: text(k.Time), value: text(k.Value) });
+  };
   const linkTable = (assetRef, partsKey, rows, store) => {
     const a = fm.load(assetRef);
     if (!a) return;
@@ -196,10 +210,12 @@ for (const { id, name } of ref.characters) {
         const p = part.Value?.Parameter;
         const file = refName(p);
         if (!file) return;
-        paramsOnce(store, fm.load(p), PARAM_OPTS);
+        const asset = fm.load(p);
+        paramsOnce(store, asset, PARAM_OPTS);
         const sub = part.Value?.SubParameter ? fm.load(part.Value.SubParameter) : null;
         const subFields = sub ? leaves(sub.props, PARAM_OPTS) : [];
         if (subFields.length) paramsOnce(store, sub, PARAM_OPTS);
+        if (store === bulletParams) { bulletSpeed(asset); if (subFields.length) bulletSpeed(sub); }
         rows.push({ id, action, part: part.Key?.Key ?? '', order, file, subFile: subFields.length ? sub.name : '' });
       });
     }

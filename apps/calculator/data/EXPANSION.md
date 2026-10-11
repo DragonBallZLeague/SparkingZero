@@ -160,7 +160,8 @@ Agreed with the league on 2026-10-10.
 
 1. **Charged ki blast** for everyone: damage, cost, shots, charge levels, and its archetype as trait tags (slow
    homing, multi-shot, paralyzing, thrown, none). Give the normal ki blast its archetype too (laser, thrown,
-   none). Speed curves need adding to `pull-fmodel.mjs` first.
+   none). The snapshot has the speed curves since 2026-10-10 (`MoveParam.SpeedCurve` in bullet-params, keys in
+   curves.csv).
 2. **Jump and dash ki blasts.**
 3. **Charged smash levels and Heavy Finish.** Test 1 settled the channel: rush follow-ups use combo.
 4. **A Mobility section:** movement ki costs and the slower short dash.
