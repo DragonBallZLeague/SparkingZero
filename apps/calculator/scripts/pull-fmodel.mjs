@@ -18,7 +18,8 @@
  * Tables
  *   characters.csv         id, names, class key, DP and the files a character uses
  *   character-values.csv   id, asset, field, value: Numeric (HP, ki, counts), Steps (dash costs),
- *                          dash assets' ki costs, ability and action flags
+ *                          dash assets' ki costs, ability and action flags, and RushChain (the
+ *                          character's ReplaceTransitionAction: rush[0-3], stepIn, rushIn, counter)
  *   moves.csv              id, slot, key, file, English name: supers, skills, ultimates
  *   move-values.csv        file, field, value: ki cost, blast impact, guard flags
  *   combatives.csv         id, action, part, file: attack parameters that differ from the common one
@@ -152,6 +153,20 @@ for (const { id, name } of ref.characters) {
   if (story.DestroyedPower !== undefined) value('Character', 'DestroyedPower', story.DestroyedPower);
   for (const k of ['AbilityFlag', 'ActionFlag']) for (const [f, v] of leaves(rec[k] || {}, { prefix: k })) value('Character', f, v);
   if (rec.ChaseChangeBlastSlot) value('Character', 'ChaseChangeBlastSlot', rec.ChaseChangeBlastSlot);
+  // Rush Chains: which action each of the four rush chains, the Step-In and Rush-In chains and the
+  // counter perform, in order (MasterDataAsset/ReplaceTransitionAction).
+  const CHAIN_KIND = { 'ラッシュ派生': 'rush', 'ステップイン派生': 'stepIn', 'ラッシュイン派生': 'rushIn', '当身': 'counter' };
+  const chains = fm.load(`${MDA}/ReplaceTransitionAction/ReplaceTransitionAction_${id}`);
+  if (!chains) problems.push(`${name} (${id}): no ReplaceTransitionAction_${id}.json`);
+  else {
+    const seen = {};
+    for (const r of chains.props.Records || []) {
+      const kind = CHAIN_KIND[r.Key];
+      if (!kind) continue;
+      const i = seen[kind] = (seen[kind] ?? -1) + 1;
+      value('RushChain', `${kind}[${i}]`, r.Value?.ReplaceAnimation?.Key ?? 'None');
+    }
+  }
   (rec.HPTriggerBuff || []).forEach((h, i) => {
     value('Character', `HPTriggerBuff[${i}].TriggerHP`, h.TriggerHP ?? '');
     buffRows.push({ id, action: `HPTrigger@${h.TriggerHP}`, list: 0, phase: 0, file: refName(h.Buff) });

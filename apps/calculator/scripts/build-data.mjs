@@ -29,6 +29,7 @@ import { APPLIED_KEYS, sparkingUltimateBonus } from '../src/utils/engine.js';
 import { loadFmodel } from './lib/fmodelData.mjs';
 import { kiBlastsOf, chargedMeleeOf } from './lib/kiBlasts.mjs';
 import { mobilityOf } from './lib/mobility.mjs';
+import { movesetOf } from './lib/moveset.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -48,7 +49,7 @@ const curated = (f) => {
 };
 const manifest = (s) => JSON.parse(fs.readFileSync(path.join(DATA, 'snapshots', s, 'MANIFEST.json'), 'utf8'));
 
-const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], smashFixes: [], kiBlastTags: { normal: {}, standing: {}, moving: {} } };
+const report = { warn: [], ccGaps: [], classFixes: [], specials: [], impossible: [], spread: [], unknownTraits: [], images: [], skills: [], teams: [], overrides: [], inferredSkills: [], kiBlasts: new Map(), meleeGaps: [], smashFixes: [], unnamedFlags: new Map(), kiBlastTags: { normal: {}, standing: {}, moving: {} } };
 
 // ------------------------------------------------------------------ indexes
 const refById = new Map(ref.characters.map(c => [c.id, c]));
@@ -553,6 +554,12 @@ for (const rc of ref.characters) {
   const chargedMelee = fm ? chargedMeleeOf(fm, id, { coef, damageConstant: K }) : null;
   const mobility = fm ? mobilityOf(fm, id) : null;
   if (mobility) prov.mobility = 'game';
+  const moveset = fm ? movesetOf(fm, id) : null;
+  if (moveset) {
+    prov.moveset = 'game';
+    for (const f of moveset.unavailableUnnamed) report.unnamedFlags.set(f, [...(report.unnamedFlags.get(f) || []), rc.name]);
+    if (moveset.rushChains.length !== 4) report.kiBlasts.set(`moveset: ${moveset.rushChains.length} rush chains, not 4`, [...(report.kiBlasts.get(`moveset: ${moveset.rushChains.length} rush chains, not 4`) || []), rc.name]);
+  }
   if (chargedMelee) {
     prov.chargedMelee = 'game';
     if (stats.smash != null && chargedMelee.smash[0] != null && Math.abs(stats.smash - chargedMelee.smash[0]) > 1) report.meleeGaps.push([rc.name, stats.smash, chargedMelee.smash[0]]);
@@ -572,6 +579,7 @@ for (const rc of ref.characters) {
     kiBlasts,
     chargedMelee,
     mobility,
+    moveset,
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
@@ -1091,6 +1099,11 @@ function reportMd() {
     "The published smash is the game's neutral smash. Capsule Corp's value differed for these characters and was replaced (the league measured Great Ape Vegeta 1,722 / 3,570 and Ma Junior Giant Form 1,688 / 3,500, 2026-10-10, as the files give):",
     '',
     table(['Character', 'Capsule Corp', 'Published (game)'], report.smashFixes),
+    '## Moveset',
+    '',
+    'Rush Chains, Step-In, Rush-In and counter from ReplaceTransitionAction; follow-ups and unavailable moves from ActionFlags (a flag turns a move off), in the controls guide\'s names (scripts/lib/moveset.mjs). ActionFlags whose in-game name is not known yet:',
+    '',
+    list([...report.unnamedFlags].map(([f, who]) => `${f}: ${who.length} characters (${who.slice(0, 5).join(', ')}${who.length > 5 ? ', …' : ''})`)),
     '## Images',
     '',
     `Characters with no face icon in public/char_thumbnails: ${report.images.length ? report.images.join(', ') : 'none'}.`,

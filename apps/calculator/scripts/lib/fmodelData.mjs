@@ -21,7 +21,9 @@ export function loadFmodel(dataDir) {
   };
 
   const characters = new Map(rows('characters.csv').map(r => [r.id, r]));
-  const values = new Map(rows('character-values.csv').map(r => [`${r.id}|${r.asset}|${r.field}`, r.value]));
+  const valueRows = rows('character-values.csv');
+  const values = new Map(valueRows.map(r => [`${r.id}|${r.asset}|${r.field}`, r.value]));
+  const valuesByAsset = group(valueRows, r => `${r.id}|${r.asset}`);
   const fieldMap = new Map(readCsv(path.join(dataDir, 'fmodel-fields.csv')).rows.map(r => [r.field, r]));
 
   const tables = new Map(rows('tables.csv').map(r => [`${r.table}|${r.key}|${r.field}`, r.value]));
@@ -56,6 +58,8 @@ export function loadFmodel(dataDir) {
     characters,
     /** A raw character value as exported, or undefined when Unreal left it out. */
     raw: (id, asset, field) => values.get(`${id}|${asset}|${field}`),
+    /** Every exported row of one of a character's assets ({ field, value }). */
+    rawRows: (id, asset) => valuesByAsset.get(`${id}|${asset}`) || [],
     /** A field-map field (fmodel-fields.csv) with Unreal's default filled in; null when unknown. */
     field(id, name) {
       const f = fieldMap.get(name);

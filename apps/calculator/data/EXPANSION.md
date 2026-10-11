@@ -127,7 +127,29 @@ A Mobility section would hold the short dash (already shown), these ki costs and
   from fast avoids.
 - **Guard crash:** 34 characters have a different ki damage rate when their guard is crashed.
 
-## Move and ability flags
+## Moveset (done in the data, 2026-10-10)
+
+`moveset` in `characters.json` (`scripts/lib/moveset.mjs`), in the game's own names from its controls guide
+(`MasterDataAsset/OperationGuide`):
+- **Rush Chains:** the four chain types in order (Heavy Finishes, Ki Blast Cannon, Flying Kicks, Rolling Hammer,
+  Blaster Wave, Rush Ki Waves), from `ReplaceTransitionAction_<id>`, each with its follow-ups.
+- **Step-In Chain, Rush-In Attack and the counter's follow-up.** The counter's meaning is unchecked.
+- **Moves the character lacks, and its abilities.**
+
+How the follow-ups are read:
+- Each chain type has fixed follow-ups: Heavy Finishes gives Heavy Crush and Delta Heavy Finish; Ki Blast Cannon
+  gives Ki Blast Cannon Smash and Ki Blast Cannon Attack; Rolling Hammer gives Rolling Hurricane and Rolling Press;
+  Blaster Wave gives Blaster Wave Combo; Rush Ki Waves gives Energy Storm.
+- **An ActionFlag turns a move off.** This was checked against the in-game lists of Goku (Z - Early), Tien and
+  the three Broly (Z) forms: CannonCombo turns off Ki Blast Cannon Smash, TriAttack Ki Blast Cannon Attack,
+  PowerPress Rolling Press, DeltaStorm Delta Heavy Finish, RollingHurricane Rolling Hurricane, SparkingRush
+  Violent Rush.
+- verify-data checks Goku's and the Brolys' lists. Tien's follow-ups match, but his file orders his chains Ki
+  Blast Cannon, Flying Kicks, Heavy Finishes, Heavy Finishes, against the screenshot's Flying Kicks, Heavy
+  Finishes, Heavy Finishes, Ki Blast Cannon. To recheck in game.
+- Flags without a known in-game name (REPORT.md "Moveset"): AirRush (not Air Combo: Tien has Air Combo),
+  DragonTornado, BlastRepel, EnergyWave, RollingHammer, Explosion.
+
 
 Each character's file sets which moves and abilities it has (`ActionFlag.*`, `AbilityFlag.*` in
 `character-values.csv`). This would give each character a moveset and trait list:
