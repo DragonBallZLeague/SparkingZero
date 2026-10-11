@@ -17,7 +17,7 @@ will ship it later, to dev-branch on its own or with the redesign.
   fills one side) and the capsule picker (the build with budget and attack-cap meters showing the hovered capsule,
   rule warnings and effects the stats can't show; every allowed capsule by category with what it changes on this
   build, e.g. Rush 5-hit 2,523 → 2,648; In Sparking! and Not in the stats tags; banned hidden behind "Show
-  banned"). In `concepts/concept-b.html#pick`. Waiting on the league's review.
+  banned"). In `concepts/concept-b.html#pick`. The league's first review (2026-10-10): every form stays its own face; Ki and Skill became separate capsule groups; faces sit on their class's colour (split tiles for sub-types and close colours). Waiting on the league's look at those changes.
 
 Signed off (2026-10-10): **concept B's four views** as of round 6 and the armor markers. Round 6: Rush Chains drawn as rush-hit pips, the chain, then ▸ follow-ups
   (sheet, Full stats, Compare, Vs); charge levels tabbed under each attack (Charge Lv.1-3); a Sparking! Mode section
