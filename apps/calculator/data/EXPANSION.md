@@ -268,7 +268,7 @@ Agreed with the league on 2026-10-10.
    class and DP.
 7. **Rush Chain damage in the Moveset (the league's choice, 2026-10-10):** each chain row shows its damage at
    its charges and its follow-ups' hits, only for the chains the character has. Heavy Finish stays in Melee too.
-   Waits on the Rush Chain tests below.
+   Data done 2026-10-11 (`rushChainDamage`); the UI is next.
 
 ## Tests for the league
 
@@ -299,7 +299,31 @@ Results from 2026-10-10:
      Broly (Z) and Broly (Z) Legendary Super Saiyan are flagged and can't; Broly (Z) Super Saiyan isn't and can).
 4. **Goku's fully charged smash: 1,400, and his Hyper Smash: 2,450 (1,960 × 1.25),** both as predicted. The smash charge levels read correctly.
 
-### Rush Chain tests (proposed 2026-10-10, to run)
+### Rush Chain tests (run 2026-10-11)
+
+Results, now in `characters.json` `rushChainDamage` (`scripts/lib/rushChains.mjs`) and checked by verify-data:
+
+1. **Chains use the combo channel.** Tien's Ki Blast Cannon: 853 uncharged, 1,472 fully charged (smash would
+   give 775 and 1,338).
+2. **An attack file with no Power uses 300.** Goku's Flying Kicks: 1,150 (two kicks of 375 and the finisher's
+   400); they can't be charged. Piccolo's fully charged Rush Ki Waves: 1,875, 5 hits of 375.
+3. **Bardock's Rolling Hammer:** 338 uncharged (one hit, as the files say), then Rolling Hurricane 500 and 800.
+   **Open:** fully charged it measured 1,150, against the files' 563 for one hit. 1,150 is exactly Flying Kicks'
+   total (Bardock's fourth chain), so re-check it, with the part charge too.
+4. **No combo scaling yet:** Heavy Crush after Heavy Finish lands 350, 425 and 563, at full damage.
+5. **Ki Blast Cannon Attack:** 625, 775, 925 after the fully charged cannon (1,338).
+6. **Rush Ki Waves land 5 hits** (the files have 3): 625 uncharged, 1,875 fully charged. **Energy Storm**'s first
+   press is two hits, 738 and 488 (1,226), then a flurry of ki blasts (224 in the test): ki blast shots of up to
+   157, so its total depends on how many land. **Open:** how many shots landed, and the part charge (no Power in
+   the files, so 1,875 like the full charge, unmeasured).
+7. **Blaster Wave:** 814 uncharged, 1,405 fully charged. **Blaster Wave Combo** is `actBC1` and `actBC2`: 657 and
+   814 for Goku (GT).
+8. **Follow-ups that need the chain fully charged:** Ki Blast Cannon Attack, Energy Storm, Blaster Wave Combo.
+
+Not measured yet: Ki Blast Cannon Smash (`actSCS`, 640), Delta Heavy Finish (`actDS1`-`3`), Rolling Press
+(`actPP1A`, `actPP2`), and characters with their own chain files (Flying Kicks for about 5 characters).
+
+### Rush Chain tests (proposed 2026-10-10)
 
 The league wants every Rush Chain's damage on its row in the Moveset (the chain, then its follow-ups), shown only
 for the chains a character has. The files give each chain's Power at three charges (`act<chain>N/P/F`) and each

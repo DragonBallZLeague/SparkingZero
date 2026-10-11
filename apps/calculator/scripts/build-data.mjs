@@ -30,6 +30,7 @@ import { loadFmodel } from './lib/fmodelData.mjs';
 import { kiBlastsOf, chargedMeleeOf } from './lib/kiBlasts.mjs';
 import { mobilityOf } from './lib/mobility.mjs';
 import { movesetOf } from './lib/moveset.mjs';
+import { rushChainsOf } from './lib/rushChains.mjs';
 import { armorOf } from './lib/armor.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
@@ -568,6 +569,8 @@ for (const rc of ref.characters) {
     for (const f of moveset.unavailableUnnamed) report.unnamedFlags.set(f, [...(report.unnamedFlags.get(f) || []), rc.name]);
     if (moveset.rushChains.length !== 4) report.kiBlasts.set(`moveset: ${moveset.rushChains.length} rush chains, not 4`, [...(report.kiBlasts.get(`moveset: ${moveset.rushChains.length} rush chains, not 4`) || []), rc.name]);
   }
+  const rushChains = fm && moveset ? rushChainsOf(fm, id, { coef, damageConstant: K, moveset }) : null;
+  if (rushChains) prov.rushChainDamage = 'game';
   if (chargedMelee) {
     prov.chargedMelee = 'game';
     if (stats.smash != null && chargedMelee.smash[0] != null && Math.abs(stats.smash - chargedMelee.smash[0]) > 1) report.meleeGaps.push([rc.name, stats.smash, chargedMelee.smash[0]]);
@@ -586,6 +589,7 @@ for (const rc of ref.characters) {
     power: { rush: num(r['Rush A first hit: Power']), throw: num(r['Throw: Power']), kiBlast: num(r['Normal Ki: Power']) },
     kiBlasts,
     chargedMelee,
+    rushChainDamage: rushChains,
     mobility,
     moveset,
     armor,

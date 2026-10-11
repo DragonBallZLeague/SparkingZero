@@ -321,6 +321,17 @@ if (v2) {
   ig('Goku full charged smash', cm('0000_00')?.smash?.[2], 1400);
   ig('Goku hyper smash', cm('0000_00')?.hyperSmash, 2450);
   ig('Tien Heavy Finish (combo channel)', cm('0070_00')?.heavyFinish?.[0], 743);
+  // Rush Chains (2026-10-11): totals before and after each chain, on a dummy with no capsules or skills
+  const rcd = (cid, type) => data.characters.find(c => c.id === cid)?.rushChainDamage?.[type];
+  const j = (v) => JSON.stringify(v);
+  ig('Tien Ki Blast Cannon, uncharged and full (combo channel)', j([rcd('0070_00', 'Ki Blast Cannon')?.damage?.[0], rcd('0070_00', 'Ki Blast Cannon')?.damage?.[2]]), j([853, 1472]));
+  ig('Goku Flying Kicks (no Power in two files: 300)', rcd('0000_00', 'Flying Kicks')?.damage?.[0], 1150);
+  ig('Goku Heavy Crush after Heavy Finish', j(rcd('0000_00', 'Heavy Finishes')?.followUps?.['Heavy Crush']?.hits), j([350, 425, 563]));
+  ig('Goku Ki Blast Cannon full, then Ki Blast Cannon Attack', j([rcd('0000_00', 'Ki Blast Cannon')?.damage?.[2], ...(rcd('0000_00', 'Ki Blast Cannon')?.followUps?.['Ki Blast Cannon Attack']?.hits || [])]), j([1338, 625, 775, 925]));
+  ig('Bardock Rolling Hammer uncharged, then Rolling Hurricane', j([rcd('0310_00', 'Rolling Hammer')?.damage?.[0], ...(rcd('0310_00', 'Rolling Hammer')?.followUps?.['Rolling Hurricane']?.hits || [])]), j([338, 500, 800]));
+  ig('Piccolo Rush Ki Waves uncharged and full (5 hits)', j([rcd('0040_00', 'Rush Ki Waves')?.damage?.[0], rcd('0040_00', 'Rush Ki Waves')?.damage?.[2]]), j([625, 1875]));
+  ig('Piccolo Energy Storm (its first press, two hits)', rcd('0040_00', 'Rush Ki Waves')?.followUps?.['Energy Storm']?.total, 1226);
+  ig('Goku (GT) Blaster Wave uncharged and full, then Blaster Wave Combo', j([rcd('0002_30', 'Blaster Wave')?.damage?.[0], rcd('0002_30', 'Blaster Wave')?.damage?.[2], ...(rcd('0002_30', 'Blaster Wave')?.followUps?.['Blaster Wave Combo']?.hits || [])]), j([814, 1405, 657, 814]));
   ig('Great Ape Vegeta smash, normal / full', cm('0023_00')?.smash ? `${cm('0023_00').smash[0]} / ${cm('0023_00').smash[2]}` : null, '1722 / 3570');
   ig('Ma Junior Giant Form smash, normal / full', cm('3310_10')?.smash ? `${cm('3310_10').smash[0]} / ${cm('3310_10').smash[2]}` : null, '1688 / 3500');
   ig('Great Ape Vegeta published smash is the game smash', data.characters.find(c => c.id === '0023_00')?.stats.smash, 1722);
@@ -367,7 +378,7 @@ if (v2) {
   }
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains, armor)', game);
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains and their damage, armor)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];
