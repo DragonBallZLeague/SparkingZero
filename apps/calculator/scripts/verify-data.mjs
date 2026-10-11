@@ -16,7 +16,7 @@ import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
 import { APPLIED_KEYS, collectEffects, computeStats } from '../src/utils/engine.js';
-import { kiBlastVolley } from '../src/utils/calculator.js';
+import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP = path.resolve(__dirname, '..');
@@ -349,6 +349,22 @@ if (v2) {
   ig('Janemba Sparking Armor damage rate (1,919 to 1,439)', jArmor?.sparking?.damageRate, 0.75);
   const abGaps = data.characters.filter(c => c.armor && c.stats.armorBreak != null && c.armor.hyperArmorBreakHits !== c.stats.armorBreak).map(c => c.name);
   check(!abGaps.length, 'every character\'s armor break (hits to break Hyper Armor) follows from the game\'s armor tables', abGaps);
+  // The engine's armor (2026-10-10): Goku's fully charged ki blast (1,875) vs base Janemba 1,919, vs Sparking
+  // Janemba 1,439 (Sparking Armor level 4 holds), vs Sparking Bardock 1,875 (level 3: a tie breaks it)
+  {
+    const g = run('0000_00');
+    const full = byId.get('0000_00')?.kiBlasts?.charged?.standing?.damage?.[2];
+    const vs = (oppId, sparking) => {
+      const o = run(oppId, { sparking });
+      return damageTaken(full, o.energy, armorFactor(g.breakLevels?.chargedKiBlast?.[2], o));
+    };
+    ig('Goku full charged ki blast vs Janemba', vs('0650_00', false), 1919);
+    ig('Goku full charged ki blast vs Sparking Janemba', vs('0650_00', true), 1439);
+    ig('Goku full charged ki blast vs Sparking Bardock', vs('0310_00', true), 1875);
+    // the rush combo: Goku's hits 1-4 don't break Janemba's Sparking Armor, hit 5 does (as the hit count said)
+    const combo = calcOutgoingCombo(g, run('0650_00', { sparking: true }));
+    ig('Goku rush vs Sparking Janemba: armored hits', combo?.perHit?.map(h => h.armorReduced).join(','), 'true,true,true,true,false');
+  }
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
   check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains, armor)', game);

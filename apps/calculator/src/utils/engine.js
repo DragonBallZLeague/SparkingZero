@@ -12,6 +12,10 @@
  *   rates        stat x (1 + class + effects) / (1 + class)
  *   flat         health, starting ki (bars, clamped to max ki), skill count, ki-blast count
  *   set          e.g. Rising Fighting Spirit: starting ki = max ki
+ *   armor        the game's armor system (characters.json armor, scripts/lib/armor.mjs): each attack
+ *                has a break level (its label at the attacker's DP), raised by "armor break level"
+ *                effects (Draconic Aura +3, Dragon Rush +3 on rush, the Sparking passive); the side's
+ *                armor has a level and damage rate; a hit breaks armor when break level >= level.
  *
  * Effects whose condition is not "always" apply only when that condition is on:
  * "sparking" follows the Sparking toggle; anything else (health thresholds, maps,
@@ -46,7 +50,7 @@ const RATES = {
 };
 const FLAT = new Set(['health', 'startingKi', 'skillStart', 'kiBlastCount', 'blastKiCost', 'ultimateKiCost']);
 const HANDLED = new Set([...Object.keys(CHANNEL_OF), 'allDamage', ...Object.keys(RESIST_OF), ...Object.keys(RATES), ...FLAT,
-  'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'armorLevel']);
+  'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'armorLevel', 'armorBreakLevel']);
 /** Effect keys that change a shown stat (everything else is listed as a note). */
 export const APPLIED_KEYS = HANDLED;
 
@@ -96,6 +100,8 @@ export function collectEffects({ character, capsules = [], skills = [], sparking
   const applied = [], notes = [], outgoing = [];
   const take = (e, source, extra = {}) => {
     const cond = e.condition || 'always';
+    // Dragon Rush: armor break level +3 on Rush Attack category actions (the rush hits)
+    if (e.key === 'armorBreakLevel' && /rush attack/i.test(cond)) { applied.push({ ...e, ...extra, source, rushOnly: true }); return; }
     if (cond === 'always' || (cond === 'sparking' && sparking)) {
       if (e.key === 'display' || (!HANDLED.has(e.key) && e.op !== 'set')) notes.push({ source, text: e.note || describe(e) });
       else applied.push({ ...e, ...extra, source });
@@ -121,6 +127,8 @@ export function collectEffects({ character, capsules = [], skills = [], sparking
     // passive: its ultimate damage is already in the published ultimates (sparkingUltimateBonus)
     for (const e of character.sparking.effects || []) take(e, 'Sparking', { passive: true });
     if (character.sparking.armor) applied.push({ key: 'sparkingArmor', value: 1, source: 'Sparking' });
+    // the common Sparking buff raises the armor break level of every attack
+    if (character.sparking.armorBreakLevel) applied.push({ key: 'armorBreakLevel', value: character.sparking.armorBreakLevel, source: 'Sparking' });
   }
   for (const e of incoming) take(e, `${e.source} (opponent)`);
   return { applied, notes: dedupeNotes(notes), outgoing };
@@ -148,7 +156,7 @@ export function computeStats(c, effects, ctx = {}) {
   const s = c.stats;
   const add = {};
   const plus = (k, v) => { add[k] = (add[k] || 0) + v; };
-  let setMaxKi = false, armorLevel = false, sparkingArmor = false;
+  let setMaxKi = false, armorLevel = false, sparkingArmor = false, breakUp = 0, rushBreakUp = 0;
   for (const e of effects.applied) {
     const v = typeof e.value === 'number' ? e.value : 0;
     if (e.op === 'set') { if (e.key === 'startingKi' && e.value === 'max') setMaxKi = true; continue; }
@@ -157,6 +165,7 @@ export function computeStats(c, effects, ctx = {}) {
     else if (e.key === 'allDamage') for (const ch of ALL_DAMAGE) { if (!(e.passive && ch === 'ultimate')) plus(`dmg.${ch}`, v); }
     else if (RESIST_OF[e.key]) for (const r of RESIST_OF[e.key]) plus(`res.${r}`, v);
     else if (e.key === 'armorLevel') armorLevel = armorLevel || v > 0;
+    else if (e.key === 'armorBreakLevel') { if (e.rushOnly) rushBreakUp += v; else breakUp += v; }
     else if (e.key === 'sparkingArmor') sparkingArmor = true;
     else plus(e.key, v);
   }
@@ -204,6 +213,23 @@ export function computeStats(c, effects, ctx = {}) {
   let armor = s.armor ?? 0;
   if (sparkingArmor) armor = Math.max(armor, SPARKING_ARMOR);
   else if (armorLevel) armor = Math.max(armor, SKILL_ARMOR);
+  // The armor's level (a hit with a lower break level is reduced by it): Sparking Armor at the level
+  // the game gives this character (3, or 4 for hyper-armor holders); Hyper Armor at 2. Skill armor's
+  // 10% is Hyper Armor's damage rate, so it is taken at Hyper Armor's level.
+  const A = c.armor || {};
+  const armorLevelNow = !(armor > 0) ? null
+    : sparkingArmor ? (A.sparking?.level ?? 3)
+      : (A.base?.level ?? 2);
+  // This side's attacks' break levels, with every armor-break-level effect added
+  const bl = A.breakLevels;
+  const up = (v, extra = 0) => (v == null ? null : v + breakUp + extra);
+  const breakLevels = bl ? {
+    rush: (bl.rush || []).map(v => up(v, rushBreakUp)),
+    smash: (bl.smash || []).map(v => up(v)), perfectSmash: up(bl.perfectSmash), hyperSmash: up(bl.hyperSmash),
+    heavyFinish: (bl.heavyFinish || []).map(v => up(v)), throw: up(bl.throw), kiBlast: up(bl.kiBlast),
+    chargedKiBlast: bl.chargedKiBlast ? bl.chargedKiBlast.map(v => up(v)) : null,
+    chargedKiBlastMoving: bl.chargedKiBlastMoving ? bl.chargedKiBlastMoving.map(v => up(v)) : null,
+  } : null;
 
   const refHits = ctx.referenceHits || null;
   const skillDamage = (d) => (typeof d === 'number' && d ? round(scale(d, k0.skill, k1.skill, K), 2) : d ?? 0);
@@ -216,6 +242,8 @@ export function computeStats(c, effects, ctx = {}) {
     switch: add.switchRecovery ? round(s.switch / (1 + add.switchRecovery), 2) : s.switch,
     armorBreak: s.armorBreak,
     armor,
+    armorLevel: armorLevelNow,
+    breakLevels,
     meleeDefenseStat: meleeDefense,
     kiBlastDefenseArmor: kiBlastDefense,
     blastDefense,

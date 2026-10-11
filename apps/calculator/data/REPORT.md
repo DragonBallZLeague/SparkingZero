@@ -23,7 +23,7 @@ Game facts are read from the FModel snapshot first (14696 character values, 2107
 |  | Count |
 | --- | --- |
 | Characters built | 241 |
-| Capsules | 103 from referencedata; 54 change shown stats, the rest are notes only |
+| Capsules | 103 from referencedata; 56 change shown stats, the rest are notes only |
 | Blasts measured | 661 |
 | Blasts computed (calibrated recipe) | 82 |
 | Blasts not measured yet | 0 |
@@ -273,9 +273,9 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Blast Attack Boost 2 (00_0_0029) | 3 | superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
 | Blast Attack Boost 3 (00_0_0030) | 5 | superDamage +7.5%; ultimateDamage +7.5% |  | blastComboDamage +7.5% |
 | Super Warrior (00_0_0031) | 2 |  | rushDamage +5% (sparking) |  |
-| Draconic Aura (00_0_0032) | 4 |  |  | Beats Power Body and Light Body |
+| Draconic Aura (00_0_0032) | 4 | armorBreakLevel +3 |  |  |
 | Light Body (00_0_0033) | 4 |  |  | Cannot be flinched by Ki Blasts (Giants and Sparking ignore it) |
-| Dragon Rush (00_0_0035) | 3 |  |  | Beats Power Body |
+| Dragon Rush (00_0_0035) | 3 |  | armorBreakLevel +3 (against Rush Attack category actions) |  |
 | The Secret to Counters (00_0_0037) | 5 |  |  | Minimum 1 |
 | Fury! (00_0_0038) | 4 |  | superDamage +5% (health at or below 75%); superDamage +5% (health at or below 50% (10% total)); superDamage +5% (health at or below 25% (15% total)) | blastComboDamage +5% |
 | Active Heart (00_0_0039) | 1 | attackKiGain +10% |  |  |

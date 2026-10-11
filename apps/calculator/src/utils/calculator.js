@@ -14,6 +14,18 @@ export function damageTaken(value, ...multipliers) {
 }
 
 /**
+ * The armor multiplier on one hit: 1 when the opponent has no armor or the hit breaks it (its break
+ * level >= the armor's level), else 1 - armor. Without levels (old data) a hit is taken as not
+ * breaking. See scripts/lib/armor.mjs for the game's rule.
+ */
+export function armorFactor(breakLevel, opponentStats) {
+  const armor = opponentStats?.armor ?? 0;
+  if (!(armor > 0)) return 1;
+  const level = opponentStats.armorLevel ?? null;
+  return breakLevel != null && level != null && breakLevel >= level ? 1 : 1 - armor;
+}
+
+/**
  * Light Body: the holder takes 10% less ki-blast damage (ki-blast defense multiplier - 0.10),
  * unless the attacker has Draconic Aura. See utils/specialCapsules.js.
  */
@@ -38,8 +50,10 @@ export function kiBlastVolley(stats, { opponentStats = null, opponentHasLightBod
   if (count >= 999) count = 20;
   const defense = opponentStats?.energy ?? 1;
   const oppArmor = opponentStats?.armor ?? 0;
-  if (!attackerHasDraconicAura && (opponentHasLightBody || oppArmor > 0)) {
-    const per = damageTaken(base, defense, oppArmor > 0 ? 1 - oppArmor : 1);
+  // a ki blast that breaks the armor (break level >= armor level) is a normal combo again
+  const armorMult = oppArmor > 0 && stats?.breakLevels ? armorFactor(stats.breakLevels.kiBlast, opponentStats) : (oppArmor > 0 ? 1 - oppArmor : 1);
+  if (!attackerHasDraconicAura && (opponentHasLightBody || armorMult < 1)) {
+    const per = damageTaken(base, defense, armorMult);
     return per * count;
   }
   const dmg = base * defense;
@@ -132,9 +146,14 @@ export function calcOutgoingCombo(yourStats, opponentStats) {
     typeof yourStats.hit5 === 'number' ? yourStats.hit5 : 0,
   ];
 
+  // With the game's armor levels: a hit is reduced until one hit's break level reaches the armor's
+  // level; that hit and the rest of the combo land in full. Without them (old data): by hit count.
+  const levels = Array.isArray(yourStats.breakLevels?.rush) && opponentStats.armorLevel != null ? yourStats.breakLevels.rush : null;
+  let broken = false;
   const perHit = rawHits.map((raw, i) => {
     const hitNum = i + 1;
-    const armorReduced = oppArmor > 0 && hitNum < oppArmorBreak;
+    if (levels) broken = broken || (levels[i] != null && levels[i] >= opponentStats.armorLevel);
+    const armorReduced = oppArmor > 0 && (levels ? !broken : hitNum < oppArmorBreak);
     const damage = damageTaken(raw, meleeDef, armorReduced ? (1 - oppArmor) : 1);
     return { damage, armorReduced };
   });
@@ -168,4 +187,4 @@ export function getImageUrl(filename, base = import.meta.env.BASE_URL) {
   const b = base.endsWith('/') ? base : base + '/';
   return `${b}char_thumbnails/${filename}`;
 }
-
+

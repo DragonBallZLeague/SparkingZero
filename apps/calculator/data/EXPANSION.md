@@ -127,8 +127,15 @@ Checked:
 - **Roster:** 185 characters have no armor, 42 Sparking Armor (level 3) in Sparking, and 14 Hyper Armor (level 2)
   that turns into Sparking Armor (level 4) in Sparking.
 
-Next: the engine (and the Vs opponent view) should use each attack's break level against the opponent's armor,
-instead of only the rush combo's hit count.
+- **Ties break armor** (measured): Goku's fully charged ki blast (level 3) against Sparking Bardock's Sparking
+  Armor (level 3) broke it, 1,875.
+- **In the engine (2026-10-10):** `computeStats` gives each side's armor level and its attacks' break levels, and
+  `armorFactor` decides one hit. Break-level effects add: Draconic Aura +3, Dragon Rush +3 on rush hits, and the
+  common Sparking buff (`Buff_Common_SP`, `ArmorBreakLevelUp` 3; 1 for one character), which raises every attack
+  while Sparking.
+- **To test (Sparking break bonus):** Goku (Z - Early) **in Sparking**, fully charged ki blast against Sparking
+  Janemba. Its break level 3 + 3 = 6 beats his level 4, so the files predict 1,919 (no armor), against 1,439 when
+  Goku isn't Sparking. His first rush hit while Sparking (1 + 3 = 4) should also break it.
 
 ## Burst attacks (measured 2026-10-10)
 
