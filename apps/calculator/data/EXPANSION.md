@@ -299,6 +299,8 @@ Results from 2026-10-10:
      Broly (Z) and Broly (Z) Legendary Super Saiyan are flagged and can't; Broly (Z) Super Saiyan isn't and can).
 4. **Goku's fully charged smash: 1,400, and his Hyper Smash: 2,450 (1,960 × 1.25),** both as predicted. The smash charge levels read correctly.
 
+Pending league tests, with predictions, are in `TESTS.md`.
+
 ### Rush Chain tests (run 2026-10-11)
 
 Results, now in `characters.json` `rushChainDamage` (`scripts/lib/rushChains.mjs`) and checked by verify-data:

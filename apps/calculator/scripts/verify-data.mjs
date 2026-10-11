@@ -321,6 +321,11 @@ if (v2) {
   ig('Goku full charged smash', cm('0000_00')?.smash?.[2], 1400);
   ig('Goku hyper smash', cm('0000_00')?.hyperSmash, 2450);
   ig('Tien Heavy Finish (combo channel)', cm('0070_00')?.heavyFinish?.[0], 743);
+  // Pursuits (game files, 2026-10-11): Videl and Mr. Satan have no Vanishing Attack or Lightning Attack, but Dragon Homing
+  const pu = (name) => data.characters.find(c => c.name === name)?.moveset?.pursuits;
+  ig('Videl pursuits', JSON.stringify([pu('Videl')?.vanishingAttack, pu('Videl')?.lightningAttack, pu('Videl')?.dragonHoming]), JSON.stringify([false, false, { limit: 2 }]));
+  ig('Mr. Satan pursuits', JSON.stringify([pu('Mr. Satan')?.vanishingAttack, pu('Mr. Satan')?.lightningAttack, pu('Mr. Satan')?.dragonHoming]), JSON.stringify([false, false, true]));
+  ig('Goku (Z - Early) follow-up limit, and in Sparking', JSON.stringify([pu('Goku (Z - Early)')?.limit, pu('Goku (Z - Early)')?.sparkingAdd]), JSON.stringify([2, 2]));
   // Rush Chains (2026-10-11): totals before and after each chain, on a dummy with no capsules or skills
   const rcd = (cid, type) => data.characters.find(c => c.id === cid)?.rushChainDamage?.[type];
   const j = (v) => JSON.stringify(v);

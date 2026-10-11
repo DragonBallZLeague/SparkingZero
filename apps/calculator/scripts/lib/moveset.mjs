@@ -70,5 +70,23 @@ export function movesetOf(fm, id) {
     unavailable: Object.entries(OFF).filter(([flag]) => on(flag)).map(([, name]) => name),
     unavailableUnnamed: unnamed,
     abilities: ABILITIES.filter(([flag]) => ability(flag)).map(([, name]) => name),
+    pursuits: pursuitsOf(fm, id, on),
   };
+}
+
+// Follow-up (pursuit) limits, Numeric: PursuitBaseLimit is the general limit (+ PursuitBaseLimitAddAtSparking
+// in Sparking); PursuitLimitVanishingAttack / LightningAttack / DragonHoming give a pursuit its own limit when
+// above 0 (only Videl: Dragon Homing 2), else it shares the general one. An ActionFlag turns a pursuit off
+// (Videl and Mr. Satan: no Vanishing Attack or Lightning Attack, but Dragon Homing). Four characters have no
+// general limit in the files (Unreal's default, not known yet): Videl, Mr. Satan, Cheelai, Panzy.
+const PURSUITS = [['vanishingAttack', 'VanishingAttack', 'PursuitLimitVanishingAttack'], ['lightningAttack', 'LightningAttack', 'PursuitLimitLightningAttack'],
+  ['dragonHoming', 'DragonHoming', 'PursuitLimitDragonHoming']];
+function pursuitsOf(fm, id, on) {
+  const n = (f) => { const v = fm.raw(id, 'Numeric', f); return v == null || v === '' ? null : Number(v); };
+  const out = { limit: n('PursuitBaseLimit'), sparkingAdd: n('PursuitBaseLimitAddAtSparking') };
+  for (const [key, flag, field] of PURSUITS) {
+    const own = n(field);
+    out[key] = on(flag) ? false : (own > 0 ? { limit: own } : true);
+  }
+  return out;
 }
