@@ -6,6 +6,10 @@ before the detailed demo and the rebuild. Update it as items close; delete it wi
 
 The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its own. None of this blocks it.
 
+**Data fix waiting to ship:** the Giants' smash (Capsule Corp's value was 675 too high for all 11; the published
+smash now comes from the game files, measured by the league on 2026-10-10) is on this branch only. The league
+will ship it later, to dev-branch on its own or with the redesign.
+
 ## 1. Decisions waiting on the league
 
 - **Sign-off on concept B** after round 4 (fill bars under stats, chevron rates on the three meters).

@@ -144,12 +144,16 @@ How the follow-ups are read:
   the three Broly (Z) forms: CannonCombo turns off Ki Blast Cannon Smash, TriAttack Ki Blast Cannon Attack,
   PowerPress Rolling Press, DeltaStorm Delta Heavy Finish, RollingHurricane Rolling Hurricane, SparkingRush
   Violent Rush.
-- verify-data checks Goku's and the Brolys' lists. Tien's follow-ups match, but his file orders his chains Ki
-  Blast Cannon, Flying Kicks, Heavy Finishes, Heavy Finishes, against the screenshot's Flying Kicks, Heavy
-  Finishes, Heavy Finishes, Ki Blast Cannon. To recheck in game.
-- Flags without a known in-game name (REPORT.md "Moveset"): AirRush (not Air Combo: Tien has Air Combo),
-  DragonTornado, BlastRepel, EnergyWave, RollingHammer, Explosion.
+- verify-data checks the five lists (Goku, Tien, the three Broly (Z) forms). Tien's order, Ki Blast Cannon, Flying
+  Kicks, Heavy Finishes, Heavy Finishes, is right: the other screenshot was Tien (World Tournament).
+- **Grand Slash's follow-ups** (`moveset.grandSlash`): AirRush turns off Aerial Slash (Tien has the flag and only
+  Tornado Slash; Goku has neither flag and both). By the same pattern DragonTornado turns off Tornado Slash: to
+  confirm, Goku (GT), Goku (Teen) or Krillin should show only Aerial Slash. Roster: both 60, Tornado Slash only
+  108, Aerial Slash only 54, neither 16, no Grand Slash 3 (Giants).
+- Flags without a known in-game name (REPORT.md "Moveset"): BlastRepel, EnergyWave, RollingHammer, Explosion
+  (one or two characters each).
 
+## Move and ability flags
 
 Each character's file sets which moves and abilities it has (`ActionFlag.*`, `AbilityFlag.*` in
 `character-values.csv`). This would give each character a moveset and trait list:
