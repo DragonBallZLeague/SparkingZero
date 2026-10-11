@@ -1,7 +1,7 @@
 # Calculator redesign: what is left
 
 The league chose concept B, the in-game character sheet (`concepts/concept-b.html`), on 2026-10-09. It has been
-through three review rounds and a header adjustment, the last on 2026-10-10. This file lists what is still open
+through six review rounds, the last on 2026-10-10, and the league signed off its four views that day. This file lists what is still open
 before the detailed demo and the rebuild. Update it as items close; delete it with `design/` once the real pages ship.
 
 The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its own. None of this blocks it.
@@ -12,7 +12,14 @@ will ship it later, to dev-branch on its own or with the redesign.
 
 ## 1. Decisions waiting on the league
 
-- **Sign-off on concept B** after round 6 (2026-10-10): Rush Chains drawn as rush-hit pips, the chain, then ▸ follow-ups
+- **Pickers (round 7, 2026-10-10):** the character picker (the roster as the game's face icons with DP, filtered by
+  search, team, class and DP; a preview with art, headline stats and forms before picking; from Compare or Vs it
+  fills one side) and the capsule picker (the build with budget and attack-cap meters showing the hovered capsule,
+  rule warnings and effects the stats can't show; every allowed capsule by category with what it changes on this
+  build, e.g. Rush 5-hit 2,523 → 2,648; In Sparking! and Not in the stats tags; banned hidden behind "Show
+  banned"). In `concepts/concept-b.html#pick`. Waiting on the league's review.
+
+Signed off (2026-10-10): **concept B's four views** as of round 6 and the armor markers. Round 6: Rush Chains drawn as rush-hit pips, the chain, then ▸ follow-ups
   (sheet, Full stats, Compare, Vs); charge levels tabbed under each attack (Charge Lv.1-3); a Sparking! Mode section
   for Sparking-only moves and traits; ki blasts in their own red-orange; a Full volley roster bar; Vs All stats as
   both full sheets side by side and an expanded Exchange (charge levels, charged ki blast, Hyper Smash). Before that, round 5 (2026-10-10): Full stats gained the new game-file data (charged, jump and
@@ -22,7 +29,7 @@ will ship it later, to dev-branch on its own or with the redesign.
   in Full stats and Compare's All stats (rush hits 1-4, Lv.1 smash, ki blast, charged ki blast;
   blasts and ultimates always break armor, the league says). The sheet keeps its Armor tile for the character's
   own armor.
-- **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
+Also settled: **Giant size factor.** Giants are the 11 characters of the Giant class (the game's `giant` key). The game's
   cards shrink them to fit, so each gets a factor on top of its card height: ×1.3 for all of them (the league
   approved it on Janemba, 2026-10-10).
 Done (2026-10-10): the stat expansion (charged, jump and dash ki blasts; smash and Heavy Finish charge levels;
@@ -48,9 +55,6 @@ auto-recharge get no bar. Blasts and ultimates get none either: their types diff
 ## 2. Views and interactions not mocked yet
 
 - Compare's **All stats** mode on a phone.
-- **Character picker** (the nameplate's "Change"), on the sheet and on each side of Compare and Vs.
-- **Capsule picker** (the hexes): the ruleset, budget and group caps, the rule warnings, and notes for effects the
-  stats don't show (today's `RulesBar`).
 - **Opponent build editing** on Vs opponent: their capsules, skills and Sparking.
 - **Breakdowns on touch screens**: tap to open and close, and keyboard and screen-reader access.
 - **"Closest fighters"**: confirm the nine-stat similarity and what tapping one does.

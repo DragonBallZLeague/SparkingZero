@@ -345,6 +345,98 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 .abcmp.h { border-top: 0; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 0; }
 .abcmp > span:not(:first-child) { text-align: center; }
 .abcmp .arm { width: 11px; height: 13px; margin: 0 3px; }
+/* pickers (round 7): the character picker and the capsule picker */
+.pk { display: grid; grid-template-columns: minmax(0, 1fr) 330px; height: calc(100% - 50px); }
+.pk-main { padding: 14px 16px 0 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; overflow: hidden; }
+.pk-h { display: flex; align-items: baseline; gap: 12px; }
+.pk-h b { font-size: 19px; font-weight: 900; font-style: italic; text-transform: uppercase; }
+.pk-h small { color: var(--muted); font-size: 12px; }
+.pk-h .x { margin-left: auto; font-size: 12px; font-weight: 800; color: #e2e8f0; padding: 3px 12px; background: rgba(148,163,184,.18); clip-path: polygon(9% 0, 100% 0, 91% 100%, 0 100%); }
+.srch { display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); color: var(--muted); font-size: 13px; }
+.srch::before { content: ''; width: 10px; height: 10px; border: 2px solid var(--muted); border-radius: 50%; }
+.fl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.fl > small { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); margin-right: 2px; }
+.fl > span { font-size: 11px; font-weight: 700; padding: 2px 10px; background: rgba(148,163,184,.14); color: #cbd5e1; white-space: nowrap; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); }
+.fl > span.on { background: #f8fafc; color: #0a0d20; }
+.fl > span.dd::after { content: ' \25BE'; }
+.cgrid { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; align-content: start; flex: 1; overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 60px), transparent); mask-image: linear-gradient(#000 calc(100% - 60px), transparent); }
+.ct { position: relative; background: linear-gradient(180deg, rgba(96,165,250,.16), rgba(10,13,32,.6)); padding: 0 0 4px; min-width: 0; outline: 1px solid rgba(148,163,184,.12); }
+.ct img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; object-position: top; }
+.ct b { position: absolute; top: 3px; right: 3px; font-size: 10px; font-weight: 900; font-style: italic; padding: 0 5px; background: #f97316; color: #111; clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%); }
+.ct span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 9.5px; line-height: 1.2; padding: 2px 4px 0; color: #e2e8f0; min-height: 2.4em; }
+.ct.cur { outline: 2px solid #f8fafc; }
+.ct.cur::after { content: 'NOW'; position: absolute; top: 3px; left: 3px; font-size: 8.5px; font-weight: 900; padding: 0 4px; background: #f8fafc; color: #0a0d20; }
+.ct.hov { outline: 2px solid #f97316; box-shadow: 0 0 14px rgba(249,115,22,.55); }
+.pv { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(37,99,235,.18), rgba(10,13,32,.4)); border-left: 1px solid var(--line); }
+.pv .pvfig { position: absolute; left: 0; right: 0; top: 0; height: 520px; display: flex; justify-content: center;
+  -webkit-mask-image: linear-gradient(#000 140px, transparent 330px); mask-image: linear-gradient(#000 140px, transparent 330px); }
+.pv .pvfig img { height: 100%; width: auto; flex: none; }
+.pv .pvb { position: absolute; left: 0; right: 0; top: 270px; padding: 0 16px; }
+.pv .nm { font-size: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; line-height: 1.05; }
+.pv .tiles.t2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.forms { display: flex; gap: 6px; align-items: center; margin-top: 10px; font-size: 11px; color: var(--muted); }
+.forms img { width: 34px; height: 34px; object-fit: cover; object-position: top; background: rgba(255,255,255,.08); outline: 1px solid rgba(148,163,184,.25); }
+.forms em { font-style: normal; color: #e2e8f0; font-weight: 700; }
+.pick { display: block; margin-top: 12px; padding: 9px 0; text-align: center; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: .04em; color: #111; background: linear-gradient(90deg, #f97316, #fbbf24); clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%); }
+.pick.side { background: linear-gradient(90deg, #3b82f6, #60a5fa); color: #fff; }
+/* the capsule picker */
+.cpk { display: grid; grid-template-columns: 360px minmax(0, 1fr); height: calc(100% - 50px); }
+.cbuild { padding: 14px 16px; border-right: 1px solid var(--line); background: rgba(10,13,32,.35); display: flex; flex-direction: column; gap: 12px; }
+.cbuild .hexes .hex { width: 44px; height: 50px; }
+.hex.slot { outline: 0; background: linear-gradient(160deg, rgba(249,115,22,.55), rgba(249,115,22,.15)); color: #fff; font-size: 16px; }
+.meterl { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); margin-bottom: 5px; }
+.meterl b { color: #f1f5f9; letter-spacing: 0; font-size: 13px; font-style: italic; }
+.meterl b em { font-style: normal; color: var(--up); }
+.bud { display: flex; gap: 3px; }
+.bud i { flex: 1; height: 10px; transform: skewX(-20deg); background: rgba(148,163,184,.16); }
+.bud i.f { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.bud i.h { background: rgba(251,146,60,.45); outline: 1px dashed rgba(251,146,60,.9); outline-offset: -1px; }
+.bud.g i.f { background: #e2e8f0; } .bud.g i.h { background: rgba(226,232,240,.3); outline-color: rgba(226,232,240,.8); }
+.warn { font-size: 12px; padding: 6px 10px; background: rgba(239,68,68,.16); border-left: 3px solid var(--burn); color: #fecaca; }
+.warn.ok { background: rgba(74,222,128,.1); border-left-color: var(--win); color: #bbf7d0; }
+.nsl { font-size: 12px; color: #cbd5e1; }
+.nsl div { padding: 4px 0; border-top: 1px solid var(--line); }
+.nsl b { color: #f1f5f9; }
+.clist { padding: 14px 18px 0; display: flex; flex-direction: column; gap: 9px; min-width: 0; overflow: hidden; }
+.crows { flex: 1; overflow: hidden; -webkit-mask-image: linear-gradient(#000 calc(100% - 50px), transparent); mask-image: linear-gradient(#000 calc(100% - 50px), transparent); }
+.cgh { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #fca5a5; padding: 8px 0 3px; border-left: 3px solid var(--melee); padding-left: 8px; margin-top: 4px; }
+.cgh + .cr { border-top: 0; }
+.cr { display: grid; grid-template-columns: 30px minmax(0, 1fr) 250px; gap: 10px; align-items: center; padding: 5px 6px; border-top: 1px solid var(--line); }
+.cr .cn b { font-size: 13px; font-weight: 800; }
+.cr .cn small { display: block; font-size: 11.5px; color: var(--muted); }
+.cr .cc { font-size: 12px; font-weight: 700; color: var(--up); text-align: right; font-variant-numeric: tabular-nums; }
+.cr .cc s { color: var(--muted); font-weight: 500; text-decoration: none; }
+.cr .cc s::after { content: ' \2192'; }
+.cr .cc .dn { font-style: normal; color: #f87171; }
+.cr .cc .ns { font-style: normal; font-weight: 600; font-size: 11px; color: var(--muted); padding: 1px 6px; background: rgba(148,163,184,.14); }
+.cr .cc .when { font-style: normal; font-size: 10px; font-weight: 800; color: #f3e8ff; padding: 1px 6px; background: rgba(168,85,247,.45); margin-right: 4px; }
+.cr.eqd { opacity: .5; }
+.cr.hov { background: rgba(249,115,22,.14); outline: 1px solid rgba(249,115,22,.6); }
+.ctag { font-style: normal; font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; margin-left: 8px; padding: 0 6px; background: #f8fafc; color: #0a0d20; vertical-align: 1px; }
+.ctag.g { background: rgba(226,232,240,.18); color: #e2e8f0; }
+.hc { display: inline-flex; width: 24px; height: 27px; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #111; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.hc.c1 { background: #cbd5e1; } .hc.c2 { background: #60a5fa; } .hc.c3 { background: #facc15; } .hc.c4 { background: #fb923c; } .hc.c5 { background: #ef4444; color: #fff; }
+.fl span .hc { width: 15px; height: 17px; font-size: 9.5px; vertical-align: -4px; }
+.fl.cost > span { clip-path: none; background: none; padding: 0 2px; }
+.fl.cost > span.on { background: #f8fafc; padding: 2px 10px; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); }
+.shown { font-size: 11.5px; color: var(--muted); }
+.shown u { color: #e2e8f0; text-decoration: underline dotted; text-underline-offset: 3px; }
+/* phone pickers */
+.ph .pk, .ph .cpk { display: block; height: auto; }
+.ph .pk-main { padding: 10px 10px 0; }
+.ph .cgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); height: 720px; flex: none; }
+.ph .fl.scroll { flex-wrap: nowrap; overflow: hidden; }
+.pkbar { position: absolute; left: 0; right: 0; bottom: 46px; display: grid; grid-template-columns: 44px minmax(0, 1fr) 92px; gap: 10px; align-items: center; padding: 8px 10px; background: rgba(10,13,32,.97); border-top: 2px solid #f97316; }
+.pkbar img { width: 44px; height: 44px; object-fit: cover; object-position: top; }
+.pkbar .nm { font-size: 13px; font-weight: 900; font-style: italic; text-transform: uppercase; line-height: 1.1; }
+.pkbar .chips { margin-top: 3px; }
+.pkbar .pick { margin: 0; padding: 7px 0; font-size: 13px; }
+.ph .cbuild { border-right: 0; padding: 10px; gap: 9px; }
+.ph .clist { padding: 4px 10px 0; }
+.ph .cr { grid-template-columns: 28px minmax(0, 1fr); row-gap: 1px; }
+.ph .cr .cc { grid-column: 2; text-align: left; }
+.ph .crows { height: 520px; flex: none; }
 /* phone */
 .ph .cols { display: block; height: auto; }
 .ph .art { height: 470px; }
@@ -388,12 +480,13 @@ h1 { font-size: 20px; margin: 0 0 4px; }
 <body>
 <div class="page">
   <h1>Concept B: the in-game character sheet</h1>
-  <p class="lead">The four views of concept B as quick static mockups, after your third round of changes. The numbers are real, from the published data and the engine. Only the switcher below works. On the real pages every dotted number opens its breakdown (Full stats shows one open).</p>
+  <p class="lead">The four views of concept B and its two pickers as quick static mockups, after your third round of changes. The numbers are real, from the published data and the engine. Only the switcher below works. On the real pages every dotted number opens its breakdown (Full stats shows one open).</p>
   <nav class="switch">
     <a href="#sheet" data-v="sheet">1. Sheet</a>
     <a href="#stats" data-v="stats">2. Full stats</a>
     <a href="#compare" data-v="compare">3. Compare</a>
     <a href="#versus" data-v="versus">4. Vs opponent</a>
+    <a href="#pick" data-v="pick">5. Pickers</a>
   </nav>
 
   <!-- ============================================================ SHEET -->
@@ -930,6 +1023,104 @@ h1 { font-size: 20px; margin: 0 0 4px; }
             </div>
           </div>
           <div class="phtabs"><span>Sheet</span><span>Stats</span><span>Compare</span><span class="on">Vs</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PICKERS -->
+  <section class="view" id="pick">
+    <div class="about">
+      <div><b>The idea</b>Picking a fighter and building capsules, the two things the sheet opens. <b style="display:inline;font-size:inherit;letter-spacing:0;text-transform:none;color:#e2e8f0">Character picker</b> (from the nameplate's "Change"): the whole roster as faces like the game's select screen, in the game's order with DP on each, filtered by search, team (this season's lists), class and DP. Hovering or tapping a face previews it on the right (art, class, DP, headline stats with their roster bars, its forms) before you pick, so you can browse without losing your sheet. From Compare or Vs opponent the same picker fills one side, and its button says which ("Pick for the right side"). <b style="display:inline;font-size:inherit;letter-spacing:0;text-transform:none;color:#e2e8f0">Capsule picker</b> (from the hexes): your build on the left (seven slots, the budget, the attack-boost cap, rule warnings, and what equipped capsules do that the stats can't show), every allowed capsule on the right by category, each with <i>what it changes on this character's build</i>, e.g. Rush 5-hit 2,523 → 2,648.</div>
+      <div><b>Notes</b>Faces are the game's own icons; the preview art is the card art the sheet uses. The budget bar shows equipped capsules solid and the hovered one dashed (Rush Attack Boost 2: 2 → 5 of 20), and the same for the attack cap (Rush, Smash and Blast Attack Boosts, 6 points in Standard). A capsule that would go over the budget or the cap shows red and can't be placed; banned capsules stay hidden, with "Show banned" to list them. Effects that only work in Sparking! are tagged In Sparking!; effects the calculator can't show (charge times, combo scaling) are tagged Not in the stats. Numbers are real, from the engine (Goku (Z - Early) with Rush Attack Boost 1 and Blast Burst).</div>
+    </div>
+    <div class="frames">
+      <div>
+        <p class="frame-lbl">Desktop 1180px, character picker</p>
+        <div class="desk" style="height:860px"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span class="on">Sheet</span><span>Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="pk">
+            <div class="pk-main">
+              <div class="pk-h"><b>Pick a fighter</b><small>241 fighters</small><span class="x">Close</span></div>
+              <div class="srch">Search by name</div>
+              <div class="fl"><small>Team</small><span class="on">All</span><span>Budokai</span><span>Cinema</span><span>Cold Kingdom</span><span>Creations</span><span>Demons</span><span>Malevolent Souls</span><span>Master &amp; Student</span><span>Outlaw Stars</span><span>Primal Instincts</span><span>Sentai Squad</span><span>Tiny Terrors</span><span>Z-Fighters</span></div>
+              <div class="fl"><small>Class</small><span class="dd">All classes</span><small style="margin-left:14px">DP</small><span class="on">Any</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+              <div class="cgrid"><div class="ct cur"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><b>4</b><span>Goku (Z - Early)</span></div><div class="ct hov"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_10_00.png" alt=""><b>5</b><span>Goku (Z - Mid)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_11_00.png" alt=""><b>6</b><span>Goku (Z - Mid) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_20_00.png" alt=""><b>5</b><span>Goku (Z - End)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_21_00.png" alt=""><b>6</b><span>Goku (Z - End) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_22_00.png" alt=""><b>6</b><span>Goku (Z - End) Super Saiyan 2</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_23_00.png" alt=""><b>7</b><span>Goku (Z - End) Super Saiyan 3</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_33_00.png" alt=""><b>8</b><span>Goku (GT) Super Saiyan 4</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_40_00.png" alt=""><b>5</b><span>Goku (Super)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_41_00.png" alt=""><b>6</b><span>Goku (Super) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_43_00.png" alt=""><b>8</b><span>Goku (Super) Super Saiyan God Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_50_00.png" alt=""><b>8</b><span>Goku (Super) Ultra Instinct -Sign-</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_51_00.png" alt=""><b>9</b><span>Goku (Super) Ultra Instinct</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0001_42_00.png" alt=""><b>7</b><span>Goku (Super) Super Saiyan God</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_30_00.png" alt=""><b>5</b><span>Goku (GT)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_31_00.png" alt=""><b>6</b><span>Goku (GT) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_32_00.png" alt=""><b>7</b><span>Goku (GT) Super Saiyan 3</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_50_00.png" alt=""><b>3</b><span>Goku (Teen)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_00_00.png" alt=""><b>4</b><span>Vegeta (Z - Scouter)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_10_00.png" alt=""><b>5</b><span>Vegeta (Z - Early)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_11_00.png" alt=""><b>6</b><span>Vegeta (Z - Early) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_30_00.png" alt=""><b>5</b><span>Vegeta (Z - End)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_31_00.png" alt=""><b>6</b><span>Vegeta (Z - End) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_32_00.png" alt=""><b>6</b><span>Vegeta (Z - End) Super Saiyan 2</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_40_00.png" alt=""><b>7</b><span>Majin Vegeta</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_50_00.png" alt=""><b>8</b><span>Vegeta (GT) Super Saiyan 4</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_60_00.png" alt=""><b>5</b><span>Vegeta (Super)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_61_00.png" alt=""><b>6</b><span>Vegeta (Super) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_63_00.png" alt=""><b>8</b><span>Vegeta (Super) Super Saiyan God Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0021_20_00.png" alt=""><b>6</b><span>Super Vegeta</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0022_62_00.png" alt=""><b>7</b><span>Vegeta (Super) Super Saiyan God</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0023_00_00.png" alt=""><b>5</b><span>Great Ape Vegeta</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0030_00_00.png" alt=""><b>3</b><span>Gohan (Kid)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0031_00_00.png" alt=""><b>4</b><span>Gohan (Teen)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0031_01_00.png" alt=""><b>6</b><span>Gohan (Teen) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0031_02_00.png" alt=""><b>7</b><span>Gohan (Teen) Super Saiyan 2</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_00_00.png" alt=""><b>4</b><span>Gohan (Adult)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_01_00.png" alt=""><b>6</b><span>Gohan (Adult) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_02_00.png" alt=""><b>7</b><span>Gohan (Adult) Super Saiyan 2</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_10_00.png" alt=""><b>4</b><span>Great Saiyaman</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_20_00.png" alt=""><b>7</b><span>Ultimate Gohan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_30_00.png" alt=""><b>5</b><span>Gohan (Future)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0032_31_00.png" alt=""><b>6</b><span>Gohan (Future) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0040_00_00.png" alt=""><b>4</b><span>Piccolo</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0040_10_00.png" alt=""><b>5</b><span>Piccolo (Fused with Kami)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0040_20_00.png" alt=""><b>4</b><span>Nail</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0050_00_00.png" alt=""><b>3</b><span>Krillin</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0060_00_00.png" alt=""><b>3</b><span>Yamcha</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0070_00_00.png" alt=""><b>4</b><span>Tien</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0080_00_00.png" alt=""><b>4</b><span>Trunks (Sword)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0080_00_01.png" alt=""><b>6</b><span>Trunks (Sword) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0080_10_00.png" alt=""><b>5</b><span>Trunks (Melee)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0080_11_00.png" alt=""><b>6</b><span>Trunks (Melee) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0080_30_00.png" alt=""><b>5</b><span>Future Trunks</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0080_31_00.png" alt=""><b>6</b><span>Future Trunks Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0081_20_00.png" alt=""><b>6</b><span>Super Trunks</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0082_00_00.png" alt=""><b>4</b><span>Trunks (Kid)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0082_01_00.png" alt=""><b>5</b><span>Trunks (Kid) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0090_00_00.png" alt=""><b>4</b><span>Goten</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0090_01_00.png" alt=""><b>5</b><span>Goten Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0100_00_00.png" alt=""><b>7</b><span>Vegito</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0100_01_00.png" alt=""><b>8</b><span>Super Vegito</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0100_02_00.png" alt=""><b>10</b><span>Vegito Super Saiyan God Super Saiyan</span></div></div>
+            </div>
+            <div class="pv">
+              <div class="pvfig"><img src="../../public/char_art/0000_10.webp" alt=""></div>
+              <div class="pvb">
+                <div class="nm">Goku (Z - Mid)</div>
+                <div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 5</span></div>
+                <div class="tiles t2">
+                  <div class="tile"><span>HP</span><b>40,000</b></div>
+                  <div class="tile"><span>Rush 5-hit</span><b>2,585</b><i class="rk" style="--p:34%"></i></div>
+                  <div class="tile"><span>Smash</span><b>709</b><i class="rk" style="--p:30%"></i></div>
+                  <div class="tile"><span>Ki blast limit</span><b>6</b><i class="rk" style="--p:62%"></i></div>
+                </div>
+                <div class="forms"><span>Forms</span><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_10_00.png" alt="" style="outline-color:#f97316"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_11_00.png" alt=""><em>Super Saiyan, DP 6</em></div>
+                <span class="pick">Pick Goku (Z - Mid)</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px, character picker</p>
+        <div class="phone" style="height:1000px"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="pk"><div class="pk-main">
+            <div class="pk-h"><b>Pick a fighter</b><span class="x">Close</span></div>
+            <div class="srch">Search by name</div>
+            <div class="fl scroll"><span class="dd on">All teams</span><span class="dd">Class</span><span class="dd">DP</span></div>
+            <div class="cgrid"><div class="ct cur"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_00_00.png" alt=""><b>4</b><span>Goku (Z - Early)</span></div><div class="ct hov"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_10_00.png" alt=""><b>5</b><span>Goku (Z - Mid)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_11_00.png" alt=""><b>6</b><span>Goku (Z - Mid) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_20_00.png" alt=""><b>5</b><span>Goku (Z - End)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_21_00.png" alt=""><b>6</b><span>Goku (Z - End) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_22_00.png" alt=""><b>6</b><span>Goku (Z - End) Super Saiyan 2</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_23_00.png" alt=""><b>7</b><span>Goku (Z - End) Super Saiyan 3</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_33_00.png" alt=""><b>8</b><span>Goku (GT) Super Saiyan 4</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_40_00.png" alt=""><b>5</b><span>Goku (Super)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_41_00.png" alt=""><b>6</b><span>Goku (Super) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_43_00.png" alt=""><b>8</b><span>Goku (Super) Super Saiyan God Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_50_00.png" alt=""><b>8</b><span>Goku (Super) Ultra Instinct -Sign-</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_51_00.png" alt=""><b>9</b><span>Goku (Super) Ultra Instinct</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0001_42_00.png" alt=""><b>7</b><span>Goku (Super) Super Saiyan God</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_30_00.png" alt=""><b>5</b><span>Goku (GT)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_31_00.png" alt=""><b>6</b><span>Goku (GT) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_32_00.png" alt=""><b>7</b><span>Goku (GT) Super Saiyan 3</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0002_50_00.png" alt=""><b>3</b><span>Goku (Teen)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_00_00.png" alt=""><b>4</b><span>Vegeta (Z - Scouter)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_10_00.png" alt=""><b>5</b><span>Vegeta (Z - Early)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_11_00.png" alt=""><b>6</b><span>Vegeta (Z - Early) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_30_00.png" alt=""><b>5</b><span>Vegeta (Z - End)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_31_00.png" alt=""><b>6</b><span>Vegeta (Z - End) Super Saiyan</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_32_00.png" alt=""><b>6</b><span>Vegeta (Z - End) Super Saiyan 2</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_40_00.png" alt=""><b>7</b><span>Majin Vegeta</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_50_00.png" alt=""><b>8</b><span>Vegeta (GT) Super Saiyan 4</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_60_00.png" alt=""><b>5</b><span>Vegeta (Super)</span></div><div class="ct"><img src="../../public/char_thumbnails/T_UI_FaceP1_0020_61_00.png" alt=""><b>6</b><span>Vegeta (Super) Super Saiyan</span></div></div>
+          </div></div>
+          <div class="pkbar"><img src="../../public/char_thumbnails/T_UI_FaceP1_0000_10_00.png" alt=""><div><div class="nm">Goku (Z - Mid)</div><div class="chips"><span class="chip">Normal</span><span class="chip dp">DP 5</span></div></div><span class="pick">Pick</span></div>
+          <div class="phtabs"><span class="on">Sheet</span><span>Stats</span><span>Compare</span><span>Vs</span></div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Desktop 1180px, capsule picker</p>
+        <div class="desk" style="height:900px"><div class="B">
+          <div class="top"><span class="ttl">Character Calculator</span><div class="tabs"><span class="on">Sheet</span><span>Full stats</span><span>Compare</span><span>Vs opponent</span></div><span class="rs">Standard ruleset ▾</span></div>
+          <div class="cpk">
+            <div class="cbuild">
+              <div class="pk-h"><b>Capsules</b><small>Goku (Z - Early)</small></div>
+              <div class="hexes"><span class="hex f">Rush<br>Boost 1</span><span class="hex f">Blast<br>Burst</span><span class="hex slot">+</span><span class="hex"></span><span class="hex"></span><span class="hex"></span><span class="hex"></span></div>
+              <div><div class="meterl"><span>Budget</span><b>2 <em>→ 5</em> of 20</b></div><div class="bud"><i class="f"></i><i class="f"></i><i class="h"></i><i class="h"></i><i class="h"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div>
+              <div><div class="meterl"><span>Attack boosts cap</span><b>1 <em>→ 4</em> of 6</b></div><div class="bud g"><i class="f"></i><i class="h"></i><i class="h"></i><i class="h"></i><i class=""></i><i class=""></i></div></div>
+              <div class="fl"><small>Ruleset</small><span class="on dd">Standard</span></div>
+              <div class="warn ok">Fits Standard. Rush Attack Boost 2 would fit too.</div>
+              <div class="nsl"><div class="meterl" style="margin:0 0 2px"><span>Not shown in the stats</span></div><div><b>Blast Burst</b> Blast combos +5%</div></div>
+              <div class="shown">The sheet's numbers already include <u>Rush +2.5%</u> and <u>Blasts +5%, +1 bar</u>.</div>
+            </div>
+            <div class="clist">
+              <div class="srch">Search capsules by name or effect</div>
+              <div class="fl"><span class="on">All</span><span>Melee</span><span>Ki blasts</span><span>Blasts</span><span>Toughness</span><span>Ki and skill</span><span>Movement</span><span>Sparking!</span><span>Team</span></div>
+              <div class="fl cost"><small>Cost</small><span class="on">Any cost</span><span><span class="hc c1">1</span></span><span><span class="hc c2">2</span></span><span><span class="hc c3">3</span></span><span><span class="hc c4">4</span></span><span><span class="hc c5">5</span></span><span style="margin-left:auto;background:none;color:var(--muted)">Show banned (14)</span></div>
+              <div class="crows"><div class="cgh">Melee</div><div class="cr eqd"><span class="hc c1">1</span><span class="cn"><b>Rush Attack Boost 1</b><em class="ctag">Equipped</em><small>Rush +2.5%</small></span><span class="cc"></span></div><div class="cr hov"><span class="hc c3">3</span><span class="cn"><b>Rush Attack Boost 2</b><em class="ctag g">Attack cap</em><small>Rush +5%</small></span><span class="cc">Rush 5-hit <s>2,523</s> 2,648</span></div><div class="cr"><span class="hc c5">5</span><span class="cn"><b>Rush Attack Boost 3</b><em class="ctag g">Attack cap</em><small>Rush +7.5%</small></span><span class="cc">Rush 5-hit <s>2,523</s> 2,706</span></div><div class="cr"><span class="hc c1">1</span><span class="cn"><b>Smash Attack Boost 1</b><em class="ctag g">Attack cap</em><small>Smash and Rush Chains +2.5%</small></span><span class="cc">Smash <s>675</s> 692</span></div><div class="cr"><span class="hc c3">3</span><span class="cn"><b>Smash Attack Boost 2</b><em class="ctag g">Attack cap</em><small>Smash and Rush Chains +5%</small></span><span class="cc">Smash <s>675</s> 709</span></div><div class="cr"><span class="hc c5">5</span><span class="cn"><b>Smash Attack Boost 3</b><em class="ctag g">Attack cap</em><small>Smash and Rush Chains +7.5%</small></span><span class="cc">Smash <s>675</s> 726</span></div><div class="cr"><span class="hc c3">3</span><span class="cn"><b>Master Strike</b><small>Rush, smash, Rush Chains +5%, −5,000 HP</small></span><span class="cc">Rush 5-hit <s>2,523</s> 2,648<br>HP <s>40,000</s> <em class="dn">35,000</em></span></div><div class="cr"><span class="hc c1">1</span><span class="cn"><b>Master Throw</b><small>Throw +5%</small></span><span class="cc">Throw <s>1,250</s> 1,313</span></div><div class="cr"><span class="hc c2">2</span><span class="cn"><b>Super Warrior</b><small>Rush +5% while Sparking</small></span><span class="cc"><i class="when">In Sparking!</i> Rush 5-hit 2,648</span></div><div class="cr"><span class="hc c3">3</span><span class="cn"><b>Dragon Rush</b><small>Rush hits break armor 3 levels sooner</small></span><span class="cc">Rush breaks every armor from hit 1</span></div><div class="cr"><span class="hc c4">4</span><span class="cn"><b>Draconic Aura</b><small>Every attack breaks armor 3 levels sooner</small></span><span class="cc">Rush breaks every armor from hit 1, ki blasts break Hyper and Sparking Armor</span></div><div class="cr"><span class="hc c1">1</span><span class="cn"><b>Melee Charge 1</b><small>Smash and Rush Chain charge time −2%</small></span><span class="cc"><i class="ns">Not in the stats</i></span></div><div class="cgh">Ki blasts</div><div class="cr"><span class="hc c1">1</span><span class="cn"><b>Ki Blast Attack Boost 1</b><small>Ki blasts +2.5%</small></span><span class="cc">Ki blast <s>250</s> 257</span></div><div class="cr"><span class="hc c3">3</span><span class="cn"><b>Ki Blast Attack Boost 2</b><small>Ki blasts +5%</small></span><span class="cc">Ki blast <s>250</s> 263</span></div><div class="cr"><span class="hc c1">1</span><span class="cn"><b>Rush Ki Blast Count Boost</b><small>Ki blast limit +2</small></span><span class="cc">Ki blast limit <s>5</s> 7</span></div></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p class="frame-lbl">Phone 390px, capsule picker</p>
+        <div class="phone" style="height:880px"><div class="B ph">
+          <div class="top"><span class="ttl">Calculator</span><span class="rs">Standard ▾</span></div>
+          <div class="cpk">
+            <div class="cbuild">
+              <div class="pk-h"><b>Capsules</b><span class="x">Done</span></div>
+              <div class="hexes"><span class="hex f">Rush<br>Boost 1</span><span class="hex f">Blast<br>Burst</span><span class="hex slot">+</span><span class="hex"></span><span class="hex"></span><span class="hex"></span><span class="hex"></span></div>
+              <div><div class="meterl"><span>Budget</span><b>2 <em>→ 5</em> of 20</b></div><div class="bud"><i class="f"></i><i class="f"></i><i class="h"></i><i class="h"></i><i class="h"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div>
+              <div><div class="meterl"><span>Attack boosts cap</span><b>1 <em>→ 4</em> of 6</b></div><div class="bud g"><i class="f"></i><i class="h"></i><i class="h"></i><i class="h"></i><i class=""></i><i class=""></i></div></div>
+            </div>
+            <div class="clist">
+              <div class="srch">Search capsules</div>
+              <div class="fl scroll"><span class="on">All</span><span>Melee</span><span>Ki blasts</span><span>Blasts</span><span>Toughness</span><span>Ki and skill</span><span>Movement</span><span>Sparking!</span><span>Team</span></div>
+              <div class="crows"><div class="cgh">Melee</div><div class="cr eqd"><span class="hc c1">1</span><span class="cn"><b>Rush Attack Boost 1</b><em class="ctag">Equipped</em><small>Rush +2.5%</small></span><span class="cc"></span></div><div class="cr hov"><span class="hc c3">3</span><span class="cn"><b>Rush Attack Boost 2</b><em class="ctag g">Attack cap</em><small>Rush +5%</small></span><span class="cc">Rush 5-hit <s>2,523</s> 2,648</span></div><div class="cr"><span class="hc c5">5</span><span class="cn"><b>Rush Attack Boost 3</b><em class="ctag g">Attack cap</em><small>Rush +7.5%</small></span><span class="cc">Rush 5-hit <s>2,523</s> 2,706</span></div><div class="cr"><span class="hc c1">1</span><span class="cn"><b>Smash Attack Boost 1</b><em class="ctag g">Attack cap</em><small>Smash and Rush Chains +2.5%</small></span><span class="cc">Smash <s>675</s> 692</span></div><div class="cr"><span class="hc c3">3</span><span class="cn"><b>Smash Attack Boost 2</b><em class="ctag g">Attack cap</em><small>Smash and Rush Chains +5%</small></span><span class="cc">Smash <s>675</s> 709</span></div><div class="cr"><span class="hc c5">5</span><span class="cn"><b>Smash Attack Boost 3</b><em class="ctag g">Attack cap</em><small>Smash and Rush Chains +7.5%</small></span><span class="cc">Smash <s>675</s> 726</span></div></div>
+            </div>
+          </div>
+          <div class="phtabs"><span class="on">Sheet</span><span>Stats</span><span>Compare</span><span>Vs</span></div>
         </div></div>
       </div>
     </div>
