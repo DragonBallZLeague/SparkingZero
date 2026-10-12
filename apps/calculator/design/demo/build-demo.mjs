@@ -1,9 +1,9 @@
-// Builds calculator-demo.html: one self-contained page that bundles the demo (demo.jsx), the
-// calculator's real engine and helpers (src/utils, src/data/adapter.js) and the published data
-// (public/data/*.json), so every number on it is the app's own. Run from the repo root:
+// Builds calculator-demo.html: one self-contained page that bundles the demo (main.jsx), the calculator's
+// real engine and helpers (src/utils, src/data/adapter.js) and the published data (public/data/*.json), so
+// every number on it is the app's own. Run from the repo root:
 //   node apps/calculator/design/demo/build-demo.mjs
-// then open apps/calculator/design/demo/calculator-demo.html. Portraits load from the
-// Analyzer's apps/analyzer/public/portraits/ by relative path, so keep the repo layout.
+// then open apps/calculator/design/demo/calculator-demo.html. Art and face icons load from
+// apps/calculator/public/ by relative path, so keep the repo layout.
 import { build } from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const out = await build({
-  entryPoints: [path.join(here, 'demo.jsx')],
+  entryPoints: [path.join(here, 'main.jsx')],
   bundle: true,
   write: false,
   format: 'iife',
@@ -22,7 +22,7 @@ const out = await build({
   logLevel: 'warning',
 });
 const js = out.outputFiles[0].text;
-const css = fs.readFileSync(path.join(here, 'demo.css'), 'utf8');
+const css = ['sheet.css', 'demo.css'].map(f => fs.readFileSync(path.join(here, f), 'utf8')).join('\n');
 const html = `<!doctype html>
 <html lang="en">
 <head>

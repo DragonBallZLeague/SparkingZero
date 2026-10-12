@@ -1,0 +1,96 @@
+// The demo shell: the top bar (title, the four views, the ruleset), the phone's tab bar, the pickers as
+// overlays, and the state in the URL. See README.md.
+import React, { useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { evaluatePair, evaluate, emptySpec, rulesetOf, meta, baseView } from './model.js';
+import { parse, serialize } from './state.js';
+import { BreakdownHost, PairCtx, usePhone } from './ui.jsx';
+import { SheetView } from './sheet.jsx';
+import { FullStatsView } from './fullstats.jsx';
+import { CompareView } from './compare.jsx';
+import { VersusView } from './versus.jsx';
+import { CharacterPicker, CapsulePicker } from './pickers.jsx';
+
+const TABS = [['sheet', 'Sheet', 'Sheet'], ['stats', 'Full stats', 'Stats'], ['compare', 'Compare', 'Compare'], ['vs', 'Vs opponent', 'Vs']];
+
+class Boundary extends React.Component {
+  constructor(p) { super(p); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidUpdate(prev) { if (prev.at !== this.props.at && this.state.error) this.setState({ error: null }); }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return <div className="plate" style={{ margin: 18 }}><h5>This view failed</h5><pre style={{ whiteSpace: 'pre-wrap', fontSize: 12 }}>{String(this.state.error.stack || this.state.error)}</pre></div>;
+  }
+}
+
+/** The no-build version of a pair, for marking changed numbers and starting breakdowns. */
+function basePairOf(pair) {
+  const b = (s) => s && { ...s, view: baseView(s.c.id), applied: [] };
+  return { A: b(pair.A), B: b(pair.B) };
+}
+
+function App() {
+  const [st, setSt] = useState(parse);
+  const [overlay, setOverlay] = useState(null); // { kind: 'char' | 'caps', side: 'A' | 'B' }
+  const phone = usePhone();
+  useEffect(() => {
+    const f = () => setSt(parse());
+    window.addEventListener('hashchange', f);
+    return () => window.removeEventListener('hashchange', f);
+  }, []);
+  const update = (patch, push = false) => {
+    const next = { ...st, ...patch };
+    if (push) location.hash = serialize(next).slice(1);
+    else history.replaceState(null, '', serialize(next));
+    setSt(next);
+  };
+  const go = (view) => { update({ view }, true); setOverlay(null); window.scrollTo(0, 0); };
+  const setSpec = (k) => (spec) => update({ [k]: spec });
+  const ruleset = rulesetOf(st.rs);
+  const exchange = st.view === 'vs';
+  const pair = useMemo(() => evaluatePair(st.A, st.view === 'compare' || st.view === 'vs' ? st.B : null, { exchange }), [st.A, st.B, st.view]);
+  const ctx = { pair, base: basePairOf(pair), names: { A: pair.A.c.name, B: pair.B?.c.name } };
+  const openPicker = (kind, side) => { setOverlay({ kind, side }); window.scrollTo(0, 0); };
+
+  let page;
+  if (overlay?.kind === 'char') {
+    page = <CharacterPicker current={st[overlay.side].id} side={overlay.side} view={st.view} onClose={() => setOverlay(null)}
+      onPick={(id) => { update({ [overlay.side]: { ...emptySpec(id), caps: st[overlay.side].caps } }); setOverlay(null); }} />;
+  } else if (overlay?.kind === 'caps') {
+    const side = evaluate(st[overlay.side]);
+    page = <CapsulePicker side={side} ruleset={ruleset} onClose={() => setOverlay(null)} onChange={setSpec(overlay.side)} who={overlay.side} />;
+  } else if (st.view === 'stats') page = <FullStatsView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} />;
+  else if (st.view === 'compare') page = <CompareView pair={pair} mode={st.cm} setMode={(cm) => update({ cm })} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} swapIn={(id) => update({ B: { ...emptySpec(id) } })} />;
+  else if (st.view === 'vs') page = <VersusView pair={pair} mode={st.vm} setMode={(vm) => update({ vm })} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={() => update({ A: { ...st.A, sit: null }, B: { ...st.B, sit: null } })} />;
+  else page = <SheetView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} />;
+
+  return (
+    <BreakdownHost resetKey={serialize(st) + (overlay ? overlay.kind : '')}>
+      <PairCtx.Provider value={ctx}>
+        <div className={`B app${phone ? ' ph' : ''}`}>
+          <div className="top">
+            <span className="ttl">{phone ? 'Calculator' : 'Character Calculator'}</span>
+            <div className="tabs" role="tablist">
+              {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={st.view === k} className={st.view === k && !overlay ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
+            </div>
+            <label className="rs">
+              <span className="sr">Ruleset</span>
+              <select value={st.rs} onChange={(e) => update({ rs: e.target.value })}>
+                {meta.rulesets.map(r => <option key={r.name} value={r.name}>{phone ? r.name.replace(' ruleset', '') : `${r.name} ruleset`}</option>)}
+              </select>
+            </label>
+          </div>
+          <main><Boundary at={st.view + (overlay?.kind || '')}>{page}</Boundary></main>
+          {phone && (
+            <nav className="phtabs">
+              {TABS.map(([k, , s]) => <button key={k} className={st.view === k && !overlay ? 'on' : ''} onClick={() => go(k)}>{s}</button>)}
+            </nav>
+          )}
+        </div>
+      </PairCtx.Provider>
+    </BreakdownHost>
+  );
+}
+
+document.title = 'Calculator demo';
+createRoot(document.getElementById('root')).render(<App />);

@@ -1,7 +1,8 @@
-// Shared demo pieces: the breakdown popover (a bottom sheet on a phone), tappable numbers,
-// chip menus, the segmented control, portraits and class badges.
+// Shared pieces: the breakdown (a popover with a mouse or keyboard, a bottom sheet on a phone), the
+// tappable number that opens it, and small controls.
 import React, { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { STAT, valueOf } from './stats.js';
+import { breakdown, effectTiles } from './model.js';
+import { F, delta } from './format.js';
 
 export function useMedia(q) {
   const [m, setM] = useState(() => window.matchMedia(q).matches);
@@ -13,178 +14,183 @@ export function useMedia(q) {
   }, [q]);
   return m;
 }
-export const usePhone = () => useMedia('(max-width: 639px)');
+export const usePhone = () => useMedia('(max-width: 720px)');
 
-/* ---------- breakdown popover ---------- */
-const BreakdownCtx = createContext(() => {});
-export const useBreakdown = () => useContext(BreakdownCtx);
+/* ------------------------------------------------------------------ the pair a number reads from */
+/** { pair: {A, B}, base: {A, B} with no build, names: {A, B} } for the numbers inside. */
+export const PairCtx = createContext(null);
+export const usePair = () => useContext(PairCtx);
 
-export function BreakdownHost({ children }) {
-  const [open, setOpen] = useState(null); // { rect, title, sub, rows }
+/* ------------------------------------------------------------------ breakdowns */
+const BdCtx = createContext(null);
+
+export function BreakdownHost({ children, resetKey }) {
   const phone = usePhone();
+  const [open, setOpen] = useState(null); // { key, title, rect, pinned, content }
+  // the numbers changed (a build, a view): close it rather than show stale parts
+  useEffect(() => setOpen(null), [resetKey]);
   const ref = useRef(null);
   const [pos, setPos] = useState(null);
   useLayoutEffect(() => {
-    if (!open || phone || !ref.current) return;
+    if (!open || phone || !ref.current) { setPos(null); return; }
     const r = open.rect, w = ref.current.offsetWidth, h = ref.current.offsetHeight;
-    let left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), window.innerWidth - w - 8);
-    let top = r.bottom + 6;
-    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
+    const left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), window.innerWidth - w - 8);
+    let top = r.bottom + 8;
+    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 8);
     setPos({ left, top });
   }, [open, phone]);
   useEffect(() => {
     if (!open) return;
-    const k = (e) => e.key === 'Escape' && setOpen(null);
-    const s = () => !phone && setOpen(null);
+    const k = (e) => { if (e.key === 'Escape') { open.anchor?.focus?.(); setOpen(null); } };
+    const s = () => { if (!phone && !open.pinned) setOpen(null); };
     window.addEventListener('keydown', k);
     window.addEventListener('scroll', s, { passive: true });
     return () => { window.removeEventListener('keydown', k); window.removeEventListener('scroll', s); };
   }, [open, phone]);
+  // a pinned popover follows its number when the page scrolls
+  useEffect(() => {
+    if (!open?.pinned || phone) return;
+    const f = () => open.anchor && setOpen(o => o && { ...o, rect: o.anchor.getBoundingClientRect() });
+    window.addEventListener('scroll', f, { passive: true });
+    return () => window.removeEventListener('scroll', f);
+  }, [open?.pinned, open?.anchor, phone]);
   return (
-    <BreakdownCtx.Provider value={setOpen}>
+    <BdCtx.Provider value={{ open, setOpen, phone }}>
       {children}
-      {open && (
-        <>
-          <div className={`backdrop${phone ? ' dim' : ''}`} onClick={() => setOpen(null)} />
-          <div ref={ref} role="dialog" aria-label={open.title} className={phone ? 'sheet' : 'pop bd-pop'}
-            style={phone ? undefined : { left: pos?.left ?? -9999, top: pos?.top ?? -9999 }}>
-            {phone && <div className="sheet-grip" />}
-            <div className="bd-title">{open.title}{open.sub && <span>{open.sub}</span>}</div>
-            <table className="bd">
-              <tbody>
-                {open.rows.map(([part, value, source, total], i) => (
-                  <tr key={i} className={total ? 'total' : ''}>
-                    <td>{part}</td>
-                    <td className="num">{value}</td>
-                    <td className="src">{source}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {phone && <button className="pop-done" onClick={() => setOpen(null)}>Done</button>}
-          </div>
-        </>
+      {open && phone && <div className="dim fx-dim" onClick={() => setOpen(null)} />}
+      {open && phone && (
+        <div className="bsheet bd fx-sheet" role="dialog" aria-label={`${open.title} breakdown`}>
+          <div className="pk-h"><b>{open.title}</b><button className="x" onClick={() => setOpen(null)}>Close</button></div>
+          {open.content}
+          <div className="hint">Tap another dotted number to switch. Tap outside to close.</div>
+        </div>
       )}
-    </BreakdownCtx.Provider>
+      {open && !phone && (
+        <div ref={ref} className="tip fx-tip" role="dialog" aria-label={`${open.title} breakdown`}
+          style={{ left: pos?.left ?? -9999, top: pos?.top ?? -9999 }}
+          onMouseEnter={() => setOpen(o => o && { ...o, hoverTip: true })}
+          onMouseLeave={() => setOpen(o => (o && !o.pinned ? null : o && { ...o, hoverTip: false }))}>
+          <div className="th">{open.title}{open.pinned && <button className="x" onClick={() => { open.anchor?.focus?.(); setOpen(null); }}>Pinned ✕</button>}</div>
+          <div className="tb">{open.content}</div>
+        </div>
+      )}
+    </BdCtx.Provider>
   );
 }
 
-/**
- * A number that opens its breakdown. `stat` is a STAT key; `ctx` = { c, side, view }.
- * `base` (a view) marks it changed when it differs. `rows` overrides the stat's own breakdown.
- */
-export function Num({ stat, ctx, base, className = '', rows, title, children, valueOverride }) {
-  const open = useBreakdown();
-  const def = STAT[stat];
-  const v = valueOverride !== undefined ? valueOverride : valueOf(stat, ctx.view);
-  const changed = base && valueOf(stat, base) !== v;
-  const text = children ?? (def ? def.fmt(v) : String(v ?? '—'));
-  return (
-    <button type="button" className={`numbtn${changed ? ' changed' : ''} ${className}`}
-      onClick={(e) => open({
-        rect: e.currentTarget.getBoundingClientRect(),
-        title: title || def?.label || stat,
-        sub: ctx.c?.name,
-        rows: rows || def.explain(ctx.c, ctx.side, ctx.view),
-      })}>
-      {text}
-    </button>
-  );
+function effectLabel(effects) {
+  const tiles = effectTiles(effects, { summed: true });
+  const vals = [...new Set(tiles.map(t => t.value))];
+  return vals.join(', ');
 }
 
-/** Opens any breakdown rows (moves, skills). */
-export function Explain({ title, sub, rows, className = '', children }) {
-  const open = useBreakdown();
+/** The rows of a breakdown: Base, each thing that changes it, then the value with this build. */
+export function BreakdownRows({ bd, fmt, kind, names, extra, totalLabel = 'With this build' }) {
   return (
-    <button type="button" className={`numbtn ${className}`}
-      onClick={(e) => open({ rect: e.currentTarget.getBoundingClientRect(), title, sub, rows })}>
-      {children}
-    </button>
-  );
-}
-
-/* ---------- segmented control ---------- */
-export function Seg({ options, value, onChange, small }) {
-  return (
-    <div className={`seg${small ? ' small' : ''}`} role="group">
-      {options.map(([v, label]) => (
-        <button key={v} type="button" aria-pressed={value === v} onClick={() => onChange(v)}>{label}</button>
+    <div>
+      <div className="tr"><span>Base</span><span>{fmt(bd.base)}</span></div>
+      {bd.rows.map((r, i) => (
+        <div className="tr" key={i}>
+          <span>{names && names.B && r.side === 'B' ? `${names.B}: ` : ''}{r.name}{r.effects.length > 0 && <small>{effectLabel(r.effects)}</small>}</span>
+          <span>{delta(r.delta, kind)}</span>
+        </div>
       ))}
+      {!bd.rows.length && <div className="tr nb"><span>Nothing in this build changes it</span><span></span></div>}
+      {bd.rows.length > 0 && <div className="tr t"><span>{totalLabel}</span><span>{fmt(bd.final)}</span></div>}
+      {extra}
     </div>
   );
 }
 
-/* ---------- chip menu (multi or single select) ---------- */
-export function ChipMenu({ label, options, selected, onChange, multi = true, search = false, render }) {
-  const [open, setOpen] = useState(false);
-  const [q, setQ] = useState('');
-  const btn = useRef(null);
-  const phone = usePhone();
-  const [pos, setPos] = useState(null);
-  useLayoutEffect(() => {
-    if (open && !phone && btn.current) {
-      const r = btn.current.getBoundingClientRect();
-      setPos({ left: Math.min(r.left, window.innerWidth - 330), top: r.bottom + 6 });
-    }
-  }, [open, phone]);
-  const set = multi ? selected : (selected ? [selected] : []);
-  const shown = options.filter(([, l]) => !q || l.toLowerCase().includes(q.toLowerCase()));
-  const toggle = (v) => {
-    if (!multi) { onChange(v === selected ? null : v); setOpen(false); return; }
-    onChange(set.includes(v) ? set.filter(x => x !== v) : [...set, v]);
+/**
+ * A number that opens its breakdown: dotted, a Tab stop, Enter or Space opens and pins it, Esc closes;
+ * with a mouse, hovering previews and clicking pins. `get(sides)` reads it from { A, B } (each with its view).
+ */
+export function Tap({ title, get, fmt = F.int, kind = 'int', lessIsBetter = false, mark = true, extra = null, className = '', children, as: As = 'b' }) {
+  const ctx = useContext(BdCtx);
+  const pc = usePair();
+  const el = useRef(null);
+  const hoverT = useRef(null);
+  if (!pc) return <As className={className}>{children}</As>;
+  let value = null, base = null;
+  try { value = get(pc.pair); base = get(pc.base); } catch { /* a value a side doesn't have */ }
+  const text = children ?? fmt(value);
+  const changed = mark && typeof value === 'number' && typeof base === 'number' && Math.abs(value - base) > 1e-9;
+  const better = changed && (lessIsBetter ? value < base : value > base);
+  const key = title + '|' + text;
+  const isOpen = ctx?.open?.key === key;
+  const content = () => {
+    const bd = breakdown(pc.pair, get);
+    return <BreakdownRows bd={bd} fmt={fmt} kind={kind} names={pc.names} extra={typeof extra === 'function' ? extra(pc.pair) : extra} />;
   };
-  const summary = !set.length ? label : set.length === 1 ? (options.find(([v]) => v === set[0])?.[1] ?? label) : `${label} · ${set.length}`;
+  const show = (pinned) => ctx.setOpen({ key, title, rect: el.current.getBoundingClientRect(), anchor: el.current, pinned, content: content() });
+  const label = `${title}, ${text}${changed ? ` with this build, base ${fmt(base)}` : ''}. Breakdown`;
   return (
-    <>
-      <button ref={btn} type="button" className={`chip${set.length ? ' set' : ''}`} onClick={() => setOpen(true)}>
-        {summary}
-        <svg viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
-      </button>
-      {open && (
-        <>
-          <div className={`backdrop${phone ? ' dim' : ''}`} onClick={() => { setOpen(false); setQ(''); }} />
-          <div className={phone ? 'sheet' : 'pop'} style={phone ? undefined : { left: pos?.left ?? -9999, top: pos?.top ?? -9999 }}>
-            {phone && <div className="sheet-grip" />}
-            {phone && <div className="sheet-title">{label}{set.length > 0 && <button className="linkbtn" onClick={() => onChange(multi ? [] : null)}>Clear</button>}</div>}
-            {search && <input className="pop-search" placeholder="Search" value={q} autoFocus={!phone} onChange={e => setQ(e.target.value)} />}
-            {shown.map(([v, l, extra]) => (
-              <button key={v} type="button" className="opt" role={multi ? 'menuitemcheckbox' : 'menuitemradio'} aria-checked={set.includes(v)} onClick={() => toggle(v)}>
-                {multi ? <span className="box">{set.includes(v) ? '✓' : ''}</span> : <span className="tick">{set.includes(v) ? '✓' : ''}</span>}
-                {render ? render(v, l) : <span>{l}</span>}
-                {extra != null && <span className="cnt">{extra}</span>}
-              </button>
-            ))}
-            {!phone && set.length > 0 && multi && <button className="opt clear" onClick={() => onChange([])}>Clear</button>}
-            {phone && <button className="pop-done" onClick={() => { setOpen(false); setQ(''); }}>Done</button>}
-          </div>
-        </>
-      )}
-    </>
+    <As ref={el} tabIndex={0} role="button" aria-expanded={isOpen} aria-label={label}
+      className={`tap${changed ? (better ? ' up' : ' dn') : ''}${isOpen ? ' on' : ''} ${className}`.trim()}
+      onClick={(e) => { e.stopPropagation(); if (isOpen && ctx.open.pinned) ctx.setOpen(null); else show(true); }}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (isOpen) ctx.setOpen(null); else show(true); } }}
+      onMouseEnter={() => { if (ctx.phone || (ctx.open?.pinned)) return; clearTimeout(hoverT.current); hoverT.current = setTimeout(() => show(false), 180); }}
+      onMouseLeave={() => { clearTimeout(hoverT.current); setTimeout(() => ctx.setOpen(o => (o && o.key === key && !o.pinned && !o.hoverTip ? null : o)), 120); }}>
+      {text}
+    </As>
   );
 }
 
-/* ---------- portraits and badges ---------- */
-export function Portrait({ id, size = 34, radius = 8 }) {
-  const [bad, setBad] = useState(false);
-  return bad
-    ? <span className="pt" style={{ width: size, height: size, borderRadius: radius }} />
-    : <img className="pt" src={`../../../analyzer/public/portraits/${id}.webp`} alt="" loading="lazy"
-        style={{ width: size, height: size, borderRadius: radius }} onError={() => setBad(true)} />;
+/** A value read from the pair's base (no build), for "Base 390" lines and the phone's Base column. */
+export function useBase(get) {
+  const pc = usePair();
+  try { return pc ? get(pc.base) : null; } catch { return null; }
+}
+export function useValue(get) {
+  const pc = usePair();
+  try { return pc ? get(pc.pair) : null; } catch { return null; }
 }
 
-const CLASS_HUE = {
-  'Normal': '#3b82f6', 'Super Saiyan': '#eab308', 'Super Saiyan (Vegeta)': '#facc15', 'Ki-Blast': '#a855f7', 'Ki-Blast (Vegeta)': '#c084fc',
-  'Power': '#ef4444', 'Villain': '#818cf8', 'Fusion': '#0ea5e9', 'Almighty': '#f97316', 'Almighty (Vegeta)': '#fb923c', 'Rival': '#10b981',
-  'Secret': '#ec4899', 'Skill-User': '#94a3b8', 'Skill-User (Yajirobe)': '#94a3b8', 'Skill-User (Mr. Satan)': '#a8a29e', 'Speed': '#06b6d4',
-  'God': '#fbbf24', 'Giant': '#b45309', 'Legendary Super Saiyan': '#16a34a', 'Infinite Ki Android (Normal)': '#6366f1',
-  'Infinite Ki Android (Ki-Blast)': '#7e22ce', 'Infinite Ki Android (Power)': '#be123c', 'Ki Drain Android (Normal)': '#64748b', 'Ki Drain Android (Power)': '#e11d48',
-};
-export const classHue = (label) => CLASS_HUE[label] || '#64748b';
-export function ClassBadge({ label }) {
-  const h = classHue(label);
-  return <span className="cls" style={{ color: h, borderColor: h + '66', background: h + '1a' }}>{label}</span>;
+/** A number with "Base N" under it when the build changes it (Full stats' rows). */
+export function Val({ get, fmt = F.int, ...rest }) {
+  const v = useValue(get), b = useBase(get);
+  const changed = typeof v === 'number' && typeof b === 'number' && Math.abs(v - b) > 1e-9;
+  return <><Tap get={get} fmt={fmt} {...rest} />{changed && <small>Base {fmt(b)}</small>}</>;
 }
 
-export function Ki({ bars }) {
-  return <span className="ki">{bars == null ? '—' : `${+bars.toFixed(2)}`}<em> bars</em></span>;
+/* ------------------------------------------------------------------ small controls */
+export function Modes({ value, options, onChange, children }) {
+  return (
+    <div className="modes" role="tablist">
+      {options.map(([k, label]) => (
+        <button key={k} role="tab" aria-selected={value === k} className={value === k ? 'on' : ''} onClick={() => onChange(k)}>{label}</button>
+      ))}
+      {children}
+    </div>
+  );
+}
+
+export function Switch({ on, onChange, label, sp = false }) {
+  return <button role="switch" aria-checked={on} aria-label={label} className={`sw${on ? ' on' : ''}${sp ? ' sp' : ''}`} onClick={() => onChange(!on)} />;
+}
+
+/** A name that wraps before its parenthesis (or its form name), the second part kept whole. */
+export function Name({ parts, br = false }) {
+  if (parts.length < 2) return <>{parts[0]}</>;
+  return <>{parts[0]}{br ? <br /> : ' '}<span className="nw">{parts[1]}</span></>;
+}
+
+/** The roster bar under a stat: fills to where the character sits in the roster's range. */
+export const Rk = ({ p, title }) => (p == null ? null : <i className="rk" style={{ '--p': `${Math.round(p * 100)}%` }} title={title} />);
+
+export function Chev({ lit, kind }) {
+  return <div className={`chev ${kind}`}>{Array.from({ length: 10 }, (_, i) => <i key={i} className={i < lit ? 'f' : ''} />)}</div>;
+}
+
+/** A plate whose header folds it (Full stats); a closed plate keeps its headline numbers. */
+export function Fold({ cls = '', title, extra = null, open, onToggle, summary, children, id }) {
+  return (
+    <div className={`plate ${cls}${open ? '' : ' cl'}`} id={id}>
+      <h5>
+        <button className="fold" aria-expanded={open} onClick={onToggle}>{title}{extra}<span className="chv" aria-hidden="true">{open ? '▾' : '▸'}</span></button>
+      </h5>
+      {open ? children : <div className="csum">{summary}</div>}
+    </div>
+  );
 }

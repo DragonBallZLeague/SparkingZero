@@ -29,6 +29,7 @@
  */
 
 import { hitsTaken } from '../data/adapter.js';
+import { parseCondition, conditionMet } from './conditions.js';
 
 const F = Math.fround;
 
@@ -77,7 +78,7 @@ const hit = (power, k, K) => Math.ceil(F(F(power * K) * F(k)));
  * the raw Power when it is known, else with the Power implied by the final (when that
  * reproduces it), else the plain ratio.
  */
-function scale(final, k0, k1, K, power = null) {
+export function scale(final, k0, k1, K, power = null) {
   if (typeof final !== 'number' || !k0) return final;
   if (Math.abs(k1 - k0) < 1e-12) return final;
   if (power != null && Math.abs(hit(power, k0, K) - final) <= 1) return hit(power, k1, K);
@@ -94,17 +95,27 @@ function scale(final, k0, k1, K, power = null) {
  * @param {Array}  p.skills     active schema-2 skills
  * @param {boolean} p.sparking
  * @param {Array}  [p.incoming] effects the opponent's skills put on this side
+ * @param {object} [p.situation] the conditions controls: { health (HP; none = full), ki, skill, map,
+ *                 events } (utils/conditions.js). Without it, conditional effects stay notes and the
+ *                 character's passives (low-health power-ups) are left out, as before.
  * @returns {{ applied: Array, notes: Array, outgoing: Array }}
  */
-export function collectEffects({ character, capsules = [], skills = [], sparking = false, incoming = [] }) {
+export function collectEffects({ character, capsules = [], skills = [], sparking = false, incoming = [], situation = null }) {
   const applied = [], notes = [], outgoing = [];
+  // health conditions read the side's maximum health: its own plus every unconditional health effect
+  const sit = situation && {
+    ...situation,
+    maxHealth: (character?.stats?.health ?? 0) + capsules.reduce((s, c) => s + (c?.effects || [])
+      .reduce((t, e) => t + (e.key === 'health' && !e.condition && typeof e.value === 'number' ? e.value : 0), 0), 0),
+  };
   const take = (e, source, extra = {}) => {
     const cond = e.condition || 'always';
     // Dragon Rush: armor break level +3 on Rush Attack category actions (the rush hits)
     if (e.key === 'armorBreakLevel' && /rush attack/i.test(cond)) { applied.push({ ...e, ...extra, source, rushOnly: true }); return; }
-    if (cond === 'always' || (cond === 'sparking' && sparking)) {
+    const met = cond !== 'always' && cond !== 'sparking' && sit && conditionMet(parseCondition(cond), sit);
+    if (cond === 'always' || (cond === 'sparking' && sparking) || met) {
       if (e.key === 'display' || (!HANDLED.has(e.key) && e.op !== 'set')) notes.push({ source, text: e.note || describe(e) });
-      else applied.push({ ...e, ...extra, source });
+      else applied.push({ ...e, ...extra, source, ...(met ? { when: cond } : {}) });
     } else if (cond === 'sparking' && ULTIMATE_KEYS.has(e.key)) {
       // Ultimates are always used in Sparking Mode: Sparking-only ultimate damage applies to them anyway
       applied.push({ ...e, ultimateOnly: true, source });
@@ -131,7 +142,14 @@ export function collectEffects({ character, capsules = [], skills = [], sparking
     if (character.sparking.armorBreakLevel) applied.push({ key: 'armorBreakLevel', value: character.sparking.armorBreakLevel, source: 'Sparking' });
   }
   for (const e of incoming) take(e, `${e.source} (opponent)`);
-  return { applied, notes: dedupeNotes(notes), outgoing };
+  // the character's own conditional passives (Goku: all damage +10% below 10,000 HP), only with the conditions controls
+  if (sit) for (const p of character?.passives || []) for (const e of p.effects || []) take({ ...e, condition: p.condition }, passiveName(p));
+  return { applied, notes: dedupeNotes(notes), outgoing, situation: sit };
+}
+
+/** A passive's name for breakdowns ("Low health" reads as the power-up it is). */
+export function passiveName(p) {
+  return p.name === 'Low health' ? `Power-up ${p.condition.replace(/^health /, '')}` : p.name;
 }
 
 function dedupeNotes(notes) {
@@ -281,8 +299,19 @@ export function computeStats(c, effects, ctx = {}) {
     blastKiCostAdd: (add.blastKiCost || 0) * 10000,
     ultimateKiCostAdd: (add.ultimateKiCost || 0) * 10000,
     referenceHits: refHits,
+    damageConstant: K,
     notes: effects.notes,
   };
+}
+
+/**
+ * A published final on one damage channel under a computed side's effects: the game-file values the
+ * engine does not compute itself (charge levels, Rush Chains and follow-ups, jump and dash ki blasts,
+ * Hyper Smash). `power` when the raw Power is known.
+ */
+export function scaleChannel(view, ch, final, power = null) {
+  if (!view?.coef || typeof final !== 'number') return final;
+  return scale(final, view.coefBase[ch], view.coef[ch], view.damageConstant ?? 1.25, power);
 }
 
 /** Modified damage of one blast row (old shape) for a computed side. */

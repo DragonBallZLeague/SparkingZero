@@ -16,6 +16,7 @@ import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
 import { APPLIED_KEYS, collectEffects, computeStats } from '../src/utils/engine.js';
+import { parseCondition } from '../src/utils/conditions.js';
 import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -469,6 +470,32 @@ if (v2) {
   if (kidOn.rush <= kidOff.rush) ult.push('Gohan (Kid) Sparking toggle no longer raises rush damage');
   if (kidOff.ultimate !== 0.15) ult.push(`Gohan (Kid) ultimate modifier ${kidOff.ultimate}, want 0.15 (0.95 + 0.20 Sparking passive - 1)`);
   check(!ult.length, 'ultimate damage always includes the Sparking passive; the Sparking toggle changes the other channels only', ult);
+
+  // Conditions controls: every condition text reads as a known condition, and the engine applies
+  // health steps and low-health power-ups only when a situation meets them (src/utils/conditions.js)
+  const condTexts = new Set();
+  for (const c of data.capsules) for (const e of c.effects || []) if (e.condition) condTexts.add(e.condition);
+  for (const c of data.characters) for (const p of c.passives || []) condTexts.add(p.condition);
+  const unread = [...condTexts].filter(t => parseCondition(t).kind === 'unknown');
+  const cond = [];
+  const sitRun = (id, capIds, situation) => {
+    const c = byId.get(id);
+    return computeStats(c, collectEffects({ character: c, capsules: capIds.map(cap), situation }), ctx);
+  };
+  const capNamed = (n) => data.capsules.find(c => c.name === n)?.id;
+  const fury = capNamed('Fury!'), latent = capNamed('Latent Power!');
+  const add = (v, ch) => +(v.coef[ch] - v.coefBase[ch]).toFixed(4);
+  const pic = byId.get('0040_00');
+  if (add(sitRun('0040_00', [fury], null), 'super') !== 0) cond.push('Fury! applies with no situation');
+  if (add(sitRun('0040_00', [fury], { health: pic.stats.health * 0.76 }), 'super') !== 0) cond.push('Fury! applies above 75% health');
+  if (add(sitRun('0040_00', [fury], { health: pic.stats.health * 0.75 }), 'super') !== 0.05) cond.push('Fury! at 75% health is not +5%');
+  if (add(sitRun('0040_00', [fury], { health: pic.stats.health * 0.25 }), 'super') !== 0.15) cond.push('Fury! at 25% health is not +15% (5% per step)');
+  const lp = sitRun('0040_00', [latent], { health: pic.stats.health * 0.25 });
+  if (lp.meleeDefenseStat !== +(pic.incomingDamage * (1 - pic.classCoef.physicalResist - 0.15)).toFixed(4)) cond.push(`Latent Power! at 25% health: melee defense ${lp.meleeDefenseStat}, want 15% less taken`);
+  if (sitRun('0000_00', [], { health: 8000 }).rush !== 429) cond.push('Goku (Z - Early) below 10,000 HP: first rush hit is not 429 (312 x 1.25 x 1.10)');
+  if (sitRun('0000_00', [], { health: 10000 }).rush !== 390) cond.push('Goku (Z - Early) at 10,000 HP gets the power-up (it is below 10,000 only)');
+  if (sitRun('0000_00', [], null).rush !== 390) cond.push('Goku (Z - Early) gets the power-up with no situation');
+  check(!unread.length && !cond.length, `every effect condition reads as a known condition (${condTexts.size}), and health steps and low-health power-ups apply only when the conditions meet them`, [...unread.map(t => `unknown condition: ${t}`), ...cond]);
 
   // With no effects the engine must leave every published number alone.
   const drift = [];
