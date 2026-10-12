@@ -366,6 +366,19 @@ if (v2) {
     ig('Devilmite Beam is wickedness-scaled', beam?.flags?.includes('wickednessScaled'), true);
     ig('Devilmite Beam on Goku (Z - Early)', on('Goku (Z - Early)'), 0);
     ig('Devilmite Beam on Frieza (Z) 1st Form', on('Frieza (Z) 1st Form'), 28350);
+    // the league's own builds (website lineups), the opponent's build presets: at most 3 each, real capsules,
+    // newest season first; Piccolo's top build is Budokai's Season 0 playoff build
+    const capIds = new Set(data.capsules.map(c => c.id));
+    const lb = data.characters.filter(c => c.leagueBuilds);
+    ig('league builds: at most 3 per character, every capsule known', lb.every(c => c.leagueBuilds.top.length <= 3 && c.leagueBuilds.top.every(b => b.capsules.every(id => capIds.has(id)))), true);
+    ig('league builds: newest season first', lb.every(c => c.leagueBuilds.top.every((b, i, a) => !i || a[i - 1].season >= b.season)), true);
+    const picc = data.characters.find(c => c.id === '0040_00')?.leagueBuilds;
+    ig('Piccolo league builds: lineups, builds', `${picc?.lineups}, ${picc?.builds}`, '19, 7');
+    ig("Piccolo's top league build (Budokai, Season 0 playoffs)", picc?.top?.[0]?.capsules?.map(id => data.capsules.find(c => c.id === id)?.name).sort().join(', '),
+      'Blast Attack Boost 2, Fury!, Indomitable Fighting Spirit, Latent Power Unleashed 2, Latent Power!, Rush Attack Boost 2');
+    // the Command list's Special line: every move with a unique rule carries the league's wording
+    const specials = Object.values(data.blasts).flat().filter(b => b.special).map(b => b.name).sort().join(', ');
+    ig('moves with a Special line', specials, 'Body Change, Devilmite Beam, Evil Containment Wave, Neo Tri-Beam');
   }
   {
     const tr = (n, mv) => ['homing', 'steering', 'straight'].find(f => data.blasts[data.characters.find(c => c.name === n)?.id]?.find(b => b.name === mv)?.flags?.includes(f));

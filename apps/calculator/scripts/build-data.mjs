@@ -32,6 +32,7 @@ import { mobilityOf } from './lib/mobility.mjs';
 import { movesetOf } from './lib/moveset.mjs';
 import { rushChainsOf } from './lib/rushChains.mjs';
 import { armorOf } from './lib/armor.mjs';
+import { loadLeagueBuilds } from './lib/lineups.mjs';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -409,6 +410,27 @@ function mapPassives(id) {
   });
 }
 
+// The league's own builds (the website's lineups), for the opponent's build presets: top 3 per character
+const teamsRef = JSON.parse(fs.readFileSync(path.join(ROOT, 'referencedata', 'teams.json'), 'utf8'));
+const teamByNorm = new Map(teamsRef.flatMap(t => [t.name, t.tag, t.slug].filter(Boolean).map(k => [normName(k), t.name])));
+const capsuleIdByName = new Map(ref.capsules.map(c => [c.name, c.id]));
+const leagueBuilds = loadLeagueBuilds(ROOT, {
+  resolveName,
+  capsuleIdByName: (n) => capsuleIdByName.get(n) ?? null,
+  // a lineup's own team text is hand-typed ("Budokai ", "Creations Week 1", "Sentai", "tp pre week2"): the website's
+  // name when the text starts with a team's name, tag or initials; else the text in title case (event teams)
+  teamName: (s) => {
+    const t = String(s ?? '').trim();
+    if (!t || t === 'null') return null;
+    const n = normName(t.replace(/^team\s+(?=\S+\s)/i, ''));
+    const hit = teamByNorm.get(n)
+      ?? teamsRef.find(tm => [tm.name, tm.tag].some(k => { const m = normName(k); return m.length >= 4 && (n.startsWith(m) || (n.length >= 5 && m.startsWith(n))); }))?.name
+      ?? teamsRef.find(tm => t.toLowerCase().split(/\s+/)[0] === tm.name.split(/[\s-]+/).map(w => w[0]).join('').toLowerCase())?.name;
+    return hit ?? t.toLowerCase().replace(/\b\w/g, ch => ch.toUpperCase());
+  },
+});
+for (const [k, v] of Object.entries(leagueBuilds.problems)) if (v.length ?? v.size) report.warn.push(`league lineups: ${k}: ${[...v].join(', ')}`);
+
 const characters = [];
 for (const rc of ref.characters) {
   const id = rc.id;
@@ -606,6 +628,8 @@ for (const rc of ref.characters) {
     mobility,
     moveset,
     armor,
+    // the league's own builds of this character (website lineups): how many lineups, how many builds, the top 3
+    leagueBuilds: leagueBuilds.byCharacter.get(id) ?? null,
     skills: buildSkills(id, cc),
     traits: tags,
     sparking: {
@@ -829,6 +853,12 @@ for (const bm of blastMoves) {
 }
 for (const list of Object.values(blasts)) for (const b of list) { if (b.recipe === undefined) delete b.recipe; if (b.spread === undefined) delete b.spread; }
 for (const r of spreadRows.values()) throw new Error(`spread-blasts.csv: ${r.character} ${r.slot} "${r.move}" matches no move in the raw Move List`);
+// A move's unique rule, the Command list's Special line (curated/move-special.csv, worded by the league)
+for (const r of curated('move-special.csv')) {
+  const hit = (blasts[r.id] || []).filter(b => b.slot === r.slot && b.name === r.move);
+  if (!hit.length) throw new Error(`move-special.csv: ${r.character} ${r.slot} "${r.move}" matches no move`);
+  for (const b of hit) b.special = r.special;
+}
 
 // ------------------------------------------------------------------ capsules
 // Capsule effects: curated/capsule-effects.csv, in the effect vocabulary of curated/effects.csv.

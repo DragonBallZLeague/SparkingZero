@@ -41,19 +41,20 @@ in `characters.json` (`data/EXPANSION.md` keeps its open items).
 
 ## 2. Open items
 
-Data the rebuild needs (none of it blocks the demo; the demo can use the mock's stand-ins):
-- **Capsule types: one list for every app (the league, 2026-10-11).** Start from the Analyzer's build types
-  (`apps/analyzer/src/config/capsuleMetadata.json`: Melee, Blast, Ki Blast, Defense, Skill, Ki Efficiency,
-  Utility), which cover 94 of the 103 capsules; the 9 league-made capsules (DBZL_Cap_*) have none yet. Proposed:
-  move the type into `referencedata/capsules.csv` so the Analyzer and the calculator read the same column.
-  Waiting on the league: the 9 types and whether each app keeps its own colours (the Analyzer's Ki Blast is yellow
-  and Skill purple, which mean ki and Sparking in the calculator).
-- **Special texts.** Neo Tri-Beam and Evil Containment Wave approved as mocked. Body Change and Devilmite Beam:
-  proposals sent 2026-10-11, waiting on the league.
-- **League lineup builds** for the opponent's build: read the website's `public/content/lineups/` in the data
-  build, grouped by matching capsules. Every capsule name in the lineups matches the capsule list.
-- **Unknown names** in `data/TESTS.md`: the four move flags (the league can't find them), and tests for the
-  counter's follow-up (likely the Perception counter) and the Dragon Dash "BK" cost.
+Data the rebuild needs:
+Done 2026-10-11:
+- **Capsule types, one list for every app:** `referencedata/capsule-types.json` (Melee, Blast, Ki Blast, Defense,
+  Skill, Ki Efficiency, Utility), from the Analyzer's types plus the league's 9 custom capsules. The Analyzer and
+  the calculator both read it (`capsules.json` `type`); each app colours the types from its own palette.
+- **Special texts** in `data/curated/move-special.csv`, published as the blast's `special`.
+- **League lineup builds** in `characters.json` `leagueBuilds` (`scripts/lib/lineups.mjs`): the top 3 per
+  character, newest season first, then the most used. Only lineups the website's season and event pages link
+  count; teams come from the schedule (the lineups' own team text is hand-typed). **Question for the league:** 9
+  lineup files are not linked from any page (8 alternate playoff games such as `s0_po2_m1r3` beside the linked
+  `s0_po2_m1r2`, and `s0_allstars_g1`); they are left out until the league says whether they count.
+- **Perception** (the counter, confirmed in game) shows beside Step-In and Rush-In.
+
+Still open: the four move flags and the Dragon Dash "BK" cost in `data/TESTS.md`.
 
 Settled (2026-10-11): names with no parenthesis or a long form after it break before the form name ("Gotenks /
 Super Saiyan 3"; names with no form part wrap normally); Full stats' Breaking armor stays where it is.

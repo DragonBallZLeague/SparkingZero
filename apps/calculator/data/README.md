@@ -121,6 +121,8 @@ ultimate effectively costs 6 bars instead of 5.
 
 The Neo Export is joined **by character name** (referencedata name, aliases, normalised), never by its own ids: those repeat across forms (Ma Junior and its Giant Form are both 3310_00, Trunks (GT) and its Super Saiyan both 3280_00; Goten Super Saiyan is 9998_00), which mixed those forms' details up until 2026-10-08.
 | capsules | `referencedata/capsules.csv` (Type = Capsule), bans and group caps from `capsule-rules.yaml`. A capsule the league never allows (e.g. Victory Power) is left out on purpose | |
+| capsule build type | `referencedata/capsule-types.json`, the one list the Analyzer reads too; `verify-data` fails on a capsule without one | |
+| league builds (`leagueBuilds`) | the website's lineups that its season and event pages link (`lineup_file`, `lineup_file_week1`...), read by `scripts/lib/lineups.mjs`: each character's builds by capsule set, the top 3 kept (newest season first, then the most used), teams from the schedule | unlinked lineup files are left out |
 | capsule effects | `curated/capsule-effects.csv` | REPORT.md lists what each capsule does in the engine |
 | which skill effects hit the opponent | `curated/skill-targets.csv` (default: the user). Empty on purpose: the league confirmed (2026-10-07) that every skill stat effect applies to its user | |
 | "Affects opponent" tag on a skill | its `skill-display.csv` type contains Explosion, Barrier, Push, Bind or Counter (the league's list) or Blind (Solar Flare-type skills; Wild Sense is `Evade/Counter`). Those skills act through damage and behaviour, not stat effects | |
@@ -214,6 +216,7 @@ class key or effect.
 | `blasts.csv` | id + slot + variant + move | measured damage (+ boosted damage when it is not x1.2 / x1.3), category, traits, flags |
 | `skill-display.csv` | skill name | stock cost, type, activation time, flags, heal/ki amounts |
 | `sparking.csv` | id | Sparking armor flag that overrides the Neo Export (for characters it lacks or gets wrong); `note` says why |
+| `move-special.csv` | id + slot + move | a move's unique rule, published as the blast's `special` (the Command list's Special line), worded by the league: Neo Tri-Beam, Evil Containment Wave, Body Change, Devilmite Beam. A row that matches no move fails the build |
 | `spread-blasts.csv` | id + slot + move | blasts whose hit count the league sets: spread shots (`shotsFired`, `commonHits` = the count the damage uses) and single bullets (1 of 1, e.g. Cheelai's Energy Shot) |
 | `short-dash-cost.csv` | id | the league's datamine of the step-cancel dash cost (raw ki, 10000 = 1 bar); half the game's per-dash cost, so raw x 2 / 10000 bars (confirmed in game: 3 short dashes per bar). Since 2026-10-09 the cross-check for the game files' own value; used only when no FModel snapshot is committed |
 | `short-dash-shared.csv` | id | DLC characters with no step data of their own: the game reads `sameAs`'s (league, 2026-10-09: Bardock SSJ from Bardock, Vegeta (GT) and its SSJ from Vegeta (Z - End) SSJ, Ma Junior from Piccolo, Tien (World Tournament) from Tien, Uub (Kid) from Goku (Z - Early), Tora from Raditz) |
