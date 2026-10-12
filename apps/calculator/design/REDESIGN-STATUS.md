@@ -56,6 +56,11 @@ Done 2026-10-11:
 
 Still open: the four move flags and the Dragon Dash "BK" cost in `data/TESTS.md`.
 
+**Full stats as rows (round 22, `#rows`):** each section laid out across as a small table, as wide as its
+numbers, sharing a line with the next when it fits, against tab 7's three columns. Waiting on the league's pick.
+On desktop the whole page is 1,953px against 2,300px (the Command list is the same in both); phones keep the
+stacked list.
+
 Settled (2026-10-11): names with no parenthesis or a long form after it break before the form name ("Gotenks /
 Super Saiyan 3"; names with no form part wrap normally); Full stats' Breaking armor stays where it is.
 
@@ -68,6 +73,10 @@ them. The health bar marks where each effect turns on; an "In effect" line names
 "health below N HP"). Waiting on the league's look.
 
 ### Ideas kept for later
+
+- **Calculator and Match Builder integration** (the league, 2026-10-11, after the rebuild): builds plug-and-play
+  both ways, and the two apps linked in general. Also noted in `apps/calculator/CLAUDE.md`, since this file goes
+  with `design/`.
 
 - **"To knock out"** on Vs opponent (rush combos or ultimates each side needs). The league didn't find that
   measure useful, so it was taken out of the mock. Keep the idea of a short "who wins the exchange" summary for
