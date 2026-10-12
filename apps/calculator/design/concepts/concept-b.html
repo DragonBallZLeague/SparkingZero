@@ -759,48 +759,49 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
 .ph .sitr { grid-template-columns: 64px minmax(0, 1fr) 70px; }
 .tkl { height: auto; margin-top: 4px; }
 .tkl span { position: static; transform: none; }
-/* round 22: Full stats as rows (each section a band as wide as its content; short bands share a line) */
+/* round 22: Full stats as rows (each section a band laid out across; a line's bands fill its width) */
 .lay { display: flex; gap: 6px; margin: 0 0 8px; flex-wrap: wrap; align-items: center; }
 .lay button { font: inherit; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 6px; border: 1px solid #2a2f3a; background: none; color: #cbd5e1; cursor: pointer; }
 .lay button.on { border-color: #f97316; color: #fff; background: rgba(249,115,22,.12); }
 .lay .len { margin-left: 8px; font-size: 12px; color: #94a3b8; }
-.lay .sep { width: 1px; height: 20px; background: #2a2f3a; margin: 0 6px; }
 .var { display: none; } .var.on { display: block; }
-.rws { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
-.rws .plate { flex: 0 1 auto; max-width: 100%; min-width: 0; padding: 8px 14px 10px; }
-.rws .plate.full { flex-basis: 100%; }
-.rws.fill .plate { flex-grow: 1; }
-.rws.fill .ht { width: 100%; }
-.ht { border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.ht th, .ht td { text-align: left; vertical-align: top; padding: 3px 12px 3px 10px; }
+.rws { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+.rws .plate { flex: 1 1 auto; max-width: 100%; min-width: 0; padding: 8px 14px 11px; --sc: #86efac; }
+.rws .plate.res { --sc: #fde68a; } .rws .plate.off { --sc: #fca5a5; } .rws .plate.mov { --sc: #fda4af; } .rws .plate.kib { --sc: #ffa36b; }
+.rws .plate.armp { --sc: #e2e8f0; } .rws .plate.new { --sc: #a5f3fc; } .rws .plate.mob { --sc: #c7d2fe; } .rws .plate.spk { --sc: #d8b4fe; }
+.ht { border-collapse: collapse; font-variant-numeric: tabular-nums; width: auto; min-width: 100%; }
+.ht th, .ht td { text-align: left; vertical-align: top; padding: 0 12px 0 0; }
+.ht .gs { padding-left: 14px; }
 .ht th:first-child, .ht td:first-child { padding-left: 0; }
-.ht th + th, .ht td + td, .ht th + td { border-left: 1px solid var(--line); }
-.ht thead th { font-size: 10.5px; font-weight: 600; color: var(--muted); line-height: 1.25; width: 58px; vertical-align: bottom; padding-bottom: 4px; }
-.ht thead tr.g th { font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--label); width: auto; border-left: 0; padding-bottom: 2px; }
-.ht thead tr.g th.gl { border-bottom: 1px solid rgba(147,197,253,.3); }
-.ht td { font-size: 15px; font-weight: 800; color: #f1f5f9; white-space: nowrap; }
+/* headers: one line each; a group's name sits on a bar in the section's colour spanning exactly its columns */
+.ht thead th { font-size: 11px; font-weight: 600; color: var(--muted); white-space: nowrap; padding-bottom: 3px; vertical-align: bottom; }
+.ht thead tr.g th { padding-bottom: 4px; }
+.ht thead tr.g th span { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--sc); padding: 1px 0 2px; border-bottom: 2px solid var(--sc); opacity: .9; }
+.ht td { font-size: 16px; font-weight: 800; color: #f1f5f9; white-space: nowrap; padding-top: 1px; }
 .ht td small, .ht th small { display: block; font-size: 10.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
 .ht td.up { color: var(--up); }
-.ht td.e::before { content: '-'; color: #475569; font-weight: 500; }
-/* matrices: a row per move, columns per charge level */
-.ht.mx tbody tr { border-top: 1px solid var(--line); }
-.ht.mx td { font-size: 13px; padding-top: 4px; padding-bottom: 4px; }
-.ht.mx tbody th { font-size: 12.5px; font-weight: 700; color: #e2e8f0; padding: 4px 14px 4px 0; white-space: nowrap; }
+/* matrices: a row per move, soft shading instead of lines, empty cells left blank */
+.ht.mx tbody:nth-of-type(odd) { background: rgba(255,255,255,.035); }
+.ht.mx tbody td, .ht.mx tbody th { padding-top: 5px; padding-bottom: 5px; }
+.ht.mx td { font-size: 13.5px; }
+.ht.mx tbody th { font-size: 12.5px; font-weight: 700; color: #e2e8f0; padding-left: 8px; padding-right: 14px; white-space: nowrap; }
+.ht.mx thead th:first-child { padding-left: 8px; }
 .ht.mx tbody th small { font-weight: 500; }
-.ht.mx thead th { width: 50px; }
-.ht.mx thead th:first-child { width: auto; }
-.ht td.fup { font-size: 12.5px; color: #fecdd3; font-weight: 700; white-space: nowrap; }
-.ht td.fup::before { content: '\25B8  '; color: #94a3b8; }
+.ht.mx tbody td:last-child { padding-right: 8px; }
+.ht.mx td.gs:first-child { padding-left: 14px; }
+.ht td.fup { font-size: 12.5px; color: #fecdd3; font-weight: 700; }
 .ht td.ctr { text-align: center; }
 .ht .ok, .ht .no { font-size: 11.5px; }
 .ht .ok { color: var(--win); font-weight: 800; }
-.ht .no { color: #cbd5e1; font-weight: 600; }
-.rws .chainmisc, .rws .abnote { max-width: 620px; }
+.ht .no { color: #94a3b8; font-weight: 600; }
+.rws .chainmisc { border-top: 0; margin-top: 4px; }
+.rws .abnote, .rws .chainmisc { width: 0; min-width: 100%; }
+.rws .abnote { border-top: 0; margin-top: 4px; }
+.rws h5 .tg { margin-left: 10px; font-size: 10px; font-style: normal; letter-spacing: .06em; padding: 1px 8px; background: rgba(199,210,254,.14); color: #e0e7ff; }
 .rws .trait { border-top: 0; padding-top: 0; }
 /* a band split in tables that wrap on narrow screens (Melee: Rush, then Smash and the rest) */
-.htw { display: flex; flex-wrap: wrap; row-gap: 8px; }
-.htw .ht + .ht th:first-child, .htw .ht + .ht td:first-child { border-left: 1px solid var(--line); padding-left: 10px; }
-.rws.fill .htw .ht { width: auto; flex-grow: 1; }
+.htw { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.htw .ht { min-width: 0; flex: 1 1 auto; }
 </style>
 </head>
 <body>
@@ -1034,7 +1035,7 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
               </div>
               <div class="plate mov">
                 <h5>Rush Chains</h5>
-                <div class="srow h"><span></span><span>Base</span><span>Build</span></div><div class="srow ch"><span><b>Heavy Finishes</b><small>Rush Chains 1 and 4</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,125</span><span class="tap">1,125</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,400</span><span class="tap">1,400</span></div><div class="srow sub fw"><span>Heavy Crush<small>3 hits: 350, 425, 563</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow ch"><span><b>Ki Blast Cannon</b><small>Rush Chain 2</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,013</span><span class="tap">1,013</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Ki Blast Cannon Attack<small>After Charge Lv.3, 3 hits: 625, 775, 925</small></span><span>2,325</span><span class="tap">2,325</span></div><div class="srow ch"><span><b>Flying Kicks</b><small>Rush Chain 3, 3 hits, can't be charged</small></span><span>1,150</span><span class="tap">1,150</span></div><div class="srow ch"><span><b>Grand Slash</b><small>Every character</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>625</span><span class="tap">625</span></div><div class="srow sub"><span>Charge Lv.2</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,263</span><span class="tap">1,263</span></div><div class="srow sub fw"><span>Tornado Slash<small>3 hits: 450, 363, 525</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Aerial Slash<small>2 presses: three kicks 1,125, then 400</small></span><span>1,525</span><span class="tap">1,525</span></div><div class="srow ch"><span><b>Lift Strike</b><small>Most characters</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>900</span><span class="tap">900</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
+                <div class="srow h"><span></span><span>Base</span><span>Build</span></div><div class="srow ch"><span><b>Heavy Finishes</b><small>Rush Chains 1 and 4</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,125</span><span class="tap">1,125</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,400</span><span class="tap">1,400</span></div><div class="srow sub fw"><span>Heavy Crush<small>3 hits: 350, 425, 563</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow ch"><span><b>Ki Blast Cannon</b><small>Rush Chain 2</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,013</span><span class="tap">1,013</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Ki Blast Cannon Attack<small>After Charge Lv.3, 3 hits: 625, 775, 925</small></span><span>2,325</span><span class="tap">2,325</span></div><div class="srow ch"><span><b>Flying Kicks</b><small>Rush Chain 3, 3 hits, can't be charged</small></span><span>1,150</span><span class="tap">1,150</span></div><div class="srow ch"><span><b>Grand Slash</b><small>Every character</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>625</span><span class="tap">625</span></div><div class="srow sub"><span>Charge Lv.2</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,263</span><span class="tap">1,263</span></div><div class="srow sub fw"><span>Tornado Slash<small>3 hits: 450, 363, 525</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Aerial Slash<small>2 hits: 1,125, 400</small></span><span>1,525</span><span class="tap">1,525</span></div><div class="srow ch"><span><b>Lift Strike</b><small>Most characters</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>900</span><span class="tap">900</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
               </div>
               <div class="plate kib">
                 <h5>Ki blasts</h5>
@@ -1800,7 +1801,7 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
               </div>
               <div class="plate mov">
                 <h5>Rush Chains<span class="chv" title="Collapse">▾</span></h5>
-                <div class="srow h"><span></span><span>Base</span><span>Build</span></div><div class="srow ch"><span><b>Heavy Finishes</b><small>Rush Chains 1 and 4</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,125</span><span class="tap">1,125</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,400</span><span class="tap">1,400</span></div><div class="srow sub fw"><span>Heavy Crush<small>3 hits: 350, 425, 563</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow ch"><span><b>Ki Blast Cannon</b><small>Rush Chain 2</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,013</span><span class="tap">1,013</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Ki Blast Cannon Attack<small>After Charge Lv.3, 3 hits: 625, 775, 925</small></span><span>2,325</span><span class="tap">2,325</span></div><div class="srow ch"><span><b>Flying Kicks</b><small>Rush Chain 3, 3 hits, can't be charged</small></span><span>1,150</span><span class="tap">1,150</span></div><div class="srow ch"><span><b>Grand Slash</b><small>Every character</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>625</span><span class="tap">625</span></div><div class="srow sub"><span>Charge Lv.2</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,263</span><span class="tap">1,263</span></div><div class="srow sub fw"><span>Tornado Slash<small>3 hits: 450, 363, 525</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Aerial Slash<small>2 presses: three kicks 1,125, then 400</small></span><span>1,525</span><span class="tap">1,525</span></div><div class="srow ch"><span><b>Lift Strike</b><small>Most characters</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>900</span><span class="tap">900</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
+                <div class="srow h"><span></span><span>Base</span><span>Build</span></div><div class="srow ch"><span><b>Heavy Finishes</b><small>Rush Chains 1 and 4</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,125</span><span class="tap">1,125</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,400</span><span class="tap">1,400</span></div><div class="srow sub fw"><span>Heavy Crush<small>3 hits: 350, 425, 563</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow ch"><span><b>Ki Blast Cannon</b><small>Rush Chain 2</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,013</span><span class="tap">1,013</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Ki Blast Cannon Attack<small>After Charge Lv.3, 3 hits: 625, 775, 925</small></span><span>2,325</span><span class="tap">2,325</span></div><div class="srow ch"><span><b>Flying Kicks</b><small>Rush Chain 3, 3 hits, can't be charged</small></span><span>1,150</span><span class="tap">1,150</span></div><div class="srow ch"><span><b>Grand Slash</b><small>Every character</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>625</span><span class="tap">625</span></div><div class="srow sub"><span>Charge Lv.2</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,263</span><span class="tap">1,263</span></div><div class="srow sub fw"><span>Tornado Slash<small>3 hits: 450, 363, 525</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Aerial Slash<small>2 hits: 1,125, 400</small></span><span>1,525</span><span class="tap">1,525</span></div><div class="srow ch"><span><b>Lift Strike</b><small>Most characters</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>900</span><span class="tap">900</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
               </div>
               <div class="plate kib">
                 <h5>Ki blasts<span class="chv" title="Collapse">▾</span></h5>
@@ -2001,13 +2002,11 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
   <!-- ============================================================ ROWS (round 22) -->
   <section class="view" id="rows">
     <div class="about">
-      <div><b>Full stats as rows</b>Each section lays its numbers out across, as a small table: the stat names as column headers, the value under each, and the base value under it only where the build changes it (Goku's rush hits, from Rush Attack Boost 1). Charge levels become columns (Lv.1, Lv.2, Lv.3), so Rush Chains and Ki blasts become one row per move instead of three. A section is only as wide as its numbers, and the next one sits beside it when it fits. Reading order is left to right, then down, the same order as the section chips.</div>
-      <div><b>What to compare</b>Flip between Columns (tab 7 as it is) and Rows on the same frame; the length of each is shown beside the buttons. "Fill the line" stretches each row's sections to the frame edge instead of leaving the right side ragged. Phones keep the stacked list from tab 7 (a section 8 columns wide does not fit 390px); the tablet frame shows how rows wrap at 820px. Compare's and Vs's All stats keep their paired rows either way (value, stat, value).</div>
+      <div><b>Full stats as rows (second pass)</b>Each section lays its numbers out across, and the sections on a line stretch to fill it. Headers are one line: long names became short ones under a group (5-hit taken: Normal, Armored; Defense: Melee, Blast, Ki blast; Ki: Refills to, was Auto-recharge to), and a group's name sits on a bar in the section's colour that spans exactly its columns, with a gap before the next group. No cell lines and no dashes: empty cells stay blank, and tables of moves shade every other move instead. The base sits under a value only where the build changes it. Follow-ups show their hit count; the hits are in the total's breakdown.</div>
+      <div><b>What to compare</b>Flip between Columns (tab 7 as it is) and Rows on the same frame; the length of each is shown beside the buttons. Phones keep the stacked list from tab 7; the tablet frame shows rows at 820px, where Melee splits into Rush, then Smash and the rest. Compare's and Vs's All stats keep their paired rows either way (value, stat, value). Aerial Slash now reads as a two-hit follow-up everywhere (1,125, then 400).</div>
     </div>
     <div class="lay" id="lay">
       <button data-v="cols">Columns (now)</button><button data-v="rows" class="on">Rows</button>
-      <span class="sep"></span>
-      <button data-f="0" class="on">Width as needed</button><button data-f="1">Fill the line</button>
       <span class="len" id="laylen"></span>
     </div>
     <div class="frames">
@@ -2060,7 +2059,7 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
               </div>
               <div class="plate mov">
                 <h5>Rush Chains<span class="chv" title="Collapse">▾</span></h5>
-                <div class="srow h"><span></span><span>Base</span><span>Build</span></div><div class="srow ch"><span><b>Heavy Finishes</b><small>Rush Chains 1 and 4</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,125</span><span class="tap">1,125</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,400</span><span class="tap">1,400</span></div><div class="srow sub fw"><span>Heavy Crush<small>3 hits: 350, 425, 563</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow ch"><span><b>Ki Blast Cannon</b><small>Rush Chain 2</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,013</span><span class="tap">1,013</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Ki Blast Cannon Attack<small>After Charge Lv.3, 3 hits: 625, 775, 925</small></span><span>2,325</span><span class="tap">2,325</span></div><div class="srow ch"><span><b>Flying Kicks</b><small>Rush Chain 3, 3 hits, can't be charged</small></span><span>1,150</span><span class="tap">1,150</span></div><div class="srow ch"><span><b>Grand Slash</b><small>Every character</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>625</span><span class="tap">625</span></div><div class="srow sub"><span>Charge Lv.2</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,263</span><span class="tap">1,263</span></div><div class="srow sub fw"><span>Tornado Slash<small>3 hits: 450, 363, 525</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Aerial Slash<small>2 presses: three kicks 1,125, then 400</small></span><span>1,525</span><span class="tap">1,525</span></div><div class="srow ch"><span><b>Lift Strike</b><small>Most characters</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>900</span><span class="tap">900</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
+                <div class="srow h"><span></span><span>Base</span><span>Build</span></div><div class="srow ch"><span><b>Heavy Finishes</b><small>Rush Chains 1 and 4</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,125</span><span class="tap">1,125</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,400</span><span class="tap">1,400</span></div><div class="srow sub fw"><span>Heavy Crush<small>3 hits: 350, 425, 563</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow ch"><span><b>Ki Blast Cannon</b><small>Rush Chain 2</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.2</span><span>1,013</span><span class="tap">1,013</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Ki Blast Cannon Attack<small>After Charge Lv.3, 3 hits: 625, 775, 925</small></span><span>2,325</span><span class="tap">2,325</span></div><div class="srow ch"><span><b>Flying Kicks</b><small>Rush Chain 3, 3 hits, can't be charged</small></span><span>1,150</span><span class="tap">1,150</span></div><div class="srow ch"><span><b>Grand Slash</b><small>Every character</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>625</span><span class="tap">625</span></div><div class="srow sub"><span>Charge Lv.2</span><span>775</span><span class="tap">775</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,263</span><span class="tap">1,263</span></div><div class="srow sub fw"><span>Tornado Slash<small>3 hits: 450, 363, 525</small></span><span>1,338</span><span class="tap">1,338</span></div><div class="srow sub fw"><span>Aerial Slash<small>2 hits: 1,125, 400</small></span><span>1,525</span><span class="tap">1,525</span></div><div class="srow ch"><span><b>Lift Strike</b><small>Most characters</small></span><span></span><span></span></div><div class="srow sub"><span>Charge Lv.1</span><span>675</span><span class="tap">675</span></div><div class="srow sub"><span>Charge Lv.2</span><span>900</span><span class="tap">900</span></div><div class="srow sub"><span>Charge Lv.3</span><span>1,338</span><span class="tap">1,338</span></div><div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
               </div>
               <div class="plate kib">
                 <h5>Ki blasts<span class="chv" title="Collapse">▾</span></h5>
@@ -2134,71 +2133,78 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
             <div class="rws">
               <div class="plate">
                 <h5>Toughness<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr><th>HP</th><th>5-hit damage taken</th><th>5-hit taken, armored</th><th>Melee defense</th><th>Blast defense</th><th>Ki-blast defense</th><th>Armor</th><th>Switch</th></tr></thead>
-                <tbody><tr><td class="tap">40,000</td><td class="tap">2,585</td><td class="tap">2,585</td><td class="tap">Base</td><td class="tap">Base</td><td class="tap">Base</td><td class="tap">None</td><td class="tap">19s</td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="1"></th><th colspan="2" class="gs"><span>5-hit taken</span></th><th colspan="3" class="gs"><span>Defense</span></th><th colspan="2" class="gs"></th></tr><tr><th>HP</th><th class="gs">Normal</th><th>Armored</th><th class="gs">Melee</th><th>Blast</th><th>Ki blast</th><th class="gs">Armor</th><th>Switch</th></tr></thead>
+<tbody><tr><td class="tap">40,000</td><td class="tap gs">2,585</td><td class="tap">2,585</td><td class="tap gs">Base</td><td class="tap">Base</td><td class="tap">Base</td><td class="tap gs">None</td><td class="tap">19s</td></tr></tbody></table>
               </div>
               <div class="plate res">
                 <h5>Resources<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr class="g"><th colspan="5" class="gl">Ki (bars)</th><th colspan="3" class="gl">Skill gauge</th></tr><tr><th>Starting</th><th>Charge per sec</th><th>Regen per sec</th><th>Auto-recharge to</th><th>From hits</th><th>At start</th><th>Limit</th><th>Per minute</th></tr></thead>
-                <tbody><tr><td class="tap">2</td><td class="tap">1.40</td><td class="tap">0.175</td><td class="tap">2</td><td class="tap">0.03</td><td class="tap">0</td><td class="tap">6</td><td class="tap">3.65</td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="5"><span>Ki (bars)</span></th><th colspan="3" class="gs"><span>Skill gauge</span></th></tr><tr><th>Start</th><th>Charge per sec</th><th>Regen per sec</th><th>Refills to</th><th>From hits</th><th class="gs">Start</th><th>Limit</th><th>Per minute</th></tr></thead>
+<tbody><tr><td class="tap">2</td><td class="tap">1.40</td><td class="tap">0.175</td><td class="tap">2</td><td class="tap">0.03</td><td class="tap gs">0</td><td class="tap">6</td><td class="tap">3.65</td></tr></tbody></table>
               </div>
               <div class="plate off">
                 <h5>Melee<span class="chv" title="Collapse">▾</span></h5>
-                <div class="htw"><table class="ht"><thead><tr class="g"><th colspan="7" class="gl">Rush</th></tr><tr><th>Hit 1</th><th>Hit 2</th><th>Hit 3</th><th>Hit 4</th><th>Hit 5</th><th>5-hit total</th><th>Into armor</th></tr></thead><tbody><tr><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">554<small>Base 540</small></td><td class="tap up">769<small>Base 750</small></td><td class="tap up">2,523<small>Base 2,460</small></td><td class="tap up">2,346<small>Base 2,289</small></td></tr></tbody></table><table class="ht"><thead><tr class="g"><th colspan="3" class="gl">Smash</th><th colspan="3"></th></tr><tr><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Throw</th><th>Pursuit</th><th>Armor break</th></tr></thead><tbody><tr><td class="tap">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="tap">1,250</td><td class="tap">1,250</td><td class="tap">5 hits</td></tr></tbody></table></div>
+<div class="htw"><table class="ht">
+<thead><tr class="g"><th colspan="7"><span>Rush</span></th></tr><tr><th>Hit 1</th><th>Hit 2</th><th>Hit 3</th><th>Hit 4</th><th>Hit 5</th><th>Total</th><th>Into armor</th></tr></thead>
+<tbody><tr><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">554<small>Base 540</small></td><td class="tap up">769<small>Base 750</small></td><td class="tap up">2,523<small>Base 2,460</small></td><td class="tap up">2,346<small>Base 2,289</small></td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="3"><span>Smash</span></th><th colspan="3" class="gs"></th></tr><tr><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th class="gs">Throw</th><th>Pursuit</th><th>Armor break</th></tr></thead>
+<tbody><tr><td class="tap">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="tap gs">1,250</td><td class="tap">1,250</td><td class="tap">5 hits</td></tr></tbody></table></div>
               </div>
               <div class="plate mov">
                 <h5>Rush Chains<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht mx"><thead><tr><th></th><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Follow-up</th><th>Total</th></tr></thead>
-                <tbody>
-                  <tr><th>Heavy Finishes<small>Rush Chains 1 and 4</small></th><td class="tap">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="fup">Heavy Crush<small>3 hits: 350, 425, 563</small></td><td class="tap">1,338</td></tr>
-                  <tr><th>Ki Blast Cannon<small>Rush Chain 2</small></th><td class="tap">775</td><td class="tap">1,013</td><td class="tap">1,338</td><td class="fup">Ki Blast Cannon Attack<small>After Lv.3, 3 hits: 625, 775, 925</small></td><td class="tap">2,325</td></tr>
-                  <tr><th>Flying Kicks<small>Rush Chain 3, 3 hits</small></th><td class="tap ctr" colspan="3">1,150<small>Can't be charged</small></td><td class="e"></td><td class="e"></td></tr>
-                  <tr><th rowspan="2">Grand Slash<small>Every character</small></th><td class="tap" rowspan="2">625</td><td class="tap" rowspan="2">775</td><td class="tap" rowspan="2">1,263</td><td class="fup">Tornado Slash<small>3 hits: 450, 363, 525</small></td><td class="tap">1,338</td></tr>
-                  <tr><td class="fup">Aerial Slash<small>2 presses: three kicks 1,125, then 400</small></td><td class="tap">1,525</td></tr>
-                  <tr><th>Lift Strike<small>Most characters</small></th><td class="tap">675</td><td class="tap">900</td><td class="tap">1,338</td><td class="e"></td><td class="e"></td></tr>
-                </tbody></table>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="3" class="gs"><span>Charge level</span></th><th colspan="2" class="gs"><span>Follow-up</span></th></tr><tr><th></th><th class="gs">Lv.1</th><th>Lv.2</th><th>Lv.3</th><th class="gs">Attack</th><th>Damage</th></tr></thead>
+<tbody><tr><th>Heavy Finishes<small>Rush Chains 1 and 4</small></th><td class="tap gs">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="fup gs">Heavy Crush<small>3 hits</small></td><td class="tap">1,338</td></tr></tbody>
+<tbody><tr><th>Ki Blast Cannon<small>Rush Chain 2</small></th><td class="tap gs">775</td><td class="tap">1,013</td><td class="tap">1,338</td><td class="fup gs">Ki Blast Cannon Attack<small>3 hits, after Lv.3</small></td><td class="tap">2,325</td></tr></tbody>
+<tbody><tr><th>Flying Kicks<small>Rush Chain 3</small></th><td class="tap ctr gs" colspan="3">1,150<small>Can't be charged</small></td><td class="gs"></td><td></td></tr></tbody>
+<tbody><tr><th rowspan="2">Grand Slash<small>Every character</small></th><td class="tap gs" rowspan="2">625</td><td class="tap" rowspan="2">775</td><td class="tap" rowspan="2">1,263</td><td class="fup gs">Tornado Slash<small>3 hits</small></td><td class="tap">1,338</td></tr><tr><td class="fup gs">Aerial Slash<small>2 hits</small></td><td class="tap">1,525</td></tr></tbody>
+<tbody><tr><th>Lift Strike<small>Most characters</small></th><td class="tap gs">675</td><td class="tap">900</td><td class="tap">1,338</td><td class="gs"></td><td></td></tr></tbody>
+</table>
                 <div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
               </div>
               <div class="plate kib">
                 <h5>Ki blasts<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht mx"><thead><tr><th></th><th>Damage</th><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Shots</th><th>Cost (bars)</th></tr></thead>
-                <tbody>
-                  <tr><th>Ki blast<small>Standard, full volley 1,125</small></th><td class="tap">250</td><td class="e"></td><td class="e"></td><td class="e"></td><td class="tap">5</td><td class="tap">0.2</td></tr>
-                  <tr><th>Charged ki blast</th><td class="e"></td><td class="tap">938</td><td class="tap">1,407</td><td class="tap">1,875</td><td class="tap">1</td><td class="tap">0.3</td></tr>
-                  <tr><th>Charged, while moving</th><td class="e"></td><td class="tap">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="e"></td><td class="e"></td></tr>
-                  <tr><th>Jump ki blast</th><td class="tap">313</td><td class="e"></td><td class="e"></td><td class="e"></td><td class="tap">5</td><td class="tap">0.135</td></tr>
-                  <tr><th>Dash ki blast</th><td class="tap">250</td><td class="e"></td><td class="e"></td><td class="e"></td><td class="tap">4</td><td class="tap">0.2</td></tr>
-                  <tr><th>Jump / dash charged</th><td class="e"></td><td class="tap">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="e"></td><td class="e"></td></tr>
-                </tbody></table>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="1" class="gs"></th><th colspan="3" class="gs"><span>Charge level</span></th><th colspan="2" class="gs"></th></tr><tr><th></th><th class="gs">Damage</th><th class="gs">Lv.1</th><th>Lv.2</th><th>Lv.3</th><th class="gs">Shots</th><th>Ki cost</th></tr></thead>
+<tbody><tr><th>Ki blast<small>Standard, full volley 1,125</small></th><td class="tap gs">250</td><td class="gs"></td><td></td><td></td><td class="tap gs">5</td><td class="tap">0.2</td></tr></tbody>
+<tbody><tr><th>Charged ki blast</th><td class="gs"></td><td class="tap gs">938</td><td class="tap">1,407</td><td class="tap">1,875</td><td class="tap gs">1</td><td class="tap">0.3</td></tr></tbody>
+<tbody><tr><th>Charged, while moving</th><td class="gs"></td><td class="tap gs">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="gs"></td><td></td></tr></tbody>
+<tbody><tr><th>Jump ki blast</th><td class="tap gs">313</td><td class="gs"></td><td></td><td></td><td class="tap gs">5</td><td class="tap">0.135</td></tr></tbody>
+<tbody><tr><th>Dash ki blast</th><td class="tap gs">250</td><td class="gs"></td><td></td><td></td><td class="tap gs">4</td><td class="tap">0.2</td></tr></tbody>
+<tbody><tr><th>Jump / dash charged</th><td class="gs"></td><td class="tap gs">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="gs"></td><td></td></tr></tbody>
+</table>
               </div>
               <div class="plate armp">
                 <h5>Breaking armor<span class="chv" title="Collapse">▾</span></h5>
                 <div class="abtabs"><span class="on">Normal</span><span class="sp">In Sparking!</span></div>
-                <table class="ht mx"><thead><tr><th>Against</th><th>Rush hit 1</th><th>Rush hit 2</th><th>Rush hit 3</th><th>Rush hit 4</th><th>Smash Lv.1</th><th>Ki blast</th><th>Charged ki blast</th></tr></thead>
-                <tbody>
-                  <tr><th>Hyper Armor</th><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr>
-                  <tr><th>Sparking Armor</th><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr>
-                  <tr><th>Hyper, in Sparking</th><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td></tr>
-                </tbody></table>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="4" class="gs"><span>Rush hit</span></th><th colspan="3" class="gs"></th></tr><tr><th>Against</th><th class="gs">1</th><th>2</th><th>3</th><th>4</th><th class="gs">Smash Lv.1</th><th>Ki blast</th><th>Charged ki blast</th></tr></thead>
+<tbody><tr><th>Hyper Armor</th><td class="gs"><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td class="gs"><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr></tbody>
+<tbody><tr><th>Sparking Armor</th><td class="gs"><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td class="gs"><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr></tbody>
+<tbody><tr><th>Hyper, in Sparking</th><td class="gs"><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td class="gs"><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td></tr></tbody>
+</table>
                 <div class="abnote">Armor takes 10% off a hit (Hyper Armor) or 25% (Sparking Armor) until a hit breaks it. A Heavy Finish breaks armor like the smash. Rush hit 5, higher smash charges, throws, blasts and ultimates break every armor. In Sparking!, Goku&#39;s rush hits break every armor too.</div>
               </div>
               <div class="plate new">
                 <h5>Combat limits<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr><th>Follow-ups</th><th>Vanishing Attack</th><th>Lightning Attack</th><th>Dragon Homing</th></tr></thead>
-                <tbody><tr><td class="tap">2<small>+2 in Sparking!</small></td><td class="tap">Yes</td><td class="tap">Yes</td><td class="tap">Yes</td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="1"></th><th colspan="3" class="gs"><span>Pursuits</span></th></tr><tr><th>Follow-ups</th><th class="gs">Vanishing Attack</th><th>Lightning Attack</th><th>Dragon Homing</th></tr></thead>
+<tbody><tr><td class="tap">2<small>+2 in Sparking!</small></td><td class="tap gs">Yes</td><td class="tap">Yes</td><td class="tap">Yes</td></tr></tbody></table>
               </div>
               <div class="plate mob">
-                <h5>Mobility<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht mx"><thead><tr><th>Ki cost (bars)</th><th>Flight</th><th>Short Dash</th><th>Step-cancel dash</th><th>Dragon Dash</th><th>High-Speed Dragon Dash</th><th>Z-Burst Dash</th><th>Quick Ascend / Descend</th><th>Dragon Homing</th></tr></thead>
-                <tbody>
-                  <tr><th>Start</th><td rowspan="2">Can fly</td><td>0.265</td><td>0.13</td><td>0.05</td><td>0.05</td><td>1</td><td>0.1</td><td>0.025</td></tr>
-                  <tr><th>Per sec</th><td class="e"></td><td class="e"></td><td>0.39</td><td>0.49</td><td>1.1</td><td>0.78</td><td>0.35</td></tr>
-                </tbody></table>
+                <h5>Mobility<span class="tg">Can fly</span><span class="chv" title="Collapse">▾</span></h5>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="5" class="gs"><span>Dash</span></th><th colspan="2" class="gs"></th></tr><tr><th>Ki cost (bars)</th><th class="gs">Short</th><th>Step-cancel</th><th>Dragon</th><th>High-Speed</th><th>Z-Burst</th><th class="gs">Ascend / Descend</th><th>Dragon Homing</th></tr></thead>
+<tbody><tr><th>To start</th><td class="gs">0.265</td><td>0.13</td><td>0.05</td><td>0.05</td><td>1</td><td class="gs">0.1</td><td>0.025</td></tr><tr><th>Per sec</th><td class="gs"></td><td></td><td>0.39</td><td>0.49</td><td>1.1</td><td class="gs">0.78</td><td>0.35</td></tr></tbody>
+</table>
               </div>
               <div class="plate spk">
                 <h5>Sparking! Mode<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr><th>Hyper Smash</th><th>Burst Melee Attack</th><th>Burst Rush, per hit</th><th>Violent Rush</th><th>Extra follow-ups</th><th>Sparking armor</th></tr></thead>
-                <tbody><tr><td class="tap">2,450</td><td class="tap">1,250</td><td class="tap">450</td><td class="tap">Yes</td><td class="tap">+2</td><td class="tap">None</td></tr></tbody></table>
+<table class="ht">
+<thead><tr><th>Hyper Smash</th><th>Burst Melee Attack</th><th>Burst Rush hit</th><th>Violent Rush</th><th>Follow-ups</th><th>Armor</th></tr></thead>
+<tbody><tr><td class="tap">2,450</td><td class="tap">1,250</td><td class="tap">450</td><td class="tap">Yes</td><td class="tap">+2</td><td class="tap">None</td></tr></tbody></table>
               </div>
               <div class="plate neutral">
                 <h5>Traits<span class="chv" title="Collapse">▾</span></h5>
@@ -2220,71 +2226,78 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
             <div class="rws">
               <div class="plate">
                 <h5>Toughness<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr><th>HP</th><th>5-hit damage taken</th><th>5-hit taken, armored</th><th>Melee defense</th><th>Blast defense</th><th>Ki-blast defense</th><th>Armor</th><th>Switch</th></tr></thead>
-                <tbody><tr><td class="tap">40,000</td><td class="tap">2,585</td><td class="tap">2,585</td><td class="tap">Base</td><td class="tap">Base</td><td class="tap">Base</td><td class="tap">None</td><td class="tap">19s</td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="1"></th><th colspan="2" class="gs"><span>5-hit taken</span></th><th colspan="3" class="gs"><span>Defense</span></th><th colspan="2" class="gs"></th></tr><tr><th>HP</th><th class="gs">Normal</th><th>Armored</th><th class="gs">Melee</th><th>Blast</th><th>Ki blast</th><th class="gs">Armor</th><th>Switch</th></tr></thead>
+<tbody><tr><td class="tap">40,000</td><td class="tap gs">2,585</td><td class="tap">2,585</td><td class="tap gs">Base</td><td class="tap">Base</td><td class="tap">Base</td><td class="tap gs">None</td><td class="tap">19s</td></tr></tbody></table>
               </div>
               <div class="plate res">
                 <h5>Resources<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr class="g"><th colspan="5" class="gl">Ki (bars)</th><th colspan="3" class="gl">Skill gauge</th></tr><tr><th>Starting</th><th>Charge per sec</th><th>Regen per sec</th><th>Auto-recharge to</th><th>From hits</th><th>At start</th><th>Limit</th><th>Per minute</th></tr></thead>
-                <tbody><tr><td class="tap">2</td><td class="tap">1.40</td><td class="tap">0.175</td><td class="tap">2</td><td class="tap">0.03</td><td class="tap">0</td><td class="tap">6</td><td class="tap">3.65</td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="5"><span>Ki (bars)</span></th><th colspan="3" class="gs"><span>Skill gauge</span></th></tr><tr><th>Start</th><th>Charge per sec</th><th>Regen per sec</th><th>Refills to</th><th>From hits</th><th class="gs">Start</th><th>Limit</th><th>Per minute</th></tr></thead>
+<tbody><tr><td class="tap">2</td><td class="tap">1.40</td><td class="tap">0.175</td><td class="tap">2</td><td class="tap">0.03</td><td class="tap gs">0</td><td class="tap">6</td><td class="tap">3.65</td></tr></tbody></table>
               </div>
               <div class="plate off">
                 <h5>Melee<span class="chv" title="Collapse">▾</span></h5>
-                <div class="htw"><table class="ht"><thead><tr class="g"><th colspan="7" class="gl">Rush</th></tr><tr><th>Hit 1</th><th>Hit 2</th><th>Hit 3</th><th>Hit 4</th><th>Hit 5</th><th>5-hit total</th><th>Into armor</th></tr></thead><tbody><tr><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">554<small>Base 540</small></td><td class="tap up">769<small>Base 750</small></td><td class="tap up">2,523<small>Base 2,460</small></td><td class="tap up">2,346<small>Base 2,289</small></td></tr></tbody></table><table class="ht"><thead><tr class="g"><th colspan="3" class="gl">Smash</th><th colspan="3"></th></tr><tr><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Throw</th><th>Pursuit</th><th>Armor break</th></tr></thead><tbody><tr><td class="tap">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="tap">1,250</td><td class="tap">1,250</td><td class="tap">5 hits</td></tr></tbody></table></div>
+<div class="htw"><table class="ht">
+<thead><tr class="g"><th colspan="7"><span>Rush</span></th></tr><tr><th>Hit 1</th><th>Hit 2</th><th>Hit 3</th><th>Hit 4</th><th>Hit 5</th><th>Total</th><th>Into armor</th></tr></thead>
+<tbody><tr><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">400<small>Base 390</small></td><td class="tap up">554<small>Base 540</small></td><td class="tap up">769<small>Base 750</small></td><td class="tap up">2,523<small>Base 2,460</small></td><td class="tap up">2,346<small>Base 2,289</small></td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="3"><span>Smash</span></th><th colspan="3" class="gs"></th></tr><tr><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th class="gs">Throw</th><th>Pursuit</th><th>Armor break</th></tr></thead>
+<tbody><tr><td class="tap">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="tap gs">1,250</td><td class="tap">1,250</td><td class="tap">5 hits</td></tr></tbody></table></div>
               </div>
               <div class="plate mov">
                 <h5>Rush Chains<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht mx"><thead><tr><th></th><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Follow-up</th><th>Total</th></tr></thead>
-                <tbody>
-                  <tr><th>Heavy Finishes<small>Rush Chains 1 and 4</small></th><td class="tap">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="fup">Heavy Crush<small>3 hits: 350, 425, 563</small></td><td class="tap">1,338</td></tr>
-                  <tr><th>Ki Blast Cannon<small>Rush Chain 2</small></th><td class="tap">775</td><td class="tap">1,013</td><td class="tap">1,338</td><td class="fup">Ki Blast Cannon Attack<small>After Lv.3, 3 hits: 625, 775, 925</small></td><td class="tap">2,325</td></tr>
-                  <tr><th>Flying Kicks<small>Rush Chain 3, 3 hits</small></th><td class="tap ctr" colspan="3">1,150<small>Can't be charged</small></td><td class="e"></td><td class="e"></td></tr>
-                  <tr><th rowspan="2">Grand Slash<small>Every character</small></th><td class="tap" rowspan="2">625</td><td class="tap" rowspan="2">775</td><td class="tap" rowspan="2">1,263</td><td class="fup">Tornado Slash<small>3 hits: 450, 363, 525</small></td><td class="tap">1,338</td></tr>
-                  <tr><td class="fup">Aerial Slash<small>2 presses: three kicks 1,125, then 400</small></td><td class="tap">1,525</td></tr>
-                  <tr><th>Lift Strike<small>Most characters</small></th><td class="tap">675</td><td class="tap">900</td><td class="tap">1,338</td><td class="e"></td><td class="e"></td></tr>
-                </tbody></table>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="3" class="gs"><span>Charge level</span></th><th colspan="2" class="gs"><span>Follow-up</span></th></tr><tr><th></th><th class="gs">Lv.1</th><th>Lv.2</th><th>Lv.3</th><th class="gs">Attack</th><th>Damage</th></tr></thead>
+<tbody><tr><th>Heavy Finishes<small>Rush Chains 1 and 4</small></th><td class="tap gs">675</td><td class="tap">1,125</td><td class="tap">1,400</td><td class="fup gs">Heavy Crush<small>3 hits</small></td><td class="tap">1,338</td></tr></tbody>
+<tbody><tr><th>Ki Blast Cannon<small>Rush Chain 2</small></th><td class="tap gs">775</td><td class="tap">1,013</td><td class="tap">1,338</td><td class="fup gs">Ki Blast Cannon Attack<small>3 hits, after Lv.3</small></td><td class="tap">2,325</td></tr></tbody>
+<tbody><tr><th>Flying Kicks<small>Rush Chain 3</small></th><td class="tap ctr gs" colspan="3">1,150<small>Can't be charged</small></td><td class="gs"></td><td></td></tr></tbody>
+<tbody><tr><th rowspan="2">Grand Slash<small>Every character</small></th><td class="tap gs" rowspan="2">625</td><td class="tap" rowspan="2">775</td><td class="tap" rowspan="2">1,263</td><td class="fup gs">Tornado Slash<small>3 hits</small></td><td class="tap">1,338</td></tr><tr><td class="fup gs">Aerial Slash<small>2 hits</small></td><td class="tap">1,525</td></tr></tbody>
+<tbody><tr><th>Lift Strike<small>Most characters</small></th><td class="tap gs">675</td><td class="tap">900</td><td class="tap">1,338</td><td class="gs"></td><td></td></tr></tbody>
+</table>
                 <div class="chainmisc"><span><small>Step-In Chain</small>Heavy Finishes</span><span><small>Rush-In Attack</small>Heavy Finishes</span><span><small>Perception</small>Standard strike</span></div>
               </div>
               <div class="plate kib">
                 <h5>Ki blasts<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht mx"><thead><tr><th></th><th>Damage</th><th>Lv.1</th><th>Lv.2</th><th>Lv.3</th><th>Shots</th><th>Cost (bars)</th></tr></thead>
-                <tbody>
-                  <tr><th>Ki blast<small>Standard, full volley 1,125</small></th><td class="tap">250</td><td class="e"></td><td class="e"></td><td class="e"></td><td class="tap">5</td><td class="tap">0.2</td></tr>
-                  <tr><th>Charged ki blast</th><td class="e"></td><td class="tap">938</td><td class="tap">1,407</td><td class="tap">1,875</td><td class="tap">1</td><td class="tap">0.3</td></tr>
-                  <tr><th>Charged, while moving</th><td class="e"></td><td class="tap">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="e"></td><td class="e"></td></tr>
-                  <tr><th>Jump ki blast</th><td class="tap">313</td><td class="e"></td><td class="e"></td><td class="e"></td><td class="tap">5</td><td class="tap">0.135</td></tr>
-                  <tr><th>Dash ki blast</th><td class="tap">250</td><td class="e"></td><td class="e"></td><td class="e"></td><td class="tap">4</td><td class="tap">0.2</td></tr>
-                  <tr><th>Jump / dash charged</th><td class="e"></td><td class="tap">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="e"></td><td class="e"></td></tr>
-                </tbody></table>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="1" class="gs"></th><th colspan="3" class="gs"><span>Charge level</span></th><th colspan="2" class="gs"></th></tr><tr><th></th><th class="gs">Damage</th><th class="gs">Lv.1</th><th>Lv.2</th><th>Lv.3</th><th class="gs">Shots</th><th>Ki cost</th></tr></thead>
+<tbody><tr><th>Ki blast<small>Standard, full volley 1,125</small></th><td class="tap gs">250</td><td class="gs"></td><td></td><td></td><td class="tap gs">5</td><td class="tap">0.2</td></tr></tbody>
+<tbody><tr><th>Charged ki blast</th><td class="gs"></td><td class="tap gs">938</td><td class="tap">1,407</td><td class="tap">1,875</td><td class="tap gs">1</td><td class="tap">0.3</td></tr></tbody>
+<tbody><tr><th>Charged, while moving</th><td class="gs"></td><td class="tap gs">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="gs"></td><td></td></tr></tbody>
+<tbody><tr><th>Jump ki blast</th><td class="tap gs">313</td><td class="gs"></td><td></td><td></td><td class="tap gs">5</td><td class="tap">0.135</td></tr></tbody>
+<tbody><tr><th>Dash ki blast</th><td class="tap gs">250</td><td class="gs"></td><td></td><td></td><td class="tap gs">4</td><td class="tap">0.2</td></tr></tbody>
+<tbody><tr><th>Jump / dash charged</th><td class="gs"></td><td class="tap gs">875</td><td class="tap">1,313</td><td class="tap">1,750</td><td class="gs"></td><td></td></tr></tbody>
+</table>
               </div>
               <div class="plate armp">
                 <h5>Breaking armor<span class="chv" title="Collapse">▾</span></h5>
                 <div class="abtabs"><span class="on">Normal</span><span class="sp">In Sparking!</span></div>
-                <table class="ht mx"><thead><tr><th>Against</th><th>Rush hit 1</th><th>Rush hit 2</th><th>Rush hit 3</th><th>Rush hit 4</th><th>Smash Lv.1</th><th>Ki blast</th><th>Charged ki blast</th></tr></thead>
-                <tbody>
-                  <tr><th>Hyper Armor</th><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr>
-                  <tr><th>Sparking Armor</th><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr>
-                  <tr><th>Hyper, in Sparking</th><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td></tr>
-                </tbody></table>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="4" class="gs"><span>Rush hit</span></th><th colspan="3" class="gs"></th></tr><tr><th>Against</th><th class="gs">1</th><th>2</th><th>3</th><th>4</th><th class="gs">Smash Lv.1</th><th>Ki blast</th><th>Charged ki blast</th></tr></thead>
+<tbody><tr><th>Hyper Armor</th><td class="gs"><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td class="gs"><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr></tbody>
+<tbody><tr><th>Sparking Armor</th><td class="gs"><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td class="gs"><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="ok">Breaks</span></td></tr></tbody>
+<tbody><tr><th>Hyper, in Sparking</th><td class="gs"><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td class="gs"><span class="ok">Breaks</span></td><td><span class="no"><i class="arm"></i>Holds</span></td><td><span class="no"><i class="arm"></i>Holds</span></td></tr></tbody>
+</table>
                 <div class="abnote">Armor takes 10% off a hit (Hyper Armor) or 25% (Sparking Armor) until a hit breaks it. A Heavy Finish breaks armor like the smash. Rush hit 5, higher smash charges, throws, blasts and ultimates break every armor. In Sparking!, Goku&#39;s rush hits break every armor too.</div>
               </div>
               <div class="plate new">
                 <h5>Combat limits<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr><th>Follow-ups</th><th>Vanishing Attack</th><th>Lightning Attack</th><th>Dragon Homing</th></tr></thead>
-                <tbody><tr><td class="tap">2<small>+2 in Sparking!</small></td><td class="tap">Yes</td><td class="tap">Yes</td><td class="tap">Yes</td></tr></tbody></table>
+<table class="ht">
+<thead><tr class="g"><th colspan="1"></th><th colspan="3" class="gs"><span>Pursuits</span></th></tr><tr><th>Follow-ups</th><th class="gs">Vanishing Attack</th><th>Lightning Attack</th><th>Dragon Homing</th></tr></thead>
+<tbody><tr><td class="tap">2<small>+2 in Sparking!</small></td><td class="tap gs">Yes</td><td class="tap">Yes</td><td class="tap">Yes</td></tr></tbody></table>
               </div>
               <div class="plate mob">
-                <h5>Mobility<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht mx"><thead><tr><th>Ki cost (bars)</th><th>Flight</th><th>Short Dash</th><th>Step-cancel dash</th><th>Dragon Dash</th><th>High-Speed Dragon Dash</th><th>Z-Burst Dash</th><th>Quick Ascend / Descend</th><th>Dragon Homing</th></tr></thead>
-                <tbody>
-                  <tr><th>Start</th><td rowspan="2">Can fly</td><td>0.265</td><td>0.13</td><td>0.05</td><td>0.05</td><td>1</td><td>0.1</td><td>0.025</td></tr>
-                  <tr><th>Per sec</th><td class="e"></td><td class="e"></td><td>0.39</td><td>0.49</td><td>1.1</td><td>0.78</td><td>0.35</td></tr>
-                </tbody></table>
+                <h5>Mobility<span class="tg">Can fly</span><span class="chv" title="Collapse">▾</span></h5>
+<table class="ht mx">
+<thead><tr class="g"><th></th><th colspan="5" class="gs"><span>Dash</span></th><th colspan="2" class="gs"></th></tr><tr><th>Ki cost (bars)</th><th class="gs">Short</th><th>Step-cancel</th><th>Dragon</th><th>High-Speed</th><th>Z-Burst</th><th class="gs">Ascend / Descend</th><th>Dragon Homing</th></tr></thead>
+<tbody><tr><th>To start</th><td class="gs">0.265</td><td>0.13</td><td>0.05</td><td>0.05</td><td>1</td><td class="gs">0.1</td><td>0.025</td></tr><tr><th>Per sec</th><td class="gs"></td><td></td><td>0.39</td><td>0.49</td><td>1.1</td><td class="gs">0.78</td><td>0.35</td></tr></tbody>
+</table>
               </div>
               <div class="plate spk">
                 <h5>Sparking! Mode<span class="chv" title="Collapse">▾</span></h5>
-                <table class="ht"><thead><tr><th>Hyper Smash</th><th>Burst Melee Attack</th><th>Burst Rush, per hit</th><th>Violent Rush</th><th>Extra follow-ups</th><th>Sparking armor</th></tr></thead>
-                <tbody><tr><td class="tap">2,450</td><td class="tap">1,250</td><td class="tap">450</td><td class="tap">Yes</td><td class="tap">+2</td><td class="tap">None</td></tr></tbody></table>
+<table class="ht">
+<thead><tr><th>Hyper Smash</th><th>Burst Melee Attack</th><th>Burst Rush hit</th><th>Violent Rush</th><th>Follow-ups</th><th>Armor</th></tr></thead>
+<tbody><tr><td class="tap">2,450</td><td class="tap">1,250</td><td class="tap">450</td><td class="tap">Yes</td><td class="tap">+2</td><td class="tap">None</td></tr></tbody></table>
               </div>
               <div class="plate neutral">
                 <h5>Traits<span class="chv" title="Collapse">▾</span></h5>
@@ -2306,13 +2319,8 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
       };
       lay.addEventListener('click', e => {
         const b = e.target.closest('button'); if (!b) return;
-        if (b.dataset.v) {
           lay.querySelectorAll('[data-v]').forEach(x => x.classList.toggle('on', x === b));
           sec.querySelectorAll('.var').forEach(x => x.classList.toggle('on', x.dataset.v === b.dataset.v));
-        } else {
-          lay.querySelectorAll('[data-f]').forEach(x => x.classList.toggle('on', x === b));
-          sec.querySelectorAll('.rws').forEach(x => x.classList.toggle('fill', b.dataset.f === '1'));
-        }
         len();
       });
       const show = () => { if (location.hash === '#rows') requestAnimationFrame(len); };

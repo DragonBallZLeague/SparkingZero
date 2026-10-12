@@ -57,8 +57,9 @@ Done 2026-10-11:
 Still open: the four move flags and the Dragon Dash "BK" cost in `data/TESTS.md`.
 
 **Full stats as rows (round 22, `#rows`):** each section laid out across as a small table, as wide as its
-numbers, sharing a line with the next when it fits, against tab 7's three columns. Waiting on the league's pick.
-On desktop the whole page is 1,953px against 2,300px (the Command list is the same in both); phones keep the
+numbers, sharing a line with the next when it fits and stretched to fill it, against tab 7's three columns. Second
+pass (one-line headers, group bars, no cell lines or dashes) done; waiting on the league's pick.
+On desktop the whole page is 1,952px against 2,300px (the Command list is the same in both); phones keep the
 stacked list.
 
 Settled (2026-10-11): names with no parenthesis or a long form after it break before the form name ("Gotenks /
