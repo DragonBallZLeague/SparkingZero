@@ -301,7 +301,7 @@ export const AltPick = createContext([{}, () => {}]);
 /**
  * The Blasts rows for two fighters: one per slot (B1, B2, the ultimate), each side showing the version it picked, so
  * one side's alternate can be compared with the other's main move. Per side: `b` (null: no move in that slot),
- * `i` of `n` versions and `next()` to switch.
+ * `i` of the slot's versions `opts` (main first) and `set(j)` to compare another.
  */
 export function useBlastSlots() {
   const pc = usePair();
@@ -311,7 +311,7 @@ export function useBlastSlots() {
       const key = `${pc.pair[k].c.id}:${slot}`;
       const opts = blastsOf(pc.pair[k].c).filter(x => x.slot === slot).sort((x, y) => !!x.variant - !!y.variant);
       const i = Math.min(pick[key] || 0, Math.max(0, opts.length - 1));
-      return { b: opts[i] || null, i, n: opts.length, next: () => setPick(p => ({ ...p, [key]: (i + 1) % opts.length })) };
+      return { b: opts[i] || null, i, n: opts.length, opts, set: (j) => setPick(p => ({ ...p, [key]: j })) };
     };
     return { slot, A: side('A'), B: side('B') };
   });
@@ -320,17 +320,23 @@ export function useBlastSlots() {
 /** A Blasts row's centre: the slot badge. */
 export const slotLabel = (r) => <span className={`slot ${r.slot === 'Ultimate' ? 'u' : 'b'}`}>{SLOT_LABEL[r.slot]}</span>;
 
-/** A side's move in a Blasts row: its name, "Alternate" on a costume's move, and a switch when it has another version. */
-export const blastName = (x) => {
-  const to = x.i === 0 ? 'Alternate' : x.i === x.n - 1 ? 'Main' : 'Next';
-  return (
-    <>
-      {x.b.name}
-      {x.b.variant && <small className="altn">Alternate, with a costume</small>}
-      {x.n > 1 && <button type="button" className="altsw" onClick={x.next} title={`Compare the ${to === 'Main' ? 'main move' : to === 'Next' ? 'next alternate' : 'alternate'} instead`}>{to} ⇄</button>}
-    </>
-  );
-};
+/**
+ * A side's move in a Blasts row (the league's pick, option B of design/concepts/alternates-r24.html): its name with
+ * "Alt." beside it on a costume's move, and under it one slanted mark per version when the slot has more than one
+ * (the costume's mark orange when chosen); a click on a mark compares that version. The marks' line is always
+ * there, so nothing moves when "Alt." appears.
+ */
+export const blastName = (x) => (
+  <>
+    {x.b.name}{x.b.variant && <small className="altt" title="A costume's alternate">Alt.</small>}
+    {x.n > 1 && (
+      <span className="vmarks">{x.opts.map((o, i) => (
+        <button key={i} type="button" className={`${o.variant ? 'alt' : ''}${i === x.i ? ' on' : ''}`} aria-pressed={i === x.i}
+          title={`${o.name}${o.variant ? ' (costume)' : ''}`} aria-label={`Compare ${o.name}`} onClick={() => x.set(i)} />
+      ))}</span>
+    )}
+  </>
+);
 
 /** Blasts side by side, ultimates included, each side's alternates one switch away (with `vs`, damage dealt to the other side). */
 function BlastsCmp({ vs = false }) {

@@ -870,3 +870,19 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 
 /* a Quick tile's level tag (Smash and Charged ki blast at Lv.3, as Rush Chains show theirs) */
 .kt.lv { background: rgba(148,163,184,.22); color: #e2e8f0; }
+
+/* the Verdict: one line per fighter, the name in the side's colour */
+.verdict.vl > div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.75; }
+.verdict.vl .sa { color: #fdba74; font-weight: 800; } .verdict.vl .sb { color: #93c5fd; font-weight: 800; }
+
+/* Versus Blasts, alternates (option B): "Alt." beside a costume's move, and a slanted mark per version under the
+   name (the chosen one bright, a chosen costume's orange); the marks' line never moves */
+.mir .mn .altt { display: inline-block; margin-left: 6px; padding: 0 5px; font-size: 9.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: #fdba74; border: 1px solid rgba(249,115,22,.5); vertical-align: 1px; line-height: 1.4; }
+.mir .mn .vmarks { display: flex; gap: 4px; margin-top: 3px; }
+.mir .ma .mn .vmarks { justify-content: flex-end; }
+.vmarks button { width: 22px; height: 12px; padding: 3px 0; background: rgba(148,163,184,.3); background-clip: content-box; transform: skewX(-20deg); cursor: pointer; }
+.vmarks button:hover { background-color: rgba(226,232,240,.6); }
+.vmarks button.on { background-color: #e2e8f0; }
+.vmarks button.alt.on { background-color: #f97316; }
+.vmarks button:focus-visible { outline: 2px solid #f97316; outline-offset: 1px; }

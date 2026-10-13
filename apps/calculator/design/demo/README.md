@@ -207,8 +207,11 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **Smash and Charged ki blast show Lv.3 in Quick** (Fighter and Versus), as Rush Chains show full charge; every
   level stays in Full.
 - **Alternates, ways to switch:** `design/concepts/alternates-r24.html` mocks five (arrows on the name, version
-  marks, a menu, one Main / Costume switch per fighter, both versions listed) against today's button, for the
-  league to pick.
+  marks, a menu, one Main / Costume switch per fighter, both versions listed) against the old button. **The league
+  picked B, version marks**, with a small "Alt." tag beside a costume's move name (not a line under it), so the
+  marks never move; built into Versus's Blasts (`blastName` in `compare.jsx`).
+- **The Verdict** has one line per fighter, the name in the side's colour ("Android 18 deals more on 3 of 8
+  attacks").
 - **Versus Blasts switch alternates in place** (replacing a row per alternate): one row per slot, and a side with
   a costume's alternate gets an "Alternate ⇄" / "Main ⇄" button under its move, so either side's alternate can be
   compared with the other's main move. The choice holds across Side by side, Matchup and Full (`AltPick` in

@@ -227,9 +227,12 @@ function VersusQuick({ pair, match, phone, swapIn }) {
       <div className="cmpcol">
         <div className="plate neutral">
           <h5>Verdict</h5>
-          <div className="verdict">{match
-            ? <>{nA} out-damages {nB} on <b>{L.a}</b> of {L.n} attacks, {nB} on <b>{L.b}</b>.</>
-            : <>{nA} leads on <b>{L.a}</b> stats, {nB} on <b>{L.b}</b>.</>}</div>
+          {/* one line per fighter, in the side's colour */}
+          <div className="verdict vl">
+            {[['sa', nA, L.a], ['sb', nB, L.b]].map(([cls, n, x]) => (
+              <div key={cls}><span className={cls}>{n}</span>{match ? <> deals more on <b>{x}</b> of {L.n} attacks</> : <> leads on <b>{x}</b> stats</>}</div>
+            ))}
+          </div>
           <div className="strong">
             <div><small>{nA}'s edge</small><div className="tags">{L.edgeA.slice(0, 6).map(x => <span key={x}>{x}</span>)}</div></div>
             <div><small>{nB}'s edge</small><div className="tags">{L.edgeB.slice(0, 6).map(x => <span key={x}>{x}</span>)}</div></div>

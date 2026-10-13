@@ -71,6 +71,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* B version dots */
 .dots { display: flex; gap: 4px; margin-top: 4px; }
+.altt { font-style: normal; margin-left: 4px; padding: 0 5px; font-size: 9.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #fdba74; border: 1px solid rgba(249,115,22,.5); }
 .cell.a .dots { justify-content: flex-end; }
 .dots button { width: 22px; height: 6px; background: rgba(148,163,184,.25); transform: skewX(-20deg); }
 .dots button.on { background: #e2e8f0; }
@@ -144,7 +145,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   </section>
 
   <section>
-    <h2>B. Version marks under the name <small>like page dots</small></h2>
+    <h2>B. Version marks under the name <small>the league's pick, with "Alt." beside the name</small></h2>
     <p class="idea">Thin slanted marks under the name, one per version; the alternate's mark is orange when it's chosen.
       Click a mark to pick that version.</p>
     <p class="trade"><b>Good:</b> the quietest option, and the count shows at a glance.
@@ -202,7 +203,7 @@ function mock(mode, phone) {
     let name;
     if (mode === 'today') name = `<span class="nmw"><span class="nm">${o.n}</span>${costume}${n > 1 ? `<button class="today" data-k="${k}" data-s="${s}" data-step="1">${st[k][s] ? 'Main' : 'Alternate'} ⇄</button>` : ''}</span>`;
     else if (mode === 'arrows') name = `<span class="nmw">${n > 1 ? `<span class="arr"><button data-k="${k}" data-s="${s}" data-step="-1" aria-label="Previous version">‹</button><span class="nm">${o.n}</span><button data-k="${k}" data-s="${s}" data-step="1" aria-label="Next version">›</button></span><small>${st[k][s] + 1} of ${n}${o.alt ? ', costume' : ''}</small>` : `<span class="nm">${o.n}</span>`}</span>`;
-    else if (mode === 'dots') name = `<span class="nmw"><span class="nm">${o.n}</span>${costume}${n > 1 ? `<span class="dots">${opts.map((x, i) => `<button class="${x.alt ? 'alt' : ''}${i === st[k][s] ? ' on' : ''}" data-k="${k}" data-s="${s}" data-i="${i}" title="${x.n}${x.alt ? ' (costume)' : ''}"></button>`).join('')}</span>` : ''}</span>`;
+    else if (mode === 'dots') name = `<span class="nmw"><span class="nm">${o.n}${o.alt ? ' <em class="altt">Alt.</em>' : ''}</span>${n > 1 ? `<span class="dots">${opts.map((x, i) => `<button class="${x.alt ? 'alt' : ''}${i === st[k][s] ? ' on' : ''}" data-k="${k}" data-s="${s}" data-i="${i}" title="${x.n}${x.alt ? ' (costume)' : ''}"></button>`).join('')}</span>` : ''}</span>`;
     else if (mode === 'menu') {
       const open = st.open === `${k}${s}`;
       name = n > 1
