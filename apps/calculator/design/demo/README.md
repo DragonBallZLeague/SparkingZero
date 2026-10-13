@@ -192,6 +192,12 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **Command list trials** (`cl=` in the hash, for the league to pick): `cl=a` drops the Skills / Blasts /
   Ultimates sub-headers (the slot badges name the cards; a wider gap between the rows); `cl=b` splits the Command
   list into Skills, Blasts and Ultimates sections in its place, in the skill, blast and ultimate colours.
+  Second pass: A's Quick rows put the skills on top (as Full does); B is two sections, Skills and Blasts, with
+  the ultimates under Blasts (they are blasts). Quick's rows now list alternate blasts and ultimates too, marked
+  under the name ("Alternate ultimate, with a costume"), in every version.
+- **Versus rails scroll with the page** (one scroll bar); only a docked capsule picker keeps its own scroll. The
+  rails run 500 to 1,030px; the stats between them 830 to 1,150px in Quick and 1,640 to 1,880px in Full.
+- **The view tabs' bar** fades from orange over the same length as the Versus header's left side.
 - **Capsule rows** lost their coloured left edge; the coloured type name says the category.
 - **A ki blast card's Ki cost** spans two of the card's columns, so "0.135 bars" stays on one line.
 - **Versus rails** follow the fighter column's order: skills and Sparking, Conditions, Capsules, League builds.

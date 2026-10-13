@@ -61,11 +61,10 @@ const SECS = [
   { id: 'mob', title: 'Mobility', cls: 'mob', fullOnly: true },
   { id: 'traits', title: 'Traits', cls: 'neutral', fullOnly: true },
 ];
-/** Trial B for the Command list (`cl=b`): its three groups as sections of their own, in the Command list's place. */
+/** Trial B for the Command list (`cl=b`): Skills and Blasts (ultimates are blasts) as sections of their own, in its place. */
 const CMD3 = [
   { id: 'skl', title: 'Skills', cls: 'skl', only: 'skills' },
   { id: 'bls', title: 'Blasts', cls: 'cmd', only: 'blasts' },
-  { id: 'ult', title: 'Ultimates', cls: 'ult', only: 'ults' },
 ];
 const sectionsFor = (cl) => (cl === 'b' ? SECS.flatMap(s => (s.id === 'cmd' ? CMD3 : [s])) : SECS);
 
@@ -155,7 +154,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
           <span className="st">{s.title}{s.note && !full && <em className="h5n">{s.note}</em>}{mob && <span className="tg">{mob}</span>}</span>
           <span className="more" aria-hidden="true">{full ? 'Less' : 'More'}</span>
         </h5>
-        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.only ? 'cmd' : s.id} only={s.only} side={side} />}</div>
+        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.only ? 'cmd' : s.id} only={s.only} skillsFirst={cl === 'a'} side={side} />}</div>
         {searching && !full && <div className="fghost" aria-hidden="true" inert="">{fullBody(s)}</div>}
       </section>
     );

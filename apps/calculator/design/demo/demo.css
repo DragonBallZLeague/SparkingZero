@@ -823,3 +823,14 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .mcard .spec b .nw, .mcard .spec b .nw span { display: inline; font-size: inherit; letter-spacing: normal; text-transform: none; color: inherit; overflow: visible; white-space: nowrap; }
 .mcard .spec b .nw small { font-size: 11px; font-weight: 600; color: var(--muted); }
 .mcard .spec b .nw > * { display: inline; }
+
+/* the Command list's rows show alternate blasts and ultimates, marked under the name */
+.cmdrow .mvn .altn { display: block; margin-top: 1px; font-size: 10.5px; font-weight: 500; font-style: normal; letter-spacing: 0; text-transform: none; color: var(--muted); }
+
+/* Versus: the loadout rails scroll with the page (one scroll bar); only a docked capsule picker keeps its own
+   scroll, pinned beside the numbers while its list is long */
+.vrail { position: static; max-height: none; overflow: visible; }
+.vrail.dock { position: sticky; top: calc(var(--top) + 8px); max-height: calc(100vh - var(--top) - 16px); overflow-y: auto; }
+
+/* the view tabs' bar: the same orange fade, to the same length, as the Versus header's left side */
+.app .top { background: linear-gradient(100deg, rgba(234,88,12,.6), rgba(14,20,48,0) 50%), #0e1430; }

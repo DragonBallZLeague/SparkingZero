@@ -50,17 +50,23 @@ const blastGet = (sideKey, b, field = 'damage') => (sides) => {
 };
 
 /* ------------------------------------------------------------------ the Sheet's Command list */
-export function CmdRows({ side, sideKey = 'A', only = null }) {
+/**
+ * The Command list as rows: blasts (B1, B2, alternate blasts), ultimates (with alternates), skills.
+ * `only`: 'skills' or 'blasts' (ultimates included) when the Command list is split into sections (trial B);
+ * `skillsFirst`: skills on top, as in Full (trial A).
+ */
+export function CmdRows({ side, sideKey = 'A', only = null, skillsFirst = false }) {
   const { c } = side;
-  const rows = [];
-  // `only`: one group (blasts, ults or skills) when the Command list is split into sections (trial B)
-  for (const b of orderedBlasts(c, { alternates: false }).filter(b => !only || (only === 'ults') === (b.slot === 'Ultimate') && only !== 'skills')) {
+  const rows = [], skillRows = [];
+  const all = orderedBlasts(c);
+  const blasts = only === 'skills' ? [] : [...all.filter(b => b.slot !== 'Ultimate'), ...all.filter(b => b.slot === 'Ultimate')];
+  for (const b of blasts) {
     const slot = SLOT_LABEL[b.slot];
     const tiles = blastTiles(b);
     rows.push(
-      <div className="cmdrow" key={b.slot + b.name}>
+      <div className={`cmdrow${b.variant ? ' alt' : ''}`} key={b.slot + (b.variant || '') + b.name}>
         <span className={`slot ${slot === 'ULT' ? 'u' : 'b'}`}>{slot}</span>
-        <span className="mvn">{b.name}</span>
+        <span className="mvn">{b.name}{b.variant && <small className="altn">{slot === 'ULT' ? 'Alternate ultimate' : 'Alternate blast'}, with a costume</small>}</span>
         <span className="tcell">
           <span className="tline"><span className="ttype">{blastType(b)}</span>{tiles.map(t => <span className="pv" key={t.label}><i>{t.shortLabel}</i>{t.short}</span>)}</span>
           {b.selfDamage && <span className="tline"><span className="ef neg">Self-damage {selfDamageText(b).amount}</span></span>}
@@ -74,7 +80,7 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
     const s = skillOf(c, slot);
     if (!s) continue;
     const effects = skillEffectTiles(s, side.spec?.stage?.[slot]);
-    rows.push(
+    skillRows.push(
       <div className="cmdrow" key={`s${slot}`}>
         <span className="slot s">S{slot}</span>
         <span className="mvn">{s.name}</span>
@@ -87,7 +93,7 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
       </div>,
     );
   }
-  return <>{rows}</>;
+  return <>{skillsFirst ? [...skillRows, ...rows] : [...rows, ...skillRows]}</>;
 }
 
 /* ------------------------------------------------------------------ Full stats' move cards */
@@ -156,13 +162,13 @@ function BlastCard({ side, sideKey, b }) {
 }
 
 /** Skills, then Blasts, then Ultimates: up to three cards a row. */
-/** The Command list's cards. `heads`: the Skills / Blasts / Ultimates sub-headers (trial A drops them); `only`: one group (trial B). */
+/** The Command list's cards. `heads`: the Skills / Blasts / Ultimates sub-headers (trial A drops them); `only`: 'skills' or 'blasts' (ultimates included; trial B). */
 export function MoveCards({ side, sideKey = 'A', onStage, heads = true, only = null }) {
   const { c } = side;
   const skills = [1, 2].filter(n => skillOf(c, n));
   const blasts = orderedBlasts(c);
   const supers = blasts.filter(b => b.slot !== 'Ultimate'), ults = blasts.filter(b => b.slot === 'Ultimate');
-  const show = (k) => !only || only === k;
+  const show = (k) => !only || only === k || (only === 'blasts' && k === 'ults');
   return (
     <div className={`mlist${heads ? '' : ' nohd'}`}>
       {show('skills') && <div className="mgrp s">{heads && <h4>Skills</h4>}<div className="mrow" style={{ '--n': Math.min(3, skills.length) }}>{skills.map(n => <SkillCard key={n} side={side} slot={n} onStage={onStage} />)}</div></div>}
