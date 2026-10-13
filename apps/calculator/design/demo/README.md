@@ -87,6 +87,18 @@ conditions, ruleset) lives in the URL hash.
   each pursuit's uses instead of Yes/No). Both also show in Compare and Vs All stats and in the capsule picker.
   The league's tests are in `data/TESTS.md`.
 
+## Under the site's shared bar (2026-10-12)
+
+The demo now renders the real shared nav bar (`packages/ui` `NavBar`, its CSS inlined by `build-demo.mjs`):
+- the bar carries the page title, with the ruleset in its centre slot;
+- the calculator's own bar is only the view tabs, sticky right under it (on a phone the tabs stay at the bottom);
+- `--top` in `demo.css` is everything stuck to the top, used by every sticky offset.
+
+`demo.css` also previews a **proposed fix to the shared bar**, not yet made in `packages/ui`: its side columns
+can't shrink below the title, so on a phone the title runs under the centre controls (today's calculator puts
+buttons there too). The fix lets the columns shrink and hides the title on a phone when there are centre
+controls.
+
 ## Checked
 
 Desktop (1280px), tablet (820px: the Sheet puts the build beside the figure, Vs opponent stacks health above the

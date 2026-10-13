@@ -17,12 +17,14 @@ const out = await build({
   format: 'iife',
   minify: true,
   jsx: 'automatic',
-  loader: { '.csv': 'text' },
+  loader: { '.csv': 'text', '.css': 'empty' },  // CSS is inlined below, not bundled
   define: { 'process.env.NODE_ENV': '"production"', 'import.meta.env.BASE_URL': '"./"' },
   logLevel: 'warning',
 });
 const js = out.outputFiles[0].text;
-const css = ['sheet.css', 'demo.css'].map(f => fs.readFileSync(path.join(here, f), 'utf8')).join('\n');
+// the site's shared nav bar (packages/ui) first, as every app has it
+const css = [path.join(here, '../../../../packages/ui/src/NavBar.css'), path.join(here, 'sheet.css'), path.join(here, 'demo.css')]
+  .map(f => fs.readFileSync(f, 'utf8')).join('\n');
 const html = `<!doctype html>
 <html lang="en">
 <head>

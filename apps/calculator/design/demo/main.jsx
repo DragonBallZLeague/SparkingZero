@@ -10,6 +10,7 @@ import { FullStatsView } from './fullstats.jsx';
 import { CompareView } from './compare.jsx';
 import { VersusView } from './versus.jsx';
 import { CharacterPicker, CapsulePicker, QuickPick } from './pickers.jsx';
+import { NavBar } from '../../../../packages/ui/src/index.js';
 
 const TABS = [['roster', 'Characters', 'Roster'], ['sheet', 'Sheet', 'Sheet'], ['stats', 'Full stats', 'Stats'], ['compare', 'Compare', 'Compare'], ['vs', 'Vs opponent', 'Vs']];
 
@@ -81,19 +82,24 @@ function App() {
   return (
     <BreakdownHost resetKey={serialize(st) + (overlay ? overlay.kind : '')}>
       <PairCtx.Provider value={ctx}>
+        {/* the site's shared bar (packages/ui) carries the page title and, in its centre slot, the ruleset;
+            the calculator's own bar under it is just the view tabs (on a phone they are at the bottom) */}
+        <NavBar current="calculator" title="Character Calculator" right={(
+          <label className="rs szl-rs">
+            <span className="sr">Ruleset</span>
+            <select value={st.rs} onChange={(e) => update({ rs: e.target.value })}>
+              {meta.rulesets.map(r => <option key={r.name} value={r.name}>{phone ? r.name.replace(' ruleset', '') : `${r.name} ruleset`}</option>)}
+            </select>
+          </label>
+        )} />
         <div className={`B app${phone ? ' ph' : ''}`}>
-          <div className="top">
-            <span className="ttl">{phone ? 'Calculator' : 'Character Calculator'}</span>
-            <div className="tabs" role="tablist">
-              {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={st.view === k} className={st.view === k && !overlay ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
+          {!phone && (
+            <div className="top">
+              <div className="tabs" role="tablist">
+                {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={st.view === k} className={st.view === k && !overlay ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
+              </div>
             </div>
-            <label className="rs">
-              <span className="sr">Ruleset</span>
-              <select value={st.rs} onChange={(e) => update({ rs: e.target.value })}>
-                {meta.rulesets.map(r => <option key={r.name} value={r.name}>{phone ? r.name.replace(' ruleset', '') : `${r.name} ruleset`}</option>)}
-              </select>
-            </label>
-          </div>
+          )}
           <main><Boundary at={st.view + (overlay?.kind || '')}>{page}</Boundary></main>
           {phone && (
             <nav className="phtabs">
