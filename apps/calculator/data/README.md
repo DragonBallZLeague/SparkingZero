@@ -177,6 +177,10 @@ A fifth round on 2026-10-12 fired blasts with Blast Burst equipped (+5% blast da
 - **Also matched:** Kaioken Attack 8,794 and Kaioken Rush 9,213 (Goku (Z - Early) and (Z - Mid)); Goku (Z - Mid)'s x20 Kaioken Kamehameha 7,840 (one 1,140-Power bullet plus 4 beam ticks of 1,140); Cell 2nd Form's Big Bang Crash 7,838 (one 5,700 hit). The engine now prefers an implied Power that gives a published value exactly (5,700 for Big Bang Crash's 7,482, not the nearer 5,701).
 - **Re-read the same day:** Kamehameha and Super Masenko are 7,485 with Blast Burst (one 1,140-Power bullet plus 4 beam ticks of 1,140: 5 × 1,497); the first reading, 7,845, had two digits swapped. Drain Life Cell is 8,795 with no capsules and 9,213 with Blast Burst: its cinematic is two hits from its own attack files, 2,730 + 3,970, each rounded up. The build now has a recipe for that, **own action parts, else the largest** (a move's own `Combatives_<id>_` parts, not the `Combatives_Common_` ones several moves share), which the "several action parts" families now pick: 11 of 11 supers and 6 of 7 ultimates match their measured damage, up from 9 and 3. No published damage changed; 660 of 743 blasts carry their hits.
 
+A sixth round on 2026-10-12 read the pursuits on Goku (Z - Early), each as the combo total after a 1,400 full smash:
+- **Damage:** Vanishing Attack and Dragon Homing's final hit (Dragon Smash) **1,250** each (1,000 Power, the published Pursuit), Lightning Attack **1,150**: two hits of 460 Power, 575 each. All on the follow-up channel.
+- **Uses:** a fighter like Goku can follow up twice in a combo (2 Vanishing Attacks, or 2 Dragon Homings, or one of each). Vanishing Break and Dragon Break add one use to their pursuit **and one to the total**: with Dragon Break, Goku can do 2 Vanishing Attacks and then a Dragon Homing. **Lightning Attack is only ever used once.** The engine's `pursuitLimit` follows this; both capsules together are a test in TESTS.md.
+
 `verify-data` checks these numbers on every build.
 
 **Capsule Corp class labels.** Capsule Corp sometimes computes a channel with its class

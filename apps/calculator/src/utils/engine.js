@@ -263,19 +263,21 @@ export function computeStats(c, effects, ctx = {}) {
   const refHits = ctx.referenceHits || null;
   const skillDamage = (d) => (typeof d === 'number' && d ? round(scale(d, k0.skill, k1.skill, K), 2) : d ?? 0);
 
-  // Pursuits (data/EXPANSION.md): the published Pursuit is the follow-up hit, Vanishing Attack's too (1,000
-  // Power); Dragon Homing's Dragon Smash is 1,000 and Lightning Attack 460, all on the follow-up channel.
-  // Vanishing Crash and Dragon Crash add to their own move's coefficient. Use limits: a pursuit with its own
-  // limit in the game files keeps it (Videl's 2 Dragon Homings), the others share the general follow-up
-  // limit; Vanishing Break and Dragon Break add one use; a pursuit the character can't do stays 0.
+  // Pursuits, all on the follow-up channel (measured 2026-10-12, Goku (Z - Early) after a 1,400 full smash:
+  // Vanishing Attack and Dragon Homing's Dragon Smash 1,250 each, 1,000 Power, as the published Pursuit;
+  // Lightning Attack 1,150, two hits of 460 Power). Vanishing Crash and Dragon Crash add to their own move.
+  // Uses (the league's test the same day): a pursuit with its own limit in the game files keeps it (Videl's 2
+  // Dragon Homings), the others share the general follow-up limit; Vanishing Break and Dragon Break add one use
+  // to their pursuit AND to the general limit (Goku with Dragon Break: 2 Vanishing Attacks, then a Dragon
+  // Homing); Lightning Attack is only ever used once; a pursuit the character can't do stays 0.
   const pursuitAt = (extra) => scale(s.pursuit, k0.followUp, k1.followUp + extra, K, 1000);
   const ps = c.moveset?.pursuits || {};
   const usesOf = (p, addKey) => (p === false ? 0 : (p?.limit ?? (p ? ps.limit ?? 0 : 0)) + (addKey ? add[addKey] || 0 : 0));
   const pursuitLimit = {
-    general: ps.limit ?? 0,
+    general: (ps.limit ?? 0) + (ps.limit ? (add.vanishingLimit || 0) + (add.dragonHomingLimit || 0) : 0),
     vanishingAttack: usesOf(ps.vanishingAttack, 'vanishingLimit'),
-    lightningAttack: usesOf(ps.lightningAttack, null),
     dragonHoming: usesOf(ps.dragonHoming, 'dragonHomingLimit'),
+    lightningAttack: ps.lightningAttack === false ? 0 : 1,
   };
 
   return {
@@ -301,7 +303,7 @@ export function computeStats(c, effects, ctx = {}) {
     pursuit: scale(s.pursuit, k0.followUp, k1.followUp, K),
     vanishingAttack: ps.vanishingAttack === false ? null : pursuitAt(add.vanishingAttackDamage || 0),
     dragonSmash: ps.dragonHoming === false ? null : pursuitAt(add.dragonSmashDamage || 0),
-    lightningAttack: ps.lightningAttack === false ? null : Math.ceil(F(F(460 * K) * F(k1.followUp))),
+    lightningAttack: ps.lightningAttack === false ? null : 2 * Math.ceil(F(F(460 * K) * F(k1.followUp))),
     pursuitLimit,
     kiBlastDmg: scale(s.kiBlastDamage, k0.kiBlast, k1.kiBlast, K, P.kiBlast ?? null),
     misc: round(c.dpScale - 1),

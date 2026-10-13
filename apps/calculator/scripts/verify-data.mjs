@@ -308,6 +308,16 @@ if (v2) {
     const b = (data.blasts[named(n)?.id] || []).find(x => x.name === move);
     ig(`${n} ${move} with Blast Burst`, b && scaleChannel(run(named(n).id, { capsules: ['00_0_0026'] }), 'super', b.damage, b.hits), want);
   }
+  // Sixth round, same day: pursuits on Goku (Z - Early), each read as the combo total after a 1,400 full smash
+  // (Vanishing Attack and Dragon Homing +1,250, Lightning Attack +1,150 = 2 x 575), and the uses: Vanishing Break
+  // and Dragon Break add one to their pursuit and one to the total; Lightning Attack is used once at most
+  const gk = run('0000_00'), gkVb = run('0000_00', { capsules: ['00_0_0136'] }), gkDb = run('0000_00', { capsules: ['00_0_0134'] });
+  ig('Goku (Z - Early) Vanishing Attack', gk.vanishingAttack, 1250);
+  ig('Goku (Z - Early) Dragon Homing (Dragon Smash)', gk.dragonSmash, 1250);
+  ig('Goku (Z - Early) Lightning Attack', gk.lightningAttack, 1150);
+  ig('Goku (Z - Early) uses: follow-ups / Vanishing / Dragon Homing / Lightning', JSON.stringify(gk.pursuitLimit), JSON.stringify({ general: 2, vanishingAttack: 2, dragonHoming: 2, lightningAttack: 1 }));
+  ig('... with Vanishing Break', JSON.stringify(gkVb.pursuitLimit), JSON.stringify({ general: 3, vanishingAttack: 3, dragonHoming: 2, lightningAttack: 1 }));
+  ig('... with Dragon Break', JSON.stringify(gkDb.pursuitLimit), JSON.stringify({ general: 3, vanishingAttack: 2, dragonHoming: 3, lightningAttack: 1 }));
   const glorio = (data.blasts[named('Glorio')?.id] || []).find(b => b.name === 'Lightning Cannon');
   if (!glorio?.traits.includes('Unguardable')) game.push('Glorio Lightning Cannon is unguardable (in game 2026-10-08)');
   // Fourth round, 2026-10-09: short-dash scale, Cheelai, blast categories, cinematics and clashes

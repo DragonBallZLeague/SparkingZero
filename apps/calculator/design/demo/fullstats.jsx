@@ -71,7 +71,7 @@ function sections(side) {
         // the pursuits' damage (Vanishing Crash and Dragon Crash raise their own); None where the fighter can't
         ['Pursuits', [
           cell('Vanishing Attack', A(x => x.vanishingAttack), { fmt: orNone }), cell('Dragon Smash', A(x => x.dragonSmash), { fmt: orNone, long: 'Dragon Smash (Dragon Homing)' }),
-          cell('Lightning Attack', A(x => x.lightningAttack), { fmt: orNone }),
+          cell('Lightning Attack', A(x => x.lightningAttack), { fmt: orNone, small: '2 hits' }),
         ]],
         [null, [cell('Armor break', A(x => x.armorBreak), { fmt: F.hits, kind: 'dec', less: true })]],
       ],
@@ -83,15 +83,15 @@ function sections(side) {
     {
       id: 'limits', title: 'Combat limits', cls: 'new',
       groups: [
-        [null, [cell('Follow-ups', null, { text: String(ps.limit ?? 0), small: ps.sparkingAdd ? `+${ps.sparkingAdd} in Sparking!` : null })]],
-        // each pursuit's uses (Vanishing Break and Dragon Break add one); No where the fighter can't
+        // the total follow-ups in a combo (Vanishing Break and Dragon Break raise it too), then each pursuit's uses
+        [null, [cell('Follow-ups', A(x => x.pursuitLimit.general), { fmt: String, kind: 'dec', long: 'Follow-ups per combo', small: ps.sparkingAdd ? `+${ps.sparkingAdd} in Sparking!` : null })]],
         ['Pursuit uses', [
           cell('Vanishing Attack', A(x => x.pursuitLimit.vanishingAttack), { fmt: uses, kind: 'dec', long: 'Vanishing Attack uses' }),
-          cell('Lightning Attack', A(x => x.pursuitLimit.lightningAttack), { fmt: uses, kind: 'dec', long: 'Lightning Attack uses' }),
           cell('Dragon Homing', A(x => x.pursuitLimit.dragonHoming), { fmt: uses, kind: 'dec', long: 'Dragon Homing uses' }),
+          cell('Lightning Attack', A(x => x.pursuitLimit.lightningAttack), { fmt: uses, kind: 'dec', long: 'Lightning Attack uses (always 1)' }),
         ]],
       ],
-      summary: [['Follow-ups', ps.limit ?? 0], ['Vanishing', uses(v.pursuitLimit.vanishingAttack)], ['Lightning', uses(v.pursuitLimit.lightningAttack)], ['Dragon Homing', uses(v.pursuitLimit.dragonHoming)]],
+      summary: [['Follow-ups', String(v.pursuitLimit.general)], ['Vanishing', uses(v.pursuitLimit.vanishingAttack)], ['Dragon Homing', uses(v.pursuitLimit.dragonHoming)], ['Lightning', uses(v.pursuitLimit.lightningAttack)]],
     },
     { id: 'mob', title: 'Mobility', cls: 'mob', custom: 'mob', tag: mob.canFly === false ? "Can't fly" : 'Can fly', summary: [[mob.canFly === false ? "Can't fly" : 'Can fly', null], ['Short Dash', F.bars(v.shortDashCost)], ['Z-Burst Dash', F.bars(mob.zBurstDash?.start)]] },
     {

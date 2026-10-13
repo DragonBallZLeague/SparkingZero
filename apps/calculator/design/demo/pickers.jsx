@@ -193,7 +193,7 @@ export function CharacterPicker({ current, side, view, onPick, onClose = null, o
 const HEADLINE = [
   ['HP', (s) => s.view.health], ['Rush 5-hit', (s) => s.view.rush5Hit], ['Smash', (s) => s.view.smash], ['Throw', (s) => s.view.throw],
   ['Vanishing Attack', (s) => s.view.vanishingAttack], ['Dragon Smash', (s) => s.view.dragonSmash],
-  ['Vanishing Attack uses', (s) => s.view.pursuitLimit.vanishingAttack, String], ['Dragon Homing uses', (s) => s.view.pursuitLimit.dragonHoming, String],
+  ['Follow-ups', (s) => s.view.pursuitLimit.general, String], ['Vanishing Attack uses', (s) => s.view.pursuitLimit.vanishingAttack, String], ['Dragon Homing uses', (s) => s.view.pursuitLimit.dragonHoming, String],
   ['Ki blast', (s) => s.view.kiBlastDmg], ['Ki blast limit', (s) => s.view.kiBlastLimit, F.count], ['Full volley', (s) => volley(s.view)],
   ['Ki blast cost', (s) => s.view.kiBlastCost, F.bars], ['Melee defense', (s) => s.view.meleeDefenseStat, F.def], ['Ki-blast defense', (s) => s.view.energy, F.def],
   ['Blast defense', (s) => s.view.blastDefense, F.def], ['Starting ki', (s) => s.view.startingKi, (x) => `${+x.toFixed(2)} bars`],

@@ -165,9 +165,9 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Skill gauge limit', get: V(x => x.skillLimit), fmt: String }, { label: 'Skill gauge per minute', get: V(x => parseFloat(x.skillRegen)), fmt: F.dec, kind: 'dec' },
     ] },
     { id: 'limits', title: 'Combat limits', cls: 'new', col: 2, rows: [
-      { label: 'Follow-ups', get: (s) => s.c.moveset?.pursuits?.limit ?? 0, fmt: String },
+      { label: 'Follow-ups', get: V(x => x.pursuitLimit.general), fmt: String },
       // each pursuit's uses with the build (Vanishing Break, Dragon Break); No where the fighter can't
-      ...[['Vanishing Attack', 'vanishingAttack'], ['Lightning Attack', 'lightningAttack'], ['Dragon Homing', 'dragonHoming']].map(([l, k]) => ({ label: `${l} uses`, get: V(x => x.pursuitLimit[k]), fmt: (x) => (x ? String(x) : 'No') })),
+      ...[['Vanishing Attack', 'vanishingAttack'], ['Dragon Homing', 'dragonHoming'], ['Lightning Attack', 'lightningAttack']].map(([l, k]) => ({ label: `${l} uses`, get: V(x => x.pursuitLimit[k]), fmt: (x) => (x ? String(x) : 'No') })),
       { label: 'Jump ki blasts', get: (s) => gameMoves(s).jump?.count, fmt: String }, { label: 'Dash ki blasts', get: (s) => gameMoves(s).dash?.count, fmt: String },
     ] },
     { id: 'spk', title: 'Sparking! Mode', cls: 'spk', col: 2, rows: [
