@@ -184,6 +184,10 @@ Changed numbers show their base under them. The row tables are gone from the dem
     their slot badge (B1, ULT, S1) on a slate head;
   - sub-groups (Melee's three, the Command list's Skills, Blasts and Ultimates) share one smaller slate style with a
     dot in the group's colour.
+- **Section headers in colour again:** the section's colour as a faded top edge and tint (no dot), and the whole
+  header opens and closes the section (More / Less only shows which way). Sub-groups and cards dropped their dots.
+- **One line parts the fighter column from the stats** on a desktop, from the top of the stats to the bottom of the
+  last section; the pinned controls lost their grey edge.
 - **Capsules' Edit and Clear** sit on the right under the list, in a neutral slate outline.
 - **Versus rails** are led by their title ("Goku's loadout"): the largest header there, with the side's orange or
   blue as its top edge and tint.

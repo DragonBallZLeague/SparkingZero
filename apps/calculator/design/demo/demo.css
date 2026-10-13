@@ -771,3 +771,30 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .ph .xv.chg s { display: block; margin: 0; }
 .ph .xph, .ph .hpvals { grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr); gap: 5px; }
 .ph .hpair { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); }
+
+/* section headers in their section's colour again, faded like the slate bars (a top edge and a tint), no dot */
+.app .plate { --sh: #22c55e; }
+.app .plate.res { --sh: #facc15; } .app .plate.off { --sh: #dc2626; } .app .plate.mov { --sh: #fb7185; } .app .plate.kib { --sh: #fbb41a; }
+.app .plate.spk { --sh: #a855f7; } .app .plate.cmd { --sh: #f97316; } .app .plate.new { --sh: #22d3ee; } .app .plate.mob { --sh: #818cf8; }
+.app .plate.armp, .app .plate.neutral { --sh: #94a3b8; }
+.app .plate:not(.sidebuild) > h5 { border-top-color: color-mix(in srgb, var(--sh) 80%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--sh) 30%, transparent), transparent 80%); }
+.app .plate:not(.sidebuild) > h5::before { display: none; }
+/* the whole header opens and closes its section */
+.fsec > h5 { cursor: pointer; user-select: none; }
+.fsec > h5:hover { background: linear-gradient(90deg, color-mix(in srgb, var(--sh) 42%, transparent), transparent 85%); }
+.fsec > h5:hover .more { color: #f8fafc; border-color: rgba(148,163,184,.6); }
+.fsec > h5:focus-visible { outline: 2px solid #f97316; outline-offset: -2px; }
+
+/* the controls lose their grey edge; a full-height line parts the fighter column from the stats instead, ending
+   with the last section */
+.fhd .fctl, .fhd .fctl:first-child { border-left: 0; }
+@media (min-width: 1101px) {
+  .app .fpage > .sheet { position: relative; align-self: start; padding-left: 18px; }
+  .app .fpage > .sheet > .fhd { margin-left: -18px; padding-left: 18px; }
+  .app .fpage > .sheet::before { content: ''; position: absolute; left: 0; top: 0; bottom: 14px; width: 2px; z-index: 17; pointer-events: none;
+    background: linear-gradient(180deg, rgba(148,163,184,.75), rgba(100,116,139,.55)); box-shadow: 0 0 10px rgba(148,163,184,.18); }
+}
+
+/* the sections' headers carry the colour now, so sub-groups and cards drop their dots */
+.fgh::before, .mgrp h4::before, .mcard .mh:not(:has(.slot))::before { display: none; }

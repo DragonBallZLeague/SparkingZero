@@ -135,14 +135,17 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
   const fullBody = (s) => (s.id === 'cmd'
     ? <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
     : <FullForm id={s.id} side={side} phone={phone} abTab={abTab} setAbTab={setAbTab} />);
+  const toggle = (id, full) => () => setOpen(o => ({ ...o, [id]: !full }));
   const section = (s) => {
     const full = isFull(s);
     const mob = s.id === 'mob' ? fs('mob')?.tag : null;
     return (
       <section key={s.id} id={`f-${s.id}`} data-sec={s.id} className={`plate fsec ${s.cls}${full ? ' full' : ''}${s.fullOnly && !full ? ' cl' : ''}`}>
-        <h5>
+        {/* the whole header opens and closes the section; More / Less shows which way */}
+        <h5 role="button" tabIndex={0} aria-expanded={full} onClick={toggle(s.id, full)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(s.id, full)(); } }}>
           <span className="st">{s.title}{s.note && !full && <em className="h5n">{s.note}</em>}{mob && <span className="tg">{mob}</span>}</span>
-          <button className="more" aria-expanded={full} onClick={() => setOpen(o => ({ ...o, [s.id]: !full }))}>{full ? 'Less' : 'More'}</button>
+          <span className="more" aria-hidden="true">{full ? 'Less' : 'More'}</span>
         </h5>
         <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.id} side={side} />}</div>
         {searching && !full && <div className="fghost" aria-hidden="true" inert="">{fullBody(s)}</div>}
