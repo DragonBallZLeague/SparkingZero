@@ -49,9 +49,9 @@ Recipes are scored per family on the moves with measured damage (match: within 1
 | super: projectile with revivals + action | projectile x (revivals + 1) | 20/43 | 47% | no | 0 |
 | ultimate: projectile with revivals + action | projectile x (revivals + 1) | 20/26 | 77% | no | 0 |
 | super: several projectiles + action | projectile once | 1/13 | 8% | no | 0 |
-| super: several action parts | last action part | 9/11 | 82% | no | 0 |
+| super: several action parts | own action parts, else the largest | 11/11 | 100% | no | 0 |
 | super: several projectiles | projectile x (revivals + 1) | 3/7 | 43% | no | 1 |
-| ultimate: several action parts | largest action part | 3/7 | 43% | no | 0 |
+| ultimate: several action parts | own action parts, else the largest | 6/7 | 86% | no | 0 |
 | super: beam (BeamPower = Power x revivals) + action | projectile x (revivals + 1) | 3/6 | 50% | no | 0 |
 | super: volley + action | projectile x shots | 1/4 | 25% | no | 0 |
 | super: no damaging part | largest action part | 0/3 | 0% | no | 0 |

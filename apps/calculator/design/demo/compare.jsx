@@ -4,25 +4,26 @@
 import React, { useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
-  similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange,
+  similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
 import { Tap, Modes, Name, Switch, usePhone, usePair } from './ui.jsx';
-import { ClassChip, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
+import { ClassChip, CapsuleRows, traitChips, ChangeButton, SkillSwitches } from './sheet.jsx';
 import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
 /* ------------------------------------------------------------------ the two-fighter header */
-export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB }) {
+export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null }) {
   const phone = usePhone();
   const fig = (side) => (
     <div className={`vfig${phone ? ' c' : ''}`}>
       <img src={artUrl(side.c.id)} alt="" className={isGiant(side.c) ? 'giant' : ''} style={{ '--fh': figHeight(side.c) }} />
     </div>
   );
+  // the Change button sits beside each name, on its inner side (the right side's mirrored)
   return (
     <div className="vshead">
-      <div className="vside l">{fig(pair.A)}<div className="who"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} /></div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
-      <div className="vside r">{fig(pair.B)}<div className="who"><div className="nm"><Name parts={nameParts(pair.B.c.name)} br={!phone} /></div>{!phone && <div className="chips" style={{ justifyContent: 'flex-end' }}>{chipsB}</div>}{actionsB}</div></div>
+      <div className="vside l">{fig(pair.A)}<div className="who"><div className="nmrow"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} /></div>{changeA}</div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
+      <div className="vside r">{fig(pair.B)}<div className="who"><div className="nmrow r"><div className="nm"><Name parts={nameParts(pair.B.c.name)} br={!phone} /></div>{changeB}</div>{!phone && <div className="chips" style={{ justifyContent: 'flex-end' }}>{chipsB}</div>}{actionsB}</div></div>
       <div className="vsmid"><b>VS</b></div>
     </div>
   );
@@ -50,14 +51,28 @@ export function buildChips(side) {
 /** A row's value for side k: `get(side)`, or `vs(side, opponent)` for what it does against the other side (Vs opponent). */
 export const valOf = (row, sides, k) => (row.vs ? row.vs(sides[k], sides[k === 'A' ? 'B' : 'A']) : row.get(sides[k]));
 
+/**
+ * Where a row's value sits in the whole roster's range (0..1, fuller is better), as on the Sheet, so a bar
+ * reads the same in every matchup. The range comes from every fighter with no build: `rget(view, c)` when the
+ * row gives one (Vs rows give the plain stat behind what they deal), else the row's own getter. Null: no bar.
+ */
+export function rosterFill(row, value) {
+  if (typeof value !== 'number') return null;
+  const get = row.rget || (!row.vs && ((v, c) => row.get({ c, view: v, spec: emptySpec(c.id), caps: [], applied: [] })));
+  if (!get) return null;
+  return rosterPos(`pair:${row.label}`, get, value, !!row.less || row.kind === 'def');
+}
+
 export function Pair({ row, sides = ['A', 'B'] }) {
   const pc = usePair();
   const [ka, kb] = sides;
   const a = valOf(row, pc.pair, ka), b = valOf(row, pc.pair, kb);
   const score = row.score || ((x) => (row.less ? (x ? 1 / x : 0) : x));
   const sa = typeof a === 'number' ? score(a) : 0, sb = typeof b === 'number' ? score(b) : 0;
-  const top = Math.max(sa, sb) || 1;
   const better = sa === sb ? null : sa > sb ? 'a' : 'b';
+  // bars fill by the roster's range and stay muted; only the better side's lights up
+  const fa = rosterFill(row, a), fb = rosterFill(row, b);
+  const bar = (f) => (f == null ? null : { width: `${Math.max(3, f * 100)}%` });
   const fmt = row.fmt || F.int;
   const cell = (k, v) => (row.text ? row.text(pc.pair[k]) : typeof v === 'number'
     ? <Tap title={`${row.label}, ${nameParts(pc.pair[k].c.name)[0]}`} get={(s) => valOf(row, s, k)} fmt={fmt} kind={row.kind || 'int'} lessIsBetter={row.less} mark={false} />
@@ -69,9 +84,9 @@ export function Pair({ row, sides = ['A', 'B'] }) {
   return (
     <div className="pair">
       <span className={`a${better === 'a' ? ' w' : ''}`}>{cell(ka, a)}</span>
-      <span className="pb l"><i style={{ width: `${(sa / top) * 80}%` }} /></span>
+      <span className={`pb l${better === 'a' ? ' w' : ''}${fa == null ? ' none' : ''}`}>{fa != null && <i style={bar(fa)} />}</span>
       <span className="n">{row.label}{row.small && <small>{row.small}</small>}</span>
-      <span className="pb r"><i style={{ width: `${(sb / top) * 80}%` }} /></span>
+      <span className={`pb r${better === 'b' ? ' w' : ''}${fb == null ? ' none' : ''}`}>{fb != null && <i style={bar(fb)} />}</span>
       <span className={`b${better === 'b' ? ' w' : ''}`}>{cell(kb, b)}</span>
     </div>
   );
@@ -92,29 +107,60 @@ const V = (get) => (s) => get(s.view, s);
 const defRow = (label, get) => ({ label, get: V(get), fmt: F.def, kind: 'def', score: (x) => 1 / x });
 
 /* ------------------------------------------------------------------ All stats: every Full stats row, paired */
-export function statSections() {
+const D = (pick) => (me, them) => pick(exchange(me, them));   // what a side deals to the other (Vs opponent)
+const hpNow = (s) => Math.round((s.spec.sit?.hp ?? 1) * s.view.health);
+const koBy = (dealt) => (me, them) => { const d = dealt(exchange(them, me)); return d ? Math.ceil(hpNow(me) / d) : null; };
+const breaksOn = (me, them) => {
+  if (!(them.view.armor > 0)) return 'No armor';
+  const i = exchange(me, them).combo.perHit.findIndex(h => !h.armorReduced);
+  return i < 0 ? 'Holds all 5' : `Hit ${i + 1}`;
+};
+
+/**
+ * The sections Compare's and Vs opponent's All stats share, in one order. With `vs`, a damage row gives what
+ * each side deals to the other (after its defenses and armor; `deal`), toughness adds what it takes to KO
+ * each side, and the armor rows become where each side breaks the other's armor. The bars still fill by the
+ * plain stat's place in the roster (`rget`).
+ */
+export function statSections({ vs = false, pair = null } = {}) {
+  const dealt = (row, deal) => (vs ? { ...row, vs: deal, rget: (v, c) => row.get({ c, view: v, spec: emptySpec(c.id), caps: [], applied: [] }) } : row);
+  const armored = vs && pair && (pair.A.view.armor > 0 || pair.B.view.armor > 0);
+  const rush = armored
+    // (a side without that hit, e.g. a giant's 5th, shows none rather than 0)
+    ? [0, 1, 2, 3, 4].map(i => dealt({ label: `Rush hit ${i + 1}`, get: V(x => [x.rush, x.hit2, x.hit3, x.hit4, x.hit5][i]) },
+      (me, them) => ([me.view.rush, me.view.hit2, me.view.hit3, me.view.hit4, me.view.hit5][i] ? exchange(me, them).combo.perHit[i]?.damage : null)))
+    : [dealt({ label: 'Rush hits 1-3', get: V(x => x.rush) }, D(x => x.combo.perHit[0]?.damage)), dealt({ label: 'Rush hit 4', get: V(x => x.hit4) }, D(x => x.combo.perHit[3]?.damage)),
+      dealt({ label: 'Rush hit 5', get: V(x => x.hit5) }, D(x => x.combo.perHit[4]?.damage))];
   return [
-    { id: 'tough', title: 'Toughness', cls: '', rows: [
-      { label: 'HP', get: V(x => x.health) }, { label: '5-hit taken', small: 'less is better', get: V(fiveHitTaken), less: true },
+    { id: 'tough', title: 'Toughness', cls: '', small: vs ? 'against their attacks' : null, rows: [
+      { label: 'HP', get: V(x => x.health) },
+      vs ? { label: '5-hit taken', small: 'their rush, less is better', vs: (me, them) => exchange(them, me).combo.rush5Hit, rget: (v) => fiveHitTaken(v), less: true }
+        : { label: '5-hit taken', small: 'less is better', get: V(fiveHitTaken), less: true },
+      ...(vs ? [
+        { label: 'Rush combos to KO', small: 'theirs, from your health now', vs: koBy(x => x.combo.rush5Hit), fmt: String },
+        { label: 'Full volleys to KO', vs: koBy(x => x.volley), fmt: String },
+        { label: 'Ultimates to KO', vs: koBy(x => x.blasts.find(y => y.b.slot === 'Ultimate' && !y.b.variant)?.deal), fmt: String },
+      ] : []),
       defRow('Melee defense', x => x.meleeDefenseStat), defRow('Blast defense', x => x.blastDefense), defRow('Ki-blast defense', x => x.energy),
       { label: 'Armor', get: V(x => x.armor), fmt: F.armor }, { label: 'Switch', get: V(x => x.switch), fmt: F.secs, less: true },
     ] },
-    { id: 'melee', title: 'Melee', cls: 'off', rows: [
-      { label: 'Rush hits 1-3', get: V(x => x.rush) }, { label: 'Rush hit 4', get: V(x => x.hit4) }, { label: 'Rush hit 5', get: V(x => x.hit5) },
-      { label: 'Rush 5-hit', get: V(x => x.rush5Hit) }, { label: 'Rush 5-hit into armor', get: V(x => x.fiveHitAfterArmor) },
-      ...[0, 1, 2].map(i => ({ label: `Smash, Charge Lv.${i + 1}`, get: (s) => gameMoves(s).smash[i] })),
-      ...[0, 1, 2].map(i => ({ label: `Heavy Finish, Lv.${i + 1}`, get: (s) => gameMoves(s).heavyFinish[i] })),
-      { label: 'Throw', get: V(x => x.throw) }, { label: 'Pursuit', get: V(x => x.pursuit) },
-      { label: 'Armor break', small: 'hits, less is better', get: V(x => x.armorBreak), fmt: F.hits, less: true },
+    { id: 'melee', title: 'Melee', cls: 'off', small: vs ? 'dealt to them' : null, rows: [
+      ...rush,
+      dealt({ label: 'Rush 5-hit', get: V(x => x.rush5Hit) }, D(x => x.combo.rush5Hit)),
+      ...(vs ? [] : [{ label: 'Rush 5-hit into armor', get: V(x => x.fiveHitAfterArmor) }]),
+      ...[0, 1, 2].map(i => dealt({ label: `Smash, Charge Lv.${i + 1}`, get: (s) => gameMoves(s).smash[i] }, D(x => x.smash[i]?.v))),
+      ...[0, 1, 2].map(i => dealt({ label: `Heavy Finish, Lv.${i + 1}`, get: (s) => gameMoves(s).heavyFinish[i] }, D(x => x.heavyFinish[i]?.v))),
+      dealt({ label: 'Throw', get: V(x => x.throw) }, D(x => x.throw.v)), dealt({ label: 'Pursuit', get: V(x => x.pursuit) }, D(x => x.pursuit)),
+      vs ? { label: 'Breaks their armor on', vs: breaksOn } : { label: 'Armor break', small: 'hits, less is better', get: V(x => x.armorBreak), fmt: F.hits, less: true },
     ] },
-    { id: 'chains', title: 'Rush Chains', cls: 'mov', custom: 'chains' },
-    { id: 'kib', title: 'Ki blasts', cls: 'kib', rows: [
-      { label: 'Ki blast', get: V(x => x.kiBlastDmg) }, { label: 'Ki blast limit', get: V(x => Math.min(x.kiBlastLimit, 999)), fmt: F.count },
-      { label: 'Full volley', get: V(x => volley(x)) }, { label: 'Cost per shot', small: 'bars, less is better', get: V(x => x.kiBlastCost), fmt: F.bars, kind: 'dec', less: true },
-      ...[0, 1, 2].map(i => ({ label: `Charged, Lv.${i + 1}`, get: (s) => gameMoves(s).charged?.damage[i], text: null, shots: true })),
-      { label: 'Jump ki blast', get: (s) => gameMoves(s).jump?.damage }, { label: 'Dash ki blast', get: (s) => gameMoves(s).dash?.damage },
+    { id: 'chains', title: 'Rush Chains', cls: 'mov', custom: 'chains', vs, small: vs ? 'dealt to them' : 'full charge' },
+    { id: 'kib', title: 'Ki blasts', cls: 'kib', small: vs ? 'dealt to them' : null, rows: [
+      dealt({ label: 'Ki blast', get: V(x => x.kiBlastDmg) }, D(x => x.kiBlast.v)), { label: 'Ki blast limit', get: V(x => Math.min(x.kiBlastLimit, 999)), fmt: F.count },
+      dealt({ label: 'Full volley', get: V(x => volley(x)) }, D(x => x.volley)), { label: 'Cost per shot', small: 'bars, less is better', get: V(x => x.kiBlastCost), fmt: F.bars, kind: 'dec', less: true },
+      ...[0, 1, 2].map(i => dealt({ label: `Charged, Lv.${i + 1}`, get: (s) => gameMoves(s).charged?.damage[i] }, D(x => x.charged[i]?.v))),
+      dealt({ label: 'Jump ki blast', get: (s) => gameMoves(s).jump?.damage }, D(x => x.jump)), dealt({ label: 'Dash ki blast', get: (s) => gameMoves(s).dash?.damage }, D(x => x.dash)),
     ] },
-    { id: 'armor', title: 'Breaking armor', cls: 'armp', custom: 'armor' },
+    { id: 'armor', title: 'Breaking armor', cls: 'armp', custom: vs ? 'vsarmor' : 'armor', small: vs ? 'as they stand now' : null },
     { id: 'res', title: 'Resources', cls: 'res', col: 2, rows: [
       { label: 'Starting ki', get: V(x => x.startingKi), fmt: (x) => `${+x.toFixed(2)} bars`, kind: 'dec' },
       { label: 'Ki charge', small: 'bars/s', get: V(x => x.kiCharge), fmt: F.dec2, kind: 'dec' }, { label: 'Ki regen', small: 'bars/s', get: V(x => x.kiRegen), fmt: F.dec, kind: 'dec' },
@@ -127,12 +173,12 @@ export function statSections() {
       { label: 'Jump ki blasts', get: (s) => gameMoves(s).jump?.count, fmt: String }, { label: 'Dash ki blasts', get: (s) => gameMoves(s).dash?.count, fmt: String },
     ] },
     { id: 'spk', title: 'Sparking! Mode', cls: 'spk', col: 2, rows: [
-      { label: 'Hyper Smash', get: (s) => gameMoves(s).hyperSmash },
+      dealt({ label: 'Hyper Smash', get: (s) => gameMoves(s).hyperSmash }, D(x => x.hyperSmash.v)),
       { label: 'Violent Rush', get: (s) => (s.c.moveset?.unavailable?.includes('Violent Rush') ? 0 : 1), fmt: (x) => (x ? 'Yes' : 'No') },
       { label: 'Extra follow-ups', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}` },
       { label: 'Sparking armor', get: (s) => (s.c.armor?.sparking ? 1 - s.c.armor.sparking.damageRate : 0), fmt: F.armor },
     ] },
-    { id: 'cmd', title: 'Command list', cls: 'cmd', col: 2, custom: 'cmd' },
+    { id: 'cmd', title: 'Command list', cls: 'cmd', col: 2, custom: 'cmd', vs, small: vs ? 'dealt to them' : null },
     { id: 'mob', title: 'Mobility', cls: 'mob', col: 2, small: 'ki bars, less is better', rows: [
       { label: 'Short Dash', get: V(x => x.shortDashCost), fmt: F.bars, kind: 'dec', less: true },
       { label: 'Step-cancel dash', get: (s) => s.c.mobility?.stepCancelCost, fmt: F.bars, kind: 'dec', less: true },
@@ -145,29 +191,47 @@ export function statSections() {
   ];
 }
 
+/**
+ * A mirrored row for moves that differ by side (Rush Chains, the Command list): each side's name with its
+ * number on the inner edge, next to the centre label, so the two numbers read straight across; the better
+ * number is green. `a`/`b`: { name, value (a node), n (number to compare), lines: [[name, value]] }.
+ */
+function Mirror({ label, sub = null, a, b }) {
+  const better = typeof a?.n === 'number' && typeof b?.n === 'number' && a.n !== b.n ? (a.n > b.n ? 'a' : 'b') : null;
+  const side = (x, k) => (!x ? <span className="no">None</span> : (
+    <>
+      <div className="mm"><span className="mn">{x.name}</span>{x.value != null && <b className={better === k ? 'w' : ''}>{x.value}</b>}</div>
+      {(x.lines || []).map(([n, v]) => <div className="ml" key={n}><span>▸ {n}</span>{v != null && <b>{v}</b>}</div>)}
+    </>
+  ));
+  return (
+    <div className="mir">
+      <div className="ma">{side(a, 'a')}</div>
+      <div className="mc">{label}{sub}</div>
+      <div className="mb">{side(b, 'b')}</div>
+    </div>
+  );
+}
+
 /** Rush Chains side by side; with `vs`, each side's damage after the other's melee defense. */
 export function ChainsCmp({ vs = false }) {
   const pc = usePair();
   const A = moveset(pc.pair.A), B = moveset(pc.pair.B);
-  const nA = nameParts(pc.pair.A.c.name)[0], nB = nameParts(pc.pair.B.c.name)[0];
   const adj = { A: vs ? exchange(pc.pair.A, pc.pair.B).chain : (x) => x, B: vs ? exchange(pc.pair.B, pc.pair.A).chain : (x) => x };
-  const cellOf = (ch, k) => (!ch?.type ? <span className="no">None</span> : (
-    <>
-      <span className="ctype">{ch.type}</span>
-      {ch.dmg && <b className="cd">{ch.dmg.damage.length > 1 && <em>Lv.{ch.dmg.damage.length}</em>}{F.int(adj[k](ch.dmg.damage.at(-1)))}</b>}
-      {ch.dmg && <span className="fu">{ch.dmg.followUps.filter(f => ch.followUps.includes(f.name)).map(f => <span key={f.name}>{f.name}<b>{F.int(f.hits.reduce((s, h) => s + adj[k](h), 0))}</b>{f.flurry && <small>+ ki blasts</small>}</span>)}</span>}
-    </>
-  ));
+  const of = (ch, k) => {
+    if (!ch?.type) return null;
+    const full = ch.dmg ? adj[k](ch.dmg.damage.at(-1)) : null;
+    const fus = ch.dmg ? ch.dmg.followUps.filter(f => ch.followUps.includes(f.name)) : [];
+    return { name: ch.type, n: full, value: full != null ? F.int(full) : null, lines: fus.map(f => [f.name + (f.flurry ? ' + ki blasts' : ''), F.int(f.hits.reduce((s, h) => s + adj[k](h), 0))]) };
+  };
+  const text = (x) => (x ? { name: x } : null);
   return (
     <>
-      <div className="mvcmp h"><span>{vs ? 'Full charge, dealt' : 'Full charge'}</span><span>{nA}</span><span>{nB}</span></div>
-      {[0, 1, 2, 3].map(i => (
-        <div className="mvcmp" key={i}><span>Chain {i + 1}<Hits n={i + 1} /></span><span>{cellOf(A.chains[i], 'A')}</span><span>{cellOf(B.chains[i], 'B')}</span></div>
-      ))}
-      <div className="mvcmp"><span>Step-In</span><span><span className="ctype">{A.stepIn || 'None'}</span></span><span><span className="ctype">{B.stepIn || 'None'}</span></span></div>
-      <div className="mvcmp"><span>Perception</span><span><span className="ctype">{perceptionName(A.counter)}</span></span><span><span className="ctype">{perceptionName(B.counter)}</span></span></div>
-      <div className="mvcmp"><span>Grand Slash</span>{[A, B].map((m, i) => <span key={i}>{m.grand && m.grand.allowed.length ? <span className="fu">{m.grand.allowed.map(f => <span key={f}>{f}</span>)}</span> : <span className="no">No follow-ups</span>}</span>)}</div>
-      {(A.unavailable.length > 0 || B.unavailable.length > 0) && <div className="mvcmp"><span>Can't use</span>{[A, B].map((m, i) => <span key={i}>{m.unavailable.length ? <span className="tags">{m.unavailable.map(x => <span key={x}>{x}</span>)}</span> : <span className="no">None</span>}</span>)}</div>}
+      {[0, 1, 2, 3].map(i => <Mirror key={i} label={`Chain ${i + 1}`} sub={<Hits n={i + 1} />} a={of(A.chains[i], 'A')} b={of(B.chains[i], 'B')} />)}
+      <Mirror label="Step-In" a={text(A.stepIn)} b={text(B.stepIn)} />
+      <Mirror label="Perception" a={text(perceptionName(A.counter))} b={text(perceptionName(B.counter))} />
+      <Mirror label="Grand Slash" a={A.grand ? { name: A.grand.allowed.length ? A.grand.allowed.join(', ') : 'No follow-ups' } : null} b={B.grand ? { name: B.grand.allowed.length ? B.grand.allowed.join(', ') : 'No follow-ups' } : null} />
+      {(A.unavailable.length > 0 || B.unavailable.length > 0) && <Mirror label="Can't use" a={text(A.unavailable.join(', ') || 'Nothing')} b={text(B.unavailable.join(', ') || 'Nothing')} />}
     </>
   );
 }
@@ -188,33 +252,57 @@ function ArmorCmp() {
   );
 }
 
-function CmdCmp({ phone }) {
+/**
+ * Vs opponent's Breaking armor: only these two fighters, as they stand (Sparking, skills): each side's attacks
+ * against the other's armor right now, the rush as the hit that breaks it. Shown in the Exchange and All stats.
+ */
+export function VsArmor() {
   const pc = usePair();
-  const nA = nameParts(pc.pair.A.c.name)[0], nB = nameParts(pc.pair.B.c.name)[0];
-  const rows = ['Super 1', 'Super 2', 'Ultimate'].map(slot => {
-    const ba = blastsOf(pc.pair.A.c).find(b => b.slot === slot && !b.variant), bb = blastsOf(pc.pair.B.c).find(b => b.slot === slot && !b.variant);
-    const get = (k, b) => (s) => (b ? blastDamage(s[k], blastsOf(s[k].c).find(x => x.slot === slot && !x.variant)).damage : null);
-    const da = ba && get('A', ba)(pc.pair), db = bb && get('B', bb)(pc.pair);
-    return { slot, lab: slot === 'Ultimate' ? 'ULT' : slot === 'Super 1' ? 'B1' : 'B2', ba, bb, da, db, ga: get('A', ba), gb: get('B', bb) };
-  });
-  const skills = [1, 2].map(n => ({ n, a: skillOf(pc.pair.A.c, n), b: skillOf(pc.pair.B.c, n) }));
-  if (phone) {
+  const { A, B } = pc.pair;
+  const armorOf = (s) => (s.view.armor > 0 ? `${s.spec.sparking && s.c.armor?.sparking ? 'Sparking Armor' : s.c.armor?.base?.type || 'Armor'} (${Math.round(s.view.armor * 100)}% off)` : null);
+  const brk = (b) => (b ? <span className="ok">Breaks</span> : <span className="no"><i className="arm" />Holds</span>);
+  const block = (att, def, title) => {
+    const arm = armorOf(def);
+    const nD = nameParts(def.c.name)[0];
+    if (!arm) return <div className="vab"><div className="vabh">{title}</div><div className="vabn">{nD} has no armor now: every hit lands in full.</div></div>;
+    const x = exchange(att, def);
+    const i = x.combo.perHit.findIndex(h => !h.armorReduced);
+    const rows = [
+      ['Rush combo', i < 0 ? <span className="no"><i className="arm" />Holds every hit</span> : <span className="ok">Breaks on hit {i + 1}</span>],
+      ['Smash Lv.1', x.smash[0] ? brk(!x.smash[0].held) : '–'],
+      ['Ki blast', brk(!x.kiBlast.held)],
+      ['Charged ki blast', x.charged.length ? brk(!(x.charged[2] || x.charged.at(-1)).held) : '–'],
+    ];
     return (
-      <>
-        {rows.map(r => <div className="pcmd" key={r.slot}><span className={`slot ${r.lab === 'ULT' ? 'u' : 'b'}`}>{r.lab}</span><span>{r.ba?.name}<Tap title={r.ba?.name} get={r.ga} className={r.da > r.db ? 'w' : ''} mark={false} /></span><span>{r.bb?.name}<Tap title={r.bb?.name} get={r.gb} className={r.db > r.da ? 'w' : ''} mark={false} /></span></div>)}
-        {skills.map(s => <div className="pcmd" key={s.n}><span className="slot s">S{s.n}</span><span>{s.a?.name}</span><span>{s.b?.name}</span></div>)}
-      </>
+      <div className="vab">
+        <div className="vabh">{title}<em>{nD}: {arm}</em></div>
+        {rows.map(([l, v]) => <div className="vabr" key={l}><span>{l}</span>{v}</div>)}
+      </div>
     );
-  }
+  };
   return (
     <>
-      <div className="mvhead"><span></span><span>Move</span><span>{nA}</span><span>{nB}</span></div>
-      {rows.map(r => (
-        <div className="mvpair" key={r.slot}><span className={`slot ${r.lab === 'ULT' ? 'u' : 'b'}`}>{r.lab}</span><span>{r.ba?.name}<small>{r.bb?.name}</small></span>
-          <span style={r.da > r.db ? { color: 'var(--win)' } : undefined}><Tap title={r.ba?.name} get={r.ga} mark={false} /></span>
-          <span style={r.db > r.da ? { color: 'var(--win)' } : undefined}><Tap title={r.bb?.name} get={r.gb} mark={false} /></span></div>
-      ))}
-      {skills.map(s => <div className="mvpair" key={s.n}><span className="slot s">S{s.n}</span><span>{s.a?.name}<small>{s.b?.name}</small></span><span>{s.a?.stockCost} pts</span><span>{s.b?.stockCost} pts</span></div>)}
+      <div className="vabs">{block(A, B, 'Your attacks')}{block(B, A, 'Their attacks')}</div>
+      <div className="abnote">Higher smash charges, rush hit 5, throws, blasts and ultimates always break armor. Sparking gives 25% armor.</div>
+    </>
+  );
+}
+
+/** The Command list side by side: B1, B2, the ultimate (with `vs`, damage dealt to the other side), then the skills. */
+function CmdCmp({ vs = false }) {
+  const pc = usePair();
+  const other = { A: 'B', B: 'A' };
+  const rows = ['Super 1', 'Super 2', 'Ultimate'].map(slot => {
+    const find = (s) => blastsOf(s.c).find(x => x.slot === slot && !x.variant);
+    const get = (k) => (s) => (!find(s[k]) ? null : vs ? exchange(s[k], s[other[k]]).blasts.find(y => y.b.slot === slot && !y.b.variant)?.deal : blastDamage(s[k], find(s[k])).damage);
+    const side = (k) => { const b = find(pc.pair[k]); return b ? { name: b.name, n: get(k)(pc.pair), value: <Tap title={b.name} get={get(k)} mark={false} /> } : null; };
+    return { slot, lab: slot === 'Ultimate' ? 'ULT' : slot === 'Super 1' ? 'B1' : 'B2', a: side('A'), b: side('B') };
+  });
+  const skill = (s, n) => { const k = skillOf(s.c, n); return k ? { name: k.name, value: `${k.stockCost} pts` } : null; };
+  return (
+    <>
+      {rows.map(r => <Mirror key={r.slot} label={<span className={`slot ${r.lab === 'ULT' ? 'u' : 'b'}`}>{r.lab}</span>} a={r.a} b={r.b} />)}
+      {[1, 2].map(n => <Mirror key={n} label={<span className="slot s">S{n}</span>} a={skill(pc.pair.A, n)} b={skill(pc.pair.B, n)} />)}
     </>
   );
 }
@@ -229,7 +317,8 @@ function TraitsCmp() {
 function sectionBody(s, phone) {
   if (s.custom === 'chains') return <ChainsCmp vs={s.vs} />;
   if (s.custom === 'armor') return <ArmorCmp />;
-  if (s.custom === 'cmd') return <CmdCmp phone={phone} />;
+  if (s.custom === 'vsarmor') return <VsArmor />;
+  if (s.custom === 'cmd') return <CmdCmp vs={s.vs} />;
   if (s.custom === 'traits') return <TraitsCmp />;
   return s.rows.map(r => <Pair key={r.label} row={r} />);
 }
@@ -291,13 +380,7 @@ export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, o
     <div className="plate opp sidebuild">
       <h5>{title}{onClose && <button className="x" onClick={onClose}>Done</button>}</h5>
       <div className="sublbl"><span>Skills and Sparking</span></div>
-      {[1, 2].map(slot => {
-        const s = skillOf(side.c, slot);
-        if (!s) return null;
-        const can = toggleable(s);
-        return <div className="tgl" key={slot}><span className="slot s">S{slot}</span>{s.name}{can ? <Switch on={!!side.spec.skills?.[slot]} label={s.name} onChange={(on) => onChange({ ...side.spec, skills: { ...side.spec.skills, [slot]: on } })} /> : <em className="na">No stat effect</em>}</div>;
-      })}
-      <div className="tgl"><span className="slot u">SP</span>Sparking!<Switch sp on={side.spec.sparking} label="Sparking" onChange={(on) => onChange({ ...side.spec, sparking: on })} /></div>
+      <SkillSwitches side={side} onChange={onChange} />
       <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} /></div>
       {lb?.top?.length > 0 && (
         <>
@@ -366,9 +449,10 @@ export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset,
   const [edit, setEdit] = useState(null); // 'A' | 'B'
   const L = leads(pair);
   const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
+  const change = (k) => <ChangeButton onClick={() => openPicker('char', k)} title={k === 'B' ? 'Change the right side' : 'Change fighter'} />;
   const actions = (k) => (
     <div className="vacts">
-      <ChangeButton cls="editb" onClick={() => openPicker('char', k)} label={phone ? 'Change' : 'Change fighter'} />
+      {phone && change(k)}
       <button className="editb" onClick={() => setEdit(edit === k ? null : k)}>{edit === k ? 'Build ▴' : 'Build ▾'}</button>
     </div>
   );
@@ -383,7 +467,7 @@ export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset,
           <span className="l"><span className="cav"><img src={faceUrl(pair.A.c)} alt="" /></span><span><Name parts={nameParts(pair.A.c.name)} /></span></span>
           <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
         </div>
-      ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} actionsA={actions('A')} actionsB={actions('B')} />}
+      ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} actionsA={actions('A')} actionsB={actions('B')} changeA={change('A')} changeB={change('B')} />}
       {phone && <div className="cbar-acts">{actions('A')}{actions('B')}</div>}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
       <Modes value={mode} options={[['summary', 'Summary'], ['all', 'All stats']]} onChange={setMode}>

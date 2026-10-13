@@ -32,6 +32,28 @@ conditions, ruleset) lives in the URL hash.
   - the rest as in Compare.
 - An ultimate's cost with Ultimate Burst reads "+1 bar"; the full text overlapped the damage.
 
+## Second look (2026-10-12)
+
+- **Change** is an outlined, square-cornered button right beside the name, with the swap icon in an orange
+  square (it blended in with the chips as a white slanted one).
+- **Class chips:**
+  - long class names wrap inside the panel;
+  - chips in the two-fighter header have no text shadow (it smudged light chips like Legendary Super Saiyan).
+- **One slant angle:** every slanted box uses a fixed-pixel slant sized to its height. Percentages gave each
+  box a different angle by its width.
+- **Full stats:**
+  - the build is one panel: Active as switch rows, Capsules in their category colours, Conditions inline;
+  - the section nav is text links with a colour dot, sticky, marking the section being read;
+  - on a tablet, Rush Chains follow Melee.
+- **All stats, both views:**
+  - Compare and Vs share one section list, order and display. Vs shows each damage row as dealt to the other side,
+    adds hits to KO to Toughness, and where each side breaks the other's armor.
+  - Bars fill by the value's place in the whole roster's range, as on the Sheet. They are muted, and only the
+    better side lights up.
+  - Rush Chains and the Command list are mirrored rows: each side's number sits next to the centre label.
+- **Vs opponent's Breaking armor** shows only these two fighters as they stand: each side's attacks against the
+  other's armor right now. It is in All stats and under Health in the Exchange.
+
 ## Checked
 
 Desktop (1280px), tablet (820px: the Sheet puts the build beside the figure, Vs opponent stacks health above the
@@ -40,7 +62,7 @@ exchange) and phone (390px). The numbers match the concept's (Vs Janemba 1,812 /
 
 ## Open
 
-- Blast damage scales hit by hit, each hit rounded up (the league's 2026-10-12 test: Energy Blast Barrage 7,880).
-  Kamehameha with Blast Burst shows 7,485. The league read 7,845 in game, so `data/TESTS.md` asks for a
-  re-read. Drain Life Cell shows 9,214 against the game's 9,213.
+- Blast damage scales hit by hit, each hit rounded up, as measured on 2026-10-12. All eight blasts tested with
+  Blast Burst match (Kamehameha 7,485, Energy Blast Barrage 7,880, Drain Life Cell 9,213, ...). 83 of 743 blasts
+  have no hit split yet and scale as one hit.
 - Burst Melee Attack and Burst Rush are shown as 1,250 and 450 for everyone (the data has no per-character availability).

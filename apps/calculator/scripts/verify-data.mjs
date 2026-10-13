@@ -302,6 +302,8 @@ if (v2) {
   for (const [n, move, want] of [
     ['Goku (Z - Early)', 'Kaioken Attack', 8794], ['Goku (Z - Mid)', 'x20 Kaioken Kamehameha', 7840], ['Goku (Z - Mid)', 'Kaioken Rush', 9213],
     ['Gohan (Teen)', 'Energy Blast Barrage', 7880], ['Cell 2nd Form', 'Big Bang Crash', 7838],
+    // re-read the same day: one bullet + 4 beam ticks of 1,140, 5 x 1,497; Drain Life Cell is its own 2,730 + 3,970
+    ['Goku (Z - Early)', 'Kamehameha', 7485], ['Gohan (Teen)', 'Super Masenko', 7485], ['Cell 2nd Form', 'Drain Life Cell', 9213],
   ]) {
     const b = (data.blasts[named(n)?.id] || []).find(x => x.name === move);
     ig(`${n} ${move} with Blast Burst`, b && scaleChannel(run(named(n).id, { capsules: ['00_0_0026'] }), 'super', b.damage, b.hits), want);

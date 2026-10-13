@@ -12,7 +12,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .app > main { display: block; padding-bottom: 24px; }
 .app.ph > main { padding-bottom: 64px; }
 .app .top { position: sticky; top: 0; z-index: 20; background-color: #0e1430; }
-.app .tabs button { padding: 5px 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #cbd5e1; background: rgba(10,13,32,.55); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+.app .tabs button { padding: 5px 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #cbd5e1; background: rgba(10,13,32,.55); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
 .app .tabs button.on { background: #f8fafc; color: #0a0d20; }
 .app .rs { padding: 0; border: 1px solid rgba(255,255,255,.25); }
 .app .rs select { background: transparent; color: #e2e8f0; border: 0; font-size: 12px; padding: 3px 8px; outline-offset: 2px; }
@@ -63,7 +63,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .pips button { flex: 1; height: 10px; transform: skewX(-20deg); background: rgba(148,163,184,.16); }
 .pips.ki button.on { background: linear-gradient(90deg, #eab308, #fde047); }
 .pips.sk button.on { background: var(--skill); }
-.steps button { font-size: 10.5px; font-weight: 800; padding: 1px 8px; background: rgba(148,163,184,.14); color: #cbd5e1; clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%); }
+.steps button { font-size: 10.5px; font-weight: 800; padding: 1px 8px; background: rgba(148,163,184,.14); color: #cbd5e1; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
 .steps button.on { background: #f8fafc; color: #0a0d20; }
 .steps { flex-wrap: wrap; }
 
@@ -84,7 +84,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .pk-h .x { cursor: pointer; }
 
 /* modes, folds, stage buttons, switches */
-.modes button { padding: 4px 14px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #cbd5e1; background: rgba(148,163,184,.12); clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%); white-space: nowrap; }
+.modes button { padding: 4px 14px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #cbd5e1; background: rgba(148,163,184,.12); clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%); white-space: nowrap; }
 .modes button.on { background: #f8fafc; color: #0a0d20; }
 .plate h5 .fold { display: block; width: 100%; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; font-style: inherit; }
 .plate h5 .fold:focus-visible { outline: 2px solid #fbbf24; outline-offset: 3px; }
@@ -98,10 +98,10 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .only .sw::after { left: 2px; }
 .only .sw.on { background: var(--win); }
 .only .sw.on::after { left: 16px; }
-.jump button { flex: none; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 9px; background: rgba(148,163,184,.14); color: #cbd5e1; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); }
+.jump button { flex: none; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 9px; background: rgba(148,163,184,.14); color: #cbd5e1; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
 .jump button.on { background: #f8fafc; color: #0a0d20; }
 .fsbar .call { cursor: pointer; }
-.fl > button { font-size: 11px; font-weight: 700; padding: 2px 10px; background: rgba(148,163,184,.14); color: #cbd5e1; white-space: nowrap; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); }
+.fl > button { font-size: 11px; font-weight: 700; padding: 2px 10px; background: rgba(148,163,184,.14); color: #cbd5e1; white-space: nowrap; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
 .fl > button.on { background: #f8fafc; color: #0a0d20; }
 .fl.cls > button { clip-path: none; }
 .fl.cls > button.ccl { background: color-mix(in srgb, var(--c1) 34%, rgba(10,13,32,.7)); color: #f1f5f9; }
@@ -129,25 +129,17 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .ef.spk { background: rgba(168,85,247,.16); border-left-color: #c084fc; color: #f3e8ff; }
 
 /* Full stats: the build bar under the name, the conditions panel, the Command list fold */
-.fsbuild { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
-.fsbuild .toggles { margin: 0; display: flex; gap: 6px; }
-.fsbuild .tog { width: auto; min-width: 120px; padding: 4px 12px; }
-.fsb-caps { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
-.fsbuild .chip.cond.on { background: rgba(253,230,138,.3); }
-.fscond .sits { max-width: 560px; }
 .rws .rstack { flex: 1 1 auto; display: flex; flex-direction: column; gap: 12px; min-width: 0; max-width: 100%; }
 .rws .rstack > .plate { flex: none; }
 .rws .rstack > .plate:last-child { flex: 1 1 auto; }
 .plate.fscmd { background: none; border-left: 0; padding: 0; }
 .plate.fscmd > h5 { color: #fdba74; }
 .plate.fscmd.cl { background: var(--plate); border-left: 3px solid var(--blast); padding: 8px 12px 9px; }
-.ph .fsbuild .tog { min-width: 0; flex: 1; }
-.ph .fsbuild .toggles { width: 100%; }
 
 /* Compare and Vs opponent */
 .vacts { display: flex; gap: 6px; margin-top: 7px; }
 .vside.r .vacts { justify-content: flex-end; }
-.vacts .editb { margin-top: 0; cursor: pointer; display: inline-block; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 3px 14px; background: #f8fafc; color: #0a0d20; text-shadow: none; clip-path: polygon(9% 0, 100% 0, 91% 100%, 0 100%); white-space: nowrap; }
+.vacts .editb { margin-top: 0; cursor: pointer; display: inline-block; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 3px 14px; background: #f8fafc; color: #0a0d20; text-shadow: none; clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%); white-space: nowrap; }
 .ph .vacts .editb { font-size: 10px; padding: 2px 10px; letter-spacing: .03em; }
 .ph .vside .vacts { flex-wrap: wrap; justify-content: inherit; }
 .vside .who { z-index: 2; }
@@ -156,6 +148,37 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .app .cmpgrid.vsgrid { grid-template-columns: minmax(0, 1fr) 380px; }
 .app .cmpall { padding-top: 10px; }
 .cmpwrap .cmpgrid { grid-template-columns: minmax(0, 1fr); padding-bottom: 0; }
+/* Vs opponent's Breaking armor: each side's attacks against the other's armor now */
+.vabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 20px; }
+.vabh { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #e2e8f0; padding-bottom: 3px; }
+.vabh em { display: block; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 11.5px; color: var(--muted); }
+.vabr { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+.vabr .ok { color: var(--win); font-weight: 800; } .vabr .no { color: #94a3b8; font-weight: 600; }
+.vabn { font-size: 12px; color: var(--muted); padding: 3px 0; }
+/* mirrored rows (Rush Chains, Command list in All stats): numbers meet at the centre label */
+.mir { display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr); gap: 10px; align-items: start; padding: 6px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+.mir:first-of-type { border-top: 0; }
+.mir .mc { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; color: var(--muted); text-align: center; padding-top: 1px; }
+.mir .mm, .mir .ml { display: flex; gap: 8px; align-items: baseline; }
+.mir .ma .mm, .mir .ma .ml { justify-content: flex-end; text-align: right; }
+.mir .mb .mm, .mir .mb .ml { flex-direction: row-reverse; justify-content: flex-end; }
+.mir .mn { font-weight: 700; color: #e2e8f0; min-width: 0; font-size: 12.5px; padding: 0; border: 0; white-space: normal; }
+.mir .mc .slot { width: 34px; }
+.mir .mm b { font-weight: 900; font-style: italic; font-size: 14px; font-variant-numeric: tabular-nums; color: #f8fafc; }
+.mir .mm b.w, .mir .mm b.w .tap { color: var(--win); }
+.mir .ml { margin-top: 2px; font-size: 11.5px; color: #cbd5e1; }
+.mir .ml b { font-weight: 800; font-variant-numeric: tabular-nums; }
+.mir .no { color: var(--muted); }
+.mir .ma > .no { display: block; text-align: right; }
+.ph .mir { grid-template-columns: minmax(0, 1fr) 62px minmax(0, 1fr); gap: 6px; }
+
+/* paired bars: muted, the better side vivid; fill = place in the roster's range */
+.pb.l i { background: linear-gradient(270deg, #8a6a55, #5c4a40); }
+.pb.r i { background: linear-gradient(90deg, #56698c, #3c4a66); }
+.pb.l.w i { background: linear-gradient(270deg, #fb923c, #ea580c); box-shadow: 0 0 8px rgba(249,115,22,.55); }
+.pb.r.w i { background: linear-gradient(90deg, #60a5fa, #2563eb); box-shadow: 0 0 8px rgba(59,130,246,.55); }
+.pb.none { background: none; }
+.app .fs .plate[id] { scroll-margin-top: 100px; }
 .cmpall .pair.txt, .pair.txt { grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr); }
 .pair.txt .a, .pair.txt .b { font-weight: 800; font-style: normal; font-size: 12.5px; color: #e2e8f0; }
 .ph .pair.txt { grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr); }
@@ -220,7 +243,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .cgh[class*="k-"] { border-left-color: var(--cc); color: color-mix(in srgb, var(--cc) 65%, #fff); }
 .fl > button[class*="k-"] { box-shadow: inset 3px 0 0 var(--cc); }
 .fl.cost > button { clip-path: none; background: none; padding: 0 2px; }
-.fl.cost > button.on { background: #f8fafc; padding: 2px 10px; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); color: #0a0d20; }
+.fl.cost > button.on { background: #f8fafc; padding: 2px 10px; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); color: #0a0d20; }
 .fl.cost > .showb { margin-left: auto; color: var(--muted); font-weight: 700; }
 .fl.cost > .showb.on { color: #0a0d20; }
 .ph .cpk { display: block; }
@@ -229,13 +252,6 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .fl > button.dd::after { content: ' \25BE'; }
 
 /* Change fighter: the button, the clickable name, and the quick list */
-.chgb { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 3px 14px 3px 11px; background: #f8fafc; color: #0a0d20; clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%); white-space: nowrap; text-shadow: none; }
-.app .chgb { color: #0a0d20; }
-.vacts .editb.chgb { display: inline-flex; padding-left: 11px; }
-.chgb i { font-style: normal; font-size: 13px; line-height: 1; }
-.chgb:hover { background: #fed7aa; }
-.chgb:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
-.nameplate .chgb { margin-top: 8px; }
 .nmb { display: block; text-align: left; text-transform: inherit; letter-spacing: inherit; font-style: inherit; }
 .nmb:hover { color: #fed7aa; }
 .fs-id { position: relative; }
@@ -266,7 +282,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .qrow img { width: 34px; height: 34px; object-fit: cover; object-position: top; background: rgba(255,255,255,.05); }
 .qrow span { font-size: 12.5px; font-weight: 700; color: #e2e8f0; line-height: 1.2; min-width: 0; }
 .qrow span small { display: block; font-size: 10.5px; font-weight: 500; color: var(--muted); }
-.qrow b { font-size: 10px; font-weight: 900; font-style: italic; padding: 0 6px; background: #f97316; color: #111; clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%); }
+.qrow b { font-size: 10px; font-weight: 900; font-style: italic; padding: 0 6px; background: #f97316; color: #111; clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); }
 .qrow:hover { background: rgba(249,115,22,.1); }
 .qrow:focus-visible { outline: 2px solid #fbbf24; outline-offset: -2px; }
 .qrow.cur { background: rgba(249,115,22,.2); box-shadow: inset 0 0 0 1px rgba(249,115,22,.6); }
@@ -287,3 +303,55 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
   .app .cmpgrid.vsgrid { grid-template-columns: minmax(0, 1fr); }
   .app .cmpgrid.vsgrid > .cmpcol { order: -1; }
 }
+
+/* Change fighter: an outlined, square-cornered button beside the name (not slanted, not a chip) */
+.chgb { display: inline-flex; align-items: center; gap: 7px; flex: none; height: 26px; padding: 0 11px 0 4px; border: 1px solid rgba(249,115,22,.75);
+  background: rgba(10,13,32,.72); color: #f8fafc; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-style: normal;
+  border-radius: 3px; white-space: nowrap; text-shadow: none; line-height: 1; }
+.chgb i { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 2px; background: #f97316; color: #0a0d20;
+  font-style: normal; font-size: 12px; font-weight: 900; line-height: 1; }
+.chgb span { padding-top: 1px; }
+.chgb:hover { background: rgba(249,115,22,.22); border-color: #fb923c; }
+.chgb:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
+.nmrow { display: flex; align-items: flex-start; gap: 12px; }
+.nmrow .nm { min-width: 0; }
+.nmrow .chgb { margin-top: 2px; }
+.nmrow.r { flex-direction: row-reverse; }
+.nameplate .nmrow .chgb { margin-top: 3px; }
+
+/* class chips: long class names wrap inside the panel; no text shadow on a chip (it smudged light chips) */
+.chips .chip { max-width: 100%; white-space: normal; }
+.nameplate .chips { padding-right: 22px; }
+.vside .who .chip { text-shadow: none; }
+.vside .who .chip.ghost { background: rgba(10,13,32,.72); }
+
+/* Full stats: the build panel (Active, Capsules, Conditions) */
+.plate.fsb { display: grid; grid-template-columns: 250px minmax(0, 1fr) 330px; gap: 0 22px; padding: 10px 14px 12px; border-left-color: #64748b; }
+.fsb-col { min-width: 0; }
+.fsb-h { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); margin: 0 0 6px; }
+.fsb .tgl:first-of-type { border-top: 0; }
+.fsb .tgl .tn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fsb .caps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 8px; }
+.fsb .sits.cmp { margin-top: 0; }
+.ph .plate.fsb { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.ph .fsb .caps { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 721px) and (max-width: 1100px) {
+  .plate.fsb { grid-template-columns: 230px minmax(0, 1fr); }
+  .plate.fsb > .fsb-col:last-child { grid-column: 1 / -1; margin-top: 10px; }
+}
+
+/* Full stats: the section nav, text links with the section's colour (not buttons), sticky under the top bar */
+.fsnav { position: sticky; top: 50px; z-index: 15; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px; padding: 8px 2px 7px;
+  background: rgba(11,16,48,.96); border-bottom: 1px solid var(--line); }
+.fsnav button { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); padding: 2px 0; border-bottom: 2px solid transparent; --sc: #86efac; }
+.fsnav button i { width: 7px; height: 7px; border-radius: 50%; background: var(--sc); opacity: .8; }
+.fsnav button:hover { color: #f1f5f9; }
+.fsnav button.on { color: #f8fafc; border-bottom-color: var(--sc); }
+.fsnav button.res { --sc: #fde68a; } .fsnav button.off { --sc: #fca5a5; } .fsnav button.mov { --sc: #fda4af; } .fsnav button.kib { --sc: #ffa36b; }
+.fsnav button.armp { --sc: #e2e8f0; } .fsnav button.new { --sc: #a5f3fc; } .fsnav button.mob { --sc: #c7d2fe; } .fsnav button.spk { --sc: #d8b4fe; }
+.fsnav button.neutral { --sc: #cbd5e1; } .fsnav button.cmd { --sc: #fdba74; }
+.fsnav .call { margin-left: auto; text-transform: none; letter-spacing: 0; font-size: 11.5px; color: #fdba74; }
+.fsnav .call:hover { text-decoration: underline; }
+.ph .fsnav { flex-wrap: nowrap; overflow-x: auto; gap: 14px; padding: 8px 10px; }
+.ph .fsnav button { flex: none; }

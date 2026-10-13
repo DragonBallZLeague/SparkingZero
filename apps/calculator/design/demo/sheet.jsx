@@ -5,7 +5,7 @@ import {
   artUrl, nameParts, classColours, chipText, rosterPos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
   capsuleSummary, typeClass, buildCheck, isGiant, figHeight,
 } from './model.js';
-import { Tap, Rk, Chev, Name, usePhone } from './ui.jsx';
+import { Tap, Rk, Chev, Name, Switch, usePhone } from './ui.jsx';
 import { CmdRows, SheetChains } from './moves.jsx';
 import { Conditions } from './conditions.jsx';
 import { F } from './format.js';
@@ -58,6 +58,26 @@ export function ActiveToggles({ side, onChange }) {
   );
 }
 
+/** Each skill and Sparking as a labelled switch row (Full stats' build, the opponent's build). */
+export function SkillSwitches({ side, onChange }) {
+  const { c, spec } = side;
+  return (
+    <>
+      {[1, 2].map(slot => {
+        const s = skillOf(c, slot);
+        if (!s) return null;
+        const can = toggleable(s);
+        return (
+          <div className="tgl" key={slot}><span className="slot s">S{slot}</span><span className="tn">{s.name}</span>
+            {can ? <Switch on={!!spec.skills?.[slot]} label={s.name} onChange={(on) => onChange({ ...spec, skills: { ...spec.skills, [slot]: on } })} /> : <em className="na">No stat effect</em>}
+          </div>
+        );
+      })}
+      <div className="tgl"><span className="slot u">SP</span><span className="tn">Sparking!</span><Switch sp on={!!spec.sparking} label="Sparking" onChange={(on) => onChange({ ...spec, sparking: on })} /></div>
+    </>
+  );
+}
+
 /** A build as capsule rows in their type's colour, with a bar of its points by type. */
 export function CapsuleRows({ side, ruleset, onEdit, slots = 7, compact = false }) {
   const chk = buildCheck(side.spec.caps, ruleset);
@@ -82,21 +102,26 @@ export function CapsuleRows({ side, ruleset, onEdit, slots = 7, compact = false 
   );
 }
 
-/** The button that opens the quick list of fighters (data-qp: clicking it is not a click away from the list). */
-export const ChangeButton = ({ onClick, label = 'Change fighter', cls = '' }) => (
-  <button className={`chgb ${cls}`} data-qp onClick={onClick} title="Pick another fighter without leaving this page"><i aria-hidden="true">⇄</i>{label}</button>
+/**
+ * The button that opens the quick list of fighters, next to the fighter's name (data-qp: clicking it is not a
+ * click away from the list). Outlined and square-cornered, so it reads as an action, not one of the chips.
+ */
+export const ChangeButton = ({ onClick, label = 'Change', title = 'Change fighter' }) => (
+  <button className="chgb" data-qp onClick={onClick} title={`${title}, without leaving this page`} aria-label={title}><i aria-hidden="true">⇄</i><span>{label}</span></button>
 );
 
 export function Nameplate({ c, onChange, showTraits = true }) {
   return (
     <div className="nameplate">
-      <div className="nm"><button className="nmb" data-qp onClick={onChange} title="Change fighter"><Name parts={nameParts(c.name)} br /></button></div>
+      <div className="nmrow">
+        <div className="nm"><button className="nmb" data-qp onClick={onChange} title="Change fighter"><Name parts={nameParts(c.name)} br /></button></div>
+        <ChangeButton onClick={onChange} />
+      </div>
       <div className="chips">
         <ClassChip c={c} />
         <span className="chip dp">DP {c.dp}</span>
         {showTraits && traitChips(c).map(([t, title]) => <span key={t} className="chip trait-chip" title={title || undefined}>{t}</span>)}
       </div>
-      <ChangeButton onClick={onChange} />
     </div>
   );
 }
@@ -159,7 +184,7 @@ export function SheetView({ A: side, ruleset, setSpec, openPicker, qp = () => nu
             <div className="meter">
               <div className="h"><span>Ki charge</span><b><Tap title="Ki charge" get={A(x => x.kiCharge)} fmt={F.dec2} kind="dec" /><small>bars/s</small></b></div>
               <Chev kind="ki" lit={chevrons('kiCharge', x => x.kiCharge, v.kiCharge)} />
-              <div className="note">{(1 / v.kiCharge).toFixed(1)}s per bar</div>
+              <div className="note">{v.kiCharge > 0 ? `${(1 / v.kiCharge).toFixed(1)}s per bar` : "Can't charge ki"}</div>
             </div>
             <div className="meter">
               <div className="h"><span>Ki regen</span><b><Tap title="Ki regen" get={A(x => x.kiRegen)} fmt={F.dec} kind="dec" /><small>bars/s</small></b></div>

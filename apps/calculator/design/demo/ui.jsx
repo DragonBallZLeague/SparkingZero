@@ -15,6 +15,8 @@ export function useMedia(q) {
   return m;
 }
 export const usePhone = () => useMedia('(max-width: 720px)');
+/** Wider than a tablet (where Full stats can put sections side by side). */
+export const useWide = () => useMedia('(min-width: 1101px)');
 
 /* ------------------------------------------------------------------ the pair a number reads from */
 /** { pair: {A, B}, base: {A, B} with no build, names: {A, B} } for the numbers inside. */

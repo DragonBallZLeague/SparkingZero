@@ -556,6 +556,7 @@ export function exchange(A, B) {
     volley: volley(a, b),
     charged: gm.charged ? gm.charged.damage.map((x, i) => ({ v: one(x, kiDef, bl.chargedKiBlast?.[i]), held: af(bl.chargedKiBlast?.[i]) < 1, shots: gm.charged.shots })) : [],
     hyperSmash: { v: one(gm.hyperSmash, melDef, bl.hyperSmash), held: af(bl.hyperSmash) < 1 },
+    pursuit: typeof a.pursuit === 'number' ? damageTaken(a.pursuit, melDef) : null,
     jump: gm.jump ? one(gm.jump.damage, kiDef, bl.kiBlast) : null,
     dash: gm.dash ? one(gm.dash.damage, kiDef, bl.kiBlast) : null,
     // Rush Chains and their follow-ups after B's melee defense (their break levels are not in the data, so no armor)

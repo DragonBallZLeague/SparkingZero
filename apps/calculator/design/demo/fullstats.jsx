@@ -6,9 +6,9 @@ import {
   faceUrl, nameParts, gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
   perceptionName, blastsOf, skillOf, blastDamage,
 } from './model.js';
-import { Tap, Val, Fold, Name, usePhone, useBase } from './ui.jsx';
+import { Tap, Val, Fold, Name, usePhone, useWide, useBase } from './ui.jsx';
 import { MoveCards, orderedBlasts } from './moves.jsx';
-import { ClassChip, ActiveToggles, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
+import { ClassChip, SkillSwitches, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
 import { Conditions } from './conditions.jsx';
 import { F } from './format.js';
 
@@ -363,10 +363,22 @@ function loadFold(phone) {
 
 export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () => null }) {
   const phone = usePhone();
+  const wide = useWide();
   const secs = sections(side);
   const [open, setOpen] = useState(() => loadFold(phone) || Object.fromEntries(secs.map(s => [s.id, !phone || s.id === 'tough'])));
   const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
-  const [showCond, setShowCond] = useState(false);
+  const [here, setHere] = useState(null);
+  useEffect(() => {
+    // the nav marks the section being read: the last one whose top has passed under the nav
+    const f = () => {
+      let at = null;
+      for (const s of secs) { const el = document.getElementById(`fs-${s.id}`); if (el && el.getBoundingClientRect().top < 140) at = s.id; }
+      setHere(at);
+    };
+    window.addEventListener('scroll', f, { passive: true });
+    f();
+    return () => window.removeEventListener('scroll', f);
+  }, [secs.map(s => s.id).join()]);
   useEffect(() => { try { localStorage.setItem(STORE + (phone ? '-ph' : ''), JSON.stringify(open)); } catch { /* private window */ } }, [open, phone]);
   const isOpen = (id) => open[id] !== false && (open[id] ?? !phone);
   const allOpen = secs.every(s => isOpen(s.id));
@@ -386,29 +398,35 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
   // On a desktop, Melee and Ki blasts stack beside Rush Chains (together about its height), so Melee
   // does not stretch to the chains' height with nothing under it.
   const kib = stat.find(s => s.id === 'kib');
-  const units = stat.flatMap(s => (phone ? [{ s }] : s.id === 'melee' ? [{ list: [s, kib] }] : s.id === 'kib' ? [] : [{ s }]));
+  // (tablets and phones keep the plain order, with Rush Chains right after Melee)
+  const units = stat.flatMap(s => (!wide ? [{ s }] : s.id === 'melee' ? [{ list: [s, kib] }] : s.id === 'kib' ? [] : [{ s }]));
   return (
     <div className="fs">
       <div className="fs-id">
         <img className="face" src={faceUrl(c)} alt="" />
         <div>
-          <div className="nm"><Name parts={nameParts(c.name)} /></div>
-          <div className="chips"><ClassChip c={c} /><span className="chip dp">DP {c.dp}</span><ChangeButton onClick={() => openPicker('char', 'A')} /></div>
+          <div className="nmrow"><div className="nm"><Name parts={nameParts(c.name)} /></div><ChangeButton onClick={() => openPicker('char', 'A')} /></div>
+          <div className="chips"><ClassChip c={c} /><span className="chip dp">DP {c.dp}</span>{traitChips(c).map(([t, title]) => <span key={t} className="chip trait-chip" title={title || undefined}>{t}</span>)}</div>
         </div>
         {qp('A')}
       </div>
-      <div className="fsbuild">
-        <ActiveToggles side={side} onChange={setSpec} />
-        <div className="fsb-caps">
-          {side.caps.length ? side.caps.map((x, i) => <button key={i} className={`chip ghost cap`} onClick={() => openPicker('caps', 'A')}>{x.name}</button>) : <button className="chip ghost cap" onClick={() => openPicker('caps', 'A')}>Add capsules</button>}
+      {/* the build as one panel: what is switched on, the capsules in their category colours, the conditions */}
+      <div className="plate fsb">
+        <div className="fsb-col">
+          <div className="fsb-h">Active</div>
+          <SkillSwitches side={side} onChange={setSpec} />
         </div>
-        <button className={`chip ghost cond${showCond ? ' on' : ''}`} aria-expanded={showCond} onClick={() => setShowCond(x => !x)}>Conditions {showCond ? '▴' : '▾'}</button>
+        <div className="fsb-col">
+          <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} />
+        </div>
+        <div className="fsb-col">
+          <Conditions side={side} onChange={setSpec} compact />
+        </div>
       </div>
-      {showCond && <div className="fscond"><Conditions side={side} onChange={setSpec} compact /></div>}
-      <div className="fsbar">
-        <div className="jump">{secs.map(s => <button key={s.id} className={isOpen(s.id) ? '' : ''} onClick={() => jump(s.id)}>{s.title.replace('! Mode', '!')}</button>)}</div>
+      <nav className="fsnav" aria-label="Sections">
+        {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
         <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
-      </div>
+      </nav>
       <div className={phone ? 'clstack' : 'rws'}>
         {units.map(u => (u.list ? <div className="rstack" key="stack">{u.list.map(fold)}</div> : fold(u.s)))}
       </div>

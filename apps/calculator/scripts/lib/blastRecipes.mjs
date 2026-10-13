@@ -27,10 +27,15 @@ const num = (v) => (v === '' || v == null ? null : Number(v));
 
 /** Parts of one move, from its Move Power rows. */
 export function moveParts(rows) {
-  const actions = [], contacts = [], projectiles = [];
+  const actions = [], ownActions = [], contacts = [], projectiles = [];
   for (const r of rows) {
     const P = num(r.Power) || 0;
-    if (r['Mapped part'] === 'Action' && !COMMON_ACTION.test(r.Action) && P > 0) actions.push(P);
+    if (r['Mapped part'] === 'Action' && !COMMON_ACTION.test(r.Action) && P > 0) {
+      actions.push(P);
+      // the move's own attack files (not a Combatives_Common_ one several moves share): Drain Life Cell's
+      // cinematic is its own 2,730 + 3,970, each rounded up (8,795, the league's reading on 2026-10-12)
+      if (r['Record key'] && !/^Combatives_Common_/.test(r['Record key'])) ownActions.push(P);
+    }
     else if (r['Mapped part'] === 'Contact' && P > 0) contacts.push(P);
     else if (r['Mapped part'] === 'Projectile' && P > 0) {
       projectiles.push({
@@ -40,7 +45,7 @@ export function moveParts(rows) {
       });
     }
   }
-  return { actions, contacts, projectiles };
+  return { actions, ownActions, contacts, projectiles };
 }
 
 /** Which family a move belongs to; recipes are calibrated per family. */
@@ -64,6 +69,7 @@ export const RECIPES = {
   'largest action part': (p) => (p.actions.length ? [[Math.max(...p.actions), 1]] : null),
   'last action part': (p) => (p.actions.length ? [[p.actions[p.actions.length - 1], 1]] : null),
   'all action parts': (p) => (p.actions.length ? p.actions.map(a => [a, 1]) : null),
+  'own action parts, else the largest': (p) => (p.ownActions?.length ? p.ownActions.map(a => [a, 1]) : p.actions.length ? [[Math.max(...p.actions), 1]] : null),
   'projectile once': (p) => (p.projectiles.length ? [[p.projectiles[0].P, 1]] : null),
   'projectile x shots': (p) => (p.projectiles.length ? [[p.projectiles[0].P, p.projectiles[0].FL * p.projectiles[0].fireNum]] : null),
   'projectile x (revivals + 1)': (p) => {
