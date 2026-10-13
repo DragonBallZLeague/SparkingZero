@@ -29,11 +29,11 @@ function formsOf(id) {
 }
 
 /* ------------------------------------------------------------------ character picker */
-function Face({ c, cur, hov, onHover, onPick }) {
+function Face({ c, cur, hov, sel, onHover, onPick, onOpen }) {
   const [c1, c2] = classColours(c.class.label);
   return (
-    <button className={`ct${c1 !== c2 ? ' two' : ''}${cur ? ' cur' : ''}${hov ? ' hov' : ''}`} style={{ '--c1': c1, '--c2': c2 }} title={`${c.name}, ${c.class.label}, DP ${c.dp}`}
-      onMouseEnter={() => onHover(c.id)} onFocus={() => onHover(c.id)} onClick={() => onPick(c.id)}>
+    <button className={`ct${c1 !== c2 ? ' two' : ''}${cur ? ' cur' : ''}${hov ? ' hov' : ''}${sel ? ' sel' : ''}`} style={{ '--c1': c1, '--c2': c2 }} title={`${c.name}, ${c.class.label}, DP ${c.dp}`}
+      aria-pressed={sel} onMouseEnter={() => onHover(c.id)} onFocus={() => onHover(c.id)} onClick={() => onPick(c.id)} onDoubleClick={() => onOpen(c.id)}>
       <img src={faceUrl(c)} alt="" loading="lazy" /><b>{c.dp}</b><span>{c.name}</span>
     </button>
   );
@@ -104,7 +104,7 @@ export function QuickPick({ current, side, onPick, onClose, onBrowse, mode = 'dd
   );
 }
 
-function Preview({ id, onPick, side, onCompare, onVs, currentName }) {
+function Preview({ id, selected, onSelect, onPick, side, onCompare, onVs, currentName }) {
   const c = byId.get(id);
   const v = baseView(id);
   const forms = formsOf(id);
@@ -121,8 +121,11 @@ function Preview({ id, onPick, side, onCompare, onVs, currentName }) {
           <div className="tile"><span>Ki blast limit</span><b>{F.count(v.kiBlastLimit)}</b><Rk p={rosterPos('kibl', x => Math.min(x.kiBlastLimit, 20), Math.min(v.kiBlastLimit, 20))} /></div>
         </div>
         {forms.length > 1 && (
-          <div className="forms"><span>Forms</span>{forms.map(f => <img key={f} src={faceUrl(byId.get(f))} alt={byId.get(f).name} title={`${byId.get(f).name}, DP ${byId.get(f).dp}`} style={f === id ? { outlineColor: '#f97316' } : undefined} />)}</div>
+          <div className="forms"><span>Forms</span>{forms.map(f => (
+            <button key={f} className={f === id ? 'on' : ''} aria-pressed={f === id} title={`${byId.get(f).name}, DP ${byId.get(f).dp}`} onClick={() => onSelect(f)}><img src={faceUrl(byId.get(f))} alt={byId.get(f).name} /></button>
+          ))}</div>
         )}
+        {!selected && <div className="pvhint">Click to select, so the buttons below act on this fighter</div>}
         <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(id)}>{side === 'B' ? `Pick for the right side` : onCompare ? `Open ${c.name}` : `Pick ${c.name}`}</button>
         {onCompare && currentName && (
           <div className="pv2"><button onClick={() => onCompare(id)}>Compare with {currentName}</button><button onClick={() => onVs(id)}>Opponent for {currentName}</button></div>
@@ -138,12 +141,16 @@ export function CharacterPicker({ current, side, view, onPick, onClose = null, o
   const [team, setTeam] = useState(null);
   const [cls, setCls] = useState(null);
   const [dp, setDp] = useState(null);
-  const [hov, setHov] = useState(current);
+  // a click selects a fighter (the preview stays on it); hovering the grid previews another, and leaving the
+  // grid goes back to the selected one, so the preview's buttons act on the fighter that was clicked
+  const [sel, setSel] = useState(current);
+  const [hov, setHov] = useState(null);
   const [open, setOpen] = useState(null); // phone filter menus
   const members = team ? new Set(teams.find(t => t.name === team)?.members || []) : null;
   const list = characters.filter(c => (!q || c.name.toLowerCase().includes(q.toLowerCase()))
     && (!members || members.has(c.id)) && (!cls || classFilterOf(c) === cls) && (!dp || c.dp === dp));
-  const pick = (id) => (phone && id !== hov ? setHov(id) : onPick(id));
+  const pick = (id) => (id !== sel ? setSel(id) : onPick(id));
+  const shown = (!phone && hov) || sel;
   const label = side === 'B' ? (view === 'vs' ? 'Pick the opponent' : 'Pick for the right side') : onClose ? 'Pick a fighter' : 'Characters';
   const currentName = nameParts(byId.get(current).name)[0];
   const teamChips = <><button className={!team ? 'on' : ''} onClick={() => setTeam(null)}>All</button>{teams.map(t => <button key={t.name} className={team === t.name ? 'on' : ''} onClick={() => setTeam(t.name)}>{t.name}</button>)}</>;
@@ -172,17 +179,17 @@ export function CharacterPicker({ current, side, view, onPick, onClose = null, o
             <div className="fl"><small>DP</small>{dpChips}</div>
           </>
         )}
-        <div className="cgrid">
-          {list.map(c => <Face key={c.id} c={c} cur={c.id === current} hov={c.id === hov} onHover={phone ? () => {} : setHov} onPick={pick} />)}
+        <div className="cgrid" onMouseLeave={() => setHov(null)}>
+          {list.map(c => <Face key={c.id} c={c} cur={c.id === current} hov={c.id === hov} sel={c.id === sel} onHover={phone ? () => {} : setHov} onPick={pick} onOpen={onPick} />)}
           {!list.length && <div className="shown">No fighter matches.</div>}
         </div>
       </div>
-      {!phone && <Preview id={hov} onPick={onPick} side={side} onCompare={onCompare} onVs={onVs} currentName={hov !== current ? currentName : null} />}
-      {phone && hov && (
+      {!phone && <Preview id={shown} selected={shown === sel} onSelect={(id) => { setSel(id); setHov(null); }} onPick={onPick} side={side} onCompare={onCompare} onVs={onVs} currentName={shown !== current ? currentName : null} />}
+      {phone && sel && (
         <div className="pkbar">
-          <img src={faceUrl(byId.get(hov))} alt="" />
-          <div><div className="nm">{byId.get(hov).name}</div><div className="chips"><ClassChip c={byId.get(hov)} /><span className="chip dp">DP {byId.get(hov).dp}</span></div></div>
-          <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(hov)}>{onClose ? 'Pick' : 'Open'}</button>
+          <img src={faceUrl(byId.get(sel))} alt="" />
+          <div><div className="nm">{byId.get(sel).name}</div><div className="chips"><ClassChip c={byId.get(sel)} /><span className="chip dp">DP {byId.get(sel).dp}</span></div></div>
+          <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(sel)}>{onClose ? 'Pick' : 'Open'}</button>
         </div>
       )}
     </div>

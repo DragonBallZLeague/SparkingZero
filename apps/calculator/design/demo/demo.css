@@ -537,3 +537,59 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 }
 /* the docked picker stays in view with its own scroll while the page scrolls past */
 .app .art.dock > .cpk.dock { position: sticky; top: var(--top); max-height: calc(100vh - var(--top)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+
+/* ================================================================== round 23, second pass: Full is Quick blown up */
+/* each section's Full form keeps the Sheet's look (tiles, cards, badges) and adds every detail, as the Command
+   list's move cards do; a changed number has its base under it */
+.tile .tb { display: block; font-size: 10.5px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile.txt b { font-size: 15px; }
+.tile.wide { grid-column: span 2; }
+.tile .minor { margin-top: 5px; }
+.fgh { margin: 14px 0 6px; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; font-style: italic; color: #fca5a5; }
+.sbody > .fgh:first-child { margin-top: 0; }
+.fgh.kib { color: #fed583; }
+.fgh + .tiles { margin-top: 0; }
+.tiles.hitstrip { grid-template-columns: repeat(5, minmax(0, 1fr)) 1.35fr 1.35fr; }
+.tile.sm b { font-size: 17px; }
+.fsec .mrow + .tiles, .fsec .tiles + .mrow { margin-top: 10px; }
+.mcard.k { --mc: var(--kib); } .mcard.r { --mc: var(--chain); }
+.mcard .mhr { margin-left: auto; display: flex; align-items: center; }
+.rcs { display: flex; gap: 8px; }
+.rcn { font-size: 11px; color: var(--muted); }
+.mcard .fx.fus { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); padding-top: 8px; }
+.mcard .fx.fus div { background: rgba(251,113,133,.08); border-left-color: var(--chain); }
+.mcard .fx.fus div span b { color: #fecdd3; }
+.lpips { display: flex; gap: 3px; margin: 5px 4px 1px 0; }
+.lpips i { width: 12px; height: 8px; transform: skewX(-20deg); background: rgba(148,163,184,.18); }
+.lpips i.f { background: var(--skill); }
+/* Breaking armor as badges: a cracked green shield where the hit breaks the armor, grey where it holds */
+.abg { display: grid; grid-template-columns: 150px repeat(var(--cols), minmax(0, 1fr)); gap: 4px; margin: 4px 0 8px; }
+.abh { align-self: end; padding-bottom: 2px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); text-align: center; }
+.abh.l { text-align: left; }
+.abl { align-self: center; font-size: 13px; font-weight: 800; font-style: italic; }
+.abc { display: flex; align-items: center; justify-content: center; gap: 2px; padding: 7px 4px; font-size: 12px; font-weight: 800; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+.abc.ok { background: rgba(74,222,128,.16); color: #86efac; }
+.abc.no { background: rgba(148,163,184,.09); color: var(--muted); }
+.ph .abg { grid-template-columns: 92px repeat(3, minmax(0, 1fr)); }
+.ph .abc { font-size: 11px; padding: 6px 2px; }
+.ph .abl { font-size: 12px; }
+.ph .tiles.hitstrip { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ph .hitstrip > .tile:nth-child(6) { grid-column: 1 / 4; }
+.ph .hitstrip > .tile:nth-child(7) { grid-column: 4 / 6; }
+.ph .hitstrip .tile.sm { padding: 5px 4px 6px 8px; }
+.ph .tile.wide { grid-column: 1 / -1; }
+@media (min-width: 721px) and (max-width: 1100px) {
+  .tiles.hitstrip { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .hitstrip > .tile:nth-child(6) { grid-column: 1 / 4; }
+  .hitstrip > .tile:nth-child(7) { grid-column: 4 / 6; }
+}
+
+/* the character picker: a click selects (the preview stays on it), a second click or a double-click opens */
+.app .ct.sel { outline: 2px solid #f97316; box-shadow: 0 0 14px rgba(249,115,22,.55); }
+.app .ct.hov:not(.sel) { outline: 2px solid rgba(248,250,252,.55); box-shadow: none; }
+.forms button { padding: 0; line-height: 0; cursor: pointer; }
+.forms button.on img { outline: 2px solid #f97316; }
+.forms button:hover img { outline-color: #f8fafc; }
+.pvhint { margin: 10px 0 -4px; font-size: 11px; color: var(--muted); }
+.mcard.k .spec, .mcard.r .spec { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); }
+.mcard.k .mmain, .mcard.r .mmain { min-width: 104px; }

@@ -1,5 +1,6 @@
 // The Fighter page (round 23): the Sheet and Full stats as one page. Every section keeps one place in one order;
-// Quick shows it as the Sheet does (the game's look, roster bars), Full as Full stats' rows, and More / Less
+// Quick shows it as the Sheet does (the game's look, roster bars), Full blows it up with every detail in the same
+// look (as the Command list's move cards do; fullstats.jsx), and More / Less
 // switches one section. A headline strip and the section links stay pinned; Find jumps to any stat or move,
 // opening a closed section to reach it. The capsule picker docks in the fighter column (main.jsx), so the
 // numbers stay in view while capsules go on and off.
@@ -7,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { fiveHitTaken, volley } from './model.js';
 import { Tap, Modes, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { QuickBody, FighterColumn } from './sheet.jsx';
-import { sections as fullSections, FullBody, Summary } from './fullstats.jsx';
+import { sections as fullSections, FullForm, Summary } from './fullstats.jsx';
 import { MoveCards } from './moves.jsx';
 import { F } from './format.js';
 
@@ -60,20 +61,19 @@ export function BuildDelta({ side, base }) {
   );
 }
 
-/** One order for both forms. `full`: the Full stats sections a section shows in Full ('cards': the move cards). */
+/** One order for both forms. `fullOnly`: one line with its headline numbers (Summary) until opened. */
 const SECS = [
-  { id: 'tough', title: 'Toughness', cls: '', full: ['tough'] },
-  { id: 'res', title: 'Resources', cls: 'res', full: ['res'] },
-  { id: 'cmd', title: 'Command list', cls: 'cmd', full: 'cards' },
-  { id: 'off', title: 'Offense', cls: 'off', full: ['melee', 'kib'] },
-  { id: 'chains', title: 'Rush Chains', cls: 'mov', note: 'Damage at full charge', full: ['chains'] },
-  { id: 'spk', title: 'Sparking! Mode', cls: 'spk', full: ['spk'] },
-  { id: 'armor', title: 'Breaking armor', cls: 'armp', full: ['armor'], fullOnly: true },
-  { id: 'limits', title: 'Combat limits', cls: 'new', full: ['limits'], fullOnly: true },
-  { id: 'mob', title: 'Mobility', cls: 'mob', full: ['mob'], fullOnly: true },
-  { id: 'traits', title: 'Traits', cls: 'neutral', full: ['traits'], fullOnly: true },
+  { id: 'tough', title: 'Toughness', cls: '' },
+  { id: 'res', title: 'Resources', cls: 'res' },
+  { id: 'cmd', title: 'Command list', cls: 'cmd' },
+  { id: 'off', title: 'Offense', cls: 'off' },
+  { id: 'chains', title: 'Rush Chains', cls: 'mov', note: 'Damage at full charge' },
+  { id: 'spk', title: 'Sparking! Mode', cls: 'spk' },
+  { id: 'armor', title: 'Breaking armor', cls: 'armp', fullOnly: true },
+  { id: 'limits', title: 'Combat limits', cls: 'new', fullOnly: true },
+  { id: 'mob', title: 'Mobility', cls: 'mob', fullOnly: true },
+  { id: 'traits', title: 'Traits', cls: 'neutral', fullOnly: true },
 ];
-const SUB = { melee: 'Melee', kib: 'Ki blasts' };
 
 /** The first text node under `root` holding `needle`, as its element; ghosts (closed sections' full rows) only when asked. */
 function findText(root, needle, inGhost) {
@@ -145,15 +145,9 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
     if (noRef.current) noRef.current.textContent = 'No match';
   }, [q, open]);
 
-  const fullBody = (s) => {
-    if (s.full === 'cards') return <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />;
-    return s.full.map(k => (
-      <React.Fragment key={k}>
-        {s.full.length > 1 && <div className={`fsub ${k}`}>{SUB[k]}</div>}
-        <FullBody s={fs(k)} side={side} phone={phone} abTab={abTab} setAbTab={setAbTab} />
-      </React.Fragment>
-    ));
-  };
+  const fullBody = (s) => (s.id === 'cmd'
+    ? <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
+    : <FullForm id={s.id} side={side} phone={phone} abTab={abTab} setAbTab={setAbTab} />);
   const section = (s) => {
     const full = isFull(s);
     const mob = s.id === 'mob' ? fs('mob')?.tag : null;
@@ -163,7 +157,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
           <span className="st">{s.title}{s.note && !full && <em className="h5n">{s.note}</em>}{mob && <span className="tg">{mob}</span>}</span>
           <button className="more" aria-expanded={full} onClick={() => setOpen(o => ({ ...o, [s.id]: !full }))}>{full ? 'Less' : 'More'}</button>
         </h5>
-        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.full[0])} /> : <QuickBody id={s.id} side={side} />}</div>
+        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.id} side={side} />}</div>
         {searching && !full && <div className="fghost" aria-hidden="true" inert="">{fullBody(s)}</div>}
       </section>
     );

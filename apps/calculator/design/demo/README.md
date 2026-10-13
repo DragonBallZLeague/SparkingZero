@@ -135,6 +135,25 @@ After the quick concepts (`../concepts/layout-r23.html`) the demo has three tabs
 - **Not taken:** the concepts' quieter type. The league kept the game's look; it reads better and makes stats
   easier to find.
 
+**Second pass, the same day.** The rows made Full look plainer than Quick; only the Command list's Full (its move
+cards) felt right. So every section's Full form (`FullForm` in `fullstats.jsx`) is now its Quick form blown up in
+the same look, with every detail:
+- **Toughness, Resources and Sparking!:** their Quick form plus tiles (Armored 5-hit taken, Switch, Max ki,
+  Refills to, Ki from hits, Sparking armor, ...).
+- **Offense:** a rush hit strip, smash levels, throw and pursuits as tiles, then ki blast cards (Ki blast,
+  Charged, Jump, Dash...).
+- **Rush Chains:** a card per chain with its charge levels and follow-ups, each follow-up's hits listed.
+- **Breaking armor:** shield badges.
+- **Combat limits:** tiles with use pips.
+- **Mobility:** a tile per dash. **Traits:** tiles.
+
+Changed numbers show their base under them. The row tables are gone from the demo.
+
+**The Characters tab.** A click selects a fighter instead of opening it. Hovering the grid still previews another
+fighter, and leaving the grid goes back to the selected one, so the preview's Open, Compare with and Opponent for
+buttons act on the fighter you clicked. A second click or a double-click opens it. The preview's forms are buttons
+that switch to that form.
+
 ## Checked
 
 Desktop (1280px), tablet (820px: the Sheet puts the build beside the figure, Vs opponent stacks health above the
