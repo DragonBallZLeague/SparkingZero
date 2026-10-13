@@ -470,6 +470,17 @@ export function blastDamage(side, b) {
   const chn = b.slot === 'Ultimate' ? 'ultimate' : 'super';
   return { damage: scaleChannel(side.view, chn, b.damage, b.hits), boosted: scaleChannel(side.view, chn, b.boostedDamage), base: b.damage, boostedBase: b.boostedDamage, chn };
 }
+/**
+ * A skill's damage with the build (the skill channel: High-Tension, Saiyan Burst...), or null when it deals none
+ * (158 of 482 skills deal damage: Wild Sense, Explosive Wave, barriers, binds). The published value is Capsule Corp's
+ * final, unrounded (Explosive Wave 1,124.4); the game rounds a hit up. Which defense the opponent takes it on is not
+ * measured yet, so the Matchup shows it before their defenses.
+ */
+export function skillDamage(side, s) {
+  if (!(s?.damage > 0)) return null;
+  const base = Math.ceil(s.damage);
+  return { damage: scaleChannel(side.view, 'skill', base), base };
+}
 export function selfDamageText(b, oppDp = null) {
   const s = b.selfDamage;
   if (!s) return null;

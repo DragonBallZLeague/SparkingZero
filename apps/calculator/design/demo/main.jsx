@@ -24,6 +24,30 @@ class Boundary extends React.Component {
   }
 }
 
+/**
+ * Copies the page's link, which carries everything on screen (the view, both fighters, builds, conditions);
+ * on a phone, its share sheet when it has one.
+ */
+function CopyLink({ phone = false }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    const url = location.href;
+    try {
+      if (phone && navigator.share) { await navigator.share({ title: 'Character Calculator', url }); return; }
+      await navigator.clipboard.writeText(url);
+    } catch (e) {
+      if (e?.name === 'AbortError') return; // the share sheet was closed
+      // no clipboard access (an older browser, a page opened from a file)
+      const t = document.createElement('textarea');
+      t.value = url; document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); } catch { /* nothing more to try */ }
+      t.remove();
+    }
+    setDone(true); setTimeout(() => setDone(false), 1600);
+  };
+  return <button type="button" className={`cplink${done ? ' ok' : ''}`} onClick={copy} title="Copy a link to this page, builds and all">{done ? 'Copied' : phone ? 'Share' : 'Copy link'}</button>;
+}
+
 /** The no-build version of a pair, for marking changed numbers and starting breakdowns. */
 function basePairOf(pair) {
   const b = (s) => s && { ...s, view: baseView(s.c.id), applied: [] };
@@ -89,7 +113,7 @@ function App() {
       onCompare={(id) => go('versus', { B: emptySpec(id), vl: 'side' })} onVs={(id) => go('versus', { B: emptySpec(id), vl: 'match' })} />;
   } else if (two) {
     page = <VersusView pair={pair} lens={st.vl} setLens={(vl) => update({ vl })} depth={st.d} setDepth={setDepth} setSpec={setSpec} openPicker={openPicker} qp={qp}
-      ruleset={ruleset} resetSits={resetSits} swapIn={(id) => update({ B: { ...emptySpec(id) }, vl: 'side' })} docks={wide && capsSide ? { [capsSide]: picker(capsSide, 'dock') } : {}} />;
+      ruleset={ruleset} resetSits={resetSits} onSwap={() => { setOverlay(null); setQuick(null); update({ A: st.B, B: st.A }); }} swapIn={(id) => update({ B: { ...emptySpec(id) }, vl: 'side' })} docks={wide && capsSide ? { [capsSide]: picker(capsSide, 'dock') } : {}} />;
   } else {
     page = <FighterView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} depth={st.d} setDepth={setDepth}
       dock={wide && capsSide === 'A' ? picker('A', 'dock') : null} onForm={(id) => update({ A: fighter('A', id) })} />;
@@ -112,6 +136,7 @@ function App() {
               <div className="tabs" role="tablist">
                 {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={st.view === k} className={st.view === k ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
               </div>
+              <CopyLink />
             </div>
           )}
           <main><Boundary at={st.view}>{page}</Boundary></main>
@@ -133,6 +158,7 @@ function App() {
           {phone && (
             <nav className="phtabs">
               {TABS.map(([k, , s]) => <button key={k} className={st.view === k ? 'on' : ''} onClick={() => go(k)}>{s}</button>)}
+              <CopyLink phone />
             </nav>
           )}
         </div>

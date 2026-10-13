@@ -18,13 +18,15 @@ export const F = {
   armor: (v) => (v > 0 ? `${Math.round(v * 100)}%` : 'None'),
   yes: (v) => (v ? 'Yes' : 'No'),
   pct: (v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(+(v * 100).toFixed(1))}%`,
+  /** a change against the usual (Sparking's charge speed and duration): 0 = "Normal", 0.2 = "+20%" */
+  rel: (v) => (typeof v !== 'number' ? '' : Math.abs(v) < 0.0005 ? 'Normal' : `${v > 0 ? '+' : '−'}${Math.abs(+(v * 100).toFixed(1))}%`),
 };
 
 /** A part of a breakdown: "+63", "−5%". */
 export function delta(v, kind = 'int') {
   if (typeof v !== 'number') return '';
   const sign = v > 0 ? '+' : v < 0 ? '−' : '';
-  if (kind === 'def') return `${sign}${Math.abs(+(v * 100).toFixed(1))}%`;
+  if (kind === 'def' || kind === 'rel') return `${sign}${Math.abs(+(v * 100).toFixed(1))}%`;
   if (kind === 'int') return `${sign}${Math.abs(Math.round(v)).toLocaleString('en-US')}`;
   return `${sign}${Math.abs(+v.toFixed(3))}`;
 }

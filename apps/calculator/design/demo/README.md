@@ -266,6 +266,29 @@ fighter, and leaving the grid goes back to the selected one, so the preview's Op
 buttons act on the fighter you clicked. A second click or a double-click opens it. The preview's forms are buttons
 that switch to that form.
 
+## Signed off, then the live calculator's four gaps (2026-10-13)
+
+The league signed off the demo as it stood after round 24 (the Fighter page, Versus, the docked picker, the
+alternates' version marks). A side-by-side check against the live calculator (dev-branch) found four things the
+demo didn't do, added here for the league's sign-off:
+- **Skill damage.** 158 of 482 skills deal damage (Wild Sense and its counters, Explosive Wave and the other
+  explosions, barriers, binds, pushes). The Fighter page's Skills show it in the Damage column (Quick; a
+  damaging skill's duration, if any, moves to a tile) and as the card's big number with its base (Full); Versus
+  shows it on each skill's row, with the cost small beside the name. It scales on the skill channel (High-Tension,
+  Saiyan Burst, Ancient Soul raise it), from Capsule Corp's value rounded up (`skillDamage` in `model.js`). In the
+  Matchup it stays **before the other side's defenses**, and the Skills header says so: which defense the game
+  uses for a skill is not measured yet (the old calculator used melee defense, unchecked).
+- **Sparking charge speed and duration.** Each character's change against the usual (`sparkCharge`, the class's
+  gauge charge speed: Ultra Instinct +20%, the Vegetas −10%; `sparkDuration`: most Super Saiyans −10%, Vegito
+  −15%), with capsules (Sparking! Plus +15% duration). They lead the Sparking! section (Quick and Full, with roster
+  bars; "Normal" when unchanged) and Versus's Sparking rows. To keep Quick at five tiles, Burst Melee Attack and
+  Burst Rush (the same for everyone) moved to Full.
+- **Copy link.** At the right of the view tabs (a phone: a Share tab, the phone's share sheet when it has one).
+  The link carries the whole page as the hash already did. Old share links still don't open here: that is the URL
+  scheme step of the rebuild.
+- **Swap.** Under the VS mark (a phone: between the Change buttons): the two fighters change sides with their
+  builds and conditions.
+
 ## Checked
 
 Desktop (1280px), tablet (820px: the Sheet puts the build beside the figure, Vs opponent stacks health above the
@@ -278,3 +301,5 @@ exchange) and phone (390px). The numbers match the concept's (Vs Janemba 1,812 /
   Blast Burst match (Kamehameha 7,485, Energy Blast Barrage 7,880, Drain Life Cell 9,213, ...). 83 of 743 blasts
   have no hit split yet and scale as one hit.
 - Burst Melee Attack and Burst Rush are shown as 1,250 and 450 for everyone (the data has no per-character availability).
+- Which defense a skill's damage is taken on (an in-game test: Explosive Wave on fighters whose melee and ki-blast
+  defenses differ). Until then the Matchup shows skill damage before defenses.

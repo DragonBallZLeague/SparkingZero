@@ -120,6 +120,8 @@ function quickRows(pair) {
       { label: 'Charged ki blast', key: 'charged3', small: 'Lv.3', get: (s) => gameMoves(s).charged?.damage.at(-1), deal: ex(x => x.charged.at(-1)?.v), held: ex(x => x.charged.at(-1)?.held), shots: (s) => gameMoves(s).charged?.shots },
     ],
     spk: [
+      { label: 'Charge speed', key: 'spkc', get: V(x => x.sparkCharge), fmt: F.rel, kind: 'rel' },
+      { label: 'Duration', key: 'spkd', get: V(x => x.sparkDuration), fmt: F.rel, kind: 'rel' },
       { label: 'Hyper Smash', get: (s) => gameMoves(s).hyperSmash, deal: ex(x => x.hyperSmash.v), held: ex(x => x.hyperSmash.held) },
       { label: 'Violent Rush', get: (s) => (s.c.moveset?.unavailable?.includes('Violent Rush') ? 0 : 1), fmt: (x) => (x ? 'Yes' : 'No'), bar: false },
       { label: 'Extra follow-ups', small: 'in Sparking!', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}`, bar: false },
@@ -217,7 +219,7 @@ function VersusQuick({ pair, match, phone, swapIn }) {
       <div className="cmpcol">
         {plate('', 'Toughness', rows.tough, null, <HpBars match={match} />)}
         {plate('res', 'Resources', rows.res)}
-        <div className="plate skl"><h5>Skills</h5><SkillsCmp /></div>
+        <div className="plate skl"><h5>Skills{match && <small className="h5s">damage before their defenses</small>}</h5><SkillsCmp /></div>
         <div className="plate cmd"><h5>Blasts</h5>{head}<BlastRows match={match} /></div>
         {plate('off', 'Melee', rows.melee, legend)}
         <div className="plate mov"><h5>Rush Chains</h5>{head}<ChainsCmp vs={match} /></div>
@@ -265,7 +267,7 @@ function Rail({ k, pair, setSpec, openPicker, ruleset, dock }) {
  * Exchange; All stats). On a wide screen each fighter's build is a rail on its own side, where its capsule
  * picker docks; narrower, the Loadout and Conditions bar (PairControls) and a bottom sheet.
  */
-export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, openPicker, ruleset, resetSits, swapIn, qp = () => null, docks = {} }) {
+export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, openPicker, ruleset, resetSits, swapIn, onSwap, qp = () => null, docks = {} }) {
   const phone = usePhone();
   const wide = useWide();
   const match = lens === 'match';
@@ -288,7 +290,7 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   else body = <RefCtx.Provider value={ref}><VersusQuick pair={pair} match={match} phone={phone} swapIn={swapIn} /></RefCtx.Provider>;
   return (
     <AltPick.Provider value={altPick}>
-      {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
+      {phone ? <PhoneVsBar pair={pair} change={change} onSwap={onSwap} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} onSwap={onSwap} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
       {wide ? (
         <>

@@ -95,12 +95,16 @@ export function sections(side) {
     {
       id: 'spk', title: 'Sparking! Mode', cls: 'spk',
       groups: [[null, [
+        cell('Charge speed', A(x => x.sparkCharge), { fmt: F.rel, kind: 'rel', long: 'Sparking charge speed' }),
+        cell('Duration', A(x => x.sparkDuration), { fmt: F.rel, kind: 'rel', long: 'Sparking duration' }),
         cell('Hyper Smash', GM(g => g.hyperSmash)), cell('Burst Melee Attack', null, { text: '1,250' }), cell('Burst Rush hit', null, { text: '450' }),
         cell('Violent Rush', null, { text: c.moveset?.unavailable?.includes('Violent Rush') ? 'No' : 'Yes' }),
         cell('Follow-ups', null, { text: `+${ps.sparkingAdd ?? 0}`, long: 'Extra follow-ups' }),
         cell('Armor', null, { text: c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None', long: 'Sparking armor' }),
       ]]],
-      summary: [['Hyper Smash', F.int(gm.hyperSmash)], [c.moveset?.unavailable?.includes('Violent Rush') ? 'No Violent Rush' : 'Violent Rush', null]],
+      // (ASCII signs: the headline marks compare these as numbers)
+      summary: [['Charge', `${v.sparkCharge > 0 ? '+' : ''}${+(v.sparkCharge * 100).toFixed(1)}%`], ['Duration', `${v.sparkDuration > 0 ? '+' : ''}${+(v.sparkDuration * 100).toFixed(1)}%`],
+        ['Hyper Smash', F.int(gm.hyperSmash)], [c.moveset?.unavailable?.includes('Violent Rush') ? 'No Violent Rush' : 'Violent Rush', null]],
     },
     { id: 'traits', title: 'Traits', cls: 'neutral', custom: 'traits', summary: traitSummary(c) },
     { id: 'cmd', title: 'Command list', cls: 'cmd', custom: 'cmd', full: true, summary: cmdSummary(side) },
@@ -430,6 +434,8 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
       <>
         <QuickBody id="spk" side={side} />
         <div className="tiles t5">
+          <TT label="Burst Melee Attack" value="1,250" />
+          <TT label="Burst Rush" value="450" sub="per hit" />
           <TT label="Sparking armor" value={c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None'} sub={c.armor?.sparking ? 'less damage taken' : null} />
           <TT label="Armor break" value={`+${c.sparking?.armorBreakLevel ?? 3}`} sub="levels in Sparking!" />
         </div>

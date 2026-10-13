@@ -10,8 +10,8 @@ The data rebuild (everything up to commit `0b6ecc99`) is on dev-branch.
 **Data waiting to ship:** everything since on this branch's data side (`src/utils`, `scripts/`, `data/`,
 `public/data/`) is on this branch only: the Giants' smash (Capsule Corp's value was 675 too high for all 11; now
 from the game files, measured by the league on 2026-10-10), the FModel game files as the primary source, armor,
-Rush Chains, charged attacks, conditions, blast hits and the pursuits. The league will ship it later, to
-dev-branch on its own or with the redesign.
+Rush Chains, charged attacks, conditions, blast hits and the pursuits, and the top 6 league builds. **It ships
+with the rebuild** (decided 2026-10-13), not on its own.
 
 ## 1. Signed off
 
@@ -52,8 +52,12 @@ Done 2026-10-11:
 - **League lineup builds** in `characters.json` `leagueBuilds` (`scripts/lib/lineups.mjs`): the top 6 per
   character (the Fighter page shows 6, the Versus rails 3), newest season first, then the most used. Only lineups the website's season and event pages link
   count; teams come from the schedule (the lineups' own team text is hand-typed). **Question for the league:** 9
-  lineup files are not linked from any page (8 alternate playoff games such as `s0_po2_m1r3` beside the linked
-  `s0_po2_m1r2`, and `s0_allstars_g1`); they are left out until the league says whether they count.
+  lineup files in `apps/website/public/content/lineups/` are not linked from any page, and are left out until the
+  league says whether they count: Season 0's All-Stars `s0_allstars_g1` (Team Beerus vs Team Champa; the event
+  links `s0_as_r1` and `s0_as2_r3`), and the other run of 8 playoff week-2 games, where `seasons/season-0.yaml`
+  links one run and not the other: `s0_po2_m1r3` (linked: `m1r2`), `s0_po2_m2r2` (`m2r3`), `s0_po2_m3r3` (`m3r2`),
+  `s0_po2_m4r2` (`m4r3`), `s0_qf2_m1r2` (`m1r3`), `s0_qf2_m2r2` (`m2r3`), `s0_qf2_m3r2` (`so_qf2_m3r3`, file name
+  spelled "so") and `s0_qf2_m4r2` (`m4r3`).
 - **Perception** (the counter, confirmed in game) shows beside Step-In and Rush-In.
 
 Still open: the four move flags and the Dragon Dash "BK" cost in `data/TESTS.md`.
@@ -102,10 +106,14 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    phone), one Versus page (Compare and Vs opponent, a Side by side / Matchup switch; the league chose the merge),
    a pinned headline strip, Find a stat, and quieter type. **The league took all of them but the quieter type**
    (it lost the flair that makes stats easy to find); Quick keeps the Sheet's look and roster bars. Built into
-   the demo on 2026-10-13 (its README, "Round 23"), waiting on the league's look.
-2. **URL scheme.** Character pages by name slug, the four views as routes, and share links that carry the whole
-   build (active skills, Sparking, ruleset, opponent). Old `#` share links must keep decoding. Uses
-   `restoreDeepLink` like the Analyzer.
+   the demo on 2026-10-13 (its README, "Round 23"). **Signed off on 2026-10-13** with round 24 (one Quick layout
+   for Versus, the alternates' version marks, the docked picker). A check against the live calculator then added
+   four things it had and the demo didn't: skill damage, Sparking charge speed and duration, Copy link and Swap
+   (demo README, "Signed off, then the live calculator's four gaps"), **waiting on the league's sign-off**.
+2. **URL scheme.** Character pages by name slug, the three views (Characters, Fighter, Versus) as routes, and
+   share links that carry the whole build (active skills, stages, Sparking, conditions, ruleset, both sides),
+   copied by the Copy link button. Old `#` share links and the website's Teams-page links must keep opening.
+   Uses `restoreDeepLink` like the Analyzer.
 3. **Rebuild the app** to the signed-off demo. Then delete `design/concepts/`, `design/demo/` and this file.
 4. Keep `apps/calculator/CLAUDE.md` in step at each stage.
 

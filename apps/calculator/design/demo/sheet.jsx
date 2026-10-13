@@ -241,11 +241,13 @@ export function QuickBody({ id, side, only = null }) {
   }
   if (id === 'chains') return <SheetChains side={side} />;
   if (id === 'spk') {
+    // how fast the gauge fills to enter Sparking! and how long it lasts, against the usual (class and capsules);
+    // Burst Melee Attack and Burst Rush, the same for everyone, are in Full
     return (
       <div className="tiles t5" style={{ marginTop: 0 }}>
+        <div className="tile"><span>Charge speed</span><Tap as="b" title="Sparking charge speed" get={A(x => x.sparkCharge)} fmt={F.rel} kind="rel" /><Rk p={rosterPos('spkc', x => x.sparkCharge, v.sparkCharge)} title="Faster is better" /></div>
+        <div className="tile"><span>Duration</span><Tap as="b" title="Sparking duration" get={A(x => x.sparkDuration)} fmt={F.rel} kind="rel" /><Rk p={rosterPos('spkd', x => x.sparkDuration, v.sparkDuration)} title="Longer is better" /></div>
         <div className="tile"><span>Hyper Smash</span><Tap as="b" title="Hyper Smash" get={(p) => gameMoves(p.A).hyperSmash} /><Rk p={movePos('hyper', g => g.hyperSmash, gm.hyperSmash)} /></div>
-        <div className="tile"><span>Burst Melee Attack</span><b>1,250</b></div>
-        <div className="tile"><span>Burst Rush</span><b>450<small>per hit</small></b></div>
         <div className="tile"><span>Violent Rush</span><b>{c.moveset?.unavailable?.includes('Violent Rush') ? 'No' : 'Yes'}</b></div>
         <div className="tile"><span>Extra follow-ups</span><b>+{c.moveset?.pursuits?.sparkingAdd ?? 0}</b></div>
       </div>

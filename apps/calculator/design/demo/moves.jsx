@@ -1,7 +1,7 @@
 // Moves: the Sheet's Command list rows, Full stats' move cards, costs, and Rush Chains.
 import React from 'react';
 import {
-  SLOT_LABEL, blastsOf, skillOf, blastType, blastTiles, blastTags, blastDamage, kiBars, selfDamageText,
+  SLOT_LABEL, blastsOf, skillOf, blastType, blastTiles, blastTags, blastDamage, skillDamage, kiBars, selfDamageText,
   SKILL_TYPE, skillTiles, skillTags, skillEffectTiles, toggleable, moveset, perceptionName,
 } from './model.js';
 import { Tap } from './ui.jsx';
@@ -49,6 +49,9 @@ const blastGet = (sideKey, b, field = 'damage') => (sides) => {
   return blastDamage(s, mine)[field];
 };
 
+/** A skill's damage with the side's build, for a Tap (its breakdown lists what raises it). */
+export const skillGet = (sideKey, s) => (sides) => skillDamage(sides[sideKey], s)?.damage;
+
 /* ------------------------------------------------------------------ the Sheet's Command list */
 /**
  * The Command list as rows: blasts (B1, B2, alternate blasts), ultimates (with alternates), skills.
@@ -84,10 +87,12 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
         <span className="slot s">S{slot}</span>
         <span className="mvn">{s.name}</span>
         <span className="tcell">
-          <span className="tline"><span className="ttype">{SKILL_TYPE(s)}</span>{skillTiles(s).map(t => <span className="pv" key={t.label}><i>{t.label}</i>{t.value}</span>)}</span>
+          <span className="tline"><span className="ttype">{SKILL_TYPE(s)}</span>{skillTiles(s).map(t => <span className="pv" key={t.label}><i>{t.label}</i>{t.value}</span>)}
+            {s.damage > 0 && s.duration > 0 && <span className="pv"><i>Duration</i>{s.duration}s</span>}</span>
           {effects.length > 0 && <span className="tline">{effects.map((t, i) => <span className={`ef${t.kind ? ' ' + t.kind : ''}`} key={i}>{t.short} {t.value}{t.time ? ` for ${t.time}` : ''}</span>)}</span>}
         </span>
-        <span className="dmg dur">{s.duration ? `${s.duration}s` : ''}</span>
+        {/* a damaging skill's damage (Wild Sense, Explosive Wave, barriers, binds), else its duration */}
+        {s.damage > 0 ? <Tap title={s.name} get={skillGet(sideKey, s)} className="dmg" /> : <span className="dmg dur">{s.duration ? `${s.duration}s` : ''}</span>}
         <Cost kind="skill" points={s.stockCost} />
       </div>,
     );
@@ -96,7 +101,7 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
 }
 
 /* ------------------------------------------------------------------ Full stats' move cards */
-function SkillCard({ side, slot, onStage }) {
+function SkillCard({ side, sideKey = 'A', slot, onStage }) {
   const s = skillOf(side.c, slot);
   if (!s) return null;
   const stage = side.spec?.stage?.[slot] || (s.stages ? s.phases.length : null);
@@ -108,7 +113,13 @@ function SkillCard({ side, slot, onStage }) {
       <div className="mbody">
         <div className="mmain">
           <span className="mt">{SKILL_TYPE(s)}</span>
-          <b>{s.duration || '–'}{s.duration ? <small>s</small> : null}</b><small>Duration</small>
+          {s.damage > 0 ? (
+            <>
+              <Tap as="b" title={s.name} get={skillGet(sideKey, s)} />
+              <small>Base {F.int(skillDamage(side, s).base)}</small>
+              {s.duration > 0 && <small>Duration <i>{s.duration}s</i></small>}
+            </>
+          ) : <><b>{s.duration || '–'}{s.duration ? <small>s</small> : null}</b><small>Duration</small></>}
           {s.stages && (
             <div className="stg"><em>Stage</em>{s.phases.map((p, i) => (
               <button key={i} className={stage === i + 1 ? 'on' : ''} onClick={() => onStage?.(slot, i + 1)} aria-pressed={stage === i + 1}>{i + 1}</button>
@@ -170,7 +181,7 @@ export function MoveCards({ side, sideKey = 'A', onStage, only = null }) {
   const show = (k) => !only || only === k || (only === 'blasts' && k === 'ults');
   return (
     <div className="mlist nohd">
-      {show('skills') && <div className="mgrp s"><div className="mrow" style={{ '--n': Math.min(3, skills.length) }}>{skills.map(n => <SkillCard key={n} side={side} slot={n} onStage={onStage} />)}</div></div>}
+      {show('skills') && <div className="mgrp s"><div className="mrow" style={{ '--n': Math.min(3, skills.length) }}>{skills.map(n => <SkillCard key={n} side={side} sideKey={sideKey} slot={n} onStage={onStage} />)}</div></div>}
       {show('blasts') && <div className="mgrp b"><div className="mrow" style={{ '--n': Math.min(3, supers.length) }}>{supers.map(b => <BlastCard key={b.slot + b.name} side={side} sideKey={sideKey} b={b} />)}</div></div>}
       {show('ults') && <div className="mgrp u"><div className="mrow" style={{ '--n': Math.min(3, ults.length) }}>{ults.map(b => <BlastCard key={b.slot + b.variant + b.name} side={side} sideKey={sideKey} b={b} />)}</div></div>}
     </div>

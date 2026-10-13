@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
-  similarFighters, skillOf, blastsOf, SLOT_LABEL, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
+  similarFighters, skillOf, blastsOf, SLOT_LABEL, blastDamage, skillDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
 import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
@@ -13,7 +13,7 @@ import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
 /* ------------------------------------------------------------------ the two-fighter header */
-export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null }) {
+export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null, onSwap = null }) {
   const phone = usePhone();
   const fig = (side) => (
     <div className={`vfig${phone ? ' c' : ''}`}>
@@ -25,10 +25,15 @@ export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = nul
     <div className="vshead">
       <div className="vside l">{fig(pair.A)}<div className="who"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} />{changeA}</div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
       <div className="vside r">{fig(pair.B)}<div className="who"><div className="nmrow r"><div className="nm"><Name parts={nameParts(pair.B.c.name)} br={!phone} /></div>{changeB}</div>{!phone && <div className="chips" style={{ justifyContent: 'flex-end' }}>{chipsB}</div>}{actionsB}</div></div>
-      <div className="vsmid"><b>VS</b></div>
+      <div className="vsmid"><b>VS</b>{onSwap && <SwapButton onSwap={onSwap} />}</div>
     </div>
   );
 }
+
+/** Swaps the two fighters, each keeping its build and conditions (the live calculator's Swap). */
+export const SwapButton = ({ onSwap }) => (
+  <button type="button" className="swapb" onClick={onSwap} title="Swap the two fighters, builds and all" aria-label="Swap sides"><i aria-hidden="true">⇄</i>Swap</button>
+);
 
 /** Chips under a fighter's name: class, DP, the build in short, skills on, Sparking. */
 export function buildChips(side) {
@@ -165,7 +170,8 @@ export function statSections({ vs = false, pair = null } = {}) {
     ] },
     // the Command list as the Fighter page has it, right after Resources: Skills, then Blasts with the ultimates
     // and every alternate
-    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills' },
+    // a skill's damage is before the other side's defenses even in the Matchup (which defense applies is untested)
+    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills', small: vs ? 'damage before their defenses' : null },
     { id: 'bls', title: 'Blasts', cls: 'cmd', col: 2, custom: 'blasts', vs, small: vs ? 'dealt to them' : null },
     { id: 'limits', title: 'Combat limits', cls: 'lim', col: 2, rows: [
       { label: 'Follow-ups', get: V(x => x.pursuitLimit.general), fmt: String },
@@ -174,6 +180,8 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Jump ki blasts', get: (s) => gameMoves(s).jump?.count, fmt: String }, { label: 'Dash ki blasts', get: (s) => gameMoves(s).dash?.count, fmt: String },
     ] },
     { id: 'spk', title: 'Sparking! Mode', cls: 'spk', col: 2, rows: [
+      { label: 'Charge speed', get: V(x => x.sparkCharge), fmt: F.rel, kind: 'rel' },
+      { label: 'Duration', get: V(x => x.sparkDuration), fmt: F.rel, kind: 'rel' },
       dealt({ label: 'Hyper Smash', get: (s) => gameMoves(s).hyperSmash }, D(x => x.hyperSmash.v)),
       { label: 'Violent Rush', get: (s) => (s.c.moveset?.unavailable?.includes('Violent Rush') ? 0 : 1), fmt: (x) => (x ? 'Yes' : 'No') },
       { label: 'Extra follow-ups', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}` },
@@ -360,11 +368,20 @@ function BlastsCmp({ vs = false }) {
   return slots.map(r => <Mirror key={r.slot} label={slotLabel(r)} a={side('A', r.A)} b={side('B', r.B)} />);
 }
 
-/** Skills side by side: name and cost in skill points. */
+/**
+ * Skills side by side: name with its cost in skill points, and a damaging skill's damage with the build (in the
+ * Matchup too it is before the other side's defenses: which defense applies is not measured yet).
+ */
 export function SkillsCmp() {
   const pc = usePair();
-  const skill = (s, n) => { const k = skillOf(s.c, n); return k ? { name: k.name, value: `${k.stockCost} pt${k.stockCost === 1 ? '' : 's'}` } : null; };
-  return [1, 2].map(n => <Mirror key={n} label={<span className="slot s">S{n}</span>} a={skill(pc.pair.A, n)} b={skill(pc.pair.B, n)} />);
+  const skill = (k, n) => {
+    const s = skillOf(pc.pair[k].c, n);
+    if (!s) return null;
+    const get = (sides) => skillDamage(sides[k], s)?.damage;
+    const name = <>{s.name}<small className="pts">{s.stockCost} pt{s.stockCost === 1 ? '' : 's'}</small></>;
+    return s.damage > 0 ? { name, n: get(pc.pair), value: <Tap title={s.name} get={get} mark={false} /> } : { name };
+  };
+  return [1, 2].map(n => <Mirror key={n} label={<span className="slot s">S{n}</span>} a={skill('A', n)} b={skill('B', n)} />);
 }
 
 function TraitsCmp() {
@@ -410,7 +427,7 @@ export function AllStats({ phone, sections = null }) {
           extra={<span className="only">Only differences<Switch on={only} onChange={setOnly} label="Only differences" /></span>} />
         <div className="pstack">
           {secs.map(s => {
-            if (s.custom) return <div className={`plate ${s.cls}`} key={s.id} id={`cmp-${s.id}`}><h5>{s.title}</h5>{sectionBody(s, true)}</div>;
+            if (s.custom) return <div className={`plate ${s.cls}`} key={s.id} id={`cmp-${s.id}`}><h5>{s.title}{s.small && <small className="h5s">{s.small}</small>}</h5>{sectionBody(s, true)}</div>;
             const diff = s.rows.filter(r => !only || valOf(r, pc.pair, 'A') !== valOf(r, pc.pair, 'B'));
             const same = s.rows.filter(r => !diff.includes(r));
             const show = (r) => { const v = valOf(r, pc.pair, 'A'); return typeof v === 'number' ? (r.fmt || F.int)(v) : (v ?? '–'); };
@@ -514,7 +531,7 @@ export function Similar({ id, name, onPick }) {
 }
 
 /** The phone's two-fighter bar: both faces and names, the VS mark, each side's Change. */
-export function PhoneVsBar({ pair, change }) {
+export function PhoneVsBar({ pair, change, onSwap = null }) {
   return (
     <>
       <div className="cbar">
@@ -522,7 +539,7 @@ export function PhoneVsBar({ pair, change }) {
         <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
         <span className="cvs" aria-hidden="true"><b>VS</b></span>
       </div>
-      <div className="cbar-acts">{change('A')}{change('B')}</div>
+      <div className="cbar-acts">{change('A')}{onSwap && <SwapButton onSwap={onSwap} />}{change('B')}</div>
     </>
   );
 }
