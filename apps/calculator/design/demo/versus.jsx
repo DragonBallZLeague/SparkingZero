@@ -139,7 +139,7 @@ function BlastRows({ match }) {
       const get = match
         ? (s) => exchange(s[k], s[other(k)]).blasts.find(y => sameBlast(y.b, x.b))?.deal
         : (s) => { const m = blastsOf(s[k].c).find(y => sameBlast(y, x.b)); return m ? blastDamage(s[k], m).damage : null; };
-      return { name: blastName(x), n: num(get, pc.pair), value: <XVal cls="xv" title={x.b.name} get={get} /> };
+      return { name: blastName(x, k), n: num(get, pc.pair), value: <XVal cls="xv" title={x.b.name} get={get} /> };
     };
     return <Mirror key={r.slot} label={slotLabel(r)} a={side(r.A, 'A')} b={side(r.B, 'B')} />;
   });

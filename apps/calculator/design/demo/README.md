@@ -209,7 +209,11 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **Alternates, ways to switch:** `design/concepts/alternates-r24.html` mocks five (arrows on the name, version
   marks, a menu, one Main / Costume switch per fighter, both versions listed) against the old button. **The league
   picked B, version marks**, with a small "Alt." tag beside a costume's move name (not a line under it), so the
-  marks never move; built into Versus's Blasts (`blastName` in `compare.jsx`).
+  marks never move; built into Versus's Blasts (`blastName` in `compare.jsx`). "Alt." sits on the name's outer
+  side (left of the left fighter's name, right of the right one's), and a move with another version has a
+  clickable name (dashed underline) that switches to the next one, besides the marks.
+- **The Fighter page's column is 400px** whether it holds the fighter or the docked capsule picker (it was 350 or
+  390 against the picker's 410), so Edit capsules no longer reflows the stats or moves the page.
 - **The Verdict** has one line per fighter, the name in the side's colour ("Android 18 deals more on 3 of 8
   attacks").
 - **Versus Blasts switch alternates in place** (replacing a row per alternate): one row per slot, and a side with

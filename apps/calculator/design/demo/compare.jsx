@@ -322,21 +322,30 @@ export const slotLabel = (r) => <span className={`slot ${r.slot === 'Ultimate' ?
 
 /**
  * A side's move in a Blasts row (the league's pick, option B of design/concepts/alternates-r24.html): its name with
- * "Alt." beside it on a costume's move, and under it one slanted mark per version when the slot has more than one
- * (the costume's mark orange when chosen); a click on a mark compares that version. The marks' line is always
- * there, so nothing moves when "Alt." appears.
+ * "Alt." on its outer side (left of the name for the left fighter, right for the right) on a costume's move, and
+ * under it one slanted mark per version when the slot has more than one (the costume's mark orange when chosen); a
+ * click on a mark compares that version, a click on the name the next one. The marks' line is always there, so
+ * nothing moves when "Alt." appears.
  */
-export const blastName = (x) => (
-  <>
-    {x.b.name}{x.b.variant && <small className="altt" title="A costume's alternate">Alt.</small>}
-    {x.n > 1 && (
-      <span className="vmarks">{x.opts.map((o, i) => (
-        <button key={i} type="button" className={`${o.variant ? 'alt' : ''}${i === x.i ? ' on' : ''}`} aria-pressed={i === x.i}
-          title={`${o.name}${o.variant ? ' (costume)' : ''}`} aria-label={`Compare ${o.name}`} onClick={() => x.set(i)} />
-      ))}</span>
-    )}
-  </>
-);
+export const blastName = (x, k) => {
+  const alt = x.b.variant && <small className="altt" title="A costume's alternate">Alt.</small>;
+  const name = x.n > 1
+    // an inline span (a button would drop to its own line), keyboard-usable like one
+    ? <span role="button" tabIndex={0} className="bcyc" title="Compare the next version" onClick={() => x.set((x.i + 1) % x.n)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); x.set((x.i + 1) % x.n); } }}>{x.b.name}</span>
+    : x.b.name;
+  return (
+    <>
+      {k === 'A' ? <>{alt}{name}</> : <>{name}{alt}</>}
+      {x.n > 1 && (
+        <span className="vmarks">{x.opts.map((o, i) => (
+          <button key={i} type="button" className={`${o.variant ? 'alt' : ''}${i === x.i ? ' on' : ''}`} aria-pressed={i === x.i}
+            title={`${o.name}${o.variant ? ' (costume)' : ''}`} aria-label={`Compare ${o.name}`} onClick={() => x.set(i)} />
+        ))}</span>
+      )}
+    </>
+  );
+};
 
 /** Blasts side by side, ultimates included, each side's alternates one switch away (with `vs`, damage dealt to the other side). */
 function BlastsCmp({ vs = false }) {
@@ -348,7 +357,7 @@ function BlastsCmp({ vs = false }) {
     if (!mine) return null;
     return vs ? exchange(s[k], s[other[k]]).blasts.find(y => sameBlast(y.b, b))?.deal : blastDamage(s[k], mine).damage;
   };
-  const side = (k, x) => (x.b ? { name: blastName(x), n: get(k, x.b)(pc.pair), value: <Tap title={x.b.name} get={get(k, x.b)} mark={false} /> } : null);
+  const side = (k, x) => (x.b ? { name: blastName(x, k), n: get(k, x.b)(pc.pair), value: <Tap title={x.b.name} get={get(k, x.b)} mark={false} /> } : null);
   return slots.map(r => <Mirror key={r.slot} label={slotLabel(r)} a={side('A', r.A)} b={side('B', r.B)} />);
 }
 

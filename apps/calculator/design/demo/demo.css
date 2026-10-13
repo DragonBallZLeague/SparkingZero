@@ -886,3 +886,15 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .vmarks button.on { background-color: #e2e8f0; }
 .vmarks button.alt.on { background-color: #f97316; }
 .vmarks button:focus-visible { outline: 2px solid #f97316; outline-offset: 1px; }
+
+/* Versus Blasts: "Alt." on each name's outer side; a move with more versions has a clickable name (the next one) */
+.mir .ma .mn .altt { margin: 0 6px 0 0; }
+.mir .mn .bcyc { cursor: pointer; text-decoration: underline dashed rgba(148,163,184,.55); text-underline-offset: 3px; }
+.mir .mn .bcyc:hover { color: #fff; text-decoration-color: #cbd5e1; }
+.mir .mn .bcyc:focus-visible { outline: 2px solid #f97316; outline-offset: 2px; }
+
+/* the Fighter page's column is one width whether it holds the fighter or the docked capsule picker, so opening the
+   picker never reflows the stats (and the page keeps its place) */
+@media (min-width: 1101px) {
+  .app .fpage:not(.docked), .app .fpage.docked { grid-template-columns: 400px minmax(0, 1fr); }
+}
