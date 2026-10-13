@@ -677,3 +677,29 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 /* every section's edge one bright neutral (the colours were getting loud); a section keeps its colour in its title
    and its numbers' bars; the two sides' build panels keep orange and blue */
 .app .plate:not(.sidebuild):not(.opp) { border-left-color: #cbd5e1; }
+
+/* section headers as header bars, like the build's groups: a slate top edge and tint across the plate, the name
+   large, and a dot in the section's colour (its colour now that every edge is neutral) */
+.app .plate { --sd: #86efac; }
+.app .plate.res { --sd: #fde68a; } .app .plate.off { --sd: #f87171; } .app .plate.mov { --sd: #fda4af; } .app .plate.kib { --sd: #fed583; }
+.app .plate.spk { --sd: #d8b4fe; } .app .plate.cmd { --sd: #fdba74; } .app .plate.new { --sd: #a5f3fc; } .app .plate.mob { --sd: #c7d2fe; }
+.app .plate.armp { --sd: #e2e8f0; } .app .plate.neutral { --sd: #cbd5e1; }
+.app .plate:not(.sidebuild) > h5 {
+  display: flex; align-items: center; gap: 9px; margin: -9px -14px 10px; padding: 6px 14px;
+  font-size: 14px; font-weight: 900; font-style: italic; letter-spacing: .1em; text-transform: uppercase; color: #f1f5f9;
+  border-top: 2px solid #64748b; background: linear-gradient(90deg, rgba(100,116,139,.34), rgba(100,116,139,0) 80%); }
+.app .plate:not(.sidebuild) > h5::before { content: ''; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--sd); }
+.app .plate > h5 .h5n, .app .plate > h5 .h5s { font-weight: 500; letter-spacing: 0; color: #cbd5e1; }
+.app .plate > h5 .h5s { margin-left: auto; float: none; }
+.fsec.cl { padding-top: 9px; }
+.fsec.cl > h5 { margin-bottom: 7px; }
+.pstack .plate > h5 { margin: -8px -10px 8px; padding: 6px 10px; }
+.ph .plate:not(.sidebuild) > h5 { margin-left: -14px; margin-right: -14px; }
+/* sub-groups inside a section rank below the section's header */
+.fgh { font-size: 13px; padding: 5px 12px; }
+
+/* in the narrow Versus rails: the points never wrap, the ruleset menu is narrower, a group's note goes under its name */
+.lbl2 .rsw > span { white-space: nowrap; }
+.vrail .lbl2 .rsel select { max-width: 92px; }
+.vrail .sublbl { flex-wrap: wrap; row-gap: 1px; }
+.vrail .sublbl em { flex-basis: 100%; }

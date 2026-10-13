@@ -174,6 +174,10 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **Section edges:** every section's edge is one bright neutral (`#cbd5e1`); the colours had got loud. A section
   keeps its colour in its title and its bars; the two sides' build panels keep orange and blue.
 - **Capsules:** Edit capsules and Clear sit under the capsule list (Clear crowded the header's points).
+- **Section headers:** every section's header is a header bar like the build's groups: a slate top edge and tint
+  across the plate, the name large and italic. A dot in the section's colour (the same as its link) is all the
+  colour a section keeps besides its stat bars. Sub-groups (Melee's Rush, Smash and throw, Pursuits) are one size
+  smaller.
 
 **Fourth pass:**
 - **Group headers:** the fighter column's groups (Forms, Active, Conditions, Capsules, League builds), the Versus
