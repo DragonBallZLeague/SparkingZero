@@ -40,6 +40,19 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .ph .nameplate { margin-top: 262px; }
 .ph .build { margin: 12px 10px 0; }
 
+/* tablet: the figure and nameplate on the left, the build beside them, the sheet full width below */
+@media (min-width: 721px) and (max-width: 1100px) {
+  .app .cols { display: block; min-height: 0; }
+  .app .art { display: grid; grid-template-columns: 300px minmax(0, 1fr); column-gap: 16px; padding: 0 18px 0 0; }
+  .app .art .fig { right: auto; width: 300px; height: 560px; --fade: 330px; }
+  .app .nameplate { grid-column: 1; grid-row: 1; margin-top: 300px; align-self: start; }
+  .app .build { grid-column: 2; grid-row: 1; margin: 14px 0 0; }
+  .app .sheet { padding: 14px 18px 24px; }
+  .app .tabs button { padding: 5px 11px; }
+  .app .top .ttl { font-size: 15px; }
+}
+.app .tabs button { white-space: nowrap; }
+
 /* conditions inside the art column */
 .sits.cmp { margin-top: 10px; padding: 7px 10px 8px; gap: 6px; border-left-color: #fde68a; }
 .sits.cmp .sitr { grid-template-columns: 58px minmax(0, 1fr) 58px; gap: 8px; }
@@ -200,3 +213,9 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .ph .cbuild { position: static; }
 .ph .crows { height: auto; }
 .fl > button.dd::after { content: ' \25BE'; }
+
+/* tablet: Vs opponent stacks health (and the opponent's build) above a full-width exchange */
+@media (min-width: 721px) and (max-width: 1100px) {
+  .app .cmpgrid.vsgrid { grid-template-columns: minmax(0, 1fr); }
+  .app .cmpgrid.vsgrid > .cmpcol { order: -1; }
+}

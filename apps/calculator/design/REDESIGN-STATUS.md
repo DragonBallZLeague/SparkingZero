@@ -86,8 +86,10 @@ them. The health bar marks where each effect turns on; an "In effect" line names
 
 ## 3. Build-out
 
-1. **Detailed real-data demo of concept B.** Reuse `design/demo/`'s build plumbing (esbuild bundling this app's
-   engine and `public/data`). Its Analyzer-look UI was rejected, so replace that.
+1. **Detailed real-data demo of concept B: built (2026-10-12), waiting on the league's review.** `design/demo/`
+   (`node apps/calculator/design/demo/build-demo.mjs`, then open `calculator-demo.html`): every view, both pickers,
+   conditions (structured in the engine: `src/utils/conditions.js`) and breakdowns, at desktop, tablet and phone
+   widths. Its README lists what is open.
 2. **URL scheme.** Character pages by name slug, the four views as routes, and share links that carry the whole
    build (active skills, Sparking, ruleset, opponent). Old `#` share links must keep decoding. Uses
    `restoreDeepLink` like the Analyzer.

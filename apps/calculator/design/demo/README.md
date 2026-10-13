@@ -18,9 +18,13 @@ conditions, ruleset) lives in the URL hash.
 - `state.js` (URL), `format.js`, `ui.jsx` (breakdowns, tappable numbers), `moves.jsx`, `conditions.jsx`.
 - Views: `sheet.jsx`, `fullstats.jsx`, `compare.jsx`, `versus.jsx`, `pickers.jsx`; shell `main.jsx`.
 
-## Open (2026-10-11, where work stopped)
+## Checked
 
-- Adding a capsule from the capsule picker did not stick in one headless test (Goku (Z - Mid), empty build); check.
-- Not yet reviewed at tablet width; phone views checked at 390px.
+Desktop (1280px), tablet (820px: the Sheet puts the build beside the figure, Vs opponent stacks health above the
+exchange) and phone (390px). The numbers match the concept's (Vs Janemba 1,812 / 2,306, round 21's conditions
+2,769 → 2,566). Adding capsules, league builds, skill stages and keyboard breakdowns were clicked through headlessly.
+
+## Open
+
 - Blast damage now uses the game's round-up formula (Kamehameha 7,482 with Blast Burst; the current app shows 7,481).
 - Burst Melee Attack and Burst Rush are shown as 1,250 and 450 for everyone (the data has no per-character availability).
