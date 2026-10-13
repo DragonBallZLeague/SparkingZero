@@ -212,6 +212,8 @@ Changed numbers show their base under them. The row tables are gone from the dem
   marks never move; built into Versus's Blasts (`blastName` in `compare.jsx`). "Alt." sits on the name's outer
   side (left of the left fighter's name, right of the right one's), and a move with another version has a
   clickable name (dashed underline) that switches to the next one, besides the marks.
+- **Versus loadouts' capsule actions are one row:** "Same as Goku's" (shown when the other side has capsules) sits
+  with Edit capsules and Clear in the same style; the "Or" line and its "No capsules" (the same as Clear) are gone.
 - **The Fighter page's column is 400px** whether it holds the fighter or the docked capsule picker (it was 350 or
   390 against the picker's 410), so Edit capsules no longer reflows the stats or moves the page.
 - **The Verdict** has one line per fighter, the name in the side's colour ("Android 18 deals more on 3 of 8

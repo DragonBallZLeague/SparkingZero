@@ -82,8 +82,11 @@ export function SkillSwitches({ side, onChange }) {
   );
 }
 
-/** A build as capsule rows in their type's colour, with a bar of its points by type. */
-export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, compact = false }) {
+/**
+ * A build as capsule rows in their type's colour, with a bar of its points by type, and its actions under it:
+ * `actions` (Versus: "Same as the other side's"), Edit capsules, Clear.
+ */
+export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, compact = false, actions = null }) {
   const chk = buildCheck(side.spec.caps, ruleset);
   const byType = new Map();
   for (const x of chk.caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);
@@ -102,6 +105,7 @@ export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, 
         )}
       </div>
       <div className="capacts">
+        {actions}
         <button className="edb" onClick={onEdit}>Edit capsules</button>
         {onClear && chk.caps.length > 0 && <button className="clr" onClick={onClear}>Clear</button>}
       </div>

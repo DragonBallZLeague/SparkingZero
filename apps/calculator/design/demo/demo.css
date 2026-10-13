@@ -898,3 +898,6 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 @media (min-width: 1101px) {
   .app .fpage:not(.docked), .app .fpage.docked { grid-template-columns: 400px minmax(0, 1fr); }
 }
+
+/* a build's actions wrap onto a second line in a narrow rail, still on the right */
+.capacts { flex-wrap: wrap; row-gap: 6px; }
