@@ -3,7 +3,7 @@
 import React from 'react';
 import {
   gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
-  perceptionName, blastsOf, skillOf, blastDamage, rosterPos, movePos,
+  perceptionName, blastsOf, skillOf, blastDamage, rosterPos, movePos, chainDamage,
 } from './model.js';
 import { Tap, Rk, usePair, useBase, useValue } from './ui.jsx';
 import { orderedBlasts, Hits } from './moves.jsx';
@@ -278,6 +278,7 @@ function ChainsFull({ side, phone }) {
           const last = lvs.length - 1;
           return (
             <Card key={r.type} cls="r" name={r.type}
+              rk={r.dmg ? rosterPos(`chain-${r.type}`, (x, c) => chainDamage({ c, view: x }, r.type)?.damage?.at(-1), r.dmg.damage.at(-1)) : null}
               right={r.slots ? <span className="rcs">{r.slots.map(n => <span key={n} title={`Rush Chain ${n}`}><Hits n={n} /></span>)}</span> : <span className="rcn">{r.sub}</span>}
               type={charged ? `Lv.${last + 1}` : 'One level'}
               main={r.dmg ? <Big title={`${r.type}${charged ? `, Charge Lv.${last + 1}` : ''}`} get={ctypeGet(r.type, last, r.grand)} /> : <b>–</b>}

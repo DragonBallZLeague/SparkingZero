@@ -165,6 +165,12 @@ Changed numbers show their base under them. The row tables are gone from the dem
   costume) instead of beside its name.
 - **Move cards' small tiles** sit two or more a row and wrap long values within the tile, so the card is shorter.
 - **Scroll bars** are thin and dark, in the page's colours.
+- **The league's answers on bars:**
+  - a Rush Chain card's bar compares its full-charge damage with the same chain type across the roster;
+  - blasts and ultimates keep no bars (their damage depends on the move type).
+- **The headline strip** appears once Toughness scrolls away, and while the build is edited. It is a plate with a
+  neutral grey edge: Health, Melee def, Rush 5-hit, Smash, Ki charge (Ki regen for a fighter that can't charge),
+  Ki blast, Skill gauge per minute and Armor break.
 
 **The Characters tab.** A click selects a fighter instead of opening it. Hovering the grid still previews another
 fighter, and leaving the grid goes back to the selected one, so the preview's Open, Compare with and Opponent for

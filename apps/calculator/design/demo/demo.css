@@ -622,3 +622,9 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .mcard .spec div { overflow: hidden; }
 .mcard .spec b { display: block; white-space: normal; line-height: 1.15; }
 .mcard .spec span { white-space: normal; line-height: 1.25; }
+/* the headline strip: shown once Toughness scrolls away (or while the build is edited), a plate with a neutral edge */
+.fhd .hl { margin: 2px 0 0; padding: 6px 0 7px 12px; background: var(--plate); border-left: 3px solid #64748b; }
+.fhd .hl b small { margin-left: 2px; font-size: 11px; font-style: normal; font-weight: 600; color: var(--muted); }
+.fhd .fctl:first-child { padding-top: 0; }
+.mcard.r .rk { --rk: #fda4af; } .mcard.k .rk { --rk: #fed583; }
+.mcard .mmain .rk { margin: 6px 0 2px; max-width: 100px; }

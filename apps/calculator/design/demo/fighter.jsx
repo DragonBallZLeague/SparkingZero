@@ -12,33 +12,43 @@ import { sections as fullSections, FullForm, Summary } from './fullstats.jsx';
 import { MoveCards } from './moves.jsx';
 import { F } from './format.js';
 
-/** The numbers checked first (the league's list), pinned at the top; the phone shows the first four marked. */
+/**
+ * The numbers checked first, pinned at the top once Toughness scrolls away (the league's pick, 2026-10-13); the
+ * phone shows the four marked. A fighter that can't charge ki shows its ki regen instead of ki charge.
+ */
+const canCharge = (v) => v.kiCharge > 0;
 export const HEAD = [
   { label: 'Health', title: 'HP', get: (v) => v.health, ph: 1 },
-  { label: '5-hit taken', title: '5-hit damage taken', get: fiveHitTaken, less: true },
+  { label: 'Melee def', title: 'Melee defense', get: (v) => 1 - v.meleeDefenseStat, fmt: (x) => F.def(1 - x), kind: 'def' },
   { label: 'Rush 5-hit', title: 'Rush 5-hit', get: (v) => v.rush5Hit, ph: 1 },
   { label: 'Smash', title: 'Smash', get: (v) => v.smash, ph: 1 },
-  { label: 'Throw', title: 'Throw', get: (v) => v.throw },
+  { label: (v) => (canCharge(v) ? 'Ki charge' : 'Ki regen'), title: (v) => (canCharge(v) ? 'Ki charge' : 'Ki regen'), get: (v, base) => (canCharge(base) ? v.kiCharge : v.kiRegen), fmt: (x) => (x < 1 ? F.dec(x) : F.dec2(x)), unit: '/s', kind: 'dec' },
   { label: 'Ki blast', title: 'Ki blast', get: (v) => v.kiBlastDmg, ph: 1 },
-  { label: 'Full volley', title: 'Full volley', get: (v) => volley(v) },
+  { label: 'Skill gauge', title: 'Skill gauge per minute', get: (v) => parseFloat(v.skillRegen), fmt: F.dec, unit: '/min', kind: 'dec' },
   { label: 'Armor break', title: 'Armor break', get: (v) => v.armorBreak, less: true, fmt: F.hits, kind: 'dec' },
-  { label: 'Ki charge', title: 'Ki charge', get: (v) => v.kiCharge, fmt: F.dec2, kind: 'dec', hide: 1 },
+  { label: '5-hit taken', title: '5-hit damage taken', get: fiveHitTaken, less: true, hide: 1 },
+  { label: 'Throw', title: 'Throw', get: (v) => v.throw, hide: 1 },
+  { label: 'Full volley', title: 'Full volley', get: (v) => volley(v), hide: 1 },
 ];
+const lab = (h, v) => (typeof h.label === 'function' ? h.label(v) : h.label);
 
 /** The headline strip; `preview` (a view with the hovered capsule added) shows where each number would go. */
 function Headline({ preview, phone }) {
   const pc = usePair();
   const items = HEAD.filter(h => !h.hide && (!phone || h.ph));
+  const base = pc.base.A.view;
   return (
     <div className="hl">
       {items.map(h => {
         const fmt = h.fmt || F.int;
-        const now = h.get(pc.pair.A.view), next = preview ? h.get(preview) : null;
+        const get = (v) => h.get(v, base);
+        const now = get(pc.pair.A.view), next = preview ? get(preview) : null;
         const moves = next != null && typeof now === 'number' && Math.abs(next - now) > 1e-9;
+        const title = typeof h.title === 'function' ? h.title(base) : h.title;
         return (
-          <div key={h.label}>
-            <span>{h.label}</span>
-            <Tap as="b" title={h.title} get={(p) => h.get(p.A.view)} fmt={fmt} kind={h.kind} lessIsBetter={h.less} />
+          <div key={title}>
+            <span>{lab(h, base)}</span>
+            <b><Tap title={title} get={(p) => get(p.A.view)} fmt={fmt} kind={h.kind} lessIsBetter={h.less} />{h.unit && <small>{h.unit}</small>}</b>
             {moves && <em className={`pv${(h.less ? next < now : next > now) ? '' : ' dn'}`}>→ {fmt(next)}</em>}
           </div>
         );
@@ -50,12 +60,13 @@ function Headline({ preview, phone }) {
 /** What the build changes among the headline numbers (the phone's loadout sheet, above the capsules). */
 export function BuildDelta({ side, base }) {
   if (!side || !base) return null;
-  const list = HEAD.filter(h => { const a = h.get(base.view), b = h.get(side.view); return typeof a === 'number' && typeof b === 'number' && Math.abs(a - b) > 1e-9; });
+  const g = (h, v) => h.get(v, base.view);
+  const list = HEAD.filter(h => { const a = g(h, base.view), b = g(h, side.view); return typeof a === 'number' && typeof b === 'number' && Math.abs(a - b) > 1e-9; });
   return (
     <div className="delta">
       {list.length ? <>Changed{list.map(h => {
-        const fmt = h.fmt || F.int, a = h.get(base.view), b = h.get(side.view);
-        return <span key={h.label}>{h.label} <s>{fmt(a)}</s> <b className={(h.less ? b < a : b > a) ? 'up' : 'dn'}>{fmt(b)}</b></span>;
+        const fmt = h.fmt || F.int, a = g(h, base.view), b = g(h, side.view);
+        return <span key={lab(h, base.view)}>{lab(h, base.view)} <s>{fmt(a)}</s> <b className={(h.less ? b < a : b > a) ? 'up' : 'dn'}>{fmt(b)}</b></span>;
       })}</> : <i>No headline number changed yet</i>}
     </div>
   );
@@ -88,7 +99,7 @@ function findText(root, needle, inGhost) {
   return null;
 }
 
-export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, preview = null, onForm = null }) {
+export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, preview = null, onForm = null, editing = false }) {
   const phone = usePhone();
   const quick = qp('A', 'col');
   const fsecs = fullSections(side);
@@ -100,6 +111,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
   const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
   const root = useRef(null);
   const [here, setHere] = useState(null);
+  const [past, setPast] = useState(false); // Toughness has scrolled under the pinned bar
   const [q, setQ] = useState('');
   const [findOpen, setFindOpen] = useState(false);
   const noRef = useRef(null);
@@ -119,6 +131,8 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
       const off = offset() + 4;
       for (const s of SECS) { const el = document.getElementById(`f-${s.id}`); if (el && el.getBoundingClientRect().top < off) at = s.id; }
       setHere(at);
+      const t = document.getElementById('f-tough');
+      setPast(!!t && t.getBoundingClientRect().bottom < off);
     };
     window.addEventListener('scroll', f, { passive: true });
     f();
@@ -180,7 +194,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
       </div>
       <div className="sheet" ref={root}>
         <div className="fhd">
-          <Headline preview={preview} phone={phone} />
+          {(past || editing || dock) && <Headline preview={preview} phone={phone} />}
           {phone ? (
             <div className="fctl">
               {findOpen ? (
