@@ -82,7 +82,9 @@ them. The health bar marks where each effect turns on; an "In effect" line names
 
 - **"To knock out"** on Vs opponent (rush combos or ultimates each side needs). The league didn't find that
   measure useful, so it was taken out of the mock. Keep the idea of a short "who wins the exchange" summary for
-  a later round.
+  a later round. The detailed demo tried it again in Vs's All stats (2026-10-12: rush combos, full volleys and
+  ultimates to KO, from each side's health now), and the league took it out again for now. Bring it back only
+  in a form that works.
 
 ## 3. Build-out
 

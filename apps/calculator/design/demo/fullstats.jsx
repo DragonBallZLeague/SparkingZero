@@ -175,10 +175,10 @@ function ChainsMatrix({ side }) {
         {rows.map(r => {
           const n = Math.max(1, r.fus.length);
           const lv = r.dmg && r.dmg.chargeable && r.dmg.damage.length > 1
-            ? r.dmg.damage.map((_, i) => <td key={i} className={i ? '' : 'gs'} rowSpan={n}><Tap title={`${r.type}, Charge Lv.${i + 1}`} get={ctypeGet(r.type, i, r.grand)} /></td>)
-            : [<td key="u" className="gs ctr" colSpan={3} rowSpan={n}>{r.dmg && <Tap title={r.type} get={ctypeGet(r.type, 0, r.grand)} />}<small>Can't be charged</small></td>];
+            ? r.dmg.damage.map((_, i) => <td key={i} className={i ? '' : 'gs'} rowSpan={n}><Val title={`${r.type}, Charge Lv.${i + 1}`} get={ctypeGet(r.type, i, r.grand)} /></td>)
+            : [<td key="u" className="gs ctr" colSpan={3} rowSpan={n}>{r.dmg && <Val title={r.type} get={ctypeGet(r.type, 0, r.grand)} />}<small>Can't be charged</small></td>];
           const fuCells = (f) => f
-            ? [<td key="n" className="fup gs">{f.name}<small>{fuSmall(f, r.dmg)}</small></td>, <td key="d"><Tap title={f.name} get={fuTotal(r.type, f.name, r.grand)} extra={(p) => <div className="hitl">Hits<span className="tags">{(r.grand ? chainTypes(p.A).ms[r.grand] : chainTypes(p.A).types.find(x => x.type === r.type)?.dmg)?.followUps.find(x => x.name === f.name)?.hits.map((h, i) => <span key={i}>{F.int(h)}</span>)}</span></div>} /></td>]
+            ? [<td key="n" className="fup gs">{f.name}<small>{fuSmall(f, r.dmg)}</small></td>, <td key="d"><Val title={f.name} get={fuTotal(r.type, f.name, r.grand)} extra={(p) => <div className="hitl">Hits<span className="tags">{(r.grand ? chainTypes(p.A).ms[r.grand] : chainTypes(p.A).types.find(x => x.type === r.type)?.dmg)?.followUps.find(x => x.name === f.name)?.hits.map((h, i) => <span key={i}>{F.int(h)}</span>)}</span></div>} /></td>]
             : [<td key="n" className="gs"></td>, <td key="d"></td>];
           return (
             <tbody key={r.type}>
@@ -224,10 +224,10 @@ function KiBlastMatrix({ side }) {
       {rows.map(r => (
         <tbody key={r.label}><tr>
           <th>{r.label}{r.sub && <small>{r.sub}</small>}</th>
-          <td className="gs">{r.dmg && <Tap title={r.label} get={r.dmg} />}</td>
-          {[0, 1, 2].map(i => <td key={i} className={i ? '' : 'gs'}>{r.lv?.[i] && <Tap title={`${r.label}, Charge Lv.${i + 1}`} get={r.lv[i]} />}</td>)}
+          <td className="gs">{r.dmg && <Val title={r.label} get={r.dmg} />}</td>
+          {[0, 1, 2].map(i => <td key={i} className={i ? '' : 'gs'}>{r.lv?.[i] && <Val title={`${r.label}, Charge Lv.${i + 1}`} get={r.lv[i]} />}</td>)}
           <td className="gs">{r.shots}</td>
-          <td>{r.costGet ? <Tap title={`${r.label} cost`} get={r.costGet} fmt={F.bars} kind="dec" lessIsBetter /> : r.cost}</td>
+          <td>{r.costGet ? <Val title={`${r.label} cost`} get={r.costGet} fmt={F.bars} kind="dec" lessIsBetter /> : r.cost}</td>
         </tr></tbody>
       ))}
     </table>
@@ -299,6 +299,11 @@ function Traits({ c }) {
 }
 
 /* ------------------------------------------------------------------ phone: the stacked list */
+/** The Base column: the value with no build. */
+function B({ get, fmt = F.int }) {
+  const b = useBase(get);
+  return typeof b === 'number' ? fmt(b) : null;
+}
 function PhoneRow({ c }) {
   const b = useBase(c.get || (() => null));
   return (
@@ -319,9 +324,9 @@ function PhoneSection({ s, side, abTab, setAbTab }) {
       <>
         {rows.map(r => (
           <React.Fragment key={r.type}>
-            <div className="srow ch"><span><b>{r.type}</b><small>{r.sub}</small></span><span></span><span>{r.dmg && !(r.dmg.chargeable && r.dmg.damage.length > 1) && <Tap title={r.type} get={ctypeGet(r.type, 0, r.grand)} />}</span></div>
-            {r.dmg && r.dmg.chargeable && r.dmg.damage.length > 1 && r.dmg.damage.map((_, i) => <div className="srow sub" key={i}><span>Charge Lv.{i + 1}</span><span></span><span><Tap title={`${r.type}, Charge Lv.${i + 1}`} get={ctypeGet(r.type, i, r.grand)} /></span></div>)}
-            {r.fus.map(f => <div className="srow sub fw" key={f.name}><span>{f.name}<small>{fuSmall(f, r.dmg)}</small></span><span></span><span><Tap title={f.name} get={fuTotal(r.type, f.name, r.grand)} /></span></div>)}
+            <div className="srow ch"><span><b>{r.type}</b><small>{r.sub}</small></span><span>{r.dmg && !(r.dmg.chargeable && r.dmg.damage.length > 1) && <B get={ctypeGet(r.type, 0, r.grand)} />}</span><span>{r.dmg && !(r.dmg.chargeable && r.dmg.damage.length > 1) && <Tap title={r.type} get={ctypeGet(r.type, 0, r.grand)} />}</span></div>
+            {r.dmg && r.dmg.chargeable && r.dmg.damage.length > 1 && r.dmg.damage.map((_, i) => <div className="srow sub" key={i}><span>Charge Lv.{i + 1}</span><span><B get={ctypeGet(r.type, i, r.grand)} /></span><span><Tap title={`${r.type}, Charge Lv.${i + 1}`} get={ctypeGet(r.type, i, r.grand)} /></span></div>)}
+            {r.fus.map(f => <div className="srow sub fw" key={f.name}><span>{f.name}<small>{fuSmall(f, r.dmg)}</small></span><span><B get={fuTotal(r.type, f.name, r.grand)} /></span><span><Tap title={f.name} get={fuTotal(r.type, f.name, r.grand)} /></span></div>)}
           </React.Fragment>
         ))}
         <div className="chainmisc"><span><small>Step-In Chain</small>{ms.stepIn || 'None'}</span><span><small>Rush-In Attack</small>{ms.rushIn || 'None'}</span><span><small>Perception</small>{perceptionName(ms.counter)}</span></div>
@@ -331,8 +336,8 @@ function PhoneSection({ s, side, abTab, setAbTab }) {
   if (s.custom === 'kib') {
     return (<>{kiRows(side).map(r => (
       <React.Fragment key={r.label}>
-        <div className="srow"><span>{r.label}</span><span></span><span>{r.dmg && <Tap title={r.label} get={r.dmg} />}</span></div>
-        {r.lv?.map((g, i) => <div className="srow sub" key={i}><span>Charge Lv.{i + 1}</span><span></span><span><Tap title={`${r.label}, Charge Lv.${i + 1}`} get={g} /></span></div>)}
+        <div className="srow"><span>{r.label}</span><span>{r.dmg && <B get={r.dmg} />}</span><span>{r.dmg && <Tap title={r.label} get={r.dmg} />}</span></div>
+        {r.lv?.map((g, i) => <div className="srow sub" key={i}><span>Charge Lv.{i + 1}</span><span><B get={g} /></span><span><Tap title={`${r.label}, Charge Lv.${i + 1}`} get={g} /></span></div>)}
         <div className="srow sub"><span>Shots, ki cost (bars)</span><span></span><span>{r.shots}, {r.cost}</span></div>
       </React.Fragment>
     ))}</>);
@@ -368,6 +373,7 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
   const [open, setOpen] = useState(() => loadFold(phone) || Object.fromEntries(secs.map(s => [s.id, !phone || s.id === 'tough'])));
   const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
   const [here, setHere] = useState(null);
+  const [navOpen, setNavOpen] = useState(false);
   useEffect(() => {
     // the nav marks the section being read: the last one whose top has passed under the nav
     const f = () => {
@@ -423,10 +429,25 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
           <Conditions side={side} onChange={setSpec} compact />
         </div>
       </div>
-      <nav className="fsnav" aria-label="Sections">
-        {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
-        <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
-      </nav>
+      {phone ? (
+        // phone: the section being read, which opens every section as a grid (no sideways scrolling)
+        <nav className={`fsnav ph${navOpen ? ' open' : ''}`} aria-label="Sections">
+          <button className={`cur ${secs.find(s => s.id === here)?.cls || 'tough'}`} aria-expanded={navOpen} onClick={() => setNavOpen(o => !o)}>
+            <i />{(secs.find(s => s.id === here)?.title || 'Sections').replace('! Mode', '!')}<span className="chv">{navOpen ? '▴' : '▾'}</span>
+          </button>
+          <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
+          {navOpen && (
+            <div className="fsgrid">
+              {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => { setNavOpen(false); jump(s.id); }}><i />{s.title.replace('! Mode', '!')}</button>)}
+            </div>
+          )}
+        </nav>
+      ) : (
+        <nav className="fsnav" aria-label="Sections">
+          {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
+          <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
+        </nav>
+      )}
       <div className={phone ? 'clstack' : 'rws'}>
         {units.map(u => (u.list ? <div className="rstack" key="stack">{u.list.map(fold)}</div> : fold(u.s)))}
       </div>

@@ -28,7 +28,7 @@ conditions, ruleset) lives in the URL hash.
 - Full stats stacks Melee and Ki blasts beside Rush Chains (Melee alone left an empty block).
 - Vs opponent: Exchange in two columns (basic attacks; blasts, ultimate, Sparking!). All stats is the matchup:
   - each side's damage as dealt to the other;
-  - toughness as taken from the other, with rush combos, full volleys and ultimates to KO;
+  - toughness as taken from the other (hits to KO were tried, then taken out);
   - the rest as in Compare.
 - An ultimate's cost with Ultimate Burst reads "+1 bar"; the full text overlapped the damage.
 
@@ -47,12 +47,27 @@ conditions, ruleset) lives in the URL hash.
   - on a tablet, Rush Chains follow Melee.
 - **All stats, both views:**
   - Compare and Vs share one section list, order and display. Vs shows each damage row as dealt to the other side,
-    adds hits to KO to Toughness, and where each side breaks the other's armor.
+    and where each side breaks the other's armor.
   - Bars fill by the value's place in the whole roster's range, as on the Sheet. They are muted, and only the
     better side lights up.
   - Rush Chains and the Command list are mirrored rows: each side's number sits next to the centre label.
 - **Vs opponent's Breaking armor** shows only these two fighters as they stand: each side's attacks against the
   other's armor right now. It is in All stats and under Health in the Exchange.
+
+## Third look (2026-10-12)
+
+- **Change** follows the name's last line: inline after it on the left side and the Sheet (its own line when
+  the line is too full), and on the inner edge of the bottom line for the right side.
+- **Phone Full stats nav:** a sticky bar names the section being read and opens every section as a two-column
+  grid. No sideways scrolling.
+- **Base values** under changed numbers in Full stats' Rush Chains and Ki blasts too, and in the phone list's
+  Base column.
+- **Hits to KO** are out (noted in REDESIGN-STATUS.md for later).
+- **Compare and Vs opponent** share one bar: **Skills & capsules** and **Conditions**, each for both fighters
+  (side by side on a desktop; one at a time with a switch on a phone). The per-side white Build buttons are
+  gone, and Compare has conditions now.
+- **Vs Breaking armor** uses the Exchange's shields (cracked green: breaks; grey: holds).
+- The phone's Compare bar has the VS mark and slanted barrier.
 
 ## Checked
 

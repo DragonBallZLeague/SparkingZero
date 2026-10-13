@@ -1,11 +1,11 @@
 // Vs opponent: the matchup. Exchange shows what each attack deals to the other side after its defenses
 // and armor (a shield on a hit the armor reduces, a cracked one on the hit that breaks it); All stats is
-// the same sections as Compare's, as dealt to and taken from the other side. Each side has conditions; the opponent's build is edited next to the Exchange.
-import React, { createContext, useContext, useMemo, useState } from 'react';
+// the same sections as Compare's, as dealt to and taken from the other side. Both sides' skills, capsules and
+// conditions open from one bar (PairControls, shared with Compare).
+import React, { createContext, useContext, useMemo } from 'react';
 import { nameParts, exchange, evaluatePair } from './model.js';
 import { Tap, Modes, usePhone, usePair } from './ui.jsx';
-import { VsHead, buildChips, AllStats, SideBuild, statSections, VsArmor } from './compare.jsx';
-import { Conditions, InEffect } from './conditions.jsx';
+import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor } from './compare.jsx';
 import { ChangeButton } from './sheet.jsx';
 import { F } from './format.js';
 
@@ -143,42 +143,22 @@ function HealthStrips() {
 export function VersusView({ pair, mode, setMode, setSpec, openPicker, ruleset, resetSits, qp = () => null }) {
   const phone = usePhone();
   const ref = useMemo(() => evaluatePair({ ...pair.A.spec, sit: null }, { ...pair.B.spec, caps: [], sit: null }, { exchange: true }), [pair]);
-  const [edit, setEdit] = useState(false);
-  const [cond, setCond] = useState(!!(pair.A.spec.sit || pair.B.spec.sit));
-  const nB = nameParts(pair.B.c.name)[0];
-  const panel = (
-    <SideBuild side={pair.B} other={pair.A} title={`${nB}'s build`} ruleset={ruleset} onChange={setSpec('B')}
-      onEditCaps={() => openPicker('caps', 'B')} onClose={() => setEdit(false)} />
-  );
-  const conds = (
-    <div className="sit">
-      <Conditions side={pair.A} onChange={setSpec('A')} who={nameParts(pair.A.c.name)[0]} />
-      {!phone && <div className="sitmid"><button className="resetb" onClick={resetSits}>Reset both to full</button><em>The map and events show here only when an equipped capsule needs them.</em></div>}
-      <Conditions side={pair.B} onChange={setSpec('B')} who={nB} right />
-    </div>
-  );
   return (
     <>
       <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)}
         changeA={<ChangeButton onClick={() => openPicker('char', 'A')} />}
-        changeB={<ChangeButton onClick={() => openPicker('char', 'B')} title="Change opponent" />}
-        actionsB={<div className="vacts"><button className="editb" onClick={() => setEdit(!edit)}>{phone ? 'Build' : 'Edit build'} {edit ? '▴' : '▾'}</button></div>} />
+        changeB={<ChangeButton onClick={() => openPicker('char', 'B')} title="Change opponent" />} />
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
-      <div className="condbar">
-        <button className={`chip ghost${cond ? ' on' : ''}`} aria-expanded={cond} onClick={() => setCond(!cond)}>Conditions {cond ? '▴' : '▾'}</button>
-        <InEffect sides={[[pair.A.c.name, pair.A], [pair.B.c.name, pair.B]]} />
-      </div>
-      {cond && conds}
+      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
       <Modes value={mode} options={[['exchange', 'Exchange'], ['all', 'All stats']]} onChange={setMode}>
         <em>{mode === 'all' ? 'Each side against the other: damage after their defenses and armor' : 'Your attacks on the left, theirs on the right'}</em>
       </Modes>
-      {phone && edit && <div className="cmpgrid">{panel}</div>}
       {mode === 'all' ? (
-        <div className={phone ? '' : 'cmpwrap'}>{!phone && edit && <div className="cmpgrid">{panel}</div>}<AllStats phone={phone} sections={statSections({ vs: true, pair })} /></div>
+        <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} sections={statSections({ vs: true, pair })} /></div>
       ) : (
         <div className="cmpgrid vsgrid">
           <div><RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider></div>
-          <div className="cmpcol">{!phone && edit && panel}<HealthStrips /><div className="plate armp"><h5>Breaking armor</h5><VsArmor /></div></div>
+          <div className="cmpcol"><HealthStrips /><div className="plate armp"><h5>Breaking armor</h5><VsArmor /></div></div>
         </div>
       )}
     </>

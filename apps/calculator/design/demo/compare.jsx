@@ -7,6 +7,7 @@ import {
   similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
 import { Tap, Modes, Name, Switch, usePhone, usePair } from './ui.jsx';
+import { Conditions, InEffect } from './conditions.jsx';
 import { ClassChip, CapsuleRows, traitChips, ChangeButton, SkillSwitches } from './sheet.jsx';
 import { Hits } from './moves.jsx';
 import { F } from './format.js';
@@ -22,7 +23,7 @@ export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = nul
   // the Change button sits beside each name, on its inner side (the right side's mirrored)
   return (
     <div className="vshead">
-      <div className="vside l">{fig(pair.A)}<div className="who"><div className="nmrow"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} /></div>{changeA}</div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
+      <div className="vside l">{fig(pair.A)}<div className="who"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} />{changeA}</div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
       <div className="vside r">{fig(pair.B)}<div className="who"><div className="nmrow r"><div className="nm"><Name parts={nameParts(pair.B.c.name)} br={!phone} /></div>{changeB}</div>{!phone && <div className="chips" style={{ justifyContent: 'flex-end' }}>{chipsB}</div>}{actionsB}</div></div>
       <div className="vsmid"><b>VS</b></div>
     </div>
@@ -108,8 +109,6 @@ const defRow = (label, get) => ({ label, get: V(get), fmt: F.def, kind: 'def', s
 
 /* ------------------------------------------------------------------ All stats: every Full stats row, paired */
 const D = (pick) => (me, them) => pick(exchange(me, them));   // what a side deals to the other (Vs opponent)
-const hpNow = (s) => Math.round((s.spec.sit?.hp ?? 1) * s.view.health);
-const koBy = (dealt) => (me, them) => { const d = dealt(exchange(them, me)); return d ? Math.ceil(hpNow(me) / d) : null; };
 const breaksOn = (me, them) => {
   if (!(them.view.armor > 0)) return 'No armor';
   const i = exchange(me, them).combo.perHit.findIndex(h => !h.armorReduced);
@@ -118,8 +117,8 @@ const breaksOn = (me, them) => {
 
 /**
  * The sections Compare's and Vs opponent's All stats share, in one order. With `vs`, a damage row gives what
- * each side deals to the other (after its defenses and armor; `deal`), toughness adds what it takes to KO
- * each side, and the armor rows become where each side breaks the other's armor. The bars still fill by the
+ * each side deals to the other (after its defenses and armor; `deal`), 5-hit taken is the other side's rush,
+ * and the armor rows become where each side breaks the other's armor. The bars still fill by the
  * plain stat's place in the roster (`rget`).
  */
 export function statSections({ vs = false, pair = null } = {}) {
@@ -136,11 +135,6 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'HP', get: V(x => x.health) },
       vs ? { label: '5-hit taken', small: 'their rush, less is better', vs: (me, them) => exchange(them, me).combo.rush5Hit, rget: (v) => fiveHitTaken(v), less: true }
         : { label: '5-hit taken', small: 'less is better', get: V(fiveHitTaken), less: true },
-      ...(vs ? [
-        { label: 'Rush combos to KO', small: 'theirs, from your health now', vs: koBy(x => x.combo.rush5Hit), fmt: String },
-        { label: 'Full volleys to KO', vs: koBy(x => x.volley), fmt: String },
-        { label: 'Ultimates to KO', vs: koBy(x => x.blasts.find(y => y.b.slot === 'Ultimate' && !y.b.variant)?.deal), fmt: String },
-      ] : []),
       defRow('Melee defense', x => x.meleeDefenseStat), defRow('Blast defense', x => x.blastDefense), defRow('Ki-blast defense', x => x.energy),
       { label: 'Armor', get: V(x => x.armor), fmt: F.armor }, { label: 'Switch', get: V(x => x.switch), fmt: F.secs, less: true },
     ] },
@@ -260,7 +254,8 @@ export function VsArmor() {
   const pc = usePair();
   const { A, B } = pc.pair;
   const armorOf = (s) => (s.view.armor > 0 ? `${s.spec.sparking && s.c.armor?.sparking ? 'Sparking Armor' : s.c.armor?.base?.type || 'Armor'} (${Math.round(s.view.armor * 100)}% off)` : null);
-  const brk = (b) => (b ? <span className="ok">Breaks</span> : <span className="no"><i className="arm" />Holds</span>);
+  // the Exchange's marks: a cracked green shield breaks the armor, a grey one is held by it
+  const brk = (b) => (b ? <span className="ok"><i className="arm brk" />Breaks</span> : <span className="no"><i className="arm" />Holds</span>);
   const block = (att, def, title) => {
     const arm = armorOf(def);
     const nD = nameParts(def.c.name)[0];
@@ -268,7 +263,7 @@ export function VsArmor() {
     const x = exchange(att, def);
     const i = x.combo.perHit.findIndex(h => !h.armorReduced);
     const rows = [
-      ['Rush combo', i < 0 ? <span className="no"><i className="arm" />Holds every hit</span> : <span className="ok">Breaks on hit {i + 1}</span>],
+      ['Rush combo', i < 0 ? <span className="no"><i className="arm" />Holds every hit</span> : <span className="ok"><i className="arm brk" />Breaks on hit {i + 1}</span>],
       ['Smash Lv.1', x.smash[0] ? brk(!x.smash[0].held) : '–'],
       ['Ki blast', brk(!x.kiBlast.held)],
       ['Charged ki blast', x.charged.length ? brk(!(x.charged[2] || x.charged.at(-1)).held) : '–'],
@@ -372,12 +367,12 @@ export function AllStats({ phone, sections = null }) {
 }
 
 /* ------------------------------------------------------------------ a side's build panel (Compare, Vs opponent) */
-export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, onClose }) {
+export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, onClose, cls = '' }) {
   const lb = side.c.leagueBuilds;
   const chk = buildCheck(side.spec.caps, ruleset);
   const same = (ids) => ids.length === side.spec.caps.length && ids.every(id => side.spec.caps.includes(id));
   return (
-    <div className="plate opp sidebuild">
+    <div className={`plate opp sidebuild ${cls}`}>
       <h5>{title}{onClose && <button className="x" onClick={onClose}>Done</button>}</h5>
       <div className="sublbl"><span>Skills and Sparking</span></div>
       <SkillSwitches side={side} onChange={onChange} />
@@ -405,6 +400,45 @@ export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, o
       <div className="fl" style={{ marginTop: 8 }}><small>Or</small><button onClick={() => onChange({ ...side.spec, caps: [] })}>No capsules</button>{other && <button onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>}</div>
       {chk.problems.length > 0 && <div className="bdhint">Leave a rule broken to see the numbers anyway; the ruleset only warns.</div>}
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ the two-fighter controls (Compare, Vs opponent) */
+/**
+ * One bar for both fighters: Skills & capsules and Conditions, each opening a panel for both sides at once
+ * (side by side on a desktop; on a phone, one fighter at a time with a switch between the two).
+ */
+export function PairControls({ pair, setSpec, openPicker, ruleset, resetSits }) {
+  const phone = usePhone();
+  const [setup, setSetup] = useState(false);
+  const [cond, setCond] = useState(!!(pair.A.spec.sit || pair.B.spec.sit));
+  const [k, setK] = useState('A');
+  const name = (s) => nameParts(pair[s].c.name)[0];
+  const build = (s) => (
+    <SideBuild key={s} side={pair[s]} other={pair[s === 'A' ? 'B' : 'A']} title={name(s)} cls={s === 'A' ? 'sa' : 'sb'} ruleset={ruleset}
+      onChange={setSpec(s)} onEditCaps={() => openPicker('caps', s)} />
+  );
+  return (
+    <>
+      <div className="condbar">
+        <button className={`chip ghost${setup ? ' on' : ''}`} aria-expanded={setup} onClick={() => setSetup(!setup)}>Skills & capsules {setup ? '▴' : '▾'}</button>
+        <button className={`chip ghost cnd${cond ? ' on' : ''}`} aria-expanded={cond} onClick={() => setCond(!cond)}>Conditions {cond ? '▴' : '▾'}</button>
+        <InEffect sides={[[pair.A.c.name, pair.A], [pair.B.c.name, pair.B]]} />
+      </div>
+      {setup && (phone ? (
+        <div className="setup">
+          <div className="sidesw">{['A', 'B'].map(s => <button key={s} className={`${s === 'A' ? 'sa' : 'sb'}${k === s ? ' on' : ''}`} onClick={() => setK(s)}>{name(s)}</button>)}</div>
+          {build(k)}
+        </div>
+      ) : <div className="setup two">{build('A')}{build('B')}</div>)}
+      {cond && (
+        <div className="sit">
+          <Conditions side={pair.A} onChange={setSpec('A')} who={name('A')} />
+          {!phone && <div className="sitmid"><button className="resetb" onClick={resetSits}>Reset both to full</button><em>The map and events show here only when an equipped capsule needs them.</em></div>}
+          <Conditions side={pair.B} onChange={setSpec('B')} who={name('B')} right />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -444,38 +478,30 @@ export function HpPair() {
   return <div className="hpair"><span className="bars hp l">{bars(a)}</span><span style={{ textAlign: 'center', fontSize: 12 }}>HP<br /><b>{a === b ? `${F.int(a)} each` : `${F.int(a)} | ${F.int(b)}`}</b></span><span className="bars hp">{bars(b)}</span></div>;
 }
 
-export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset, swapIn, qp = () => null }) {
+export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset, swapIn, resetSits, qp = () => null }) {
   const phone = usePhone();
-  const [edit, setEdit] = useState(null); // 'A' | 'B'
   const L = leads(pair);
   const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
   const change = (k) => <ChangeButton onClick={() => openPicker('char', k)} title={k === 'B' ? 'Change the right side' : 'Change fighter'} />;
-  const actions = (k) => (
-    <div className="vacts">
-      {phone && change(k)}
-      <button className="editb" onClick={() => setEdit(edit === k ? null : k)}>{edit === k ? 'Build ▴' : 'Build ▾'}</button>
-    </div>
-  );
-  const panel = edit && (
-    <SideBuild side={pair[edit]} other={pair[edit === 'A' ? 'B' : 'A']} title={`${nameParts(pair[edit].c.name)[0]}'s build`} ruleset={ruleset}
-      onChange={setSpec(edit)} onEditCaps={() => openPicker('caps', edit)} onClose={() => setEdit(null)} />
-  );
   return (
     <>
       {phone ? (
-        <div className="cbar">
-          <span className="l"><span className="cav"><img src={faceUrl(pair.A.c)} alt="" /></span><span><Name parts={nameParts(pair.A.c.name)} /></span></span>
-          <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
-        </div>
-      ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} actionsA={actions('A')} actionsB={actions('B')} changeA={change('A')} changeB={change('B')} />}
-      {phone && <div className="cbar-acts">{actions('A')}{actions('B')}</div>}
+        <>
+          <div className="cbar">
+            <span className="l"><span className="cav"><img src={faceUrl(pair.A.c)} alt="" /></span><span><Name parts={nameParts(pair.A.c.name)} /></span></span>
+            <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
+            <span className="cvs" aria-hidden="true"><b>VS</b></span>
+          </div>
+          <div className="cbar-acts">{change('A')}{change('B')}</div>
+        </>
+      ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
+      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
       <Modes value={mode} options={[['summary', 'Summary'], ['all', 'All stats']]} onChange={setMode}>
         <em>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></em>
       </Modes>
-      {phone && panel && <div className="cmpgrid">{panel}</div>}
       {mode === 'all' ? (
-        <div className={phone ? '' : 'cmpwrap'}>{!phone && panel && <div className="cmpgrid">{panel}</div>}<AllStats phone={phone} /></div>
+        <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} /></div>
       ) : (
         <div className="cmpgrid">
           <div className="cmpcol">
@@ -485,7 +511,6 @@ export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset,
             <div className="plate cmd"><h5>Command list</h5><CmdCmp phone={phone} /></div>
           </div>
           <div className="cmpcol">
-            {!phone && panel}
             <div className="plate neutral">
               <h5>Verdict</h5>
               <div className="verdict">{nA} leads on <b>{L.a}</b> stats, {nB} on <b>{L.b}</b>.</div>

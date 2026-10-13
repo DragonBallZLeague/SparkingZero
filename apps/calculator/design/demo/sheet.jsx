@@ -113,10 +113,8 @@ export const ChangeButton = ({ onClick, label = 'Change', title = 'Change fighte
 export function Nameplate({ c, onChange, showTraits = true }) {
   return (
     <div className="nameplate">
-      <div className="nmrow">
-        <div className="nm"><button className="nmb" data-qp onClick={onChange} title="Change fighter"><Name parts={nameParts(c.name)} br /></button></div>
-        <ChangeButton onClick={onChange} />
-      </div>
+      {/* the button flows right after the name's last line */}
+      <div className="nm"><button className="nmb" data-qp onClick={onChange} title="Change fighter"><Name parts={nameParts(c.name)} br /></button><ChangeButton onClick={onChange} /></div>
       <div className="chips">
         <ClassChip c={c} />
         <span className="chip dp">DP {c.dp}</span>

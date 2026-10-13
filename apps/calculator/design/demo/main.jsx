@@ -49,6 +49,7 @@ function App() {
   const go = (view, patch = {}) => { update({ view, ...patch }, true); setOverlay(null); setQuick(null); window.scrollTo(0, 0); };
   const setSpec = (k) => (spec) => update({ [k]: spec });
   const fighter = (side, id) => ({ ...emptySpec(id), caps: st[side].caps });
+  const resetSits = () => update({ A: { ...st.A, sit: null }, B: { ...st.B, sit: null } });
   const ruleset = rulesetOf(st.rs);
   const exchange = st.view === 'vs';
   const pair = useMemo(() => evaluatePair(st.A, st.view === 'compare' || st.view === 'vs' ? st.B : null, { exchange }), [st.A, st.B, st.view]);
@@ -73,8 +74,8 @@ function App() {
     page = <CharacterPicker current={st.A.id} side="A" view="roster" onPick={(id) => go('sheet', { A: fighter('A', id) })}
       onCompare={(id) => go('compare', { B: emptySpec(id) })} onVs={(id) => go('vs', { B: emptySpec(id) })} />;
   } else if (st.view === 'stats') page = <FullStatsView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} />;
-  else if (st.view === 'compare') page = <CompareView pair={pair} mode={st.cm} setMode={(cm) => update({ cm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} swapIn={(id) => update({ B: { ...emptySpec(id) } })} />;
-  else if (st.view === 'vs') page = <VersusView pair={pair} mode={st.vm} setMode={(vm) => update({ vm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} resetSits={() => update({ A: { ...st.A, sit: null }, B: { ...st.B, sit: null } })} />;
+  else if (st.view === 'compare') page = <CompareView pair={pair} mode={st.cm} setMode={(cm) => update({ cm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} resetSits={resetSits} swapIn={(id) => update({ B: { ...emptySpec(id) } })} />;
+  else if (st.view === 'vs') page = <VersusView pair={pair} mode={st.vm} setMode={(vm) => update({ vm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} resetSits={resetSits} />;
   else page = <SheetView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} />;
 
   return (
