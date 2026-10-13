@@ -703,3 +703,71 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .vrail .lbl2 .rsel select { max-width: 92px; }
 .vrail .sublbl { flex-wrap: wrap; row-gap: 1px; }
 .vrail .sublbl em { flex-basis: 100%; }
+
+/* the capsules' Edit and Clear on the right, neutral (a slate outline that lights on hover) */
+.capacts { justify-content: flex-end; }
+.edb, .capacts .clr { color: #e2e8f0; border: 1px solid rgba(148,163,184,.55); background: rgba(148,163,184,.12); }
+.edb:hover, .capacts .clr:hover { color: #fff; border-color: #cbd5e1; background: rgba(148,163,184,.26); }
+.capacts .clr { color: #cbd5e1; }
+
+/* trial: the sections without a left edge (the header bar marks each one); the two sides' build panels keep theirs */
+.app .plate:not(.sidebuild):not(.opp) { border-left: 0; padding-left: 17px; }
+.app .plate:not(.sidebuild):not(.opp) > h5 { margin-left: -17px; padding-left: 17px; }
+
+/* trial: cards' heads in the sections' slate, a dot in the card's colour (blast and skill cards keep their slot badge) */
+.mcard { border-top-color: #64748b; }
+.mcard .mh { background: linear-gradient(90deg, rgba(100,116,139,.34), rgba(100,116,139,0) 80%); }
+.mcard .mh:not(:has(.slot))::before { content: ''; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--mc); }
+
+/* a section's sub-groups (Melee's Rush, Smash and throw, Pursuits; the Command list's Skills, Blasts, Ultimates):
+   a thinner slate edge and tint, smaller than the section's header, a dot in the group's colour */
+.fgh, .mgrp h4 { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; padding: 4px 10px; font-size: 12.5px; font-weight: 900; font-style: italic;
+  letter-spacing: .1em; text-transform: uppercase; color: #e2e8f0; border-top: 1px solid #64748b;
+  background: linear-gradient(90deg, rgba(100,116,139,.24), rgba(100,116,139,0) 70%); }
+.fgh::before, .mgrp h4::before { content: ''; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--gd, #f87171); }
+.fgh.kib { --gd: #fed583; }
+.mgrp.s { --gd: #22d3ee; } .mgrp.b { --gd: #fb923c; } .mgrp.u { --gd: #c084fc; }
+.mgrp h4 { margin: 2px 0 8px; }
+.mgrp + .mgrp { margin-top: 16px; }
+.sbody > .fgh:first-child { margin-top: 2px; }
+
+/* each side's build panel is led by its title: the side's colour as a top edge and tint, the largest header in it */
+.app .sidebuild > h5 { margin: -9px -14px 12px; padding: 7px 14px; font-size: 16px; font-weight: 900; font-style: italic; letter-spacing: .06em;
+  text-transform: uppercase; color: #fff; border-top: 3px solid #f97316; background: linear-gradient(90deg, rgba(249,115,22,.32), rgba(249,115,22,0) 85%); }
+.app .sidebuild.sb > h5 { border-top-color: #3b82f6; background: linear-gradient(90deg, rgba(59,130,246,.32), rgba(59,130,246,0) 85%); }
+.app .sidebuild > h5 .x { font-size: 11px; }
+
+/* the Matchup's Quick in Side by side's look: paired rows mirrored around the attack */
+.pair.xp { grid-template-columns: 112px minmax(0, 1fr) 140px minmax(0, 1fr) 112px; padding: 3px 0; border-top: 1px solid var(--line); }
+.xph + .pair.xp, .xlegend + .pair.xp { border-top: 0; }
+.pair.xp .n { font-weight: 700; color: #e2e8f0; }
+.pair.xp .n small { font-weight: 500; }
+.pair.xp .a, .pair.xp .b { white-space: nowrap; }
+.pair.xp.sub .n { font-size: 11.5px; font-weight: 500; color: var(--muted); }
+.pair.xp.sub .a, .pair.xp.sub .b { font-size: 13px; }
+.pair.xp.sub .pb { height: 6px; }
+.pair.xp .held { color: #cbd5e1; }
+.pair.xp.chgd { background: linear-gradient(90deg, transparent, rgba(59,130,246,.12) 50%, transparent); }
+.xv.chg s { text-decoration: none; font-size: 11px; font-weight: 500; font-style: normal; color: var(--muted); margin-right: 4px; }
+.xv.chg s::after { content: ' \2192'; }
+.xph { display: grid; grid-template-columns: minmax(0, 1fr) 140px minmax(0, 1fr); gap: 8px; padding: 0 0 4px; font-size: 10.5px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase; }
+.xph .sa { color: #fdba74; text-align: right; } .xph .sb { color: #93c5fd; }
+.xgrid .xlegend { margin: 0 0 6px; }
+.xgrid .mir { border-top: 1px solid var(--line); }
+.xgrid .xph + .mir { border-top: 0; }
+.xgrid .mir .mm b .xv { font-weight: 900; }
+.xgrid .mir .mm b.w { color: var(--win); }
+.hpn { text-align: center; font-size: 12px; color: #cbd5e1; font-weight: 800; }
+.hpvals { display: grid; grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr); gap: 8px; font-size: 12px; color: var(--muted); }
+.hpvals > span:first-child { text-align: right; } .hpvals > span:nth-child(2) { text-align: center; font-size: 11px; }
+.hpvals b { color: #e2e8f0; font-weight: 900; font-style: italic; font-size: 14px; }
+/* a mirrored health bar drains from its outer end */
+.bars.l i.part { background-position: 100% 0; }
+.bars.l i.hit::after { right: auto; left: 0; }
+.bars.l i.part.hit::after { right: auto; left: calc(100% - var(--p)); }
+.ph .pair.xp { grid-template-columns: 76px minmax(0, 1fr) 84px minmax(0, 1fr) 76px; gap: 5px; }
+.ph .pair.xp .a, .ph .pair.xp .b { white-space: normal; font-size: 13px; }
+.ph .xv.chg s { display: block; margin: 0; }
+.ph .xph, .ph .hpvals { grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr); gap: 5px; }
+.ph .hpair { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); }

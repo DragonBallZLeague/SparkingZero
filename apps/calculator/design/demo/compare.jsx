@@ -194,7 +194,7 @@ export function statSections({ vs = false, pair = null } = {}) {
  * number on the inner edge, next to the centre label, so the two numbers read straight across; the better
  * number is green. `a`/`b`: { name, value (a node), n (number to compare), lines: [[name, value]] }.
  */
-function Mirror({ label, sub = null, a, b }) {
+export function Mirror({ label, sub = null, a, b }) {
   const better = typeof a?.n === 'number' && typeof b?.n === 'number' && a.n !== b.n ? (a.n > b.n ? 'a' : 'b') : null;
   const side = (x, k) => (!x ? <span className="no">None</span> : (
     <>

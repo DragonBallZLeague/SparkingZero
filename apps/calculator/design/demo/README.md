@@ -178,6 +178,21 @@ Changed numbers show their base under them. The row tables are gone from the dem
   across the plate, the name large and italic. A dot in the section's colour (the same as its link) is all the
   colour a section keeps besides its stat bars. Sub-groups (Melee's Rush, Smash and throw, Pursuits) are one size
   smaller.
+- **Trials, after the headers** (for the league to judge):
+  - sections have no left edge at all; the header bar marks each one (the two sides' build panels keep theirs);
+  - ki blast and Rush Chain cards' heads are slate with a dot in the card's colour; blast and skill cards keep
+    their slot badge (B1, ULT, S1) on a slate head;
+  - sub-groups (Melee's three, the Command list's Skills, Blasts and Ultimates) share one smaller slate style with a
+    dot in the group's colour.
+- **Capsules' Edit and Clear** sit on the right under the list, in a neutral slate outline.
+- **Versus rails** are led by their title ("Goku's loadout"): the largest header there, with the side's orange or
+  blue as its top edge and tint.
+- **Matchup, Quick** is laid out like Side by side's Quick: plates for Health (both bars mirrored, one rush 5-hit
+  from the other side in red), Melee, Ki blasts, the Command list and Sparking!, with Breaking armor beside them.
+  Each row is what one side deals | the attack | what the other deals, with bars sized to the larger of the two
+  (the bigger hitter's lit; blasts and the ultimate have no bars, and the Command list is Side by side's mirrored
+  rows with each move's name). A multi-shot attack compares by its total (Janemba's charged ki blast fires 3).
+  Shields, the armor legend (both sides' armor now) and the old → new tints are kept.
 
 **Fourth pass:**
 - **Group headers:** the fighter column's groups (Forms, Active, Conditions, Capsules, League builds), the Versus

@@ -1,11 +1,11 @@
-// Versus: Compare and Vs opponent as one page (round 23). The Matchup's Quick form is the Exchange: what each
-// attack deals to the other side after its defenses and armor (a shield on a hit the armor reduces, a cracked
-// one on the hit that breaks it); its Full form is the same sections as Side by side's, as dealt to and taken
+// Versus: Compare and Vs opponent as one page (round 23). The Matchup's Quick form is the Exchange, laid out as
+// Side by side's Quick: what each attack deals to the other side after its defenses and armor, mirrored around
+// the attack (a shield on a hit the armor reduces, a cracked one on the hit that breaks it); its Full form is the same sections as Side by side's, as dealt to and taken
 // from the other side. Side by side's own pieces are in compare.jsx.
 import React, { createContext, useContext, useMemo } from 'react';
 import { nameParts, exchange, evaluatePair } from './model.js';
 import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
-import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads } from './compare.jsx';
+import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads, Mirror } from './compare.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
 import { ChangeButton } from './sheet.jsx';
 import { F } from './format.js';
@@ -32,91 +32,117 @@ function XVal({ title, get, held = false, brk = false, cls, suffix = '' }) {
   );
 }
 
-function XRow({ name, small, deal, take, sub = false }) {
+/**
+ * One attack of the matchup in Side by side's look: what you deal | the attack | what they deal. The bars are
+ * sized to the larger of the two and only the bigger hitter's lights up (the matchup compares the two sides, not
+ * the roster); blasts and the ultimate get no bars.
+ */
+function XPair({ name, small, deal, take, sub = false, bars = true }) {
+  const pc = usePair();
   const changed = [useChanged(deal?.get || (() => null)), useChanged(take?.get || (() => null))].some(x => x != null);
+  // a multi-shot attack compares by its total (Janemba's charged ki blast: 3 shots)
+  const num = (x) => { try { const v = x?.get(pc.pair); return typeof v === 'number' ? v * (x.shots || 1) : null; } catch { return null; } };
+  const a = num(deal), b = num(take);
+  const better = a != null && b != null && a !== b ? (a > b ? 'a' : 'b') : null;
+  const max = Math.max(a || 0, b || 0);
+  const bar = (v, k) => (
+    <span className={`pb ${k === 'a' ? 'l' : 'r'}${better === k ? ' w' : ''}${!bars || v == null ? ' none' : ''}`}>
+      {bars && v != null && max > 0 && <i style={{ width: `${Math.max(3, (v / max) * 100)}%` }} />}
+    </span>
+  );
   return (
-    <div className={`xrow${sub ? ' sub' : ''}${changed ? ' chgd' : ''}`}>
-      <span className="nm2">{name}{small && <small>{small}</small>}</span>
-      {deal ? <XVal cls="v1" {...deal} /> : <span className="v1" />}
-      {take ? <XVal cls="v2" {...take} /> : <span className="v2" />}
+    <div className={`pair xp${sub ? ' sub' : ''}${changed ? ' chgd' : ''}`}>
+      <span className={`a${better === 'a' ? ' w' : ''}`}>{deal ? <XVal cls="xv" {...deal} /> : '–'}</span>
+      {bar(a, 'a')}
+      <span className="n">{name}{small && <small>{small}</small>}</span>
+      {bar(b, 'b')}
+      <span className={`b${better === 'b' ? ' w' : ''}`}>{take ? <XVal cls="xv" {...take} /> : '–'}</span>
     </div>
   );
 }
 
+/** A plate's first line in the matchup: whose damage each side is. */
+const XHead = ({ nA, nB }) => <div className="xph"><span className="sa">{nA} deals</span><span /><span className="sb">{nB} deals</span></div>;
+
+/**
+ * The Matchup's Quick form, laid out like Side by side's: a plate per kind of attack (Health, Melee, Ki blasts,
+ * the Command list; Sparking! and Breaking armor beside them), each row the two sides' damage after the other's
+ * defenses and armor, mirrored around the attack's name.
+ */
 function Exchange({ phone }) {
   const pc = usePair();
   const { A, B } = pc.pair;
   const you = exchange(A, B), them = exchange(B, A);
-  const nB = nameParts(B.c.name)[0];
-  const armorB = B.view.armor > 0 ? (B.spec.sparking && B.c.armor?.sparking ? 'Sparking Armor' : B.c.armor?.base?.type || 'Armor') : null;
+  const nA = nameParts(A.c.name)[0], nB = nameParts(B.c.name)[0];
+  const armorOf = (s) => (s.view.armor > 0 ? (s.spec.sparking && s.c.armor?.sparking ? 'Sparking Armor' : s.c.armor?.base?.type || 'Armor') : null);
+  const armorA = armorOf(A), armorB = armorOf(B);
   const ph = you.combo.perHit;
   const breakAt = B.view.armor > 0 ? ph.findIndex((h, i) => !h.armorReduced && (i === 0 || ph[i - 1].armorReduced)) : -1;
   const theirHits = them.combo.perHit;
-  const groups = [
-    ['melee', 'Melee', [
-      { name: 'Rush 5-hit', small: armorB ? (breakAt >= 0 ? `breaks the armor on hit ${breakAt + 1}` : 'the armor holds every hit') : null, deal: { title: 'Rush 5-hit', get: X(x => x.combo.rush5Hit) }, take: { title: 'Rush 5-hit taken', get: T(x => x.combo.rush5Hit) } },
-      ...(phone ? [] : ph.map((h, i) => ({ sub: true, name: `Hit ${i + 1}`, deal: { title: `Rush hit ${i + 1}`, get: X(x => x.combo.perHit[i].damage), held: h.armorReduced, brk: i === breakAt }, take: theirHits[i] && B.view[['rush', 'hit2', 'hit3', 'hit4', 'hit5'][i]] ? { title: `Rush hit ${i + 1} taken`, get: T(x => x.combo.perHit[i].damage), held: theirHits[i].armorReduced } : null }))),
-      ...(phone ? [{ name: 'Smash, Charge Lv.1', deal: { title: 'Smash Lv.1', get: X(x => x.smash[0].v), held: you.smash[0]?.held }, take: { title: 'Smash Lv.1 taken', get: T(x => x.smash[0].v) } }] : [
-        { name: 'Smash' },
-        ...you.smash.map((s, i) => ({ sub: true, name: `Charge Lv.${i + 1}`, deal: { title: `Smash Lv.${i + 1}`, get: X(x => x.smash[i].v), held: s.held }, take: them.smash[i] ? { title: `Smash Lv.${i + 1} taken`, get: T(x => x.smash[i].v), held: them.smash[i].held } : null })),
-        { name: 'Heavy Finish' },
-        ...you.heavyFinish.map((s, i) => ({ sub: true, name: `Charge Lv.${i + 1}`, deal: { title: `Heavy Finish Lv.${i + 1}`, get: X(x => x.heavyFinish[i].v), held: s.held }, take: them.heavyFinish[i] ? { title: `Heavy Finish Lv.${i + 1} taken`, get: T(x => x.heavyFinish[i].v), held: them.heavyFinish[i].held } : null })),
-      ]),
-      { name: 'Throw', deal: { title: 'Throw', get: X(x => x.throw.v), held: you.throw.held }, take: { title: 'Throw taken', get: T(x => x.throw.v), held: them.throw.held } },
-    ]],
-    ['kib', 'Ki blasts', [
-      { name: 'One ki blast', deal: { title: 'Ki blast', get: X(x => x.kiBlast.v), held: you.kiBlast.held }, take: { title: 'Ki blast taken', get: T(x => x.kiBlast.v), held: them.kiBlast.held } },
-      { name: 'Full volley', small: you.kiBlast.held ? 'every shot on armor' : null, deal: { title: 'Full volley', get: X(x => x.volley), held: you.kiBlast.held }, take: { title: 'Full volley taken', get: T(x => x.volley), held: them.kiBlast.held } },
-      ...(you.charged.length || them.charged.length ? [{ name: 'Charged ki blast', small: them.charged[0]?.shots > 1 ? `theirs fires ${them.charged[0].shots} shots` : null }] : []),
-      ...[0, 1, 2].filter(i => you.charged[i] || them.charged[i]).map(i => ({ sub: true, name: `Charge Lv.${i + 1}`,
-        deal: you.charged[i] ? { title: `Charged Lv.${i + 1}`, get: X(x => x.charged[i]?.v), held: you.charged[i].held, suffix: you.charged[i].shots > 1 ? ` ×${you.charged[i].shots}` : '' } : null,
-        take: them.charged[i] ? { title: `Charged Lv.${i + 1} taken`, get: T(x => x.charged[i]?.v), held: them.charged[i].held, suffix: them.charged[i].shots > 1 ? ` ×${them.charged[i].shots}` : '' } : null })),
-    ]],
-    ['blast', 'Blasts', ['Super 1', 'Super 2'].map((slot, i) => {
-      const yb = you.blasts.find(x => x.b.slot === slot && !x.b.variant), tb = them.blasts.find(x => x.b.slot === slot && !x.b.variant);
-      return { name: `B${i + 1} ${yb?.b.name || ''}`, small: tb ? `vs ${tb.b.name}` : null,
-        deal: yb && { title: yb.b.name, get: X(x => x.blasts.find(y => y.b.slot === slot && !y.b.variant)?.deal) },
-        take: tb && { title: `${tb.b.name} taken`, get: T(x => x.blasts.find(y => y.b.slot === slot && !y.b.variant)?.deal) } };
-    })],
-    ['ult', 'Ultimate', (() => {
-      const yb = you.blasts.find(x => x.b.slot === 'Ultimate' && !x.b.variant), tb = them.blasts.find(x => x.b.slot === 'Ultimate' && !x.b.variant);
-      return [{ name: yb?.b.name || 'Ultimate', small: tb ? `vs ${tb.b.name}` : null,
-        deal: yb && { title: yb.b.name, get: X(x => x.blasts.find(y => y.b.slot === 'Ultimate' && !y.b.variant)?.deal) },
-        take: tb && { title: `${tb.b.name} taken`, get: T(x => x.blasts.find(y => y.b.slot === 'Ultimate' && !y.b.variant)?.deal) } }];
-    })()],
-    ['spk', 'Sparking! Mode', [{ name: 'Hyper Smash', deal: { title: 'Hyper Smash', get: X(x => x.hyperSmash.v), held: you.hyperSmash.held }, take: { title: 'Hyper Smash taken', get: T(x => x.hyperSmash.v), held: them.hyperSmash.held } }]],
+  const lv = (n, i) => `${n} Lv.${i + 1}`;
+  const melee = [
+    { name: 'Rush 5-hit', small: armorB ? (breakAt >= 0 ? `breaks armor on hit ${breakAt + 1}` : 'armor holds every hit') : null, deal: { title: 'Rush 5-hit', get: X(x => x.combo.rush5Hit) }, take: { title: 'Rush 5-hit taken', get: T(x => x.combo.rush5Hit) } },
+    ...(phone ? [] : ph.map((h, i) => ({ sub: true, name: `Hit ${i + 1}`, deal: { title: `Rush hit ${i + 1}`, get: X(x => x.combo.perHit[i].damage), held: h.armorReduced, brk: i === breakAt }, take: theirHits[i] && B.view[['rush', 'hit2', 'hit3', 'hit4', 'hit5'][i]] ? { title: `Rush hit ${i + 1} taken`, get: T(x => x.combo.perHit[i].damage), held: theirHits[i].armorReduced } : null }))),
+    ...(phone ? you.smash.slice(0, 1) : you.smash).map((s, i) => ({ name: lv('Smash', i), deal: { title: lv('Smash', i), get: X(x => x.smash[i].v), held: s.held }, take: them.smash[i] ? { title: `${lv('Smash', i)} taken`, get: T(x => x.smash[i].v), held: them.smash[i].held } : null })),
+    ...(phone ? [] : you.heavyFinish.map((s, i) => ({ name: lv('Heavy Finish', i), deal: { title: lv('Heavy Finish', i), get: X(x => x.heavyFinish[i].v), held: s.held }, take: them.heavyFinish[i] ? { title: `${lv('Heavy Finish', i)} taken`, get: T(x => x.heavyFinish[i].v), held: them.heavyFinish[i].held } : null }))),
+    { name: 'Throw', deal: { title: 'Throw', get: X(x => x.throw.v), held: you.throw.held }, take: { title: 'Throw taken', get: T(x => x.throw.v), held: them.throw.held } },
   ];
+  const shots = (x) => (x?.shots > 1 ? ` ×${x.shots}` : '');
+  const kib = [
+    { name: 'One ki blast', deal: { title: 'Ki blast', get: X(x => x.kiBlast.v), held: you.kiBlast.held }, take: { title: 'Ki blast taken', get: T(x => x.kiBlast.v), held: them.kiBlast.held } },
+    { name: 'Full volley', small: you.kiBlast.held || them.kiBlast.held ? 'every shot on armor' : null, deal: { title: 'Full volley', get: X(x => x.volley), held: you.kiBlast.held }, take: { title: 'Full volley taken', get: T(x => x.volley), held: them.kiBlast.held } },
+    ...[0, 1, 2].filter(i => you.charged[i] || them.charged[i]).map(i => ({ name: lv('Charged', i), small: i === 0 && (you.charged[0]?.shots > 1 || them.charged[0]?.shots > 1) ? 'per shot' : null,
+      deal: you.charged[i] ? { title: lv('Charged', i), get: X(x => x.charged[i]?.v), held: you.charged[i].held, shots: you.charged[i].shots, suffix: shots(you.charged[i]) } : null,
+      take: them.charged[i] ? { title: `${lv('Charged', i)} taken`, get: T(x => x.charged[i]?.v), held: them.charged[i].held, shots: them.charged[i].shots, suffix: shots(them.charged[i]) } : null })),
+  ];
+  // the Command list as Side by side's mirrored rows: each side's move by name, what it deals, no bars
+  const cmd = ['Super 1', 'Super 2', 'Ultimate'].map(slot => {
+    const mine = (x) => x.blasts.find(y => y.b.slot === slot && !y.b.variant);
+    const side = (ex, pick, t) => {
+      const m = mine(ex);
+      if (!m) return null;
+      const get = pick(x => mine(x)?.deal);
+      return { name: m.b.name, n: get(pc.pair), value: <XVal cls="xv" title={t ? `${m.b.name} taken` : m.b.name} get={get} /> };
+    };
+    const lab = slot === 'Ultimate' ? 'ULT' : slot === 'Super 1' ? 'B1' : 'B2';
+    return { slot, label: <span className={`slot ${lab === 'ULT' ? 'u' : 'b'}`}>{lab}</span>, a: side(you, X, false), b: side(them, T, true) };
+  });
+  const hyper = { name: 'Hyper Smash', deal: { title: 'Hyper Smash', get: X(x => x.hyperSmash.v), held: you.hyperSmash.held }, take: { title: 'Hyper Smash taken', get: T(x => x.hyperSmash.v), held: them.hyperSmash.held } };
+  const legend = (armorA || armorB) && (
+    <div className="xlegend">
+      {armorB && <span><b>{nB}'s {armorB}</b> takes {Math.round(B.view.armor * 100)}% off {nA}'s hits until one breaks it.</span>}
+      {armorA && <span><b>{nA}'s {armorA}</b> takes {Math.round(A.view.armor * 100)}% off {nB}'s hits until one breaks it.</span>}
+      {!phone && <><span><i className="arm" />Armor holds</span><span><i className="arm brk" />Breaks it</span><span>No mark: full damage</span></>}
+    </div>
+  );
+  const head = <XHead nA={nA} nB={nB} />;
   return (
-    <div className="plate neutral">
-      <h5>Damage exchange</h5>
-      {armorB && !phone && (
-        <div className="xlegend"><span><b>{nB}'s {armorB}</b> takes {Math.round(B.view.armor * 100)}% off your hits until one breaks it.</span><span><i className="arm" />Armor holds</span><span><i className="arm brk" />Breaks it</span><span>No mark: full damage</span></div>
-      )}
-      <div className="xcols">
-        {/* the basic attacks, then the Command list's (blasts, the ultimate) and Sparking!'s */}
-        {[['melee', 'kib'], ['blast', 'ult', 'spk']].map((keys, ci) => (
-          <div className="xcol" key={ci}>
-            <div className="xhead"><span></span><span>{phone ? 'Deal' : 'You deal'}</span><span>{phone ? 'Take' : 'You take'}</span></div>
-            {groups.filter(([k]) => keys.includes(k)).map(([k, label, rows]) => (
-              <div className={`xgroup ${k}`} key={k}><div className="gh">{label}</div>{rows.map((r, i) => <XRow key={i} {...r} />)}</div>
-            ))}
-          </div>
-        ))}
+    <div className="cmpgrid xgrid">
+      <div className="cmpcol">
+        <div className="plate"><h5>Health</h5><HpExchange /></div>
+        <div className="plate off"><h5>Melee</h5>{head}{legend}{melee.map((r, i) => <XPair key={i} {...r} />)}</div>
+        <div className="plate kib"><h5>Ki blasts</h5>{head}{kib.map((r, i) => <XPair key={i} {...r} />)}</div>
+        <div className="plate cmd"><h5>Command list</h5>{head}{cmd.map(r => <Mirror key={r.slot} label={r.label} a={r.a} b={r.b} />)}</div>
+        <div className="plate spk"><h5>Sparking! Mode</h5>{head}<XPair {...hyper} /></div>
+      </div>
+      <div className="cmpcol">
+        <div className="plate armp"><h5>Breaking armor</h5><VsArmor /></div>
       </div>
     </div>
   );
 }
 
-function HealthStrips() {
+/** Both health bars mirrored as in Side by side, each with one rush 5-hit from the other side in red. */
+function HpExchange() {
   const pc = usePair();
   const { A, B } = pc.pair;
-  const strip = (side, dmg, now) => {
+  const strip = (side, dmg, now, l) => {
     const max = side.view.health;
     const hp = now ?? max;
     const n = Math.max(5, Math.ceil(max / 10000));
     const lastFull = Math.ceil(hp / 10000) - 1;
     return (
-      <span className="bars hp">{Array.from({ length: n }, (_, i) => {
+      <span className={`bars hp${l ? ' l' : ''}`}>{Array.from({ length: n }, (_, i) => {
         const fillPct = i < Math.floor(hp / 10000) ? 100 : i === Math.floor(hp / 10000) ? ((hp % 10000) / 100) : 0;
         const cap = i * 10000 >= max;
         const hit = i === lastFull ? Math.min(100, (dmg / 10000) * 100) : 0;
@@ -129,15 +155,12 @@ function HealthStrips() {
   };
   const you = exchange(A, B), them = exchange(B, A);
   const hpOf = (s) => (s.spec.sit?.hp != null ? Math.round(s.spec.sit.hp * s.view.health) : null);
+  const val = (s) => <b>{hpOf(s) != null ? `${F.int(hpOf(s))} of ` : ''}{F.int(s.view.health)}</b>;
   return (
-    <div className="plate">
-      <h5>Health</h5>
-      <div className="hpcap"><span>{B.c.name}</span><b>{hpOf(B) != null ? `${F.int(hpOf(B))} of ` : ''}{F.int(B.view.health)}</b></div>
-      {strip(B, you.combo.rush5Hit, hpOf(B))}
-      <div className="hpcap"><span>You</span><b>{hpOf(A) != null ? `${F.int(hpOf(A))} of ` : ''}{F.int(A.view.health)}</b></div>
-      {strip(A, them.combo.rush5Hit, hpOf(A))}
-      <div className="hpcap" style={{ marginTop: 8 }}><span>Red: one rush combo</span><span></span></div>
-    </div>
+    <>
+      <div className="hpair">{strip(A, them.combo.rush5Hit, hpOf(A), true)}<span className="hpn">HP</span>{strip(B, you.combo.rush5Hit, hpOf(B), false)}</div>
+      <div className="hpvals"><span>{val(A)}</span><span>Red: one rush 5-hit from the other side</span><span>{val(B)}</span></div>
+    </>
   );
 }
 
@@ -173,14 +196,8 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   const change = (k) => <ChangeButton onClick={() => openPicker('char', k)} title={k === 'B' ? (match ? 'Change opponent' : 'Change the right side') : 'Change fighter'} />;
   let body;
   if (depth === 'full') body = <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} sections={match ? statSections({ vs: true, pair }) : null} /></div>;
-  else if (match) {
-    body = (
-      <div className="cmpgrid vsgrid">
-        <div><RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider></div>
-        <div className="cmpcol"><HealthStrips /><div className="plate armp"><h5>Breaking armor</h5><VsArmor /></div></div>
-      </div>
-    );
-  } else body = <CompareSummary pair={pair} swapIn={swapIn} />;
+  else if (match) body = <RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider>;
+  else body = <CompareSummary pair={pair} swapIn={swapIn} />;
   return (
     <>
       {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
