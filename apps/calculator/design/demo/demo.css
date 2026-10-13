@@ -230,7 +230,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .sidesw button.sb.on { color: #fff; border-bottom-color: #3b82f6; background: rgba(59,130,246,.16); }
 .ph .setup { padding: 8px 10px 0; }
 .vabr .arm { margin-right: 5px; }
-.ph .sit { display: flex; flex-direction: column; gap: 8px; padding: 8px 10px 0; }
+.ph .sit { display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 8px 10px 0; }  /* (the desktop grid's align-items: start shrank each side to its content) */
 .ph .condbar { padding: 8px 10px 0; }
 
 /* pickers */
