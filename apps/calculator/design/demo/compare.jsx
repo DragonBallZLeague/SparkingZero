@@ -144,7 +144,10 @@ export function statSections({ vs = false, pair = null } = {}) {
       ...(vs ? [] : [{ label: 'Rush 5-hit into armor', get: V(x => x.fiveHitAfterArmor) }]),
       ...[0, 1, 2].map(i => dealt({ label: `Smash, Charge Lv.${i + 1}`, get: (s) => gameMoves(s).smash[i] }, D(x => x.smash[i]?.v))),
       ...[0, 1, 2].map(i => dealt({ label: `Heavy Finish, Lv.${i + 1}`, get: (s) => gameMoves(s).heavyFinish[i] }, D(x => x.heavyFinish[i]?.v))),
-      dealt({ label: 'Throw', get: V(x => x.throw) }, D(x => x.throw.v)), dealt({ label: 'Pursuit', get: V(x => x.pursuit) }, D(x => x.pursuit)),
+      dealt({ label: 'Throw', get: V(x => x.throw) }, D(x => x.throw.v)),
+      dealt({ label: 'Vanishing Attack', get: V(x => x.vanishingAttack) }, D(x => x.vanishingAttack)),
+      dealt({ label: 'Dragon Smash', get: V(x => x.dragonSmash) }, D(x => x.dragonSmash)),
+      dealt({ label: 'Lightning Attack', get: V(x => x.lightningAttack) }, D(x => x.lightningAttack)),
       vs ? { label: 'Breaks their armor on', vs: breaksOn } : { label: 'Armor break', small: 'hits, less is better', get: V(x => x.armorBreak), fmt: F.hits, less: true },
     ] },
     { id: 'chains', title: 'Rush Chains', cls: 'mov', custom: 'chains', vs, small: vs ? 'dealt to them' : 'full charge' },
@@ -163,7 +166,8 @@ export function statSections({ vs = false, pair = null } = {}) {
     ] },
     { id: 'limits', title: 'Combat limits', cls: 'new', col: 2, rows: [
       { label: 'Follow-ups', get: (s) => s.c.moveset?.pursuits?.limit ?? 0, fmt: String },
-      ...[['Vanishing Attack', 'vanishingAttack'], ['Lightning Attack', 'lightningAttack'], ['Dragon Homing', 'dragonHoming']].map(([l, k]) => ({ label: l, get: (s) => (s.c.moveset?.pursuits?.[k] === false ? 0 : 1), fmt: (x) => (x ? 'Yes' : 'No') })),
+      // each pursuit's uses with the build (Vanishing Break, Dragon Break); No where the fighter can't
+      ...[['Vanishing Attack', 'vanishingAttack'], ['Lightning Attack', 'lightningAttack'], ['Dragon Homing', 'dragonHoming']].map(([l, k]) => ({ label: `${l} uses`, get: V(x => x.pursuitLimit[k]), fmt: (x) => (x ? String(x) : 'No') })),
       { label: 'Jump ki blasts', get: (s) => gameMoves(s).jump?.count, fmt: String }, { label: 'Dash ki blasts', get: (s) => gameMoves(s).dash?.count, fmt: String },
     ] },
     { id: 'spk', title: 'Sparking! Mode', cls: 'spk', col: 2, rows: [

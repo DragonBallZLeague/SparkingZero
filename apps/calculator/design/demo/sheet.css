@@ -5,7 +5,7 @@
 
 :root {
   --ki: #facc15; --spark: #a855f7; --ult: #a855f7; --blast: #f97316; --skill: #22d3ee; --melee: #ef4444;
-  --kib: #fc9b20; --chain: #fb7185; --hp: #22c55e; --burn: #ef4444; --up: #fb923c; --win: #4ade80;
+  --kib: #fbb41a; --chain: #fb7185; --hp: #22c55e; --burn: #ef4444; --up: #fb923c; --win: #4ade80;
   --plate: rgba(10, 13, 32, .62); --line: rgba(148, 163, 184, .14); --muted: #94a3b8; --label: #93c5fd;
 }
 .B { height: 100%; color: #f1f5f9; background: radial-gradient(1200px 700px at 20% 0%, #24305e 0%, #121836 45%, #0a0d20 100%); position: relative; overflow: hidden; }
@@ -258,9 +258,9 @@
 .mvcmp .tags { display: inline-flex; margin-left: 4px; vertical-align: 1px; }
 .mvcmp .no { color: var(--muted); }
 /* ki blasts: a red leaning to yellow, apart from melee red and blast orange */
-.plate.kib { border-left-color: var(--kib); } .plate.kib h5 { color: #fec47b; } .plate.kib .rk { --rk: #fec47b; }
-.tile.kib .rk { --rk: #fec47b; }
-.xgroup.kib { border-color: var(--kib); } .xgroup.kib .gh { color: #fec47b; }
+.plate.kib { border-left-color: var(--kib); } .plate.kib h5 { color: #fed583; } .plate.kib .rk { --rk: #fed583; }
+.tile.kib .rk { --rk: #fed583; }
+.xgroup.kib { border-color: var(--kib); } .xgroup.kib .gh { color: #fed583; }
 .xgroup.spk { border-color: var(--spark); } .xgroup.spk .gh { color: #d8b4fe; }
 .plate.spk { border-left-color: var(--spark); } .plate.spk h5 { color: #d8b4fe; }
 .srow.lvh span:nth-child(2), .srow.lvh span:nth-child(3) { color: transparent; }
@@ -608,7 +608,7 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
 .jump { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
 /* round 15: a build reads by capsule category (colour, full names, points per category) */
 .k-mel { --cc: #ef4444; } .k-bla { --cc: #f97316; } .k-tou { --cc: #22c55e; } .k-ki { --cc: #facc15; }
-.k-kib { --cc: #fc9b20; } .k-skl { --cc: #22d3ee; } .k-mov { --cc: #818cf8; } .k-spk { --cc: #a855f7; }
+.k-kib { --cc: #fbb41a; } .k-skl { --cc: #22d3ee; } .k-mov { --cc: #818cf8; } .k-spk { --cc: #a855f7; }
 .catbar { display: flex; gap: 3px; height: 9px; margin: 2px 0 5px; }
 .catbar i { background: color-mix(in srgb, var(--cc) 75%, #0a0d20); transform: skewX(-20deg); }
 .catleg { display: flex; flex-wrap: wrap; gap: 3px 12px; font-size: 11px; color: #cbd5e1; margin-bottom: 6px; }
@@ -720,7 +720,7 @@ kbd { font-family: inherit; font-size: 10.5px; font-weight: 800; padding: 1px 6p
 /* round 22: Full stats as rows (each section a band laid out across; a line's bands fill its width) */
 .rws { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
 .rws .plate { flex: 1 1 auto; max-width: 100%; min-width: 0; padding: 8px 14px 11px; --sc: #86efac; }
-.rws .plate.res { --sc: #fde68a; } .rws .plate.off { --sc: #fca5a5; } .rws .plate.mov { --sc: #fda4af; } .rws .plate.kib { --sc: #fec47b; }
+.rws .plate.res { --sc: #fde68a; } .rws .plate.off { --sc: #fca5a5; } .rws .plate.mov { --sc: #fda4af; } .rws .plate.kib { --sc: #fed583; }
 .rws .plate.armp { --sc: #e2e8f0; } .rws .plate.new { --sc: #a5f3fc; } .rws .plate.mob { --sc: #c7d2fe; } .rws .plate.spk { --sc: #d8b4fe; }
 .ht { border-collapse: collapse; font-variant-numeric: tabular-nums; width: auto; min-width: 100%; }
 .ht th, .ht td { text-align: left; vertical-align: top; padding: 0 12px 0 0; }

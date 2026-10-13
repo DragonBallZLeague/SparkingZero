@@ -23,7 +23,8 @@ function sections(side) {
   const gm = gameMoves(side);
   const mob = c.mobility || {};
   const ps = c.moveset?.pursuits || {};
-  const yes = (b) => (b === false ? 'No' : 'Yes');
+  const orNone = (x) => (x == null ? 'None' : F.int(x));
+  const uses = (n) => (n ? String(n) : 'No');
   return [
     {
       id: 'tough', title: 'Toughness', cls: '',
@@ -66,7 +67,13 @@ function sections(side) {
           cell('Total', A(x => x.rush5Hit), { long: 'Rush 5-hit total' }), cell('Into armor', A(x => x.fiveHitAfterArmor), { long: 'Rush 5-hit into armor' }),
         ]],
         ['Smash', gm.smash.map((_, i) => cell(`Lv.${i + 1}`, GM(g => g.smash[i]), { long: `Smash, Charge Lv.${i + 1}` }))],
-        [null, [cell('Throw', A(x => x.throw)), cell('Pursuit', A(x => x.pursuit)), cell('Armor break', A(x => x.armorBreak), { fmt: F.hits, kind: 'dec', less: true })]],
+        [null, [cell('Throw', A(x => x.throw))]],
+        // the pursuits' damage (Vanishing Crash and Dragon Crash raise their own); None where the fighter can't
+        ['Pursuits', [
+          cell('Vanishing Attack', A(x => x.vanishingAttack), { fmt: orNone }), cell('Dragon Smash', A(x => x.dragonSmash), { fmt: orNone, long: 'Dragon Smash (Dragon Homing)' }),
+          cell('Lightning Attack', A(x => x.lightningAttack), { fmt: orNone }),
+        ]],
+        [null, [cell('Armor break', A(x => x.armorBreak), { fmt: F.hits, kind: 'dec', less: true })]],
       ],
       summary: [['Rush 5-hit', F.int(v.rush5Hit)], ['Smash', F.int(gm.smash[0])], ['Throw', F.int(v.throw)], ['Armor break', F.hits(v.armorBreak)]],
     },
@@ -77,9 +84,14 @@ function sections(side) {
       id: 'limits', title: 'Combat limits', cls: 'new',
       groups: [
         [null, [cell('Follow-ups', null, { text: String(ps.limit ?? 0), small: ps.sparkingAdd ? `+${ps.sparkingAdd} in Sparking!` : null })]],
-        ['Pursuits', [cell('Vanishing Attack', null, { text: yes(ps.vanishingAttack) }), cell('Lightning Attack', null, { text: yes(ps.lightningAttack) }), cell('Dragon Homing', null, { text: yes(ps.dragonHoming) })]],
+        // each pursuit's uses (Vanishing Break and Dragon Break add one); No where the fighter can't
+        ['Pursuit uses', [
+          cell('Vanishing Attack', A(x => x.pursuitLimit.vanishingAttack), { fmt: uses, kind: 'dec', long: 'Vanishing Attack uses' }),
+          cell('Lightning Attack', A(x => x.pursuitLimit.lightningAttack), { fmt: uses, kind: 'dec', long: 'Lightning Attack uses' }),
+          cell('Dragon Homing', A(x => x.pursuitLimit.dragonHoming), { fmt: uses, kind: 'dec', long: 'Dragon Homing uses' }),
+        ]],
       ],
-      summary: [['Follow-ups', ps.limit ?? 0], [[ps.vanishingAttack, ps.lightningAttack, ps.dragonHoming].every(x => x !== false) ? 'Every pursuit' : 'Some pursuits', null]],
+      summary: [['Follow-ups', ps.limit ?? 0], ['Vanishing', uses(v.pursuitLimit.vanishingAttack)], ['Lightning', uses(v.pursuitLimit.lightningAttack)], ['Dragon Homing', uses(v.pursuitLimit.dragonHoming)]],
     },
     { id: 'mob', title: 'Mobility', cls: 'mob', custom: 'mob', tag: mob.canFly === false ? "Can't fly" : 'Can fly', summary: [[mob.canFly === false ? "Can't fly" : 'Can fly', null], ['Short Dash', F.bars(v.shortDashCost)], ['Z-Burst Dash', F.bars(mob.zBurstDash?.start)]] },
     {

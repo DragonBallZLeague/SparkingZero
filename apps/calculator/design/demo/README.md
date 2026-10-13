@@ -81,6 +81,11 @@ conditions, ruleset) lives in the URL hash.
 - **Every number a skill, capsule or condition changes is marked** on the Sheet and in Full stats (orange when better,
   red when worse), including Rush Chains, armor break, the short dash and folded summaries.
 - **Armored 5-hit taken** shows only when the fighter has armor now (it equals the plain value otherwise).
+- **Ki blasts' colour** is a golden yellow (`#fbb41a`).
+- **Pursuits:** Vanishing Crash and Dragon Crash raise Vanishing Attack's and Dragon Smash's damage (Melee's new
+  Pursuits group, beside Lightning Attack). Vanishing Break and Dragon Break add a use (Combat limits now counts
+  each pursuit's uses instead of Yes/No). Both also show in Compare and Vs All stats and in the capsule picker.
+  The league's tests are in `data/TESTS.md`.
 
 ## Checked
 

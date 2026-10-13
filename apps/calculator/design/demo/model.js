@@ -331,8 +331,10 @@ const SHORT = {
   kiRestore: ['Ki restored', 'Ki'], kiPerSecond: ['Ki per second', 'Ki per sec'], healthRestore: ['Health restored', 'Health'],
   healthRestoreFraction: ['Health restored', 'Health'], meleeCharge: ['Melee charge time', 'Melee charge'], kiShotCharge: ['Ki blast charge time', 'Charge time'],
   comboScaling: ['Combo scaling', 'Combo scaling'], blastComboDamage: ['Blast combo damage', 'Blast combos'],
+  vanishingAttackDamage: ['Vanishing Attack damage', 'Vanishing Attack'], dragonSmashDamage: ['Dragon Smash damage', 'Dragon Smash'],
+  vanishingLimit: ['Vanishing Attack uses', 'Vanishing uses'], dragonHomingLimit: ['Dragon Homing uses', 'Dragon Homing uses'],
 };
-const PCT_KINDS = new Set(['rushDamage', 'smashDamage', 'comboDamage', 'throwDamage', 'counterDamage', 'followUpDamage', 'kiBlastDamage', 'chargedKiBlastDamage', 'superDamage', 'ultimateDamage', 'skillDamage', 'allDamage', 'physicalResist', 'energyResist', 'blastResist', 'guardResist', 'allResist', 'kiCharge', 'kiRecovery', 'attackKiGain', 'kiBlastCost', 'skillRecovery', 'shortDashCost', 'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'preSparkingDrain', 'meleeCharge', 'kiShotCharge', 'comboScaling', 'blastComboDamage', 'moveSpeed']);
+const PCT_KINDS = new Set(['vanishingAttackDamage', 'dragonSmashDamage', 'rushDamage', 'smashDamage', 'comboDamage', 'throwDamage', 'counterDamage', 'followUpDamage', 'kiBlastDamage', 'chargedKiBlastDamage', 'superDamage', 'ultimateDamage', 'skillDamage', 'allDamage', 'physicalResist', 'energyResist', 'blastResist', 'guardResist', 'allResist', 'kiCharge', 'kiRecovery', 'attackKiGain', 'kiBlastCost', 'skillRecovery', 'shortDashCost', 'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'preSparkingDrain', 'meleeCharge', 'kiShotCharge', 'comboScaling', 'blastComboDamage', 'moveSpeed']);
 const signed = (n, d = 1) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(+n.toFixed(d)).toLocaleString('en-US')}`;
 export function effectValueText(e) {
   if (e.op === 'set') return e.value === 'max' ? 'full' : `set to ${e.value}`;
@@ -557,6 +559,9 @@ export function exchange(A, B) {
     charged: gm.charged ? gm.charged.damage.map((x, i) => ({ v: one(x, kiDef, bl.chargedKiBlast?.[i]), held: af(bl.chargedKiBlast?.[i]) < 1, shots: gm.charged.shots })) : [],
     hyperSmash: { v: one(gm.hyperSmash, melDef, bl.hyperSmash), held: af(bl.hyperSmash) < 1 },
     pursuit: typeof a.pursuit === 'number' ? damageTaken(a.pursuit, melDef) : null,
+    vanishingAttack: typeof a.vanishingAttack === 'number' ? damageTaken(a.vanishingAttack, melDef) : null,
+    dragonSmash: typeof a.dragonSmash === 'number' ? damageTaken(a.dragonSmash, melDef) : null,
+    lightningAttack: typeof a.lightningAttack === 'number' ? damageTaken(a.lightningAttack, melDef) : null,
     jump: gm.jump ? one(gm.jump.damage, kiDef, bl.kiBlast) : null,
     dash: gm.dash ? one(gm.dash.damage, kiDef, bl.kiBlast) : null,
     // Rush Chains and their follow-ups after B's melee defense (their break levels are not in the data, so no armor)

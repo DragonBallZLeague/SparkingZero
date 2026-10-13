@@ -209,7 +209,7 @@ export function SheetView({ A: side, ruleset, setSpec, openPicker, qp = () => nu
             <div className="tile"><span>Rush 5-hit</span><Tap as="b" title="Rush 5-hit" get={A(x => x.rush5Hit)} extra={(p) => <div className="hitl">Hits<span className="tags">{[p.A.view.rush, p.A.view.hit2, p.A.view.hit3, p.A.view.hit4, p.A.view.hit5].map((h, i) => <span key={i}>{F.int(h)}</span>)}</span></div>} /><Rk p={rosterPos('rush5', x => x.rush5Hit, v.rush5Hit)} /></div>
             <div className="tile"><span>Smash</span><Tap as="b" title="Smash" get={A(x => x.smash)} /><Rk p={rosterPos('smash', x => x.smash, v.smash)} /></div>
             <div className="tile"><span>Throw</span><Tap as="b" title="Throw" get={A(x => x.throw)} /><Rk p={rosterPos('throw', x => x.throw, v.throw)} /></div>
-            <div className="tile"><span>Pursuit</span><Tap as="b" title="Pursuit" get={A(x => x.pursuit)} /><Rk p={rosterPos('pursuit', x => x.pursuit, v.pursuit)} /></div>
+            <div className="tile"><span>Pursuit</span><Tap as="b" title="Pursuit (Vanishing Attack)" get={A(x => x.vanishingAttack ?? x.pursuit)} /><Rk p={rosterPos('pursuit', x => x.pursuit, v.vanishingAttack ?? v.pursuit)} /></div>
             <div className="tile"><span>Armor break</span><Tap as="b" title="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" lessIsBetter>{v.armorBreak}<small>hits</small></Tap></div>
           </div>
           <div className="tiles t5">
