@@ -220,6 +220,8 @@ Changed numbers show their base under them. The row tables are gone from the dem
   fighter or the docked picker (it was 350 or 390 against the picker's 410), and the button that opens or closes
   the picker lets go of focus first: it is swapped out with the column's content, and a focused element that
   disappears made the browser scroll to the top (a real mouse click, not a scripted one; `letGo` in `main.jsx`).
+  The docked picker (Fighter page and Versus rails) also stops 24px short of the window's bottom, the space under
+  the page's last section, so at the very bottom of the page it is no longer pushed up under the tabs.
 - **The Verdict** has one line per fighter, the name in the side's colour ("Android 18 deals more on 3 of 8
   attacks").
 - **Versus Blasts switch alternates in place** (replacing a row per alternate): one row per slot, and a side with

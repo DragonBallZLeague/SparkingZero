@@ -915,3 +915,8 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .edb.same.sa:hover { color: #fff; border-color: rgba(249,115,22,.75); background: rgba(249,115,22,.22); }
 .edb.same.sb { color: #bfdbfe; border-color: rgba(59,130,246,.5); background: rgba(59,130,246,.1); }
 .edb.same.sb:hover { color: #fff; border-color: rgba(59,130,246,.8); background: rgba(59,130,246,.24); }
+
+/* the docked picker stops short of the 24px under the page's last section, so at the very bottom of the page its
+cell never pushes it up under the tabs (its Done header stays in view) */
+.app .art.dock > .cpk.dock { max-height: calc(100vh - var(--top) - 24px); }
+.vrail.dock { max-height: calc(100vh - var(--top) - 8px - 24px); }
