@@ -172,6 +172,13 @@ Changed numbers show their base under them. The row tables are gone from the dem
   neutral grey edge: Health, Melee def, Rush 5-hit, Smash, Ki charge (Ki regen for a fighter that can't charge),
   Ki blast, Skill gauge per minute and Armor break.
 
+**Fourth pass:**
+- **Group headers:** the fighter column's groups (Forms, Active, Conditions, Capsules, League builds), the Versus
+  rails' groups and the capsule picker's groups (Equipped, Rules, Not in the stats, Add capsules) sit under clear
+  header bars: a slate top edge and tint, the name large. Conditions has no box of its own any more.
+- **Clear:** capsules have a Clear button (the build's header and the picker's Equipped).
+- **Done:** the picker's Done is filled orange, and pinned at the top of the docked picker while its list scrolls.
+
 **The Characters tab.** A click selects a fighter instead of opening it. Hovering the grid still previews another
 fighter, and leaving the grid goes back to the selected one, so the preview's Open, Compare with and Opponent for
 buttons act on the fighter you clicked. A second click or a double-click opens it. The preview's forms are buttons

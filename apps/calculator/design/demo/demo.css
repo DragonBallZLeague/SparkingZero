@@ -640,3 +640,26 @@ html { scrollbar-color: #3b4677 #0a0d20; }
   border-top: 3px solid var(--melee); background: linear-gradient(90deg, color-mix(in srgb, var(--melee) 30%, transparent), transparent 75%); }
 .sbody > .fgh:first-child { margin-top: 2px; }
 .fgh + .tiles { margin-top: 6px; }
+
+/* the build's groups (Forms, Active, Conditions, Capsules, League builds) and the capsule picker's (Equipped,
+   Rules, Not in the stats, Add capsules) under clear header bars: a slate top edge and tint, the name large */
+.bgh, .build .lbl2, .build .sits > h6, .build .sublbl, .vrail .sidebuild .sublbl, .vrail .lbl2, .vrail .sits > h6 {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 20px 0 8px; padding: 5px 10px;
+  font-size: 12.5px; font-weight: 900; font-style: italic; letter-spacing: .1em; text-transform: uppercase; color: #f1f5f9;
+  border-top: 2px solid #64748b; background: linear-gradient(90deg, rgba(100,116,139,.34), rgba(100,116,139,0) 80%); }
+.build > :first-child .lbl2, .build > .lbl2:first-child, .cbuild > .bgh:first-child, .clist > .bgh:first-child, .vrail .sidebuild .sublbl:first-of-type { margin-top: 0; }
+.bgh em, .build .sublbl em, .vrail .sublbl em, .build .sits > h6 em { font-style: normal; font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 11px; color: #cbd5e1; }
+.build .lbl2 .rsw, .vrail .lbl2 .rsw { font-style: normal; font-weight: 600; letter-spacing: .06em; font-size: 11px; color: #cbd5e1; }
+/* Conditions sits in the column like the other groups (no box of its own) */
+.build .sits.cmp, .vrail .sits.cmp { margin-top: 0; padding: 0; background: none; border: 0; }
+.cpk .cbuild > .bgh { margin: 6px 0 0; }
+.cpk .clist > .bgh { margin: 0 0 2px; }
+.clr { font-size: 10.5px; font-weight: 800; font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: #fecaca; padding: 1px 9px;
+  border: 1px solid rgba(248,113,113,.5); background: rgba(239,68,68,.12); cursor: pointer; }
+.clr:hover { background: rgba(239,68,68,.28); color: #fff; }
+/* the picker's Done: filled orange, and pinned at the top of the docked picker while its list scrolls */
+.cpk .pk-h .x { font-size: 13px; font-weight: 900; padding: 5px 20px; background: #f97316; color: #0a0d20; }
+.cpk .pk-h .x:hover { background: #fb923c; }
+.cpk.dock > .pk-h { position: sticky; top: 0; z-index: 4; padding: 10px 14px; background: #0f1534; border-bottom: 1px solid var(--line); box-shadow: 0 6px 12px rgba(0,0,0,.35); }
+.cpk.dock > .cbuild { padding-top: 10px; }
+.lsh .x { background: #f97316; color: #0a0d20; font-size: 13px; padding: 4px 18px; }

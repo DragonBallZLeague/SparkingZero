@@ -378,7 +378,7 @@ export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, o
       <h5>{title}{onClose && <button className="x" onClick={onClose}>Done</button>}</h5>
       <div className="sublbl"><span>Skills and Sparking</span></div>
       <SkillSwitches side={side} onChange={onChange} />
-      <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} /></div>
+      <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} onClear={() => onChange({ ...side.spec, caps: [] })} /></div>
       <LeagueBuilds side={side} onChange={onChange} />
       <div className="fl" style={{ marginTop: 8 }}><small>Or</small><button onClick={() => onChange({ ...side.spec, caps: [] })}>No capsules</button>{other && <button onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>}</div>
       {chk.problems.length > 0 && <div className="bdhint">Leave a rule broken to see the numbers anyway; the ruleset only warns.</div>}

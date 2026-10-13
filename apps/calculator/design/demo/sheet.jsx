@@ -79,13 +79,13 @@ export function SkillSwitches({ side, onChange }) {
 }
 
 /** A build as capsule rows in their type's colour, with a bar of its points by type. */
-export function CapsuleRows({ side, ruleset, onEdit, slots = 7, compact = false }) {
+export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, compact = false }) {
   const chk = buildCheck(side.spec.caps, ruleset);
   const byType = new Map();
   for (const x of chk.caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);
   return (
     <>
-      <p className="lbl2"><span>Capsules</span><span className="rsw"><RulesetSelect /><span>{chk.cost} of {ruleset.totalCost}</span></span></p>
+      <p className="lbl2"><span>Capsules</span><span className="rsw"><RulesetSelect /><span>{chk.cost} of {ruleset.totalCost}</span>{onClear && chk.caps.length > 0 && <button className="clr" onClick={onClear}>Clear</button>}</span></p>
       {chk.caps.length > 0 && <div className="catbar">{[...byType].map(([t, n]) => <i key={t} className={typeClass(t)} style={{ flex: n }} title={`${t} ${n}`} />)}</div>}
       <div className="caps">
         {chk.caps.map((x, i) => (
@@ -295,7 +295,7 @@ export function FighterColumn({ side, ruleset, setSpec, openPicker, onForm }) {
         <p className="lbl2"><span>Active</span></p>
         <ActiveToggles side={side} onChange={setSpec} />
         <Conditions side={side} onChange={setSpec} compact />
-        <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} />
+        <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} onClear={() => setSpec({ ...side.spec, caps: [] })} />
         <LeagueBuilds side={side} onChange={setSpec} />
       </div>
     </>
