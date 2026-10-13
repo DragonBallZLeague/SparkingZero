@@ -3,7 +3,7 @@
 import React from 'react';
 import {
   gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
-  perceptionName, blastsOf, skillOf, blastDamage, rosterPos,
+  perceptionName, blastsOf, skillOf, blastDamage, rosterPos, movePos,
 } from './model.js';
 import { Tap, Rk, usePair, useBase, useValue } from './ui.jsx';
 import { orderedBlasts, Hits } from './moves.jsx';
@@ -140,8 +140,8 @@ function TV({ label, title, get, fmt = F.int, kind = 'int', less = false, unit, 
   );
 }
 /** A tile for a value that has no breakdown (text, or a game-file value no build changes). */
-const TT = ({ label, value, unit, sub, cls = '' }) => (
-  <div className={`tile ${cls}`}><span>{label}</span><b>{value}{unit && <small>{unit}</small>}</b>{sub && <small className="tb">{sub}</small>}</div>
+const TT = ({ label, value, unit, sub, cls = '', rk = null }) => (
+  <div className={`tile ${cls}`}><span>{label}</span><b>{value}{unit && <small>{unit}</small>}</b>{sub && <small className="tb">{sub}</small>}{rk}</div>
 );
 const Gh = ({ children, cls = '' }) => <div className={`fgh ${cls}`}>{children}</div>;
 const Pips = ({ n, max = n }) => <span className="lpips">{Array.from({ length: Math.max(n, max) }, (_, i) => <i key={i} className={i < n ? 'f' : ''} />)}</span>;
@@ -170,27 +170,28 @@ function kiRows(side) {
   const same = (a, b) => a && b && JSON.stringify(a.damage) === JSON.stringify(b.damage);
   const tagText = (t) => (t || []).filter(x => !['giant'].includes(x));
   const rows = [
-    { label: 'Ki blast', type: gm.kiBlastTags.length && !gm.kiBlastTags.includes('none') ? gm.kiBlastTags[0] : 'Standard', dmg: A(x => x.kiBlastDmg), shots: v.kiBlastLimit, shotsGet: A(x => x.kiBlastLimit), costGet: A(x => x.kiBlastCost), volley: true, tags: gm.kiBlastTags.slice(1) },
+    { label: 'Ki blast', rk: rosterPos('kib', x => x.kiBlastDmg, v.kiBlastDmg), type: gm.kiBlastTags.length && !gm.kiBlastTags.includes('none') ? gm.kiBlastTags[0] : 'Standard', dmg: A(x => x.kiBlastDmg), shots: v.kiBlastLimit, shotsGet: A(x => x.kiBlastLimit), costGet: A(x => x.kiBlastCost), volley: true, tags: gm.kiBlastTags.slice(1) },
   ];
-  if (gm.charged) rows.push({ label: 'Charged ki blast', type: 'Charged', lv: gm.charged.damage.map((_, i) => GM(g => g.charged.damage[i])), shots: gm.charged.shots, cost: gm.charged.cost, tags: tagText(gm.charged.tags) });
-  if (gm.chargedMoving && !same(gm.chargedMoving, gm.charged)) rows.push({ label: 'Charged, while moving', type: 'Charged', lv: gm.chargedMoving.damage.map((_, i) => GM(g => g.chargedMoving.damage[i])), shots: gm.chargedMoving.shots, cost: gm.chargedMoving.cost, tags: tagText(gm.chargedMoving.tags) });
-  if (gm.jump) rows.push({ label: 'Jump ki blast', type: 'Jump', dmg: GM(g => g.jump.damage), shots: gm.jump.count, cost: gm.jump.cost });
-  if (gm.dash) rows.push({ label: 'Dash ki blast', type: 'Dash', dmg: GM(g => g.dash.damage), shots: gm.dash.count, cost: gm.dash.cost });
-  if (gm.jumpCharged && same(gm.jumpCharged, gm.dashCharged)) rows.push({ label: 'Jump / dash charged', type: 'Charged', lv: gm.jumpCharged.damage.map((_, i) => GM(g => g.jumpCharged.damage[i])), shots: gm.jumpCharged.shots, cost: gm.jumpCharged.cost });
+  const rkOf = (key, pick) => movePos(key, pick, pick(gm));
+  if (gm.charged) rows.push({ label: 'Charged ki blast', rk: rkOf('kc', g => g.charged?.damage?.at(-1)), type: 'Charged', lv: gm.charged.damage.map((_, i) => GM(g => g.charged.damage[i])), shots: gm.charged.shots, cost: gm.charged.cost, tags: tagText(gm.charged.tags) });
+  if (gm.chargedMoving && !same(gm.chargedMoving, gm.charged)) rows.push({ label: 'Charged, while moving', rk: rkOf('kcm', g => g.chargedMoving?.damage?.at(-1)), type: 'Charged', lv: gm.chargedMoving.damage.map((_, i) => GM(g => g.chargedMoving.damage[i])), shots: gm.chargedMoving.shots, cost: gm.chargedMoving.cost, tags: tagText(gm.chargedMoving.tags) });
+  if (gm.jump) rows.push({ label: 'Jump ki blast', rk: rkOf('kj', g => g.jump?.damage), type: 'Jump', dmg: GM(g => g.jump.damage), shots: gm.jump.count, cost: gm.jump.cost });
+  if (gm.dash) rows.push({ label: 'Dash ki blast', rk: rkOf('kd', g => g.dash?.damage), type: 'Dash', dmg: GM(g => g.dash.damage), shots: gm.dash.count, cost: gm.dash.cost });
+  if (gm.jumpCharged && same(gm.jumpCharged, gm.dashCharged)) rows.push({ label: 'Jump / dash charged', rk: rkOf('kjc', g => g.jumpCharged?.damage?.at(-1)), type: 'Charged', lv: gm.jumpCharged.damage.map((_, i) => GM(g => g.jumpCharged.damage[i])), shots: gm.jumpCharged.shots, cost: gm.jumpCharged.cost });
   else {
-    if (gm.jumpCharged) rows.push({ label: 'Jump, charged', type: 'Charged', lv: gm.jumpCharged.damage.map((_, i) => GM(g => g.jumpCharged.damage[i])), shots: gm.jumpCharged.shots, cost: gm.jumpCharged.cost });
-    if (gm.dashCharged) rows.push({ label: 'Dash, charged', type: 'Charged', lv: gm.dashCharged.damage.map((_, i) => GM(g => g.dashCharged.damage[i])), shots: gm.dashCharged.shots, cost: gm.dashCharged.cost });
+    if (gm.jumpCharged) rows.push({ label: 'Jump, charged', rk: rkOf('kjc', g => g.jumpCharged?.damage?.at(-1)), type: 'Charged', lv: gm.jumpCharged.damage.map((_, i) => GM(g => g.jumpCharged.damage[i])), shots: gm.jumpCharged.shots, cost: gm.jumpCharged.cost });
+    if (gm.dashCharged) rows.push({ label: 'Dash, charged', rk: rkOf('kdc', g => g.dashCharged?.damage?.at(-1)), type: 'Charged', lv: gm.dashCharged.damage.map((_, i) => GM(g => g.dashCharged.damage[i])), shots: gm.dashCharged.shots, cost: gm.dashCharged.cost });
   }
   return rows;
 }
 
 /** A card in the Command list's style: a coloured head, the main number large, the rest as small tiles. */
-function Card({ cls, name, right = null, type, main, mainSub = [], spec = [], minor = [], fx = null }) {
+function Card({ cls, name, right = null, type, main, mainSub = [], spec = [], minor = [], fx = null, rk = null }) {
   return (
     <div className={`mcard ${cls}`}>
       <div className="mh"><span className="mvn">{name}</span>{right && <span className="mhr">{right}</span>}</div>
       <div className="mbody">
-        <div className="mmain">{type && <span className="mt">{type}</span>}{main}{mainSub.map((s, i) => <small key={i}>{s}</small>)}</div>
+        <div className="mmain">{type && <span className="mt">{type}</span>}{main}{rk != null && <Rk p={rk} />}{mainSub.map((s, i) => <small key={i}>{s}</small>)}</div>
         {(spec.length > 0 || minor.length > 0) && (
           <div className="mside">
             {spec.length > 0 && <div className="spec">{spec.map(([l, v]) => <div key={l}><span>{l}</span><b>{v}</b></div>)}</div>}
@@ -215,48 +216,53 @@ function Small({ title, get, fmt = F.int }) {
 }
 
 /* ------------------------------------------------------------------ each section's Full form */
-function OffenseFull({ side, phone }) {
+function MeleeFull({ side }) {
   const { view: v } = side;
   const gm = gameMoves(side);
   const hitsGet = ['rush', 'hit2', 'hit3', 'hit4', 'hit5'];
-  const kr = kiRows(side);
   return (
     <>
       <Gh>Rush</Gh>
       <div className="tiles hitstrip">
-        {hitsGet.map((k, i) => <TV key={k} label={`Hit ${i + 1}`} title={`Rush hit ${i + 1}`} get={A(x => x[k])} cls="sm" />)}
+        {hitsGet.map((k, i) => <TV key={k} label={`Hit ${i + 1}`} title={`Rush hit ${i + 1}`} get={A(x => x[k])} cls="sm" rk={<Rk p={rosterPos(`hit-${k}`, x => x[k], v[k])} />} />)}
         <TV label="5-hit total" title="Rush 5-hit" get={A(x => x.rush5Hit)} rk={<Rk p={rosterPos('rush5', x => x.rush5Hit, v.rush5Hit)} />} />
-        <TV label="Into armor" title="Rush 5-hit into armor" get={A(x => x.fiveHitAfterArmor)} />
+        <TV label="Into armor" title="Rush 5-hit into armor" get={A(x => x.fiveHitAfterArmor)} rk={<Rk p={rosterPos('intoarm', x => x.fiveHitAfterArmor, v.fiveHitAfterArmor)} />} />
       </div>
       <Gh>Smash and throw</Gh>
       <div className="tiles t5">
-        {gm.smash.map((_, i) => <TV key={i} label={`Smash Lv.${i + 1}`} title={`Smash, Charge Lv.${i + 1}`} get={GM(g => g.smash[i])} rk={i === 0 ? <Rk p={rosterPos('smash', x => x.smash, v.smash)} /> : null} />)}
+        {gm.smash.map((_, i) => <TV key={i} label={`Smash Lv.${i + 1}`} title={`Smash, Charge Lv.${i + 1}`} get={GM(g => g.smash[i])}
+          rk={<Rk p={i === 0 ? rosterPos('smash', x => x.smash, v.smash) : movePos(`smash${i}`, g => g.smash[i], gm.smash[i])} />} />)}
         <TV label="Throw" get={A(x => x.throw)} rk={<Rk p={rosterPos('throw', x => x.throw, v.throw)} />} />
-        <TV label="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" less sub="hits to break" />
+        <TV label="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" less sub="hits to break" rk={<Rk p={rosterPos('abrk', x => x.armorBreak, v.armorBreak, true)} title="Fewer is better" />} />
       </div>
       <Gh>Pursuits</Gh>
       <div className="tiles t5">
         <TV label="Vanishing Attack" get={A(x => x.vanishingAttack)} rk={v.vanishingAttack != null ? <Rk p={rosterPos('pursuit', x => x.pursuit, v.vanishingAttack)} /> : null} sub={v.vanishingAttack == null ? "Can't use it" : null} />
-        <TV label="Dragon Smash" title="Dragon Smash (Dragon Homing)" get={A(x => x.dragonSmash)} sub={v.dragonSmash == null ? "Can't use it" : 'after Dragon Homing'} />
-        <TV label="Lightning Attack" get={A(x => x.lightningAttack)} sub={v.lightningAttack == null ? "Can't use it" : '2 hits'} />
-      </div>
-      <Gh cls="kib">Ki blasts</Gh>
-      <div className="mrow" style={{ '--n': phone ? 1 : 3 }}>
-        {kr.map(r => {
-          const last = r.lv ? r.lv.length - 1 : null;
-          const spec = [];
-          if (r.lv) r.lv.forEach((g, i) => spec.push([`Lv.${i + 1}`, <Small title={`${r.label}, Charge Lv.${i + 1}`} get={g} />]));
-          spec.push(['Shots', r.shotsGet ? <Small title="Ki blast limit" get={r.shotsGet} fmt={F.count} /> : r.shots]);
-          spec.push(['Ki cost', r.costGet ? <><Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /><small> bars</small></> : <>{F.bars(r.cost)}<small> bars</small></>]);
-          if (r.volley) spec.push(['Volley', <Small title="Full volley" get={A(x => volley(x))} />]);
-          return (
-            <Card key={r.label} cls="k" name={r.label} type={r.type}
-              main={<Big title={r.lv ? `${r.label}, Charge Lv.${last + 1}` : r.label} get={r.lv ? r.lv[last] : r.dmg} />}
-              mainSub={[r.lv ? `Lv.${last + 1}, per shot` : 'per shot']} spec={spec} minor={r.tags || []} />
-          );
-        })}
+        <TV label="Dragon Smash" title="Dragon Smash (Dragon Homing)" get={A(x => x.dragonSmash)} sub={v.dragonSmash == null ? "Can't use it" : 'after Dragon Homing'} rk={v.dragonSmash != null ? <Rk p={rosterPos('dsmash', x => x.dragonSmash, v.dragonSmash)} /> : null} />
+        <TV label="Lightning Attack" get={A(x => x.lightningAttack)} sub={v.lightningAttack == null ? "Can't use it" : '2 hits'} rk={v.lightningAttack != null ? <Rk p={rosterPos('lightning', x => x.lightningAttack, v.lightningAttack)} /> : null} />
       </div>
     </>
+  );
+}
+
+function KiFull({ side, phone }) {
+  const kr = kiRows(side);
+  return (
+    <div className="mrow" style={{ '--n': phone ? 1 : 3 }}>
+      {kr.map(r => {
+        const last = r.lv ? r.lv.length - 1 : null;
+        const spec = [];
+        if (r.lv) r.lv.forEach((g, i) => spec.push([`Lv.${i + 1}`, <Small title={`${r.label}, Charge Lv.${i + 1}`} get={g} />]));
+        spec.push(['Shots', r.shotsGet ? <Small title="Ki blast limit" get={r.shotsGet} fmt={F.count} /> : r.shots]);
+        spec.push(['Ki cost', r.costGet ? <><Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /><small> bars</small></> : <>{F.bars(r.cost)}<small> bars</small></>]);
+        if (r.volley) spec.push(['Volley', <Small title="Full volley" get={A(x => volley(x))} />]);
+        return (
+          <Card key={r.label} cls="k" name={r.label} type={r.type} rk={r.rk}
+            main={<Big title={r.lv ? `${r.label}, Charge Lv.${last + 1}` : r.label} get={r.lv ? r.lv[last] : r.dmg} />}
+            mainSub={[r.lv ? `Lv.${last + 1}, per shot` : 'per shot']} spec={spec} minor={r.tags || []} />
+        );
+      })}
+    </div>
   );
 }
 
@@ -349,17 +355,20 @@ function LimitsFull({ side }) {
 
 function MobilityFull({ side }) {
   const m = side.c.mobility || {};
+  const v = side.view;
   const per = (x) => (typeof x === 'number' ? `then ${F.bars(x)} bars/s` : null);
   const num = (x) => (typeof x === 'number' ? F.bars(x) : '–');
+  // a dash's bar: where its running cost (else its start cost) sits in the roster, cheaper is fuller
+  const bar = (key, pick) => { const x = pick(m); return typeof x === 'number' ? <Rk p={rosterPos(key, (_, c) => pick(c.mobility || {}), x, true)} title="Cheaper is better" /> : null; };
   return (
     <div className="tiles t4">
-      <TV label="Short Dash" get={A(x => x.shortDashCost)} fmt={F.bars} kind="dec" less unit="bars" />
-      <TT label="Step-cancel" value={num(m.stepCancelCost)} unit="bars" />
-      <TT label="Dragon Dash" value={num(m.dragonDash?.start)} unit="bars" sub={per(m.dragonDash?.perSecond)} />
-      <TT label="High-Speed Dash" value={num(m.dragonDash?.start)} unit="bars" sub={per(m.dragonDash?.highSpeedPerSecond)} />
-      <TT label="Z-Burst Dash" value={num(m.zBurstDash?.start)} unit="bars" sub={per(m.zBurstDash?.perSecond)} />
-      <TT label="Ascend / Descend" value={num(m.dashUp?.start)} unit="bars" sub={per(m.dashUp?.perSecond)} />
-      <TT label="Dragon Homing" value={num(m.dragonHoming?.start)} unit="bars" sub={per(m.dragonHoming?.perSecond)} />
+      <TV label="Short Dash" get={A(x => x.shortDashCost)} fmt={F.bars} kind="dec" less unit="bars" rk={<Rk p={rosterPos('sdash', x => x.shortDashCost, v.shortDashCost, true)} title="Cheaper is better" />} />
+      <TT label="Step-cancel" value={num(m.stepCancelCost)} unit="bars" rk={bar('scancel', x => x.stepCancelCost)} />
+      <TT label="Dragon Dash" value={num(m.dragonDash?.start)} unit="bars" sub={per(m.dragonDash?.perSecond)} rk={bar('ddash', x => x.dragonDash?.perSecond)} />
+      <TT label="High-Speed Dash" value={num(m.dragonDash?.start)} unit="bars" sub={per(m.dragonDash?.highSpeedPerSecond)} rk={bar('hsdash', x => x.dragonDash?.highSpeedPerSecond)} />
+      <TT label="Z-Burst Dash" value={num(m.zBurstDash?.start)} unit="bars" sub={per(m.zBurstDash?.perSecond)} rk={bar('zdash', x => x.zBurstDash?.perSecond)} />
+      <TT label="Ascend / Descend" value={num(m.dashUp?.start)} unit="bars" sub={per(m.dashUp?.perSecond)} rk={bar('updash', x => x.dashUp?.perSecond)} />
+      <TT label="Dragon Homing" value={num(m.dragonHoming?.start)} unit="bars" sub={per(m.dragonHoming?.perSecond)} rk={bar('dhome', x => x.dragonHoming?.perSecond)} />
       <TT label="Flight" value={m.canFly === false ? "Can't fly" : 'Can fly'} cls="txt" />
     </div>
   );
@@ -391,8 +400,8 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
       <>
         <QuickBody id="tough" side={side} />
         <div className="tiles t5">
-          {v.armor > 0 && <TV label="Armored 5-hit taken" title="5-hit taken, armored" get={A(fiveHitTakenArmored)} less sub="with this armor up" />}
-          <TV label="Switch" title="Switch cooldown" get={A(x => x.switch)} fmt={F.secs} kind="dec" less sub="cooldown" />
+          {v.armor > 0 && <TV label="Armored 5-hit taken" title="5-hit taken, armored" get={A(fiveHitTakenArmored)} less sub="with this armor up" rk={<Rk p={rosterPos('armtaken', fiveHitTakenArmored, fiveHitTakenArmored(v), true)} title="Less is better" />} />}
+          <TV label="Switch" title="Switch cooldown" get={A(x => x.switch)} fmt={F.secs} kind="dec" less sub="cooldown" rk={<Rk p={rosterPos('switch', x => x.switch, v.switch, true)} title="Shorter is better" />} />
           <TT label="Health bars" value={+(v.health / 10000).toFixed(2)} sub="10,000 each" />
         </div>
       </>
@@ -406,13 +415,14 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
           <TT label="Max ki" value={c.stats.maxKi ?? 5} unit="bars" />
           <TV label="Starting ki" get={A(x => x.startingKi)} fmt={F.bars} kind="dec" unit="bars" />
           <TT label="Refills to" value={v.kiRegenRange} unit="bars" sub="on its own" />
-          <TV label="Ki from hits" get={A(x => x.attackKiGain)} fmt={F.dec} kind="dec" unit="bars" />
+          <TV label="Ki from hits" get={A(x => x.attackKiGain)} fmt={F.dec} kind="dec" unit="bars" rk={<Rk p={rosterPos('kgain', x => x.attackKiGain, v.attackKiGain)} />} />
           <TV label="Skill gauge per min" title="Skill gauge per minute" get={A(x => parseFloat(x.skillRegen))} fmt={F.dec} kind="dec" />
         </div>
       </>
     );
   }
-  if (id === 'off') return <OffenseFull side={side} phone={phone} />;
+  if (id === 'melee') return <MeleeFull side={side} />;
+  if (id === 'kib') return <KiFull side={side} phone={phone} />;
   if (id === 'chains') return <ChainsFull side={side} phone={phone} />;
   if (id === 'spk') {
     return (

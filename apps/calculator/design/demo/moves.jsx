@@ -132,7 +132,6 @@ function BlastCard({ side, sideKey, b }) {
     <div className={`mcard ${u ? 'u' : 'b'}`}>
       <div className="mh">
         <span className={`slot ${u ? 'u' : 'b'}`}>{slot}</span><span className="mvn">{b.name}</span>
-        {b.variant && <span className="alt">Alt. ULT, with a costume</span>}
         {blastCost(side, b)}
       </div>
       <div className="mbody">
@@ -142,6 +141,7 @@ function BlastCard({ side, sideKey, b }) {
           <small>Base {F.int(d.base)}</small>
           {d.boosted != null && <small title="1 extra bar of ki spent while firing">Boosted <i>{F.int(d.boosted)}</i></small>}
           {b.spread && <small>{b.spread.commonHits} of {b.spread.shotsFired} shots × {F.int(b.spread.perShot)}</small>}
+          {b.variant && <span className="altv">{u ? 'Alternate ultimate' : 'Alternate blast'}<small>with a costume</small></span>}
         </div>
         <div className="mside">
           <div className="spec">{blastTiles(b).map(t => <div key={t.label}><span>{t.label}</span><b>{t.value}</b></div>)}</div>

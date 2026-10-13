@@ -2,31 +2,14 @@
 // class and DP, with a preview) and the capsule picker (the build with its budget and attack-cap meters,
 // every allowed capsule by type with what it changes on this build).
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import transformations from '../../../../referencedata/transformations.json';
 import {
   characters, capsules, teams, byId, faceUrl, artUrl, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, nameParts,
-  CAPSULE_TYPES, typeClass, capsuleSummary, buildCheck, inAttackGroup, evaluate, blastsOf, blastDamage, volley, conditionNeedsOf,
+  CAPSULE_TYPES, typeClass, capsuleSummary, buildCheck, inAttackGroup, evaluate, blastsOf, blastDamage, volley, conditionNeedsOf, formsOf,
 } from './model.js';
 import { usePhone, Rk, Name, RulesetSelect } from './ui.jsx';
 import { ClassChip } from './sheet.jsx';
 import { parseCondition } from '../../src/utils/conditions.js';
 import { F } from './format.js';
-
-/* ------------------------------------------------------------------ forms (referencedata/transformations.json) */
-const ADJ = new Map();
-for (const [id, t] of Object.entries(transformations)) {
-  if (id.startsWith('_')) continue;
-  for (const to of t.transformsTo || []) {
-    if (!ADJ.has(id)) ADJ.set(id, new Set());
-    if (!ADJ.has(to)) ADJ.set(to, new Set());
-    ADJ.get(id).add(to); ADJ.get(to).add(id);
-  }
-}
-function formsOf(id) {
-  const seen = new Set([id]), q = [id];
-  while (q.length) for (const n of ADJ.get(q.shift()) || []) if (!seen.has(n)) { seen.add(n); q.push(n); }
-  return [...seen].filter(x => byId.has(x)).sort((a, b) => characters.findIndex(c => c.id === a) - characters.findIndex(c => c.id === b));
-}
 
 /* ------------------------------------------------------------------ character picker */
 function Face({ c, cur, hov, sel, onHover, onPick, onOpen }) {

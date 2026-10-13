@@ -68,6 +68,8 @@ The league chose option B in the 2026-10-09 review doc: rebuild the calculator t
   - **Full** (`FullForm` in `fullstats.jsx`): the Quick form blown up in the same look with every detail (tiles, ki blast and Rush Chain cards, armor badges), as the Command list's move cards do. The league found row tables too plain next to Quick.
 
   A Quick / Full switch sets every section and More / Less switches one.
+
+  The order is Toughness, Resources, Command list, Melee, Rush Chains, Ki blasts, Sparking!, then the one-line sections. Roster bars go on every stat where better is clear. The fighter column holds Forms (switching keeps the build), Active, Conditions, Capsules and league builds.
 - **Characters tab:** a click selects a fighter (the preview stays on it, with clickable forms); a second click or a double-click opens it.
 - **Pinned on Fighter:** a headline strip, the section links and Find, which opens a closed section to reach a match.
 - **The capsule picker never replaces the page.** It docks in the fighter column on a wide screen, where hovering a capsule previews its effect on the headline strip. Narrower, it is a bottom sheet.

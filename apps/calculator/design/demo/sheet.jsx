@@ -2,8 +2,8 @@
 // Conditions, Capsules), each section's Quick form, and the build controls shared with Versus.
 import React from 'react';
 import {
-  artUrl, nameParts, classColours, chipText, rosterPos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
-  capsuleSummary, typeClass, buildCheck, isGiant, figHeight,
+  artUrl, faceUrl, nameParts, classColours, chipText, rosterPos, movePos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
+  capsuleSummary, typeClass, buildCheck, isGiant, figHeight, formsOf, byId, capsuleById,
 } from './model.js';
 import { Tap, Rk, Chev, Name, Switch, RulesetSelect, usePhone } from './ui.jsx';
 import { CmdRows, SheetChains } from './moves.jsx';
@@ -148,9 +148,9 @@ export function QuickBody({ id, side }) {
         </div>
         <div className="tiles t5">
           <div className="tile"><span>5-hit taken</span><Tap as="b" title="5-hit damage taken" get={A(fiveHitTaken)} lessIsBetter /><Rk p={rosterPos('taken', fiveHitTaken, v.melee, true)} title="Less is better" /></div>
-          <div className="tile"><span>Melee def</span><Tap as="b" title="Melee defense" get={A(x => 1 - x.meleeDefenseStat)} fmt={(x) => F.def(1 - x)} kind="def" /></div>
-          <div className="tile"><span>Blast def</span><Tap as="b" title="Blast defense" get={A(x => 1 - x.blastDefense)} fmt={(x) => F.def(1 - x)} kind="def" /></div>
-          <div className="tile"><span>Ki-blast def</span><Tap as="b" title="Ki-blast defense" get={A(x => 1 - x.energy)} fmt={(x) => F.def(1 - x)} kind="def" /></div>
+          <div className="tile"><span>Melee def</span><Tap as="b" title="Melee defense" get={A(x => 1 - x.meleeDefenseStat)} fmt={(x) => F.def(1 - x)} kind="def" /><Rk p={rosterPos('mdef', x => 1 - x.meleeDefenseStat, 1 - v.meleeDefenseStat)} /></div>
+          <div className="tile"><span>Blast def</span><Tap as="b" title="Blast defense" get={A(x => 1 - x.blastDefense)} fmt={(x) => F.def(1 - x)} kind="def" /><Rk p={rosterPos('bdef', x => 1 - x.blastDefense, 1 - v.blastDefense)} /></div>
+          <div className="tile"><span>Ki-blast def</span><Tap as="b" title="Ki-blast defense" get={A(x => 1 - x.energy)} fmt={(x) => F.def(1 - x)} kind="def" /><Rk p={rosterPos('edef', x => 1 - x.energy, 1 - v.energy)} /></div>
           <div className="tile"><span>Armor</span><Tap as="b" title="Armor" get={A(x => x.armor)} fmt={F.armor} kind="def" /></div>
         </div>
       </>
@@ -197,8 +197,7 @@ export function QuickBody({ id, side }) {
       </>
     );
   }
-  if (id === 'off') {
-    const ktype = gm.kiBlastTags.find(t => ['laser', 'thrown', 'giant', 'none'].includes(t));
+  if (id === 'melee') {
     return (
       <>
         <div className="tiles t5" style={{ marginTop: 0 }}>
@@ -206,9 +205,16 @@ export function QuickBody({ id, side }) {
           <div className="tile"><span>Smash</span><Tap as="b" title="Smash" get={A(x => x.smash)} /><Rk p={rosterPos('smash', x => x.smash, v.smash)} /></div>
           <div className="tile"><span>Throw</span><Tap as="b" title="Throw" get={A(x => x.throw)} /><Rk p={rosterPos('throw', x => x.throw, v.throw)} /></div>
           <div className="tile"><span>Pursuit</span><Tap as="b" title="Pursuit (Vanishing Attack)" get={A(x => x.vanishingAttack ?? x.pursuit)} /><Rk p={rosterPos('pursuit', x => x.pursuit, v.vanishingAttack ?? v.pursuit)} /></div>
-          <div className="tile"><span>Armor break</span><Tap as="b" title="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" lessIsBetter>{v.armorBreak}<small>hits</small></Tap></div>
+          <div className="tile"><span>Armor break</span><Tap as="b" title="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" lessIsBetter>{v.armorBreak}<small>hits</small></Tap><Rk p={rosterPos('abrk', x => x.armorBreak, v.armorBreak, true)} title="Fewer is better" /></div>
         </div>
-        <div className="tiles t5">
+      </>
+    );
+  }
+  if (id === 'kib') {
+    const ktype = gm.kiBlastTags.find(t => ['laser', 'thrown', 'giant', 'none'].includes(t));
+    return (
+      <>
+        <div className="tiles t5" style={{ marginTop: 0 }}>
           <div className="tile kib"><span>Ki blast{ktype && ktype !== 'none' && <em className="kt">{ktype.toUpperCase()}</em>}</span><Tap as="b" title="Ki blast" get={A(x => x.kiBlastDmg)} /><Rk p={rosterPos('kib', x => x.kiBlastDmg, v.kiBlastDmg)} /></div>
           <div className="tile kib"><span>Ki blast limit</span><Tap as="b" title="Ki blast limit" get={A(x => x.kiBlastLimit)} fmt={F.count} /><Rk p={rosterPos('kibl', x => Math.min(x.kiBlastLimit, 20), Math.min(v.kiBlastLimit, 20))} /></div>
           <div className="tile kib"><span>Ki blast cost</span><b><Tap title="Ki blast cost" get={A(x => x.kiBlastCost)} fmt={F.bars} kind="dec" lessIsBetter /><small>bars</small></b><Rk p={rosterPos('kibc', x => x.kiBlastCost, v.kiBlastCost, true)} title="Less is better" /></div>
@@ -224,7 +230,7 @@ export function QuickBody({ id, side }) {
   if (id === 'spk') {
     return (
       <div className="tiles t5" style={{ marginTop: 0 }}>
-        <div className="tile"><span>Hyper Smash</span><Tap as="b" title="Hyper Smash" get={(p) => gameMoves(p.A).hyperSmash} /></div>
+        <div className="tile"><span>Hyper Smash</span><Tap as="b" title="Hyper Smash" get={(p) => gameMoves(p.A).hyperSmash} /><Rk p={movePos('hyper', g => g.hyperSmash, gm.hyperSmash)} /></div>
         <div className="tile"><span>Burst Melee Attack</span><b>1,250</b></div>
         <div className="tile"><span>Burst Rush</span><b>450<small>per hit</small></b></div>
         <div className="tile"><span>Violent Rush</span><b>{c.moveset?.unavailable?.includes('Violent Rush') ? 'No' : 'Yes'}</b></div>
@@ -235,18 +241,62 @@ export function QuickBody({ id, side }) {
   return null;
 }
 
-/** The fighter column: the figure, the nameplate, then the build (Active, Conditions, Capsules). */
-export function FighterColumn({ side, ruleset, setSpec, openPicker }) {
+/** A fighter's forms as faces; a click switches to that form (the build stays). */
+export function FormSwitch({ c, onForm }) {
+  const forms = formsOf(c.id);
+  if (forms.length < 2) return null;
+  return (
+    <div className="fforms">
+      <p className="lbl2"><span>Forms</span></p>
+      <div className="ffl">{forms.map(f => {
+        const x = byId.get(f);
+        return <button key={f} className={f === c.id ? 'on' : ''} aria-pressed={f === c.id} title={`${x.name}, DP ${x.dp}`} onClick={() => f !== c.id && onForm(f)}><img src={faceUrl(x)} alt={x.name} /><b>{x.dp}</b></button>;
+      })}</div>
+    </div>
+  );
+}
+
+/** The league's lineup builds for this fighter (the website's linked lineups); a click puts one on. */
+export function LeagueBuilds({ side, onChange }) {
+  const lb = side.c.leagueBuilds;
+  if (!lb?.top?.length) return null;
+  const same = (ids) => ids.length === side.spec.caps.length && ids.every(id => side.spec.caps.includes(id));
+  return (
+    <>
+      <div className="sublbl" style={{ marginTop: 12 }}><span>League builds</span><em>top {lb.top.length} of {lb.builds}, from {lb.lineups} lineups</em></div>
+      <div className="lb">
+        {lb.top.map((b, i) => {
+          const caps = b.capsules.map(id => capsuleById.get(id)).filter(Boolean);
+          const byType = new Map();
+          for (const x of caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);
+          const on = same(b.capsules);
+          return (
+            <button key={i} className={on ? 'on' : ''} onClick={() => onChange({ ...side.spec, caps: [...b.capsules] })} aria-pressed={on}>
+              <div className="lbh"><span>{b.teams.join(', ')}</span><em>{b.uses} lineup{b.uses === 1 ? '' : 's'}, Season {b.season}</em></div>
+              <div className="catbar">{[...byType].map(([t, n]) => <i key={t} className={typeClass(t)} style={{ flex: n }} />)}</div>
+              {!on && <div className="tags">{caps.map(x => <span key={x.id} className={`cm ${typeClass(x.type)}`}>{x.name}</span>)}</div>}
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+/** The fighter column: the figure, the nameplate, then the build (Forms, Active, Conditions, Capsules, league builds). */
+export function FighterColumn({ side, ruleset, setSpec, openPicker, onForm }) {
   const { c } = side;
   return (
     <>
       <div className="fig"><img src={artUrl(c.id)} alt="" className={isGiant(c) ? 'giant' : ''} style={{ '--fh': figHeight(c) }} /></div>
       <Nameplate c={c} onChange={() => openPicker('char', 'A')} />
       <div className="build">
+        {onForm && <FormSwitch c={c} onForm={onForm} />}
         <p className="lbl2"><span>Active</span></p>
         <ActiveToggles side={side} onChange={setSpec} />
         <Conditions side={side} onChange={setSpec} compact />
         <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} />
+        <LeagueBuilds side={side} onChange={setSpec} />
       </div>
     </>
   );

@@ -8,7 +8,7 @@ import {
 } from './model.js';
 import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
-import { ClassChip, CapsuleRows, traitChips, ChangeButton, SkillSwitches } from './sheet.jsx';
+import { ClassChip, CapsuleRows, traitChips, ChangeButton, SkillSwitches, LeagueBuilds } from './sheet.jsx';
 import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
@@ -372,35 +372,14 @@ export function AllStats({ phone, sections = null }) {
 
 /* ------------------------------------------------------------------ a side's build panel (Compare, Vs opponent) */
 export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, onClose, cls = '' }) {
-  const lb = side.c.leagueBuilds;
   const chk = buildCheck(side.spec.caps, ruleset);
-  const same = (ids) => ids.length === side.spec.caps.length && ids.every(id => side.spec.caps.includes(id));
   return (
     <div className={`plate opp sidebuild ${cls}`}>
       <h5>{title}{onClose && <button className="x" onClick={onClose}>Done</button>}</h5>
       <div className="sublbl"><span>Skills and Sparking</span></div>
       <SkillSwitches side={side} onChange={onChange} />
       <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} /></div>
-      {lb?.top?.length > 0 && (
-        <>
-          <div className="sublbl" style={{ marginTop: 12 }}><span>League builds</span><em>top {lb.top.length} of {lb.builds}, from {lb.lineups} lineups</em></div>
-          <div className="lb">
-            {lb.top.map((b, i) => {
-              const caps = b.capsules.map(id => capsuleById.get(id)).filter(Boolean);
-              const byType = new Map();
-              for (const x of caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);
-              const on = same(b.capsules);
-              return (
-                <button key={i} className={on ? 'on' : ''} onClick={() => onChange({ ...side.spec, caps: [...b.capsules] })} aria-pressed={on}>
-                  <div className="lbh"><span>{b.teams.join(', ')}</span><em>{b.uses} lineup{b.uses === 1 ? '' : 's'}, Season {b.season}</em></div>
-                  <div className="catbar">{[...byType].map(([t, n]) => <i key={t} className={typeClass(t)} style={{ flex: n }} />)}</div>
-                  {!on && <div className="tags">{caps.map(x => <span key={x.id} className={`cm ${typeClass(x.type)}`}>{x.name}</span>)}</div>}
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+      <LeagueBuilds side={side} onChange={onChange} />
       <div className="fl" style={{ marginTop: 8 }}><small>Or</small><button onClick={() => onChange({ ...side.spec, caps: [] })}>No capsules</button>{other && <button onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>}</div>
       {chk.problems.length > 0 && <div className="bdhint">Leave a rule broken to see the numbers anyway; the ruleset only warns.</div>}
     </div>

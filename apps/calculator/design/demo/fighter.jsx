@@ -66,8 +66,9 @@ const SECS = [
   { id: 'tough', title: 'Toughness', cls: '' },
   { id: 'res', title: 'Resources', cls: 'res' },
   { id: 'cmd', title: 'Command list', cls: 'cmd' },
-  { id: 'off', title: 'Offense', cls: 'off' },
+  { id: 'melee', title: 'Melee', cls: 'off' },
   { id: 'chains', title: 'Rush Chains', cls: 'mov', note: 'Damage at full charge' },
+  { id: 'kib', title: 'Ki blasts', cls: 'kib' },
   { id: 'spk', title: 'Sparking! Mode', cls: 'spk' },
   { id: 'armor', title: 'Breaking armor', cls: 'armp', fullOnly: true },
   { id: 'limits', title: 'Combat limits', cls: 'new', fullOnly: true },
@@ -87,7 +88,7 @@ function findText(root, needle, inGhost) {
   return null;
 }
 
-export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, preview = null }) {
+export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, preview = null, onForm = null }) {
   const phone = usePhone();
   const quick = qp('A', 'col');
   const fsecs = fullSections(side);
@@ -174,7 +175,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
   return (
     <div className={`cols fpage${dock ? ' docked' : ''}`}>
       <div className={`art${quick && !phone ? ' qpon' : ''}${dock ? ' dock' : ''}`}>
-        {dock || (quick && !phone ? quick : <FighterColumn side={side} ruleset={ruleset} setSpec={setSpec} openPicker={openPicker} />)}
+        {dock || (quick && !phone ? quick : <FighterColumn side={side} ruleset={ruleset} setSpec={setSpec} openPicker={openPicker} onForm={onForm} />)}
         {phone && quick}
       </div>
       <div className="sheet" ref={root}>

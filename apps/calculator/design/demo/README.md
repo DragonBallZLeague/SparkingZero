@@ -149,6 +149,23 @@ the same look, with every detail:
 
 Changed numbers show their base under them. The row tables are gone from the demo.
 
+**Third pass, the same day:**
+- **Offense splits** into Melee and Ki blasts, with Rush Chains between them (Melee, Rush Chains, Ki blasts), in
+  both forms.
+- **Roster bars** on every stat where more (or less) is clearly better:
+  - the three defenses, armor break, every rush hit and Into armor, the smash levels, Dragon Smash and Lightning
+    Attack;
+  - each ki blast card's main number;
+  - Armored 5-hit taken, Switch, Ki from hits, Hyper Smash;
+  - every dash's cost (cheaper is fuller).
+- **Forms** sit above Active in the fighter column; a click switches form and keeps the build.
+- **League builds** sit under the capsules on the Fighter page, the same list as Versus's rails (`LeagueBuilds` in
+  `sheet.jsx`).
+- **An alternate move** is marked in its card's damage column ("Alternate blast" or "Alternate ultimate", with a
+  costume) instead of beside its name.
+- **Move cards' small tiles** sit two or more a row and wrap long values within the tile, so the card is shorter.
+- **Scroll bars** are thin and dark, in the page's colours.
+
 **The Characters tab.** A click selects a fighter instead of opening it. Hovering the grid still previews another
 fighter, and leaving the grid goes back to the selected one, so the preview's Open, Compare with and Opponent for
 buttons act on the fighter you clicked. A second click or a double-click opens it. The preview's forms are buttons

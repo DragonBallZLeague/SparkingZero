@@ -8,6 +8,7 @@ import capsules from '../../public/data/capsules.json';
 import teams from '../../public/data/teams.json';
 import meta from '../../public/data/meta.json';
 import artSizes from '../../public/char_art/sizes.json';
+import transformations from '../../../../referencedata/transformations.json';
 import { collectEffects, computeStats, scaleChannel, APPLIED_KEYS } from '../../src/utils/engine.js';
 import { applyLightBodyKiBlastArmor, kiBlastVolley, calcOutgoingCombo, damageTaken, armorFactor, calcFiveHitDamageTaken } from '../../src/utils/calculator.js';
 import { LIGHT_BODY, DRACONIC_AURA } from '../../src/utils/specialCapsules.js';
@@ -25,6 +26,23 @@ export const faceUrl = (c) => `../../public/char_thumbnails/${c.image}`;
 export const isGiant = (c) => c?.class?.key === 'giant';
 /** The figure's height on its game card, times 1.3 for Giants (the cards shrink them; approved on Janemba). */
 export const figHeight = (c) => Math.round((artSizes[c.id] || 1700) * (isGiant(c) ? 1.3 : 1));
+
+/* ------------------------------------------------------------------ forms (referencedata/transformations.json) */
+const ADJ = new Map();
+for (const [id, t] of Object.entries(transformations)) {
+  if (id.startsWith('_')) continue;
+  for (const to of t.transformsTo || []) {
+    if (!ADJ.has(id)) ADJ.set(id, new Set());
+    if (!ADJ.has(to)) ADJ.set(to, new Set());
+    ADJ.get(id).add(to); ADJ.get(to).add(id);
+  }
+}
+/** Every form of a fighter (its transformation chain), in roster order. */
+export function formsOf(id) {
+  const seen = new Set([id]), q = [id];
+  while (q.length) for (const n of ADJ.get(q.shift()) || []) if (!seen.has(n)) { seen.add(n); q.push(n); }
+  return [...seen].filter(x => byId.has(x)).sort((a, b) => characters.findIndex(c => c.id === a) - characters.findIndex(c => c.id === b));
+}
 
 /* ------------------------------------------------------------------ names */
 const FORM_WORDS = /\s(Super Saiyan|Ultra Instinct|Full Power|Giant Form|Final Form|1st Form|2nd Form|3rd Form|4th Form|Perfect Form|Golden|Kaioken|God of Destruction|Berserk|Max Power|Fusion|Rosé)\b/;
@@ -214,6 +232,8 @@ export function rosterPos(key, get, value, lessIsBetter = false) {
   const p = Math.max(0, Math.min(1, (value - r.lo) / (r.hi - r.lo)));
   return lessIsBetter ? 1 - p : p;
 }
+/** rosterPos for a game-file move (gameMoves): `pick` reads it from a fighter's moves with no build. */
+export const movePos = (key, pick, value, lessIsBetter = false) => rosterPos(key, (x, c) => pick(gameMoves({ c, view: x })), value, lessIsBetter);
 /** Chevrons lit (of 10) for a rate, from the roster's slowest to its fastest. */
 export function chevrons(key, get, value) {
   const r = range(key, get);
