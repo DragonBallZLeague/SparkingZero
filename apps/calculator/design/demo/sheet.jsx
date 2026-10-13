@@ -85,7 +85,7 @@ export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, 
   for (const x of chk.caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);
   return (
     <>
-      <p className="lbl2"><span>Capsules</span><span className="rsw"><RulesetSelect /><span>{chk.cost} of {ruleset.totalCost}</span>{onClear && chk.caps.length > 0 && <button className="clr" onClick={onClear}>Clear</button>}</span></p>
+      <p className="lbl2"><span>Capsules</span><span className="rsw"><RulesetSelect /><span>{chk.cost} of {ruleset.totalCost}</span></span></p>
       {chk.caps.length > 0 && <div className="catbar">{[...byType].map(([t, n]) => <i key={t} className={typeClass(t)} style={{ flex: n }} title={`${t} ${n}`} />)}</div>}
       <div className="caps">
         {chk.caps.map((x, i) => (
@@ -96,6 +96,10 @@ export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, 
         {chk.caps.length < slots && (
           <button className="caprow empty" onClick={onEdit}><span className="cst">+</span><b>{chk.caps.length ? 'Add a capsule' : 'Add capsules'}</b><em>{slots - chk.caps.length} free</em></button>
         )}
+      </div>
+      <div className="capacts">
+        <button className="edb" onClick={onEdit}>Edit capsules</button>
+        {onClear && chk.caps.length > 0 && <button className="clr" onClick={onClear}>Clear</button>}
       </div>
       {!compact && chk.problems.map(p => <div className="warn" key={p}>{p}</div>)}
     </>

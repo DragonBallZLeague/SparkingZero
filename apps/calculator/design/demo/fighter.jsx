@@ -1,20 +1,20 @@
 // The Fighter page (round 23): the Sheet and Full stats as one page. Every section keeps one place in one order;
 // Quick shows it as the Sheet does (the game's look, roster bars), Full blows it up with every detail in the same
 // look (as the Command list's move cards do; fullstats.jsx), and More / Less
-// switches one section. A headline strip and the section links stay pinned; Find jumps to any stat or move,
+// switches one section. The section links stay pinned; Find jumps to any stat or move,
 // opening a closed section to reach it. The capsule picker docks in the fighter column (main.jsx), so the
 // numbers stay in view while capsules go on and off.
 import React, { useEffect, useRef, useState } from 'react';
 import { fiveHitTaken, volley } from './model.js';
-import { Tap, Modes, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
+import { Modes, PhoneSectionNav, usePhone } from './ui.jsx';
 import { QuickBody, FighterColumn } from './sheet.jsx';
 import { sections as fullSections, FullForm, Summary } from './fullstats.jsx';
 import { MoveCards } from './moves.jsx';
 import { F } from './format.js';
 
 /**
- * The numbers checked first, pinned at the top once Toughness scrolls away (the league's pick, 2026-10-13); the
- * phone shows the four marked. A fighter that can't charge ki shows its ki regen instead of ki charge.
+ * The numbers checked first, listed in the phone's loadout sheet when the build changes them (a pinned strip of
+ * them was tried on 2026-10-13 and taken out). A fighter that can't charge ki shows its ki regen instead.
  */
 const canCharge = (v) => v.kiCharge > 0;
 export const HEAD = [
@@ -31,31 +31,6 @@ export const HEAD = [
   { label: 'Full volley', title: 'Full volley', get: (v) => volley(v), hide: 1 },
 ];
 const lab = (h, v) => (typeof h.label === 'function' ? h.label(v) : h.label);
-
-/** The headline strip; `preview` (a view with the hovered capsule added) shows where each number would go. */
-function Headline({ preview, phone }) {
-  const pc = usePair();
-  const items = HEAD.filter(h => !h.hide && (!phone || h.ph));
-  const base = pc.base.A.view;
-  return (
-    <div className="hl">
-      {items.map(h => {
-        const fmt = h.fmt || F.int;
-        const get = (v) => h.get(v, base);
-        const now = get(pc.pair.A.view), next = preview ? get(preview) : null;
-        const moves = next != null && typeof now === 'number' && Math.abs(next - now) > 1e-9;
-        const title = typeof h.title === 'function' ? h.title(base) : h.title;
-        return (
-          <div key={title}>
-            <span>{lab(h, base)}</span>
-            <b><Tap title={title} get={(p) => get(p.A.view)} fmt={fmt} kind={h.kind} lessIsBetter={h.less} />{h.unit && <small>{h.unit}</small>}</b>
-            {moves && <em className={`pv${(h.less ? next < now : next > now) ? '' : ' dn'}`}>→ {fmt(next)}</em>}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 /** What the build changes among the headline numbers (the phone's loadout sheet, above the capsules). */
 export function BuildDelta({ side, base }) {
@@ -99,7 +74,7 @@ function findText(root, needle, inGhost) {
   return null;
 }
 
-export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, preview = null, onForm = null, editing = false }) {
+export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, onForm = null }) {
   const phone = usePhone();
   const quick = qp('A', 'col');
   const fsecs = fullSections(side);
@@ -111,7 +86,6 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
   const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
   const root = useRef(null);
   const [here, setHere] = useState(null);
-  const [past, setPast] = useState(false); // Toughness has scrolled under the pinned bar
   const [q, setQ] = useState('');
   const [findOpen, setFindOpen] = useState(false);
   const noRef = useRef(null);
@@ -131,8 +105,6 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
       const off = offset() + 4;
       for (const s of SECS) { const el = document.getElementById(`f-${s.id}`); if (el && el.getBoundingClientRect().top < off) at = s.id; }
       setHere(at);
-      const t = document.getElementById('f-tough');
-      setPast(!!t && t.getBoundingClientRect().bottom < off);
     };
     window.addEventListener('scroll', f, { passive: true });
     f();
@@ -194,7 +166,6 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
       </div>
       <div className="sheet" ref={root}>
         <div className="fhd">
-          {(past || editing || dock) && <Headline preview={preview} phone={phone} />}
           {phone ? (
             <div className="fctl">
               {findOpen ? (

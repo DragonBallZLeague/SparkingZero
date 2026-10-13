@@ -663,3 +663,17 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .cpk.dock > .pk-h { position: sticky; top: 0; z-index: 4; padding: 10px 14px; background: #0f1534; border-bottom: 1px solid var(--line); box-shadow: 0 6px 12px rgba(0,0,0,.35); }
 .cpk.dock > .cbuild { padding-top: 10px; }
 .lsh .x { background: #f97316; color: #0a0d20; font-size: 13px; padding: 4px 18px; }
+
+/* the capsules' Edit and Clear, under the list */
+.capacts { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+.edb { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 14px; color: #fff; cursor: pointer;
+  border: 1px solid rgba(249,115,22,.75); background: rgba(249,115,22,.16); }
+.edb:hover { background: rgba(249,115,22,.32); }
+.capacts .clr { padding: 3px 12px; font-size: 11px; }
+/* the pinned controls (Quick / Full, the section links, Find) on a plate with a neutral edge (the strip of
+   headline numbers above them was taken out) */
+.fhd .fctl, .fhd .fctl:first-child { margin: 0 0 8px; padding: 7px 12px; background: var(--plate); border-left: 3px solid #64748b; }
+.fhd { border-bottom: 0; padding-bottom: 0; background: rgba(12,16,42,.96); }
+/* every section's edge one bright neutral (the colours were getting loud); a section keeps its colour in its title
+   and its numbers' bars; the two sides' build panels keep orange and blue */
+.app .plate:not(.sidebuild):not(.opp) { border-left-color: #cbd5e1; }

@@ -3,7 +3,7 @@
 // bottom sheet otherwise), and the state in the URL. See README.md.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { evaluatePair, evaluate, emptySpec, rulesetOf, meta, baseView, buildCheck } from './model.js';
+import { evaluatePair, emptySpec, rulesetOf, meta, baseView, buildCheck } from './model.js';
 import { parse, serialize } from './state.js';
 import { BreakdownHost, PairCtx, RulesetCtx, usePhone, useWide } from './ui.jsx';
 import { FighterView, BuildDelta } from './fighter.jsx';
@@ -34,7 +34,6 @@ function App() {
   const [st, setSt] = useState(parse);
   const [overlay, setOverlay] = useState(null); // { kind: 'caps', side: 'A' | 'B' }: the capsule picker open for a side
   const [quick, setQuick] = useState(null);     // the quick list open on side 'A' | 'B'
-  const [hov, setHov] = useState(null);         // the capsule under the pointer in the open picker
   const closeQuick = useCallback(() => setQuick(null), []);
   const phone = usePhone();
   const wide = useWide();
@@ -61,14 +60,14 @@ function App() {
   // 'char' opens the quick list where the fighter is shown; 'caps' the capsule picker, beside the numbers
   const openPicker = (kind, side) => {
     if (kind === 'char') { setQuick(q => (q === side ? null : side)); return; }
-    setOverlay({ kind, side }); setQuick(null); setHov(null);
+    setOverlay({ kind, side }); setQuick(null);
     // as a bottom sheet, bring the Fighter page's numbers (its pinned headline strip) above it
     if (!wide && st.view === 'fighter') {
       const sh = document.querySelector('.fpage .sheet');
       if (sh && sh.getBoundingClientRect().top > 0) window.scrollTo({ top: sh.getBoundingClientRect().top + window.scrollY - parseFloat(getComputedStyle(sh.querySelector('.fhd')).top) });
     }
   };
-  const closeCaps = () => { setOverlay(null); setHov(null); };
+  const closeCaps = () => setOverlay(null);
   /** The quick list for a side, when it is open there (the views place it). */
   const qp = (side, mode = 'dd') => (quick === side ? (
     <QuickPick current={st[side].id} side={side} mode={phone ? 'sheet' : mode} onClose={closeQuick} onBrowse={() => go('roster')}
@@ -77,9 +76,7 @@ function App() {
   ) : null);
 
   const capsSide = overlay?.kind === 'caps' && st.view !== 'roster' && pair[overlay.side] ? overlay.side : null;
-  const picker = (side, mode) => <CapsulePicker side={pair[side]} ruleset={ruleset} onClose={closeCaps} onChange={setSpec(side)} who={side} mode={mode} onHover={setHov} />;
-  // the hovered capsule's effect on the Fighter page's headline numbers
-  const preview = useMemo(() => (capsSide === 'A' && hov && !st.A.caps.includes(hov) && !two ? evaluate({ ...st.A, caps: [...st.A.caps, hov] }).view : null), [capsSide, hov, st.A, two]);
+  const picker = (side, mode) => <CapsulePicker side={pair[side]} ruleset={ruleset} onClose={closeCaps} onChange={setSpec(side)} who={side} mode={mode} />;
   const setDepth = (d) => update({ d });
 
   let page;
@@ -91,7 +88,7 @@ function App() {
       ruleset={ruleset} resetSits={resetSits} swapIn={(id) => update({ B: { ...emptySpec(id) }, vl: 'side' })} docks={wide && capsSide ? { [capsSide]: picker(capsSide, 'dock') } : {}} />;
   } else {
     page = <FighterView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} depth={st.d} setDepth={setDepth}
-      dock={wide && capsSide === 'A' ? picker('A', 'dock') : null} preview={preview} onForm={(id) => update({ A: fighter('A', id) })} editing={capsSide === 'A'} />;
+      dock={wide && capsSide === 'A' ? picker('A', 'dock') : null} onForm={(id) => update({ A: fighter('A', id) })} />;
   }
   // narrower than a wide screen: the picker is a bottom sheet over the lower part of the page, with the
   // skills and Sparking and what the build changed on top, so the numbers above stay in view

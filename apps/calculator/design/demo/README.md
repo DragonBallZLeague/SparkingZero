@@ -168,9 +168,12 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **The league's answers on bars:**
   - a Rush Chain card's bar compares its full-charge damage with the same chain type across the roster;
   - blasts and ultimates keep no bars (their damage depends on the move type).
-- **The headline strip** appears once Toughness scrolls away, and while the build is edited. It is a plate with a
-  neutral grey edge: Health, Melee def, Rush 5-hit, Smash, Ki charge (Ki regen for a fighter that can't charge),
-  Ki blast, Skill gauge per minute and Armor break.
+- **The headline strip was tried, then taken out** (the league didn't take to it). The pinned controls (Quick /
+  Full, the section links, Find) sit on a plate with its neutral grey edge. The phone's loadout sheet still lists
+  the headline numbers the build changes.
+- **Section edges:** every section's edge is one bright neutral (`#cbd5e1`); the colours had got loud. A section
+  keeps its colour in its title and its bars; the two sides' build panels keep orange and blue.
+- **Capsules:** Edit capsules and Clear sit under the capsule list (Clear crowded the header's points).
 
 **Fourth pass:**
 - **Group headers:** the fighter column's groups (Forms, Active, Conditions, Capsules, League builds), the Versus
