@@ -2,10 +2,10 @@
 // Side by side's Quick: what each attack deals to the other side after its defenses and armor, mirrored around
 // the attack (a shield on a hit the armor reduces, a cracked one on the hit that breaks it); its Full form is the same sections as Side by side's, as dealt to and taken
 // from the other side. Side by side's own pieces are in compare.jsx.
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { nameParts, exchange, evaluatePair } from './model.js';
 import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
-import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads, Mirror, SkillsCmp, blastSlots, sameBlast, slotLabel, altLabel } from './compare.jsx';
+import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads, Mirror, SkillsCmp, useBlastSlots, sameBlast, slotLabel, blastName, AltPick } from './compare.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
 import { ChangeButton } from './sheet.jsx';
 import { F } from './format.js';
@@ -84,7 +84,6 @@ function Exchange({ phone }) {
     { name: 'Rush 5-hit', small: armorB ? (breakAt >= 0 ? `breaks armor on hit ${breakAt + 1}` : 'armor holds every hit') : null, deal: { title: 'Rush 5-hit', get: X(x => x.combo.rush5Hit) }, take: { title: 'Rush 5-hit taken', get: T(x => x.combo.rush5Hit) } },
     ...(phone ? [] : ph.map((h, i) => ({ sub: true, name: `Hit ${i + 1}`, deal: { title: `Rush hit ${i + 1}`, get: X(x => x.combo.perHit[i].damage), held: h.armorReduced, brk: i === breakAt }, take: theirHits[i] && B.view[['rush', 'hit2', 'hit3', 'hit4', 'hit5'][i]] ? { title: `Rush hit ${i + 1} taken`, get: T(x => x.combo.perHit[i].damage), held: theirHits[i].armorReduced } : null }))),
     ...(phone ? you.smash.slice(0, 1) : you.smash).map((s, i) => ({ name: lv('Smash', i), deal: { title: lv('Smash', i), get: X(x => x.smash[i].v), held: s.held }, take: them.smash[i] ? { title: `${lv('Smash', i)} taken`, get: T(x => x.smash[i].v), held: them.smash[i].held } : null })),
-    ...(phone ? [] : you.heavyFinish.map((s, i) => ({ name: lv('Heavy Finish', i), deal: { title: lv('Heavy Finish', i), get: X(x => x.heavyFinish[i].v), held: s.held }, take: them.heavyFinish[i] ? { title: `${lv('Heavy Finish', i)} taken`, get: T(x => x.heavyFinish[i].v), held: them.heavyFinish[i].held } : null }))),
     { name: 'Throw', deal: { title: 'Throw', get: X(x => x.throw.v), held: you.throw.held }, take: { title: 'Throw taken', get: T(x => x.throw.v), held: them.throw.held } },
   ];
   const shots = (x) => (x?.shots > 1 ? ` ×${x.shots}` : '');
@@ -95,15 +94,15 @@ function Exchange({ phone }) {
       deal: you.charged[i] ? { title: lv('Charged', i), get: X(x => x.charged[i]?.v), held: you.charged[i].held, shots: you.charged[i].shots, suffix: shots(you.charged[i]) } : null,
       take: them.charged[i] ? { title: `${lv('Charged', i)} taken`, get: T(x => x.charged[i]?.v), held: them.charged[i].held, shots: them.charged[i].shots, suffix: shots(them.charged[i]) } : null })),
   ];
-  // Blasts as Side by side's mirrored rows: each side's move by name, what it deals, no bars; ultimates and every
-  // alternate included (a costume's, paired in order under the same slot)
-  const cmd = blastSlots(pc.pair).map(r => {
-    const side = (b, pick, t) => {
-      if (!b) return null;
-      const get = pick(x => x.blasts.find(y => sameBlast(y.b, b))?.deal);
-      return { name: b.name, n: get(pc.pair), value: <XVal cls="xv" title={t ? `${b.name} taken` : b.name} get={get} /> };
+  // Blasts as Side by side's mirrored rows: each side's move by name, what it deals, no bars; ultimates included, and
+  // each side's alternates one switch away (the choice holds across Side by side, Matchup and Full)
+  const cmd = useBlastSlots().map(r => {
+    const side = (x, pick, t) => {
+      if (!x.b) return null;
+      const get = pick(s => s.blasts.find(y => sameBlast(y.b, x.b))?.deal);
+      return { name: blastName(x), n: get(pc.pair), value: <XVal cls="xv" title={t ? `${x.b.name} taken` : x.b.name} get={get} /> };
     };
-    return { label: slotLabel(r), sub: altLabel(r), a: side(r.a, X, false), b: side(r.b, T, true) };
+    return { slot: r.slot, label: slotLabel(r), a: side(r.A, X, false), b: side(r.B, T, true) };
   });
   const hyper = { name: 'Hyper Smash', deal: { title: 'Hyper Smash', get: X(x => x.hyperSmash.v), held: you.hyperSmash.held }, take: { title: 'Hyper Smash taken', get: T(x => x.hyperSmash.v), held: them.hyperSmash.held } };
   const legend = (armorA || armorB) && (
@@ -188,6 +187,8 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   const phone = usePhone();
   const wide = useWide();
   const match = lens === 'match';
+  // which version of each blast slot each side compares (main or a costume's alternate), across both lenses and depths
+  const altPick = useState({});
   const ref = useMemo(() => (match ? evaluatePair({ ...pair.A.spec, sit: null }, { ...pair.B.spec, caps: [], sit: null }, { exchange: true }) : null), [pair, match]);
   const L = useMemo(() => leads(pair), [pair]);
   const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
@@ -205,7 +206,7 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   else if (match) body = <RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider>;
   else body = <CompareSummary pair={pair} swapIn={swapIn} />;
   return (
-    <>
+    <AltPick.Provider value={altPick}>
       {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
       {wide ? (
@@ -224,6 +225,6 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
           {body}
         </>
       )}
-    </>
+    </AltPick.Provider>
   );
 }

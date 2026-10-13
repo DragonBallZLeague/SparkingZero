@@ -7,7 +7,7 @@ import {
 } from './model.js';
 import { Tap, Rk, usePair, useBase, useValue } from './ui.jsx';
 import { orderedBlasts, Hits } from './moves.jsx';
-import { traitChips, QuickBody } from './sheet.jsx';
+import { traitChips, otherAbilities, QuickBody } from './sheet.jsx';
 import { F } from './format.js';
 
 const A = (get) => (sides) => get(sides.A.view, sides.A);
@@ -376,7 +376,7 @@ function MobilityFull({ side }) {
 }
 
 function Traits({ c }) {
-  const ab = (c.moveset?.abilities || []).filter(x => x !== 'Hyper armor');
+  const ab = otherAbilities(c);
   const missing = c.moveset?.unavailable || [];
   const plays = traitChips(c).filter(([t]) => t !== 'Low-HP power-up');
   return (

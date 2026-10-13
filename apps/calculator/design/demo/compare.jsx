@@ -1,14 +1,14 @@
 // Versus, Side by side (was Compare): two fighters as they are, each with its own build. Quick pairs the main
 // stats (CompareSummary); Full pairs every Full stats row (AllStats). Also the pieces the Matchup shares: the
 // two-fighter header, paired rows, All stats and a side's build panel. The page itself is in versus.jsx.
-import React, { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
   similarFighters, skillOf, blastsOf, SLOT_LABEL, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
 import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
-import { ClassChip, CapsuleRows, traitChips, ChangeButton, SkillSwitches, LeagueBuilds } from './sheet.jsx';
+import { ClassChip, CapsuleRows, traitChips, otherAbilities, ChangeButton, SkillSwitches, LeagueBuilds } from './sheet.jsx';
 import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
@@ -143,7 +143,6 @@ export function statSections({ vs = false, pair = null } = {}) {
       dealt({ label: 'Rush 5-hit', get: V(x => x.rush5Hit) }, D(x => x.combo.rush5Hit)),
       ...(vs ? [] : [{ label: 'Rush 5-hit into armor', get: V(x => x.fiveHitAfterArmor) }]),
       ...[0, 1, 2].map(i => dealt({ label: `Smash, Charge Lv.${i + 1}`, get: (s) => gameMoves(s).smash[i] }, D(x => x.smash[i]?.v))),
-      ...[0, 1, 2].map(i => dealt({ label: `Heavy Finish, Lv.${i + 1}`, get: (s) => gameMoves(s).heavyFinish[i] }, D(x => x.heavyFinish[i]?.v))),
       dealt({ label: 'Throw', get: V(x => x.throw) }, D(x => x.throw.v)),
       dealt({ label: 'Vanishing Attack', get: V(x => x.vanishingAttack) }, D(x => x.vanishingAttack)),
       dealt({ label: 'Dragon Smash', get: V(x => x.dragonSmash) }, D(x => x.dragonSmash)),
@@ -294,35 +293,57 @@ export function VsArmor() {
 export const sameBlast = (x, y) => x.slot === y.slot && x.variant === y.variant && x.name === y.name;
 
 /**
- * The Blasts rows for two fighters: per slot (B1, B2, the ultimate) the main move, then its alternates (a costume's),
- * paired in order, so every option is shown side by side. `a` / `b`: each side's blast or null.
+ * Which version of a slot each side compares: 0 the main move, 1.. a costume's alternates. Keyed by the fighter's
+ * id and the slot, provided by the Versus page so a choice holds across Side by side, Matchup and Full.
  */
-export function blastSlots(pair) {
-  const rows = [];
-  for (const slot of ['Super 1', 'Super 2', 'Ultimate']) {
-    const of = (k, alt) => blastsOf(pair[k].c).filter(x => x.slot === slot && !!x.variant === alt);
-    rows.push({ slot, alt: false, a: of('A', false)[0] || null, b: of('B', false)[0] || null });
-    const aa = of('A', true), ab = of('B', true);
-    for (let i = 0; i < Math.max(aa.length, ab.length); i++) rows.push({ slot, alt: true, a: aa[i] || null, b: ab[i] || null });
-  }
-  return rows;
+export const AltPick = createContext([{}, () => {}]);
+
+/**
+ * The Blasts rows for two fighters: one per slot (B1, B2, the ultimate), each side showing the version it picked, so
+ * one side's alternate can be compared with the other's main move. Per side: `b` (null: no move in that slot),
+ * `i` of `n` versions and `next()` to switch.
+ */
+export function useBlastSlots() {
+  const pc = usePair();
+  const [pick, setPick] = useContext(AltPick);
+  return ['Super 1', 'Super 2', 'Ultimate'].map(slot => {
+    const side = (k) => {
+      const key = `${pc.pair[k].c.id}:${slot}`;
+      const opts = blastsOf(pc.pair[k].c).filter(x => x.slot === slot).sort((x, y) => !!x.variant - !!y.variant);
+      const i = Math.min(pick[key] || 0, Math.max(0, opts.length - 1));
+      return { b: opts[i] || null, i, n: opts.length, next: () => setPick(p => ({ ...p, [key]: (i + 1) % opts.length })) };
+    };
+    return { slot, A: side('A'), B: side('B') };
+  });
 }
 
-/** A Blasts row's centre: the slot badge, and "Alternate" under it on a costume's move. */
+/** A Blasts row's centre: the slot badge. */
 export const slotLabel = (r) => <span className={`slot ${r.slot === 'Ultimate' ? 'u' : 'b'}`}>{SLOT_LABEL[r.slot]}</span>;
-export const altLabel = (r) => (r.alt ? <small className="altm">Alternate</small> : null);
 
-/** Blasts side by side, ultimates included and every alternate shown (with `vs`, damage dealt to the other side). */
+/** A side's move in a Blasts row: its name, "Alternate" on a costume's move, and a switch when it has another version. */
+export const blastName = (x) => {
+  const to = x.i === 0 ? 'Alternate' : x.i === x.n - 1 ? 'Main' : 'Next';
+  return (
+    <>
+      {x.b.name}
+      {x.b.variant && <small className="altn">Alternate, with a costume</small>}
+      {x.n > 1 && <button type="button" className="altsw" onClick={x.next} title={`Compare the ${to === 'Main' ? 'main move' : to === 'Next' ? 'next alternate' : 'alternate'} instead`}>{to} ⇄</button>}
+    </>
+  );
+};
+
+/** Blasts side by side, ultimates included, each side's alternates one switch away (with `vs`, damage dealt to the other side). */
 function BlastsCmp({ vs = false }) {
   const pc = usePair();
+  const slots = useBlastSlots();
   const other = { A: 'B', B: 'A' };
   const get = (k, b) => (s) => {
     const mine = blastsOf(s[k].c).find(x => sameBlast(x, b));
     if (!mine) return null;
     return vs ? exchange(s[k], s[other[k]]).blasts.find(y => sameBlast(y.b, b))?.deal : blastDamage(s[k], mine).damage;
   };
-  const side = (k, b) => (b ? { name: b.name, n: get(k, b)(pc.pair), value: <Tap title={b.name} get={get(k, b)} mark={false} /> } : null);
-  return blastSlots(pc.pair).map((r, i) => <Mirror key={i} label={slotLabel(r)} sub={altLabel(r)} a={side('A', r.a)} b={side('B', r.b)} />);
+  const side = (k, x) => (x.b ? { name: blastName(x), n: get(k, x.b)(pc.pair), value: <Tap title={x.b.name} get={get(k, x.b)} mark={false} /> } : null);
+  return slots.map(r => <Mirror key={r.slot} label={slotLabel(r)} a={side('A', r.A)} b={side('B', r.B)} />);
 }
 
 /** Skills side by side: name and cost in skill points. */
@@ -334,7 +355,7 @@ export function SkillsCmp() {
 
 function TraitsCmp() {
   const pc = usePair();
-  const t = (s) => { const x = [...traitChips(s.c).map(([n]) => n), ...(s.c.moveset?.abilities || []).filter(a => a !== 'Hyper armor')]; return x.length ? <span className="tags">{x.map(n => <span key={n}>{n}</span>)}</span> : <span className="no">None</span>; };
+  const t = (s) => { const x = [...new Set([...traitChips(s.c).map(([n]) => n), ...otherAbilities(s.c)])]; return x.length ? <span className="tags">{x.map(n => <span key={n}>{n}</span>)}</span> : <span className="no">None</span>; };
   const kt = (s) => { const tags = [...(s.c.kiBlasts?.normal?.tags || []), ...(s.c.kiBlasts?.charged?.standing?.tags || []).map(x => `charged ${x}`)]; return tags.length ? <span className="tags">{[...new Set(tags)].map(n => <span key={n}>{n}</span>)}</span> : <span className="no">Standard</span>; };
   return (<><div className="mvcmp h"><span></span><span>{nameParts(pc.pair.A.c.name)[0]}</span><span>{nameParts(pc.pair.B.c.name)[0]}</span></div><div className="mvcmp"><span>Traits</span><span>{t(pc.pair.A)}</span><span>{t(pc.pair.B)}</span></div><div className="mvcmp"><span>Ki blasts</span><span>{kt(pc.pair.A)}</span><span>{kt(pc.pair.B)}</span></div></>);
 }

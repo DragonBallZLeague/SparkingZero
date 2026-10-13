@@ -28,6 +28,10 @@ export function traitChips(c) {
   return out;
 }
 
+/** The game's abilities the trait chips don't already say ("Cannot charge ki" is the chip "Can't charge ki"). */
+const CHIPPED = ['Hyper armor', 'Ki absorption', 'Immune to ki drain', 'Cannot charge ki'];
+export const otherAbilities = (c) => (c.moveset?.abilities || []).filter(a => !CHIPPED.includes(a));
+
 export function ClassChip({ c }) {
   const [c1] = classColours(c.class.label);
   return <span className="chip" style={{ background: c1, color: chipText(c1) }}>{c.class.label}</span>;

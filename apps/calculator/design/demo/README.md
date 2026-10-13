@@ -195,6 +195,14 @@ Changed numbers show their base under them. The row tables are gone from the dem
   the same everywhere (Side by side, Matchup, All stats): a Skills plate, then a Blasts plate where every alternate
   has its own row under its slot ("Alternate" under the badge; "None" for a side without one), so every option is
   compared. Combat limits moved to teal, apart from the skills' cyan.
+- **Versus Blasts switch alternates in place** (replacing a row per alternate): one row per slot, and a side with
+  a costume's alternate gets an "Alternate ⇄" / "Main ⇄" button under its move, so either side's alternate can be
+  compared with the other's main move. The choice holds across Side by side, Matchup and Full (`AltPick` in
+  `compare.jsx`).
+- **Traits** no longer list "Cannot charge ki" (or the other game abilities a trait chip already says) twice.
+- **Heavy Finish** left Versus's Melee (All stats and the Matchup), as it left the Fighter page's: it is a Rush
+  Chain, shown under Rush Chains.
+- **The Characters preview's Open button** wraps a long name inside its slanted ends.
 - **League builds:** the Fighter page shows the top 6 (the data keeps 6), the Versus rails the top 3.
 - **One page width** (1,720px) for all three views, so the frame no longer jumps between tabs (Versus needed it for
   its two rails); the Fighter page's column is 390px from 1,500px up.
