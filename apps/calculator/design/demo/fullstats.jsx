@@ -396,11 +396,20 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
   const jump = (id) => { setOpen(o => ({ ...o, [id]: true })); setTimeout(() => document.getElementById(`fs-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); };
   const { c } = side;
   const body = (s) => (phone ? <PhoneSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} /> : <RowsSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} />);
-  // a closed section's headline numbers: orange where the build or conditions change them, as everywhere else
+  // a closed section's headline numbers, marked like everywhere else: orange when the build or conditions make
+  // them better than base, red when worse (less is better for damage taken, armor break and dash costs)
   const baseSecs = pc?.base?.A ? sections(pc.base.A) : [];
+  const LESS = /taken|armor break|dash/i;
+  const num = (t) => parseFloat(String(t).replace(/[^0-9.\-]/g, ''));
+  const mark = (label, now, was) => {
+    if (was == null || was === now) return undefined;
+    const a = num(now), b = num(was);
+    if (Number.isNaN(a) || Number.isNaN(b) || a === b) return 'up';
+    return (LESS.test(label) ? a < b : a > b) ? 'up' : 'dn';
+  };
   const summary = (s) => {
     const was = baseSecs.find(b => b.id === s.id)?.summary || [];
-    return s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b className={was[i] && was[i][1] !== v ? 'up' : undefined}>{v}</b>}</span>);
+    return s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b className={mark(l, v, was[i]?.[1])}>{v}</b>}</span>);
   };
   const stat = secs.filter(s => s.id !== 'cmd');
   const cmd = secs.find(s => s.id === 'cmd');

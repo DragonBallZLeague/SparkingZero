@@ -78,8 +78,8 @@ conditions, ruleset) lives in the URL hash.
 - **Full stats keeps its arrangement when sections fold:** a folded section keeps its open width (`Fold`'s
   `keepWidth`: the contents laid out at no height, hidden and inert), so lines never reshuffle. The order is the
   nav's: Melee on its own line, then Rush Chains before Ki blasts (the Melee and Ki blasts stack is gone).
-- **Every number a skill, capsule or condition changes is orange** on the Sheet and in Full stats, including
-  worse-than-base ones (they were red), Rush Chains, armor break, the short dash and folded summaries.
+- **Every number a skill, capsule or condition changes is marked** on the Sheet and in Full stats (orange when better,
+  red when worse), including Rush Chains, armor break, the short dash and folded summaries.
 - **Armored 5-hit taken** shows only when the fighter has armor now (it equals the plain value otherwise).
 
 ## Checked
