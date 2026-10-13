@@ -164,6 +164,10 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Ki refills to', get: V(x => x.kiRegenRange), fmt: (x) => `${x} bars` }, { label: 'Ki from hits', get: V(x => x.attackKiGain), fmt: F.dec, kind: 'dec' },
       { label: 'Skill gauge limit', get: V(x => x.skillLimit), fmt: String }, { label: 'Skill gauge per minute', get: V(x => parseFloat(x.skillRegen)), fmt: F.dec, kind: 'dec' },
     ] },
+    // the Command list as the Fighter page has it, right after Resources: Skills, then Blasts with the ultimates
+    // and every alternate
+    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills' },
+    { id: 'bls', title: 'Blasts', cls: 'cmd', col: 2, custom: 'blasts', vs, small: vs ? 'dealt to them' : null },
     { id: 'limits', title: 'Combat limits', cls: 'lim', col: 2, rows: [
       { label: 'Follow-ups', get: V(x => x.pursuitLimit.general), fmt: String },
       // each pursuit's uses with the build (Vanishing Break, Dragon Break); No where the fighter can't
@@ -176,9 +180,6 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Extra follow-ups', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}` },
       { label: 'Sparking armor', get: (s) => (s.c.armor?.sparking ? 1 - s.c.armor.sparking.damageRate : 0), fmt: F.armor },
     ] },
-    // the Command list as the Fighter page has it: Skills, then Blasts with the ultimates and every alternate
-    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills' },
-    { id: 'bls', title: 'Blasts', cls: 'cmd', col: 2, custom: 'blasts', vs, small: vs ? 'dealt to them' : null },
     { id: 'mob', title: 'Mobility', cls: 'mob', col: 2, small: 'ki bars, less is better', rows: [
       { label: 'Short Dash', get: V(x => x.shortDashCost), fmt: F.bars, kind: 'dec', less: true },
       { label: 'Step-cancel dash', get: (s) => s.c.mobility?.stepCancelCost, fmt: F.bars, kind: 'dec', less: true },

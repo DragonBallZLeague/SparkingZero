@@ -196,6 +196,11 @@ Changed numbers show their base under them. The row tables are gone from the dem
   has its own row under its slot ("Alternate" under the badge; "None" for a side without one), so every option is
   compared. Combat limits moved to teal, apart from the skills' cyan.
 - **League builds:** the Fighter page shows the top 6 (the data keeps 6), the Versus rails the top 3.
+- **One page width** (1,720px) for all three views, so the frame no longer jumps between tabs (Versus needed it for
+  its two rails); the Fighter page's column is 390px from 1,500px up.
+- **Versus:** the loadouts have no left edge and slightly darker orange and blue title bars; Side by side /
+  Matchup and Quick / Full sit on a plate right on top of the stats (they change only the stats); in Full, Skills
+  and Blasts come right after Resources, above Combat limits and Sparking!.
 - **Versus rails scroll with the page** (one scroll bar); only a docked capsule picker keeps its own scroll. The
   rails run 500 to 1,030px; the stats between them 830 to 1,150px in Quick and 1,640 to 1,880px in Full.
 - **The view tabs' bar** fades from orange over the same length as the Versus header's left side.

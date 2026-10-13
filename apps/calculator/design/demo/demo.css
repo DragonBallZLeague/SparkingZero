@@ -841,3 +841,17 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .fsec.skl { --sc: #a5f3fc; }
 /* a costume's alternate in Versus's Blasts rows: "Alternate" under the slot badge */
 .mir .mc .altm { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* one page width for every view (Versus needed 1720px for its two rails; the others match it so the frame never
+   jumps between tabs); the Fighter page's column a little wider on a wide screen */
+.B.app, .B.app.vw { max-width: 1720px; }
+@media (min-width: 1500px) { .app .fpage:not(.docked) { grid-template-columns: 390px minmax(0, 1fr); } }
+
+/* the two loadouts: no left edge (like the sections), their title bars a shade darker */
+.app .sidebuild.sa, .app .sidebuild.sb { border-left: 0; padding-left: 17px; }
+.app .sidebuild.sa > h5, .app .sidebuild.sb > h5 { margin-left: -17px; padding-left: 17px; }
+.app .sidebuild.sa > h5 { border-top-color: #c2410c; background: linear-gradient(90deg, rgba(194,65,12,.34), rgba(194,65,12,0) 85%); }
+.app .sidebuild.sb > h5 { border-top-color: #1d4ed8; background: linear-gradient(90deg, rgba(29,78,216,.36), rgba(29,78,216,0) 85%); }
+
+/* Versus: Side by side / Matchup and Quick / Full on top of the stats, on a plate like the Fighter page's controls */
+.vsc > .vmodes { margin: 0 0 10px; padding: 7px 12px; background: var(--plate); }

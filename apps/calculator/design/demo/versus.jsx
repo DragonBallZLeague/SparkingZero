@@ -192,6 +192,14 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   const L = useMemo(() => leads(pair), [pair]);
   const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
   const change = (k) => <ChangeButton onClick={() => openPicker('char', k)} title={k === 'B' ? (match ? 'Change opponent' : 'Change the right side') : 'Change fighter'} />;
+  // the lens and depth change only the stats, so they sit right on top of them (between the rails on a wide screen)
+  const modes = (
+    <div className="vmodes">
+      <Modes value={lens} options={[['side', 'Side by side'], ['match', 'Matchup']]} onChange={setLens} />
+      <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
+      <em>{match ? 'Each side\'s damage after the other\'s defenses and armor' : <>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></>}</em>
+    </div>
+  );
   let body;
   if (depth === 'full') body = <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} sections={match ? statSections({ vs: true, pair }) : null} /></div>;
   else if (match) body = <RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider>;
@@ -200,23 +208,19 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
     <>
       {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
-      <div className="vmodes">
-        <Modes value={lens} options={[['side', 'Side by side'], ['match', 'Matchup']]} onChange={setLens} />
-        <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
-        <em>{match ? 'Each side\'s damage after the other\'s defenses and armor' : <>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></>}</em>
-      </div>
       {wide ? (
         <>
           <div className="vineff"><InEffect sides={[[pair.A.c.name, pair.A], [pair.B.c.name, pair.B]]} /></div>
           <div className="vsl">
             <Rail k="A" pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} dock={docks.A} />
-            <div className="vsc">{body}</div>
+            <div className="vsc">{modes}{body}</div>
             <Rail k="B" pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} dock={docks.B} />
           </div>
         </>
       ) : (
         <>
           <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
+          {modes}
           {body}
         </>
       )}
