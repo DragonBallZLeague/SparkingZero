@@ -221,13 +221,16 @@ export function PhoneSectionNav({ items, prefix, onJump, extra = null }) {
 }
 
 /** A plate whose header folds it (Full stats); a closed plate keeps its headline numbers. */
-export function Fold({ cls = '', title, extra = null, open, onToggle, summary, children, id }) {
+export function Fold({ cls = '', title, extra = null, open, onToggle, summary, children, id, keepWidth = false }) {
   return (
     <div className={`plate ${cls}${open ? '' : ' cl'}`} id={id}>
       <h5>
         <button className="fold" aria-expanded={open} onClick={onToggle}>{title}{extra}<span className="chv" aria-hidden="true">{open ? '▾' : '▸'}</span></button>
       </h5>
       {open ? children : <div className="csum">{summary}</div>}
+      {/* closed, it keeps its open width (the contents laid out at no height, hidden and inert), so folding a
+          section never moves the others between lines */}
+      {!open && keepWidth && <div className="fghost" aria-hidden="true" inert="">{children}</div>}
     </div>
   );
 }

@@ -77,7 +77,10 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .tap { cursor: pointer; border-radius: 2px; }
 .tap:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; box-shadow: 0 0 0 5px rgba(251,191,36,.22); }
 .tap.on { background: rgba(249,115,22,.22); outline: 1px solid rgba(249,115,22,.75); }
-.tap.dn, .dn { color: #f87171; }
+.dn { color: #f87171; }
+/* every number a skill, capsule or condition changes is orange on the Sheet and Full stats (Compare and Vs mark
+   their own way and pass mark={false}) */
+.app .tap.up, .app .tap.dn { color: var(--up); }
 .tile b .tap.up, .tile b.tap.up { color: var(--up); }
 .fx-tip { position: fixed; z-index: 60; width: 320px; }
 .fx-tip .th { display: flex; align-items: center; gap: 8px; }
@@ -135,9 +138,6 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .ef.spk { background: rgba(168,85,247,.16); border-left-color: #c084fc; color: #f3e8ff; }
 
 /* Full stats: the build bar under the name, the conditions panel, the Command list fold */
-.rws .rstack { flex: 1 1 auto; display: flex; flex-direction: column; gap: 12px; min-width: 0; max-width: 100%; }
-.rws .rstack > .plate { flex: none; }
-.rws .rstack > .plate:last-child { flex: 1 1 auto; }
 .plate.fscmd { background: none; border-left: 0; padding: 0; }
 .plate.fscmd > h5 { color: #fdba74; }
 .plate.fscmd.cl { background: var(--plate); border-left: 3px solid var(--blast); padding: 8px 12px 9px; }
@@ -185,6 +185,10 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .pb.r.w i { background: linear-gradient(90deg, #60a5fa, #2563eb); box-shadow: 0 0 8px rgba(59,130,246,.55); }
 .pb.none { background: none; }
 .app .fs .plate[id] { scroll-margin-top: 100px; }
+.fghost { height: 0; overflow: hidden; visibility: hidden; }
+.csum span b.up { color: var(--up); }
+/* Melee on its own line (sharing one left an empty block under it beside the taller Rush Chains) */
+.rws > .plate.off { flex-basis: 100%; }
 .cmpall .pair.txt, .pair.txt { grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr); }
 .pair.txt .a, .pair.txt .b { font-weight: 800; font-style: normal; font-size: 12.5px; color: #e2e8f0; }
 .ph .pair.txt { grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr); }

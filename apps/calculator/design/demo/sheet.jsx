@@ -210,7 +210,7 @@ export function SheetView({ A: side, ruleset, setSpec, openPicker, qp = () => nu
             <div className="tile"><span>Smash</span><Tap as="b" title="Smash" get={A(x => x.smash)} /><Rk p={rosterPos('smash', x => x.smash, v.smash)} /></div>
             <div className="tile"><span>Throw</span><Tap as="b" title="Throw" get={A(x => x.throw)} /><Rk p={rosterPos('throw', x => x.throw, v.throw)} /></div>
             <div className="tile"><span>Pursuit</span><Tap as="b" title="Pursuit" get={A(x => x.pursuit)} /><Rk p={rosterPos('pursuit', x => x.pursuit, v.pursuit)} /></div>
-            <div className="tile"><span>Armor break</span><b>{v.armorBreak}<small>hits</small></b></div>
+            <div className="tile"><span>Armor break</span><Tap as="b" title="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" lessIsBetter>{v.armorBreak}<small>hits</small></Tap></div>
           </div>
           <div className="tiles t5">
             <div className="tile kib"><span>Ki blast{ktype && ktype !== 'none' && <em className="kt">{ktype.toUpperCase()}</em>}</span><Tap as="b" title="Ki blast" get={A(x => x.kiBlastDmg)} /><Rk p={rosterPos('kib', x => x.kiBlastDmg, v.kiBlastDmg)} /></div>

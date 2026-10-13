@@ -6,7 +6,7 @@ import {
   faceUrl, nameParts, gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
   perceptionName, blastsOf, skillOf, blastDamage,
 } from './model.js';
-import { Tap, Val, Fold, Name, PhoneSectionNav, usePhone, useWide, useBase } from './ui.jsx';
+import { Tap, Val, Fold, Name, PhoneSectionNav, usePhone, usePair, useBase } from './ui.jsx';
 import { MoveCards, orderedBlasts } from './moves.jsx';
 import { ClassChip, SkillSwitches, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
 import { Conditions } from './conditions.jsx';
@@ -29,7 +29,11 @@ function sections(side) {
       id: 'tough', title: 'Toughness', cls: '',
       groups: [
         [null, [cell('HP', A(x => x.health))]],
-        ['5-hit taken', [cell('Normal', A(fiveHitTaken), { less: true, long: '5-hit damage taken' }), cell('Armored', A(fiveHitTakenArmored), { less: true, long: '5-hit taken, armored' })]],
+        // Armored: the same rush with this fighter's armor up (a giant's Hyper Armor, Sparking Armor), the hits
+        // before the one that breaks it reduced. Only shown when the fighter has armor now; otherwise it equals Normal.
+        v.armor > 0
+          ? ['5-hit taken', [cell('Normal', A(fiveHitTaken), { less: true, long: '5-hit damage taken' }), cell('Armored', A(fiveHitTakenArmored), { less: true, long: '5-hit taken, armored' })]]
+          : [null, [cell('5-hit taken', A(fiveHitTaken), { less: true, long: '5-hit damage taken' })]],
         ['Defense', [def('Melee', x => x.meleeDefenseStat, 'Melee defense'), def('Blast', x => x.blastDefense, 'Blast defense'), def('Ki blast', x => x.energy, 'Ki-blast defense')]],
         [null, [cell('Armor', A(x => x.armor), { fmt: F.armor, kind: 'def' }), cell('Switch', A(x => x.switch), { fmt: F.secs, kind: 'dec', less: true })]],
       ],
@@ -62,7 +66,7 @@ function sections(side) {
           cell('Total', A(x => x.rush5Hit), { long: 'Rush 5-hit total' }), cell('Into armor', A(x => x.fiveHitAfterArmor), { long: 'Rush 5-hit into armor' }),
         ]],
         ['Smash', gm.smash.map((_, i) => cell(`Lv.${i + 1}`, GM(g => g.smash[i]), { long: `Smash, Charge Lv.${i + 1}` }))],
-        [null, [cell('Throw', A(x => x.throw)), cell('Pursuit', A(x => x.pursuit)), cell('Armor break', null, { text: F.hits(v.armorBreak) })]],
+        [null, [cell('Throw', A(x => x.throw)), cell('Pursuit', A(x => x.pursuit)), cell('Armor break', A(x => x.armorBreak), { fmt: F.hits, kind: 'dec', less: true })]],
       ],
       summary: [['Rush 5-hit', F.int(v.rush5Hit)], ['Smash', F.int(gm.smash[0])], ['Throw', F.int(v.throw)], ['Armor break', F.hits(v.armorBreak)]],
     },
@@ -265,7 +269,8 @@ function mobCells(side) {
   const v = side.view;
   const r = (x) => (typeof x === 'number' ? F.bars(x) : '');
   return [
-    ['Short', r(v.shortDashCost), ''], ['Step-cancel', r(m.stepCancelCost), ''], ['Dragon', r(m.dragonDash?.start), r(m.dragonDash?.perSecond)],
+    // the short dash is the one a capsule changes (Light Body, ...): a tappable value, orange with "Base" when changed
+    ['Short', typeof v.shortDashCost === 'number' ? <Val title="Short Dash cost" get={A(x => x.shortDashCost)} fmt={F.bars} kind="dec" lessIsBetter /> : '', ''], ['Step-cancel', r(m.stepCancelCost), ''], ['Dragon', r(m.dragonDash?.start), r(m.dragonDash?.perSecond)],
     ['High-Speed', r(m.dragonDash?.start), r(m.dragonDash?.highSpeedPerSecond)], ['Z-Burst', r(m.zBurstDash?.start), r(m.zBurstDash?.perSecond)],
     ['Ascend / Descend', r(m.dashUp?.start), r(m.dashUp?.perSecond)], ['Dragon Homing', r(m.dragonHoming?.start), r(m.dragonHoming?.perSecond)],
   ];
@@ -368,7 +373,7 @@ function loadFold(phone) {
 
 export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () => null }) {
   const phone = usePhone();
-  const wide = useWide();
+  const pc = usePair();
   const secs = sections(side);
   const [open, setOpen] = useState(() => loadFold(phone) || Object.fromEntries(secs.map(s => [s.id, !phone || s.id === 'tough'])));
   const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
@@ -391,20 +396,20 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
   const jump = (id) => { setOpen(o => ({ ...o, [id]: true })); setTimeout(() => document.getElementById(`fs-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); };
   const { c } = side;
   const body = (s) => (phone ? <PhoneSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} /> : <RowsSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} />);
-  const summary = (s) => s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b>{v}</b>}</span>);
+  // a closed section's headline numbers: orange where the build or conditions change them, as everywhere else
+  const baseSecs = pc?.base?.A ? sections(pc.base.A) : [];
+  const summary = (s) => {
+    const was = baseSecs.find(b => b.id === s.id)?.summary || [];
+    return s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b className={was[i] && was[i][1] !== v ? 'up' : undefined}>{v}</b>}</span>);
+  };
   const stat = secs.filter(s => s.id !== 'cmd');
   const cmd = secs.find(s => s.id === 'cmd');
   const fold = (s) => (
-    <Fold key={s.id} id={`fs-${s.id}`} cls={s.cls} title={s.title} extra={s.tag && <span className="tg">{s.tag}</span>} open={isOpen(s.id)}
+    <Fold key={s.id} id={`fs-${s.id}`} keepWidth={!phone} cls={s.cls} title={s.title} extra={s.tag && <span className="tg">{s.tag}</span>} open={isOpen(s.id)}
       onToggle={() => setOpen(o => ({ ...o, [s.id]: !isOpen(s.id) }))} summary={summary(s)}>
       {body(s)}
     </Fold>
   );
-  // On a desktop, Melee and Ki blasts stack beside Rush Chains (together about its height), so Melee
-  // does not stretch to the chains' height with nothing under it.
-  const kib = stat.find(s => s.id === 'kib');
-  // (tablets and phones keep the plain order, with Rush Chains right after Melee)
-  const units = stat.flatMap(s => (!wide ? [{ s }] : s.id === 'melee' ? [{ list: [s, kib] }] : s.id === 'kib' ? [] : [{ s }]));
   return (
     <div className="fs">
       <div className="fs-id">
@@ -438,7 +443,7 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
         </nav>
       )}
       <div className={phone ? 'clstack' : 'rws'}>
-        {units.map(u => (u.list ? <div className="rstack" key="stack">{u.list.map(fold)}</div> : fold(u.s)))}
+        {stat.map(fold)}
       </div>
       <Fold id="fs-cmd" cls="cmd fscmd" title="Command list" open={isOpen('cmd')} onToggle={() => setOpen(o => ({ ...o, cmd: !isOpen('cmd') }))} summary={summary(cmd)}>
         <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
