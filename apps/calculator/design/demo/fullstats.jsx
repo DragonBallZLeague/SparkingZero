@@ -1,15 +1,14 @@
-// Full stats: every section of the character's stats. On a desktop each section is a small table laid
-// out across (round 22, the league's pick), sections sharing a line and filling it; on a phone the
-// stacked list (label, Base, Build). Sections fold; a closed one keeps its headline numbers.
-import React, { useEffect, useState } from 'react';
+// Full stats: every section of the character's stats in full, the Fighter page's Full form of each section.
+// On a desktop each section is a small table laid out across (round 22, the league's pick); on a phone the
+// stacked list (label, Base, Build). A folded section shows its headline numbers (Summary).
+import React from 'react';
 import {
-  faceUrl, nameParts, gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
+  gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
   perceptionName, blastsOf, skillOf, blastDamage,
 } from './model.js';
-import { Tap, Val, Fold, Name, PhoneSectionNav, usePhone, usePair, useBase } from './ui.jsx';
-import { MoveCards, orderedBlasts } from './moves.jsx';
-import { ClassChip, SkillSwitches, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
-import { Conditions } from './conditions.jsx';
+import { Tap, Val, usePair, useBase } from './ui.jsx';
+import { orderedBlasts } from './moves.jsx';
+import { traitChips } from './sheet.jsx';
 import { F } from './format.js';
 
 const A = (get) => (sides) => get(sides.A.view, sides.A);
@@ -18,7 +17,7 @@ const cell = (h, get, o = {}) => ({ h, get, long: o.long || h, fmt: o.fmt || F.i
 const def = (h, get, long) => cell(h, (s) => 1 - get(s.A.view), { fmt: (x) => F.def(1 - x), kind: 'def', long });
 
 /* ------------------------------------------------------------------ the sections */
-function sections(side) {
+export function sections(side) {
   const { c, view: v } = side;
   const gm = gameMoves(side);
   const mob = c.mobility || {};
@@ -376,99 +375,26 @@ function PhoneSection({ s, side, abTab, setAbTab }) {
   return null;
 }
 
-/* ------------------------------------------------------------------ the view */
-const STORE = 'calc-demo-fold';
-function loadFold(phone) {
-  try { const v = JSON.parse(localStorage.getItem(STORE + (phone ? '-ph' : ''))); if (v) return v; } catch { /* private window */ }
-  return null;
+/* ------------------------------------------------------------------ a section's headline numbers */
+/**
+ * A folded section's headline numbers, marked like everywhere else: orange when the build or conditions make
+ * them better than base, red when worse (less is better for damage taken, armor break and dash costs).
+ */
+const LESS = /taken|armor break|dash/i;
+const num = (t) => parseFloat(String(t).replace(/[^0-9.\-]/g, ''));
+function mark(label, now, was) {
+  if (was == null || was === now) return undefined;
+  const a = num(now), b = num(was);
+  if (Number.isNaN(a) || Number.isNaN(b) || a === b) return 'up';
+  return (LESS.test(label) ? a < b : a > b) ? 'up' : 'dn';
+}
+export function Summary({ s }) {
+  const pc = usePair();
+  const was = (pc?.base?.A ? sections(pc.base.A) : []).find(b => b.id === s.id)?.summary || [];
+  return <div className="csum">{s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b className={mark(l, v, was[i]?.[1])}>{v}</b>}</span>)}</div>;
 }
 
-export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () => null }) {
-  const phone = usePhone();
-  const pc = usePair();
-  const secs = sections(side);
-  const [open, setOpen] = useState(() => loadFold(phone) || Object.fromEntries(secs.map(s => [s.id, !phone || s.id === 'tough'])));
-  const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
-  const [here, setHere] = useState(null);
-  useEffect(() => {
-    // the nav marks the section being read: the last one whose top has passed under the nav
-    const f = () => {
-      let at = null;
-      for (const s of secs) { const el = document.getElementById(`fs-${s.id}`); if (el && el.getBoundingClientRect().top < 140) at = s.id; }
-      setHere(at);
-    };
-    window.addEventListener('scroll', f, { passive: true });
-    f();
-    return () => window.removeEventListener('scroll', f);
-  }, [secs.map(s => s.id).join()]);
-  useEffect(() => { try { localStorage.setItem(STORE + (phone ? '-ph' : ''), JSON.stringify(open)); } catch { /* private window */ } }, [open, phone]);
-  const isOpen = (id) => open[id] !== false && (open[id] ?? !phone);
-  const allOpen = secs.every(s => isOpen(s.id));
-  const setAll = (v) => setOpen(Object.fromEntries(secs.map(s => [s.id, v])));
-  const jump = (id) => { setOpen(o => ({ ...o, [id]: true })); setTimeout(() => document.getElementById(`fs-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); };
-  const { c } = side;
-  const body = (s) => (phone ? <PhoneSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} /> : <RowsSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} />);
-  // a closed section's headline numbers, marked like everywhere else: orange when the build or conditions make
-  // them better than base, red when worse (less is better for damage taken, armor break and dash costs)
-  const baseSecs = pc?.base?.A ? sections(pc.base.A) : [];
-  const LESS = /taken|armor break|dash/i;
-  const num = (t) => parseFloat(String(t).replace(/[^0-9.\-]/g, ''));
-  const mark = (label, now, was) => {
-    if (was == null || was === now) return undefined;
-    const a = num(now), b = num(was);
-    if (Number.isNaN(a) || Number.isNaN(b) || a === b) return 'up';
-    return (LESS.test(label) ? a < b : a > b) ? 'up' : 'dn';
-  };
-  const summary = (s) => {
-    const was = baseSecs.find(b => b.id === s.id)?.summary || [];
-    return s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b className={mark(l, v, was[i]?.[1])}>{v}</b>}</span>);
-  };
-  const stat = secs.filter(s => s.id !== 'cmd');
-  const cmd = secs.find(s => s.id === 'cmd');
-  const fold = (s) => (
-    <Fold key={s.id} id={`fs-${s.id}`} keepWidth={!phone} cls={s.cls} title={s.title} extra={s.tag && <span className="tg">{s.tag}</span>} open={isOpen(s.id)}
-      onToggle={() => setOpen(o => ({ ...o, [s.id]: !isOpen(s.id) }))} summary={summary(s)}>
-      {body(s)}
-    </Fold>
-  );
-  return (
-    <div className="fs">
-      <div className="fs-id">
-        <img className="face" src={faceUrl(c)} alt="" />
-        <div>
-          <div className="nmrow"><div className="nm"><Name parts={nameParts(c.name)} /></div><ChangeButton onClick={() => openPicker('char', 'A')} /></div>
-          <div className="chips"><ClassChip c={c} /><span className="chip dp">DP {c.dp}</span>{traitChips(c).map(([t, title]) => <span key={t} className="chip trait-chip" title={title || undefined}>{t}</span>)}</div>
-        </div>
-        {qp('A')}
-      </div>
-      {/* the build as one panel: what is switched on, the capsules in their category colours, the conditions */}
-      <div className="plate fsb">
-        <div className="fsb-col">
-          <div className="fsb-h">Active</div>
-          <SkillSwitches side={side} onChange={setSpec} />
-        </div>
-        <div className="fsb-col">
-          <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} />
-        </div>
-        <div className="fsb-col">
-          <Conditions side={side} onChange={setSpec} compact />
-        </div>
-      </div>
-      {phone ? (
-        <PhoneSectionNav items={secs} prefix="fs-" onJump={jump}
-          extra={<button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>} />
-      ) : (
-        <nav className="fsnav" aria-label="Sections">
-          {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
-          <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
-        </nav>
-      )}
-      <div className={phone ? 'clstack' : 'rws'}>
-        {stat.map(fold)}
-      </div>
-      <Fold id="fs-cmd" cls="cmd fscmd" title="Command list" open={isOpen('cmd')} onToggle={() => setOpen(o => ({ ...o, cmd: !isOpen('cmd') }))} summary={summary(cmd)}>
-        <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
-      </Fold>
-    </div>
-  );
+/** A section's full rows: the desktop's tables, or the phone's stacked list. */
+export function FullBody({ s, side, phone, abTab, setAbTab }) {
+  return phone ? <PhoneSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} /> : <RowsSection s={s} side={side} abTab={abTab} setAbTab={setAbTab} />;
 }

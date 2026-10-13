@@ -1,18 +1,18 @@
-// The demo shell: the site's shared bar, the view tabs under it, the phone's tab bar, the pickers as
-// overlays, and the state in the URL. See README.md.
+// The demo shell: the site's shared bar, the view tabs under it (Characters, Fighter, Versus; round 23), the
+// phone's tab bar, the quick fighter list, the capsule picker (docked beside the numbers on a wide screen, a
+// bottom sheet otherwise), and the state in the URL. See README.md.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { evaluatePair, evaluate, emptySpec, rulesetOf, meta, baseView } from './model.js';
+import { evaluatePair, evaluate, emptySpec, rulesetOf, meta, baseView, buildCheck } from './model.js';
 import { parse, serialize } from './state.js';
-import { BreakdownHost, PairCtx, RulesetCtx, usePhone } from './ui.jsx';
-import { SheetView } from './sheet.jsx';
-import { FullStatsView } from './fullstats.jsx';
-import { CompareView } from './compare.jsx';
+import { BreakdownHost, PairCtx, RulesetCtx, usePhone, useWide } from './ui.jsx';
+import { FighterView, BuildDelta } from './fighter.jsx';
 import { VersusView } from './versus.jsx';
+import { SkillSwitches } from './sheet.jsx';
 import { CharacterPicker, CapsulePicker, QuickPick } from './pickers.jsx';
 import { NavBar } from '../../../../packages/ui/src/index.js';
 
-const TABS = [['roster', 'Characters', 'Roster'], ['sheet', 'Sheet', 'Sheet'], ['stats', 'Full stats', 'Stats'], ['compare', 'Compare', 'Compare'], ['vs', 'Vs opponent', 'Vs']];
+const TABS = [['roster', 'Characters', 'Roster'], ['fighter', 'Fighter', 'Fighter'], ['versus', 'Versus', 'Versus']];
 
 class Boundary extends React.Component {
   constructor(p) { super(p); this.state = { error: null }; }
@@ -32,10 +32,12 @@ function basePairOf(pair) {
 
 function App() {
   const [st, setSt] = useState(parse);
-  const [overlay, setOverlay] = useState(null); // { kind: 'caps', side: 'A' | 'B' }
+  const [overlay, setOverlay] = useState(null); // { kind: 'caps', side: 'A' | 'B' }: the capsule picker open for a side
   const [quick, setQuick] = useState(null);     // the quick list open on side 'A' | 'B'
+  const [hov, setHov] = useState(null);         // the capsule under the pointer in the open picker
   const closeQuick = useCallback(() => setQuick(null), []);
   const phone = usePhone();
+  const wide = useWide();
   useEffect(() => {
     const f = () => setSt(parse());
     window.addEventListener('hashchange', f);
@@ -52,32 +54,49 @@ function App() {
   const fighter = (side, id) => ({ ...emptySpec(id), caps: st[side].caps });
   const resetSits = () => update({ A: { ...st.A, sit: null }, B: { ...st.B, sit: null } });
   const ruleset = rulesetOf(st.rs);
-  const exchange = st.view === 'vs';
-  const pair = useMemo(() => evaluatePair(st.A, st.view === 'compare' || st.view === 'vs' ? st.B : null, { exchange }), [st.A, st.B, st.view]);
+  const two = st.view === 'versus';
+  const match = two && st.vl === 'match';
+  const pair = useMemo(() => evaluatePair(st.A, two ? st.B : null, { exchange: match }), [st.A, st.B, two, match]);
   const ctx = { pair, base: basePairOf(pair), names: { A: pair.A.c.name, B: pair.B?.c.name } };
-  // 'char' opens the quick list where the fighter is shown; 'caps' opens the capsule picker
+  // 'char' opens the quick list where the fighter is shown; 'caps' the capsule picker, beside the numbers
   const openPicker = (kind, side) => {
     if (kind === 'char') { setQuick(q => (q === side ? null : side)); return; }
-    setOverlay({ kind, side }); setQuick(null); window.scrollTo(0, 0);
+    setOverlay({ kind, side }); setQuick(null); setHov(null);
+    // as a bottom sheet, bring the Fighter page's numbers (its pinned headline strip) above it
+    if (!wide && st.view === 'fighter') {
+      const sh = document.querySelector('.fpage .sheet');
+      if (sh && sh.getBoundingClientRect().top > 0) window.scrollTo({ top: sh.getBoundingClientRect().top + window.scrollY - parseFloat(getComputedStyle(sh.querySelector('.fhd')).top) });
+    }
   };
+  const closeCaps = () => { setOverlay(null); setHov(null); };
   /** The quick list for a side, when it is open there (the views place it). */
   const qp = (side, mode = 'dd') => (quick === side ? (
     <QuickPick current={st[side].id} side={side} mode={phone ? 'sheet' : mode} onClose={closeQuick} onBrowse={() => go('roster')}
-      title={side === 'B' ? (st.view === 'vs' ? 'Change opponent' : 'Change the right side') : 'Change fighter'}
+      title={side === 'B' ? (match ? 'Change opponent' : 'Change the right side') : 'Change fighter'}
       onPick={(id, keep) => { if (id !== st[side].id) update({ [side]: fighter(side, id) }); if (!keep) setQuick(null); }} />
   ) : null);
 
+  const capsSide = overlay?.kind === 'caps' && st.view !== 'roster' && pair[overlay.side] ? overlay.side : null;
+  const picker = (side, mode) => <CapsulePicker side={pair[side]} ruleset={ruleset} onClose={closeCaps} onChange={setSpec(side)} who={side} mode={mode} onHover={setHov} />;
+  // the hovered capsule's effect on the Fighter page's headline numbers
+  const preview = useMemo(() => (capsSide === 'A' && hov && !st.A.caps.includes(hov) && !two ? evaluate({ ...st.A, caps: [...st.A.caps, hov] }).view : null), [capsSide, hov, st.A, two]);
+  const setDepth = (d) => update({ d });
+
   let page;
-  if (overlay?.kind === 'caps') {
-    const side = evaluate(st[overlay.side]);
-    page = <CapsulePicker side={side} ruleset={ruleset} onClose={() => setOverlay(null)} onChange={setSpec(overlay.side)} who={overlay.side} />;
-  } else if (st.view === 'roster') {
-    page = <CharacterPicker current={st.A.id} side="A" view="roster" onPick={(id) => go('sheet', { A: fighter('A', id) })}
-      onCompare={(id) => go('compare', { B: emptySpec(id) })} onVs={(id) => go('vs', { B: emptySpec(id) })} />;
-  } else if (st.view === 'stats') page = <FullStatsView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} />;
-  else if (st.view === 'compare') page = <CompareView pair={pair} mode={st.cm} setMode={(cm) => update({ cm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} resetSits={resetSits} swapIn={(id) => update({ B: { ...emptySpec(id) } })} />;
-  else if (st.view === 'vs') page = <VersusView pair={pair} mode={st.vm} setMode={(vm) => update({ vm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} resetSits={resetSits} />;
-  else page = <SheetView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} />;
+  if (st.view === 'roster') {
+    page = <CharacterPicker current={st.A.id} side="A" view="roster" onPick={(id) => go('fighter', { A: fighter('A', id) })}
+      onCompare={(id) => go('versus', { B: emptySpec(id), vl: 'side' })} onVs={(id) => go('versus', { B: emptySpec(id), vl: 'match' })} />;
+  } else if (two) {
+    page = <VersusView pair={pair} lens={st.vl} setLens={(vl) => update({ vl })} depth={st.d} setDepth={setDepth} setSpec={setSpec} openPicker={openPicker} qp={qp}
+      ruleset={ruleset} resetSits={resetSits} swapIn={(id) => update({ B: { ...emptySpec(id) }, vl: 'side' })} docks={wide && capsSide ? { [capsSide]: picker(capsSide, 'dock') } : {}} />;
+  } else {
+    page = <FighterView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} depth={st.d} setDepth={setDepth}
+      dock={wide && capsSide === 'A' ? picker('A', 'dock') : null} preview={preview} />;
+  }
+  // narrower than a wide screen: the picker is a bottom sheet over the lower part of the page, with the
+  // skills and Sparking and what the build changed on top, so the numbers above stay in view
+  const sheetSide = !wide && capsSide;
+  const chk = buildCheck(st.A.caps, ruleset);
 
   return (
     <BreakdownHost resetKey={serialize(st) + (overlay ? overlay.kind : '')}>
@@ -86,18 +105,33 @@ function App() {
         {/* the site's shared bar (packages/ui) carries the page title; the calculator's own bar under it is
             just the view tabs (on a phone they are at the bottom). The ruleset is picked where builds are made. */}
         <NavBar current="calculator" title="Character Calculator" />
-        <div className={`B app${phone ? ' ph' : ''}`}>
+        <div className={`B app${phone ? ' ph' : ''}${two && wide ? ' vw' : ''}${sheetSide ? ' lsopen' : ''}`}>
           {!phone && (
             <div className="top">
               <div className="tabs" role="tablist">
-                {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={st.view === k} className={st.view === k && !overlay ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
+                {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={st.view === k} className={st.view === k ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
               </div>
             </div>
           )}
-          <main><Boundary at={st.view + (overlay?.kind || '')}>{page}</Boundary></main>
+          <main><Boundary at={st.view}>{page}</Boundary></main>
+          {sheetSide && (
+            <div className="lsheet" role="dialog" aria-label="Loadout">
+              <div className="lsh"><b>Loadout</b><small>{pair[sheetSide].c.name}</small><button className="x" onClick={closeCaps}>Done</button></div>
+              <BuildDelta side={pair[sheetSide]} base={ctx.base[sheetSide]} />
+              <div className="lsb">
+                <div className="lsk"><SkillSwitches side={pair[sheetSide]} onChange={setSpec(sheetSide)} /></div>
+                {picker(sheetSide, 'sheet')}
+              </div>
+            </div>
+          )}
+          {phone && st.view === 'fighter' && !sheetSide && (
+            <button className="lobar" onClick={() => openPicker('caps', 'A')}>
+              <b>Loadout</b><span>{chk.caps.length ? `${chk.caps.length} capsule${chk.caps.length === 1 ? '' : 's'}, ${chk.cost} of ${ruleset.totalCost}` : 'No capsules'}{st.A.sparking ? ', Sparking!' : ''}</span><i>Edit</i>
+            </button>
+          )}
           {phone && (
             <nav className="phtabs">
-              {TABS.map(([k, , s]) => <button key={k} className={st.view === k && !overlay ? 'on' : ''} onClick={() => go(k)}>{s}</button>)}
+              {TABS.map(([k, , s]) => <button key={k} className={st.view === k ? 'on' : ''} onClick={() => go(k)}>{s}</button>)}
             </nav>
           )}
         </div>

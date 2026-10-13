@@ -1,7 +1,8 @@
 # Calculator demo: concept B on real data (in progress)
 
-The detailed demo of concept B (signed off through round 22): the Sheet, Full stats (rows), Compare, Vs opponent,
-both pickers, conditions controls and breakdowns, on the published data and the calculator's own engine. It is a
+The detailed demo of concept B (signed off through round 22, re-laid out in round 23): the Fighter page (the Sheet
+and Full stats as one page), Versus (Compare and Vs opponent as one page), both pickers, conditions controls and
+breakdowns, on the published data and the calculator's own engine. It is a
 throwaway: delete this folder once the real pages ship and match it.
 
 ## Run it
@@ -16,7 +17,8 @@ conditions, ruleset) lives in the URL hash.
 - `sheet.css`: concept B's stylesheet, extracted from `design/concepts/concept-b.html`; `demo.css` adapts it to a live page.
 - `model.js`: data and engine glue (sides, game-file values scaled by the build, breakdowns, roster ranges, moves, exchange).
 - `state.js` (URL), `format.js`, `ui.jsx` (breakdowns, tappable numbers), `moves.jsx`, `conditions.jsx`.
-- Views: `sheet.jsx`, `fullstats.jsx`, `compare.jsx`, `versus.jsx`, `pickers.jsx`; shell `main.jsx`.
+- Views: `fighter.jsx` (the Fighter page, from `sheet.jsx`'s Quick forms and `fullstats.jsx`'s Full forms),
+  `versus.jsx` (the Versus page, with `compare.jsx`'s Side by side pieces), `pickers.jsx`; shell `main.jsx`.
 
 ## The league's first look (2026-10-12)
 
@@ -100,6 +102,38 @@ Capsules header of every build (Sheet, Full stats, Loadout) and the capsule pick
 (`RulesetSelect` in `ui.jsx`). The league approved a fix to the shared bar at the same time, made in
 `packages/ui/src/NavBar.css`: on a phone its title ran under any centre controls (today's calculator puts buttons
 there). The side columns now shrink, and on a phone the title hides when the centre slot is used.
+
+## Round 23: fewer pages, the build beside the numbers (2026-10-13)
+
+The league found the demo took more clicks than the live calculator and split one fighter over separate pages.
+After the quick concepts (`../concepts/layout-r23.html`) the demo has three tabs: **Characters, Fighter, Versus**.
+- **Fighter** (`fighter.jsx`) is the Sheet and Full stats as one page, in the Sheet's order. Each section has two
+  forms in the same place:
+  - **Quick**: the Sheet's look, roster bars and all (`QuickBody` in `sheet.jsx`).
+  - **Full**: Full stats' rows (`FullBody` in `fullstats.jsx`).
+  A **Quick / Full** switch sets every section; **More / Less** switches one. Breaking armor, Combat limits,
+  Mobility and Traits are one line with their headline numbers until opened.
+- **Pinned at the top of Fighter:**
+  - a headline strip (Health, 5-hit taken, Rush 5-hit, Smash, Throw, Ki blast, Full volley, Armor break; four on a
+    phone);
+  - the section links;
+  - **Find**: it jumps to any stat or move and opens a closed section to reach it (it searches each closed
+    section's full rows, rendered hidden only while searching).
+- **The capsule picker never replaces the page.**
+  - **Wide screens:** it docks in the fighter column, pinned with its own scroll, and hovering a capsule shows
+    where the headline numbers would go.
+  - **Narrower:** it is a bottom sheet over the lower page, with the skills, Sparking and what the build changed
+    on top.
+  - **Phone:** a Loadout bar above the tabs opens it.
+- **Versus** (`versus.jsx`) is Compare and Vs opponent as one page.
+  - **Side by side / Matchup** picks the lens; Quick / Full picks Summary or Exchange, or All stats.
+  - **Wide screens:** each fighter's build is a rail on its own side (`SideBuild` plus Conditions), where its
+    picker docks.
+  - **Narrower:** the Loadout and Conditions bar.
+- **The URL:** `#/fighter`, `#/versus`, with `d=full` and `vl=match`. Old links still open (`#/sheet`, `#/stats`,
+  `#/compare`, `#/vs`, `cm=all`, `vm=all`).
+- **Not taken:** the concepts' quieter type. The league kept the game's look; it reads better and makes stats
+  easier to find.
 
 ## Checked
 

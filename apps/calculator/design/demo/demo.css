@@ -407,3 +407,133 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .fsgrid button { padding: 7px 0; font-size: 11.5px; }
 .pstack .plate { scroll-margin-top: calc(var(--top) + 50px); }
 .fsnav.ph .only { margin-left: auto; }
+
+/* ================================================================== round 23: fewer pages, the build beside the numbers */
+/* The Fighter page: the Sheet's column and sections; each section's Quick (Sheet) or Full (rows) form in place */
+.fpage .sheet { gap: 10px; }
+.fhd { position: sticky; top: var(--top); z-index: 16; margin: -14px -20px 0 -4px; padding: 8px 20px 0 4px; background: rgba(12,16,42,.96);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.fhd .hl { display: flex; }
+.fhd .hl > div { flex: 1 1 0; min-width: 0; padding: 0 12px; border-left: 1px solid var(--line); white-space: nowrap; overflow: hidden; }
+.fhd .hl > div:first-child { padding-left: 2px; border-left: 0; }
+.fhd .hl span { display: block; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); overflow: hidden; text-overflow: ellipsis; }
+.fhd .hl b { font-size: 19px; font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums; color: #f8fafc; }
+.fhd .hl .pv { margin-left: 5px; font-style: normal; font-size: 12px; font-weight: 800; color: var(--up); }
+.fhd .hl .pv.dn { color: #f87171; }
+.fctl { display: flex; align-items: center; gap: 16px; padding: 7px 0 7px; }
+.fctl .modes { padding: 0; flex: none; }
+.fctl .fsnav { position: static; flex: 1; min-width: 0; padding: 0; background: none; border: 0; gap: 2px 14px; }
+.ffind { display: inline-flex; align-items: center; gap: 6px; flex: 0 1 230px; min-width: 0; padding: 4px 10px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.ffind::before { content: ''; flex: none; width: 9px; height: 9px; border: 2px solid var(--muted); border-radius: 50%; }
+.ffind:focus-within { border-color: rgba(249,115,22,.6); }
+.ffind input { flex: 1; min-width: 0; background: transparent; border: 0; color: #f1f5f9; font: inherit; font-size: 12px; outline: none; }
+.ffind em { font-style: normal; font-size: 11px; color: #fca5a5; white-space: nowrap; }
+.ffind em:empty { display: none; }
+.fhit { outline: 2px solid #f97316; outline-offset: 2px; background: rgba(249,115,22,.2); }
+.fsec { scroll-margin-top: calc(var(--top) + 90px); }
+.fsec h5 { display: flex; align-items: center; gap: 10px; }
+.fsec h5 .st { flex: 1; min-width: 0; }
+.fsec h5 .more { flex: none; font-style: normal; letter-spacing: .04em; font-size: 10.5px; font-weight: 800; color: #cbd5e1; padding: 1px 10px; border: 1px solid rgba(148,163,184,.3); }
+.fsec h5 .more:hover { color: #f8fafc; border-color: rgba(148,163,184,.6); }
+.fsec.full h5 .more { color: #fdba74; border-color: rgba(249,115,22,.45); }
+.fsec.cl { padding: 8px 14px 9px; }
+.fsec.cl h5 { margin-bottom: 4px; }
+/* Full stats' tables inside the Sheet's plates: each group's colour from its section */
+.fsec { --sc: #86efac; }
+.fsec.res { --sc: #fde68a; } .fsec.off { --sc: #fca5a5; } .fsec.mov { --sc: #fda4af; } .fsec.armp { --sc: #e2e8f0; }
+.fsec.new { --sc: #a5f3fc; } .fsec.mob { --sc: #c7d2fe; } .fsec.spk { --sc: #d8b4fe; } .fsec.cmd { --sc: #fdba74; }
+.fsec .htw { display: flex; flex-wrap: wrap; gap: 8px 30px; }
+.fsec .htw .ht { min-width: 0; width: auto; }
+.fsec.full .sbody > .ht:not(.mx) { min-width: 0; width: auto; }
+.fsub { margin: 4px 0 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #fca5a5; font-style: italic; }
+.fsub.kib { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); color: #fed583; --sc: #fed583; }
+.fsub.kib + .ht, .fsub.kib ~ .srow { --sc: #fed583; }
+.fsec .mcards { margin-top: 2px; }
+/* phone: four headline numbers, then Quick / Full, the section menu and Find on one line */
+.ph .fhd { margin: -6px -10px 0; padding: 6px 10px 0; }
+.ph .fhd .hl > div { padding: 0 8px; }
+.ph .fhd .hl b { font-size: 16px; }
+.ph .fctl { flex-wrap: wrap; gap: 6px 10px; padding: 6px 0; }
+.ph .fctl .fsnav.ph { flex: 1; min-width: 0; padding: 0; background: none; border: 0; position: static; }
+.ph .fctl .fsnav.ph.open { flex-basis: 100%; order: 3; }
+.ph .fctl .ffind { flex: 1; }
+.fctl .fbtn { flex: none; font-size: 11px; font-weight: 800; color: #e2e8f0; padding: 3px 10px; border: 1px solid rgba(148,163,184,.3); }
+@media (min-width: 721px) and (max-width: 1100px) {
+  .fhd { margin: -14px -18px 0; padding: 8px 18px 0; }
+  .fctl { flex-wrap: wrap; }
+  .fctl .fsnav { order: 3; flex-basis: 100%; }
+  .ffind { margin-left: auto; }
+}
+
+/* the capsule picker docked in the fighter column (or a Versus rail): one column, the numbers stay beside it */
+.fpage.docked { grid-template-columns: 410px minmax(0, 1fr); }
+.app .art.dock { overflow: visible; padding: 0; background: rgba(10,13,32,.45); border-right: 1px solid var(--line); }
+.cpk.dock, .cpk.sheet { display: block; height: auto; min-height: 0; }
+.cpk.dock .cbuild { position: static; border-right: 0; padding: 12px 14px; gap: 9px; background: none; }
+.cpk.dock .clist, .cpk.sheet .clist { padding: 0 14px 18px; overflow: visible; }
+.cpk.dock .cr, .cpk.sheet .cr { grid-template-columns: 28px minmax(0, 1fr); row-gap: 1px; }
+.cpk.dock .cr .cc, .cpk.sheet .cr .cc { grid-column: 2; text-align: left; }
+.cpk.dock .crows, .cpk.sheet .crows { height: auto; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+.cpk.dock .cbuild .caprow.empty b { font-weight: 600; color: var(--muted); }
+
+/* narrower than a wide screen: the picker as a bottom sheet over the lower page */
+.lsheet { position: fixed; z-index: 44; left: 0; right: 0; bottom: 0; height: 60vh; display: flex; flex-direction: column; background: #0d1230;
+  border-top: 2px solid #f97316; box-shadow: 0 -14px 30px rgba(0,0,0,.6); }
+.ph .lsheet { bottom: 46px; height: calc(62vh - 46px); }
+.app.lsopen > main { padding-bottom: 62vh; }
+.lsh { display: flex; align-items: center; gap: 10px; padding: 8px 12px 6px; }
+.lsh b { font-size: 16px; font-weight: 900; font-style: italic; text-transform: uppercase; }
+.lsh small { color: var(--muted); font-size: 12px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lsh .x { margin-left: auto; font-size: 12px; font-weight: 800; color: #0a0d20; background: #f8fafc; padding: 3px 14px; clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%); }
+.lsb { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.lsk { padding: 0 12px 6px; }
+.lsk .tgl:first-child { border-top: 0; }
+.cpk.sheet .cbuild { padding: 6px 12px 10px; gap: 8px; position: static; border-right: 0; background: none; }
+.cpk.sheet .pk-h { display: none; }
+.delta { display: flex; flex-wrap: wrap; gap: 2px 12px; padding: 6px 12px; font-size: 12px; color: #cbd5e1; background: rgba(255,255,255,.04); border-bottom: 1px solid var(--line); }
+.delta > span s { color: var(--muted); text-decoration: none; }
+.delta > span s::after { content: ' \2192'; }
+.delta b { font-weight: 800; }
+.delta b.up { color: var(--up); } .delta b.dn { color: #f87171; }
+.delta i { font-style: normal; color: var(--muted); }
+/* the phone's Loadout bar, above the tabs */
+.lobar { position: fixed; z-index: 29; left: 0; right: 0; bottom: 46px; display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(13,18,48,.97);
+  border-top: 1px solid var(--line); text-align: left; }
+.lobar b { font-size: 12px; font-weight: 900; font-style: italic; text-transform: uppercase; }
+.lobar span { flex: 1; min-width: 0; font-size: 12px; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lobar i { font-style: normal; font-size: 11px; font-weight: 800; color: #0a0d20; background: #f8fafc; padding: 2px 12px; }
+.ph.app > main { padding-bottom: 104px; }
+
+/* Versus: the lens and depth switches, then each fighter's build as a rail on its own side (wide screens) */
+.vmodes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 8px 18px 0; }
+.vmodes .modes { padding: 0; }
+.vmodes em { margin-left: auto; font-style: normal; font-size: 12.5px; color: #cbd5e1; }
+.vmodes em b { color: var(--win); font-style: italic; font-size: 15px; }
+.ph .vmodes { padding: 8px 10px 0; gap: 6px 10px; }
+.ph .vmodes em { display: none; }
+.vineff { padding: 8px 18px 0; }
+.vineff .ineff { margin: 0; }
+.vineff:empty, .vineff:not(:has(*)) { display: none; }
+.B.app.vw { max-width: 1720px; }
+.vsl { display: grid; grid-template-columns: 290px minmax(0, 1fr) 290px; gap: 12px; padding: 10px 18px 0; align-items: start; }
+.vsl:has(.vrail.sa.dock) { grid-template-columns: 400px minmax(0, 1fr) 290px; }
+.vsl:has(.vrail.sb.dock) { grid-template-columns: 290px minmax(0, 1fr) 400px; }
+.vrail { position: sticky; top: calc(var(--top) + 8px); max-height: calc(100vh - var(--top) - 16px); overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: 10px; min-width: 0; scrollbar-width: thin; }
+.vrail.dock { background: rgba(10,13,32,.55); border-top: 3px solid #f97316; }
+.vrail.sb.dock { border-top-color: #3b82f6; }
+.vrail .sidebuild { margin: 0; }
+.vrail .sidebuild .caps { grid-template-columns: minmax(0, 1fr); }
+.vrail .sits.cmp { margin-top: 0; }
+.vsc { min-width: 0; }
+.vsc .cmpgrid, .vsc .cmpall { padding: 0; }
+.vsc .cmpgrid { grid-template-columns: minmax(0, 1fr) 300px; }
+.vsc .cmpgrid.vsgrid { grid-template-columns: minmax(0, 1fr); }
+.vsc .cmpgrid.vsgrid > .cmpcol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+.vsc .cmpwrap .cmpgrid { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 1400px) {
+  .vsc .cmpgrid { grid-template-columns: minmax(0, 1fr); }
+  .vsc .cmpall { grid-template-columns: minmax(0, 1fr); }
+}
+/* the docked picker stays in view with its own scroll while the page scrolls past */
+.app .art.dock > .cpk.dock { position: sticky; top: var(--top); max-height: calc(100vh - var(--top)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }

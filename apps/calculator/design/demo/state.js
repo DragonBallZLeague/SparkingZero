@@ -1,19 +1,22 @@
 // The demo's state lives in the URL hash, so a reload or a copied link keeps the view, both fighters, their
 // builds, skills, Sparking and conditions, and the ruleset:
 //   #/<view>?a=<id>&ac=<capsule ids>&as=<active skills>&ag=<stages>&ap=1&ah=<health %>&ak=<ki>&aq=<skill gauge>&am=<map>&ae=<events>
-//            &b=... (the same for the other fighter)&rs=<ruleset>&cm=<compare mode>&vm=<vs mode>
+//            &b=... (the same for the other fighter)&rs=<ruleset>&d=full (Quick or Full)&vl=match (Versus: Side by side or Matchup)
+// The views are roster, fighter and versus (round 23); the old ones still open: #/sheet and #/stats the Fighter page
+// (Quick, Full), #/compare and #/vs Versus (Side by side, Matchup), with cm=all / vm=all as Full.
 // The rebuild keeps this shape on real routes (REDESIGN-STATUS.md, build-out 2).
 import { meta, byId } from './model.js';
 
-export const VIEWS = ['roster', 'sheet', 'stats', 'compare', 'vs'];
+export const VIEWS = ['roster', 'fighter', 'versus'];
+const OLD = { sheet: ['fighter'], stats: ['fighter', 'full'], compare: ['versus', null, 'side', 'cm'], vs: ['versus', null, 'match', 'vm'] };
 
 const DEFAULTS = {
-  view: 'sheet',
+  view: 'fighter',
   A: { id: '0000_00', caps: ['00_0_0005', '00_0_0026'], skills: {}, stage: {}, sparking: false, sit: null },
   B: { id: '0040_00', caps: [], skills: {}, stage: {}, sparking: false, sit: null },
   rs: meta.defaultRuleset,
-  cm: 'summary',
-  vm: 'exchange',
+  d: 'quick',
+  vl: 'side',
 };
 
 function readSpec(q, p, fallback) {
@@ -37,15 +40,18 @@ export function parse(hash = location.hash) {
   const h = hash.replace(/^#\/?/, '');
   const [path, qs = ''] = h.split('?');
   const q = new URLSearchParams(qs);
-  const view = VIEWS.includes(path) ? path : DEFAULTS.view;
+  const old = OLD[path];
+  const view = old ? old[0] : VIEWS.includes(path) ? path : DEFAULTS.view;
   const fresh = !qs;
+  const d = q.get('d') === 'full' || old?.[1] === 'full' || (old?.[3] && q.get(old[3]) === 'all') ? 'full' : 'quick';
+  const vl = old?.[2] || (q.get('vl') === 'match' ? 'match' : 'side');
   return {
     view,
     A: fresh ? DEFAULTS.A : readSpec(q, 'a', { ...DEFAULTS.A, caps: [] }),
     B: fresh ? DEFAULTS.B : readSpec(q, 'b', DEFAULTS.B),
     rs: meta.rulesets.some(r => r.name === q.get('rs')) ? q.get('rs') : DEFAULTS.rs,
-    cm: q.get('cm') === 'all' ? 'all' : 'summary',
-    vm: q.get('vm') === 'all' ? 'all' : 'exchange',
+    d,
+    vl,
   };
 }
 
@@ -71,7 +77,7 @@ export function serialize(st) {
   writeSpec(q, 'a', st.A);
   writeSpec(q, 'b', st.B);
   if (st.rs !== meta.defaultRuleset) q.set('rs', st.rs);
-  if (st.cm === 'all') q.set('cm', 'all');
-  if (st.vm === 'all') q.set('vm', 'all');
+  if (st.d === 'full') q.set('d', 'full');
+  if (st.vl === 'match') q.set('vl', 'match');
   return `#/${st.view}?${q.toString().replace(/%3A/g, ':')}`;
 }

@@ -1,6 +1,6 @@
-// Compare: two fighters side by side, each with its own build. Summary pairs the main stats; All stats
-// pairs every Full stats row. Also the pieces Vs opponent shares: the two-fighter header, paired rows,
-// All stats and a side's build panel.
+// Versus, Side by side (was Compare): two fighters as they are, each with its own build. Quick pairs the main
+// stats (CompareSummary); Full pairs every Full stats row (AllStats). Also the pieces the Matchup shares: the
+// two-fighter header, paired rows, All stats and a side's build panel. The page itself is in versus.jsx.
 import React, { useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
@@ -482,51 +482,44 @@ export function HpPair() {
   return <div className="hpair"><span className="bars hp l">{bars(a)}</span><span style={{ textAlign: 'center', fontSize: 12 }}>HP<br /><b>{a === b ? `${F.int(a)} each` : `${F.int(a)} | ${F.int(b)}`}</b></span><span className="bars hp">{bars(b)}</span></div>;
 }
 
-export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset, swapIn, resetSits, qp = () => null }) {
+/** The phone's two-fighter bar: both faces and names, the VS mark, each side's Change. */
+export function PhoneVsBar({ pair, change }) {
+  return (
+    <>
+      <div className="cbar">
+        <span className="l"><span className="cav"><img src={faceUrl(pair.A.c)} alt="" /></span><span><Name parts={nameParts(pair.A.c.name)} /></span></span>
+        <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
+        <span className="cvs" aria-hidden="true"><b>VS</b></span>
+      </div>
+      <div className="cbar-acts">{change('A')}{change('B')}</div>
+    </>
+  );
+}
+
+/** Versus, Side by side, Quick (was Compare's Summary): the headline pairs, the Command list, the verdict, similar fighters. */
+export function CompareSummary({ pair, swapIn }) {
   const phone = usePhone();
   const L = leads(pair);
   const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
-  const change = (k) => <ChangeButton onClick={() => openPicker('char', k)} title={k === 'B' ? 'Change the right side' : 'Change fighter'} />;
   return (
-    <>
-      {phone ? (
-        <>
-          <div className="cbar">
-            <span className="l"><span className="cav"><img src={faceUrl(pair.A.c)} alt="" /></span><span><Name parts={nameParts(pair.A.c.name)} /></span></span>
-            <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
-            <span className="cvs" aria-hidden="true"><b>VS</b></span>
-          </div>
-          <div className="cbar-acts">{change('A')}{change('B')}</div>
-        </>
-      ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
-      <div className="qpanchor">{qp('A')}{qp('B')}</div>
-      <Modes value={mode} options={[['summary', 'Summary'], ['all', 'All stats']]} onChange={setMode}>
-        <em>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></em>
-      </Modes>
-      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
-      {mode === 'all' ? (
-        <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} /></div>
-      ) : (
-        <div className="cmpgrid">
-          <div className="cmpcol">
-            {SUMMARY(pair).map(s => (
-              <div className={`plate ${s.cls}`} key={s.title}><h5>{s.title}</h5>{s.hp && <HpPair />}{s.rows.map(r => <Pair key={r.label} row={r} />)}</div>
-            ))}
-            <div className="plate cmd"><h5>Command list</h5><CmdCmp phone={phone} /></div>
-          </div>
-          <div className="cmpcol">
-            <div className="plate neutral">
-              <h5>Verdict</h5>
-              <div className="verdict">{nA} leads on <b>{L.a}</b> stats, {nB} on <b>{L.b}</b>.</div>
-              <div className="strong">
-                <div><small>{nA}'s edge</small><div className="tags">{L.edgeA.map(x => <span key={x}>{x}</span>)}</div></div>
-                <div><small>{nB}'s edge</small><div className="tags">{L.edgeB.map(x => <span key={x}>{x}</span>)}</div></div>
-              </div>
-            </div>
-            <Similar id={pair.A.c.id} name={pair.A.c.name} onPick={swapIn} />
+    <div className="cmpgrid">
+      <div className="cmpcol">
+        {SUMMARY(pair).map(s => (
+          <div className={`plate ${s.cls}`} key={s.title}><h5>{s.title}</h5>{s.hp && <HpPair />}{s.rows.map(r => <Pair key={r.label} row={r} />)}</div>
+        ))}
+        <div className="plate cmd"><h5>Command list</h5><CmdCmp phone={phone} /></div>
+      </div>
+      <div className="cmpcol">
+        <div className="plate neutral">
+          <h5>Verdict</h5>
+          <div className="verdict">{nA} leads on <b>{L.a}</b> stats, {nB} on <b>{L.b}</b>.</div>
+          <div className="strong">
+            <div><small>{nA}'s edge</small><div className="tags">{L.edgeA.map(x => <span key={x}>{x}</span>)}</div></div>
+            <div><small>{nB}'s edge</small><div className="tags">{L.edgeB.map(x => <span key={x}>{x}</span>)}</div></div>
           </div>
         </div>
-      )}
-    </>
+        <Similar id={pair.A.c.id} name={pair.A.c.name} onPick={swapIn} />
+      </div>
+    </div>
   );
 }

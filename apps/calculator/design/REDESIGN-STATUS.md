@@ -100,7 +100,9 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    page (Sheet and Full stats merged: quick numbers per section, More or a Quick / Full switch for the full rows,
    one section order), the capsule picker inside the build rail with the numbers in view (a half-height sheet on a
    phone), one Versus page (Compare and Vs opponent, a Side by side / Matchup switch; the league chose the merge),
-   a pinned headline strip, Find a stat, and quieter type. Waiting on the league's picks before the demo changes.
+   a pinned headline strip, Find a stat, and quieter type. **The league took all of them but the quieter type**
+   (it lost the flair that makes stats easy to find); Quick keeps the Sheet's look and roster bars. Built into
+   the demo on 2026-10-13 (its README, "Round 23"), waiting on the league's look.
 2. **URL scheme.** Character pages by name slug, the four views as routes, and share links that carry the whole
    build (active skills, Sparking, ruleset, opponent). Old `#` share links must keep decoding. Uses
    `restoreDeepLink` like the Analyzer.

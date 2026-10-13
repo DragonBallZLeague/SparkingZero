@@ -238,13 +238,21 @@ function Meter({ label, now, hover, of, gray = false }) {
   );
 }
 
-export function CapsulePicker({ side, ruleset, onChange, onClose, who }) {
+/**
+ * The capsule picker. `mode` places it (round 23): 'dock' in the fighter's column or a Versus rail, beside the
+ * numbers it changes; 'sheet' in the phone's (and tablet's) half-height bottom sheet; 'page' on its own.
+ * `onHover(id)` reports the capsule under the pointer, so the page can preview what it would change.
+ */
+export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'page', onHover = null }) {
   const phone = usePhone();
+  const narrow = phone || mode !== 'page';
   const [q, setQ] = useState('');
   const [type, setType] = useState(null);
   const [cost, setCost] = useState(null);
   const [banned, setBanned] = useState(false);
-  const [hov, setHov] = useState(null);
+  const [hov, setHov0] = useState(null);
+  const setHov = (id) => { setHov0(id); onHover?.(id); };
+  useEffect(() => () => onHover?.(null), []);
   const spec = side.spec;
   const chk = buildCheck(spec.caps, ruleset);
   const group = chk.groups[0];
@@ -266,26 +274,26 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who }) {
   }
   const nameOf = side.c.name;
   return (
-    <div className="cpk">
+    <div className={`cpk ${mode}`}>
       <div className="cbuild">
-        <div className="pk-h"><b>{who === 'B' ? 'Their capsules' : 'Capsules'}</b><small>{nameOf}</small><button className="x" onClick={onClose}>Done</button></div>
+        <div className="pk-h"><b>Capsules</b><small>{nameOf}</small>{mode !== 'sheet' && <button className="x" onClick={onClose}>Done</button>}</div>
         <div className="caps">
           {chk.caps.map(x => (
             <div key={x.id} className={`caprow ${typeClass(x.type)}`}><span className="cst">{x.cost}</span><b title={capsuleSummary(x)}>{x.name}</b><button className="rm" aria-label={`Remove ${x.name}`} onClick={() => remove(x.id)}>✕</button></div>
           ))}
-          {Array.from({ length: 7 - chk.caps.length }, (_, i) => <div key={i} className="caprow empty"><span className="cst"></span><b>{i === 0 ? 'Pick a capsule on the right' : 'Empty slot'}</b><em></em></div>)}
+          {Array.from({ length: mode === 'page' ? 7 - chk.caps.length : Math.min(1, 7 - chk.caps.length) }, (_, i) => <div key={i} className="caprow empty"><span className="cst"></span><b>{mode !== 'page' ? `${7 - chk.caps.length} free, pick below` : i === 0 ? 'Pick a capsule on the right' : 'Empty slot'}</b><em></em></div>)}
         </div>
         <div className="meterl rsrow"><span>Ruleset</span><RulesetSelect /></div>
         <Meter label="Budget" now={chk.cost} hover={hovAdds ? hovAdds.cost : 0} of={ruleset.totalCost} />
         {group && <Meter label="Attack boosts cap" now={group.cost} hover={hovAdds && inAttackGroup(ruleset, hovAdds.id) ? hovAdds.cost : 0} of={group.maxCost} gray />}
         {chk.problems.length ? chk.problems.map(p => <div className="warn" key={p}>{p}</div>) : <div className="warn ok">Fits {ruleset.name}{chk.cost < ruleset.totalCost ? `, ${ruleset.totalCost - chk.cost} points left` : ''}.</div>}
         {notShown.length > 0 && <div className="nsl"><div className="meterl" style={{ margin: '0 0 2px' }}><span>Not in the stats</span></div>{notShown.map(([n, t], i) => <div key={i}><b>{n}</b> {t}</div>)}</div>}
-        {chk.caps.length > 0 && <div className="shown">The sheet's numbers already include {chk.caps.filter(x => (x.effects || []).some(e => !e.condition && e.key !== 'display')).map(x => capsuleSummary({ effects: x.effects.filter(e => !e.condition && e.key !== 'display') })).join('; ') || 'nothing yet'}.</div>}
+        {chk.caps.length > 0 && mode === 'page' && <div className="shown">The sheet's numbers already include {chk.caps.filter(x => (x.effects || []).some(e => !e.condition && e.key !== 'display')).map(x => capsuleSummary({ effects: x.effects.filter(e => !e.condition && e.key !== 'display') })).join('; ') || 'nothing yet'}.</div>}
       </div>
       <div className="clist">
-        <label className="srch"><span className="sr">Search capsules</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={phone ? 'Search capsules' : 'Search capsules by name or effect'} /></label>
-        <div className={`fl${phone ? ' scroll' : ''}`}><button className={!type ? 'on' : ''} onClick={() => setType(null)}>All</button>{CAPSULE_TYPES.map(t => <button key={t.type} className={`${t.k}${type === t.type ? ' on' : ''}`} onClick={() => setType(type === t.type ? null : t.type)}>{t.type}</button>)}</div>
-        {!phone && (
+        <label className="srch"><span className="sr">Search capsules</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={narrow ? 'Search capsules' : 'Search capsules by name or effect'} /></label>
+        <div className={`fl${phone && mode === 'page' ? ' scroll' : ''}`}><button className={!type ? 'on' : ''} onClick={() => setType(null)}>All</button>{CAPSULE_TYPES.map(t => <button key={t.type} className={`${t.k}${type === t.type ? ' on' : ''}`} onClick={() => setType(type === t.type ? null : t.type)}>{t.type}</button>)}</div>
+        {!narrow && (
           <div className="fl cost"><small>Cost</small><button className={!cost ? 'on' : ''} onClick={() => setCost(null)}>Any cost</button>
             {[1, 2, 3, 4, 5].map(n => <button key={n} className={cost === n ? 'on' : ''} onClick={() => setCost(cost === n ? null : n)}><span className={`hc c${n}`}>{n}</span></button>)}
             <button className={`showb${banned ? ' on' : ''}`} onClick={() => setBanned(!banned)}>{banned ? 'Hide banned' : `Show banned (${ruleset.banned.length})`}</button>

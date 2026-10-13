@@ -1,11 +1,12 @@
-// Vs opponent: the matchup. Exchange shows what each attack deals to the other side after its defenses
-// and armor (a shield on a hit the armor reduces, a cracked one on the hit that breaks it); All stats is
-// the same sections as Compare's, as dealt to and taken from the other side. Both sides' skills, capsules and
-// conditions open from one bar (PairControls, shared with Compare).
+// Versus: Compare and Vs opponent as one page (round 23). The Matchup's Quick form is the Exchange: what each
+// attack deals to the other side after its defenses and armor (a shield on a hit the armor reduces, a cracked
+// one on the hit that breaks it); its Full form is the same sections as Side by side's, as dealt to and taken
+// from the other side. Side by side's own pieces are in compare.jsx.
 import React, { createContext, useContext, useMemo } from 'react';
 import { nameParts, exchange, evaluatePair } from './model.js';
-import { Tap, Modes, usePhone, usePair } from './ui.jsx';
-import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor } from './compare.jsx';
+import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
+import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads } from './compare.jsx';
+import { Conditions, InEffect } from './conditions.jsx';
 import { ChangeButton } from './sheet.jsx';
 import { F } from './format.js';
 
@@ -140,26 +141,69 @@ function HealthStrips() {
   );
 }
 
-export function VersusView({ pair, mode, setMode, setSpec, openPicker, ruleset, resetSits, qp = () => null }) {
+/** A side's rail on a wide screen: its build (skills, Sparking, capsules, league builds) and conditions, or its docked capsule picker. */
+function Rail({ k, pair, setSpec, openPicker, ruleset, dock }) {
+  const side = pair[k], other = pair[k === 'A' ? 'B' : 'A'];
+  return (
+    <aside className={`vrail ${k === 'A' ? 'sa' : 'sb'}${dock ? ' dock' : ''}`}>
+      {dock || (
+        <>
+          <SideBuild side={side} other={other} title={`${nameParts(side.c.name)[0]}'s loadout`} cls={k === 'A' ? 'sa' : 'sb'} ruleset={ruleset}
+            onChange={setSpec(k)} onEditCaps={() => openPicker('caps', k)} />
+          <Conditions side={side} onChange={setSpec(k)} compact />
+        </>
+      )}
+    </aside>
+  );
+}
+
+/**
+ * Versus (round 23): Compare and Vs opponent as one page. Side by side shows each fighter as they are; Matchup
+ * each one's damage after the other's defenses and armor. Quick and Full as on the Fighter page (Summary or
+ * Exchange; All stats). On a wide screen each fighter's build is a rail on its own side, where its capsule
+ * picker docks; narrower, the Loadout and Conditions bar (PairControls) and a bottom sheet.
+ */
+export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, openPicker, ruleset, resetSits, swapIn, qp = () => null, docks = {} }) {
   const phone = usePhone();
-  const ref = useMemo(() => evaluatePair({ ...pair.A.spec, sit: null }, { ...pair.B.spec, caps: [], sit: null }, { exchange: true }), [pair]);
+  const wide = useWide();
+  const match = lens === 'match';
+  const ref = useMemo(() => (match ? evaluatePair({ ...pair.A.spec, sit: null }, { ...pair.B.spec, caps: [], sit: null }, { exchange: true }) : null), [pair, match]);
+  const L = useMemo(() => leads(pair), [pair]);
+  const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
+  const change = (k) => <ChangeButton onClick={() => openPicker('char', k)} title={k === 'B' ? (match ? 'Change opponent' : 'Change the right side') : 'Change fighter'} />;
+  let body;
+  if (depth === 'full') body = <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} sections={match ? statSections({ vs: true, pair }) : null} /></div>;
+  else if (match) {
+    body = (
+      <div className="cmpgrid vsgrid">
+        <div><RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider></div>
+        <div className="cmpcol"><HealthStrips /><div className="plate armp"><h5>Breaking armor</h5><VsArmor /></div></div>
+      </div>
+    );
+  } else body = <CompareSummary pair={pair} swapIn={swapIn} />;
   return (
     <>
-      <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)}
-        changeA={<ChangeButton onClick={() => openPicker('char', 'A')} />}
-        changeB={<ChangeButton onClick={() => openPicker('char', 'B')} title="Change opponent" />} />
+      {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
-      <Modes value={mode} options={[['exchange', 'Exchange'], ['all', 'All stats']]} onChange={setMode}>
-        <em>{mode === 'all' ? 'Each side against the other: damage after their defenses and armor' : 'Your attacks on the left, theirs on the right'}</em>
-      </Modes>
-      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
-      {mode === 'all' ? (
-        <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} sections={statSections({ vs: true, pair })} /></div>
+      <div className="vmodes">
+        <Modes value={lens} options={[['side', 'Side by side'], ['match', 'Matchup']]} onChange={setLens} />
+        <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
+        <em>{match ? 'Each side\'s damage after the other\'s defenses and armor' : <>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></>}</em>
+      </div>
+      {wide ? (
+        <>
+          <div className="vineff"><InEffect sides={[[pair.A.c.name, pair.A], [pair.B.c.name, pair.B]]} /></div>
+          <div className="vsl">
+            <Rail k="A" pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} dock={docks.A} />
+            <div className="vsc">{body}</div>
+            <Rail k="B" pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} dock={docks.B} />
+          </div>
+        </>
       ) : (
-        <div className="cmpgrid vsgrid">
-          <div><RefCtx.Provider value={ref}><Exchange phone={phone} /></RefCtx.Provider></div>
-          <div className="cmpcol"><HealthStrips /><div className="plate armp"><h5>Breaking armor</h5><VsArmor /></div></div>
-        </div>
+        <>
+          <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
+          {body}
+        </>
       )}
     </>
   );
