@@ -7,7 +7,7 @@ import {
   characters, capsules, teams, byId, faceUrl, artUrl, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, nameParts,
   CAPSULE_TYPES, typeClass, capsuleSummary, buildCheck, inAttackGroup, evaluate, blastsOf, blastDamage, volley, conditionNeedsOf,
 } from './model.js';
-import { usePhone, Rk, Name } from './ui.jsx';
+import { usePhone, Rk, Name, RulesetSelect } from './ui.jsx';
 import { ClassChip } from './sheet.jsx';
 import { parseCondition } from '../../src/utils/conditions.js';
 import { F } from './format.js';
@@ -275,6 +275,7 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who }) {
           ))}
           {Array.from({ length: 7 - chk.caps.length }, (_, i) => <div key={i} className="caprow empty"><span className="cst"></span><b>{i === 0 ? 'Pick a capsule on the right' : 'Empty slot'}</b><em></em></div>)}
         </div>
+        <div className="meterl rsrow"><span>Ruleset</span><RulesetSelect /></div>
         <Meter label="Budget" now={chk.cost} hover={hovAdds ? hovAdds.cost : 0} of={ruleset.totalCost} />
         {group && <Meter label="Attack boosts cap" now={group.cost} hover={hovAdds && inAttackGroup(ruleset, hovAdds.id) ? hovAdds.cost : 0} of={group.maxCost} gray />}
         {chk.problems.length ? chk.problems.map(p => <div className="warn" key={p}>{p}</div>) : <div className="warn ok">Fits {ruleset.name}{chk.cost < ruleset.totalCost ? `, ${ruleset.totalCost - chk.cost} points left` : ''}.</div>}

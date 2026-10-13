@@ -19,14 +19,12 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .app .top { position: sticky; top: var(--nav); z-index: 20; height: 44px; background: linear-gradient(90deg, rgba(249,115,22,.35), rgba(14,20,48,0) 30%), #0e1430; }
 .app .top .tabs { margin-left: 0; }
 .szl-navbar { z-index: 50; }
-.szl-rs { display: inline-flex; border: 1px solid rgba(255,255,255,.25); }
-.szl-rs select { background: transparent; color: #e2e8f0; border: 0; font: inherit; font-size: 12px; padding: 3px 8px; outline-offset: 2px; }
-.szl-rs select option { background: #0b1030; }
-/* PROPOSED change to the shared bar (packages/ui/src/NavBar.css), previewed here only: its side columns can't
-   shrink below the title, so on a phone the title runs under the centre controls. Let them shrink (the title
-   truncates), and on a phone hide the title when the page has centre controls. */
-.szl-navbar__inner { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
-@media (max-width: 640px) { .szl-navbar__inner:has(.szl-navbar__right) .szl-navbar__divider, .szl-navbar__inner:has(.szl-navbar__right) .szl-navbar__title { display: none; } }
+/* the ruleset sits where builds are made: the capsule rows' header and the capsule picker */
+.rsel { display: inline-flex; border: 1px solid rgba(255,255,255,.2); }
+.rsel select { background: transparent; color: #cbd5e1; border: 0; font: inherit; font-size: 11px; letter-spacing: 0; text-transform: none; padding: 1px 4px; outline-offset: 2px; cursor: pointer; }
+.rsel select option { background: #0b1030; }
+.lbl2 .rsw { display: inline-flex; align-items: center; gap: 8px; }
+.meterl.rsrow { align-items: center; margin: 4px 0 10px; }
 .app .tabs button { padding: 5px 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #cbd5e1; background: rgba(10,13,32,.55); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
 .app .tabs button.on { background: #f8fafc; color: #0a0d20; }
 .app .rs { padding: 0; border: 1px solid rgba(255,255,255,.25); }

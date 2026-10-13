@@ -179,7 +179,7 @@ A fifth round on 2026-10-12 fired blasts with Blast Burst equipped (+5% blast da
 
 A sixth round on 2026-10-12 read the pursuits on Goku (Z - Early), each as the combo total after a 1,400 full smash:
 - **Damage:** Vanishing Attack and Dragon Homing's final hit (Dragon Smash) **1,250** each (1,000 Power, the published Pursuit), Lightning Attack **1,150**: two hits of 460 Power, 575 each. All on the follow-up channel.
-- **Uses:** a fighter like Goku can follow up twice in a combo (2 Vanishing Attacks, or 2 Dragon Homings, or one of each). Vanishing Break and Dragon Break add one use to their pursuit **and one to the total**: with Dragon Break, Goku can do 2 Vanishing Attacks and then a Dragon Homing. **Lightning Attack is only ever used once.** The engine's `pursuitLimit` follows this; both capsules together are a test in TESTS.md.
+- **Uses:** a fighter like Goku can follow up twice in a combo (2 Vanishing Attacks, or 2 Dragon Homings, or one of each). Vanishing Break and Dragon Break add one use to their pursuit **and one to the total**: with Dragon Break, Goku can do 2 Vanishing Attacks and then a Dragon Homing. **Lightning Attack is only ever used once.** With both capsules (2026-10-13) the total is 4: 2 Vanishing Attacks then 2 Dragon Homings worked. The engine's `pursuitLimit` follows this.
 
 `verify-data` checks these numbers on every build.
 

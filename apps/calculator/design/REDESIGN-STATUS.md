@@ -5,11 +5,13 @@ four views on 2026-10-10, and signed off everything mocked since (rounds 7 to 18
 what is still open before the detailed demo and the rebuild. Update it as items close; delete it with `design/`
 once the real pages ship.
 
-The data rebuild (everything up to commit `0b6ecc99`) ships to dev-branch on its own. None of this blocks it.
+The data rebuild (everything up to commit `0b6ecc99`) is on dev-branch.
 
-**Data fix waiting to ship:** the Giants' smash (Capsule Corp's value was 675 too high for all 11; the published
-smash now comes from the game files, measured by the league on 2026-10-10) is on this branch only. The league
-will ship it later, to dev-branch on its own or with the redesign.
+**Data waiting to ship:** everything since on this branch's data side (`src/utils`, `scripts/`, `data/`,
+`public/data/`) is on this branch only: the Giants' smash (Capsule Corp's value was 675 too high for all 11; now
+from the game files, measured by the league on 2026-10-10), the FModel game files as the primary source, armor,
+Rush Chains, charged attacks, conditions, blast hits and the pursuits. The league will ship it later, to
+dev-branch on its own or with the redesign.
 
 ## 1. Signed off
 
@@ -72,7 +74,7 @@ Fighting Spirit), a character's low-health power-up (Goku below 10,000 HP), and 
 skill stock (Vegeta's Technique, future capsules); the map and timed events only when an equipped capsule needs
 them. The health bar marks where each effect turns on; an "In effect" line names what is on; changed rows tint old
 → new. The engine needs structured conditions (capsule conditions are free text today; character passives are
-"health below N HP"). Waiting on the league's look.
+"health below N HP"). Built in the detailed demo and approved with it (2026-10-13).
 
 ### Ideas kept for later
 
@@ -88,10 +90,11 @@ them. The health bar marks where each effect turns on; an "In effect" line names
 
 ## 3. Build-out
 
-1. **Detailed real-data demo of concept B: built (2026-10-12), waiting on the league's review.** `design/demo/`
-   (`node apps/calculator/design/demo/build-demo.mjs`, then open `calculator-demo.html`): every view, both pickers,
-   conditions (structured in the engine: `src/utils/conditions.js`) and breakdowns, at desktop, tablet and phone
-   widths. Its README lists what is open.
+1. **Detailed real-data demo of concept B: built (2026-10-12), reviewed in four looks and approved on
+   2026-10-13.** `design/demo/` (`node apps/calculator/design/demo/build-demo.mjs`, then open
+   `calculator-demo.html`): every view, both pickers, conditions (structured in the engine:
+   `src/utils/conditions.js`) and breakdowns, at desktop, tablet and phone widths, under the site's shared bar
+   (the ruleset only where builds are made). Its README lists what changed in each look and what is open.
 2. **URL scheme.** Character pages by name slug, the four views as routes, and share links that carry the whole
    build (active skills, Sparking, ruleset, opponent). Old `#` share links must keep decoding. Uses
    `restoreDeepLink` like the Analyzer.

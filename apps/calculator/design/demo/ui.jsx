@@ -23,6 +23,22 @@ export const useWide = () => useMedia('(min-width: 1101px)');
 export const PairCtx = createContext(null);
 export const usePair = () => useContext(PairCtx);
 
+/* ------------------------------------------------------------------ the ruleset */
+/** { rs, setRs, rulesets }: the ruleset is chosen where builds are made (the capsule rows and the capsule picker). */
+export const RulesetCtx = createContext(null);
+export function RulesetSelect() {
+  const r = useContext(RulesetCtx);
+  if (!r) return null;
+  return (
+    <label className="rsel" title="The capsule ruleset: budget, banned capsules and caps">
+      <span className="sr">Ruleset</span>
+      <select value={r.rs} onChange={(e) => r.setRs(e.target.value)}>
+        {r.rulesets.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
+      </select>
+    </label>
+  );
+}
+
 /* ------------------------------------------------------------------ breakdowns */
 const BdCtx = createContext(null);
 

@@ -5,7 +5,7 @@ import {
   artUrl, nameParts, classColours, chipText, rosterPos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
   capsuleSummary, typeClass, buildCheck, isGiant, figHeight,
 } from './model.js';
-import { Tap, Rk, Chev, Name, Switch, usePhone } from './ui.jsx';
+import { Tap, Rk, Chev, Name, Switch, RulesetSelect, usePhone } from './ui.jsx';
 import { CmdRows, SheetChains } from './moves.jsx';
 import { Conditions } from './conditions.jsx';
 import { F } from './format.js';
@@ -85,7 +85,7 @@ export function CapsuleRows({ side, ruleset, onEdit, slots = 7, compact = false 
   for (const x of chk.caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);
   return (
     <>
-      <p className="lbl2"><span>Capsules</span><span>{chk.cost} of {ruleset.totalCost}</span></p>
+      <p className="lbl2"><span>Capsules</span><span className="rsw"><RulesetSelect /><span>{chk.cost} of {ruleset.totalCost}</span></span></p>
       {chk.caps.length > 0 && <div className="catbar">{[...byType].map(([t, n]) => <i key={t} className={typeClass(t)} style={{ flex: n }} title={`${t} ${n}`} />)}</div>}
       <div className="caps">
         {chk.caps.map((x, i) => (

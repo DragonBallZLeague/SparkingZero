@@ -1,10 +1,10 @@
-// The demo shell: the top bar (title, the four views, the ruleset), the phone's tab bar, the pickers as
+// The demo shell: the site's shared bar, the view tabs under it, the phone's tab bar, the pickers as
 // overlays, and the state in the URL. See README.md.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { evaluatePair, evaluate, emptySpec, rulesetOf, meta, baseView } from './model.js';
 import { parse, serialize } from './state.js';
-import { BreakdownHost, PairCtx, usePhone } from './ui.jsx';
+import { BreakdownHost, PairCtx, RulesetCtx, usePhone } from './ui.jsx';
 import { SheetView } from './sheet.jsx';
 import { FullStatsView } from './fullstats.jsx';
 import { CompareView } from './compare.jsx';
@@ -82,16 +82,10 @@ function App() {
   return (
     <BreakdownHost resetKey={serialize(st) + (overlay ? overlay.kind : '')}>
       <PairCtx.Provider value={ctx}>
-        {/* the site's shared bar (packages/ui) carries the page title and, in its centre slot, the ruleset;
-            the calculator's own bar under it is just the view tabs (on a phone they are at the bottom) */}
-        <NavBar current="calculator" title="Character Calculator" right={(
-          <label className="rs szl-rs">
-            <span className="sr">Ruleset</span>
-            <select value={st.rs} onChange={(e) => update({ rs: e.target.value })}>
-              {meta.rulesets.map(r => <option key={r.name} value={r.name}>{phone ? r.name.replace(' ruleset', '') : `${r.name} ruleset`}</option>)}
-            </select>
-          </label>
-        )} />
+      <RulesetCtx.Provider value={{ rs: st.rs, setRs: (rs) => update({ rs }), rulesets: meta.rulesets }}>
+        {/* the site's shared bar (packages/ui) carries the page title; the calculator's own bar under it is
+            just the view tabs (on a phone they are at the bottom). The ruleset is picked where builds are made. */}
+        <NavBar current="calculator" title="Character Calculator" />
         <div className={`B app${phone ? ' ph' : ''}`}>
           {!phone && (
             <div className="top">
@@ -107,6 +101,7 @@ function App() {
             </nav>
           )}
         </div>
+      </RulesetCtx.Provider>
       </PairCtx.Provider>
     </BreakdownHost>
   );

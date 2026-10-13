@@ -318,6 +318,9 @@ if (v2) {
   ig('Goku (Z - Early) uses: follow-ups / Vanishing / Dragon Homing / Lightning', JSON.stringify(gk.pursuitLimit), JSON.stringify({ general: 2, vanishingAttack: 2, dragonHoming: 2, lightningAttack: 1 }));
   ig('... with Vanishing Break', JSON.stringify(gkVb.pursuitLimit), JSON.stringify({ general: 3, vanishingAttack: 3, dragonHoming: 2, lightningAttack: 1 }));
   ig('... with Dragon Break', JSON.stringify(gkDb.pursuitLimit), JSON.stringify({ general: 3, vanishingAttack: 2, dragonHoming: 3, lightningAttack: 1 }));
+  // both together (2026-10-13): 4 in total, 2 Vanishing Attacks then 2 Dragon Homings worked
+  const gkBoth = run('0000_00', { capsules: ['00_0_0136', '00_0_0134'] });
+  ig('... with both', JSON.stringify(gkBoth.pursuitLimit), JSON.stringify({ general: 4, vanishingAttack: 3, dragonHoming: 3, lightningAttack: 1 }));
   const glorio = (data.blasts[named('Glorio')?.id] || []).find(b => b.name === 'Lightning Cannon');
   if (!glorio?.traits.includes('Unguardable')) game.push('Glorio Lightning Cannon is unguardable (in game 2026-10-08)');
   // Fourth round, 2026-10-09: short-dash scale, Cheelai, blast categories, cinematics and clashes

@@ -5,7 +5,7 @@ with no capsules or skills unless a test says otherwise, and note the combo's to
 (as in the Rush Chain tests). When a test is done, move its result to `EXPANSION.md` (or the right section of
 `README.md`), add a check to `scripts/verify-data.mjs`, and delete it here.
 
-Last updated 2026-10-12 (the pursuit tests answered in README.md, sixth round; one left on both pursuit capsules together).
+Last updated 2026-10-13 (the pursuit tests all answered in README.md, sixth round).
 
 ## Names still unknown
 
@@ -20,9 +20,3 @@ Last updated 2026-10-12 (the pursuit tests answered in README.md, sixth round; o
    Janemba 0.35 and 0.36), so it is likely a variant of the high-speed dash: backward, without a lock-on, or during
    a Dragon Homing. Test with Goku (Z - Early) from 5 bars: hold each candidate for 5 seconds. The one that costs
    2.6 bars (not 2.45) is BK.
-
-## Pursuits
-
-3. **Vanishing Break and Dragon Break together: 4 follow-ups?** Each one alone adds one use to its pursuit and
-   one to the total (README.md, sixth round). With both on Goku (Z - Early), the demo assumes 4 in total (3
-   Vanishing Attacks, 3 Dragon Homings, 4 of any mix). Try 2 Vanishing Attacks then 2 Dragon Homings in one combo.
