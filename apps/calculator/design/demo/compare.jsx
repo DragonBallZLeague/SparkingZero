@@ -6,7 +6,7 @@ import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
   similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
-import { Tap, Modes, Name, Switch, usePhone, usePair } from './ui.jsx';
+import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
 import { ClassChip, CapsuleRows, traitChips, ChangeButton, SkillSwitches } from './sheet.jsx';
 import { Hits } from './moves.jsx';
@@ -340,8 +340,8 @@ export function AllStats({ phone, sections = null }) {
   if (phone) {
     return (
       <>
-        <div className="onlybar"><span className="only">Only differences<Switch on={only} onChange={setOnly} label="Only differences" /></span></div>
-        <div className="jump">{secs.map(s => <button key={s.id} onClick={() => document.getElementById(`cmp-${s.id}`)?.scrollIntoView({ behavior: 'smooth' })}>{s.title.replace('! Mode', '!')}</button>)}</div>
+        <PhoneSectionNav items={secs} prefix="cmp-" onJump={(id) => document.getElementById(`cmp-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          extra={<span className="only">Only differences<Switch on={only} onChange={setOnly} label="Only differences" /></span>} />
         <div className="pstack">
           {secs.map(s => {
             if (s.custom) return <div className={`plate ${s.cls}`} key={s.id} id={`cmp-${s.id}`}><h5>{s.title}</h5>{sectionBody(s, true)}</div>;

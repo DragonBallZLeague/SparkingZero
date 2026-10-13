@@ -6,7 +6,7 @@ import {
   faceUrl, nameParts, gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
   perceptionName, blastsOf, skillOf, blastDamage,
 } from './model.js';
-import { Tap, Val, Fold, Name, usePhone, useWide, useBase } from './ui.jsx';
+import { Tap, Val, Fold, Name, PhoneSectionNav, usePhone, useWide, useBase } from './ui.jsx';
 import { MoveCards, orderedBlasts } from './moves.jsx';
 import { ClassChip, SkillSwitches, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
 import { Conditions } from './conditions.jsx';
@@ -373,7 +373,6 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
   const [open, setOpen] = useState(() => loadFold(phone) || Object.fromEntries(secs.map(s => [s.id, !phone || s.id === 'tough'])));
   const [abTab, setAbTab] = useState(side.spec.sparking ? 'sp' : 'n');
   const [here, setHere] = useState(null);
-  const [navOpen, setNavOpen] = useState(false);
   useEffect(() => {
     // the nav marks the section being read: the last one whose top has passed under the nav
     const f = () => {
@@ -430,18 +429,8 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () =
         </div>
       </div>
       {phone ? (
-        // phone: the section being read, which opens every section as a grid (no sideways scrolling)
-        <nav className={`fsnav ph${navOpen ? ' open' : ''}`} aria-label="Sections">
-          <button className={`cur ${secs.find(s => s.id === here)?.cls || 'tough'}`} aria-expanded={navOpen} onClick={() => setNavOpen(o => !o)}>
-            <i />{(secs.find(s => s.id === here)?.title || 'Sections').replace('! Mode', '!')}<span className="chv">{navOpen ? '▴' : '▾'}</span>
-          </button>
-          <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
-          {navOpen && (
-            <div className="fsgrid">
-              {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => { setNavOpen(false); jump(s.id); }}><i />{s.title.replace('! Mode', '!')}</button>)}
-            </div>
-          )}
-        </nav>
+        <PhoneSectionNav items={secs} prefix="fs-" onJump={jump}
+          extra={<button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>} />
       ) : (
         <nav className="fsnav" aria-label="Sections">
           {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}

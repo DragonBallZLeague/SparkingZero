@@ -185,6 +185,41 @@ export function Chev({ lit, kind }) {
   return <div className={`chev ${kind}`}>{Array.from({ length: 10 }, (_, i) => <i key={i} className={i < lit ? 'f' : ''} />)}</div>;
 }
 
+/**
+ * A phone's section nav (Full stats, Compare's and Vs's All stats): a sticky bar naming the section being
+ * read, which opens every section as a two-column grid; no sideways scrolling. `items`: [{ id, title, cls }],
+ * each section's element id is prefix + id; `onJump(id)` scrolls to it; `extra` sits on the bar's right.
+ */
+export function PhoneSectionNav({ items, prefix, onJump, extra = null }) {
+  const [here, setHere] = useState(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const f = () => {
+      let at = null;
+      for (const s of items) { const el = document.getElementById(prefix + s.id); if (el && el.getBoundingClientRect().top < 140) at = s.id; }
+      setHere(at);
+    };
+    window.addEventListener('scroll', f, { passive: true });
+    f();
+    return () => window.removeEventListener('scroll', f);
+  }, [items.map(s => s.id).join(), prefix]);
+  const cur = items.find(s => s.id === here);
+  const label = (s) => s.title.replace('! Mode', '!');
+  return (
+    <nav className={`fsnav ph${open ? ' open' : ''}`} aria-label="Sections">
+      <button className={`cur ${cur?.cls || 'tough'}`} aria-expanded={open} onClick={() => setOpen(o => !o)}>
+        <i />{cur ? label(cur) : 'Sections'}<span className="chv">{open ? '▴' : '▾'}</span>
+      </button>
+      {extra}
+      {open && (
+        <div className="fsgrid">
+          {items.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => { setOpen(false); onJump(s.id); }}><i />{label(s)}</button>)}
+        </div>
+      )}
+    </nav>
+  );
+}
+
 /** A plate whose header folds it (Full stats); a closed plate keeps its headline numbers. */
 export function Fold({ cls = '', title, extra = null, open, onToggle, summary, children, id }) {
   return (

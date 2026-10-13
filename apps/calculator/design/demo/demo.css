@@ -36,7 +36,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .app .caps button.caprow:hover { background: rgba(148,163,184,.14); }
 .catbar { height: 4px; margin: 2px 0 6px; opacity: .55; }
 .lb .catbar { height: 3px; margin: 0 0 5px; }
-.tags span.cm { background: rgba(148,163,184,.12); border-left: 2px solid var(--cc); }
+.tags span.cm { background: rgba(148,163,184,.12); border-left: 0; }
 .app .caprow.empty:hover { background: rgba(148,163,184,.08); }
 .app .chip { border: 0; }
 .app button.chip { cursor: pointer; }
@@ -380,8 +380,11 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .fsnav button.neutral { --sc: #cbd5e1; } .fsnav button.cmd { --sc: #fdba74; }
 .fsnav .call { margin-left: auto; text-transform: none; letter-spacing: 0; font-size: 11.5px; color: #fdba74; }
 .fsnav .call:hover { text-decoration: underline; }
-.fsnav.ph { flex-wrap: wrap; gap: 0 12px; padding: 7px 10px; margin: 0 -10px; }
+.fsnav.ph { flex-wrap: wrap; gap: 0 12px; padding: 7px 10px; }
+.fs > .fsnav.ph { margin: 0 -10px; }
 .fsnav.ph .cur { font-size: 12px; color: #f8fafc; border-bottom: 0; }
 .fsnav.ph .cur .chv { margin-left: 4px; color: var(--muted); }
 .fsgrid { flex-basis: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; padding: 8px 0 4px; margin-top: 6px; border-top: 1px solid var(--line); }
 .fsgrid button { padding: 7px 0; font-size: 11.5px; }
+.pstack .plate { scroll-margin-top: 100px; }
+.fsnav.ph .only { margin-left: auto; }
