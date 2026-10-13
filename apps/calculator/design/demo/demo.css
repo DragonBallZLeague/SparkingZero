@@ -628,3 +628,15 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .fhd .fctl:first-child { padding-top: 0; }
 .mcard.r .rk { --rk: #fda4af; } .mcard.k .rk { --rk: #fed583; }
 .mcard .mmain .rk { margin: 6px 0 2px; max-width: 100px; }
+
+/* melee a deeper red (red-600, its text red-400), further from Rush Chains' rose */
+:root { --melee: #dc2626; }
+.plate.off h5, .xgroup.melee .gh { color: #f87171; }
+.k-mel { --cc: #dc2626; }
+.plate.off .rk, .rws .plate.off, .fsec.off { --rk: #f87171; --sc: #f87171; }
+.fsnav button.off { --sc: #f87171; }
+/* Melee's groups (Rush, Smash and throw, Pursuits) as header bars, like the ki blast and Rush Chain cards' */
+.fgh { margin: 14px 0 0; padding: 6px 12px; font-size: 15px; font-weight: 900; font-style: italic; letter-spacing: .01em; text-transform: uppercase; color: #fff;
+  border-top: 3px solid var(--melee); background: linear-gradient(90deg, color-mix(in srgb, var(--melee) 30%, transparent), transparent 75%); }
+.sbody > .fgh:first-child { margin-top: 2px; }
+.fgh + .tiles { margin-top: 6px; }
