@@ -321,11 +321,10 @@ export function useBlastSlots() {
 export const slotLabel = (r) => <span className={`slot ${r.slot === 'Ultimate' ? 'u' : 'b'}`}>{SLOT_LABEL[r.slot]}</span>;
 
 /**
- * A side's move in a Blasts row (the league's pick, option B of design/concepts/alternates-r24.html): its name with
- * "Alt." on its outer side (left of the name for the left fighter, right for the right) on a costume's move, and
- * under it one slanted mark per version when the slot has more than one (the costume's mark orange when chosen); a
- * click on a mark compares that version, a click on the name the next one. The marks' line is always there, so
- * nothing moves when "Alt." appears.
+ * A side's move in a Blasts row (the league's pick, option B of design/concepts/alternates-r24.html): its name, and
+ * under it one slanted mark per version when the slot has more than one (the costume's mark orange when chosen),
+ * with a small grey "Alt." on that line's outer side (left for the left fighter, right for the right) on a
+ * costume's move, so the marks never move. A click on a mark compares that version, a click on the name the next.
  */
 export const blastName = (x, k) => {
   const alt = x.b.variant && <small className="altt" title="A costume's alternate">Alt.</small>;
@@ -336,12 +335,12 @@ export const blastName = (x, k) => {
     : x.b.name;
   return (
     <>
-      {k === 'A' ? <>{alt}{name}</> : <>{name}{alt}</>}
+      {name}
       {x.n > 1 && (
-        <span className="vmarks">{x.opts.map((o, i) => (
+        <span className="vmarks">{k === 'A' && alt}{x.opts.map((o, i) => (
           <button key={i} type="button" className={`${o.variant ? 'alt' : ''}${i === x.i ? ' on' : ''}`} aria-pressed={i === x.i}
             title={`${o.name}${o.variant ? ' (costume)' : ''}`} aria-label={`Compare ${o.name}`} onClick={() => x.set(i)} />
-        ))}</span>
+        ))}{k !== 'A' && alt}</span>
       )}
     </>
   );
@@ -443,10 +442,10 @@ export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, o
       <div className="sublbl"><span>Skills and Sparking</span></div>
       <SkillSwitches side={side} onChange={onChange} />
       {conditions}
-      {/* "Same as the other side's" joins Edit and Clear in one row (Clear replaced the old "No capsules"); shown when
-          the other side has capsules to copy */}
+      {/* "Same as the other side's" under Edit and Clear (Clear replaced the old "No capsules"), in a faded version of
+          the other side's colour since it takes their capsules; shown when the other side has capsules to copy */}
       <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} onClear={() => onChange({ ...side.spec, caps: [] })}
-        actions={other && other.spec.caps.length > 0 && <button className="edb" onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>} /></div>
+        actions={other && other.spec.caps.length > 0 && <button className={`edb same ${cls === 'sa' ? 'sb' : 'sa'}`} onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>} /></div>
       <LeagueBuilds side={side} onChange={onChange} max={3} />
       {chk.problems.length > 0 && <div className="bdhint">Leave a rule broken to see the numbers anyway; the ruleset only warns.</div>}
     </div>

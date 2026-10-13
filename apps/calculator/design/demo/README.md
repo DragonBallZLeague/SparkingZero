@@ -209,13 +209,17 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **Alternates, ways to switch:** `design/concepts/alternates-r24.html` mocks five (arrows on the name, version
   marks, a menu, one Main / Costume switch per fighter, both versions listed) against the old button. **The league
   picked B, version marks**, with a small "Alt." tag beside a costume's move name (not a line under it), so the
-  marks never move; built into Versus's Blasts (`blastName` in `compare.jsx`). "Alt." sits on the name's outer
-  side (left of the left fighter's name, right of the right one's), and a move with another version has a
-  clickable name (dashed underline) that switches to the next one, besides the marks.
-- **Versus loadouts' capsule actions are one row:** "Same as Goku's" (shown when the other side has capsules) sits
-  with Edit capsules and Clear in the same style; the "Or" line and its "No capsules" (the same as Clear) are gone.
-- **The Fighter page's column is 400px** whether it holds the fighter or the docked capsule picker (it was 350 or
-  390 against the picker's 410), so Edit capsules no longer reflows the stats or moves the page.
+  marks never move; built into Versus's Blasts (`blastName` in `compare.jsx`). Second pass: "Alt." is small grey
+  text on the marks' line, on its outer side (left for the left fighter, right for the right), so neither the
+  name nor the marks move; a move with another version has a clickable name (no underline; it turns orange on
+  hover) that switches to the next one, besides the marks.
+- **Versus loadouts' capsule actions:** "Same as Goku's" (shown when the other side has capsules) sits under Edit
+  capsules and Clear, in a faded version of the other side's colour (you take their capsules); the "Or" line and
+  its "No capsules" (the same as Clear) are gone.
+- **Opening the capsule picker keeps the page's place.** The Fighter page's column is 400px whether it holds the
+  fighter or the docked picker (it was 350 or 390 against the picker's 410), and the button that opens or closes
+  the picker lets go of focus first: it is swapped out with the column's content, and a focused element that
+  disappears made the browser scroll to the top (a real mouse click, not a scripted one; `letGo` in `main.jsx`).
 - **The Verdict** has one line per fighter, the name in the side's colour ("Android 18 deals more on 3 of 8
   attacks").
 - **Versus Blasts switch alternates in place** (replacing a row per alternate): one row per slot, and a side with

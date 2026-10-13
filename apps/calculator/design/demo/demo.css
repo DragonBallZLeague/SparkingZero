@@ -901,3 +901,17 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 
 /* a build's actions wrap onto a second line in a narrow rail, still on the right */
 .capacts { flex-wrap: wrap; row-gap: 6px; }
+
+/* Versus Blasts: "Alt." small and grey on the marks' line, on its outer side; the clickable name only lightens on hover */
+.mir .mn .vmarks { align-items: center; }
+.mir .mn .altt, .mir .ma .mn .altt { display: inline; margin: 0 4px; padding: 0; border: 0; font-size: 10px; font-weight: 500; letter-spacing: 0;
+  text-transform: none; color: var(--muted); line-height: 1; }
+.mir .mn .bcyc, .mir .mn .bcyc:hover { text-decoration: none; }
+.mir .mn .bcyc:hover { color: #fdba74; }
+
+/* "Same as the other side's", under Edit and Clear, a faded version of the other side's colour (you take their capsules) */
+.capacts + .capacts { margin-top: 6px; }
+.edb.same.sa { color: #fed7aa; border-color: rgba(249,115,22,.45); background: rgba(249,115,22,.1); }
+.edb.same.sa:hover { color: #fff; border-color: rgba(249,115,22,.75); background: rgba(249,115,22,.22); }
+.edb.same.sb { color: #bfdbfe; border-color: rgba(59,130,246,.5); background: rgba(59,130,246,.1); }
+.edb.same.sb:hover { color: #fff; border-color: rgba(59,130,246,.8); background: rgba(59,130,246,.24); }

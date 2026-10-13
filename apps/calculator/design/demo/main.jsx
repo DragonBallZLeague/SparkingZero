@@ -58,8 +58,12 @@ function App() {
   const pair = useMemo(() => evaluatePair(st.A, two ? st.B : null, { exchange: match }), [st.A, st.B, two, match]);
   const ctx = { pair, base: basePairOf(pair), names: { A: pair.A.c.name, B: pair.B?.c.name } };
   // 'char' opens the quick list where the fighter is shown; 'caps' the capsule picker, beside the numbers
+  // the button clicked to open or close the docked picker is swapped out with the column's content; if it still has
+  // focus when it goes, the browser scrolls the page to the top, so let go of focus first
+  const letGo = () => document.activeElement?.blur?.();
   const openPicker = (kind, side) => {
     if (kind === 'char') { setQuick(q => (q === side ? null : side)); return; }
+    letGo();
     setOverlay({ kind, side }); setQuick(null);
     // as a bottom sheet, bring the Fighter page's numbers (its pinned headline strip) above it
     if (!wide && st.view === 'fighter') {
@@ -67,7 +71,7 @@ function App() {
       if (sh && sh.getBoundingClientRect().top > 0) window.scrollTo({ top: sh.getBoundingClientRect().top + window.scrollY - parseFloat(getComputedStyle(sh.querySelector('.fhd')).top) });
     }
   };
-  const closeCaps = () => setOverlay(null);
+  const closeCaps = () => { letGo(); setOverlay(null); };
   /** The quick list for a side, when it is open there (the views place it). */
   const qp = (side, mode = 'dd') => (quick === side ? (
     <QuickPick current={st[side].id} side={side} mode={phone ? 'sheet' : mode} onClose={closeQuick} onBrowse={() => go('roster')}
