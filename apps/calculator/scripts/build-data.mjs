@@ -738,7 +738,8 @@ const blasts = {};
 for (const bm of blastMoves) {
   const { character: c, move: m, curated: cur } = bm;
   const cal = calibration.get(bm.family);
-  const pred = cal ? evaluate(RECIPES[cal.recipe](bm.parts), bm.coef, K) : null;
+  const spec = cal ? RECIPES[cal.recipe](bm.parts) : null;
+  const pred = cal ? evaluate(spec, bm.coef, K) : null;
   let damage = bm.measured, status = 'measured';
   if (damage == null) {
     if (cal?.accepted && pred) { damage = pred.damage; status = 'computed'; }
@@ -749,7 +750,7 @@ for (const bm of blastMoves) {
   // Spread shots: damage = one shot x the hit count the league uses (curated/spread-blasts.csv).
   // The shot is the side projectile (Record key ..._2_A) where the move opens with a centre shot
   // that rarely hits, else the move's projectile. A measured value that agrees is kept as measured.
-  let spread;
+  let spread, spreadShotPower = null;
   const sp = spreadRows.get(bm.key);
   if (sp) {
     spreadRows.delete(bm.key);
@@ -757,7 +758,8 @@ for (const bm of blastMoves) {
     const shotRow = projs.find(x => /_2_[A-Z]$/.test(x['Record key'])) || projs[0];
     const centreRow = projs.find(x => /_2_[A-Z]$/.test(x['Record key'])) ? projs.find(x => !/_2_[A-Z]$/.test(x['Record key'])) : null;
     if (!shotRow) throw new Error(`spread-blasts.csv: ${c.name} ${m.Move} has no damaging projectile in the Move Power tab`);
-    const perShot = applicationDamage(num(shotRow.Power), bm.coef, K);
+    spreadShotPower = num(shotRow.Power);
+    const perShot = applicationDamage(spreadShotPower, bm.coef, K);
     const hits = num(sp.commonHits), fired = num(sp.shotsFired);
     spread = { perShot, commonHits: hits, shotsFired: fired, allShots: perShot * fired, centreShot: centreRow ? applicationDamage(num(centreRow.Power), bm.coef, K) : null };
     const value = perShot * hits;
@@ -765,6 +767,12 @@ for (const bm of blastMoves) {
     else report.spread.push([c.name, m.Move, `${hits} of ${fired} x ${perShot}`, value, damage != null ? `agrees with measured ${damage}` : 'no measured value']);
     if (damage == null || Math.abs(damage - value) > hits) { damage = value; status = 'computed'; }
   }
+  // The hits the damage is made of, [[Power, count]], where the family's recipe reproduces the damage (within a
+  // point a hit): the engine scales a build hit by hit, each rounded up, as the game does (the league's test,
+  // 2026-10-12: Energy Blast Barrage with Blast Burst 7,880 = 10 x 788, not 7,500 x 1.05 = 7,875).
+  let hitList = null;
+  if (spread) hitList = [[spreadShotPower, spread.commonHits]];
+  else if (spec && pred && damage != null && Math.abs(pred.damage - damage) <= pred.hits) hitList = spec.filter(([, n]) => n > 0);
   const mult = m.Slot === 'Ultimate' ? 1.3 : 1.2;
   const boosted = cur?.boostedDamage ? Number(cur.boostedDamage) : damage != null ? Math.round(damage * mult) : null;
   const split = (v) => (v ? v.split(';').map(s => s.trim()).filter(Boolean) : []);
@@ -841,6 +849,7 @@ for (const bm of blastMoves) {
     damage, damageStatus: status, boostedDamage: boosted,
     recipe: status === 'computed' ? (spread ? 'spread: shot x common hit count' : cal.recipe) : undefined,
     spread,
+    hits: hitList || undefined,
     category: det.category, type: det.type,
     impactPower: det.impactPower,
     traits: det.traits,
@@ -851,7 +860,7 @@ for (const bm of blastMoves) {
     detailsSource: det.source,
   });
 }
-for (const list of Object.values(blasts)) for (const b of list) { if (b.recipe === undefined) delete b.recipe; if (b.spread === undefined) delete b.spread; }
+for (const list of Object.values(blasts)) for (const b of list) { for (const k of ['recipe', 'spread', 'hits']) if (b[k] === undefined) delete b[k]; }
 for (const r of spreadRows.values()) throw new Error(`spread-blasts.csv: ${r.character} ${r.slot} "${r.move}" matches no move in the raw Move List`);
 // A move's unique rule, the Command list's Special line (curated/move-special.csv, worded by the league)
 for (const r of curated('move-special.csv')) {

@@ -15,7 +15,7 @@ import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
-import { APPLIED_KEYS, collectEffects, computeStats } from '../src/utils/engine.js';
+import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel } from '../src/utils/engine.js';
 import { parseCondition } from '../src/utils/conditions.js';
 import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
 
@@ -297,6 +297,15 @@ if (v2) {
     ['Vegeta (Z - End) Super Saiyan', 'Infinite Blaster', 9000], ['Zarbon', 'Shooting Star Arrow', 5940],
     ['Chilled', 'Death Rain', 11028], ['Champa', "God of Destruction's Menace", 12255], ['Super 17 (GT)', 'Flash Bomber', 7530],
   ]) ig(`${n} ${move}`, blastOf(n, move), want);
+  // Fifth round, 2026-10-12: blasts with Blast Burst (+5%, added to the DP scale), each hit rounded up on its own
+  // (Energy Blast Barrage: 10 x ceil(600 x 1.25 x 1.05) = 7,880, not 7,500 x 1.05 = 7,875)
+  for (const [n, move, want] of [
+    ['Goku (Z - Early)', 'Kaioken Attack', 8794], ['Goku (Z - Mid)', 'x20 Kaioken Kamehameha', 7840], ['Goku (Z - Mid)', 'Kaioken Rush', 9213],
+    ['Gohan (Teen)', 'Energy Blast Barrage', 7880], ['Cell 2nd Form', 'Big Bang Crash', 7838],
+  ]) {
+    const b = (data.blasts[named(n)?.id] || []).find(x => x.name === move);
+    ig(`${n} ${move} with Blast Burst`, b && scaleChannel(run(named(n).id, { capsules: ['00_0_0026'] }), 'super', b.damage, b.hits), want);
+  }
   const glorio = (data.blasts[named('Glorio')?.id] || []).find(b => b.name === 'Lightning Cannon');
   if (!glorio?.traits.includes('Unguardable')) game.push('Glorio Lightning Cannon is unguardable (in game 2026-10-08)');
   // Fourth round, 2026-10-09: short-dash scale, Cheelai, blast categories, cinematics and clashes

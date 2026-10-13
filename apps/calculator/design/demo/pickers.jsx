@@ -1,7 +1,7 @@
 // The two pickers: the character picker (the roster as the game's faces, filtered by search, team,
 // class and DP, with a preview) and the capsule picker (the build with its budget and attack-cap meters,
 // every allowed capsule by type with what it changes on this build).
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import transformations from '../../../../referencedata/transformations.json';
 import {
   characters, capsules, teams, byId, faceUrl, artUrl, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, nameParts,
@@ -39,7 +39,72 @@ function Face({ c, cur, hov, onHover, onPick }) {
   );
 }
 
-function Preview({ id, onPick, side }) {
+/* ------------------------------------------------------------------ the quick list (Change fighter) */
+/**
+ * A searchable list of every fighter that opens where the fighter is shown, so changing one never leaves
+ * its numbers: in the Sheet's art column, or as a drop-down under the name. Up and down switch the fighter
+ * as you go (the numbers follow); a click or Enter keeps it and closes the list.
+ */
+export function QuickPick({ current, side, onPick, onClose, onBrowse, mode = 'dd', title = 'Change fighter' }) {
+  const phone = usePhone();
+  const [q, setQ] = useState('');
+  const [team, setTeam] = useState('');
+  const [dp, setDp] = useState('');
+  const box = useRef(null);
+  const members = team ? new Set(teams.find(t => t.name === team)?.members || []) : null;
+  const list = characters.filter(c => (!q || c.name.toLowerCase().includes(q.toLowerCase())) && (!members || members.has(c.id)) && (!dp || c.dp === +dp));
+  const forms = formsOf(current);
+  useEffect(() => {
+    // keep the current fighter in view, scrolling the list only (not the page)
+    const l = box.current?.querySelector('.qlist'), r = l?.querySelector('.qrow.cur');
+    if (l && r && (r.offsetTop < l.scrollTop || r.offsetTop + r.offsetHeight > l.scrollTop + l.clientHeight)) l.scrollTop = r.offsetTop - l.clientHeight / 2 + r.offsetHeight / 2;
+  }, [current, q, team, dp]);
+  useEffect(() => {
+    const away = (e) => { if (box.current && !box.current.contains(e.target) && !e.target.closest?.('[data-qp]')) onClose(); };
+    document.addEventListener('mousedown', away);
+    return () => document.removeEventListener('mousedown', away);
+  }, [onClose]);
+  const step = (d) => {
+    if (!list.length) return;
+    const i = list.findIndex(c => c.id === current);
+    const n = list[i < 0 ? 0 : (i + d + list.length) % list.length];
+    onPick(n.id, true);
+  };
+  const key = (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); step(e.key === 'ArrowDown' ? 1 : -1); }
+    else if (e.key === 'Enter') { e.preventDefault(); const pick = list.find(c => c.id === current) || list[0]; if (pick) onPick(pick.id); }
+    else if (e.key === 'Escape') onClose();
+  };
+  return (
+    <div className={`qp ${mode} s${side}`} ref={box} role="dialog" aria-label={title} onKeyDown={key}>
+      <div className="qph"><b>{title}</b><button className="x" onClick={onClose}>Close</button></div>
+      <label className="srch"><span className="sr">Search</span><input autoFocus={!phone} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name" /></label>
+      <div className="qpf">
+        <label><span className="sr">Team</span><select value={team} onChange={(e) => setTeam(e.target.value)}><option value="">All teams</option>{teams.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}</select></label>
+        <label><span className="sr">DP</span><select value={dp} onChange={(e) => setDp(e.target.value)}><option value="">Any DP</option>{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => <option key={n} value={n}>DP {n}</option>)}</select></label>
+      </div>
+      {forms.length > 1 && !q && (
+        <div className="qforms"><small>Forms</small>{forms.map(f => (
+          <button key={f} className={f === current ? 'on' : ''} title={byId.get(f).name} onClick={() => onPick(f, true)}><img src={faceUrl(byId.get(f))} alt={byId.get(f).name} /></button>
+        ))}</div>
+      )}
+      <div className="qlist" role="listbox" aria-label="Fighters">
+        {list.map(c => {
+          const [c1] = classColours(c.class.label);
+          return (
+            <button key={c.id} role="option" aria-selected={c.id === current} className={`qrow${c.id === current ? ' cur' : ''}`} style={{ '--c1': c1 }} onClick={() => onPick(c.id)}>
+              <img src={faceUrl(c)} alt="" loading="lazy" /><span>{c.name}<small>{c.class.label}</small></span><b>{c.dp}</b>
+            </button>
+          );
+        })}
+        {!list.length && <div className="shown">No fighter matches.</div>}
+      </div>
+      <div className="qpfoot">{!phone && <span>↑ ↓ flip through, Enter keeps</span>}<button onClick={onBrowse}>Browse all characters</button></div>
+    </div>
+  );
+}
+
+function Preview({ id, onPick, side, onCompare, onVs, currentName }) {
   const c = byId.get(id);
   const v = baseView(id);
   const forms = formsOf(id);
@@ -58,13 +123,16 @@ function Preview({ id, onPick, side }) {
         {forms.length > 1 && (
           <div className="forms"><span>Forms</span>{forms.map(f => <img key={f} src={faceUrl(byId.get(f))} alt={byId.get(f).name} title={`${byId.get(f).name}, DP ${byId.get(f).dp}`} style={f === id ? { outlineColor: '#f97316' } : undefined} />)}</div>
         )}
-        <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(id)}>{side === 'B' ? `Pick for the right side` : `Pick ${c.name}`}</button>
+        <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(id)}>{side === 'B' ? `Pick for the right side` : onCompare ? `Open ${c.name}` : `Pick ${c.name}`}</button>
+        {onCompare && currentName && (
+          <div className="pv2"><button onClick={() => onCompare(id)}>Compare with {currentName}</button><button onClick={() => onVs(id)}>Opponent for {currentName}</button></div>
+        )}
       </div>
     </div>
   );
 }
 
-export function CharacterPicker({ current, side, view, onPick, onClose }) {
+export function CharacterPicker({ current, side, view, onPick, onClose = null, onCompare = null, onVs = null }) {
   const phone = usePhone();
   const [q, setQ] = useState('');
   const [team, setTeam] = useState(null);
@@ -76,14 +144,15 @@ export function CharacterPicker({ current, side, view, onPick, onClose }) {
   const list = characters.filter(c => (!q || c.name.toLowerCase().includes(q.toLowerCase()))
     && (!members || members.has(c.id)) && (!cls || classFilterOf(c) === cls) && (!dp || c.dp === dp));
   const pick = (id) => (phone && id !== hov ? setHov(id) : onPick(id));
-  const label = side === 'B' ? (view === 'vs' ? 'Pick the opponent' : 'Pick for the right side') : 'Pick a fighter';
+  const label = side === 'B' ? (view === 'vs' ? 'Pick the opponent' : 'Pick for the right side') : onClose ? 'Pick a fighter' : 'Characters';
+  const currentName = nameParts(byId.get(current).name)[0];
   const teamChips = <><button className={!team ? 'on' : ''} onClick={() => setTeam(null)}>All</button>{teams.map(t => <button key={t.name} className={team === t.name ? 'on' : ''} onClick={() => setTeam(t.name)}>{t.name}</button>)}</>;
   const classChips = <><button className={!cls ? 'on' : ''} onClick={() => setCls(null)}>All</button>{CLASS_FILTERS.map(k => { const [c1, c2] = classColours(k); return <button key={k} className={`ccl${c1 !== c2 ? ' two' : ''}${cls === k ? ' on' : ''}`} style={{ '--c1': c1, '--c2': c2 }} onClick={() => setCls(cls === k ? null : k)}>{k}</button>; })}</>;
   const dpChips = <><button className={!dp ? 'on' : ''} onClick={() => setDp(null)}>Any</button>{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => <button key={n} className={dp === n ? 'on' : ''} onClick={() => setDp(dp === n ? null : n)}>{n}</button>)}</>;
   return (
     <div className="pk">
       <div className="pk-main">
-        <div className="pk-h"><b>{label}</b>{!phone && <small>{list.length} of {characters.length} fighters</small>}<button className="x" onClick={onClose}>Close</button></div>
+        <div className="pk-h"><b>{label}</b>{!phone && <small>{list.length} of {characters.length} fighters</small>}{onClose && <button className="x" onClick={onClose}>Close</button>}</div>
         <label className="srch"><span className="sr">Search</span><input autoFocus={!phone} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name" /></label>
         {phone ? (
           <>
@@ -108,12 +177,12 @@ export function CharacterPicker({ current, side, view, onPick, onClose }) {
           {!list.length && <div className="shown">No fighter matches.</div>}
         </div>
       </div>
-      {!phone && <Preview id={hov} onPick={onPick} side={side} />}
+      {!phone && <Preview id={hov} onPick={onPick} side={side} onCompare={onCompare} onVs={onVs} currentName={hov !== current ? currentName : null} />}
       {phone && hov && (
         <div className="pkbar">
           <img src={faceUrl(byId.get(hov))} alt="" />
           <div><div className="nm">{byId.get(hov).name}</div><div className="chips"><ClassChip c={byId.get(hov)} /><span className="chip dp">DP {byId.get(hov).dp}</span></div></div>
-          <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(hov)}>Pick</button>
+          <button className={`pick${side === 'B' ? ' side' : ''}`} onClick={() => onPick(hov)}>{onClose ? 'Pick' : 'Open'}</button>
         </div>
       )}
     </div>

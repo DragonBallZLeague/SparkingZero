@@ -172,6 +172,11 @@ A fourth round on 2026-10-09 checked blast details the data left blank or disput
 - **Short dash:** Goku (Z - Early) dashes 3 times from one bar (a 4th goes just over), which confirms Capsule Corp's scale, raw x 2 / 10000 bars (0.265 each).
 - **Cheelai's Energy Shot** is a single bullet of 5,914, now measured.
 
+A fifth round on 2026-10-12 fired blasts with Blast Burst equipped (+5% blast damage, added to the DP scale):
+- **Each hit is rounded up on its own.** Gohan (Teen)'s Energy Blast Barrage did 7,880: 10 bullets of 600 Power, 10 × ceil(600 × 1.25 × 1.05) = 10 × 788. Scaling the 7,500 total would give 7,875. So `blasts.json` now carries each blast's `hits` (`[[Power, count]]`, wherever its family's recipe reproduces the damage: 655 of 743), and the engine's `scale` scales a build hit by hit.
+- **Also matched:** Kaioken Attack 8,794 and Kaioken Rush 9,213 (Goku (Z - Early) and (Z - Mid)); Goku (Z - Mid)'s x20 Kaioken Kamehameha 7,840 (one 1,140-Power bullet plus 4 beam ticks of 1,140); Cell 2nd Form's Big Bang Crash 7,838 (one 5,700 hit). The engine now prefers an implied Power that gives a published value exactly (5,700 for Big Bang Crash's 7,482, not the nearer 5,701).
+- **Still open:** Kamehameha and Super Masenko (both 1,140 + 4 × 1,140 at DP 4) were reported as 7,845. The model gives 7,485, the same digits swapped; TESTS.md asks for a re-read. Drain Life Cell shows 9,214 against the game's 9,213: its measured 8,795 fits a 1,000 lunge hit plus a 5,700 hit, which no recipe publishes yet.
+
 `verify-data` checks these numbers on every build.
 
 **Capsule Corp class labels.** Capsule Corp sometimes computes a channel with its class
@@ -234,7 +239,7 @@ skill id `<characterId>:<slot>` as the id, into that skill (e.g. `damage`).
 | `meta.json` | `schemaVersion`, `dataVersion` (content hash; the app fetches every other file with `?v=<dataVersion>`), source versions, `referenceAttacker`, `defaultRuleset`, `rulesets` (total cost, banned ids, group caps) |
 | `characters.json` | array in referencedata order: `id`, `name`, `aliases`, `image`, `class {key, label}`, `dp`, `dpScale`, `stats` (explicit units: defenses are incoming-damage multipliers, ki in bars, `kiBlastLimit` null = unlimited), `coef` (total damage coefficient per channel = DP scale + class add), `classCoef`, `incomingDamage`, `skills` (ids into skills.json), `traits`, `sparking {armor, effects, armorBreakLevel}`, `passives`, `provenance {source: [fields]}`. **The website reads `name` from this file** |
 | `skills.json` | object keyed `<characterId>:<slot>`: `name`, `stockCost`, `damage`, `duration`, `phases [{duration, effects [{key, value}]}]` (exact game coefficients; `stages: true` when the phases are charge stages, one of which applies), `expiryRule`, `display`, `armor` |
-| `blasts.json` | object keyed by character id: `[{slot, variant, name, kiCost, triggerKi, damage, damageStatus (measured / computed / unmeasured), boostedDamage, recipe?, category, type, impactPower, traits, flags, lungeSpeed, moveLimitTime}]` |
+| `blasts.json` | object keyed by character id: `[{slot, variant, name, kiCost, triggerKi, damage, damageStatus (measured / computed / unmeasured), boostedDamage, recipe?, hits? ([[Power, count]]: the hits the damage is made of, each rounded up on its own), category, type, impactPower, traits, flags, lungeSpeed, moveLimitTime}]` |
 | `capsules.json` | every referencedata capsule: `id`, `name`, `cost`, `description`, `exclusiveTo`, `effects`, `bannedIn` (ruleset names) |
 | `teams.json` | `[{name, slug, members: [ids]}]` from the season's master lists, every form included |
 

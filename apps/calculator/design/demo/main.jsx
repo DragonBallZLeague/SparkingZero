@@ -1,6 +1,6 @@
 // The demo shell: the top bar (title, the four views, the ruleset), the phone's tab bar, the pickers as
 // overlays, and the state in the URL. See README.md.
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { evaluatePair, evaluate, emptySpec, rulesetOf, meta, baseView } from './model.js';
 import { parse, serialize } from './state.js';
@@ -9,9 +9,9 @@ import { SheetView } from './sheet.jsx';
 import { FullStatsView } from './fullstats.jsx';
 import { CompareView } from './compare.jsx';
 import { VersusView } from './versus.jsx';
-import { CharacterPicker, CapsulePicker } from './pickers.jsx';
+import { CharacterPicker, CapsulePicker, QuickPick } from './pickers.jsx';
 
-const TABS = [['sheet', 'Sheet', 'Sheet'], ['stats', 'Full stats', 'Stats'], ['compare', 'Compare', 'Compare'], ['vs', 'Vs opponent', 'Vs']];
+const TABS = [['roster', 'Characters', 'Roster'], ['sheet', 'Sheet', 'Sheet'], ['stats', 'Full stats', 'Stats'], ['compare', 'Compare', 'Compare'], ['vs', 'Vs opponent', 'Vs']];
 
 class Boundary extends React.Component {
   constructor(p) { super(p); this.state = { error: null }; }
@@ -31,7 +31,9 @@ function basePairOf(pair) {
 
 function App() {
   const [st, setSt] = useState(parse);
-  const [overlay, setOverlay] = useState(null); // { kind: 'char' | 'caps', side: 'A' | 'B' }
+  const [overlay, setOverlay] = useState(null); // { kind: 'caps', side: 'A' | 'B' }
+  const [quick, setQuick] = useState(null);     // the quick list open on side 'A' | 'B'
+  const closeQuick = useCallback(() => setQuick(null), []);
   const phone = usePhone();
   useEffect(() => {
     const f = () => setSt(parse());
@@ -44,25 +46,36 @@ function App() {
     else history.replaceState(null, '', serialize(next));
     setSt(next);
   };
-  const go = (view) => { update({ view }, true); setOverlay(null); window.scrollTo(0, 0); };
+  const go = (view, patch = {}) => { update({ view, ...patch }, true); setOverlay(null); setQuick(null); window.scrollTo(0, 0); };
   const setSpec = (k) => (spec) => update({ [k]: spec });
+  const fighter = (side, id) => ({ ...emptySpec(id), caps: st[side].caps });
   const ruleset = rulesetOf(st.rs);
   const exchange = st.view === 'vs';
   const pair = useMemo(() => evaluatePair(st.A, st.view === 'compare' || st.view === 'vs' ? st.B : null, { exchange }), [st.A, st.B, st.view]);
   const ctx = { pair, base: basePairOf(pair), names: { A: pair.A.c.name, B: pair.B?.c.name } };
-  const openPicker = (kind, side) => { setOverlay({ kind, side }); window.scrollTo(0, 0); };
+  // 'char' opens the quick list where the fighter is shown; 'caps' opens the capsule picker
+  const openPicker = (kind, side) => {
+    if (kind === 'char') { setQuick(q => (q === side ? null : side)); return; }
+    setOverlay({ kind, side }); setQuick(null); window.scrollTo(0, 0);
+  };
+  /** The quick list for a side, when it is open there (the views place it). */
+  const qp = (side, mode = 'dd') => (quick === side ? (
+    <QuickPick current={st[side].id} side={side} mode={phone ? 'sheet' : mode} onClose={closeQuick} onBrowse={() => go('roster')}
+      title={side === 'B' ? (st.view === 'vs' ? 'Change opponent' : 'Change the right side') : 'Change fighter'}
+      onPick={(id, keep) => { if (id !== st[side].id) update({ [side]: fighter(side, id) }); if (!keep) setQuick(null); }} />
+  ) : null);
 
   let page;
-  if (overlay?.kind === 'char') {
-    page = <CharacterPicker current={st[overlay.side].id} side={overlay.side} view={st.view} onClose={() => setOverlay(null)}
-      onPick={(id) => { update({ [overlay.side]: { ...emptySpec(id), caps: st[overlay.side].caps } }); setOverlay(null); }} />;
-  } else if (overlay?.kind === 'caps') {
+  if (overlay?.kind === 'caps') {
     const side = evaluate(st[overlay.side]);
     page = <CapsulePicker side={side} ruleset={ruleset} onClose={() => setOverlay(null)} onChange={setSpec(overlay.side)} who={overlay.side} />;
-  } else if (st.view === 'stats') page = <FullStatsView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} />;
-  else if (st.view === 'compare') page = <CompareView pair={pair} mode={st.cm} setMode={(cm) => update({ cm })} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} swapIn={(id) => update({ B: { ...emptySpec(id) } })} />;
-  else if (st.view === 'vs') page = <VersusView pair={pair} mode={st.vm} setMode={(vm) => update({ vm })} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={() => update({ A: { ...st.A, sit: null }, B: { ...st.B, sit: null } })} />;
-  else page = <SheetView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} />;
+  } else if (st.view === 'roster') {
+    page = <CharacterPicker current={st.A.id} side="A" view="roster" onPick={(id) => go('sheet', { A: fighter('A', id) })}
+      onCompare={(id) => go('compare', { B: emptySpec(id) })} onVs={(id) => go('vs', { B: emptySpec(id) })} />;
+  } else if (st.view === 'stats') page = <FullStatsView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} />;
+  else if (st.view === 'compare') page = <CompareView pair={pair} mode={st.cm} setMode={(cm) => update({ cm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} swapIn={(id) => update({ B: { ...emptySpec(id) } })} />;
+  else if (st.view === 'vs') page = <VersusView pair={pair} mode={st.vm} setMode={(vm) => update({ vm })} setSpec={setSpec} openPicker={openPicker} qp={qp} ruleset={ruleset} resetSits={() => update({ A: { ...st.A, sit: null }, B: { ...st.B, sit: null } })} />;
+  else page = <SheetView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} />;
 
   return (
     <BreakdownHost resetKey={serialize(st) + (overlay ? overlay.kind : '')}>

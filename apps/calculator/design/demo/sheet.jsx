@@ -82,22 +82,28 @@ export function CapsuleRows({ side, ruleset, onEdit, slots = 7, compact = false 
   );
 }
 
+/** The button that opens the quick list of fighters (data-qp: clicking it is not a click away from the list). */
+export const ChangeButton = ({ onClick, label = 'Change fighter', cls = '' }) => (
+  <button className={`chgb ${cls}`} data-qp onClick={onClick} title="Pick another fighter without leaving this page"><i aria-hidden="true">⇄</i>{label}</button>
+);
+
 export function Nameplate({ c, onChange, showTraits = true }) {
   return (
     <div className="nameplate">
-      <div className="nm"><Name parts={nameParts(c.name)} br /></div>
+      <div className="nm"><button className="nmb" data-qp onClick={onChange} title="Change fighter"><Name parts={nameParts(c.name)} br /></button></div>
       <div className="chips">
         <ClassChip c={c} />
         <span className="chip dp">DP {c.dp}</span>
-        <button className="chip ghost" onClick={onChange}>Change ▾</button>
         {showTraits && traitChips(c).map(([t, title]) => <span key={t} className="chip trait-chip" title={title || undefined}>{t}</span>)}
       </div>
+      <ChangeButton onClick={onChange} />
     </div>
   );
 }
 
-export function SheetView({ A: side, ruleset, setSpec, openPicker }) {
+export function SheetView({ A: side, ruleset, setSpec, openPicker, qp = () => null }) {
   const phone = usePhone();
+  const quick = qp('A', 'col');
   const { c, view: v } = side;
   const gm = gameMoves(side);
   const s = c.stats;
@@ -106,15 +112,20 @@ export function SheetView({ A: side, ruleset, setSpec, openPicker }) {
   const ktype = gm.kiBlastTags.find(t => ['laser', 'thrown', 'giant', 'none'].includes(t));
   return (
     <div className="cols">
-      <div className="art">
-        <div className="fig"><img src={artUrl(c.id)} alt="" className={isGiant(c) ? 'giant' : ''} style={{ '--fh': figHeight(c) }} /></div>
-        <Nameplate c={c} onChange={() => openPicker('char', 'A')} />
-        <div className="build">
-          <p className="lbl2"><span>Active</span></p>
-          <ActiveToggles side={side} onChange={setSpec} />
-          <Conditions side={side} onChange={setSpec} compact />
-          <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} />
-        </div>
+      <div className={`art${quick && !phone ? ' qpon' : ''}`}>
+        {quick && !phone ? quick : (
+          <>
+            <div className="fig"><img src={artUrl(c.id)} alt="" className={isGiant(c) ? 'giant' : ''} style={{ '--fh': figHeight(c) }} /></div>
+            <Nameplate c={c} onChange={() => openPicker('char', 'A')} />
+            <div className="build">
+              <p className="lbl2"><span>Active</span></p>
+              <ActiveToggles side={side} onChange={setSpec} />
+              <Conditions side={side} onChange={setSpec} compact />
+              <CapsuleRows side={side} ruleset={ruleset} onEdit={() => openPicker('caps', 'A')} />
+            </div>
+          </>
+        )}
+        {phone && quick}
       </div>
       <div className="sheet">
         <div className="plate">

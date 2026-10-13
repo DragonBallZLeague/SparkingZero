@@ -72,17 +72,26 @@ export function sparkingUltimateBonus(c) {
 
 const round = (v, d = 4) => (typeof v === 'number' && Number.isFinite(v) ? Math.round(v * 10 ** d) / 10 ** d : v);
 const hit = (power, k, K) => Math.ceil(F(F(power * K) * F(k)));
+const hitsTotal = (hits, k, K) => hits.reduce((s, [p, n]) => s + hit(p, k, K) * n, 0);
 
 /**
  * Scale a published final from coefficient k0 to k1. Uses the exact game formula with
  * the raw Power when it is known, else with the Power implied by the final (when that
- * reproduces it), else the plain ratio.
+ * reproduces it), else the plain ratio. `power` may be a blast's hits, [[Power, count]]
+ * (blasts.json `hits`): each hit is rounded up on its own, as the game does (Energy Blast
+ * Barrage with Blast Burst: 10 x 788 = 7,880, measured 2026-10-12, not 7,875).
  */
 export function scale(final, k0, k1, K, power = null) {
   if (typeof final !== 'number' || !k0) return final;
   if (Math.abs(k1 - k0) < 1e-12) return final;
-  if (power != null && Math.abs(hit(power, k0, K) - final) <= 1) return hit(power, k1, K);
+  if (Array.isArray(power) && power.length) {
+    const at0 = hitsTotal(power, k0, K), n = power.reduce((s, [, c]) => s + c, 0);
+    if (Math.abs(at0 - final) <= n) return hitsTotal(power, k1, K) + (final - at0);
+  } else if (typeof power === 'number' && Math.abs(hit(power, k0, K) - final) <= 1) return hit(power, k1, K);
+  // the implied Power: one that gives the final exactly first (Big Bang Crash 7,482 is 5,700, not the nearer 5,701)
   const implied = Math.round(final / (K * k0));
+  const exact = [implied, implied - 1, implied + 1].find(p => p > 0 && hit(p, k0, K) === final);
+  if (exact) return hit(exact, k1, K);
   if (implied > 0 && Math.abs(hit(implied, k0, K) - final) <= 1) return hit(implied, k1, K);
   return Math.round(final * k1 / k0);
 }
@@ -307,7 +316,7 @@ export function computeStats(c, effects, ctx = {}) {
 /**
  * A published final on one damage channel under a computed side's effects: the game-file values the
  * engine does not compute itself (charge levels, Rush Chains and follow-ups, jump and dash ki blasts,
- * Hyper Smash). `power` when the raw Power is known.
+ * Hyper Smash) and blasts. `power` when the raw Power is known, or a blast's hits ([[Power, count]]).
  */
 export function scaleChannel(view, ch, final, power = null) {
   if (!view?.coef || typeof final !== 'number') return final;

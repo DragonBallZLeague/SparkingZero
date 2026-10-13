@@ -5,7 +5,7 @@
 // The rebuild keeps this shape on real routes (REDESIGN-STATUS.md, build-out 2).
 import { meta, byId } from './model.js';
 
-export const VIEWS = ['sheet', 'stats', 'compare', 'vs'];
+export const VIEWS = ['roster', 'sheet', 'stats', 'compare', 'vs'];
 
 const DEFAULTS = {
   view: 'sheet',

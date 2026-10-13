@@ -8,7 +8,7 @@ import {
 } from './model.js';
 import { Tap, Val, Fold, Name, usePhone, useBase } from './ui.jsx';
 import { MoveCards, orderedBlasts } from './moves.jsx';
-import { ClassChip, ActiveToggles, CapsuleRows, traitChips } from './sheet.jsx';
+import { ClassChip, ActiveToggles, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
 import { Conditions } from './conditions.jsx';
 import { F } from './format.js';
 
@@ -361,7 +361,7 @@ function loadFold(phone) {
   return null;
 }
 
-export function FullStatsView({ A: side, ruleset, setSpec, openPicker }) {
+export function FullStatsView({ A: side, ruleset, setSpec, openPicker, qp = () => null }) {
   const phone = usePhone();
   const secs = sections(side);
   const [open, setOpen] = useState(() => loadFold(phone) || Object.fromEntries(secs.map(s => [s.id, !phone || s.id === 'tough'])));
@@ -377,14 +377,25 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker }) {
   const summary = (s) => s.summary.map(([l, v], i) => <span key={i}>{l}{v != null && <b>{v}</b>}</span>);
   const stat = secs.filter(s => s.id !== 'cmd');
   const cmd = secs.find(s => s.id === 'cmd');
+  const fold = (s) => (
+    <Fold key={s.id} id={`fs-${s.id}`} cls={s.cls} title={s.title} extra={s.tag && <span className="tg">{s.tag}</span>} open={isOpen(s.id)}
+      onToggle={() => setOpen(o => ({ ...o, [s.id]: !isOpen(s.id) }))} summary={summary(s)}>
+      {body(s)}
+    </Fold>
+  );
+  // On a desktop, Melee and Ki blasts stack beside Rush Chains (together about its height), so Melee
+  // does not stretch to the chains' height with nothing under it.
+  const kib = stat.find(s => s.id === 'kib');
+  const units = stat.flatMap(s => (phone ? [{ s }] : s.id === 'melee' ? [{ list: [s, kib] }] : s.id === 'kib' ? [] : [{ s }]));
   return (
     <div className="fs">
       <div className="fs-id">
         <img className="face" src={faceUrl(c)} alt="" />
         <div>
           <div className="nm"><Name parts={nameParts(c.name)} /></div>
-          <div className="chips"><ClassChip c={c} /><span className="chip dp">DP {c.dp}</span><button className="chip ghost" onClick={() => openPicker('char', 'A')}>Change ▾</button></div>
+          <div className="chips"><ClassChip c={c} /><span className="chip dp">DP {c.dp}</span><ChangeButton onClick={() => openPicker('char', 'A')} /></div>
         </div>
+        {qp('A')}
       </div>
       <div className="fsbuild">
         <ActiveToggles side={side} onChange={setSpec} />
@@ -399,12 +410,7 @@ export function FullStatsView({ A: side, ruleset, setSpec, openPicker }) {
         <button className="call" onClick={() => setAll(!allOpen)}>{allOpen ? 'Collapse all' : 'Expand all'}</button>
       </div>
       <div className={phone ? 'clstack' : 'rws'}>
-        {stat.map(s => (
-          <Fold key={s.id} id={`fs-${s.id}`} cls={s.cls} title={s.title} extra={s.tag && <span className="tg">{s.tag}</span>} open={isOpen(s.id)}
-            onToggle={() => setOpen(o => ({ ...o, [s.id]: !isOpen(s.id) }))} summary={summary(s)}>
-            {body(s)}
-          </Fold>
-        ))}
+        {units.map(u => (u.list ? <div className="rstack" key="stack">{u.list.map(fold)}</div> : fold(u.s)))}
       </div>
       <Fold id="fs-cmd" cls="cmd fscmd" title="Command list" open={isOpen('cmd')} onToggle={() => setOpen(o => ({ ...o, cmd: !isOpen('cmd') }))} summary={summary(cmd)}>
         <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />

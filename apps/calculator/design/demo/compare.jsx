@@ -4,10 +4,10 @@
 import React, { useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
-  similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec,
+  similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange,
 } from './model.js';
 import { Tap, Modes, Name, Switch, usePhone, usePair } from './ui.jsx';
-import { ClassChip, CapsuleRows, traitChips } from './sheet.jsx';
+import { ClassChip, CapsuleRows, traitChips, ChangeButton } from './sheet.jsx';
 import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
@@ -47,18 +47,25 @@ export function buildChips(side) {
  * A row of the pair: { label, small, get(side) -> number, fmt, kind, less, score }. The better value is
  * green; bars grow from the middle, sized to the larger.
  */
+/** A row's value for side k: `get(side)`, or `vs(side, opponent)` for what it does against the other side (Vs opponent). */
+export const valOf = (row, sides, k) => (row.vs ? row.vs(sides[k], sides[k === 'A' ? 'B' : 'A']) : row.get(sides[k]));
+
 export function Pair({ row, sides = ['A', 'B'] }) {
   const pc = usePair();
   const [ka, kb] = sides;
-  const a = row.get(pc.pair[ka]), b = row.get(pc.pair[kb]);
+  const a = valOf(row, pc.pair, ka), b = valOf(row, pc.pair, kb);
   const score = row.score || ((x) => (row.less ? (x ? 1 / x : 0) : x));
   const sa = typeof a === 'number' ? score(a) : 0, sb = typeof b === 'number' ? score(b) : 0;
   const top = Math.max(sa, sb) || 1;
   const better = sa === sb ? null : sa > sb ? 'a' : 'b';
   const fmt = row.fmt || F.int;
   const cell = (k, v) => (row.text ? row.text(pc.pair[k]) : typeof v === 'number'
-    ? <Tap title={`${row.label}, ${nameParts(pc.pair[k].c.name)[0]}`} get={(s) => row.get(s[k])} fmt={fmt} kind={row.kind || 'int'} lessIsBetter={row.less} mark={false} />
+    ? <Tap title={`${row.label}, ${nameParts(pc.pair[k].c.name)[0]}`} get={(s) => valOf(row, s, k)} fmt={fmt} kind={row.kind || 'int'} lessIsBetter={row.less} mark={false} />
     : (v ?? '–'));
+  if (typeof a !== 'number' && typeof b !== 'number' && !row.text) {
+    // words on both sides (skill names, "No armor"): no bars, the words get the room
+    return <div className="pair txt"><span className="a">{a ?? '–'}</span><span className="n">{row.label}{row.small && <small>{row.small}</small>}</span><span className="b">{b ?? '–'}</span></div>;
+  }
   return (
     <div className="pair">
       <span className={`a${better === 'a' ? ' w' : ''}`}>{cell(ka, a)}</span>
@@ -73,11 +80,11 @@ export function Pair({ row, sides = ['A', 'B'] }) {
 /** The phone's row: value | stat | value. */
 export function PRow({ row }) {
   const pc = usePair();
-  const a = row.get(pc.pair.A), b = row.get(pc.pair.B);
+  const a = valOf(row, pc.pair, 'A'), b = valOf(row, pc.pair, 'B');
   const score = row.score || ((x) => (row.less ? (x ? 1 / x : 0) : x));
   const better = typeof a === 'number' && typeof b === 'number' && a !== b ? (score(a) > score(b) ? 'a' : 'b') : null;
   const fmt = row.fmt || F.int;
-  const cell = (k, v) => (row.text ? row.text(pc.pair[k]) : typeof v === 'number' ? <Tap title={row.label} get={(s) => row.get(s[k])} fmt={fmt} kind={row.kind || 'int'} lessIsBetter={row.less} mark={false} /> : (v ?? '–'));
+  const cell = (k, v) => (row.text ? row.text(pc.pair[k]) : typeof v === 'number' ? <Tap title={row.label} get={(s) => valOf(row, s, k)} fmt={fmt} kind={row.kind || 'int'} lessIsBetter={row.less} mark={false} /> : (v ?? '–'));
   return <div className="prow"><span className={`a${better === 'a' ? ' w' : ''}`}>{cell('A', a)}</span><span className="n">{row.label}{row.small && <small>{row.small}</small>}</span><span className={`b${better === 'b' ? ' w' : ''}`}>{cell('B', b)}</span></div>;
 }
 
@@ -138,22 +145,24 @@ export function statSections() {
   ];
 }
 
-function ChainsCmp() {
+/** Rush Chains side by side; with `vs`, each side's damage after the other's melee defense. */
+export function ChainsCmp({ vs = false }) {
   const pc = usePair();
   const A = moveset(pc.pair.A), B = moveset(pc.pair.B);
   const nA = nameParts(pc.pair.A.c.name)[0], nB = nameParts(pc.pair.B.c.name)[0];
-  const cellOf = (ch) => (!ch?.type ? <span className="no">None</span> : (
+  const adj = { A: vs ? exchange(pc.pair.A, pc.pair.B).chain : (x) => x, B: vs ? exchange(pc.pair.B, pc.pair.A).chain : (x) => x };
+  const cellOf = (ch, k) => (!ch?.type ? <span className="no">None</span> : (
     <>
       <span className="ctype">{ch.type}</span>
-      {ch.dmg && <b className="cd">{ch.dmg.damage.length > 1 && <em>Lv.{ch.dmg.damage.length}</em>}{F.int(ch.dmg.damage.at(-1))}</b>}
-      {ch.dmg && <span className="fu">{ch.dmg.followUps.filter(f => ch.followUps.includes(f.name)).map(f => <span key={f.name}>{f.name}<b>{F.int(f.total)}</b>{f.flurry && <small>+ ki blasts</small>}</span>)}</span>}
+      {ch.dmg && <b className="cd">{ch.dmg.damage.length > 1 && <em>Lv.{ch.dmg.damage.length}</em>}{F.int(adj[k](ch.dmg.damage.at(-1)))}</b>}
+      {ch.dmg && <span className="fu">{ch.dmg.followUps.filter(f => ch.followUps.includes(f.name)).map(f => <span key={f.name}>{f.name}<b>{F.int(f.hits.reduce((s, h) => s + adj[k](h), 0))}</b>{f.flurry && <small>+ ki blasts</small>}</span>)}</span>}
     </>
   ));
   return (
     <>
-      <div className="mvcmp h"><span>Full charge</span><span>{nA}</span><span>{nB}</span></div>
+      <div className="mvcmp h"><span>{vs ? 'Full charge, dealt' : 'Full charge'}</span><span>{nA}</span><span>{nB}</span></div>
       {[0, 1, 2, 3].map(i => (
-        <div className="mvcmp" key={i}><span>Chain {i + 1}<Hits n={i + 1} /></span><span>{cellOf(A.chains[i])}</span><span>{cellOf(B.chains[i])}</span></div>
+        <div className="mvcmp" key={i}><span>Chain {i + 1}<Hits n={i + 1} /></span><span>{cellOf(A.chains[i], 'A')}</span><span>{cellOf(B.chains[i], 'B')}</span></div>
       ))}
       <div className="mvcmp"><span>Step-In</span><span><span className="ctype">{A.stepIn || 'None'}</span></span><span><span className="ctype">{B.stepIn || 'None'}</span></span></div>
       <div className="mvcmp"><span>Perception</span><span><span className="ctype">{perceptionName(A.counter)}</span></span><span><span className="ctype">{perceptionName(B.counter)}</span></span></div>
@@ -218,7 +227,7 @@ function TraitsCmp() {
 }
 
 function sectionBody(s, phone) {
-  if (s.custom === 'chains') return <ChainsCmp />;
+  if (s.custom === 'chains') return <ChainsCmp vs={s.vs} />;
   if (s.custom === 'armor') return <ArmorCmp />;
   if (s.custom === 'cmd') return <CmdCmp phone={phone} />;
   if (s.custom === 'traits') return <TraitsCmp />;
@@ -240,10 +249,10 @@ export function leads(pair) {
   return { a, b, edgeA: top(ea), edgeB: top(eb) };
 }
 
-export function AllStats({ phone }) {
+export function AllStats({ phone, sections = null }) {
   const pc = usePair();
   const [only, setOnly] = useState(true);
-  const secs = statSections();
+  const secs = sections || statSections();
   if (phone) {
     return (
       <>
@@ -252,13 +261,14 @@ export function AllStats({ phone }) {
         <div className="pstack">
           {secs.map(s => {
             if (s.custom) return <div className={`plate ${s.cls}`} key={s.id} id={`cmp-${s.id}`}><h5>{s.title}</h5>{sectionBody(s, true)}</div>;
-            const diff = s.rows.filter(r => { const a = r.get(pc.pair.A), b = r.get(pc.pair.B); return !only || a !== b; });
+            const diff = s.rows.filter(r => !only || valOf(r, pc.pair, 'A') !== valOf(r, pc.pair, 'B'));
             const same = s.rows.filter(r => !diff.includes(r));
+            const show = (r) => { const v = valOf(r, pc.pair, 'A'); return typeof v === 'number' ? (r.fmt || F.int)(v) : (v ?? '–'); };
             return (
               <div className={`plate ${s.cls}`} key={s.id} id={`cmp-${s.id}`}>
-                <h5>{s.title}</h5>
+                <h5>{s.title}{s.small && <small className="h5s">{s.small}</small>}</h5>
                 {diff.map(r => <PRow key={r.label} row={r} />)}
-                {same.length > 0 && <div className="same">Same for both: {same.map((r, i) => <b key={r.label}>{i ? ', ' : ''}{r.label} {(r.fmt || F.int)(r.get(pc.pair.A))}</b>)}</div>}
+                {same.length > 0 && <div className="same">Same for both: {same.map((r, i) => <b key={r.label}>{i ? ', ' : ''}{r.label} {show(r)}</b>)}</div>}
               </div>
             );
           })}
@@ -351,14 +361,14 @@ export function HpPair() {
   return <div className="hpair"><span className="bars hp l">{bars(a)}</span><span style={{ textAlign: 'center', fontSize: 12 }}>HP<br /><b>{a === b ? `${F.int(a)} each` : `${F.int(a)} | ${F.int(b)}`}</b></span><span className="bars hp">{bars(b)}</span></div>;
 }
 
-export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset, swapIn }) {
+export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset, swapIn, qp = () => null }) {
   const phone = usePhone();
   const [edit, setEdit] = useState(null); // 'A' | 'B'
   const L = leads(pair);
   const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
   const actions = (k) => (
     <div className="vacts">
-      <button className="editb" onClick={() => openPicker('char', k)}>Change</button>
+      <ChangeButton cls="editb" onClick={() => openPicker('char', k)} label={phone ? 'Change' : 'Change fighter'} />
       <button className="editb" onClick={() => setEdit(edit === k ? null : k)}>{edit === k ? 'Build ▴' : 'Build ▾'}</button>
     </div>
   );
@@ -375,6 +385,7 @@ export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset,
         </div>
       ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} actionsA={actions('A')} actionsB={actions('B')} />}
       {phone && <div className="cbar-acts">{actions('A')}{actions('B')}</div>}
+      <div className="qpanchor">{qp('A')}{qp('B')}</div>
       <Modes value={mode} options={[['summary', 'Summary'], ['all', 'All stats']]} onChange={setMode}>
         <em>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></em>
       </Modes>

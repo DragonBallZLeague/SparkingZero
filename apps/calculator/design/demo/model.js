@@ -446,7 +446,7 @@ export const kiBars = (b) => (b.kiCost != null ? +(b.kiCost / 10000).toFixed(2) 
 /** A blast's damage with the build (base and Boosted scale on the super or ultimate channel). */
 export function blastDamage(side, b) {
   const chn = b.slot === 'Ultimate' ? 'ultimate' : 'super';
-  return { damage: scaleChannel(side.view, chn, b.damage), boosted: scaleChannel(side.view, chn, b.boostedDamage), base: b.damage, boostedBase: b.boostedDamage, chn };
+  return { damage: scaleChannel(side.view, chn, b.damage, b.hits), boosted: scaleChannel(side.view, chn, b.boostedDamage), base: b.damage, boostedBase: b.boostedDamage, chn };
 }
 export function selfDamageText(b, oppDp = null) {
   const s = b.selfDamage;
@@ -556,6 +556,10 @@ export function exchange(A, B) {
     volley: volley(a, b),
     charged: gm.charged ? gm.charged.damage.map((x, i) => ({ v: one(x, kiDef, bl.chargedKiBlast?.[i]), held: af(bl.chargedKiBlast?.[i]) < 1, shots: gm.charged.shots })) : [],
     hyperSmash: { v: one(gm.hyperSmash, melDef, bl.hyperSmash), held: af(bl.hyperSmash) < 1 },
+    jump: gm.jump ? one(gm.jump.damage, kiDef, bl.kiBlast) : null,
+    dash: gm.dash ? one(gm.dash.damage, kiDef, bl.kiBlast) : null,
+    // Rush Chains and their follow-ups after B's melee defense (their break levels are not in the data, so no armor)
+    chain: (x) => (typeof x === 'number' ? damageTaken(x, melDef) : null),
     blasts,
   };
 }

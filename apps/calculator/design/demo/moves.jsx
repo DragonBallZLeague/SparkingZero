@@ -10,7 +10,12 @@ import { F } from './format.js';
 /** Ki pips for a blast (Blast Burst's extra bar outlined), Sparking for an ultimate (Ultimate Burst's burnout in red), points for a skill. */
 export function Cost({ kind, bars = 0, add = 0, points = 0 }) {
   if (kind === 'ult') {
-    return <span className="cost"><i className="spark" />{add > 0 && <i className="burn" />}<em>{add > 0 ? `Sparking, +${add} bar` : 'Sparking'}</em></span>;
+    // with Ultimate Burst the text is just the extra bar: the purple bar already says Sparking
+    return (
+      <span className="cost" title={add > 0 ? `Sparking! Mode, plus ${add} bar of ki` : 'Sparking! Mode'}>
+        <i className={`spark${add > 0 ? ' sm' : ''}`} />{add > 0 && <i className="burn" />}<em>{add > 0 ? `+${add} bar` : 'Sparking'}</em>
+      </span>
+    );
   }
   if (kind === 'skill') {
     return <span className="cost">{Array.from({ length: points }, (_, i) => <i key={i} className="pt" />)}<em>{points} point{points === 1 ? '' : 's'}</em></span>;
