@@ -834,3 +834,10 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 
 /* the view tabs' bar: the same orange fade, to the same length, as the Versus header's left side */
 .app .top { background: linear-gradient(100deg, rgba(234,88,12,.6), rgba(14,20,48,0) 50%), #0e1430; }
+
+/* Combat limits in teal, apart from the skills' cyan */
+.app .plate.lim { --sh: #14b8a6; --sd: #5eead4; }
+.fsnav button.lim, .fsec.lim, .rws .plate.lim { --sc: #5eead4; }
+.fsec.skl { --sc: #a5f3fc; }
+/* a costume's alternate in Versus's Blasts rows: "Alternate" under the slot badge */
+.mir .mc .altm { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }

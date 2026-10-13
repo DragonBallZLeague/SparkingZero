@@ -395,7 +395,7 @@ if (v2) {
     // newest season first; Piccolo's top build is Budokai's Season 0 playoff build
     const capIds = new Set(data.capsules.map(c => c.id));
     const lb = data.characters.filter(c => c.leagueBuilds);
-    ig('league builds: at most 3 per character, every capsule known', lb.every(c => c.leagueBuilds.top.length <= 3 && c.leagueBuilds.top.every(b => b.capsules.every(id => capIds.has(id)))), true);
+    ig('league builds: at most 6 per character, every capsule known', lb.every(c => c.leagueBuilds.top.length <= 6 && c.leagueBuilds.top.every(b => b.capsules.every(id => capIds.has(id)))), true);
     ig('league builds: newest season first', lb.every(c => c.leagueBuilds.top.every((b, i, a) => !i || a[i - 1].season >= b.season)), true);
     const picc = data.characters.find(c => c.id === '0040_00')?.leagueBuilds;
     ig('Piccolo league builds: lineups, builds', `${picc?.lineups}, ${picc?.builds}`, '19, 7');

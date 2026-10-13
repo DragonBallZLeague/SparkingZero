@@ -49,8 +49,8 @@ Done 2026-10-11:
   Skill, Ki Efficiency, Utility), from the Analyzer's types plus the league's 9 custom capsules. The Analyzer and
   the calculator both read it (`capsules.json` `type`); each app colours the types from its own palette.
 - **Special texts** in `data/curated/move-special.csv`, published as the blast's `special`.
-- **League lineup builds** in `characters.json` `leagueBuilds` (`scripts/lib/lineups.mjs`): the top 3 per
-  character, newest season first, then the most used. Only lineups the website's season and event pages link
+- **League lineup builds** in `characters.json` `leagueBuilds` (`scripts/lib/lineups.mjs`): the top 6 per
+  character (the Fighter page shows 6, the Versus rails 3), newest season first, then the most used. Only lineups the website's season and event pages link
   count; teams come from the schedule (the lineups' own team text is hand-typed). **Question for the league:** 9
   lineup files are not linked from any page (8 alternate playoff games such as `s0_po2_m1r3` beside the linked
   `s0_po2_m1r2`, and `s0_allstars_g1`); they are left out until the league says whether they count.

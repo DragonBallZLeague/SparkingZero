@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
-  similarFighters, skillOf, blastsOf, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
+  similarFighters, skillOf, blastsOf, SLOT_LABEL, blastDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
 import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
@@ -164,7 +164,7 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Ki refills to', get: V(x => x.kiRegenRange), fmt: (x) => `${x} bars` }, { label: 'Ki from hits', get: V(x => x.attackKiGain), fmt: F.dec, kind: 'dec' },
       { label: 'Skill gauge limit', get: V(x => x.skillLimit), fmt: String }, { label: 'Skill gauge per minute', get: V(x => parseFloat(x.skillRegen)), fmt: F.dec, kind: 'dec' },
     ] },
-    { id: 'limits', title: 'Combat limits', cls: 'new', col: 2, rows: [
+    { id: 'limits', title: 'Combat limits', cls: 'lim', col: 2, rows: [
       { label: 'Follow-ups', get: V(x => x.pursuitLimit.general), fmt: String },
       // each pursuit's uses with the build (Vanishing Break, Dragon Break); No where the fighter can't
       ...[['Vanishing Attack', 'vanishingAttack'], ['Dragon Homing', 'dragonHoming'], ['Lightning Attack', 'lightningAttack']].map(([l, k]) => ({ label: `${l} uses`, get: V(x => x.pursuitLimit[k]), fmt: (x) => (x ? String(x) : 'No') })),
@@ -176,7 +176,9 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Extra follow-ups', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}` },
       { label: 'Sparking armor', get: (s) => (s.c.armor?.sparking ? 1 - s.c.armor.sparking.damageRate : 0), fmt: F.armor },
     ] },
-    { id: 'cmd', title: 'Command list', cls: 'cmd', col: 2, custom: 'cmd', vs, small: vs ? 'dealt to them' : null },
+    // the Command list as the Fighter page has it: Skills, then Blasts with the ultimates and every alternate
+    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills' },
+    { id: 'bls', title: 'Blasts', cls: 'cmd', col: 2, custom: 'blasts', vs, small: vs ? 'dealt to them' : null },
     { id: 'mob', title: 'Mobility', cls: 'mob', col: 2, small: 'ki bars, less is better', rows: [
       { label: 'Short Dash', get: V(x => x.shortDashCost), fmt: F.bars, kind: 'dec', less: true },
       { label: 'Step-cancel dash', get: (s) => s.c.mobility?.stepCancelCost, fmt: F.bars, kind: 'dec', less: true },
@@ -287,23 +289,46 @@ export function VsArmor() {
   );
 }
 
-/** The Command list side by side: B1, B2, the ultimate (with `vs`, damage dealt to the other side), then the skills. */
-function CmdCmp({ vs = false }) {
+/** The same blast on either side's list (a costume's alternate shares its slot, so the variant and name tell them apart). */
+export const sameBlast = (x, y) => x.slot === y.slot && x.variant === y.variant && x.name === y.name;
+
+/**
+ * The Blasts rows for two fighters: per slot (B1, B2, the ultimate) the main move, then its alternates (a costume's),
+ * paired in order, so every option is shown side by side. `a` / `b`: each side's blast or null.
+ */
+export function blastSlots(pair) {
+  const rows = [];
+  for (const slot of ['Super 1', 'Super 2', 'Ultimate']) {
+    const of = (k, alt) => blastsOf(pair[k].c).filter(x => x.slot === slot && !!x.variant === alt);
+    rows.push({ slot, alt: false, a: of('A', false)[0] || null, b: of('B', false)[0] || null });
+    const aa = of('A', true), ab = of('B', true);
+    for (let i = 0; i < Math.max(aa.length, ab.length); i++) rows.push({ slot, alt: true, a: aa[i] || null, b: ab[i] || null });
+  }
+  return rows;
+}
+
+/** A Blasts row's centre: the slot badge, and "Alternate" under it on a costume's move. */
+export const slotLabel = (r) => <span className={`slot ${r.slot === 'Ultimate' ? 'u' : 'b'}`}>{SLOT_LABEL[r.slot]}</span>;
+export const altLabel = (r) => (r.alt ? <small className="altm">Alternate</small> : null);
+
+/** Blasts side by side, ultimates included and every alternate shown (with `vs`, damage dealt to the other side). */
+function BlastsCmp({ vs = false }) {
   const pc = usePair();
   const other = { A: 'B', B: 'A' };
-  const rows = ['Super 1', 'Super 2', 'Ultimate'].map(slot => {
-    const find = (s) => blastsOf(s.c).find(x => x.slot === slot && !x.variant);
-    const get = (k) => (s) => (!find(s[k]) ? null : vs ? exchange(s[k], s[other[k]]).blasts.find(y => y.b.slot === slot && !y.b.variant)?.deal : blastDamage(s[k], find(s[k])).damage);
-    const side = (k) => { const b = find(pc.pair[k]); return b ? { name: b.name, n: get(k)(pc.pair), value: <Tap title={b.name} get={get(k)} mark={false} /> } : null; };
-    return { slot, lab: slot === 'Ultimate' ? 'ULT' : slot === 'Super 1' ? 'B1' : 'B2', a: side('A'), b: side('B') };
-  });
-  const skill = (s, n) => { const k = skillOf(s.c, n); return k ? { name: k.name, value: `${k.stockCost} pts` } : null; };
-  return (
-    <>
-      {rows.map(r => <Mirror key={r.slot} label={<span className={`slot ${r.lab === 'ULT' ? 'u' : 'b'}`}>{r.lab}</span>} a={r.a} b={r.b} />)}
-      {[1, 2].map(n => <Mirror key={n} label={<span className="slot s">S{n}</span>} a={skill(pc.pair.A, n)} b={skill(pc.pair.B, n)} />)}
-    </>
-  );
+  const get = (k, b) => (s) => {
+    const mine = blastsOf(s[k].c).find(x => sameBlast(x, b));
+    if (!mine) return null;
+    return vs ? exchange(s[k], s[other[k]]).blasts.find(y => sameBlast(y.b, b))?.deal : blastDamage(s[k], mine).damage;
+  };
+  const side = (k, b) => (b ? { name: b.name, n: get(k, b)(pc.pair), value: <Tap title={b.name} get={get(k, b)} mark={false} /> } : null);
+  return blastSlots(pc.pair).map((r, i) => <Mirror key={i} label={slotLabel(r)} sub={altLabel(r)} a={side('A', r.a)} b={side('B', r.b)} />);
+}
+
+/** Skills side by side: name and cost in skill points. */
+export function SkillsCmp() {
+  const pc = usePair();
+  const skill = (s, n) => { const k = skillOf(s.c, n); return k ? { name: k.name, value: `${k.stockCost} pt${k.stockCost === 1 ? '' : 's'}` } : null; };
+  return [1, 2].map(n => <Mirror key={n} label={<span className="slot s">S{n}</span>} a={skill(pc.pair.A, n)} b={skill(pc.pair.B, n)} />);
 }
 
 function TraitsCmp() {
@@ -317,7 +342,8 @@ function sectionBody(s, phone) {
   if (s.custom === 'chains') return <ChainsCmp vs={s.vs} />;
   if (s.custom === 'armor') return <ArmorCmp />;
   if (s.custom === 'vsarmor') return <VsArmor />;
-  if (s.custom === 'cmd') return <CmdCmp vs={s.vs} />;
+  if (s.custom === 'skills') return <SkillsCmp />;
+  if (s.custom === 'blasts') return <BlastsCmp vs={s.vs} />;
   if (s.custom === 'traits') return <TraitsCmp />;
   return s.rows.map(r => <Pair key={r.label} row={r} />);
 }
@@ -381,7 +407,7 @@ export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, o
       <SkillSwitches side={side} onChange={onChange} />
       {conditions}
       <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} onClear={() => onChange({ ...side.spec, caps: [] })} /></div>
-      <LeagueBuilds side={side} onChange={onChange} />
+      <LeagueBuilds side={side} onChange={onChange} max={3} />
       <div className="fl" style={{ marginTop: 8 }}><small>Or</small><button onClick={() => onChange({ ...side.spec, caps: [] })}>No capsules</button>{other && <button onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>}</div>
       {chk.problems.length > 0 && <div className="bdhint">Leave a rule broken to see the numbers anyway; the ruleset only warns.</div>}
     </div>
@@ -488,7 +514,8 @@ export function CompareSummary({ pair, swapIn }) {
         {SUMMARY(pair).map(s => (
           <div className={`plate ${s.cls}`} key={s.title}><h5>{s.title}</h5>{s.hp && <HpPair />}{s.rows.map(r => <Pair key={r.label} row={r} />)}</div>
         ))}
-        <div className="plate cmd"><h5>Command list</h5><CmdCmp phone={phone} /></div>
+        <div className="plate skl"><h5>Skills</h5><SkillsCmp /></div>
+        <div className="plate cmd"><h5>Blasts</h5><BlastsCmp /></div>
       </div>
       <div className="cmpcol">
         <div className="plate neutral">

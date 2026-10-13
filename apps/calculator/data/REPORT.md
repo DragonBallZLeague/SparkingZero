@@ -23,7 +23,7 @@ Game facts are read from the FModel snapshot first (14696 character values, 2107
 |  | Count |
 | --- | --- |
 | Characters built | 241 |
-| Capsules | 103 from referencedata; 56 change shown stats, the rest are notes only |
+| Capsules | 103 from referencedata; 60 change shown stats, the rest are notes only |
 | Blasts measured | 661 |
 | Blasts computed (calibrated recipe) | 82 |
 | Blasts not measured yet | 0 |
@@ -328,10 +328,10 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | God Ki (00_0_0131) | 5 |  |  | Blasts cost 50% less ki; 1 bar of ki back after a missed Blast |
 | Sparking! Plus (00_0_0132) | 1 | sparkingDrain -15%; physicalResist -20%; energyResist -10% |  |  |
 | Style of the Strong (00_0_0133) | 2 | sparkingDrain -15% |  |  |
-| Dragon Break (00_0_0134) | 2 |  |  | dragonHomingLimit +1 |
-| Dragon Crash (00_0_0135) | 2 |  |  | dragonSmashDamage +5% |
-| Vanishing Break (00_0_0136) | 2 |  |  | vanishingLimit +1 |
-| Vanishing Crash (00_0_0137) | 2 |  |  | vanishingAttackDamage +5% |
+| Dragon Break (00_0_0134) | 2 | dragonHomingLimit +1 |  |  |
+| Dragon Crash (00_0_0135) | 2 | dragonSmashDamage +5% |  |  |
+| Vanishing Break (00_0_0136) | 2 | vanishingLimit +1 |  |  |
+| Vanishing Crash (00_0_0137) | 2 | vanishingAttackDamage +5% |  |  |
 | Secret Measures (00_0_0138) | 2 | skillStart +1 |  |  |
 | Rush Ki Blast 1 (00_0_0139) | 1 |  |  | kiBlastSpeed +5% |
 | Rush Ki Blast Count Boost (00_0_0140) | 1 | kiBlastCount +2 |  |  |

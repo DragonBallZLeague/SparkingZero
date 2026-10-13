@@ -133,7 +133,7 @@ export function Nameplate({ c, onChange, showTraits = true }) {
  * under the stats that have them (how the fighter sits in the whole roster's range), rates as chevrons, health
  * and ki as bars. `id` is the Fighter page's section id.
  */
-export function QuickBody({ id, side, only = null, skillsFirst = false }) {
+export function QuickBody({ id, side, only = null }) {
   const phone = usePhone();
   const { c, view: v } = side;
   const gm = gameMoves(side);
@@ -197,7 +197,7 @@ export function QuickBody({ id, side, only = null, skillsFirst = false }) {
     return (
       <>
         {!phone && <div className="cmdhead"><span></span><span>Move</span><span>Type</span><span className="r">Damage</span><span className="r">Cost</span></div>}
-        <CmdRows side={side} only={only} skillsFirst={skillsFirst} />
+        <CmdRows side={side} only={only} />
       </>
     );
   }
@@ -261,15 +261,17 @@ export function FormSwitch({ c, onForm }) {
 }
 
 /** The league's lineup builds for this fighter (the website's linked lineups); a click puts one on. */
-export function LeagueBuilds({ side, onChange }) {
+/** The league's builds for this fighter: up to 6 on the Fighter page, `max` 3 in the narrow Versus rails. */
+export function LeagueBuilds({ side, onChange, max = 6 }) {
   const lb = side.c.leagueBuilds;
   if (!lb?.top?.length) return null;
+  const top = lb.top.slice(0, max);
   const same = (ids) => ids.length === side.spec.caps.length && ids.every(id => side.spec.caps.includes(id));
   return (
     <>
-      <div className="sublbl" style={{ marginTop: 12 }}><span>League builds</span><em>top {lb.top.length} of {lb.builds}, from {lb.lineups} lineups</em></div>
+      <div className="sublbl" style={{ marginTop: 12 }}><span>League builds</span><em>top {top.length} of {lb.builds}, from {lb.lineups} lineups</em></div>
       <div className="lb">
-        {lb.top.map((b, i) => {
+        {top.map((b, i) => {
           const caps = b.capsules.map(id => capsuleById.get(id)).filter(Boolean);
           const byType = new Map();
           for (const x of caps) byType.set(x.type, (byType.get(x.type) || 0) + x.cost);

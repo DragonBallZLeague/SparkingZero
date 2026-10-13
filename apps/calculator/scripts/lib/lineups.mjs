@@ -4,14 +4,14 @@
  * order: each season's schedule (preseason, season, playoffs) as listed, then that season's events.
  *
  * A build is a character's capsule set (the AI strategy is listed but does not split builds: it changes no stat).
- * Each character keeps its top 3 (the league, 2026-10-11): the newest season first, then the most used there, then
+ * Each character keeps its top 6 (the league, 2026-10-11, top 3; 6 since 2026-10-13 for the Fighter page): the newest season first, then the most used there, then
  * the most used overall, then the most recent.
  */
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-export const LEAGUE_BUILDS_SHOWN = 3;
+export const LEAGUE_BUILDS_SHOWN = 6;
 
 /**
  * Every lineup a parsed season or event document links, in document order: `lineup_file` and the playoffs'

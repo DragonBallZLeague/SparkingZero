@@ -5,7 +5,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { nameParts, exchange, evaluatePair } from './model.js';
 import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
-import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads, Mirror } from './compare.jsx';
+import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, CompareSummary, PhoneVsBar, leads, Mirror, SkillsCmp, blastSlots, sameBlast, slotLabel, altLabel } from './compare.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
 import { ChangeButton } from './sheet.jsx';
 import { F } from './format.js';
@@ -95,17 +95,15 @@ function Exchange({ phone }) {
       deal: you.charged[i] ? { title: lv('Charged', i), get: X(x => x.charged[i]?.v), held: you.charged[i].held, shots: you.charged[i].shots, suffix: shots(you.charged[i]) } : null,
       take: them.charged[i] ? { title: `${lv('Charged', i)} taken`, get: T(x => x.charged[i]?.v), held: them.charged[i].held, shots: them.charged[i].shots, suffix: shots(them.charged[i]) } : null })),
   ];
-  // the Command list as Side by side's mirrored rows: each side's move by name, what it deals, no bars
-  const cmd = ['Super 1', 'Super 2', 'Ultimate'].map(slot => {
-    const mine = (x) => x.blasts.find(y => y.b.slot === slot && !y.b.variant);
-    const side = (ex, pick, t) => {
-      const m = mine(ex);
-      if (!m) return null;
-      const get = pick(x => mine(x)?.deal);
-      return { name: m.b.name, n: get(pc.pair), value: <XVal cls="xv" title={t ? `${m.b.name} taken` : m.b.name} get={get} /> };
+  // Blasts as Side by side's mirrored rows: each side's move by name, what it deals, no bars; ultimates and every
+  // alternate included (a costume's, paired in order under the same slot)
+  const cmd = blastSlots(pc.pair).map(r => {
+    const side = (b, pick, t) => {
+      if (!b) return null;
+      const get = pick(x => x.blasts.find(y => sameBlast(y.b, b))?.deal);
+      return { name: b.name, n: get(pc.pair), value: <XVal cls="xv" title={t ? `${b.name} taken` : b.name} get={get} /> };
     };
-    const lab = slot === 'Ultimate' ? 'ULT' : slot === 'Super 1' ? 'B1' : 'B2';
-    return { slot, label: <span className={`slot ${lab === 'ULT' ? 'u' : 'b'}`}>{lab}</span>, a: side(you, X, false), b: side(them, T, true) };
+    return { label: slotLabel(r), sub: altLabel(r), a: side(r.a, X, false), b: side(r.b, T, true) };
   });
   const hyper = { name: 'Hyper Smash', deal: { title: 'Hyper Smash', get: X(x => x.hyperSmash.v), held: you.hyperSmash.held }, take: { title: 'Hyper Smash taken', get: T(x => x.hyperSmash.v), held: them.hyperSmash.held } };
   const legend = (armorA || armorB) && (
@@ -122,7 +120,8 @@ function Exchange({ phone }) {
         <div className="plate"><h5>Health</h5><HpExchange /></div>
         <div className="plate off"><h5>Melee</h5>{head}{legend}{melee.map((r, i) => <XPair key={i} {...r} />)}</div>
         <div className="plate kib"><h5>Ki blasts</h5>{head}{kib.map((r, i) => <XPair key={i} {...r} />)}</div>
-        <div className="plate cmd"><h5>Command list</h5>{head}{cmd.map(r => <Mirror key={r.slot} label={r.label} a={r.a} b={r.b} />)}</div>
+        <div className="plate skl"><h5>Skills</h5><SkillsCmp /></div>
+        <div className="plate cmd"><h5>Blasts</h5>{head}{cmd.map((r, i) => <Mirror key={i} {...r} />)}</div>
         <div className="plate spk"><h5>Sparking! Mode</h5>{head}<XPair {...hyper} /></div>
       </div>
       <div className="cmpcol">

@@ -79,7 +79,7 @@ export function sections(side) {
     { id: 'kib', title: 'Ki blasts', cls: 'kib', custom: 'kib', summary: [['Ki blast', F.int(v.kiBlastDmg)], ['Limit', F.count(v.kiBlastLimit)], ['Full volley', F.int(volley(v))], ...(gm.charged ? [['Charged', F.int(gm.charged.damage.at(-1))]] : [])] },
     { id: 'armor', title: 'Breaking armor', cls: 'armp', custom: 'armor', summary: armorSummary(v) },
     {
-      id: 'limits', title: 'Combat limits', cls: 'new',
+      id: 'limits', title: 'Combat limits', cls: 'lim',
       groups: [
         // the total follow-ups in a combo (Vanishing Break and Dragon Break raise it too), then each pursuit's uses
         [null, [cell('Follow-ups', A(x => x.pursuitLimit.general), { fmt: String, kind: 'dec', long: 'Follow-ups per combo', small: ps.sparkingAdd ? `+${ps.sparkingAdd} in Sparking!` : null })]],

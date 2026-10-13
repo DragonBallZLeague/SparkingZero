@@ -410,7 +410,7 @@ function mapPassives(id) {
   });
 }
 
-// The league's own builds (the website's lineups), for the opponent's build presets: top 3 per character
+// The league's own builds (the website's lineups), for the opponent's build presets: top 6 per character
 const teamsRef = JSON.parse(fs.readFileSync(path.join(ROOT, 'referencedata', 'teams.json'), 'utf8'));
 const teamByNorm = new Map(teamsRef.flatMap(t => [t.name, t.tag, t.slug].filter(Boolean).map(k => [normName(k), t.name])));
 const capsuleIdByName = new Map(ref.capsules.map(c => [c.name, c.id]));
@@ -628,7 +628,7 @@ for (const rc of ref.characters) {
     mobility,
     moveset,
     armor,
-    // the league's own builds of this character (website lineups): how many lineups, how many builds, the top 3
+    // the league's own builds of this character (website lineups): how many lineups, how many builds, the top 6
     leagueBuilds: leagueBuilds.byCharacter.get(id) ?? null,
     skills: buildSkills(id, cc),
     traits: tags,

@@ -51,22 +51,18 @@ export function BuildDelta({ side, base }) {
 const SECS = [
   { id: 'tough', title: 'Toughness', cls: '' },
   { id: 'res', title: 'Resources', cls: 'res' },
-  { id: 'cmd', title: 'Command list', cls: 'cmd' },
+  // the Command list as two sections (the league's pick, 2026-10-13): Skills, then Blasts with the ultimates (they are blasts)
+  { id: 'skl', title: 'Skills', cls: 'skl', only: 'skills' },
+  { id: 'bls', title: 'Blasts', cls: 'cmd', only: 'blasts' },
   { id: 'melee', title: 'Melee', cls: 'off' },
   { id: 'chains', title: 'Rush Chains', cls: 'mov', note: 'Damage at full charge' },
   { id: 'kib', title: 'Ki blasts', cls: 'kib' },
   { id: 'spk', title: 'Sparking! Mode', cls: 'spk' },
   { id: 'armor', title: 'Breaking armor', cls: 'armp', fullOnly: true },
-  { id: 'limits', title: 'Combat limits', cls: 'new', fullOnly: true },
+  { id: 'limits', title: 'Combat limits', cls: 'lim', fullOnly: true },
   { id: 'mob', title: 'Mobility', cls: 'mob', fullOnly: true },
   { id: 'traits', title: 'Traits', cls: 'neutral', fullOnly: true },
 ];
-/** Trial B for the Command list (`cl=b`): Skills and Blasts (ultimates are blasts) as sections of their own, in its place. */
-const CMD3 = [
-  { id: 'skl', title: 'Skills', cls: 'skl', only: 'skills' },
-  { id: 'bls', title: 'Blasts', cls: 'cmd', only: 'blasts' },
-];
-const sectionsFor = (cl) => (cl === 'b' ? SECS.flatMap(s => (s.id === 'cmd' ? CMD3 : [s])) : SECS);
 
 /** The first text node under `root` holding `needle`, as its element; ghosts (closed sections' full rows) only when asked. */
 function findText(root, needle, inGhost) {
@@ -80,9 +76,8 @@ function findText(root, needle, inGhost) {
   return null;
 }
 
-export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, onForm = null, cl = null }) {
+export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, onForm = null }) {
   const phone = usePhone();
-  const secs = sectionsFor(cl);
   const quick = qp('A', 'col');
   const fsecs = fullSections(side);
   const fs = (id) => fsecs.find(s => s.id === id);
@@ -139,8 +134,8 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
     if (noRef.current) noRef.current.textContent = 'No match';
   }, [q, open]);
 
-  const fullBody = (s) => (s.id === 'cmd' || s.only
-    ? <MoveCards side={side} only={s.only} heads={cl == null} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
+  const fullBody = (s) => (s.only
+    ? <MoveCards side={side} only={s.only} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
     : <FullForm id={s.id} side={side} phone={phone} abTab={abTab} setAbTab={setAbTab} />);
   const toggle = (id, full) => () => setOpen(o => ({ ...o, [id]: !full }));
   const section = (s) => {
@@ -154,7 +149,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
           <span className="st">{s.title}{s.note && !full && <em className="h5n">{s.note}</em>}{mob && <span className="tg">{mob}</span>}</span>
           <span className="more" aria-hidden="true">{full ? 'Less' : 'More'}</span>
         </h5>
-        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.only ? 'cmd' : s.id} only={s.only} skillsFirst={cl === 'a'} side={side} />}</div>
+        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.only ? 'cmd' : s.id} only={s.only} side={side} />}</div>
         {searching && !full && <div className="fghost" aria-hidden="true" inert="">{fullBody(s)}</div>}
       </section>
     );
@@ -183,7 +178,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
               ) : (
                 <>
                   <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
-                  <PhoneSectionNav items={secs} prefix="f-" onJump={jump} />
+                  <PhoneSectionNav items={SECS} prefix="f-" onJump={jump} />
                   <button className="fbtn" onClick={() => setFindOpen(true)}>Find</button>
                 </>
               )}
@@ -192,13 +187,13 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
             <div className="fctl">
               <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
               <nav className="fsnav" aria-label="Sections">
-                {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
+                {SECS.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
               </nav>
               {find}
             </div>
           )}
         </div>
-        {secs.map(section)}
+        {SECS.map(section)}
       </div>
     </div>
   );

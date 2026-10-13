@@ -189,12 +189,13 @@ Changed numbers show their base under them. The row tables are gone from the dem
 - **One line parts the fighter column from the stats** on a desktop, from the top of the stats to the bottom of the
   last section; the pinned controls lost their grey edge.
 - **The stats sit flush against that line**, so it reads as their shared edge.
-- **Command list trials** (`cl=` in the hash, for the league to pick): `cl=a` drops the Skills / Blasts /
-  Ultimates sub-headers (the slot badges name the cards; a wider gap between the rows); `cl=b` splits the Command
-  list into Skills, Blasts and Ultimates sections in its place, in the skill, blast and ultimate colours.
-  Second pass: A's Quick rows put the skills on top (as Full does); B is two sections, Skills and Blasts, with
-  the ultimates under Blasts (they are blasts). Quick's rows now list alternate blasts and ultimates too, marked
-  under the name ("Alternate ultimate, with a costume"), in every version.
+- **The Command list is two sections, Skills and Blasts** (the league's pick on 2026-10-13, over dropping its
+  sub-headers): the ultimates sit under Blasts (they are blasts), Skills in the skills' cyan. Quick's rows list
+  alternate blasts and ultimates too, marked under the name ("Alternate ultimate, with a costume"). Versus does
+  the same everywhere (Side by side, Matchup, All stats): a Skills plate, then a Blasts plate where every alternate
+  has its own row under its slot ("Alternate" under the badge; "None" for a side without one), so every option is
+  compared. Combat limits moved to teal, apart from the skills' cyan.
+- **League builds:** the Fighter page shows the top 6 (the data keeps 6), the Versus rails the top 3.
 - **Versus rails scroll with the page** (one scroll bar); only a docked capsule picker keeps its own scroll. The
   rails run 500 to 1,030px; the stats between them 830 to 1,150px in Quick and 1,640 to 1,880px in Full.
 - **The view tabs' bar** fades from orange over the same length as the Versus header's left side.
