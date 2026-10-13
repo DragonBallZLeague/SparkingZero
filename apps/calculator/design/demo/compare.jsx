@@ -405,7 +405,7 @@ export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, o
 
 /* ------------------------------------------------------------------ the two-fighter controls (Compare, Vs opponent) */
 /**
- * One bar for both fighters: Skills & capsules and Conditions, each opening a panel for both sides at once
+ * One bar for both fighters, under the view switch: Loadout (skills, Sparking, capsules) and Conditions, each opening a panel for both sides at once
  * (side by side on a desktop; on a phone, one fighter at a time with a switch between the two).
  */
 export function PairControls({ pair, setSpec, openPicker, ruleset, resetSits }) {
@@ -421,7 +421,7 @@ export function PairControls({ pair, setSpec, openPicker, ruleset, resetSits }) 
   return (
     <>
       <div className="condbar">
-        <button className={`chip ghost${setup ? ' on' : ''}`} aria-expanded={setup} onClick={() => setSetup(!setup)}>Skills & capsules {setup ? '▴' : '▾'}</button>
+        <button className={`chip ghost${setup ? ' on' : ''}`} aria-expanded={setup} onClick={() => setSetup(!setup)}>Loadout {setup ? '▴' : '▾'}</button>
         <button className={`chip ghost cnd${cond ? ' on' : ''}`} aria-expanded={cond} onClick={() => setCond(!cond)}>Conditions {cond ? '▴' : '▾'}</button>
         <InEffect sides={[[pair.A.c.name, pair.A], [pair.B.c.name, pair.B]]} />
       </div>
@@ -496,10 +496,10 @@ export function CompareView({ pair, mode, setMode, setSpec, openPicker, ruleset,
         </>
       ) : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
-      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
       <Modes value={mode} options={[['summary', 'Summary'], ['all', 'All stats']]} onChange={setMode}>
         <em>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></em>
       </Modes>
+      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
       {mode === 'all' ? (
         <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} /></div>
       ) : (

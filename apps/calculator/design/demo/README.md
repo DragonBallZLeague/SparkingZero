@@ -63,9 +63,11 @@ conditions, ruleset) lives in the URL hash.
 - **Base values** under changed numbers in Full stats' Rush Chains and Ki blasts too, and in the phone list's
   Base column.
 - **Hits to KO** are out (noted in REDESIGN-STATUS.md for later).
-- **Compare and Vs opponent** share one bar: **Skills & capsules** and **Conditions**, each for both fighters
-  (side by side on a desktop; one at a time with a switch on a phone). The per-side white Build buttons are
-  gone, and Compare has conditions now.
+- **Compare and Vs opponent** share one bar, under the Summary/Exchange and All stats switch: **Loadout**
+  (skills, Sparking, capsules) and **Conditions**, each for both fighters (side by side on a desktop; one at a
+  time with a switch on a phone). The per-side white Build buttons are gone, and Compare has conditions now.
+- **Capsule colour is one cue:** a capsule row's left edge. Rows, type labels and league builds are neutral, and
+  the build's category bar is thin and muted.
 - **Vs Breaking armor** uses the Exchange's shields (cracked green: breaks; grey: holds).
 - The phone's Compare bar has the VS mark and slanted barrier.
 

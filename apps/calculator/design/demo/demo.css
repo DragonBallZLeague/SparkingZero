@@ -30,7 +30,14 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .app .tog.na { opacity: .45; cursor: not-allowed; }
 .app .tog.off { opacity: .4; }
 .app .caps button.caprow { width: 100%; text-align: left; color: #f1f5f9; }
-.app .caps button.caprow:hover { background: color-mix(in srgb, var(--cc) 18%, rgba(10,13,32,.55)); }
+/* capsule colour, kept to one cue: a capsule row's left edge. Rows, type labels and league builds are neutral;
+   the build's category bar is thin and muted (the league found the full colouring hard to look at) */
+.caprow { background: rgba(148,163,184,.07); }
+.caprow em { color: var(--muted); font-weight: 700; }
+.app .caps button.caprow:hover { background: rgba(148,163,184,.14); }
+.catbar { height: 4px; margin: 2px 0 6px; opacity: .55; }
+.lb .catbar { display: none; }
+.tags span.cm { background: rgba(148,163,184,.12); border-left: 0; }
 .app .caprow.empty:hover { background: rgba(148,163,184,.08); }
 .app .chip { border: 0; }
 .app button.chip { cursor: pointer; }

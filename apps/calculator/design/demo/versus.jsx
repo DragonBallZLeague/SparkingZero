@@ -149,10 +149,10 @@ export function VersusView({ pair, mode, setMode, setSpec, openPicker, ruleset, 
         changeA={<ChangeButton onClick={() => openPicker('char', 'A')} />}
         changeB={<ChangeButton onClick={() => openPicker('char', 'B')} title="Change opponent" />} />
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
-      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
       <Modes value={mode} options={[['exchange', 'Exchange'], ['all', 'All stats']]} onChange={setMode}>
         <em>{mode === 'all' ? 'Each side against the other: damage after their defenses and armor' : 'Your attacks on the left, theirs on the right'}</em>
       </Modes>
+      <PairControls pair={pair} setSpec={setSpec} openPicker={openPicker} ruleset={ruleset} resetSits={resetSits} />
       {mode === 'all' ? (
         <div className={phone ? '' : 'cmpwrap'}><AllStats phone={phone} sections={statSections({ vs: true, pair })} /></div>
       ) : (
