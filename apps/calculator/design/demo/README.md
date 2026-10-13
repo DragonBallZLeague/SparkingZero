@@ -188,6 +188,13 @@ Changed numbers show their base under them. The row tables are gone from the dem
   header opens and closes the section (More / Less only shows which way). Sub-groups and cards dropped their dots.
 - **One line parts the fighter column from the stats** on a desktop, from the top of the stats to the bottom of the
   last section; the pinned controls lost their grey edge.
+- **The stats sit flush against that line**, so it reads as their shared edge.
+- **Command list trials** (`cl=` in the hash, for the league to pick): `cl=a` drops the Skills / Blasts /
+  Ultimates sub-headers (the slot badges name the cards; a wider gap between the rows); `cl=b` splits the Command
+  list into Skills, Blasts and Ultimates sections in its place, in the skill, blast and ultimate colours.
+- **Capsule rows** lost their coloured left edge; the coloured type name says the category.
+- **A ki blast card's Ki cost** spans two of the card's columns, so "0.135 bars" stays on one line.
+- **Versus rails** follow the fighter column's order: skills and Sparking, Conditions, Capsules, League builds.
 - **Capsules' Edit and Clear** sit on the right under the list, in a neutral slate outline.
 - **Versus rails** are led by their title ("Goku's loadout"): the largest header there, with the side's orange or
   blue as its top edge and tint.

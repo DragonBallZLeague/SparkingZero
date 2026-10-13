@@ -2,6 +2,7 @@
 // builds, skills, Sparking and conditions, and the ruleset:
 //   #/<view>?a=<id>&ac=<capsule ids>&as=<active skills>&ag=<stages>&ap=1&ah=<health %>&ak=<ki>&aq=<skill gauge>&am=<map>&ae=<events>
 //            &b=... (the same for the other fighter)&rs=<ruleset>&d=full (Quick or Full)&vl=match (Versus: Side by side or Matchup)
+//            &cl=a|b (trials for the Command list: A without its sub-headers, B as three sections)
 // The views are roster, fighter and versus (round 23); the old ones still open: #/sheet and #/stats the Fighter page
 // (Quick, Full), #/compare and #/vs Versus (Side by side, Matchup), with cm=all / vm=all as Full.
 // The rebuild keeps this shape on real routes (REDESIGN-STATUS.md, build-out 2).
@@ -52,6 +53,7 @@ export function parse(hash = location.hash) {
     rs: meta.rulesets.some(r => r.name === q.get('rs')) ? q.get('rs') : DEFAULTS.rs,
     d,
     vl,
+    cl: ['a', 'b'].includes(q.get('cl')) ? q.get('cl') : null,
   };
 }
 
@@ -79,5 +81,6 @@ export function serialize(st) {
   if (st.rs !== meta.defaultRuleset) q.set('rs', st.rs);
   if (st.d === 'full') q.set('d', 'full');
   if (st.vl === 'match') q.set('vl', 'match');
+  if (st.cl) q.set('cl', st.cl);
   return `#/${st.view}?${q.toString().replace(/%3A/g, ':')}`;
 }

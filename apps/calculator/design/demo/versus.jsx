@@ -172,8 +172,7 @@ function Rail({ k, pair, setSpec, openPicker, ruleset, dock }) {
       {dock || (
         <>
           <SideBuild side={side} other={other} title={`${nameParts(side.c.name)[0]}'s loadout`} cls={k === 'A' ? 'sa' : 'sb'} ruleset={ruleset}
-            onChange={setSpec(k)} onEditCaps={() => openPicker('caps', k)} />
-          <Conditions side={side} onChange={setSpec(k)} compact />
+            onChange={setSpec(k)} onEditCaps={() => openPicker('caps', k)} conditions={<Conditions side={side} onChange={setSpec(k)} compact />} />
         </>
       )}
     </aside>

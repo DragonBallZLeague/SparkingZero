@@ -133,7 +133,7 @@ export function Nameplate({ c, onChange, showTraits = true }) {
  * under the stats that have them (how the fighter sits in the whole roster's range), rates as chevrons, health
  * and ki as bars. `id` is the Fighter page's section id.
  */
-export function QuickBody({ id, side }) {
+export function QuickBody({ id, side, only = null }) {
   const phone = usePhone();
   const { c, view: v } = side;
   const gm = gameMoves(side);
@@ -197,7 +197,7 @@ export function QuickBody({ id, side }) {
     return (
       <>
         {!phone && <div className="cmdhead"><span></span><span>Move</span><span>Type</span><span className="r">Damage</span><span className="r">Cost</span></div>}
-        <CmdRows side={side} />
+        <CmdRows side={side} only={only} />
       </>
     );
   }

@@ -194,7 +194,7 @@ function Card({ cls, name, right = null, type, main, mainSub = [], spec = [], mi
         <div className="mmain">{type && <span className="mt">{type}</span>}{main}{rk != null && <Rk p={rk} />}{mainSub.map((s, i) => <small key={i}>{s}</small>)}</div>
         {(spec.length > 0 || minor.length > 0) && (
           <div className="mside">
-            {spec.length > 0 && <div className="spec">{spec.map(([l, v]) => <div key={l}><span>{l}</span><b>{v}</b></div>)}</div>}
+            {spec.length > 0 && <div className="spec">{spec.map(([l, v, w]) => <div key={l} className={w ? 'w2' : undefined}><span>{l}</span><b>{v}</b></div>)}</div>}
             {minor.length > 0 && <div className="minor">{minor.map(t => <span key={t}>{t}</span>)}</div>}
           </div>
         )}
@@ -254,7 +254,7 @@ function KiFull({ side, phone }) {
         const spec = [];
         if (r.lv) r.lv.forEach((g, i) => spec.push([`Lv.${i + 1}`, <Small title={`${r.label}, Charge Lv.${i + 1}`} get={g} />]));
         spec.push(['Shots', r.shotsGet ? <Small title="Ki blast limit" get={r.shotsGet} fmt={F.count} /> : r.shots]);
-        spec.push(['Ki cost', r.costGet ? <><Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /><small> bars</small></> : <>{F.bars(r.cost)}<small> bars</small></>]);
+        spec.push(['Ki cost', <span className="nw">{r.costGet ? <Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /> : F.bars(r.cost)}<small> bars</small></span>, true]);   // two columns wide, so the unit fits beside the value
         if (r.volley) spec.push(['Volley', <Small title="Full volley" get={A(x => volley(x))} />]);
         return (
           <Card key={r.label} cls="k" name={r.label} type={r.type} rk={r.rk}

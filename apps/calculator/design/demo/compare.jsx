@@ -371,13 +371,15 @@ export function AllStats({ phone, sections = null }) {
 }
 
 /* ------------------------------------------------------------------ a side's build panel (Compare, Vs opponent) */
-export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, onClose, cls = '' }) {
+/** `conditions`: shown between the skills and the capsules, in the Fighter page's order (the Versus rails). */
+export function SideBuild({ side, title, ruleset, onChange, onEditCaps, other, onClose, cls = '', conditions = null }) {
   const chk = buildCheck(side.spec.caps, ruleset);
   return (
     <div className={`plate opp sidebuild ${cls}`}>
       <h5>{title}{onClose && <button className="x" onClick={onClose}>Done</button>}</h5>
       <div className="sublbl"><span>Skills and Sparking</span></div>
       <SkillSwitches side={side} onChange={onChange} />
+      {conditions}
       <div className="caps-wrap"><CapsuleRows side={side} ruleset={ruleset} onEdit={onEditCaps} onClear={() => onChange({ ...side.spec, caps: [] })} /></div>
       <LeagueBuilds side={side} onChange={onChange} />
       <div className="fl" style={{ marginTop: 8 }}><small>Or</small><button onClick={() => onChange({ ...side.spec, caps: [] })}>No capsules</button>{other && <button onClick={() => onChange({ ...side.spec, caps: [...other.spec.caps] })}>Same as {nameParts(other.c.name)[0]}'s</button>}</div>

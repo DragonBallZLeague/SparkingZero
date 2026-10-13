@@ -50,10 +50,11 @@ const blastGet = (sideKey, b, field = 'damage') => (sides) => {
 };
 
 /* ------------------------------------------------------------------ the Sheet's Command list */
-export function CmdRows({ side, sideKey = 'A' }) {
+export function CmdRows({ side, sideKey = 'A', only = null }) {
   const { c } = side;
   const rows = [];
-  for (const b of orderedBlasts(c, { alternates: false })) {
+  // `only`: one group (blasts, ults or skills) when the Command list is split into sections (trial B)
+  for (const b of orderedBlasts(c, { alternates: false }).filter(b => !only || (only === 'ults') === (b.slot === 'Ultimate') && only !== 'skills')) {
     const slot = SLOT_LABEL[b.slot];
     const tiles = blastTiles(b);
     rows.push(
@@ -69,7 +70,7 @@ export function CmdRows({ side, sideKey = 'A' }) {
       </div>,
     );
   }
-  for (const slot of [1, 2]) {
+  for (const slot of (!only || only === 'skills' ? [1, 2] : [])) {
     const s = skillOf(c, slot);
     if (!s) continue;
     const effects = skillEffectTiles(s, side.spec?.stage?.[slot]);
@@ -155,16 +156,18 @@ function BlastCard({ side, sideKey, b }) {
 }
 
 /** Skills, then Blasts, then Ultimates: up to three cards a row. */
-export function MoveCards({ side, sideKey = 'A', onStage }) {
+/** The Command list's cards. `heads`: the Skills / Blasts / Ultimates sub-headers (trial A drops them); `only`: one group (trial B). */
+export function MoveCards({ side, sideKey = 'A', onStage, heads = true, only = null }) {
   const { c } = side;
   const skills = [1, 2].filter(n => skillOf(c, n));
   const blasts = orderedBlasts(c);
   const supers = blasts.filter(b => b.slot !== 'Ultimate'), ults = blasts.filter(b => b.slot === 'Ultimate');
+  const show = (k) => !only || only === k;
   return (
-    <div className="mlist">
-      <div className="mgrp s"><h4>Skills</h4><div className="mrow" style={{ '--n': Math.min(3, skills.length) }}>{skills.map(n => <SkillCard key={n} side={side} slot={n} onStage={onStage} />)}</div></div>
-      <div className="mgrp b"><h4>Blasts</h4><div className="mrow" style={{ '--n': Math.min(3, supers.length) }}>{supers.map(b => <BlastCard key={b.slot + b.name} side={side} sideKey={sideKey} b={b} />)}</div></div>
-      <div className="mgrp u"><h4>Ultimates</h4><div className="mrow" style={{ '--n': Math.min(3, ults.length) }}>{ults.map(b => <BlastCard key={b.slot + b.variant + b.name} side={side} sideKey={sideKey} b={b} />)}</div></div>
+    <div className={`mlist${heads ? '' : ' nohd'}`}>
+      {show('skills') && <div className="mgrp s">{heads && <h4>Skills</h4>}<div className="mrow" style={{ '--n': Math.min(3, skills.length) }}>{skills.map(n => <SkillCard key={n} side={side} slot={n} onStage={onStage} />)}</div></div>}
+      {show('blasts') && <div className="mgrp b">{heads && <h4>Blasts</h4>}<div className="mrow" style={{ '--n': Math.min(3, supers.length) }}>{supers.map(b => <BlastCard key={b.slot + b.name} side={side} sideKey={sideKey} b={b} />)}</div></div>}
+      {show('ults') && <div className="mgrp u">{heads && <h4>Ultimates</h4>}<div className="mrow" style={{ '--n': Math.min(3, ults.length) }}>{ults.map(b => <BlastCard key={b.slot + b.variant + b.name} side={side} sideKey={sideKey} b={b} />)}</div></div>}
     </div>
   );
 }

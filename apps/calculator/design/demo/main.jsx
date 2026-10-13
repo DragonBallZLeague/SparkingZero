@@ -88,7 +88,7 @@ function App() {
       ruleset={ruleset} resetSits={resetSits} swapIn={(id) => update({ B: { ...emptySpec(id) }, vl: 'side' })} docks={wide && capsSide ? { [capsSide]: picker(capsSide, 'dock') } : {}} />;
   } else {
     page = <FighterView A={pair.A} ruleset={ruleset} setSpec={setSpec('A')} openPicker={openPicker} qp={qp} depth={st.d} setDepth={setDepth}
-      dock={wide && capsSide === 'A' ? picker('A', 'dock') : null} onForm={(id) => update({ A: fighter('A', id) })} />;
+      dock={wide && capsSide === 'A' ? picker('A', 'dock') : null} onForm={(id) => update({ A: fighter('A', id) })} cl={st.cl} />;
   }
   // narrower than a wide screen: the picker is a bottom sheet over the lower part of the page, with the
   // skills and Sparking and what the build changed on top, so the numbers above stay in view

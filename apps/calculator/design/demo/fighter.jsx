@@ -61,6 +61,13 @@ const SECS = [
   { id: 'mob', title: 'Mobility', cls: 'mob', fullOnly: true },
   { id: 'traits', title: 'Traits', cls: 'neutral', fullOnly: true },
 ];
+/** Trial B for the Command list (`cl=b`): its three groups as sections of their own, in the Command list's place. */
+const CMD3 = [
+  { id: 'skl', title: 'Skills', cls: 'skl', only: 'skills' },
+  { id: 'bls', title: 'Blasts', cls: 'cmd', only: 'blasts' },
+  { id: 'ult', title: 'Ultimates', cls: 'ult', only: 'ults' },
+];
+const sectionsFor = (cl) => (cl === 'b' ? SECS.flatMap(s => (s.id === 'cmd' ? CMD3 : [s])) : SECS);
 
 /** The first text node under `root` holding `needle`, as its element; ghosts (closed sections' full rows) only when asked. */
 function findText(root, needle, inGhost) {
@@ -74,8 +81,9 @@ function findText(root, needle, inGhost) {
   return null;
 }
 
-export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, onForm = null }) {
+export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => null, depth, setDepth, dock = null, onForm = null, cl = null }) {
   const phone = usePhone();
+  const secs = sectionsFor(cl);
   const quick = qp('A', 'col');
   const fsecs = fullSections(side);
   const fs = (id) => fsecs.find(s => s.id === id);
@@ -103,7 +111,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
     const f = () => {
       let at = null;
       const off = offset() + 4;
-      for (const s of SECS) { const el = document.getElementById(`f-${s.id}`); if (el && el.getBoundingClientRect().top < off) at = s.id; }
+      for (const el of root.current?.querySelectorAll('[data-sec]') || []) if (el.getBoundingClientRect().top < off) at = el.dataset.sec;
       setHere(at);
     };
     window.addEventListener('scroll', f, { passive: true });
@@ -132,8 +140,8 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
     if (noRef.current) noRef.current.textContent = 'No match';
   }, [q, open]);
 
-  const fullBody = (s) => (s.id === 'cmd'
-    ? <MoveCards side={side} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
+  const fullBody = (s) => (s.id === 'cmd' || s.only
+    ? <MoveCards side={side} only={s.only} heads={cl == null} onStage={(slot, n) => setSpec({ ...side.spec, stage: { ...side.spec.stage, [slot]: n } })} />
     : <FullForm id={s.id} side={side} phone={phone} abTab={abTab} setAbTab={setAbTab} />);
   const toggle = (id, full) => () => setOpen(o => ({ ...o, [id]: !full }));
   const section = (s) => {
@@ -147,7 +155,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
           <span className="st">{s.title}{s.note && !full && <em className="h5n">{s.note}</em>}{mob && <span className="tg">{mob}</span>}</span>
           <span className="more" aria-hidden="true">{full ? 'Less' : 'More'}</span>
         </h5>
-        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.id} side={side} />}</div>
+        <div className="sbody">{full ? fullBody(s) : s.fullOnly ? <Summary s={fs(s.id)} /> : <QuickBody id={s.only ? 'cmd' : s.id} only={s.only} side={side} />}</div>
         {searching && !full && <div className="fghost" aria-hidden="true" inert="">{fullBody(s)}</div>}
       </section>
     );
@@ -176,7 +184,7 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
               ) : (
                 <>
                   <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
-                  <PhoneSectionNav items={SECS} prefix="f-" onJump={jump} />
+                  <PhoneSectionNav items={secs} prefix="f-" onJump={jump} />
                   <button className="fbtn" onClick={() => setFindOpen(true)}>Find</button>
                 </>
               )}
@@ -185,13 +193,13 @@ export function FighterView({ A: side, ruleset, setSpec, openPicker, qp = () => 
             <div className="fctl">
               <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
               <nav className="fsnav" aria-label="Sections">
-                {SECS.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
+                {secs.map(s => <button key={s.id} className={`${s.cls || 'tough'}${here === s.id ? ' on' : ''}`} onClick={() => jump(s.id)}><i />{s.title.replace('! Mode', '!')}</button>)}
               </nav>
               {find}
             </div>
           )}
         </div>
-        {SECS.map(section)}
+        {secs.map(section)}
       </div>
     </div>
   );

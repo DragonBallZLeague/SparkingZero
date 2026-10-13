@@ -798,3 +798,28 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 
 /* the sections' headers carry the colour now, so sub-groups and cards drop their dots */
 .fgh::before, .mgrp h4::before, .mcard .mh:not(:has(.slot))::before { display: none; }
+
+/* a value and its unit stay on one line (a ki blast card's Ki cost) */
+.spec .nw, .mcard .spec b .nw { white-space: nowrap; }
+
+/* Command list trials: A drops the sub-headers (the S1 / B1 / ULT badges name the cards), a wider gap between
+   the rows instead; B splits it into Skills, Blasts and Ultimates sections in the skill and ultimate colours */
+.mlist.nohd .mgrp + .mgrp { margin-top: 20px; }
+.app .plate.skl { --sh: #22d3ee; --sd: #a5f3fc; } .app .plate.ult { --sh: #a855f7; --sd: #d8b4fe; }
+.fsnav button.skl { --sc: #a5f3fc; } .fsnav button.ult { --sc: #d8b4fe; }
+
+/* capsule rows without their coloured left edge: the coloured type name says the category */
+.caprow, .caprow.empty { border-left: 0; padding-left: 9px; }
+
+/* the stats sit flush against the line that parts them from the fighter column, so it reads as their shared edge */
+@media (min-width: 1101px) {
+  .app .fpage > .sheet { padding-left: 0; }
+  .app .fpage > .sheet > .fhd { margin-left: 0; padding-left: 0; }
+}
+/* a tile whose value needs room (Ki cost with its unit) spans two of a card's columns */
+.mcard .spec .w2 { grid-column: span 2; }
+.mcard .spec .nw small { display: inline; font-size: 11px; text-transform: none; letter-spacing: 0; color: var(--muted); }
+/* the value's spans are not labels (".spec span" styles a tile's label) */
+.mcard .spec b .nw, .mcard .spec b .nw span { display: inline; font-size: inherit; letter-spacing: normal; text-transform: none; color: inherit; overflow: visible; white-space: nowrap; }
+.mcard .spec b .nw small { font-size: 11px; font-weight: 600; color: var(--muted); }
+.mcard .spec b .nw > * { display: inline; }
