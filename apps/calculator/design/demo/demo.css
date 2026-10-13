@@ -867,3 +867,6 @@ html { scrollbar-color: #3b4677 #0a0d20; }
 .mir .ma .mn .altsw { margin-left: auto; }
 /* a mirrored row's value never splits ("4 pts") */
 .mir .mm b { white-space: nowrap; }
+
+/* a Quick tile's level tag (Smash and Charged ki blast at Lv.3, as Rush Chains show theirs) */
+.kt.lv { background: rgba(148,163,184,.22); color: #e2e8f0; }

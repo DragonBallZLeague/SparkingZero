@@ -210,7 +210,8 @@ export function QuickBody({ id, side, only = null }) {
       <>
         <div className="tiles t5" style={{ marginTop: 0 }}>
           <div className="tile"><span>Rush 5-hit</span><Tap as="b" title="Rush 5-hit" get={A(x => x.rush5Hit)} extra={(p) => <div className="hitl">Hits<span className="tags">{[p.A.view.rush, p.A.view.hit2, p.A.view.hit3, p.A.view.hit4, p.A.view.hit5].map((h, i) => <span key={i}>{F.int(h)}</span>)}</span></div>} /><Rk p={rosterPos('rush5', x => x.rush5Hit, v.rush5Hit)} /></div>
-          <div className="tile"><span>Smash</span><Tap as="b" title="Smash" get={A(x => x.smash)} /><Rk p={rosterPos('smash', x => x.smash, v.smash)} /></div>
+          {/* the smash at full charge (Lv.3), as Rush Chains show theirs; every level is in Full */}
+          <div className="tile"><span>Smash<em className="kt lv">Lv.3</em></span><Tap as="b" title="Smash, Charge Lv.3" get={(p) => gameMoves(p.A).smash.at(-1)} /><Rk p={movePos('smash3', g => g.smash.at(-1), gm.smash.at(-1))} /></div>
           <div className="tile"><span>Throw</span><Tap as="b" title="Throw" get={A(x => x.throw)} /><Rk p={rosterPos('throw', x => x.throw, v.throw)} /></div>
           <div className="tile"><span>Pursuit</span><Tap as="b" title="Pursuit (Vanishing Attack)" get={A(x => x.vanishingAttack ?? x.pursuit)} /><Rk p={rosterPos('pursuit', x => x.pursuit, v.vanishingAttack ?? v.pursuit)} /></div>
           <div className="tile"><span>Armor break</span><Tap as="b" title="Armor break" get={A(x => x.armorBreak)} fmt={F.hits} kind="dec" lessIsBetter>{v.armorBreak}<small>hits</small></Tap><Rk p={rosterPos('abrk', x => x.armorBreak, v.armorBreak, true)} title="Fewer is better" /></div>
@@ -228,7 +229,7 @@ export function QuickBody({ id, side, only = null }) {
           <div className="tile kib"><span>Ki blast cost</span><b><Tap title="Ki blast cost" get={A(x => x.kiBlastCost)} fmt={F.bars} kind="dec" lessIsBetter /><small>bars</small></b><Rk p={rosterPos('kibc', x => x.kiBlastCost, v.kiBlastCost, true)} title="Less is better" /></div>
           <div className="tile kib"><span>Full volley</span><Tap as="b" title="Full volley" get={A(x => volley(x))} /><Rk p={rosterPos('volley', x => volley(x), volley(v))} /></div>
           {gm.charged && (
-            <div className="tile kib"><span>Charged ki blast{gm.charged.shots > 1 && <em className="kt x">×{gm.charged.shots}</em>}</span><Tap as="b" title="Charged ki blast, Charge Lv.1" get={(p) => gameMoves(p.A).charged.damage[0]} /><Rk p={rosterPos('charged', (x, cc) => cc.kiBlasts?.charged?.standing?.damage?.[0], c.kiBlasts?.charged?.standing?.damage?.[0])} /></div>
+            <div className="tile kib"><span>Charged ki blast<em className="kt lv">Lv.3</em>{gm.charged.shots > 1 && <em className="kt x">×{gm.charged.shots}</em>}</span><Tap as="b" title="Charged ki blast, Charge Lv.3" get={(p) => gameMoves(p.A).charged.damage.at(-1)} /><Rk p={movePos('charged3', g => g.charged?.damage.at(-1), gm.charged.damage.at(-1))} /></div>
           )}
         </div>
       </>

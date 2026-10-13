@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alternate blasts, round 24</title>
+<!--
+  Round 24 (2026-10-13): ways to switch a fighter's alternate blast or ultimate (a costume's move) in Versus, so one
+  side's alternate can be compared with the other side's main move. The league didn't like the "Alternate ⇄" button.
+  Static mock, every concept clickable: Android 18 (Chain Destructo Disc, her costume's B2) and Goku (Z - Early)
+  (Legendary Strike, his costume's ultimate), as they are, numbers from the published data.
+-->
+<style>
+:root {
+  --bg: #07080d; --plate: rgba(10, 13, 32, .62); --line: rgba(148, 163, 184, .14);
+  --text: #e5e7eb; --mut: #94a3b8; --acc: #f97316; --blast: #f97316; --ult: #a855f7; --win: #4ade80;
+  --a: #f97316; --b: #3b82f6;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.doc { max-width: 1180px; margin: 0 auto; padding: 28px 16px 80px; }
+.doc > h1 { font-size: 24px; margin: 0 0 6px; font-weight: 800; }
+.doc > .lede { color: var(--mut); max-width: 820px; margin: 0 0 10px; }
+.doc h2 { font-size: 18px; margin: 42px 0 4px; font-weight: 800; }
+.doc h2 small { font-weight: 600; color: var(--acc); font-size: 12px; margin-left: 8px; letter-spacing: .06em; text-transform: uppercase; }
+.idea { margin: 0 0 4px; max-width: 900px; }
+.trade { color: var(--mut); margin: 0 0 14px; max-width: 900px; }
+.trade b { color: #cbd5e1; }
+.mocks { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.mocks figure { margin: 0; }
+.mocks figcaption { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); margin-bottom: 6px; }
+.mocks figure.w { width: min(640px, 100%); }
+.mocks figure.p { width: min(360px, 100%); }
+
+/* the Blasts plate, as in the demo */
+.plate { background: var(--plate); padding: 0 14px 10px; border: 1px solid #141a3a; }
+.plate > h5 { margin: 0 -14px 6px; padding: 6px 14px; font-size: 14px; font-weight: 900; font-style: italic; letter-spacing: .1em; text-transform: uppercase;
+  border-top: 2px solid rgba(249, 115, 22, .8); background: linear-gradient(90deg, rgba(249, 115, 22, .3), transparent 80%); display: flex; align-items: center; gap: 10px; }
+.xph { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); gap: 10px; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 2px 0 4px; }
+.xph .sa { color: #fdba74; text-align: right; } .xph .sb { color: #93c5fd; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); gap: 10px; align-items: start; padding: 7px 0; border-top: 1px solid var(--line); position: relative; }
+.row:first-of-type, .xph + .row, .sidesw + .row { border-top: 0; }
+.cell { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+.cell.a { justify-content: flex-end; text-align: right; }
+.cell.b { flex-direction: row-reverse; justify-content: flex-end; }
+.cell .nmw { min-width: 0; }
+.cell .nm { font-weight: 700; font-size: 13px; }
+.cell .v { font-weight: 900; font-style: italic; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cell .v.w { color: var(--win); }
+.cell small { display: block; font-size: 10.5px; color: var(--mut); font-weight: 500; }
+.mc { display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 1px; }
+.slot { display: inline-block; width: 34px; text-align: center; font-size: 11px; font-weight: 900; font-style: italic; color: #111; background: var(--blast); transform: skewX(-12deg); }
+.slot.u { background: var(--ult); color: #fff; }
+.none { color: var(--mut); }
+.phone .cell .nm { font-size: 12px; }
+.phone .row, .phone .xph { grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1fr); gap: 6px; }
+.phone .cell { flex-direction: column; gap: 0; }
+.phone .cell.a { align-items: flex-end; } .phone .cell.b { align-items: flex-start; flex-direction: column; }
+.phone .cell .v { order: -1; }
+
+/* 0 today: the button under the name */
+.today { display: block; margin: 3px 0 0 auto; width: fit-content; padding: 1px 7px; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; border: 1px solid rgba(148,163,184,.5); background: rgba(148,163,184,.12); }
+.cell.b .today { margin-left: 0; }
+
+/* A arrows on the name */
+.arr { display: inline-flex; align-items: center; gap: 4px; }
+.arr button { width: 18px; height: 18px; display: inline-grid; place-items: center; font-size: 13px; font-weight: 900; color: #cbd5e1; background: rgba(148,163,184,.14); clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+.arr button:hover { background: rgba(148,163,184,.3); color: #fff; }
+.arr .cnt { font-size: 10px; color: var(--mut); font-variant-numeric: tabular-nums; }
+
+/* B version dots */
+.dots { display: flex; gap: 4px; margin-top: 4px; }
+.cell.a .dots { justify-content: flex-end; }
+.dots button { width: 22px; height: 6px; background: rgba(148,163,184,.25); transform: skewX(-20deg); }
+.dots button.on { background: #e2e8f0; }
+.dots button.alt.on { background: var(--acc); }
+.dots button:hover { background: rgba(226,232,240,.6); }
+
+/* C a menu on the name */
+.menuw { position: relative; display: inline-block; }
+.pickb { display: inline-flex; align-items: center; gap: 6px; padding: 1px 8px; border: 1px solid rgba(148,163,184,.35); background: rgba(148,163,184,.08); }
+.pickb:hover { border-color: rgba(148,163,184,.7); }
+.pickb i { font-style: normal; font-size: 10px; color: var(--mut); }
+.menu { position: absolute; z-index: 5; top: calc(100% + 4px); min-width: 230px; background: #121937; border: 1px solid #2a3466; box-shadow: 0 8px 20px rgba(0,0,0,.5); text-align: left; }
+.menu { left: 0; }
+.menu button { display: grid; grid-template-columns: 1fr auto; gap: 10px; width: 100%; padding: 6px 10px; font-size: 12.5px; border-top: 1px solid var(--line); text-align: left; }
+.menu button:first-child { border-top: 0; }
+.menu button:hover { background: rgba(148,163,184,.12); }
+.menu button.on { background: rgba(249,115,22,.14); }
+.menu button b { font-variant-numeric: tabular-nums; font-style: italic; }
+.menu button small { grid-column: 1 / -1; margin-top: -2px; }
+
+/* D one switch per side, in the plate's header */
+.sidesw { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); gap: 10px; padding: 4px 0 6px; }
+.sidesw > div { display: flex; gap: 2px; align-items: center; }
+.sidesw > div:first-child { justify-content: flex-end; }
+.sidesw span.lb { font-size: 10.5px; color: var(--mut); margin: 0 6px; }
+.seg button { padding: 2px 10px; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: rgba(148,163,184,.12); color: #cbd5e1; }
+.seg button.on { background: #f8fafc; color: #0a0d20; }
+.seg .x { font-size: 10.5px; color: var(--mut); padding: 0 6px; }
+.phone .sidesw { grid-template-columns: 1fr 1fr; }
+.phone .sidesw > div:nth-child(2), .phone .sidesw .lb { display: none; }
+
+/* E both versions listed, the compared one bright */
+.alts { display: flex; flex-direction: column; gap: 3px; }
+.cell.a .alts { align-items: flex-end; }
+.optn { display: flex; gap: 8px; align-items: baseline; padding: 1px 6px; color: var(--mut); border: 1px solid transparent; }
+.cell.a .optn { flex-direction: row; }
+.cell.b .optn { flex-direction: row-reverse; }
+.optn .nm { font-weight: 600; font-size: 12px; }
+.optn .v { font-size: 12.5px; font-weight: 700; font-style: italic; }
+.optn:hover { border-color: rgba(148,163,184,.35); }
+.optn.on { color: var(--text); background: rgba(148,163,184,.1); border-color: rgba(148,163,184,.3); }
+.optn.on .nm { font-weight: 700; font-size: 13px; }
+.optn.on .v { font-size: 15px; font-weight: 900; }
+.optn.on .v.w { color: var(--win); }
+.optn em { font-style: normal; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: #fdba74; }
+.phone .optn { flex-direction: column !important; gap: 0; }
+.phone .cell.a .optn { align-items: flex-end; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <h1>Alternate blasts and ultimates in Versus</h1>
+  <p class="lede">Ways to pick which version of a slot each fighter compares, so one fighter's alternate (a costume's
+    move) can be set against the other's main move. Android 18's B2 has an alternate (Chain Destructo Disc), and so
+    does Goku's ultimate (Legendary Strike). Every mock is clickable. Each is shown at desktop width and phone width.</p>
+
+  <section>
+    <h2>0. Today <small>for reference</small></h2>
+    <p class="idea">An "Alternate ⇄" button under the move's name, which reads "Main ⇄" once switched.</p>
+    <p class="trade">The league didn't like it: the button looks like a separate control and makes the row taller.</p>
+    <div class="mocks" data-mode="today"></div>
+  </section>
+
+  <section>
+    <h2>A. Arrows on the name <small>cycle in place</small></h2>
+    <p class="idea">A move that has another version gets small ‹ › arrows around its name, with "1 of 2" beside it. A click flips to the
+      next version, like flipping through forms in the game's character select.</p>
+    <p class="trade"><b>Good:</b> it stays on one line, and the arrows say "there's more than one" without a word.
+      <b>Less good:</b> you don't see what the other version is until you flip to it.</p>
+    <div class="mocks" data-mode="arrows"></div>
+  </section>
+
+  <section>
+    <h2>B. Version marks under the name <small>like page dots</small></h2>
+    <p class="idea">Thin slanted marks under the name, one per version; the alternate's mark is orange when it's chosen.
+      Click a mark to pick that version.</p>
+    <p class="trade"><b>Good:</b> the quietest option, and the count shows at a glance.
+      <b>Less good:</b> the marks are small to click, and new users may not guess what they do without a tooltip.</p>
+    <div class="mocks" data-mode="dots"></div>
+  </section>
+
+  <section>
+    <h2>C. A menu on the name <small>pick from a list</small></h2>
+    <p class="idea">The name becomes a drop-down (with ▾) only when the slot has another version. The menu lists every
+      version with its damage, so you see both before picking.</p>
+    <p class="trade"><b>Good:</b> the clearest about what the options are, and it handles any number of versions.
+      <b>Less good:</b> one more click than A or B, and a menu over the rows.</p>
+    <div class="mocks" data-mode="menu"></div>
+  </section>
+
+  <section>
+    <h2>D. One switch per fighter <small>Main / Costume above the rows</small></h2>
+    <p class="idea">A Main / Costume switch for each fighter at the top of Blasts, shown only for a fighter who has a costume
+      move. It swaps every alternate that fighter has at once (in practice nearly always one).</p>
+    <p class="trade"><b>Good:</b> the rows stay clean, and the switch reads like picking a costume in the game.
+      <b>Less good:</b> it can't mix a costume's B2 with the main ultimate, which only matters for the few fighters with
+      two costume moves.</p>
+    <div class="mocks" data-mode="side"></div>
+  </section>
+
+  <section>
+    <h2>E. Both versions listed <small>tap one to compare it</small></h2>
+    <p class="idea">The row lists every version with its damage; the one being compared is bright and boxed, the other
+      faded. A click on the faded one makes it the compared one.</p>
+    <p class="trade"><b>Good:</b> nothing hidden: every number is on the page.
+      <b>Less good:</b> the rows with alternates get taller, and two numbers per side are more to read.</p>
+    <div class="mocks" data-mode="stack"></div>
+  </section>
+</div>
+
+<script>
+const F = (n) => n.toLocaleString('en-US');
+const SIDES = {
+  A: { name: 'Android 18', slots: { B1: [{ n: 'Infinity Bullet', d: 7880 }], B2: [{ n: 'Energy Wave', d: 7878 }, { n: 'Chain Destructo Disc', d: 7872, alt: true }], ULT: [{ n: 'Sadistic 18', d: 15750 }] } },
+  B: { name: 'Goku', slots: { B1: [{ n: 'Kamehameha', d: 7125 }], B2: [{ n: 'Kaioken Attack', d: 8375 }], ULT: [{ n: 'Spirit Bomb', d: 15000 }, { n: 'Legendary Strike', d: 15000, alt: true }] } },
+};
+const SLOTS = ['B1', 'B2', 'ULT'];
+const hasAlt = (k) => SLOTS.some(s => SIDES[k].slots[s].length > 1);
+
+function mock(mode, phone) {
+  const st = { A: { B1: 0, B2: 0, ULT: 0 }, B: { B1: 0, B2: 0, ULT: 0 }, open: null };
+  const el = document.createElement('div');
+  el.className = `mock ${phone ? 'phone' : 'wide'}`;
+  const pick = (k, s) => SIDES[k].slots[s][st[k][s]];
+  const cell = (k, s, win) => {
+    const opts = SIDES[k].slots[s], o = pick(k, s), n = opts.length;
+    const v = `<span class="v${win ? ' w' : ''}">${F(o.d)}</span>`;
+    const costume = o.alt ? `<small>Alternate, with a costume</small>` : '';
+    let name;
+    if (mode === 'today') name = `<span class="nmw"><span class="nm">${o.n}</span>${costume}${n > 1 ? `<button class="today" data-k="${k}" data-s="${s}" data-step="1">${st[k][s] ? 'Main' : 'Alternate'} ⇄</button>` : ''}</span>`;
+    else if (mode === 'arrows') name = `<span class="nmw">${n > 1 ? `<span class="arr"><button data-k="${k}" data-s="${s}" data-step="-1" aria-label="Previous version">‹</button><span class="nm">${o.n}</span><button data-k="${k}" data-s="${s}" data-step="1" aria-label="Next version">›</button></span><small>${st[k][s] + 1} of ${n}${o.alt ? ', costume' : ''}</small>` : `<span class="nm">${o.n}</span>`}</span>`;
+    else if (mode === 'dots') name = `<span class="nmw"><span class="nm">${o.n}</span>${costume}${n > 1 ? `<span class="dots">${opts.map((x, i) => `<button class="${x.alt ? 'alt' : ''}${i === st[k][s] ? ' on' : ''}" data-k="${k}" data-s="${s}" data-i="${i}" title="${x.n}${x.alt ? ' (costume)' : ''}"></button>`).join('')}</span>` : ''}</span>`;
+    else if (mode === 'menu') {
+      const open = st.open === `${k}${s}`;
+      name = n > 1
+        ? `<span class="nmw"><span class="menuw"><button class="pickb" data-open="${k}${s}"><span class="nm">${o.n}</span><i>▾</i></button>${open ? `<div class="menu">${opts.map((x, i) => `<button class="${i === st[k][s] ? 'on' : ''}" data-k="${k}" data-s="${s}" data-i="${i}"><span>${x.n}</span><b>${F(x.d)}</b>${x.alt ? '<small>Alternate, with a costume</small>' : ''}</button>`).join('')}</div>` : ''}</span>${costume}</span>`
+        : `<span class="nmw"><span class="nm">${o.n}</span></span>`;
+    } else if (mode === 'side') name = `<span class="nmw"><span class="nm">${o.n}</span>${costume}</span>`;
+    else if (mode === 'stack') {
+      if (n === 1) name = `<span class="nmw"><span class="nm">${o.n}</span></span>`;
+      else return `<div class="cell ${k.toLowerCase()}"><div class="alts">${opts.map((x, i) => `<button class="optn${i === st[k][s] ? ' on' : ''}" data-k="${k}" data-s="${s}" data-i="${i}"><span class="nm">${x.n}${x.alt ? ' <em>costume</em>' : ''}</span><span class="v${i === st[k][s] && win ? ' w' : ''}">${F(x.d)}</span></button>`).join('')}</div></div>`;
+    }
+    return `<div class="cell ${k.toLowerCase()}">${name}${v}</div>`;
+  };
+  const seg = (k) => (hasAlt(k)
+    ? `<div class="seg">${k === 'B' ? '' : `<span class="lb">${SIDES[k].name}</span>`}<button class="${SLOTS.some(s => st[k][s]) ? '' : 'on'}" data-side="${k}" data-v="0">Main</button><button class="${SLOTS.some(s => st[k][s]) ? 'on' : ''}" data-side="${k}" data-v="1">Costume</button>${k === 'B' ? `<span class="lb">${SIDES[k].name}</span>` : ''}</div>`
+    : `<div class="seg"><span class="x">No costume moves</span></div>`);
+  const draw = () => {
+    let h = `<div class="plate"><h5>Blasts</h5>`;
+    if (mode === 'side') h += `<div class="sidesw">${seg('A')}<div></div>${seg('B')}</div>`;
+    h += `<div class="xph"><span class="sa">${SIDES.A.name}</span><span></span><span class="sb">${SIDES.B.name}</span></div>`;
+    for (const s of SLOTS) {
+      const a = pick('A', s).d, b = pick('B', s).d;
+      h += `<div class="row">${cell('A', s, a > b)}<div class="mc"><span class="slot${s === 'ULT' ? ' u' : ''}">${s}</span></div>${cell('B', s, b > a)}</div>`;
+    }
+    el.innerHTML = h + '</div>';
+  };
+  el.addEventListener('click', (e) => {
+    const t = e.target.closest('button');
+    if (!t) { if (st.open) { st.open = null; draw(); } return; }
+    const { k, s } = t.dataset;
+    if (t.dataset.open) st.open = st.open === t.dataset.open ? null : t.dataset.open;
+    else if (t.dataset.side) { for (const x of SLOTS) st[t.dataset.side][x] = +t.dataset.v && SIDES[t.dataset.side].slots[x].length > 1 ? 1 : 0; }
+    else if (t.dataset.step) { const n = SIDES[k].slots[s].length; st[k][s] = (st[k][s] + +t.dataset.step + n) % n; }
+    else if (t.dataset.i != null) { st[k][s] = +t.dataset.i; st.open = null; }
+    draw();
+  });
+  draw();
+  return el;
+}
+
+for (const box of document.querySelectorAll('.mocks')) {
+  for (const phone of [false, true]) {
+    const fig = document.createElement('figure');
+    fig.className = phone ? 'p' : 'w';
+    fig.innerHTML = `<figcaption>${phone ? 'Phone' : 'Desktop'}</figcaption>`;
+    fig.appendChild(mock(box.dataset.mode, phone));
+    box.appendChild(fig);
+  }
+}
+</script>
+</body>
+</html>

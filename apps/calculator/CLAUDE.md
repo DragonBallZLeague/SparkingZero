@@ -73,7 +73,7 @@ The league chose option B in the 2026-10-09 review doc: rebuild the calculator t
 - **Characters tab:** a click selects a fighter (the preview stays on it, with clickable forms); a second click or a double-click opens it.
 - **Pinned on Fighter:** a headline strip, the section links and Find, which opens a closed section to reach a match.
 - **The capsule picker never replaces the page.** It docks in the fighter column on a wide screen, where hovering a capsule previews its effect on the headline strip. Narrower, it is a bottom sheet.
-- **Versus** merges Compare and Vs opponent. A Side by side / Matchup switch picks the lens, Quick / Full the depth, and each fighter's build is a rail on its own side. The Matchup's Quick form uses Side by side's look: a plate per kind of attack, each row one side's damage | the attack | the other's, mirrored.
+- **Versus** merges Compare and Vs opponent. A Side by side / Matchup switch picks the lens, Quick / Full the depth, and each fighter's build is a rail on its own side. Quick is one layout for both lenses (round 24): the Fighter page's Quick sections, order and rows, mirrored around each stat with roster bars; the lens only changes the numbers (the Matchup: as dealt to the other side, with armor shields). Smash and Charged ki blast show Lv.3 in every Quick view. Ways to switch a costume's alternate blast are mocked in `design/concepts/alternates-r24.html`.
 - **Old hash links still open.** The demo README lists the details. Delete `design/` once the real pages ship.
 
 ## Gotchas

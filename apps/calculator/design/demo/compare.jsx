@@ -1,6 +1,6 @@
-// Versus, Side by side (was Compare): two fighters as they are, each with its own build. Quick pairs the main
-// stats (CompareSummary); Full pairs every Full stats row (AllStats). Also the pieces the Matchup shares: the
-// two-fighter header, paired rows, All stats and a side's build panel. The page itself is in versus.jsx.
+// Versus's shared pieces: the two-fighter header, paired rows, All stats (Full, both lenses), Skills, Blasts with
+// the alternate switch, Rush Chains, similar fighters and a side's build panel. The page and its Quick form (one
+// layout for Side by side and the Matchup) are in versus.jsx.
 import React, { createContext, useContext, useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
@@ -476,7 +476,7 @@ export function PairControls({ pair, setSpec, openPicker, ruleset, resetSits }) 
 }
 
 /* ------------------------------------------------------------------ similar fighters */
-function Similar({ id, name, onPick }) {
+export function Similar({ id, name, onPick }) {
   const { same, other } = similarFighters(id);
   const row = (o) => (
     <button className="simrow" key={o.c.id} onClick={() => onPick(o.c.id)}>
@@ -497,20 +497,6 @@ function Similar({ id, name, onPick }) {
   );
 }
 
-/* ------------------------------------------------------------------ the view */
-const SUMMARY = (pair) => [
-  { title: 'Toughness', cls: '', rows: [{ label: '5-hit taken', small: 'less is better', get: V(fiveHitTaken), less: true }, defRow('Melee defense', x => x.meleeDefenseStat)], hp: true },
-  { title: 'Offense', cls: 'off', rows: [{ label: 'Rush 5-hit', get: V(x => x.rush5Hit) }, { label: 'Smash', get: V(x => x.smash) }, { label: 'Throw', get: V(x => x.throw) }, { label: 'Full ki volley', get: V(x => volley(x)) }] },
-  { title: 'Resources', cls: 'res', rows: [{ label: 'Ki charge', get: V(x => x.kiCharge), fmt: F.dec2, kind: 'dec' }, { label: 'Ki regen', get: V(x => x.kiRegen), fmt: F.dec, kind: 'dec' }, { label: 'Skill gauge limit', get: V(x => x.skillLimit), fmt: String }] },
-];
-
-export function HpPair() {
-  const pc = usePair();
-  const bars = (h) => { const n = Math.max(5, Math.ceil(h / 10000)); return Array.from({ length: n }, (_, i) => <i key={i} className={i < Math.floor(h / 10000) ? 'f' : i === Math.floor(h / 10000) && h % 10000 ? 'part' : 'cap'} style={i === Math.floor(h / 10000) && h % 10000 ? { '--p': `${(h % 10000) / 100}%` } : undefined} />); };
-  const a = pc.pair.A.view.health, b = pc.pair.B.view.health;
-  return <div className="hpair"><span className="bars hp l">{bars(a)}</span><span style={{ textAlign: 'center', fontSize: 12 }}>HP<br /><b>{a === b ? `${F.int(a)} each` : `${F.int(a)} | ${F.int(b)}`}</b></span><span className="bars hp">{bars(b)}</span></div>;
-}
-
 /** The phone's two-fighter bar: both faces and names, the VS mark, each side's Change. */
 export function PhoneVsBar({ pair, change }) {
   return (
@@ -525,31 +511,3 @@ export function PhoneVsBar({ pair, change }) {
   );
 }
 
-/** Versus, Side by side, Quick (was Compare's Summary): the headline pairs, the Command list, the verdict, similar fighters. */
-export function CompareSummary({ pair, swapIn }) {
-  const phone = usePhone();
-  const L = leads(pair);
-  const nA = nameParts(pair.A.c.name)[0], nB = nameParts(pair.B.c.name)[0];
-  return (
-    <div className="cmpgrid">
-      <div className="cmpcol">
-        {SUMMARY(pair).map(s => (
-          <div className={`plate ${s.cls}`} key={s.title}><h5>{s.title}</h5>{s.hp && <HpPair />}{s.rows.map(r => <Pair key={r.label} row={r} />)}</div>
-        ))}
-        <div className="plate skl"><h5>Skills</h5><SkillsCmp /></div>
-        <div className="plate cmd"><h5>Blasts</h5><BlastsCmp /></div>
-      </div>
-      <div className="cmpcol">
-        <div className="plate neutral">
-          <h5>Verdict</h5>
-          <div className="verdict">{nA} leads on <b>{L.a}</b> stats, {nB} on <b>{L.b}</b>.</div>
-          <div className="strong">
-            <div><small>{nA}'s edge</small><div className="tags">{L.edgeA.map(x => <span key={x}>{x}</span>)}</div></div>
-            <div><small>{nB}'s edge</small><div className="tags">{L.edgeB.map(x => <span key={x}>{x}</span>)}</div></div>
-          </div>
-        </div>
-        <Similar id={pair.A.c.id} name={pair.A.c.name} onPick={swapIn} />
-      </div>
-    </div>
-  );
-}

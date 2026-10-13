@@ -195,6 +195,20 @@ Changed numbers show their base under them. The row tables are gone from the dem
   the same everywhere (Side by side, Matchup, All stats): a Skills plate, then a Blasts plate where every alternate
   has its own row under its slot ("Alternate" under the badge; "None" for a side without one), so every option is
   compared. Combat limits moved to teal, apart from the skills' cyan.
+- **Versus Quick is one layout for both lenses** (round 24, `VersusQuick` in `versus.jsx`): the Fighter page's Quick
+  sections in its order (Toughness with both health bars, Resources, Skills, Blasts, Melee, Rush Chains, Ki blasts,
+  Sparking!) and its rows, so switching lens keeps every section and row in place and only the numbers change. Side
+  by side shows each fighter as they are; the Matchup the same rows as dealt to the other side (armor shields, the
+  legend, "Goku deals / Janemba deals" over attacks, the other side's rush in red on the health bars, 5-hit taken as
+  the other side's rush). Every row's bars fill by the roster's range of the plain stat in both lenses (the Matchup's
+  bars relative to the larger value are gone). The right column is the Verdict in both (stats led, or attacks
+  out-damaged in the Matchup), then Fighters like the left one or Breaking armor. Hit-by-hit and charge levels are
+  in Full only. Side by side's old summary (`CompareSummary`) and the Matchup's Exchange were removed.
+- **Smash and Charged ki blast show Lv.3 in Quick** (Fighter and Versus), as Rush Chains show full charge; every
+  level stays in Full.
+- **Alternates, ways to switch:** `design/concepts/alternates-r24.html` mocks five (arrows on the name, version
+  marks, a menu, one Main / Costume switch per fighter, both versions listed) against today's button, for the
+  league to pick.
 - **Versus Blasts switch alternates in place** (replacing a row per alternate): one row per slot, and a side with
   a costume's alternate gets an "Alternate ⇄" / "Main ⇄" button under its move, so either side's alternate can be
   compared with the other's main move. The choice holds across Side by side, Matchup and Full (`AltPick` in
