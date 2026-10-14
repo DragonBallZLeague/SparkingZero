@@ -470,7 +470,8 @@ if (v2) {
     ig('league builds: at most 6 per character, every capsule known', lb.every(c => c.leagueBuilds.top.length <= 6 && c.leagueBuilds.top.every(b => b.capsules.every(id => capIds.has(id)))), true);
     ig('league builds: newest season first', lb.every(c => c.leagueBuilds.top.every((b, i, a) => !i || a[i - 1].season >= b.season)), true);
     const picc = data.characters.find(c => c.id === '0040_00')?.leagueBuilds;
-    ig('Piccolo league builds: lineups, builds', `${picc?.lineups}, ${picc?.builds}`, '19, 7');
+    // grows as the website links new lineups (19 until the 2026-10-14 merge of dev-branch's newer games)
+    ig('Piccolo league builds: lineups, builds', `${picc?.lineups}, ${picc?.builds}`, '20, 7');
     ig("Piccolo's top league build (Budokai, Season 0 playoffs)", picc?.top?.[0]?.capsules?.map(id => data.capsules.find(c => c.id === id)?.name).sort().join(', '),
       'Blast Attack Boost 2, Fury!, Indomitable Fighting Spirit, Latent Power Unleashed 2, Latent Power!, Rush Attack Boost 2');
     // the Command list's Special line: every move with a unique rule carries the league's wording

@@ -119,8 +119,8 @@
       "hyperArmorBreakHits": 5
     },
     "leagueBuilds": {
-      "lineups": 18,
-      "builds": 13,
+      "lineups": 19,
+      "builds": 14,
       "top": [
         {
           "capsules": ["00_0_0033","00_0_0007","00_0_0028","00_0_0055","00_0_0072","00_0_0150","00_0_0098"],
@@ -144,6 +144,13 @@
           "ais": ["Attack Strategy: Barrage","Defense Strategy: Skills"]
         },
         {
+          "capsules": ["00_0_0033","00_0_0007","00_0_0028","00_0_0055","00_0_0072","00_0_0115","00_0_0098"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Budokai"],
+          "ais": ["Attack Strategy: Barrage"]
+        },
+        {
           "capsules": ["00_0_0033","00_0_0006","00_0_0029","00_0_0055","00_0_0072","00_0_0150","00_0_0098"],
           "uses": 1,
           "season": 0,
@@ -152,13 +159,6 @@
         },
         {
           "capsules": ["00_0_0102","00_0_0006","00_0_0029","00_0_0098","00_0_0033","00_0_0055","00_0_0039"],
-          "uses": 1,
-          "season": 0,
-          "teams": ["Budokai"],
-          "ais": ["Attack Strategy: Barrage"]
-        },
-        {
-          "capsules": ["00_0_0007","00_0_0005","00_0_0129","00_0_0130","00_0_0128","00_0_0115","00_0_0040"],
           "uses": 1,
           "season": 0,
           "teams": ["Budokai"],
@@ -558,7 +558,7 @@
       "hyperArmorBreakHits": 3
     },
     "leagueBuilds": {
-      "lineups": 15,
+      "lineups": 16,
       "builds": 5,
       "top": [
         {
@@ -570,7 +570,7 @@
         },
         {
           "capsules": ["00_0_0029","00_0_0006","00_0_0031","00_0_0133","00_0_0128","00_0_0138","00_0_0055"],
-          "uses": 1,
+          "uses": 2,
           "season": 0,
           "teams": ["Z-Fighters"],
           "ais": ["Defense Strategy: Blasts"]
@@ -3087,7 +3087,19 @@
       },
       "hyperArmorBreakHits": 3
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["DBZL_Cap_17","DBZL_Cap_21","00_0_0066","00_0_0138","00_0_0055","00_0_0038","00_0_0028"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Tiny Terrors"],
+          "ais": ["Defense Strategy: Skills"]
+        }
+      ]
+    },
     "skills": ["0002_31:1","0002_31:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -3638,7 +3650,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0005","00_0_0016","00_0_0040","00_0_0066","00_0_0122","DBZL_Cap_1"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Primal Instincts"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0020_00:1","0020_00:2"],
     "traits": ["Scouter"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -4378,7 +4402,7 @@
       "hyperArmorBreakHits": 3
     },
     "leagueBuilds": {
-      "lineups": 17,
+      "lineups": 18,
       "builds": 11,
       "top": [
         {
@@ -4390,7 +4414,7 @@
         },
         {
           "capsules": ["00_0_0006","00_0_0114","00_0_0102","00_0_0128","00_0_0082"],
-          "uses": 3,
+          "uses": 4,
           "season": 0,
           "teams": ["Budokai"],
           "ais": ["Attack Strategy: Barrage"]
@@ -6736,12 +6760,12 @@
       "hyperArmorBreakHits": 3
     },
     "leagueBuilds": {
-      "lineups": 19,
-      "builds": 7,
+      "lineups": 21,
+      "builds": 8,
       "top": [
         {
           "capsules": ["00_0_0006","00_0_0029","00_0_0072","00_0_0138","00_0_0055","00_0_0102","00_0_0000"],
-          "uses": 11,
+          "uses": 12,
           "season": 0,
           "teams": ["Z-Fighters"],
           "ais": ["Defense Strategy: Blasts"]
@@ -6751,6 +6775,13 @@
           "uses": 3,
           "season": 0,
           "teams": ["Team Beerus"],
+          "ais": ["Defense Strategy: Blasts"]
+        },
+        {
+          "capsules": ["00_0_0006","00_0_0029","00_0_0038","00_0_0128","00_0_0138","00_0_0055"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Z-Fighters"],
           "ais": ["Defense Strategy: Blasts"]
         },
         {
@@ -6773,13 +6804,6 @@
           "season": 0,
           "teams": ["Z-Fighters"],
           "ais": ["Defense Strategy: Blasts"]
-        },
-        {
-          "capsules": ["00_0_0028","00_0_0030","00_0_0128","00_0_0138","00_0_0039","00_0_0040","00_0_0112"],
-          "uses": 1,
-          "season": 0,
-          "teams": ["Z-Fighters"],
-          "ais": ["Balanced Strategy: Blasts"]
         }
       ]
     },
@@ -8470,12 +8494,12 @@
       "hyperArmorBreakHits": 5
     },
     "leagueBuilds": {
-      "lineups": 19,
+      "lineups": 20,
       "builds": 7,
       "top": [
         {
           "capsules": ["00_0_0006","00_0_0029","00_0_0038","00_0_0102","00_0_0040","00_0_0095"],
-          "uses": 4,
+          "uses": 5,
           "season": 0,
           "teams": ["Budokai"],
           "ais": ["Attack Strategy: Barrage"]
@@ -9412,7 +9436,7 @@
       "hyperArmorBreakHits": 5
     },
     "leagueBuilds": {
-      "lineups": 16,
+      "lineups": 17,
       "builds": 4,
       "top": [
         {
@@ -9424,7 +9448,7 @@
         },
         {
           "capsules": ["00_0_0005","00_0_0030","00_0_0038","00_0_0039","00_0_0040","00_0_0072","00_0_0112"],
-          "uses": 5,
+          "uses": 6,
           "season": 0,
           "teams": ["Z-Fighters"],
           "ais": ["Attack Strategy: Barrage","Attack Strategy: Evasion"]
@@ -9796,15 +9820,15 @@
       "hyperArmorBreakHits": 3
     },
     "leagueBuilds": {
-      "lineups": 16,
+      "lineups": 17,
       "builds": 14,
       "top": [
         {
           "capsules": ["00_0_0028","00_0_0007","00_0_0141","00_0_0075","00_0_0094","00_0_0095","00_0_0112"],
-          "uses": 3,
+          "uses": 4,
           "season": 0,
           "teams": ["Z-Fighters"],
-          "ais": ["Attack Strategy: Ultimate Blasts"]
+          "ais": ["Attack Strategy: Ultimate Blasts","Balanced Strategy: Melee"]
         },
         {
           "capsules": ["00_0_0007","00_0_0028","00_0_0075","00_0_0094","00_0_0095","00_0_0112","00_0_0055"],
@@ -10028,7 +10052,19 @@
       },
       "hyperArmorBreakHits": 4
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0101","00_0_0066","DBZL_Cap_18","00_0_0040","00_0_0000","00_0_0055"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Master & Student"],
+          "ais": ["Defense Strategy: Gauge Recovery"]
+        }
+      ]
+    },
     "skills": ["0080_10:1","0080_10:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -13861,7 +13897,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0029","00_0_0028","DBZL_Cap_21","00_0_0128","00_0_0038","00_0_0133"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Master & Student"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
+        }
+      ]
+    },
     "skills": ["0121_00:1","0121_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -14942,7 +14990,19 @@
       },
       "hyperArmorBreakHits": 4
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0006","00_0_0029","00_0_0038","00_0_0072","00_0_0150","00_0_0055","00_0_0066"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Cold Kingdom"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0152_00:1","0152_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -18783,7 +18843,19 @@
       },
       "hyperArmorBreakHits": 3
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0072","00_0_0138","00_0_0030","00_0_0038","00_0_0040","00_0_0118"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Budokai"],
+          "ais": ["Balanced Strategy: Blasts"]
+        }
+      ]
+    },
     "skills": ["0220_00:1","0220_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19686,7 +19758,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0102","00_0_0115","00_0_0113","00_0_0150","00_0_0141"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Budokai"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0270_00:1","0270_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -19862,7 +19946,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0000","00_0_0102","00_0_0006","00_0_0040","00_0_0072","00_0_0033","DBZL_Cap_15"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Creations"],
+          "ais": ["Balanced Strategy: Melee"]
+        }
+      ]
+    },
     "skills": ["0280_00:1","0280_00:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -20208,7 +20304,7 @@
       "hyperArmorBreakHits": 5
     },
     "leagueBuilds": {
-      "lineups": 17,
+      "lineups": 18,
       "builds": 9,
       "top": [
         {
@@ -20227,7 +20323,7 @@
         },
         {
           "capsules": ["00_0_0006","00_0_0028","00_0_0055","00_0_0011","00_0_0115","00_0_0128","00_0_0038"],
-          "uses": 1,
+          "uses": 2,
           "season": 0,
           "teams": ["Primal Instincts"],
           "ais": ["Defense Strategy: Skills"]
@@ -20460,7 +20556,19 @@
       },
       "hyperArmorBreakHits": 3
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0040","00_0_0011","00_0_0082","DBZL_Cap_30","00_0_0072","00_0_0000"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Cinema"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0310_01:1","0310_01:2"],
     "traits": [],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -22457,8 +22565,8 @@
       "hyperArmorBreakHits": 5
     },
     "leagueBuilds": {
-      "lineups": 16,
-      "builds": 8,
+      "lineups": 17,
+      "builds": 9,
       "top": [
         {
           "capsules": ["00_0_0030","00_0_0028","00_0_0038","00_0_0112","00_0_0072","00_0_0118","00_0_0116"],
@@ -22496,11 +22604,11 @@
           "ais": ["Defense Strategy: Gauge Recovery"]
         },
         {
-          "capsules": ["00_0_0030","00_0_0028","00_0_0039","00_0_0112","00_0_0072","00_0_0041","00_0_0075"],
+          "capsules": ["00_0_0030","00_0_0005","00_0_0039","00_0_0112","00_0_0072","00_0_0117","00_0_0075"],
           "uses": 1,
           "season": 0,
           "teams": ["Sentai Squad"],
-          "ais": ["Defense Strategy: Gauge Recovery"]
+          "ais": ["Attack Strategy: Barrage"]
         }
       ]
     },
@@ -23122,12 +23230,12 @@
       "hyperArmorBreakHits": 4
     },
     "leagueBuilds": {
-      "lineups": 13,
+      "lineups": 14,
       "builds": 2,
       "top": [
         {
           "capsules": ["00_0_0005","00_0_0007","00_0_0039","00_0_0040","00_0_0038","00_0_0102","00_0_0000"],
-          "uses": 12,
+          "uses": 13,
           "season": 0,
           "teams": ["Z-Fighters"],
           "ais": ["Attack Strategy: Barrage","Balanced Strategy: Melee"]
@@ -23500,7 +23608,19 @@
       },
       "hyperArmorBreakHits": 3
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0006","00_0_0029","00_0_0000","DBZL_Cap_14","DBZL_Cap_18"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Sentai Squad"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0450_10:1","0450_10:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23684,7 +23804,19 @@
       },
       "hyperArmorBreakHits": 1
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0030","00_0_0128","00_0_0118","00_0_0115","00_0_0038"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Demons"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
+        }
+      ]
+    },
     "skills": ["0451_00:1","0451_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -23865,8 +23997,8 @@
       "hyperArmorBreakHits": 4
     },
     "leagueBuilds": {
-      "lineups": 18,
-      "builds": 12,
+      "lineups": 20,
+      "builds": 14,
       "top": [
         {
           "capsules": ["00_0_0040","00_0_0033","00_0_0072","00_0_0038","00_0_0028","00_0_0030"],
@@ -23890,25 +24022,25 @@
           "ais": ["Attack Strategy: Ultimate Blasts"]
         },
         {
+          "capsules": ["00_0_0030","00_0_0028","00_0_0072","00_0_0112","00_0_0038","00_0_0000","00_0_0118"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Creations"],
+          "ais": ["Attack Strategy: Barrage"]
+        },
+        {
+          "capsules": ["00_0_0040","00_0_0033","00_0_0072","00_0_0038","00_0_0039","00_0_0030"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Budokai"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
+        },
+        {
           "capsules": ["00_0_0040","00_0_0104","00_0_0072","00_0_0150","00_0_0038","00_0_0030","00_0_0028"],
           "uses": 1,
           "season": 0,
           "teams": ["Budokai"],
           "ais": ["Attack Strategy: Ultimate Blasts"]
-        },
-        {
-          "capsules": ["00_0_0030","00_0_0038","00_0_0039","00_0_0040","00_0_0095","00_0_0082"],
-          "uses": 1,
-          "season": 0,
-          "teams": ["Budokai"],
-          "ais": ["Attack Strategy: Ultimate Blasts"]
-        },
-        {
-          "capsules": ["00_0_0030","00_0_0028","00_0_0038","00_0_0039","00_0_0040","00_0_0150","00_0_0141"],
-          "uses": 1,
-          "season": 0,
-          "teams": ["Budokai"],
-          "ais": ["Attack Strategy: Barrage"]
         }
       ]
     },
@@ -24861,7 +24993,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0006","00_0_0150","DBZL_Cap_18","00_0_0032","00_0_0033"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Primal Instincts"],
+          "ais": ["Balanced Strategy: Melee"]
+        }
+      ]
+    },
     "skills": ["0510_00:1","0510_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -25413,8 +25557,8 @@
       "hyperArmorBreakHits": 1
     },
     "leagueBuilds": {
-      "lineups": 13,
-      "builds": 4,
+      "lineups": 14,
+      "builds": 5,
       "top": [
         {
           "capsules": ["00_0_0006","00_0_0012","00_0_0055","00_0_0127","00_0_0072","00_0_0138","00_0_0066"],
@@ -25443,6 +25587,13 @@
           "season": 0,
           "teams": ["Malevolent Souls"],
           "ais": ["Balanced Strategy: Sparking!"]
+        },
+        {
+          "capsules": ["00_0_0006","00_0_0029","00_0_0128","00_0_0068","00_0_0070","00_0_0000"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Cinema"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
         }
       ]
     },
@@ -27972,7 +28123,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0030","00_0_0055","00_0_0138","00_0_0072","DBZL_Cap_14"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Sentai Squad"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0610_00:1","0610_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -29464,7 +29627,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0030","00_0_0028","00_0_0072","DBZL_Cap_28","00_0_0150","00_0_0016"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Time Patrol"],
+          "ais": ["Balanced Strategy: Ki Blasts"]
+        }
+      ]
+    },
     "skills": ["0660_00:1","0660_00:2"],
     "traits": ["Sword","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -30184,7 +30359,19 @@
       },
       "hyperArmorBreakHits": 1
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["DBZL_Cap_14","00_0_0029","00_0_0128","00_0_0038","00_0_0028"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Malevolent Souls"],
+          "ais": ["Defense Strategy: Gauge Recovery"]
+        }
+      ]
+    },
     "skills": ["0680_02:1","0680_02:2"],
     "traits": ["Super Movement","High-Speed Movement"],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -30555,7 +30742,19 @@
       },
       "hyperArmorBreakHits": 1
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0016","00_0_0040","00_0_0117","00_0_0112","00_0_0014","00_0_0005"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Creations"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0690_00:1","0690_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -31151,7 +31350,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","DBZL_Cap_6","DBZL_Cap_21","DBZL_Cap_18","00_0_0129"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Malevolent Souls"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["0710_00:1","0710_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -33287,7 +33498,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0037","00_0_0040","00_0_0072","00_0_0024","DBZL_Cap_30","00_0_0000"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Demons"],
+          "ais": ["Balanced Strategy: Melee"]
+        }
+      ]
+    },
     "skills": ["0820_00:1","0820_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -33471,7 +33694,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0030","00_0_0028","DBZL_Cap_1","00_0_0112","00_0_0072","DBZL_Cap_30","00_0_0075"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Sentai Squad"],
+          "ais": ["Defense Strategy: Gauge Recovery"]
+        }
+      ]
+    },
     "skills": ["0830_00:1","0830_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -34832,12 +35067,12 @@
       "hyperArmorBreakHits": 1
     },
     "leagueBuilds": {
-      "lineups": 16,
+      "lineups": 17,
       "builds": 2,
       "top": [
         {
           "capsules": ["00_0_0030","00_0_0033","00_0_0023","00_0_0118","00_0_0082","00_0_0039"],
-          "uses": 9,
+          "uses": 10,
           "season": 0,
           "teams": ["Primal Instincts"],
           "ais": ["Defense Strategy: Gauge Recovery","Defense Strategy: Blasts"]
@@ -35420,8 +35655,8 @@
       "hyperArmorBreakHits": 3
     },
     "leagueBuilds": {
-      "lineups": 15,
-      "builds": 10,
+      "lineups": 16,
+      "builds": 11,
       "top": [
         {
           "capsules": ["00_0_0128","00_0_0030","00_0_0028","00_0_0038","00_0_0082"],
@@ -35445,6 +35680,13 @@
           "ais": ["Defense Strategy: Gauge Recovery"]
         },
         {
+          "capsules": ["00_0_0095","00_0_0030","00_0_0150","00_0_0082","00_0_0118","00_0_0138"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Budokai"],
+          "ais": ["Defense Strategy: Gauge Recovery"]
+        },
+        {
           "capsules": ["00_0_0095","00_0_0030","00_0_0055","00_0_0082","00_0_0126","00_0_0138"],
           "uses": 1,
           "season": 0,
@@ -35453,13 +35695,6 @@
         },
         {
           "capsules": ["00_0_0128","00_0_0068","00_0_0030","00_0_0082"],
-          "uses": 1,
-          "season": 0,
-          "teams": ["Budokai"],
-          "ais": ["Defense Strategy: Gauge Recovery"]
-        },
-        {
-          "capsules": ["00_0_0128","00_0_0075","00_0_0030","00_0_0082"],
           "uses": 1,
           "season": 0,
           "teams": ["Budokai"],
@@ -36220,12 +36455,12 @@
       "hyperArmorBreakHits": 1
     },
     "leagueBuilds": {
-      "lineups": 16,
+      "lineups": 17,
       "builds": 4,
       "top": [
         {
           "capsules": ["00_0_0007","00_0_0066","00_0_0055","00_0_0095","00_0_0038","00_0_0102"],
-          "uses": 9,
+          "uses": 10,
           "season": 0,
           "teams": ["Sentai Squad"],
           "ais": ["Attack Strategy: Barrage","Balanced Strategy: Blasts"]
@@ -36624,12 +36859,12 @@
       "hyperArmorBreakHits": 1
     },
     "leagueBuilds": {
-      "lineups": 16,
+      "lineups": 17,
       "builds": 10,
       "top": [
         {
           "capsules": ["00_0_0007","00_0_0028","00_0_0066","00_0_0040","00_0_0138","00_0_0072","00_0_0102"],
-          "uses": 5,
+          "uses": 6,
           "season": 0,
           "teams": ["Sentai Squad"],
           "ais": ["Attack Strategy: Vanishing","Attack Strategy: Barrage"]
@@ -37023,8 +37258,8 @@
       "hyperArmorBreakHits": 3
     },
     "leagueBuilds": {
-      "lineups": 17,
-      "builds": 4,
+      "lineups": 18,
+      "builds": 5,
       "top": [
         {
           "capsules": ["00_0_0006","00_0_0012","00_0_0023","00_0_0033","00_0_0040","00_0_0000","00_0_0072"],
@@ -37046,6 +37281,13 @@
           "season": 0,
           "teams": ["Primal Instincts"],
           "ais": ["Balanced Strategy: Melee"]
+        },
+        {
+          "capsules": ["00_0_0006","00_0_0012","00_0_0114","00_0_0033","00_0_0130","00_0_0000","00_0_0115"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Primal Instincts"],
+          "ais": ["Attack Strategy: Barrage"]
         },
         {
           "capsules": ["00_0_0006","00_0_0012","00_0_0023","00_0_0033","00_0_0040","00_0_0000","00_0_0115"],
@@ -37239,7 +37481,19 @@
       },
       "hyperArmorBreakHits": 1
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["DBZL_Cap_21","DBZL_Cap_6","DBZL_Cap_30","00_0_0115","00_0_0006","00_0_0029","00_0_0113"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Time Patrol"],
+          "ais": ["Balanced Strategy: Melee"]
+        }
+      ]
+    },
     "skills": ["1000_00:1","1000_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -37425,7 +37679,7 @@
       "hyperArmorBreakHits": 4
     },
     "leagueBuilds": {
-      "lineups": 18,
+      "lineups": 19,
       "builds": 3,
       "top": [
         {
@@ -37444,7 +37698,7 @@
         },
         {
           "capsules": ["00_0_0029","00_0_0005","00_0_0015","00_0_0082","00_0_0068","00_0_0118"],
-          "uses": 1,
+          "uses": 2,
           "season": 0,
           "teams": ["Primal Instincts"],
           "ais": ["Balanced Strategy: Restrain"]
@@ -37625,12 +37879,12 @@
       "hyperArmorBreakHits": 4
     },
     "leagueBuilds": {
-      "lineups": 16,
+      "lineups": 17,
       "builds": 8,
       "top": [
         {
           "capsules": ["00_0_0006","00_0_0029","00_0_0112","00_0_0150","00_0_0125","00_0_0095","00_0_0075"],
-          "uses": 3,
+          "uses": 4,
           "season": 0,
           "teams": ["Sentai Squad"],
           "ais": ["Balanced Strategy: Movement"]
@@ -38224,7 +38478,19 @@
       },
       "hyperArmorBreakHits": 1
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0128","00_0_0027","00_0_0096","00_0_0030","00_0_0133","00_0_0028","00_0_0038"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Budokai"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
+        }
+      ]
+    },
     "skills": ["1500_00:1","1500_00:2"],
     "traits": ["Super Armor"],
     "sparking": {"armor":true,"effects":[],"armorBreakLevel":3},
@@ -38416,7 +38682,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0030","00_0_0005","00_0_0102","00_0_0055","00_0_0072","00_0_0040"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Cold Kingdom"],
+          "ais": ["Balanced Strategy: Blasts"]
+        }
+      ]
+    },
     "skills": ["1960_00:1","1960_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -40147,12 +40425,12 @@
       "hyperArmorBreakHits": 1
     },
     "leagueBuilds": {
-      "lineups": 15,
+      "lineups": 16,
       "builds": 2,
       "top": [
         {
           "capsules": ["00_0_0006","00_0_0029","00_0_0128","00_0_0038","00_0_0055","00_0_0138"],
-          "uses": 12,
+          "uses": 13,
           "season": 0,
           "teams": ["Sentai Squad"],
           "ais": ["Attack Strategy: Barrage"]
@@ -40890,8 +41168,8 @@
       "hyperArmorBreakHits": 4
     },
     "leagueBuilds": {
-      "lineups": 18,
-      "builds": 4,
+      "lineups": 19,
+      "builds": 5,
       "top": [
         {
           "capsules": ["00_0_0028","00_0_0029","00_0_0040","00_0_0102","00_0_0000","00_0_0138","00_0_0066"],
@@ -40903,6 +41181,13 @@
         {
           "capsules": ["00_0_0028","00_0_0029","00_0_0072","00_0_0102","00_0_0000","00_0_0138","00_0_0066"],
           "uses": 3,
+          "season": 0,
+          "teams": ["Primal Instincts"],
+          "ais": ["Attack Strategy: Barrage"]
+        },
+        {
+          "capsules": ["00_0_0028","00_0_0029","00_0_0038","00_0_0102","00_0_0072","00_0_0138","00_0_0066"],
+          "uses": 1,
           "season": 0,
           "teams": ["Primal Instincts"],
           "ais": ["Attack Strategy: Barrage"]
@@ -43894,7 +44179,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0128","00_0_0038","00_0_0068","00_0_0030","00_0_0028"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Time Patrol"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
+        }
+      ]
+    },
     "skills": ["3170_00:1","3170_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -44083,7 +44380,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","00_0_0102","DBZL_Cap_30","00_0_0000","00_0_0040","00_0_0112","DBZL_Cap_1"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Malevolent Souls"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["3190_00:1","3190_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -44287,7 +44596,19 @@
       },
       "hyperArmorBreakHits": 4
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0028","00_0_0029","00_0_0128","00_0_0066","00_0_0055","00_0_0038","00_0_0040"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Primal Instincts"],
+          "ais": ["Defense Strategy: Blasts"]
+        }
+      ]
+    },
     "skills": ["3270_00:1","3270_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -44823,7 +45144,19 @@
       },
       "hyperArmorBreakHits": 4
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0006","00_0_0029","00_0_0072","00_0_0138","00_0_0055","00_0_0102","00_0_0000"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Z-Fighters"],
+          "ais": ["Defense Strategy: Blasts"]
+        }
+      ]
+    },
     "skills": ["3280_01:1","3280_01:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -45009,7 +45342,19 @@
       },
       "hyperArmorBreakHits": 4
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0007","DBZL_Cap_18","00_0_0040","00_0_0039","00_0_0038","00_0_0028"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Cinema"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["3290_00:1","3290_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -45195,7 +45540,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0006","00_0_0029","00_0_0038","00_0_0040","DBZL_Cap_6","DBZL_Cap_30","00_0_0114"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Master & Student"],
+          "ais": ["Attack Strategy: Evasion"]
+        }
+      ]
+    },
     "skills": ["3300_00:1","3300_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -45401,7 +45758,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0029","00_0_0040","00_0_0075","00_0_0038","00_0_0115","00_0_0117"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Demons"],
+          "ais": ["Balanced Strategy: Blasts"]
+        }
+      ]
+    },
     "skills": ["3310_00:1","3310_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -45762,7 +46131,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0005","00_0_0030","00_0_0038","00_0_0039","00_0_0040","00_0_0072","00_0_0112"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Z-Fighters"],
+          "ais": ["Attack Strategy: Barrage"]
+        }
+      ]
+    },
     "skills": ["3320_00:1","3320_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -45944,7 +46325,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["DBZL_Cap_15","DBZL_Cap_30","DBZL_Cap_18","DBZL_Cap_1","00_0_0128","00_0_0150","00_0_0006"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Tiny Terrors"],
+          "ais": ["Balanced Strategy: Sparking!"]
+        }
+      ]
+    },
     "skills": ["3330_00:1","3330_00:2"],
     "traits": [],
     "sparking": {
@@ -46151,7 +46544,19 @@
       },
       "hyperArmorBreakHits": 5
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["00_0_0128","00_0_0007","00_0_0028","00_0_0102","00_0_0040","00_0_0039"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Cold Kingdom"],
+          "ais": ["Attack Strategy: Ultimate Blasts"]
+        }
+      ]
+    },
     "skills": ["3350_00:1","3350_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},
@@ -46356,7 +46761,19 @@
       },
       "hyperArmorBreakHits": 4
     },
-    "leagueBuilds": null,
+    "leagueBuilds": {
+      "lineups": 1,
+      "builds": 1,
+      "top": [
+        {
+          "capsules": ["DBZL_Cap_6","DBZL_Cap_28","DBZL_Cap_14","00_0_0028","00_0_0029","00_0_0040"],
+          "uses": 1,
+          "season": 0,
+          "teams": ["Tiny Terrors"],
+          "ais": ["Defense Strategy: Gauge Recovery"]
+        }
+      ]
+    },
     "skills": ["3360_00:1","3360_00:2"],
     "traits": [],
     "sparking": {"armor":false,"effects":[],"armorBreakLevel":3},

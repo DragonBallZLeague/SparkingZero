@@ -23,7 +23,8 @@ function lineupRefs(node, out = [], sides = null) {
   else if (node && typeof node === 'object') {
     const here = node.home && node.away ? [node.home, node.away] : node.team_a && node.team_b ? [node.team_a, node.team_b] : sides;
     for (const [k, v] of Object.entries(node)) {
-      if (/^lineup_file/.test(k) && typeof v === 'string') out.push({ file: v.trim(), sides: here });
+      // an empty lineup_file is a match not played yet (Season 1's final and third-place match, 2026-10-14)
+      if (/^lineup_file/.test(k) && typeof v === 'string') { if (v.trim()) out.push({ file: v.trim(), sides: here }); }
       else lineupRefs(v, out, here);
     }
   }
