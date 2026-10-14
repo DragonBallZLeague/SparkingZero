@@ -15,6 +15,7 @@ import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { linkIndex, readLink, writeLink } from '../src/links.js';
+import { applyOrder } from './lib/order.mjs';
 import { buildTransformAdj, getFormChain, calculatorSlug } from '../../website/src/utils/formChain.js';
 import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel, skillHit, skillTaken } from '../src/utils/engine.js';
 import { parseCondition } from '../src/utils/conditions.js';
@@ -64,8 +65,11 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   const refById = new Map(ref.characters.map((c, i) => [c.id, { ...c, i }]));
   const wrong = chars.filter(c => refById.get(c.id)?.name !== c.name).map(c => `${c.id}: "${c.name}" (referencedata: "${refById.get(c.id)?.name ?? 'missing'}")`);
   check(!wrong.length, 'every name equals referencedata/characters.csv for its id', wrong);
-  const order = chars.map(c => refById.get(c.id)?.i ?? -1);
-  check(order.every((v, i) => i === 0 || v > order[i - 1]), 'characters follow referencedata order');
+  // referencedata's order with the league's moves (curated/character-order.csv)
+  const moves = readCsv(path.join(DATA, 'curated', 'character-order.csv')).rows;
+  const want = applyOrder(ref.characters.filter(c => chars.some(x => x.id === c.id)), moves);
+  check(!want.problems.length && want.list.map(c => c.id).join() === chars.map(c => c.id).join(),
+    `characters follow referencedata order with the league's ${moves.length} moves (curated/character-order.csv)`, want.problems);
   const missing = ref.characters.filter(c => !chars.some(x => x.id === c.id)).map(c => `${c.id} ${c.name}`);
   strictCheck(!missing.length, `every referencedata character is published (${chars.length}/${ref.characters.length})`, missing);
 }

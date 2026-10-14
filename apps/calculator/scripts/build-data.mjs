@@ -33,6 +33,7 @@ import { movesetOf } from './lib/moveset.mjs';
 import { rushChainsOf } from './lib/rushChains.mjs';
 import { armorOf } from './lib/armor.mjs';
 import { loadLeagueBuilds } from './lib/lineups.mjs';
+import { applyOrder } from './lib/order.mjs';
 // the Analyzer's slug rule, so a character's link name is the same in both apps
 import { slugifyCharacterName as slugify } from '../../analyzer/src/utils/characterSlug.js';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
@@ -938,6 +939,12 @@ const teams = ref.season.map(t => {
 const charmapManifest = manifest('charmap');
 const ccManifest = manifest('capsulecorp');
 const neoManifest = manifest('neo');
+// The league's order (curated/character-order.csv, scripts/lib/order.mjs): forms after the form they come from.
+{
+  const { list, problems } = applyOrder(characters, curated('character-order.csv'));
+  for (const p of problems) report.warn.push(`character-order.csv: "${p}" names a character that isn't published`);
+  characters.splice(0, characters.length, ...list);
+}
 // Every character built is published (the website links every name in characters.json).
 const roster = characters.map(c => c.id);
 const pub = new Set(roster);
