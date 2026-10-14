@@ -81,7 +81,34 @@ The league chose option B in the 2026-10-09 review doc: rebuild the calculator t
   - Copy link (Share on a phone);
   - Swap (both fighters change sides with their builds): "Swap sides" in concept B's look (round 25, `design/concepts/swap-r25.html`), between the two Change buttons. Change's icon became ▾, so ⇄ means only Swap.
 - **The data on this branch ships with the rebuild**, not on its own.
-- **Built into the app and signed off by the league (2026-10-13)**: `src/app/` is the demo with real addresses (see Architecture). `design/` was deleted on 2026-10-14, then the branch merged into dev-branch.
+- **Built into the app and signed off by the league (2026-10-13)**: `src/app/` is the demo with real addresses (see Architecture). `design/` was deleted on 2026-10-14, then the branch merged into dev-branch and deployed; see "Working on it now".
+
+## Working on it now
+
+The rebuild shipped to dev-branch on 2026-10-14 (deployed, `695c21b7`); its worktree and branch
+(`calculator-data-rebuild`) were closed. Small fixes and the items below go on dev-branch. Never push without the
+league's say-so: a push to dev-branch deploys the whole site.
+
+**How to check a change:**
+- **Data or engine:** `npm run build:calculator` (repo root) runs build-data, then verify-data (ok / FAIL / WARN, the
+  league's in-game measurements among them), then Vite. Read `data/CHANGES.md` after a data change. One WARN is
+  expected for now: 17 misspelled Season 1 masterlist names, a website content fix.
+- **Pages:** `node apps/calculator/scripts/check-pages.mjs` opens every kind of address (Characters, Fighter, Versus,
+  a build, raw ids, old `#` share links) at desktop, tablet and phone widths in headless Edge and fails on a view
+  error or a wrong landing. It needs the built site served as GitHub Pages serves it: build the calculator and the
+  website (`cd apps/website && npx vite build --outDir ../../dist --emptyOutDir=false`), then `node
+  scripts/build-404.js` and `node scripts/serve-dist.js 8093` (deep links only work through the site-root 404 page,
+  so the Vite dev server can't test them). Pass the live site's URL as its first argument to spot-check a deploy.
+- **A look:** the dev server (`npm run dev:calculator`, :5175) for quick visual work; screenshots through
+  `apps/analyzer/scripts/dev/browser.mjs` (headless Edge, as check-pages uses it).
+- **A whole-site build** (before a merge that touches more than the calculator) follows `.github/workflows/deploy.yml`'s
+  order. The Analyzer's prebuild rewrites thousands of tracked match files and generated summaries locally (mostly
+  line endings) and copies new matches into `apps/analyzer/public/BR_Data/`: restore those
+  (`git checkout -- apps/analyzer`) and don't commit them; the deploy regenerates them.
+
+**When an in-game test result comes in** (`data/TESTS.md`): record it in `data/README.md` (the rounds of league
+measurements) or `data/EXPANSION.md`, fix the data or engine, add the value to verify-data's in-game checks (the
+"published values equal the league in-game measurements" block), and delete the test from TESTS.md.
 
 ## Open items
 
