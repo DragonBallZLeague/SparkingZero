@@ -124,10 +124,22 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    collision. Old `#` share links (the live calculator's and the website's) open and are rewritten; the website's
    Teams page now links to the addresses (`formChain.js` `calculatorSlug`). Deep links go through the site-root 404
    page and `restoreDeepLink`, checked on `scripts/serve-dist.js`.
-3. **Rebuild the app: built (2026-10-13), waiting on the league's sign-off.** `src/app/` is the demo moved in with
-   only its imports changed (data fetched at runtime, `src/data/data.js`), the old `App.jsx`, components and
-   Tailwind removed. **From here, changes go in `src/app/`, not `design/demo/`.** Once the league signs off the
-   rebuilt app, delete `design/concepts/`, `design/demo/` and this file.
+3. **Rebuild the app: built (2026-10-13), signed off by the league the same day** (with the Kame House credit,
+   the art centered on the body, no Max ki tile, "1 bar"). `src/app/` is the demo moved in with only its imports
+   changed (data fetched at runtime, `src/data/data.js`), the old `App.jsx`, components and Tailwind removed.
+   **Changes go in `src/app/`, not `design/demo/`.**
+
+**Next steps, each waiting on the league's go-ahead (the league, 2026-10-13: none started yet):**
+1. Delete `design/concepts/`, `design/demo/` and this file (move anything still open here, the ideas kept for
+   later and the set-aside lineups, into `apps/calculator/CLAUDE.md` first).
+2. Run the whole-site build once more, then merge this branch into dev-branch. It ships the rebuilt calculator, its
+   addresses, the website Teams page's new links and the data work held back for the rebuild. Nothing is pushed
+   without the league's say-so.
+3. Optional cleanup: `verify-data` still checks the old app's data shapes (`toLegacy` in `src/data/adapter.js`),
+   which nothing else reads now.
+4. Later: the league's in-game tests in `data/TESTS.md` (move flags, Dragon Dash BK, Burst attacks, blast hit
+   splits), Match Builder integration, a "who wins the exchange" summary if a form that works comes up, and the 9
+   unlinked lineup files.
 4. Keep `apps/calculator/CLAUDE.md` in step at each stage.
 
 ## Conventions

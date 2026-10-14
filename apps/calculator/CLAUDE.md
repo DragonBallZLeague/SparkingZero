@@ -76,7 +76,7 @@ The league chose option B in the 2026-10-09 review doc: rebuild the calculator t
   - Copy link (Share on a phone);
   - Swap (both fighters change sides with their builds): "Swap sides" in concept B's look (round 25, `design/concepts/swap-r25.html`), between the two Change buttons. Change's icon became ▾, so ⇄ means only Swap.
 - **The data on this branch ships with the rebuild**, not on its own.
-- **Built into the app (2026-10-13)**: `src/app/` is the demo with real addresses (see Architecture). `design/demo/` stays, as the league's reference, until the league signs off the rebuilt app; then delete `design/`.
+- **Built into the app and signed off by the league (2026-10-13)**: `src/app/` is the demo with real addresses (see Architecture). Next, each only on the league's go-ahead: delete `design/`, then the whole-site build and the merge into dev-branch; the list is in `design/REDESIGN-STATUS.md` ("Next steps").
 
 ## Gotchas
 
