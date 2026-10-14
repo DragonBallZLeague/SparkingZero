@@ -14,7 +14,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 /* Under the site's shared bar (packages/ui NavBar: 4px accent + 56px + 1px border, sticky at 0): the calculator's
    own bar is just the view tabs, sticky below it. --top is everything stuck to the top (the phone has only the
    shared bar; its tabs are at the bottom). */
-:root { --nav: calc(3.5rem + 5px); --top: calc(var(--nav) + 44px); }  /* the bar is 3.5rem + 4px accent + 1px border */
+:root { --nav: 61px; --top: calc(var(--nav) + 44px); }  /* the shared bar is 56px + 4px accent + 1px border, in px in every app */
 @media (max-width: 720px) { :root { --top: var(--nav); } }
 .app .top { position: sticky; top: var(--nav); z-index: 20; height: 44px; background: linear-gradient(90deg, rgba(249,115,22,.35), rgba(14,20,48,0) 30%), #0e1430; }
 .app .top .tabs { margin-left: 0; }
