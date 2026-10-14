@@ -83,6 +83,27 @@ const hitsTotal = (hits, k, K) => hits.reduce((s, [p, n]) => s + hit(p, k, K) * 
  * (blasts.json `hits`): each hit is rounded up on its own, as the game does (Energy Blast
  * Barrage with Blast Burst: 10 x 788 = 7,880, measured 2026-10-12, not 7,875).
  */
+/**
+ * Sparking! Mode's length in seconds: the whole ki gauge (maxKi bars of 10,000) drained at the game's
+ * SparkingModeGaugeDecreaseSpeed (2,800 a second for all 241 characters) times (1 + the drain scales: the class's
+ * SparkingModeGaugeDecreaseSpeedScale, capsules such as Sparking! Plus -15%). Normal: 17.9s. That the gauge is the
+ * full ki gauge is an assumption (the files omit SPGaugeMaxValue as a default): data/TESTS.md, Sparking test.
+ */
+export const SPARKING_DRAIN_PER_SEC = 2800;
+export function sparkingSeconds(maxKi, drain) {
+  const rate = SPARKING_DRAIN_PER_SEC * (1 + drain);
+  return rate > 0 ? round((maxKi ?? 5) * 10000 / rate, 2) : null;
+}
+/**
+ * Time to charge from full ki into Sparking! Mode, in seconds: the base time over (1 + the charge-speed scales:
+ * the class's SparkingGaugeChargeSpeedScale, capsules). The base (SparkingGaugeChargeSpeed, a default the files
+ * omit) is not measured yet, so this is null until the league's test sets SPARKING_CHARGE_BASE_SECONDS.
+ */
+export const SPARKING_CHARGE_BASE_SECONDS = null;
+export function sparkingChargeSeconds(charge) {
+  return SPARKING_CHARGE_BASE_SECONDS ? round(SPARKING_CHARGE_BASE_SECONDS / (1 + charge), 2) : null;
+}
+
 export function scale(final, k0, k1, K, power = null) {
   if (typeof final !== 'number' || !k0) return final;
   if (Math.abs(k1 - k0) < 1e-12) return final;
@@ -322,6 +343,13 @@ export function computeStats(c, effects, ctx = {}) {
     skillRegen: s.skillRegen != null ? `${rate('skillRecovery', s.skillRegen)} Points/m` : null,
     sparkCharge: round((cls.sparkingCharge || 0) + (add.sparkingCharge || 0)),
     sparkDuration: round((s.sparkDuration ?? 0) - (add.sparkingDrain || 0)),
+    // Sparking! Mode's gauge (2026-10-13). The old panels' sparkDuration above is Capsule Corp's "Spark Duration",
+    // which matches the class's PRE-Sparking decay for every class (a partly charged gauge fading when charging
+    // stops), not how long Sparking lasts. Rates add like the other rates: (1 + class + capsules).
+    sparkDrain: round((cls.sparkingDrain || 0) + (add.sparkingDrain || 0)),
+    sparkPreDrain: round((cls.preSparkingDrain || 0) + (add.preSparkingDrain || 0)),
+    sparkSeconds: sparkingSeconds(maxKi, (cls.sparkingDrain || 0) + (add.sparkingDrain || 0)),
+    sparkChargeSeconds: sparkingChargeSeconds((cls.sparkingCharge || 0) + (add.sparkingCharge || 0)),
     skill1Damage: skillDamage(ctx.skillDamage?.[0]),
     skill2Damage: skillDamage(ctx.skillDamage?.[1]),
     // engine extras

@@ -3,7 +3,7 @@
 import React from 'react';
 import {
   gameMoves, chainTypes, armorBreaks, fiveHitTaken, fiveHitTakenArmored, volley,
-  perceptionName, blastsOf, skillOf, blastDamage, rosterPos, movePos, chainDamage,
+  perceptionName, blastsOf, skillOf, blastDamage, rosterPos, movePos, chainDamage, SPARK,
 } from './model.js';
 import { Tap, Rk, usePair, useBase, useValue } from './ui.jsx';
 import { orderedBlasts, Hits } from './moves.jsx';
@@ -95,15 +95,14 @@ export function sections(side) {
     {
       id: 'spk', title: 'Sparking! Mode', cls: 'spk',
       groups: [[null, [
-        cell('Charge speed', A(x => x.sparkCharge), { fmt: F.rel, kind: 'rel', long: 'Sparking charge speed' }),
-        cell('Duration', A(x => x.sparkDuration), { fmt: F.rel, kind: 'rel', long: 'Sparking duration' }),
+        ...[SPARK.charge, SPARK.duration, SPARK.fade].map(r => cell(r.label, A(r.get), { fmt: F[r.fmt], kind: r.kind, less: r.less, long: r.long })),
         cell('Hyper Smash', GM(g => g.hyperSmash)), cell('Burst Melee Attack', null, { text: '1,250' }), cell('Burst Rush hit', null, { text: '450' }),
         cell('Violent Rush', null, { text: c.moveset?.unavailable?.includes('Violent Rush') ? 'No' : 'Yes' }),
         cell('Follow-ups', null, { text: `+${ps.sparkingAdd ?? 0}`, long: 'Extra follow-ups' }),
         cell('Armor', null, { text: c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None', long: 'Sparking armor' }),
       ]]],
       // (ASCII signs: the headline marks compare these as numbers)
-      summary: [['Charge', `${v.sparkCharge > 0 ? '+' : ''}${+(v.sparkCharge * 100).toFixed(1)}%`], ['Duration', `${v.sparkDuration > 0 ? '+' : ''}${+(v.sparkDuration * 100).toFixed(1)}%`],
+      summary: [['Charge', SPARK.charge.fmt === 's1' ? F.s1(SPARK.charge.get(v)) : `${v.sparkCharge > 0 ? '+' : ''}${+(v.sparkCharge * 100).toFixed(1)}%`], ['Duration', F.s1(v.sparkSeconds)],
         ['Hyper Smash', F.int(gm.hyperSmash)], [c.moveset?.unavailable?.includes('Violent Rush') ? 'No Violent Rush' : 'Violent Rush', null]],
     },
     { id: 'traits', title: 'Traits', cls: 'neutral', custom: 'traits', summary: traitSummary(c) },
@@ -434,6 +433,8 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
       <>
         <QuickBody id="spk" side={side} />
         <div className="tiles t5">
+          {/* how fast a partly charged Sparking gauge drops once charging stops (Capsule Corp's "Spark Duration") */}
+          <TV label={SPARK.fade.label} title={SPARK.fade.long} get={A(SPARK.fade.get)} fmt={F.rel} kind="rel" less sub="when charging stops" />
           <TT label="Burst Melee Attack" value="1,250" />
           <TT label="Burst Rush" value="450" sub="per hit" />
           <TT label="Sparking armor" value={c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None'} sub={c.armor?.sparking ? 'less damage taken' : null} />

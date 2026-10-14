@@ -4,7 +4,7 @@
 // one on the hit that breaks it) and toughness as taken from the other side. Switching lens keeps every section
 // and row in place; only the numbers change. Full is All stats (compare.jsx).
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { nameParts, exchange, evaluatePair, gameMoves, volley, fiveHitTaken, emptySpec, rosterPos, blastsOf, blastDamage } from './model.js';
+import { nameParts, exchange, evaluatePair, gameMoves, volley, fiveHitTaken, emptySpec, rosterPos, blastsOf, blastDamage, SPARK } from './model.js';
 import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
 import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, PhoneVsBar, leads, Mirror, SkillsCmp, ChainsCmp, Similar, useBlastSlots, sameBlast, slotLabel, blastName, AltPick } from './compare.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
@@ -120,8 +120,7 @@ function quickRows(pair) {
       { label: 'Charged ki blast', key: 'charged3', small: 'Lv.3', get: (s) => gameMoves(s).charged?.damage.at(-1), deal: ex(x => x.charged.at(-1)?.v), held: ex(x => x.charged.at(-1)?.held), shots: (s) => gameMoves(s).charged?.shots },
     ],
     spk: [
-      { label: 'Charge speed', key: 'spkc', get: V(x => x.sparkCharge), fmt: F.rel, kind: 'rel' },
-      { label: 'Duration', key: 'spkd', get: V(x => x.sparkDuration), fmt: F.rel, kind: 'rel' },
+      ...[[SPARK.charge, 'spkc'], [SPARK.duration, 'spkt']].map(([r, key]) => ({ label: r.label, key, get: V(r.get), fmt: F[r.fmt], kind: r.kind, less: r.less })),
       { label: 'Hyper Smash', get: (s) => gameMoves(s).hyperSmash, deal: ex(x => x.hyperSmash.v), held: ex(x => x.hyperSmash.held) },
       { label: 'Violent Rush', get: (s) => (s.c.moveset?.unavailable?.includes('Violent Rush') ? 0 : 1), fmt: (x) => (x ? 'Yes' : 'No'), bar: false },
       { label: 'Extra follow-ups', small: 'in Sparking!', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}`, bar: false },

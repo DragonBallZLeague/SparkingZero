@@ -51,9 +51,9 @@ Done 2026-10-11:
 - **Special texts** in `data/curated/move-special.csv`, published as the blast's `special`.
 - **League lineup builds** in `characters.json` `leagueBuilds` (`scripts/lib/lineups.mjs`): the top 6 per
   character (the Fighter page shows 6, the Versus rails 3), newest season first, then the most used. Only lineups the website's season and event pages link
-  count; teams come from the schedule (the lineups' own team text is hand-typed). **Question for the league:** 9
-  lineup files in `apps/website/public/content/lineups/` are not linked from any page, and are left out until the
-  league says whether they count: Season 0's All-Stars `s0_allstars_g1` (Team Beerus vs Team Champa; the event
+  count; teams come from the schedule (the lineups' own team text is hand-typed). 9 lineup files in
+  `apps/website/public/content/lineups/` are not linked from any page; **left out, and set aside for now** (the
+  user, 2026-10-13: unlinked files are ignored): Season 0's All-Stars `s0_allstars_g1` (Team Beerus vs Team Champa; the event
   links `s0_as_r1` and `s0_as2_r3`), and the other run of 8 playoff week-2 games, where `seasons/season-0.yaml`
   links one run and not the other: `s0_po2_m1r3` (linked: `m1r2`), `s0_po2_m2r2` (`m2r3`), `s0_po2_m3r3` (`m3r2`),
   `s0_po2_m4r2` (`m4r3`), `s0_qf2_m1r2` (`m1r3`), `s0_qf2_m2r2` (`m2r3`), `s0_qf2_m3r2` (`so_qf2_m3r3`, file name
@@ -110,6 +110,9 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    for Versus, the alternates' version marks, the docked picker). A check against the live calculator then added
    four things it had and the demo didn't: skill damage, Sparking charge speed and duration, Copy link and Swap
    (demo README, "Signed off, then the live calculator's four gaps"), **waiting on the league's sign-off**.
+   Second pass the same day: Sparking's duration in seconds (its charge in seconds after `data/TESTS.md` test 9;
+   the old "Spark Duration" turned out to be the pre-Sparking decay), and **round 25**
+   (`concepts/swap-r25.html`): four looks and places for Swap, **open**.
 2. **URL scheme.** Character pages by name slug, the three views (Characters, Fighter, Versus) as routes, and
    share links that carry the whole build (active skills, stages, Sparking, conditions, ruleset, both sides),
    copied by the Copy link button. Old `#` share links and the website's Teams-page links must keep opening.

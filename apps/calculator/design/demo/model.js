@@ -9,7 +9,7 @@ import teams from '../../public/data/teams.json';
 import meta from '../../public/data/meta.json';
 import artSizes from '../../public/char_art/sizes.json';
 import transformations from '../../../../referencedata/transformations.json';
-import { collectEffects, computeStats, scaleChannel, APPLIED_KEYS } from '../../src/utils/engine.js';
+import { collectEffects, computeStats, scaleChannel, APPLIED_KEYS, SPARKING_CHARGE_BASE_SECONDS } from '../../src/utils/engine.js';
 import { applyLightBodyKiBlastArmor, kiBlastVolley, calcOutgoingCombo, damageTaken, armorFactor, calcFiveHitDamageTaken } from '../../src/utils/calculator.js';
 import { LIGHT_BODY, DRACONIC_AURA } from '../../src/utils/specialCapsules.js';
 import { parseCondition, conditionNeeds } from '../../src/utils/conditions.js';
@@ -470,6 +470,19 @@ export function blastDamage(side, b) {
   const chn = b.slot === 'Ultimate' ? 'ultimate' : 'super';
   return { damage: scaleChannel(side.view, chn, b.damage, b.hits), boosted: scaleChannel(side.view, chn, b.boostedDamage), base: b.damage, boostedBase: b.boostedDamage, chn };
 }
+/**
+ * Sparking!'s numbers as every view shows them (`fmt` names a format in format.js). Duration is in seconds; the
+ * charge is in seconds once the league measures its base (engine.js SPARKING_CHARGE_BASE_SECONDS), until then a
+ * speed against the usual. Fade: how fast a partly charged gauge drops when charging stops (Full only).
+ */
+export const SPARK = {
+  charge: SPARKING_CHARGE_BASE_SECONDS
+    ? { label: 'Charge time', long: 'Time to Sparking! from full ki', get: (x) => x.sparkChargeSeconds, fmt: 's1', kind: 'dec', less: true }
+    : { label: 'Charge speed', long: 'Sparking charge speed', get: (x) => x.sparkCharge, fmt: 'rel', kind: 'rel', less: false },
+  duration: { label: 'Duration', long: 'Sparking! Mode duration', get: (x) => x.sparkSeconds, fmt: 's1', kind: 'dec', less: false },
+  fade: { label: 'Charge fade', long: 'A partial Sparking charge fading', get: (x) => x.sparkPreDrain, fmt: 'rel', kind: 'rel', less: true },
+};
+
 /**
  * A skill's damage with the build (the skill channel: High-Tension, Saiyan Burst...), or null when it deals none
  * (158 of 482 skills deal damage: Wild Sense, Explosive Wave, barriers, binds). The published value is Capsule Corp's

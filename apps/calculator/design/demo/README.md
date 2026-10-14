@@ -278,16 +278,27 @@ demo didn't do, added here for the league's sign-off:
   Saiyan Burst, Ancient Soul raise it), from Capsule Corp's value rounded up (`skillDamage` in `model.js`). In the
   Matchup it stays **before the other side's defenses**, and the Skills header says so: which defense the game
   uses for a skill is not measured yet (the old calculator used melee defense, unchecked).
-- **Sparking charge speed and duration.** Each character's change against the usual (`sparkCharge`, the class's
-  gauge charge speed: Ultra Instinct +20%, the Vegetas −10%; `sparkDuration`: most Super Saiyans −10%, Vegito
-  −15%), with capsules (Sparking! Plus +15% duration). They lead the Sparking! section (Quick and Full, with roster
-  bars; "Normal" when unchanged) and Versus's Sparking rows. To keep Quick at five tiles, Burst Melee Attack and
-  Burst Rush (the same for everyone) moved to Full.
+- **Sparking charge and duration.** They lead the Sparking! section (Quick and Full, with roster bars) and
+  Versus's Sparking rows; `SPARK` in `model.js` defines them once for every view. To keep Quick at five tiles,
+  Burst Melee Attack and Burst Rush (the same for everyone) moved to Full.
+  - **Duration is in seconds** (second pass, the league asked for times): the whole 5-bar gauge over the game's
+    drain of 2,800 a second, times (1 + the class's drain scale + capsules): 17.9s for most, 16.2s for the Almighty
+    and fusion classes, 17.0s for the Ki-Blast and Speed classes, 21.0s with Sparking! Plus (`sparkSeconds` in
+    `engine.js`). The gauge's size is assumed; `data/TESTS.md` tests 5 to 8 check it.
+  - **The old "Spark Duration" was something else.** Capsule Corp's value (Super Saiyans −10%) matches, class
+    for class, the game's *pre-Sparking* decay: how fast a partly charged gauge fades once charging stops. It is
+    shown in Full as **Charge fade**. The live calculator showed it as the duration.
+  - **Charge is a speed against the usual for now** (+20% for the Power class, −10% for the Vegetas). The game
+    files don't hold the base charge speed, so it becomes a time ("Charge time", from full ki) once `data/TESTS.md`
+    test 9 sets `SPARKING_CHARGE_BASE_SECONDS` in `engine.js`; every view switches with that one constant.
 - **Copy link.** At the right of the view tabs (a phone: a Share tab, the phone's share sheet when it has one).
   The link carries the whole page as the hash already did. Old share links still don't open here: that is the URL
   scheme step of the rebuild.
 - **Swap.** Under the VS mark (a phone: between the Change buttons): the two fighters change sides with their
-  builds and conditions.
+  builds and conditions. The league didn't like its look (a box split orange | blue) and wasn't sure of the spot;
+  `design/concepts/swap-r25.html` mocks four ways (an emblem on the barrier, with the view switches, a sibling of
+  Change, the VS as the button) and a ▾ icon for Change, so ⇄ means Swap alone. The demo keeps the first look
+  until the league picks.
 
 ## Checked
 

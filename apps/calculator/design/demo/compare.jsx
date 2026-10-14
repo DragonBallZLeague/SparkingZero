@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import {
   artUrl, faceUrl, nameParts, isGiant, figHeight, gameMoves, moveset, chainTypes, armorBreaks, fiveHitTaken, volley, perceptionName,
-  similarFighters, skillOf, blastsOf, SLOT_LABEL, blastDamage, skillDamage, toggleable, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
+  similarFighters, skillOf, blastsOf, SLOT_LABEL, blastDamage, skillDamage, toggleable, SPARK, typeClass, capsuleById, buildCheck, emptySpec, exchange, rosterPos,
 } from './model.js';
 import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './ui.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
@@ -180,8 +180,7 @@ export function statSections({ vs = false, pair = null } = {}) {
       { label: 'Jump ki blasts', get: (s) => gameMoves(s).jump?.count, fmt: String }, { label: 'Dash ki blasts', get: (s) => gameMoves(s).dash?.count, fmt: String },
     ] },
     { id: 'spk', title: 'Sparking! Mode', cls: 'spk', col: 2, rows: [
-      { label: 'Charge speed', get: V(x => x.sparkCharge), fmt: F.rel, kind: 'rel' },
-      { label: 'Duration', get: V(x => x.sparkDuration), fmt: F.rel, kind: 'rel' },
+      ...[SPARK.charge, SPARK.duration, SPARK.fade].map(r => ({ label: r.label, get: V(r.get), fmt: F[r.fmt], kind: r.kind, less: r.less })),
       dealt({ label: 'Hyper Smash', get: (s) => gameMoves(s).hyperSmash }, D(x => x.hyperSmash.v)),
       { label: 'Violent Rush', get: (s) => (s.c.moveset?.unavailable?.includes('Violent Rush') ? 0 : 1), fmt: (x) => (x ? 'Yes' : 'No') },
       { label: 'Extra follow-ups', get: (s) => s.c.moveset?.pursuits?.sparkingAdd ?? 0, fmt: (x) => `+${x}` },

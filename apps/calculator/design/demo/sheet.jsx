@@ -3,7 +3,7 @@
 import React from 'react';
 import {
   artUrl, faceUrl, nameParts, classColours, chipText, rosterPos, movePos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
-  capsuleSummary, typeClass, buildCheck, isGiant, figHeight, formsOf, byId, capsuleById,
+  capsuleSummary, typeClass, buildCheck, isGiant, figHeight, formsOf, byId, capsuleById, SPARK,
 } from './model.js';
 import { Tap, Rk, Chev, Name, Switch, RulesetSelect, usePhone } from './ui.jsx';
 import { CmdRows, SheetChains } from './moves.jsx';
@@ -241,12 +241,16 @@ export function QuickBody({ id, side, only = null }) {
   }
   if (id === 'chains') return <SheetChains side={side} />;
   if (id === 'spk') {
-    // how fast the gauge fills to enter Sparking! and how long it lasts, against the usual (class and capsules);
-    // Burst Melee Attack and Burst Rush, the same for everyone, are in Full
+    // getting into Sparking! and how long it lasts (class and capsules; SPARK in model.js); Burst Melee Attack and
+    // Burst Rush, the same for everyone, are in Full
+    const sk = (r, key, sub) => (
+      <div className="tile"><span>{r.label}</span><Tap as="b" title={r.long} get={A(r.get)} fmt={F[r.fmt]} kind={r.kind} lessIsBetter={r.less} />
+        {sub && <small className="tb">{sub}</small>}<Rk p={rosterPos(key, r.get, r.get(v), r.less)} title={r.less ? 'Less is better' : 'More is better'} /></div>
+    );
     return (
       <div className="tiles t5" style={{ marginTop: 0 }}>
-        <div className="tile"><span>Charge speed</span><Tap as="b" title="Sparking charge speed" get={A(x => x.sparkCharge)} fmt={F.rel} kind="rel" /><Rk p={rosterPos('spkc', x => x.sparkCharge, v.sparkCharge)} title="Faster is better" /></div>
-        <div className="tile"><span>Duration</span><Tap as="b" title="Sparking duration" get={A(x => x.sparkDuration)} fmt={F.rel} kind="rel" /><Rk p={rosterPos('spkd', x => x.sparkDuration, v.sparkDuration)} title="Longer is better" /></div>
+        {sk(SPARK.charge, 'spkc', 'from full ki')}
+        {sk(SPARK.duration, 'spkt')}
         <div className="tile"><span>Hyper Smash</span><Tap as="b" title="Hyper Smash" get={(p) => gameMoves(p.A).hyperSmash} /><Rk p={movePos('hyper', g => g.hyperSmash, gm.hyperSmash)} /></div>
         <div className="tile"><span>Violent Rush</span><b>{c.moveset?.unavailable?.includes('Violent Rush') ? 'No' : 'Yes'}</b></div>
         <div className="tile"><span>Extra follow-ups</span><b>+{c.moveset?.pursuits?.sparkingAdd ?? 0}</b></div>

@@ -7,6 +7,7 @@ export const F = {
   dec2: (v) => (typeof v === 'number' ? v.toFixed(2) : ''),
   bars: (v) => n(v, 3),
   secs: (v) => (typeof v === 'number' ? `${n(v, 2)}s` : ''),
+  s1: (v) => (typeof v === 'number' ? `${v.toFixed(1)}s` : ''),
   hits: (v) => (typeof v === 'number' ? `${v} hit${v === 1 ? '' : 's'}` : ''),
   count: (v) => (v == null ? '' : v >= 999 ? 'No limit' : String(v)),
   /** a damage-taken multiplier: 0.9 takes 10% less = "+10%"; 1 = "Base" */
