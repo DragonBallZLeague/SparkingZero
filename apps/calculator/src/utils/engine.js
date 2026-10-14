@@ -28,8 +28,16 @@
  * meleeDefenseStat, energy, kiBlastDmg, ...) so components only render.
  */
 
-import { hitsTaken } from '../data/adapter.js';
 import { parseCondition, conditionMet } from './conditions.js';
+
+/**
+ * Damage taken from a list of hits: the game rounds each hit up after defense (the same rule as
+ * calculator.js damageTaken).
+ */
+export function hitsTaken(hits, defense) {
+  if (!Array.isArray(hits) || typeof defense !== 'number') return null;
+  return hits.reduce((t, h) => t + (typeof h === 'number' ? Math.ceil(h * defense - 1e-9) : 0), 0);
+}
 
 const F = Math.fround;
 

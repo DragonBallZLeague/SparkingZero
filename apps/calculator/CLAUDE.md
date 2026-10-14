@@ -19,7 +19,7 @@ Dev: `npm run dev:calculator` (repo root) → `:5175`. Build: `npm run build:cal
 
 `predev` runs `build-data`; `prebuild` runs `build-data` then `scripts/verify-data.mjs` (ok/FAIL/WARN, exit 1 on FAIL; it includes engine checks against known in-game values). Both are offline and deterministic. Every build regenerates `data/REPORT.md` (coverage, source disagreements, blast calibration, capsule effects); `data/CHANGES.md` is rewritten only when the published data changes (previous build → this build). Read both diffs after any data change. `data/rebuild-2026-10/` is the frozen record of the one-time move from the old hand-edited JSON.
 
-`src/data/data.js` fetches `meta.json` (no-cache) and the rest (and `char_art/sizes.json`) with `?v=<dataVersion>`, as a top-level await, so `src/app/model.js` builds its indexes at module level; `src/main.jsx` imports the app dynamically and shows "Loading" until then, or the error if the data fails. `src/data/adapter.js` `toLegacy()` turns schema-2 data into the old app's flat shapes; only `verify-data` still reads them (the engine uses its `hitsTaken`). It has no imports so the build, the checks and the browser share it.
+`src/data/data.js` fetches `meta.json` (no-cache) and the rest (and `char_art/sizes.json`) with `?v=<dataVersion>`, as a top-level await, so `src/app/model.js` builds its indexes at module level; `src/main.jsx` imports the app dynamically and shows "Loading" until then, or the error if the data fails. The app and the checks read schema 2 directly; the old app's flat shapes (`toLegacy`, `src/data/adapter.js`) were removed on 2026-10-14.
 
 Gotchas:
 - **Damage coefficients add** (DP scale + class + capsules + skills), they do not multiply. `final = ceil(Power x 1.25 x coefficient)`.
@@ -45,7 +45,7 @@ Gotchas:
 - `blastDamage(blast, stats)` — a blast row's damage under those effects (the panels no longer do their own blast math).
 - `src/app/model.js` `evaluate` / `evaluatePair` computes each side; the two fighters exchange their skills' opponent-targeted effects (`curated/skill-targets.csv`).
 
-`src/utils/calculator.js` — combat helpers the panels share (damage taken against the reference attacker's hits, outgoing combos, defense, the ki-blast volley, formatting) and Light Body's ki-blast-defense special case. Single and compare mode must use these helpers, never their own copies: they once had two volley formulas. Game rules: damage taken rounds up per hit (`adapter.js` `hitsTaken` is the import-free copy the engine uses for "5-Hit Damage Taken"); in a ki-blast volley each shot deals 5% of the first shot less, held at 40% from the 13th shot (the game's `ComboRushBulletDamageScalingCurve`), except against armor (hits on armor are not a combo).
+`src/utils/calculator.js` — combat helpers the panels share (damage taken against the reference attacker's hits, outgoing combos, defense, the ki-blast volley, formatting) and Light Body's ki-blast-defense special case. Single and compare mode must use these helpers, never their own copies: they once had two volley formulas. Game rules: damage taken rounds up per hit (`engine.js` `hitsTaken`, used for "5-Hit Damage Taken"); in a ki-blast volley each shot deals 5% of the first shot less, held at 40% from the 13th shot (the game's `ComboRushBulletDamageScalingCurve`), except against armor (hits on armor are not a combo).
 
 `src/utils/specialCapsules.js` — the capsules with behaviour beyond their effect rows (Light Body, Draconic Aura, Dragon Rush), by id.
 
@@ -99,8 +99,6 @@ Moved here from `design/REDESIGN-STATUS.md` when `design/` was deleted (2026-10-
 - **Ideas kept for later:** builds plug-and-play between the calculator and Match Builder, both ways, and the two apps
   linked in general (the league, 2026-10-11; links already carry a whole build and accept capsule ids); a short "who
   wins the exchange" summary on Versus, only in a form that works (hits to KO was tried twice and taken out).
-- **Optional cleanup:** `verify-data` still checks the old app's data shapes (`toLegacy` in `src/data/adapter.js`),
-  which nothing else reads now.
 
 ## Gotchas
 

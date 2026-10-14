@@ -2,7 +2,7 @@
  * Checks the calculator's published data (public/data/) and curated tables before
  * every build (prebuild, after build-data). Prints `  ok  ` / `  FAIL ` / `  WARN `
  * lines and exits 1 on any FAIL. Imports the modules that ship (the share-link
- * decoder, the adapter, the website's form-chain walk) so the checks cannot drift
+ * decoder, the address codec, the engine, the website's form-chain walk) so the checks cannot drift
  * from what runs in the browser.
  *
  * Usage: node scripts/verify-data.mjs
@@ -12,12 +12,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { readCsv } from './lib/csv.mjs';
 import { loadRefdata, repoRoot } from './lib/refdata.mjs';
-import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { linkIndex, readLink, writeLink } from '../src/links.js';
 import { applyOrder } from './lib/order.mjs';
 import { buildTransformAdj, getFormChain, calculatorSlug } from '../../website/src/utils/formChain.js';
-import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel, skillHit, skillTaken } from '../src/utils/engine.js';
+import { collectEffects, computeStats, scaleChannel, skillHit, skillTaken } from '../src/utils/engine.js';
 import { parseCondition } from '../src/utils/conditions.js';
 import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
 
@@ -28,32 +27,22 @@ const DATA = path.join(APP, 'data');
 const PUBLIC = path.join(APP, 'public', 'data');
 const config = JSON.parse(fs.readFileSync(path.join(DATA, 'config.json'), 'utf8'));
 const ref = loadRefdata(ROOT, config.teamsSeason);
-// Kept as switches for the checks' wording; the pipeline now always publishes schema 2 for every character.
-const strict = true;
-const v2 = true;
 
 let failed = 0, warned = 0;
 const ok = (m) => console.log(`  ok    ${m}`);
 const fail = (m, items = []) => { failed++; console.log(`  FAIL  ${m}`); for (const i of items.slice(0, 15)) console.log(`          ${i}`); if (items.length > 15) console.log(`          ... and ${items.length - 15} more`); };
 const warn = (m, items = []) => { warned++; console.log(`  WARN  ${m}`); for (const i of items.slice(0, 10)) console.log(`          ${i}`); if (items.length > 10) console.log(`          ... and ${items.length - 10} more`); };
 const check = (cond, m, items) => (cond ? ok(m) : fail(m, items));
-const strictCheck = (cond, m, items) => (cond ? ok(m) : strict ? fail(m, items) : warn(`${m} (fails once the full roster is published)`, items));
 const read = (f) => JSON.parse(fs.readFileSync(path.join(PUBLIC, f), 'utf8'));
 const pack = (o) => btoa(encodeURIComponent(JSON.stringify(o)));
 
-console.log(`verify-data (${v2 ? 'schema 2' : 'legacy shapes'}, ${strict ? 'full roster' : 'old roster'})`);
+console.log('verify-data (schema 2, full roster)');
 
 // ------------------------------------------------------------------ load
-let data, legacy, aliasMap = {};
-if (v2) {
-  data = { characters: read('characters.json'), skills: read('skills.json'), blasts: read('blasts.json'), capsules: read('capsules.json'), teams: read('teams.json'), meta: read('meta.json') };
-  legacy = toLegacy(data, { roster: data.meta.roster, appliedKeys: APPLIED_KEYS });
-  for (const c of data.characters) for (const a of c.aliases || []) aliasMap[a] = c.id;
-} else {
-  legacy = { characters: read('characters.json'), skills: read('skills.json'), blast: read('blast.json'), capsules: read('capsules.json'), teams: read('teams.json'), characterImages: read('characterImages.json') };
-  aliasMap = fs.existsSync(path.join(PUBLIC, 'aliases.json')) ? read('aliases.json') : {};
-}
-const chars = v2 ? data.characters : legacy.characters;
+const data = { characters: read('characters.json'), skills: read('skills.json'), blasts: read('blasts.json'), capsules: read('capsules.json'), teams: read('teams.json'), meta: read('meta.json') };
+const aliasMap = {};
+for (const c of data.characters) for (const a of c.aliases || []) aliasMap[a] = c.id;
+const chars = data.characters;
 
 // ------------------------------------------------------------------ the website's contract
 check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' && typeof c.id === 'string'),
@@ -71,7 +60,7 @@ check(Array.isArray(chars) && chars.every(c => c && typeof c.name === 'string' &
   check(!want.problems.length && want.list.map(c => c.id).join() === chars.map(c => c.id).join(),
     `characters follow referencedata order with the league's ${moves.length} moves (curated/character-order.csv)`, want.problems);
   const missing = ref.characters.filter(c => !chars.some(x => x.id === c.id)).map(c => `${c.id} ${c.name}`);
-  strictCheck(!missing.length, `every referencedata character is published (${chars.length}/${ref.characters.length})`, missing);
+  check(!missing.length, `every referencedata character is published (${chars.length}/${ref.characters.length})`, missing);
 }
 
 // Game facts come from the FModel snapshot when it is committed (scripts/lib/gameSource.mjs)
@@ -84,7 +73,7 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
 
 // ------------------------------------------------------------------ share links
 {
-  const caps = v2 ? data.capsules : legacy.capsules;
+  const caps = data.capsules;
   const resolver = makeResolver(chars, caps, aliasMap);
   const NULLS = [null, null, null, null, null, null, null];
   const bad = [];
@@ -101,7 +90,7 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
   check(!bad.length, `website-style links (name payloads) resolve for all ${chars.length} names and their aliases`, bad);
   const capBad = caps.filter(c => decodeBuild(pack({ c: chars[0].name, p: [c.name] }), resolver)?.capsules?.[0]?.name !== c.name).map(c => c.name);
   check(!capBad.length, 'old links resolve every capsule by name', capBad);
-  if (v2) {
+  {
     const rt = [];
     for (const c of chars) {
       const sample = caps.filter(x => !x.bannedIn?.length).slice(0, 7);
@@ -116,7 +105,7 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
 }
 
 // ------------------------------------------------------------------ addresses (src/links.js: /calculator/<fighter>/vs/<opponent>?caps=...)
-if (v2) {
+{
   // slugs are the link names: unique, never empty, never mistakable for an id or for the path's "vs"
   const slugIssues = (list, what) => {
     const seen = new Map(), out = [];
@@ -154,42 +143,49 @@ if (v2) {
     === 'goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking', 'a link reads as names: goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking');
 }
 
-// ------------------------------------------------------------------ field types (legacy shapes, what the components read)
+// ------------------------------------------------------------------ field types (characters.json stats, blasts.json)
 {
-  const NUMERIC = ['dp', 'switch', 'armorBreak', 'meleeDefenseStat', 'kiBlastDefenseArmor', 'blastDefense', 'health', 'melee', 'energy', 'energyDecimal', 'armor', 'hit2', 'hit3', 'hit4', 'hit5', 'fiveHitAfterArmor', 'rush5Hit', 'misc', 'rush', 'smash', 'throw', 'pursuit', 'chain', 'perception', 'sCounter', 'super', 'ultimate', 'shortDashCost', 'kiBlastDmg', 'kiBlast', 'kiBlastCost', 'kiBlastLimit', 'startingKi', 'kiCharge', 'attackKiGain', 'kiRegen', 'kiRegenRange', 'skillStart', 'skillLimit', 'skillDmg', 'skill1Damage', 'skill2Damage', 'sparkCharge', 'sparkDuration'];
+  const STATS = ['health', 'switch', 'armorBreak', 'armor', 'meleeDefense', 'kiBlastDefense', 'kiBlastDefenseArmor', 'blastDefense', 'rush5Hit', 'fiveHitAfterArmor', 'smash', 'throw', 'pursuit', 'kiBlastDamage', 'kiBlastCost', 'kiBlastLimit', 'startingKi', 'maxKi', 'kiCharge', 'attackKiGain', 'kiRegen', 'kiRegenRange', 'shortDashCost', 'skillStart', 'skillLimit', 'skillRegen', 'sparkCharge', 'sparkDuration'];
   const bad = [];
-  for (const c of legacy.characters) for (const f of NUMERIC) if (c[f] !== null && typeof c[f] !== 'number') bad.push(`${c.name}.${f} = ${JSON.stringify(c[f])}`);
-  check(!bad.length, 'numeric character fields hold numbers or null', bad);
+  for (const c of chars) {
+    if (typeof c.dp !== 'number') bad.push(`${c.name}.dp = ${JSON.stringify(c.dp)}`);
+    for (const f of STATS) if (c.stats?.[f] !== null && typeof c.stats?.[f] !== 'number') bad.push(`${c.name}.stats.${f} = ${JSON.stringify(c.stats?.[f])}`);
+    if (!Array.isArray(c.stats?.hits) || c.stats.hits.length !== 5 || c.stats.hits.some(h => typeof h !== 'number')) bad.push(`${c.name}.stats.hits = ${JSON.stringify(c.stats?.hits)}`);
+  }
+  check(!bad.length, 'stats hold numbers or null, and every character has five rush hits', bad);
   const nulls = [];
-  for (const c of legacy.characters) for (const f of ['health', 'dp', 'rush', 'hit2', 'hit3', 'hit4', 'hit5', 'smash', 'throw', 'kiBlastDmg', 'meleeDefenseStat', 'blastDefense', 'energy']) if (c[f] == null) nulls.push(`${c.name}.${f}`);
-  check(!nulls.length, 'core combat fields are never null (capsules silently stop applying on null)', nulls);
+  for (const c of chars) for (const f of ['health', 'smash', 'throw', 'kiBlastDamage', 'meleeDefense', 'blastDefense', 'kiBlastDefense']) if (c.stats?.[f] == null) nulls.push(`${c.name}.stats.${f}`);
+  check(!nulls.length, 'core combat stats are never null (capsules silently stop applying on null)', nulls);
   // Giants have a four-hit rush, so their fifth hit is 0; every other damage value must be positive
   const nonPositive = [];
-  for (const c of legacy.characters) for (const f of ['rush', 'hit2', 'hit3', 'hit4', 'smash', 'throw', 'pursuit', 'kiBlastDmg', 'rush5Hit']) if (typeof c[f] === 'number' && c[f] <= 0) nonPositive.push(`${c.name}.${f} = ${c[f]}`);
+  for (const c of chars) {
+    const s = c.stats || {};
+    for (const [f, v] of [['hit1', s.hits?.[0]], ['hit2', s.hits?.[1]], ['hit3', s.hits?.[2]], ['hit4', s.hits?.[3]], ['smash', s.smash], ['throw', s.throw], ['pursuit', s.pursuit], ['kiBlastDamage', s.kiBlastDamage], ['rush5Hit', s.rush5Hit]]) {
+      if (typeof v === 'number' && v <= 0) nonPositive.push(`${c.name}.${f} = ${v}`);
+    }
+  }
   check(!nonPositive.length, 'damage values are positive (Capsule Corp goes negative for very low coefficients)', nonPositive);
   const bl = [];
-  for (const [n, rows] of Object.entries(legacy.blast)) for (const b of rows) if (b.baseDamagePatch !== null && typeof b.baseDamagePatch !== 'number') bl.push(`${n} ${b.name}`);
+  for (const [id, rows] of Object.entries(data.blasts)) for (const b of rows) if (b.damage !== null && typeof b.damage !== 'number') bl.push(`${id} ${b.name}`);
   check(!bl.length, 'blast damage is a number or null', bl);
-  const knownSlots = new Set(['BlastSkill1', 'BlastSkill2', 'BlastUltimate', 'ReplacementSlot2']);
-  const slots = Object.entries(legacy.blast).flatMap(([n, rows]) => rows.filter(b => !knownSlots.has(b.slot)).map(b => `${n}: ${b.slot}`));
-  check(!slots.length, 'blast slots are ones the UI knows', slots);
-  const noBlasts = legacy.characters.filter(c => (legacy.blast[c.name] || []).length < 3).map(c => c.name);
+  const knownSlots = new Set(['Super 1', 'Super 2', 'Ultimate']);
+  const slots = Object.entries(data.blasts).flatMap(([id, rows]) => rows.filter(b => !knownSlots.has(b.slot)).map(b => `${id}: ${b.slot}`));
+  check(!slots.length, 'blast slots are ones the app knows (Super 1, Super 2, Ultimate)', slots);
+  const noBlasts = chars.filter(c => !['Super 1', 'Super 2', 'Ultimate'].every(s => (data.blasts[c.id] || []).some(b => b.slot === s))).map(c => c.name);
   check(!noBlasts.length, 'every character has its two supers and ultimate', noBlasts);
 }
 
 // ------------------------------------------------------------------ capsules
 {
-  const caps = v2 ? data.capsules : legacy.capsules;
-  const special = v2
-    ? [['00_0_0033', 'Light Body'], ['00_0_0032', 'Draconic Aura'], ['00_0_0035', 'Dragon Rush']].filter(([id]) => !caps.some(c => c.id === id))
-    : ['Light Body', 'Draconic Aura', 'Dragon Rush'].filter(n => !caps.some(c => c.name === n)).map(n => [n]);
+  const caps = data.capsules;
+  const special = [['00_0_0033', 'Light Body'], ['00_0_0032', 'Draconic Aura'], ['00_0_0035', 'Dragon Rush']].filter(([id]) => !caps.some(c => c.id === id));
   check(!special.length, 'the specially handled capsules exist (Light Body, Draconic Aura, Dragon Rush)', special.map(s => s.join(' ')));
   const refCaps = new Map(ref.capsules.map(c => [c.name, c]));
   const unknown = caps.filter(c => !refCaps.has(c.name)).map(c => c.name);
   check(!unknown.length, 'every capsule is in referencedata/capsules.csv', unknown);
   const noCost = caps.filter(c => typeof c.cost !== 'number').map(c => c.name);
   check(!noCost.length, 'every capsule has a cost', noCost);
-  if (v2) {
+  {
     // one list of build types for every app (referencedata/capsule-types.json, which the Analyzer reads too)
     const TYPES = ['Melee', 'Blast', 'Ki Blast', 'Defense', 'Skill', 'Ki Efficiency', 'Utility'];
     const untyped = caps.filter(c => !TYPES.includes(c.type)).map(c => `${c.name} (${c.type})`);
@@ -251,15 +247,15 @@ if (v2) {
     if (links) continue;
     (spelledRight(n.trim()) ? broken : typos).push(`${t.name}: "${n}"`);
   }
-  strictCheck(!broken.length, 'every correctly spelled masterlist entry links into the calculator (website Teams page, run with the shipped formChain.js)', broken);
+  check(!broken.length, 'every correctly spelled masterlist entry links into the calculator (website Teams page, run with the shipped formChain.js)', broken);
   if (typos.length) warn(`${typos.length} masterlist entr${typos.length === 1 ? 'y is' : 'ies are'} misspelled in ${ref.seasonFile}, so the website shows them as plain text (the calculator's team filter resolves them through aliases.csv)`, typos);
   const nodes = Object.entries(ref.transformations).filter(([, e]) => e?.name).map(([id, e]) => [id, e.name]);
   const unresolved = nodes.filter(([id, n]) => !calcNames.has(n)).map(([id, n]) => `${id} ${n}`);
-  strictCheck(!unresolved.length, `every transformations.json node is a calculator name (${nodes.length - unresolved.length}/${nodes.length})`, unresolved);
+  check(!unresolved.length, `every transformations.json node is a calculator name (${nodes.length - unresolved.length}/${nodes.length})`, unresolved);
 }
 
 // ------------------------------------------------------------------ engine known values (schema 2)
-if (v2) {
+{
   const byId = new Map(data.characters.map(c => [c.id, c]));
   const cap = (id) => data.capsules.find(c => c.id === id);
   const ref = byId.get(data.meta.referenceAttacker);
@@ -612,7 +608,7 @@ if (v2) {
 // ------------------------------------------------------------------ images
 {
   const thumbs = new Set(fs.readdirSync(path.join(APP, 'public', 'char_thumbnails')));
-  const missing = legacy.characters.filter(c => !legacy.characterImages[c.name] || !thumbs.has(legacy.characterImages[c.name])).map(c => c.name);
+  const missing = chars.filter(c => !c.image || !thumbs.has(c.image)).map(c => c.name);
   if (missing.length) warn('characters without a face icon (the selector shows their initial)', missing); else ok('every character has a face icon');
 }
 

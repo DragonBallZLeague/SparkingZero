@@ -256,7 +256,7 @@ skill id `<characterId>:<slot>` as the id, into that skill (e.g. `damage`).
 | `capsules.json` | every referencedata capsule: `id`, `name`, `slug` (its name in links), `cost`, `description`, `exclusiveTo`, `effects`, `bannedIn` (ruleset names) |
 | `teams.json` | `[{name, slug, members: [ids]}]` from the season's master lists, every form included |
 
-`src/data/data.js` loads them; `src/data/adapter.js` `toLegacy()` converts them to the old app's shapes, which only `verify-data` still checks.
+`src/data/data.js` loads them; the app and `verify-data` read these shapes directly.
 
 Links are page addresses (`src/links.js`): `/calculator/goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking`, by `slug`, with ids accepted. The old share links (`src/utils/shareLink.js`: `{v: 2, c: characterId, p: [capsuleId|null x7], o?, op?}`, and name links like the website's before 2026-10-13) still open and are rewritten to the address (exact name, then `aliases`, then a case/punctuation-insensitive match).
 
