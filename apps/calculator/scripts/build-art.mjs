@@ -14,7 +14,7 @@
  *
  * Like the Analyzer's build-portraits, it uses headless Edge/Chrome to decode and encode (no
  * image library is installed), so its output is committed rather than made in prebuild.
- * Re-run it when the game adds characters.
+ * Re-run it when the game adds characters, then scripts/build-art-centers.mjs (where each body sits).
  *
  * Usage (from the repo root):
  *   node apps/calculator/scripts/build-art.mjs "<...>/PCard_FavoriteCh" [id ...]

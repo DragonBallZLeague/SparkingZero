@@ -3,12 +3,12 @@
 import React from 'react';
 import {
   artUrl, faceUrl, nameParts, classColours, chipText, rosterPos, movePos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
-  capsuleSummary, typeClass, buildCheck, isGiant, figHeight, formsOf, byId, capsuleById, SPARK,
+  capsuleSummary, typeClass, buildCheck, isGiant, figHeight, figStyle, formsOf, byId, capsuleById, SPARK,
 } from './model.js';
 import { Tap, Rk, Chev, Name, Switch, RulesetSelect, usePhone } from './ui.jsx';
 import { CmdRows, SheetChains } from './moves.jsx';
 import { Conditions } from './conditions.jsx';
-import { F } from './format.js';
+import { F, barUnit, barsText } from './format.js';
 
 const A = (get) => (sides) => get(sides.A.view, sides.A);
 
@@ -156,7 +156,7 @@ export function QuickBody({ id, side, only = null }) {
           <span className="bars hp">{Array.from({ length: hpBars }, (_, i) => (
             <i key={i} className={i < full ? 'f' : i === full && part ? 'part' : i >= 4 && i >= full ? 'cap' : ''} style={i === full && part ? { '--p': `${part * 100}%` } : undefined} />
           ))}</span>
-          <span className="v"><Tap title="HP" get={A(x => x.health)} /><small>{+(v.health / 10000).toFixed(2)} bars</small></span>
+          <span className="v"><Tap title="HP" get={A(x => x.health)} /><small>{barsText(v.health / 10000)}</small></span>
         </div>
         <div className="tiles t5">
           <div className="tile"><span>5-hit taken</span><Tap as="b" title="5-hit damage taken" get={A(fiveHitTaken)} lessIsBetter /><Rk p={rosterPos('taken', fiveHitTaken, v.melee, true)} title="Less is better" /></div>
@@ -230,7 +230,7 @@ export function QuickBody({ id, side, only = null }) {
         <div className="tiles t5" style={{ marginTop: 0 }}>
           <div className="tile kib"><span>Ki blast{ktype && ktype !== 'none' && <em className="kt">{ktype.toUpperCase()}</em>}</span><Tap as="b" title="Ki blast" get={A(x => x.kiBlastDmg)} /><Rk p={rosterPos('kib', x => x.kiBlastDmg, v.kiBlastDmg)} /></div>
           <div className="tile kib"><span>Ki blast limit</span><Tap as="b" title="Ki blast limit" get={A(x => x.kiBlastLimit)} fmt={F.count} /><Rk p={rosterPos('kibl', x => Math.min(x.kiBlastLimit, 20), Math.min(v.kiBlastLimit, 20))} /></div>
-          <div className="tile kib"><span>Ki blast cost</span><b><Tap title="Ki blast cost" get={A(x => x.kiBlastCost)} fmt={F.bars} kind="dec" lessIsBetter /><small>bars</small></b><Rk p={rosterPos('kibc', x => x.kiBlastCost, v.kiBlastCost, true)} title="Less is better" /></div>
+          <div className="tile kib"><span>Ki blast cost</span><b><Tap title="Ki blast cost" get={A(x => x.kiBlastCost)} fmt={F.bars} kind="dec" lessIsBetter /><small>{barUnit(F.bars(v.kiBlastCost))}</small></b><Rk p={rosterPos('kibc', x => x.kiBlastCost, v.kiBlastCost, true)} title="Less is better" /></div>
           <div className="tile kib"><span>Full volley</span><Tap as="b" title="Full volley" get={A(x => volley(x))} /><Rk p={rosterPos('volley', x => volley(x), volley(v))} /></div>
           {gm.charged && (
             <div className="tile kib"><span>Charged ki blast<em className="kt lv">Lv.3</em>{gm.charged.shots > 1 && <em className="kt x">×{gm.charged.shots}</em>}</span><Tap as="b" title="Charged ki blast, Charge Lv.3" get={(p) => gameMoves(p.A).charged.damage.at(-1)} /><Rk p={movePos('charged3', g => g.charged?.damage.at(-1), gm.charged.damage.at(-1))} /></div>
@@ -309,7 +309,7 @@ export function FighterColumn({ side, ruleset, setSpec, openPicker, onForm }) {
   const { c } = side;
   return (
     <>
-      <div className="fig"><img src={artUrl(c.id)} alt="" className={isGiant(c) ? 'giant' : ''} style={{ '--fh': figHeight(c) }} /></div>
+      <div className="fig"><img src={artUrl(c.id)} alt="" className={isGiant(c) ? 'giant' : ''} style={figStyle(c)} /></div>
       <Nameplate c={c} onChange={() => openPicker('char', 'A')} />
       <div className="build">
         {onForm && <FormSwitch c={c} onForm={onForm} />}

@@ -5,7 +5,7 @@ import {
   SKILL_TYPE, skillTiles, skillTags, skillEffectTiles, toggleable, moveset, perceptionName,
 } from './model.js';
 import { Tap } from './ui.jsx';
-import { F } from './format.js';
+import { F, barsText } from './format.js';
 
 /** Ki pips for a blast (Blast Burst's extra bar outlined), Sparking for an ultimate (Ultimate Burst's burnout in red), points for a skill. */
 export function Cost({ kind, bars = 0, add = 0, points = 0 }) {
@@ -25,7 +25,7 @@ export function Cost({ kind, bars = 0, add = 0, points = 0 }) {
     <span className="cost">
       {Array.from({ length: whole }, (_, i) => <i key={i} />)}
       {Array.from({ length: Math.round(add) }, (_, i) => <i key={`a${i}`} className="add" />)}
-      <em>{+(bars + add).toFixed(2)} bars</em>
+      <em>{barsText(bars + add)}</em>
     </span>
   );
 }

@@ -1,13 +1,14 @@
 // The data and engine glue: the published data (loaded by data/data.js) run through the calculator's own engine
 // (utils/engine.js, calculator.js, conditions.js), plus what the views need on top: game-file values scaled by the
 // build, breakdowns, roster ranges, move details.
-import { characters, skillsById, blastsById, capsules, teams, meta, artSizes } from '../data/data.js';
+import { characters, skillsById, blastsById, capsules, teams, meta, artSizes, artCenters } from '../data/data.js';
 import transformations from '../../../../referencedata/transformations.json';
 import { collectEffects, computeStats, scaleChannel, skillHit, skillTaken, APPLIED_KEYS, SPARKING_CHARGE_BASE_SECONDS } from '../utils/engine.js';
 import { applyLightBodyKiBlastArmor, kiBlastVolley, calcOutgoingCombo, damageTaken, armorFactor, calcFiveHitDamageTaken } from '../utils/calculator.js';
 import { LIGHT_BODY, DRACONIC_AURA } from '../utils/specialCapsules.js';
 import { parseCondition, conditionNeeds } from '../utils/conditions.js';
 import { linkIndex } from '../links.js';
+import { barsText } from './format.js';
 
 export { characters, capsules, teams, meta };
 export const byId = new Map(characters.map(c => [c.id, c]));
@@ -23,6 +24,11 @@ export const faceUrl = (c) => `${import.meta.env.BASE_URL}char_thumbnails/${c.im
 export const isGiant = (c) => c?.class?.key === 'giant';
 /** The figure's height on its game card, times 1.3 for Giants (the cards shrink them; approved on Janemba). */
 export const figHeight = (c) => Math.round((artSizes[c.id] || 1700) * (isGiant(c) ? 1.3 : 1));
+/**
+ * The art's style: its card height, and where the body sits across the picture (scripts/build-art-centers.mjs), so
+ * the pages center the body, not a picture an arm, a tail or hair has widened (Tien (World Tournament): 0.32).
+ */
+export const figStyle = (c) => ({ '--fh': figHeight(c), '--cx': artCenters[c.id] ?? 0.5 });
 
 /* ------------------------------------------------------------------ forms (referencedata/transformations.json) */
 const ADJ = new Map();
@@ -450,7 +456,7 @@ export function blastTiles(b) {
 export function blastTags(b) {
   const t = [];
   const bars = (x) => +(x / 10000).toFixed(2);
-  if (b.triggerKi != null && b.kiCost != null && b.triggerKi !== b.kiCost && b.slot !== 'Ultimate') t.push(['Initial cost', `${bars(b.triggerKi)} bars`]);
+  if (b.triggerKi != null && b.kiCost != null && b.triggerKi !== b.kiCost && b.slot !== 'Ultimate') t.push(['Initial cost', barsText(b.triggerKi / 10000)]);
   if (b.flags?.includes('lockOnNeeded')) t.push(['Lock-on required']);
   if (b.flags?.includes('noStepBack')) t.push(['No Step Back']);
   if (b.flags?.includes('unblockable') || b.traits?.includes('Unguardable')) t.push(['Unguardable']);
@@ -530,7 +536,7 @@ export function skillTags(s) {
  */
 export function skillEffectTiles(s, stage = null) {
   const out = [];
-  if (s.display?.instantKi) out.push({ label: 'Instant ki', short: 'Instant ki', value: s.display.kiAmount != null ? `${s.display.kiAmount} bars` : 'Yes', kind: 'kiv' });
+  if (s.display?.instantKi) out.push({ label: 'Instant ki', short: 'Instant ki', value: s.display.kiAmount != null ? barsText(s.display.kiAmount) : 'Yes', kind: 'kiv' });
   if (s.display?.instantSparking) out.push({ label: 'Instant Sparking', short: 'Instant Sparking', value: 'Yes', kind: 'spk' });
   const phases = s.stages ? [s.phases[(stage || s.phases.length) - 1]] : s.phases || [];
   for (const p of phases) {

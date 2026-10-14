@@ -963,3 +963,7 @@ cell never pushes it up under the tabs (its Done header stays in view) */
 .app .credit a:hover span, .app .credit a:focus-visible span { color: #f97316; }
 .app .credit b { color: #3b82f6; font-weight: 700; }
 .app .credit img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+/* the art on the Fighter page and the Characters preview: the body in the middle, not the picture (--cx, the body's
+   place across it: model.js figStyle). Versus keeps the picture's middle (the league, 2026-10-13). */
+.fig img, .pvfig img { translate: calc((0.5 - var(--cx, .5)) * 100%) 0; }

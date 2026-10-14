@@ -8,7 +8,7 @@ import {
 import { Tap, Rk, usePair, useBase, useValue } from './ui.jsx';
 import { orderedBlasts, Hits } from './moves.jsx';
 import { traitChips, otherAbilities, QuickBody } from './sheet.jsx';
-import { F } from './format.js';
+import { F, barUnit } from './format.js';
 
 const A = (get) => (sides) => get(sides.A.view, sides.A);
 const GM = (get) => (sides) => get(gameMoves(sides.A), sides.A);
@@ -136,7 +136,7 @@ function TV({ label, title, get, fmt = F.int, kind = 'int', less = false, unit, 
   return (
     <div className={`tile ${cls}`}>
       <span>{label}</span>
-      <b>{v == null ? '–' : <Tap title={title || label} get={get} fmt={fmt} kind={kind} lessIsBetter={less} />}{unit && v != null && <small>{unit}</small>}</b>
+      <b>{v == null ? '–' : <Tap title={title || label} get={get} fmt={fmt} kind={kind} lessIsBetter={less} />}{unit && v != null && <small>{unit === 'bars' ? barUnit(fmt(v)) : unit}</small>}</b>
       {changed ? <small className="tb">Base {fmt(b)}</small> : sub ? <small className="tb">{sub}</small> : null}
       {rk}
     </div>
@@ -144,7 +144,7 @@ function TV({ label, title, get, fmt = F.int, kind = 'int', less = false, unit, 
 }
 /** A tile for a value that has no breakdown (text, or a game-file value no build changes). */
 const TT = ({ label, value, unit, sub, cls = '', rk = null }) => (
-  <div className={`tile ${cls}`}><span>{label}</span><b>{value}{unit && <small>{unit}</small>}</b>{sub && <small className="tb">{sub}</small>}{rk}</div>
+  <div className={`tile ${cls}`}><span>{label}</span><b>{value}{unit && <small>{unit === 'bars' ? barUnit(value) : unit}</small>}</b>{sub && <small className="tb">{sub}</small>}{rk}</div>
 );
 const Gh = ({ children, cls = '' }) => <div className={`fgh ${cls}`}>{children}</div>;
 const Pips = ({ n, max = n }) => <span className="lpips">{Array.from({ length: Math.max(n, max) }, (_, i) => <i key={i} className={i < n ? 'f' : ''} />)}</span>;
@@ -257,7 +257,7 @@ function KiFull({ side, phone }) {
         const spec = [];
         if (r.lv) r.lv.forEach((g, i) => spec.push([`Lv.${i + 1}`, <Small title={`${r.label}, Charge Lv.${i + 1}`} get={g} />]));
         spec.push(['Shots', r.shotsGet ? <Small title="Ki blast limit" get={r.shotsGet} fmt={F.count} /> : r.shots]);
-        spec.push(['Ki cost', <span className="nw">{r.costGet ? <Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /> : F.bars(r.cost)}<small> bars</small></span>, true]);   // two columns wide, so the unit fits beside the value
+        spec.push(['Ki cost', <span className="nw">{r.costGet ? <Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /> : F.bars(r.cost)}<small> {barUnit(F.bars(r.costGet ? r.costGet({ A: side }) : r.cost))}</small></span>, true]);   // two columns wide, so the unit fits beside the value
         if (r.volley) spec.push(['Volley', <Small title="Full volley" get={A(x => volley(x))} />]);
         return (
           <Card key={r.label} cls="k" name={r.label} type={r.type} rk={r.rk}
@@ -360,7 +360,7 @@ function LimitsFull({ side }) {
 function MobilityFull({ side }) {
   const m = side.c.mobility || {};
   const v = side.view;
-  const per = (x) => (typeof x === 'number' ? `then ${F.bars(x)} bars/s` : null);
+  const per = (x) => (typeof x === 'number' ? `then ${F.bars(x)} ${barUnit(F.bars(x))}/s` : null);
   const num = (x) => (typeof x === 'number' ? F.bars(x) : '–');
   // a dash's bar: where its running cost (else its start cost) sits in the roster, cheaper is fuller
   const bar = (key, pick) => { const x = pick(m); return typeof x === 'number' ? <Rk p={rosterPos(key, (_, c) => pick(c.mobility || {}), x, true)} title="Cheaper is better" /> : null; };
@@ -416,7 +416,6 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
       <>
         <QuickBody id="res" side={side} />
         <div className="tiles t5">
-          <TT label="Max ki" value={c.stats.maxKi ?? 5} unit="bars" />
           <TV label="Starting ki" get={A(x => x.startingKi)} fmt={F.bars} kind="dec" unit="bars" />
           <TT label="Refills to" value={v.kiRegenRange} unit="bars" sub="on its own" />
           <TV label="Ki from hits" get={A(x => x.attackKiGain)} fmt={F.dec} kind="dec" unit="bars" rk={<Rk p={rosterPos('kgain', x => x.attackKiGain, v.attackKiGain)} />} />

@@ -13,8 +13,8 @@ const json = (r) => {
 };
 const meta = await fetch(`${base}data/meta.json`, { cache: 'no-cache' }).then(json);
 const get = (f) => fetch(`${base}${f}?v=${meta.dataVersion}`).then(json);
-const [characters, skillsById, blastsById, capsules, teams, artSizes] = await Promise.all([
-  'data/characters.json', 'data/skills.json', 'data/blasts.json', 'data/capsules.json', 'data/teams.json', 'char_art/sizes.json',
+const [characters, skillsById, blastsById, capsules, teams, artSizes, artCenters] = await Promise.all([
+  'data/characters.json', 'data/skills.json', 'data/blasts.json', 'data/capsules.json', 'data/teams.json', 'char_art/sizes.json', 'char_art/centers.json',
 ].map(get));
 
-export { characters, skillsById, blastsById, capsules, teams, meta, artSizes };
+export { characters, skillsById, blastsById, capsules, teams, meta, artSizes, artCenters };

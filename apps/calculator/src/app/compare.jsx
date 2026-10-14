@@ -10,7 +10,7 @@ import { Tap, Modes, Name, Switch, PhoneSectionNav, usePhone, usePair } from './
 import { Conditions, InEffect } from './conditions.jsx';
 import { ClassChip, CapsuleRows, traitChips, otherAbilities, ChangeButton, SkillSwitches, LeagueBuilds } from './sheet.jsx';
 import { Hits } from './moves.jsx';
-import { F } from './format.js';
+import { F, barsText } from './format.js';
 
 /* ------------------------------------------------------------------ the two-fighter header */
 /** `mid`: what sits between the two Change buttons, under the barrier (Swap sides). */
@@ -173,9 +173,9 @@ export function statSections({ vs = false, pair = null } = {}) {
     ] },
     { id: 'armor', title: 'Breaking armor', cls: 'armp', custom: vs ? 'vsarmor' : 'armor', small: vs ? 'as they stand now' : null },
     { id: 'res', title: 'Resources', cls: 'res', col: 2, rows: [
-      { label: 'Starting ki', get: V(x => x.startingKi), fmt: (x) => `${+x.toFixed(2)} bars`, kind: 'dec' },
+      { label: 'Starting ki', get: V(x => x.startingKi), fmt: (x) => barsText(x), kind: 'dec' },
       { label: 'Ki charge', small: 'bars/s', get: V(x => x.kiCharge), fmt: F.dec2, kind: 'dec' }, { label: 'Ki regen', small: 'bars/s', get: V(x => x.kiRegen), fmt: F.dec, kind: 'dec' },
-      { label: 'Ki refills to', get: V(x => x.kiRegenRange), fmt: (x) => `${x} bars` }, { label: 'Ki from hits', get: V(x => x.attackKiGain), fmt: F.dec, kind: 'dec' },
+      { label: 'Ki refills to', get: V(x => x.kiRegenRange), fmt: (x) => barsText(x) }, { label: 'Ki from hits', get: V(x => x.attackKiGain), fmt: F.dec, kind: 'dec' },
       { label: 'Skill gauge limit', get: V(x => x.skillLimit), fmt: String }, { label: 'Skill gauge per minute', get: V(x => parseFloat(x.skillRegen)), fmt: F.dec, kind: 'dec' },
     ] },
     // the Command list as the Fighter page has it, right after Resources: Skills, then Blasts with the ultimates

@@ -3,13 +3,13 @@
 // every allowed capsule by type with what it changes on this build).
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  characters, capsules, teams, byId, faceUrl, artUrl, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, nameParts,
+  characters, capsules, teams, byId, faceUrl, artUrl, figStyle, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, nameParts,
   CAPSULE_TYPES, typeClass, capsuleSummary, buildCheck, inAttackGroup, evaluate, blastsOf, blastDamage, volley, conditionNeedsOf, formsOf,
 } from './model.js';
 import { usePhone, Rk, Name, RulesetSelect } from './ui.jsx';
 import { ClassChip } from './sheet.jsx';
 import { parseCondition } from '../utils/conditions.js';
-import { F } from './format.js';
+import { F, barsText } from './format.js';
 
 /* ------------------------------------------------------------------ character picker */
 function Face({ c, cur, hov, sel, onHover, onPick, onOpen }) {
@@ -93,7 +93,7 @@ function Preview({ id, selected, onSelect, onPick, side, onCompare, onVs, curren
   const forms = formsOf(id);
   return (
     <div className="pvw">
-      <div className="pvfig"><img src={artUrl(id)} alt="" /></div>
+      <div className="pvfig"><img src={artUrl(id)} alt="" style={figStyle(byId.get(id))} /></div>
       <div className="pvb">
         <div className="nm"><Name parts={nameParts(c.name)} br /></div>
         <div className="chips"><ClassChip c={c} /><span className="chip dp">DP {c.dp}</span></div>
@@ -186,7 +186,7 @@ const HEADLINE = [
   ['Follow-ups', (s) => s.view.pursuitLimit.general, String], ['Vanishing Attack uses', (s) => s.view.pursuitLimit.vanishingAttack, String], ['Dragon Homing uses', (s) => s.view.pursuitLimit.dragonHoming, String],
   ['Ki blast', (s) => s.view.kiBlastDmg], ['Ki blast limit', (s) => s.view.kiBlastLimit, F.count], ['Full volley', (s) => volley(s.view)],
   ['Ki blast cost', (s) => s.view.kiBlastCost, F.bars], ['Melee defense', (s) => s.view.meleeDefenseStat, F.def], ['Ki-blast defense', (s) => s.view.energy, F.def],
-  ['Blast defense', (s) => s.view.blastDefense, F.def], ['Starting ki', (s) => s.view.startingKi, (x) => `${+x.toFixed(2)} bars`],
+  ['Blast defense', (s) => s.view.blastDefense, F.def], ['Starting ki', (s) => s.view.startingKi, (x) => barsText(x)],
   ['Ki charge', (s) => s.view.kiCharge, F.dec2], ['Ki regen', (s) => s.view.kiRegen, F.dec], ['Ki from hits', (s) => s.view.attackKiGain, F.dec],
   ['Skill gauge at start', (s) => s.view.skillStart, String], ['Skill gauge per minute', (s) => parseFloat(s.view.skillRegen), F.dec],
   ['Short dash', (s) => s.view.shortDashCost, F.bars], ['Switch', (s) => s.view.switch, F.secs], ['Armor', (s) => s.view.armor, F.armor],

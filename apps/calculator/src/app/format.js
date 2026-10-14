@@ -1,6 +1,11 @@
 // Number formats, in the league's wording: "per", never "a"; defenses as + (takes less) or − (takes more).
 const n = (v, d = 0) => (typeof v === 'number' && Number.isFinite(v) ? (+v.toFixed(d)).toLocaleString('en-US', { maximumFractionDigits: d }) : '');
 
+/** "bar" when the number as shown is exactly 1, else "bars". */
+export const barUnit = (shown) => (String(shown).replace(/<[^>]*>/g, '').trim() === '1' ? 'bar' : 'bars');
+/** ki in bars with its unit: "1 bar", "2.5 bars" */
+export const barsText = (v, d = 2) => { const s = n(v, d); return `${s} ${barUnit(s)}`; };
+
 export const F = {
   int: (v) => n(Math.round(v ?? NaN)),
   dec: (v) => n(v, 3),

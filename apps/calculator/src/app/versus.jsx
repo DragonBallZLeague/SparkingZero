@@ -9,7 +9,7 @@ import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
 import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, PhoneVsBar, leads, Mirror, ChainsCmp, Similar, SwapButton, useBlastSlots, sameBlast, slotLabel, blastName, AltPick } from './compare.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
 import { ChangeButton } from './sheet.jsx';
-import { F } from './format.js';
+import { F, barsText } from './format.js';
 
 /** What the tints compare against: the opponent without capsules, both sides without conditions (what the panels edit). */
 const RefCtx = createContext(null);
@@ -99,7 +99,7 @@ function quickRows(pair) {
       { label: 'Armor', get: V(x => x.armor), fmt: F.armor, kind: 'def', bar: false },
     ],
     res: [
-      { label: 'Starting ki', get: V(x => x.startingKi), fmt: (x) => `${+x.toFixed(2)} bars`, kind: 'dec', bar: false },
+      { label: 'Starting ki', get: V(x => x.startingKi), fmt: (x) => barsText(x), kind: 'dec', bar: false },
       { label: 'Ki charge', small: 'bars/s', get: V(x => x.kiCharge), fmt: F.dec2, kind: 'dec' },
       { label: 'Ki regen', small: 'bars/s', get: V(x => x.kiRegen), fmt: F.dec, kind: 'dec' },
       { label: 'Skill gauge limit', get: V(x => x.skillLimit), fmt: String },
@@ -115,7 +115,7 @@ function quickRows(pair) {
     kib: [
       { label: 'Ki blast', get: V(x => x.kiBlastDmg), deal: ex(x => x.kiBlast.v), held: ex(x => x.kiBlast.held) },
       { label: 'Ki blast limit', get: V(x => x.kiBlastLimit), fmt: F.count, rget: (x) => Math.min(x.kiBlastLimit, 20), rval: (v) => Math.min(v, 20) },
-      { label: 'Ki blast cost', small: 'less is better', get: V(x => x.kiBlastCost), fmt: (x) => `${F.bars(x)} bars`, kind: 'dec', less: true },
+      { label: 'Ki blast cost', small: 'less is better', get: V(x => x.kiBlastCost), fmt: (x) => barsText(x, 3), kind: 'dec', less: true },
       { label: 'Full volley', get: V(x => volley(x)), deal: ex(x => x.volley), held: ex(x => x.kiBlast.held) },
       { label: 'Charged ki blast', key: 'charged3', small: 'Lv.3', get: (s) => gameMoves(s).charged?.damage.at(-1), deal: ex(x => x.charged.at(-1)?.v), held: ex(x => x.charged.at(-1)?.held), shots: (s) => gameMoves(s).charged?.shots },
     ],
