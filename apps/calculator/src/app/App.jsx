@@ -212,7 +212,7 @@ function App() {
           {/* the old calculator's credit, kept (the league, 2026-10-13): the one place the UI names a data source */}
           <footer className="credit">
             <a href="https://discord.gg/RgpaPb6jbz" target="_blank" rel="noopener noreferrer" title="Kame House Discord">
-              <span>Character data provided by</span><b>Kame House</b>
+              <span>Data gathered in collaboration with</span><b>Kame House</b>
               <img src={`${import.meta.env.BASE_URL}general_imgs/KameHouseIcon.png`} alt="" />
             </a>
           </footer>
