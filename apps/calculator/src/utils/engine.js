@@ -86,8 +86,9 @@ const hitsTotal = (hits, k, K) => hits.reduce((s, [p, n]) => s + hit(p, k, K) * 
 /**
  * Sparking! Mode's length in seconds: the whole ki gauge (maxKi bars of 10,000) drained at the game's
  * SparkingModeGaugeDecreaseSpeed (2,800 a second for all 241 characters) times (1 + the drain scales: the class's
- * SparkingModeGaugeDecreaseSpeedScale, capsules such as Sparking! Plus -15%). Normal: 17.9s. That the gauge is the
- * full ki gauge is an assumption (the files omit SPGaugeMaxValue as a default): data/TESTS.md, Sparking test.
+ * SparkingModeGaugeDecreaseSpeedScale, capsules such as Sparking! Plus -15%). Measured by the league 2026-10-13:
+ * Goku (Z - Early) and Goku (Z - Mid) Super Saiyan 17.8s (17.86, timed from the first frame the bar drops), Ultimate
+ * Gohan 16.23s (+10% drain), Goku with Sparking! Plus 20.98s (21.01: the scales add, not multiply the time).
  */
 export const SPARKING_DRAIN_PER_SEC = 2800;
 export function sparkingSeconds(maxKi, drain) {
@@ -97,9 +98,10 @@ export function sparkingSeconds(maxKi, drain) {
 /**
  * Time to charge from full ki into Sparking! Mode, in seconds: the base time over (1 + the charge-speed scales:
  * the class's SparkingGaugeChargeSpeedScale, capsules). The base (SparkingGaugeChargeSpeed, a default the files
- * omit) is not measured yet, so this is null until the league's test sets SPARKING_CHARGE_BASE_SECONDS.
+ * omit) was measured by the league on 2026-10-13: Goku (Z - Early) 1.67s; Nappa (+20%) 1.4s, Vegeta (Z - Scouter)
+ * (-10%) 1.85s; Yamcha 1.67s, the same as Goku with a faster ki charge (the fighter's ki charge speed doesn't count).
  */
-export const SPARKING_CHARGE_BASE_SECONDS = null;
+export const SPARKING_CHARGE_BASE_SECONDS = 1.67;
 export function sparkingChargeSeconds(charge) {
   return SPARKING_CHARGE_BASE_SECONDS ? round(SPARKING_CHARGE_BASE_SECONDS / (1 + charge), 2) : null;
 }
@@ -372,6 +374,27 @@ export function computeStats(c, effects, ctx = {}) {
 export function scaleChannel(view, ch, final, power = null) {
   if (!view?.coef || typeof final !== 'number') return final;
   return scale(final, view.coefBase[ch], view.coef[ch], view.damageConstant ?? 1.25, power);
+}
+
+/**
+ * A skill's damage for a computed side, or null when it deals none (158 of 482 skills). Measured by the league on
+ * 2026-10-13 (data/README.md, seventh round):
+ * - Counters (the Evade/Counter type: Wild Sense and its kind) are a smash hit: one Power for all 43 fits every
+ *   published value on the smash channel (Goku (Z - Mid) Super Saiyan 1,708 = 1,120 Power x 1.25 x 1.22; Tien
+ *   1,400 on his smash 1.0, not his rush 1.1), and they go through melee defense (Sparking! Plus's x1.2: 2,050).
+ * - Everything else (explosions, barriers, binds, pushes) is on the skill channel and goes through ki defense
+ *   (Vegeta (Z - Scouter)'s Explosive Wave 938, x1.1 = 1,032). Capsule Corp's values come from 937 x the
+ *   coefficient, unrounded; the game's is 750 Power rounded up (938), so the Power is recovered and re-hit.
+ * Barriers, binds and pushes are taken to work like the explosion (untested). Armor on them is untested too.
+ * Returns { damage (with the build), base, defense: 'melee' | 'ki' }.
+ */
+export function skillHit(skill, view) {
+  if (!(skill?.damage > 0) || !view?.coefBase) return null;
+  const counter = /Counter/.test(skill.display?.type || '');
+  const ch = counter ? 'smash' : 'skill';
+  const K = view.damageConstant ?? 1.25;
+  const power = Math.round(skill.damage / (K * view.coefBase[ch]));
+  return { damage: hit(power, view.coef[ch], K), base: hit(power, view.coefBase[ch], K), defense: counter ? 'melee' : 'ki' };
 }
 
 /** Modified damage of one blast row (old shape) for a computed side. */

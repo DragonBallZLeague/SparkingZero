@@ -119,7 +119,7 @@ export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, 
  * click away from the list). Outlined and square-cornered, so it reads as an action, not one of the chips.
  */
 export const ChangeButton = ({ onClick, label = 'Change', title = 'Change fighter' }) => (
-  <button className="chgb" data-qp onClick={onClick} title={`${title}, without leaving this page`} aria-label={title}><i aria-hidden="true">⇄</i><span>{label}</span></button>
+  <button className="chgb" data-qp onClick={onClick} title={`${title}, without leaving this page`} aria-label={title}><i aria-hidden="true">▾</i><span>{label}</span></button>
 );
 
 export function Nameplate({ c, onChange, showTraits = true }) {

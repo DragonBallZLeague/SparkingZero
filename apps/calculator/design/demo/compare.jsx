@@ -13,7 +13,7 @@ import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
 /* ------------------------------------------------------------------ the two-fighter header */
-export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null, onSwap = null }) {
+export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null }) {
   const phone = usePhone();
   const fig = (side) => (
     <div className={`vfig${phone ? ' c' : ''}`}>
@@ -25,14 +25,22 @@ export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = nul
     <div className="vshead">
       <div className="vside l">{fig(pair.A)}<div className="who"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} />{changeA}</div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
       <div className="vside r">{fig(pair.B)}<div className="who"><div className="nmrow r"><div className="nm"><Name parts={nameParts(pair.B.c.name)} br={!phone} /></div>{changeB}</div>{!phone && <div className="chips" style={{ justifyContent: 'flex-end' }}>{chipsB}</div>}{actionsB}</div></div>
-      <div className="vsmid"><b>VS</b>{onSwap && <SwapButton onSwap={onSwap} />}</div>
+      <div className="vsmid"><b>VS</b></div>
     </div>
   );
 }
 
-/** Swaps the two fighters, each keeping its build and conditions (the live calculator's Swap). */
+/**
+ * Swaps the two fighters, each keeping its build and conditions (the live calculator's Swap). It sits with the
+ * view switches over the stats, in their style, its ends in each side's colour (round 25, concept B); Change took
+ * a ▾ so the arrows mean only this.
+ */
 export const SwapButton = ({ onSwap }) => (
-  <button type="button" className="swapb" onClick={onSwap} title="Swap the two fighters, builds and all" aria-label="Swap sides"><i aria-hidden="true">⇄</i>Swap</button>
+  <button type="button" className="swapb" onClick={onSwap} title="Swap the two fighters, builds and all">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 7h13M12.5 3.5 16 7l-3.5 3.5" /><path d="M17 13H4M7.5 9.5 4 13l3.5 3.5" />
+    </svg>Swap sides
+  </button>
 );
 
 /** Chips under a fighter's name: class, DP, the build in short, skills on, Sparking. */
@@ -170,8 +178,7 @@ export function statSections({ vs = false, pair = null } = {}) {
     ] },
     // the Command list as the Fighter page has it, right after Resources: Skills, then Blasts with the ultimates
     // and every alternate
-    // a skill's damage is before the other side's defenses even in the Matchup (which defense applies is untested)
-    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills', small: vs ? 'damage before their defenses' : null },
+    { id: 'skl', title: 'Skills', cls: 'skl', col: 2, custom: 'skills', vs, small: vs ? 'dealt to them' : null },
     { id: 'bls', title: 'Blasts', cls: 'cmd', col: 2, custom: 'blasts', vs, small: vs ? 'dealt to them' : null },
     { id: 'limits', title: 'Combat limits', cls: 'lim', col: 2, rows: [
       { label: 'Follow-ups', get: V(x => x.pursuitLimit.general), fmt: String },
@@ -368,15 +375,15 @@ function BlastsCmp({ vs = false }) {
 }
 
 /**
- * Skills side by side: name with its cost in skill points, and a damaging skill's damage with the build (in the
- * Matchup too it is before the other side's defenses: which defense applies is not measured yet).
+ * Skills side by side: name with its cost in skill points, and a damaging skill's damage with the build (with
+ * `vs`, the Matchup: as dealt to the other side, a counter through their melee defense, the rest through ki).
  */
-export function SkillsCmp() {
+export function SkillsCmp({ vs = false }) {
   const pc = usePair();
   const skill = (k, n) => {
     const s = skillOf(pc.pair[k].c, n);
     if (!s) return null;
-    const get = (sides) => skillDamage(sides[k], s)?.damage;
+    const get = (sides) => skillDamage(sides[k], s, vs ? sides[k === 'A' ? 'B' : 'A'] : null)?.damage;
     const name = <>{s.name}<small className="pts">{s.stockCost} pt{s.stockCost === 1 ? '' : 's'}</small></>;
     return s.damage > 0 ? { name, n: get(pc.pair), value: <Tap title={s.name} get={get} mark={false} /> } : { name };
   };
@@ -394,7 +401,7 @@ function sectionBody(s, phone) {
   if (s.custom === 'chains') return <ChainsCmp vs={s.vs} />;
   if (s.custom === 'armor') return <ArmorCmp />;
   if (s.custom === 'vsarmor') return <VsArmor />;
-  if (s.custom === 'skills') return <SkillsCmp />;
+  if (s.custom === 'skills') return <SkillsCmp vs={s.vs} />;
   if (s.custom === 'blasts') return <BlastsCmp vs={s.vs} />;
   if (s.custom === 'traits') return <TraitsCmp />;
   return s.rows.map(r => <Pair key={r.label} row={r} />);
@@ -530,7 +537,7 @@ export function Similar({ id, name, onPick }) {
 }
 
 /** The phone's two-fighter bar: both faces and names, the VS mark, each side's Change. */
-export function PhoneVsBar({ pair, change, onSwap = null }) {
+export function PhoneVsBar({ pair, change }) {
   return (
     <>
       <div className="cbar">
@@ -538,7 +545,7 @@ export function PhoneVsBar({ pair, change, onSwap = null }) {
         <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
         <span className="cvs" aria-hidden="true"><b>VS</b></span>
       </div>
-      <div className="cbar-acts">{change('A')}{onSwap && <SwapButton onSwap={onSwap} />}{change('B')}</div>
+      <div className="cbar-acts">{change('A')}{change('B')}</div>
     </>
   );
 }

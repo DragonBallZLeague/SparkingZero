@@ -101,8 +101,8 @@ export function sections(side) {
         cell('Follow-ups', null, { text: `+${ps.sparkingAdd ?? 0}`, long: 'Extra follow-ups' }),
         cell('Armor', null, { text: c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None', long: 'Sparking armor' }),
       ]]],
-      // (ASCII signs: the headline marks compare these as numbers)
-      summary: [['Charge', SPARK.charge.fmt === 's1' ? F.s1(SPARK.charge.get(v)) : `${v.sparkCharge > 0 ? '+' : ''}${+(v.sparkCharge * 100).toFixed(1)}%`], ['Duration', F.s1(v.sparkSeconds)],
+      // the time into Sparking! (less is better, LESS below) and how long it lasts
+      summary: [['To Sparking', F.secs(v.sparkChargeSeconds)], ['Lasts', F.s1(v.sparkSeconds)],
         ['Hyper Smash', F.int(gm.hyperSmash)], [c.moveset?.unavailable?.includes('Violent Rush') ? 'No Violent Rush' : 'Violent Rush', null]],
     },
     { id: 'traits', title: 'Traits', cls: 'neutral', custom: 'traits', summary: traitSummary(c) },
@@ -455,7 +455,7 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
  * A folded section's headline numbers, marked like everywhere else: orange when the build or conditions make
  * them better than base, red when worse (less is better for damage taken, armor break and dash costs).
  */
-const LESS = /taken|armor break|dash/i;
+const LESS = /taken|armor break|dash|to sparking/i;
 const num = (t) => parseFloat(String(t).replace(/[^0-9.\-]/g, ''));
 function mark(label, now, was) {
   if (was == null || was === now) return undefined;

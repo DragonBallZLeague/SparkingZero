@@ -274,31 +274,31 @@ demo didn't do, added here for the league's sign-off:
 - **Skill damage.** 158 of 482 skills deal damage (Wild Sense and its counters, Explosive Wave and the other
   explosions, barriers, binds, pushes). The Fighter page's Skills show it in the Damage column (Quick; a
   damaging skill's duration, if any, moves to a tile) and as the card's big number with its base (Full); Versus
-  shows it on each skill's row, with the cost small beside the name. It scales on the skill channel (High-Tension,
-  Saiyan Burst, Ancient Soul raise it), from Capsule Corp's value rounded up (`skillDamage` in `model.js`). In the
-  Matchup it stays **before the other side's defenses**, and the Skills header says so: which defense the game
-  uses for a skill is not measured yet (the old calculator used melee defense, unchecked).
+  shows it on each skill's row, with the cost small beside the name, tinted old → new like Blasts. Measured by the
+  league the same day (`skillHit` in `engine.js`, data README's seventh round): counters (Wild Sense and its kind)
+  are a smash hit through **melee defense**; explosions, barriers, binds and pushes are on the skill channel
+  through **ki defense** (the last three assumed, `data/TESTS.md` tests 4 to 6). The Matchup shows each as dealt
+  through that defense; armor on skills is untested (test 7) and not applied.
 - **Sparking charge and duration.** They lead the Sparking! section (Quick and Full, with roster bars) and
   Versus's Sparking rows; `SPARK` in `model.js` defines them once for every view. To keep Quick at five tiles,
   Burst Melee Attack and Burst Rush (the same for everyone) moved to Full.
-  - **Duration is in seconds** (second pass, the league asked for times): the whole 5-bar gauge over the game's
-    drain of 2,800 a second, times (1 + the class's drain scale + capsules): 17.9s for most, 16.2s for the Almighty
-    and fusion classes, 17.0s for the Ki-Blast and Speed classes, 21.0s with Sparking! Plus (`sparkSeconds` in
-    `engine.js`). The gauge's size is assumed; `data/TESTS.md` tests 5 to 8 check it.
+  - **Both are times** (second pass, the league asked for them; confirmed in game the same day). Duration: the whole
+    5-bar gauge over the game's drain of 2,800 a second, times (1 + the class's drain scale + capsules): 17.9s for
+    most, 16.2s for the Almighty and fusion classes, 17.0s for the Ki-Blast and Speed classes, 21.0s with Sparking!
+    Plus (`sparkSeconds`). **Charge time**, from full ki into Sparking: 1.67s over (1 + the class's charge scale),
+    1.39s for the Power class, 1.86s for the Vegetas (`sparkChargeSeconds`); a fighter's ki charge speed doesn't
+    change it.
   - **The old "Spark Duration" was something else.** Capsule Corp's value (Super Saiyans −10%) matches, class
     for class, the game's *pre-Sparking* decay: how fast a partly charged gauge fades once charging stops. It is
     shown in Full as **Charge fade**. The live calculator showed it as the duration.
-  - **Charge is a speed against the usual for now** (+20% for the Power class, −10% for the Vegetas). The game
-    files don't hold the base charge speed, so it becomes a time ("Charge time", from full ki) once `data/TESTS.md`
-    test 9 sets `SPARKING_CHARGE_BASE_SECONDS` in `engine.js`; every view switches with that one constant.
 - **Copy link.** At the right of the view tabs (a phone: a Share tab, the phone's share sheet when it has one).
   The link carries the whole page as the hash already did. Old share links still don't open here: that is the URL
   scheme step of the rebuild.
-- **Swap.** Under the VS mark (a phone: between the Change buttons): the two fighters change sides with their
-  builds and conditions. The league didn't like its look (a box split orange | blue) and wasn't sure of the spot;
-  `design/concepts/swap-r25.html` mocks four ways (an emblem on the barrier, with the view switches, a sibling of
-  Change, the VS as the button) and a ▾ icon for Change, so ⇄ means Swap alone. The demo keeps the first look
-  until the league picks.
+- **Swap.** The two fighters change sides with their builds and conditions. It started under the VS mark; the league didn't like its look (a box split orange | blue) and wasn't sure of the spot;
+  `design/concepts/swap-r25.html` mocked four ways, and **the league chose B**: **Swap sides** sits with Side by
+  side / Matchup and Quick / Full over the stats (on a phone, on its own line under them), in their slanted
+  style with a thin orange edge on its left and blue on its right. **Change** took a ▾ icon (it opens a list),
+  so the arrows mean only Swap.
 
 ## Checked
 
@@ -312,5 +312,5 @@ exchange) and phone (390px). The numbers match the concept's (Vs Janemba 1,812 /
   Blast Burst match (Kamehameha 7,485, Energy Blast Barrage 7,880, Drain Life Cell 9,213, ...). 83 of 743 blasts
   have no hit split yet and scale as one hit.
 - Burst Melee Attack and Burst Rush are shown as 1,250 and 450 for everyone (the data has no per-character availability).
-- Which defense a skill's damage is taken on (an in-game test: Explosive Wave on fighters whose melee and ki-blast
-  defenses differ). Until then the Matchup shows skill damage before defenses.
+- Barriers', binds' and pushes' defense (taken as ki, like the explosion) and skills against armor (not applied):
+  `data/TESTS.md` tests 4 to 7.

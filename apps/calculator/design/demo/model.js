@@ -9,7 +9,7 @@ import teams from '../../public/data/teams.json';
 import meta from '../../public/data/meta.json';
 import artSizes from '../../public/char_art/sizes.json';
 import transformations from '../../../../referencedata/transformations.json';
-import { collectEffects, computeStats, scaleChannel, APPLIED_KEYS, SPARKING_CHARGE_BASE_SECONDS } from '../../src/utils/engine.js';
+import { collectEffects, computeStats, scaleChannel, skillHit, APPLIED_KEYS, SPARKING_CHARGE_BASE_SECONDS } from '../../src/utils/engine.js';
 import { applyLightBodyKiBlastArmor, kiBlastVolley, calcOutgoingCombo, damageTaken, armorFactor, calcFiveHitDamageTaken } from '../../src/utils/calculator.js';
 import { LIGHT_BODY, DRACONIC_AURA } from '../../src/utils/specialCapsules.js';
 import { parseCondition, conditionNeeds } from '../../src/utils/conditions.js';
@@ -477,22 +477,23 @@ export function blastDamage(side, b) {
  */
 export const SPARK = {
   charge: SPARKING_CHARGE_BASE_SECONDS
-    ? { label: 'Charge time', long: 'Time to Sparking! from full ki', get: (x) => x.sparkChargeSeconds, fmt: 's1', kind: 'dec', less: true }
+    ? { label: 'Charge time', long: 'Time to Sparking! from full ki', get: (x) => x.sparkChargeSeconds, fmt: 'secs', kind: 'dec', less: true }
     : { label: 'Charge speed', long: 'Sparking charge speed', get: (x) => x.sparkCharge, fmt: 'rel', kind: 'rel', less: false },
   duration: { label: 'Duration', long: 'Sparking! Mode duration', get: (x) => x.sparkSeconds, fmt: 's1', kind: 'dec', less: false },
   fade: { label: 'Charge fade', long: 'A partial Sparking charge fading', get: (x) => x.sparkPreDrain, fmt: 'rel', kind: 'rel', less: true },
 };
 
 /**
- * A skill's damage with the build (the skill channel: High-Tension, Saiyan Burst...), or null when it deals none
- * (158 of 482 skills deal damage: Wild Sense, Explosive Wave, barriers, binds). The published value is Capsule Corp's
- * final, unrounded (Explosive Wave 1,124.4); the game rounds a hit up. Which defense the opponent takes it on is not
- * measured yet, so the Matchup shows it before their defenses.
+ * A skill's damage with the build, or null when it deals none (engine.js skillHit, measured 2026-10-13: counters
+ * such as Wild Sense are a smash hit through melee defense; explosions, barriers, binds and pushes are on the skill
+ * channel through ki defense). With `them`, as dealt to that side (the Matchup): their melee or plain ki defense
+ * (Light Body's ki-blast-only defense left out).
  */
-export function skillDamage(side, s) {
-  if (!(s?.damage > 0)) return null;
-  const base = Math.ceil(s.damage);
-  return { damage: scaleChannel(side.view, 'skill', base), base };
+export function skillDamage(side, s, them = null) {
+  const h = skillHit(s, side.view);
+  if (!h || !them) return h;
+  const def = h.defense === 'melee' ? them.view.meleeDefenseStat : them.view.kiBlastDefenseArmor;
+  return { ...h, damage: damageTaken(h.damage, def) };
 }
 export function selfDamageText(b, oppDp = null) {
   const s = b.selfDamage;

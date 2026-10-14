@@ -110,9 +110,10 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    for Versus, the alternates' version marks, the docked picker). A check against the live calculator then added
    four things it had and the demo didn't: skill damage, Sparking charge speed and duration, Copy link and Swap
    (demo README, "Signed off, then the live calculator's four gaps"), **waiting on the league's sign-off**.
-   Second pass the same day: Sparking's duration in seconds (its charge in seconds after `data/TESTS.md` test 9;
-   the old "Spark Duration" turned out to be the pre-Sparking decay), and **round 25**
-   (`concepts/swap-r25.html`): four looks and places for Swap, **open**.
+   Second pass the same day, after the league's in-game tests: Sparking's charge and duration in seconds (the old
+   "Spark Duration" turned out to be the pre-Sparking decay), skill damage through the measured defense (counters
+   melee, the rest ki), and **round 25** (`concepts/swap-r25.html`): the league chose **B**, Swap sides with the
+   view switches, and a ▾ icon for Change.
 2. **URL scheme.** Character pages by name slug, the three views (Characters, Fighter, Versus) as routes, and
    share links that carry the whole build (active skills, stages, Sparking, conditions, ruleset, both sides),
    copied by the Copy link button. Old `#` share links and the website's Teams-page links must keep opening.

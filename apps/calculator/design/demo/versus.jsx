@@ -4,9 +4,9 @@
 // one on the hit that breaks it) and toughness as taken from the other side. Switching lens keeps every section
 // and row in place; only the numbers change. Full is All stats (compare.jsx).
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { nameParts, exchange, evaluatePair, gameMoves, volley, fiveHitTaken, emptySpec, rosterPos, blastsOf, blastDamage, SPARK } from './model.js';
+import { nameParts, exchange, evaluatePair, gameMoves, volley, fiveHitTaken, emptySpec, rosterPos, blastsOf, blastDamage, skillOf, skillDamage, SPARK } from './model.js';
 import { Tap, Modes, usePhone, useWide, usePair } from './ui.jsx';
-import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, PhoneVsBar, leads, Mirror, SkillsCmp, ChainsCmp, Similar, useBlastSlots, sameBlast, slotLabel, blastName, AltPick } from './compare.jsx';
+import { VsHead, buildChips, AllStats, PairControls, statSections, VsArmor, SideBuild, PhoneVsBar, leads, Mirror, ChainsCmp, Similar, SwapButton, useBlastSlots, sameBlast, slotLabel, blastName, AltPick } from './compare.jsx';
 import { Conditions, InEffect } from './conditions.jsx';
 import { ChangeButton } from './sheet.jsx';
 import { F } from './format.js';
@@ -146,6 +146,22 @@ function BlastRows({ match }) {
   });
 }
 
+/** Skills as mirrored rows, like BlastRows: name and cost, a damaging skill's damage as it is or as dealt (Matchup), tinted old → new. */
+function SkillRows({ match }) {
+  const pc = usePair();
+  return [1, 2].map(n => {
+    const side = (k) => {
+      const s = skillOf(pc.pair[k].c, n);
+      if (!s) return null;
+      const name = <>{s.name}<small className="pts">{s.stockCost} pt{s.stockCost === 1 ? '' : 's'}</small></>;
+      if (!(s.damage > 0)) return { name };
+      const get = (p) => skillDamage(p[k], s, match ? p[other(k)] : null)?.damage;
+      return { name, n: num(get, pc.pair), value: <XVal cls="xv" title={s.name} get={get} /> };
+    };
+    return <Mirror key={n} label={<span className="slot s">S{n}</span>} a={side('A')} b={side('B')} />;
+  });
+}
+
 /** Both health bars mirrored; in the Matchup each shows one rush 5-hit from the other side in red. */
 function HpBars({ match }) {
   const pc = usePair();
@@ -218,7 +234,7 @@ function VersusQuick({ pair, match, phone, swapIn }) {
       <div className="cmpcol">
         {plate('', 'Toughness', rows.tough, null, <HpBars match={match} />)}
         {plate('res', 'Resources', rows.res)}
-        <div className="plate skl"><h5>Skills{match && <small className="h5s">damage before their defenses</small>}</h5><SkillsCmp /></div>
+        <div className="plate skl"><h5>Skills</h5>{head}<SkillRows match={match} /></div>
         <div className="plate cmd"><h5>Blasts</h5>{head}<BlastRows match={match} /></div>
         {plate('off', 'Melee', rows.melee, legend)}
         <div className="plate mov"><h5>Rush Chains</h5>{head}<ChainsCmp vs={match} /></div>
@@ -281,6 +297,7 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
     <div className="vmodes">
       <Modes value={lens} options={[['side', 'Side by side'], ['match', 'Matchup']]} onChange={setLens} />
       <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
+      <SwapButton onSwap={onSwap} />
       <em>{match ? 'Each side\'s damage after the other\'s defenses and armor' : <>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></>}</em>
     </div>
   );
@@ -289,7 +306,7 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   else body = <RefCtx.Provider value={ref}><VersusQuick pair={pair} match={match} phone={phone} swapIn={swapIn} /></RefCtx.Provider>;
   return (
     <AltPick.Provider value={altPick}>
-      {phone ? <PhoneVsBar pair={pair} change={change} onSwap={onSwap} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} onSwap={onSwap} />}
+      {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
       {wide ? (
         <>

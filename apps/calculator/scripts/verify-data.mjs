@@ -15,7 +15,7 @@ import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
-import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel } from '../src/utils/engine.js';
+import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel, skillHit } from '../src/utils/engine.js';
 import { parseCondition } from '../src/utils/conditions.js';
 import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
 
@@ -321,6 +321,27 @@ if (v2) {
   // both together (2026-10-13): 4 in total, 2 Vanishing Attacks then 2 Dragon Homings worked
   const gkBoth = run('0000_00', { capsules: ['00_0_0136', '00_0_0134'] });
   ig('... with both', JSON.stringify(gkBoth.pursuitLimit), JSON.stringify({ general: 4, vanishingAttack: 3, dragonHoming: 3, lightningAttack: 1 }));
+  // Seventh round, 2026-10-13: skill damage and Sparking! Mode. The dummy, Goku (Z - Early), wore Sparking! Plus
+  // (melee defense x1.2, ki x1.1) to tell the defenses apart.
+  const sk = (id, name) => Object.values(data.skills).find(s => s.character === id && s.name === name);
+  const plus = run('0000_00', { capsules: ['00_0_0132'] });
+  const dealt = (h, def) => Math.ceil(h.damage * def - 1e-9);
+  const ew = skillHit(sk('0020_00', 'Explosive Wave'), run('0020_00'));
+  ig('Vegeta (Z - Scouter) Explosive Wave', ew?.damage, 938);
+  ig('... into Sparking! Plus (ki defense)', ew && dealt(ew, plus.kiBlastDefenseArmor), 1032);
+  const ws = skillHit(sk('0000_11', 'Wild Sense'), run('0000_11'));
+  ig('Goku (Z - Mid) Super Saiyan Wild Sense', ws?.damage, 1708);
+  ig('... into Sparking! Plus (melee defense)', ws && dealt(ws, plus.meleeDefenseStat), 2050);
+  // timed from video: duration from the first frame the bar drops (about 0.05s late), charge from 5 full bars
+  const near = (label, got, want, tol) => { if (!(Math.abs(got - want) <= tol)) game.push(`${label}: got ${got}, game ${want}`); };
+  near('Goku (Z - Early) Sparking duration', gk.sparkSeconds, 17.8, 0.1);
+  near('Goku (Z - Mid) Super Saiyan Sparking duration', run('0000_11').sparkSeconds, 17.8, 0.1);
+  near('Ultimate Gohan Sparking duration (+10% drain)', run(named('Ultimate Gohan').id).sparkSeconds, 16.23, 0.05);
+  near('Goku (Z - Early) with Sparking! Plus, duration', plus.sparkSeconds, 20.98, 0.05);
+  near('Goku (Z - Early) charge into Sparking', gk.sparkChargeSeconds, 1.67, 0.02);
+  near('Nappa charge (+20%)', run(named('Nappa').id).sparkChargeSeconds, 1.4, 0.02);
+  near('Vegeta (Z - Scouter) charge (-10%)', run('0020_00').sparkChargeSeconds, 1.85, 0.02);
+  near('Yamcha charge (faster ki charge, same time)', run(named('Yamcha').id).sparkChargeSeconds, 1.67, 0.02);
   const glorio = (data.blasts[named('Glorio')?.id] || []).find(b => b.name === 'Lightning Cannon');
   if (!glorio?.traits.includes('Unguardable')) game.push('Glorio Lightning Cannon is unguardable (in game 2026-10-08)');
   // Fourth round, 2026-10-09: short-dash scale, Cheelai, blast categories, cinematics and clashes
@@ -485,7 +506,7 @@ if (v2) {
   }
   const a16 = run('0440_00');
   ig('Android 16 5-hit damage taken rounds each hit up', a16.melee, a16.referenceHits.reduce((t, h) => t + Math.ceil(h * a16.meleeDefenseStat - 1e-9), 0));
-  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 09: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains and their damage, armor)', game);
+  check(!game.length, 'published values equal the league in-game measurements (2026-10-07 to 13: rush, smash, throw, ki blast, defense, armor, ki cost, short dash, 20+ blasts, skills, spread shots, blast categories, cinematics, clashes, ki volley falloff, charged ki blast, jump ki blast, charged smash, Giant smash, Heavy Finish, Rush Chains and their damage, armor, pursuits, skill damage and its defense, Sparking charge and duration)', game);
 
   // Ultimates need Sparking Mode: their damage includes the Sparking passive and the toggle leaves them alone
   const ult = [];

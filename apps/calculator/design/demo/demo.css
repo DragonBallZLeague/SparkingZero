@@ -933,21 +933,16 @@ cell never pushes it up under the tabs (its Done header stays in view) */
 .ph .phtabs .cplink { flex: 0 0 auto; height: auto; padding: 0 16px; border: 0; border-left: 1px solid var(--line); border-radius: 0; background: none; color: var(--muted); font-size: 11px; }
 .ph .phtabs .cplink.ok { color: #86efac; }
 
-/* Swap: under the VS mark (a phone: between the Change buttons), in the header's own look: a box slanted like the
-   barrier, split orange | blue where the barrier would run on, the label heavy italic like the VS */
-.swapb { position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 15px;
-  border: 0; background: none; color: #fff7ed; font-size: 12px; font-weight: 900; font-style: italic; letter-spacing: .07em; text-transform: uppercase;
-  white-space: nowrap; cursor: pointer; line-height: 1; text-shadow: 0 1px 0 rgba(10,13,32,.7); }
-.swapb::before { content: ''; position: absolute; inset: 0; z-index: -1; transform: skewX(var(--skew, -13.5deg)); border-radius: 2px;
-  background: linear-gradient(90deg, #c2410c 0 50%, #1d4ed8 50% 100%); border: 1px solid rgba(255,247,237,.5);
-  box-shadow: 0 2px 8px rgba(0,0,0,.5); transition: box-shadow .15s, border-color .15s; }
-.swapb i { font-style: normal; font-size: 15px; font-weight: 700; margin-top: -1px; }
-.swapb:hover::before { border-color: #fff7ed; box-shadow: 0 0 10px rgba(249,115,22,.85), 0 0 20px rgba(59,130,246,.6); }
-.swapb:active::before { filter: brightness(1.15); }
-.swapb:focus-visible { outline: none; }
-.swapb:focus-visible::before { border-color: #fbbf24; box-shadow: 0 0 0 2px #fbbf24; }
-.vsmid .swapb { position: absolute; left: 50%; top: calc(50% + 34px); transform: translateX(-50%); pointer-events: auto; }
-.cbar-acts { align-items: center; }
+/* Swap sides (round 25, concept B): with the view switches over the stats, in their slanted style, a thin orange
+   edge on its left and blue on its right (each side's colour); the slant drawn by a skewed backing so the edges
+   stay even */
+.swapb { position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border: 0; background: none;
+  font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #e2e8f0; white-space: nowrap; cursor: pointer; }
+.swapb::before { content: ''; position: absolute; inset: 0; z-index: -1; transform: skewX(-12deg); background: rgba(148,163,184,.12);
+  border-left: 2px solid rgba(249,115,22,.85); border-right: 2px solid rgba(59,130,246,.85); }
+.swapb svg { width: 14px; height: 14px; flex: none; }
+.swapb:hover { color: #fff; } .swapb:hover::before { background: rgba(148,163,184,.24); }
+.swapb:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
 
 /* Skills in Versus: the cost small beside the name, the damage on the inner edge */
 .mir .mn small.pts { margin-left: 6px; font-size: 10.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
