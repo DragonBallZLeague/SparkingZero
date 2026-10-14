@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   SLOT_LABEL, blastsOf, skillOf, blastType, blastTiles, blastTags, blastDamage, skillDamage, kiBars, selfDamageText,
-  SKILL_TYPE, skillTiles, skillTags, skillEffectTiles, toggleable, moveset, perceptionName,
+  SKILL_TYPE, skillTiles, skillTags, skillEffectTiles, skillHeal, toggleable, moveset, perceptionName,
 } from './model.js';
 import { Tap } from './ui.jsx';
 import { F, barsText } from './format.js';
@@ -84,6 +84,7 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
     const s = skillOf(c, slot);
     if (!s) continue;
     const effects = skillEffectTiles(s, side.spec?.stage?.[slot]);
+    const heal = skillHeal(s);
     skillRows.push(
       <div className="cmdrow" key={`s${slot}`}>
         <span className="slot s">S{slot}</span>
@@ -92,8 +93,10 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
           <span className="tline"><span className="ttype">{SKILL_TYPE(s)}</span>{skillTiles(s).map(t => <span className="pv" key={t.label}><i>{t.label}</i>{t.value}</span>)}            {s.display?.reflectPower && <span className="pv"><i>Reflected ki blast</i><Tap as="span" title={`${s.name}, reflected ki blast`} get={reflectGet(sideKey, s)} /></span>}</span>
           {effects.length > 0 && <span className="tline">{effects.map((t, i) => <span className={`ef${t.kind ? ' ' + t.kind : ''}`} key={i}>{t.short} {t.value}{t.time ? ` for ${t.time}` : ''}</span>)}</span>}
         </span>
-        {/* a damaging skill's damage (Wild Sense, Explosive Wave, barriers, binds), else its duration */}
-        {s.damage > 0 ? <Tap title={s.name} get={skillGet(sideKey, s)} className="dmg" /> : <span className="dmg dur">{s.duration ? `${s.duration}s` : ''}</span>}
+        {/* a damaging skill's damage (Wild Sense, Explosive Wave, barriers, binds), a heal-only skill's heal, else its duration */}
+        {s.damage > 0 ? <Tap title={s.name} get={skillGet(sideKey, s)} className="dmg" />
+          : heal ? <span className="dmg dur" title="Health restored">{heal.value}{heal.unit}</span>
+          : <span className="dmg dur">{s.duration ? `${s.duration}s` : ''}</span>}
         <Cost kind="skill" points={s.stockCost} />
       </div>,
     );
@@ -108,6 +111,7 @@ function SkillCard({ side, sideKey = 'A', slot, onStage }) {
   const stage = side.spec?.stage?.[slot] || (s.stages ? s.phases.length : null);
   const fx = skillEffectTiles(s, stage);
   const pos = fx.filter(t => t.kind !== 'neg'), neg = fx.filter(t => t.kind === 'neg');
+  const heal = skillHeal(s);
   return (
     <div className="mcard s">
       <div className="mh"><span className="slot s">S{slot}</span><span className="mvn">{s.name}</span><Cost kind="skill" points={s.stockCost} /></div>
@@ -119,7 +123,8 @@ function SkillCard({ side, sideKey = 'A', slot, onStage }) {
               <Tap as="b" title={s.name} get={skillGet(sideKey, s)} />
               <small>Base {F.int(skillDamage(side, s).base)}</small>              {s.display?.reflectPower && <small title="A ki blast or blast hitting the barrier sends a ki blast back">Reflected ki blast <Tap as="i" title={`${s.name}, reflected ki blast`} get={reflectGet(sideKey, s)} /></small>}
             </>
-          ) : <><b>{s.duration || '–'}{s.duration ? <small>s</small> : null}</b><small>Duration</small></>}
+          ) : heal ? <><b>{heal.value}<small>{heal.unit.trim()}</small></b><small>Health restored</small></>
+            : <><b>{s.duration || '–'}{s.duration ? <small>s</small> : null}</b><small>Duration</small></>}
           {s.stages && (
             <div className="stg"><em>Stage</em>{s.phases.map((p, i) => (
               <button key={i} className={stage === i + 1 ? 'on' : ''} onClick={() => onStage?.(slot, i + 1)} aria-pressed={stage === i + 1}>{i + 1}</button>

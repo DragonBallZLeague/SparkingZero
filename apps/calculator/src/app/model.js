@@ -534,7 +534,23 @@ export function skillTags(s) {
  * A skill's effect tiles, phase by phase (a phase that lasts a different time shows its own time), with
  * Instant ki and Instant Sparking as effects. For a staged skill, the chosen stage only.
  */
+/**
+ * A skill that only restores health (Sleep, Regeneration, Snack Time): its heal as { value, unit }, which it shows
+ * where a skill's duration usually sits (none of them lasts). Null for anything else, Makyo Star's buffs included.
+ */
+export function skillHeal(s) {
+  if (!s || s.damage > 0 || s.display?.instantKi || s.display?.instantSparking) return null;
+  const fx = (s.phases || []).flatMap(p => p.effects || []);
+  if (!fx.length || !fx.every(e => e.key === fx[0].key && typeof e.value === 'number' && e.value > 0)) return null;
+  const total = fx.reduce((n, e) => n + e.value, 0);
+  if (fx[0].key === 'healthRestoreFraction') return { value: +total.toFixed(1), unit: '%' };
+  if (fx[0].key === 'healthRestore') return { value: Math.round(total).toLocaleString('en-US'), unit: ' HP' };
+  return null;
+}
+
 export function skillEffectTiles(s, stage = null) {
+  // a heal-only skill's heal is its main value, not an effect line
+  if (skillHeal(s)) return [];
   const out = [];
   if (s.display?.instantKi) out.push({ label: 'Instant ki', short: 'Instant ki', value: s.display.kiAmount != null ? barsText(s.display.kiAmount) : 'Yes', kind: 'kiv' });
   if (s.display?.instantSparking) out.push({ label: 'Instant Sparking', short: 'Instant Sparking', value: 'Yes', kind: 'spk' });
