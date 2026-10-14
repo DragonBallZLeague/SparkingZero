@@ -337,7 +337,7 @@ export function useBlastSlots() {
 export const slotLabel = (r) => <span className={`slot ${r.slot === 'Ultimate' ? 'u' : 'b'}`}>{SLOT_LABEL[r.slot]}</span>;
 
 /**
- * A side's move in a Blasts row (the league's pick, option B of design/concepts/alternates-r24.html): its name, and
+ * A side's move in a Blasts row (the league's pick, option B of round 24's alternates concepts): its name, and
  * under it one slanted mark per version when the slot has more than one (the costume's mark orange when chosen),
  * with a small grey "Alt." on that line's outer side (left for the left fighter, right for the right) on a
  * costume's move, so the marks never move. A click on a mark compares that version, a click on the name the next.
