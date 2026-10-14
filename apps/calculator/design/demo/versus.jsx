@@ -156,7 +156,9 @@ function SkillRows({ match }) {
       const name = <>{s.name}<small className="pts">{s.stockCost} pt{s.stockCost === 1 ? '' : 's'}</small></>;
       if (!(s.damage > 0)) return { name };
       const get = (p) => skillDamage(p[k], s, match ? p[other(k)] : null)?.damage;
-      return { name, n: num(get, pc.pair), value: <XVal cls="xv" title={s.name} get={get} /> };
+      const rget = (p) => skillDamage(p[k], s, match ? p[other(k)] : null)?.reflect?.damage;
+      const lines = s.display?.reflectPower ? [['Reflected ki blast', <XVal key="r" cls="xv" title={`${s.name}, reflected ki blast`} get={rget} />]] : [];
+      return { name, n: num(get, pc.pair), value: <XVal cls="xv" title={s.name} get={get} />, lines };
     };
     return <Mirror key={n} label={<span className="slot s">S{n}</span>} a={side('A')} b={side('B')} />;
   });
@@ -297,7 +299,6 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
     <div className="vmodes">
       <Modes value={lens} options={[['side', 'Side by side'], ['match', 'Matchup']]} onChange={setLens} />
       <Modes value={depth} options={[['quick', 'Quick'], ['full', 'Full']]} onChange={setDepth} />
-      <SwapButton onSwap={onSwap} />
       <em>{match ? 'Each side\'s damage after the other\'s defenses and armor' : <>{nA} leads on <b>{L.a}</b>, {nB} on <b>{L.b}</b></>}</em>
     </div>
   );
@@ -306,7 +307,8 @@ export function VersusView({ pair, lens, setLens, depth, setDepth, setSpec, open
   else body = <RefCtx.Provider value={ref}><VersusQuick pair={pair} match={match} phone={phone} swapIn={swapIn} /></RefCtx.Provider>;
   return (
     <AltPick.Provider value={altPick}>
-      {phone ? <PhoneVsBar pair={pair} change={change} /> : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} />}
+      {phone ? <PhoneVsBar pair={pair} change={change} mid={<SwapButton onSwap={onSwap} />} />
+        : <VsHead pair={pair} chipsA={buildChips(pair.A)} chipsB={buildChips(pair.B)} changeA={change('A')} changeB={change('B')} mid={<SwapButton onSwap={onSwap} />} />}
       <div className="qpanchor">{qp('A')}{qp('B')}</div>
       {wide ? (
         <>

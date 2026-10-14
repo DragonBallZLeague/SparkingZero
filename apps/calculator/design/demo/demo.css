@@ -946,3 +946,11 @@ cell never pushes it up under the tabs (its Done header stays in view) */
 
 /* Skills in Versus: the cost small beside the name, the damage on the inner edge */
 .mir .mn small.pts { margin-left: 6px; font-size: 10.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+
+/* Swap sides between the two Change buttons: under the barrier on a wide screen, on the Change buttons' line, on a
+   dark backing over the art; a phone puts it between the buttons in their row */
+.vsact { position: absolute; left: 50%; bottom: 39px; transform: translateX(-50%); pointer-events: auto; }
+.vsact .swapb::before { background: rgba(10,13,32,.88); box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+.vsact .swapb:hover::before { background: rgba(30,41,82,.95); }
+.cbar-acts { align-items: center; }
+.cbar-acts .swapb::before { background: rgba(10,13,32,.88); }

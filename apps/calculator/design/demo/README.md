@@ -277,8 +277,8 @@ demo didn't do, added here for the league's sign-off:
   shows it on each skill's row, with the cost small beside the name, tinted old → new like Blasts. Measured by the
   league the same day (`skillHit` in `engine.js`, data README's seventh round): counters (Wild Sense and its kind)
   are a smash hit through **melee defense**; explosions, barriers, binds and pushes are on the skill channel
-  through **ki defense** (the last three assumed, `data/TESTS.md` tests 4 to 6). The Matchup shows each as dealt
-  through that defense; armor on skills is untested (test 7) and not applied.
+  through **ki defense**; Gogeta's Stardust Barrier is a melee swipe whose **reflected ki blast** shows as its own
+  line. The Matchup shows each as dealt through that defense; skills break or ignore armor.
 - **Sparking charge and duration.** They lead the Sparking! section (Quick and Full, with roster bars) and
   Versus's Sparking rows; `SPARK` in `model.js` defines them once for every view. To keep Quick at five tiles,
   Burst Melee Attack and Burst Rush (the same for everyone) moved to Full.
@@ -295,10 +295,11 @@ demo didn't do, added here for the league's sign-off:
   The link carries the whole page as the hash already did. Old share links still don't open here: that is the URL
   scheme step of the rebuild.
 - **Swap.** The two fighters change sides with their builds and conditions. It started under the VS mark; the league didn't like its look (a box split orange | blue) and wasn't sure of the spot;
-  `design/concepts/swap-r25.html` mocked four ways, and **the league chose B**: **Swap sides** sits with Side by
-  side / Matchup and Quick / Full over the stats (on a phone, on its own line under them), in their slanted
-  style with a thin orange edge on its left and blue on its right. **Change** took a ▾ icon (it opens a list),
-  so the arrows mean only Swap.
+  `design/concepts/swap-r25.html` mocked four ways, and **the league chose B's look**: **Swap sides** in the view
+  switches' slanted style with a thin orange edge on its left and blue on its right. It sat with the switches at
+  first; the league moved it **between the two Change buttons** (under the barrier on the Change buttons' line on a
+  wide screen, between them in their row on a phone). **Change** took a ▾ icon (it opens a list), so the arrows
+  mean only Swap.
 
 ## Checked
 
@@ -312,5 +313,3 @@ exchange) and phone (390px). The numbers match the concept's (Vs Janemba 1,812 /
   Blast Burst match (Kamehameha 7,485, Energy Blast Barrage 7,880, Drain Life Cell 9,213, ...). 83 of 743 blasts
   have no hit split yet and scale as one hit.
 - Burst Melee Attack and Burst Rush are shown as 1,250 and 450 for everyone (the data has no per-character availability).
-- Barriers', binds' and pushes' defense (taken as ki, like the explosion) and skills against armor (not applied):
-  `data/TESTS.md` tests 4 to 7.

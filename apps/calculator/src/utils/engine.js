@@ -385,16 +385,29 @@ export function scaleChannel(view, ch, final, power = null) {
  * - Everything else (explosions, barriers, binds, pushes) is on the skill channel and goes through ki defense
  *   (Vegeta (Z - Scouter)'s Explosive Wave 938, x1.1 = 1,032). Capsule Corp's values come from 937 x the
  *   coefficient, unrounded; the game's is 750 Power rounded up (938), so the Power is recovered and re-hit.
- * Barriers, binds and pushes are taken to work like the explosion (untested). Armor on them is untested too.
- * Returns { damage (with the build), base, defense: 'melee' | 'ki' }.
+ * Second round, same day: a barrier (Android Barrier), a bind (Paralyze Beam) and a push (Mystic Breath) go through
+ * ki defense like the explosion; Gogeta (Super) SSGSS's Stardust Barrier, the files' only front barrier
+ * (`display.frontBarrier`), is a close-range swipe through melee defense, and a ki blast or blast hitting it sends
+ * back a ki blast of its own (`display.reflectPower`, 1,000 Power, curated) through ki defense. Explosive Wave into
+ * Janemba did its full 960: skills break or ignore armor. Defense applies before the rounding (Vegeta (Z - Early)'s
+ * 984.375 x 1.1 = 1,082.8 -> 1,083, not 985 x 1.1 -> 1,084): skillTaken.
+ * Returns { damage (with the build), base, defense: 'melee' | 'ki', power, k, K, reflect: the same for the
+ * reflected shot, or null }.
  */
 export function skillHit(skill, view) {
   if (!(skill?.damage > 0) || !view?.coefBase) return null;
   const counter = /Counter/.test(skill.display?.type || '');
   const ch = counter ? 'smash' : 'skill';
   const K = view.damageConstant ?? 1.25;
+  const one = (power, c, defense) => ({ damage: hit(power, view.coef[c], K), base: hit(power, view.coefBase[c], K), defense, power, k: view.coef[c], K });
   const power = Math.round(skill.damage / (K * view.coefBase[ch]));
-  return { damage: hit(power, view.coef[ch], K), base: hit(power, view.coefBase[ch], K), defense: counter ? 'melee' : 'ki' };
+  const main = one(power, ch, counter || skill.display?.frontBarrier ? 'melee' : 'ki');
+  const rp = skill.display?.reflectPower;
+  return { ...main, reflect: rp ? one(rp, 'skill', 'ki') : null };
+}
+/** A skillHit (or its reflect) as taken through a defense multiplier, rounded up once at the end. */
+export function skillTaken(h, def) {
+  return h ? Math.ceil(h.power * h.K * h.k * def - 1e-9) : null;
 }
 
 /** Modified damage of one blast row (old shape) for a computed side. */

@@ -9,7 +9,7 @@ import teams from '../../public/data/teams.json';
 import meta from '../../public/data/meta.json';
 import artSizes from '../../public/char_art/sizes.json';
 import transformations from '../../../../referencedata/transformations.json';
-import { collectEffects, computeStats, scaleChannel, skillHit, APPLIED_KEYS, SPARKING_CHARGE_BASE_SECONDS } from '../../src/utils/engine.js';
+import { collectEffects, computeStats, scaleChannel, skillHit, skillTaken, APPLIED_KEYS, SPARKING_CHARGE_BASE_SECONDS } from '../../src/utils/engine.js';
 import { applyLightBodyKiBlastArmor, kiBlastVolley, calcOutgoingCombo, damageTaken, armorFactor, calcFiveHitDamageTaken } from '../../src/utils/calculator.js';
 import { LIGHT_BODY, DRACONIC_AURA } from '../../src/utils/specialCapsules.js';
 import { parseCondition, conditionNeeds } from '../../src/utils/conditions.js';
@@ -485,15 +485,16 @@ export const SPARK = {
 
 /**
  * A skill's damage with the build, or null when it deals none (engine.js skillHit, measured 2026-10-13: counters
- * such as Wild Sense are a smash hit through melee defense; explosions, barriers, binds and pushes are on the skill
- * channel through ki defense). With `them`, as dealt to that side (the Matchup): their melee or plain ki defense
- * (Light Body's ki-blast-only defense left out).
+ * such as Wild Sense, and Gogeta's front-barrier swipe, hit through melee defense; explosions, barriers, binds and
+ * pushes through ki defense; skills break or ignore armor). With `them`, as dealt to that side (the Matchup), their
+ * defense applied before the rounding (Light Body's ki-blast-only defense left out). `reflect`: a barrier's
+ * returned ki blast (Stardust Barrier), the same way.
  */
 export function skillDamage(side, s, them = null) {
   const h = skillHit(s, side.view);
   if (!h || !them) return h;
-  const def = h.defense === 'melee' ? them.view.meleeDefenseStat : them.view.kiBlastDefenseArmor;
-  return { ...h, damage: damageTaken(h.damage, def) };
+  const def = (x) => (x.defense === 'melee' ? them.view.meleeDefenseStat : them.view.kiBlastDefenseArmor);
+  return { ...h, damage: skillTaken(h, def(h)), reflect: h.reflect && { ...h.reflect, damage: skillTaken(h.reflect, def(h.reflect)) } };
 }
 export function selfDamageText(b, oppDp = null) {
   const s = b.selfDamage;

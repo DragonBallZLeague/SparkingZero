@@ -13,7 +13,8 @@ import { Hits } from './moves.jsx';
 import { F } from './format.js';
 
 /* ------------------------------------------------------------------ the two-fighter header */
-export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null }) {
+/** `mid`: what sits between the two Change buttons, under the barrier (Swap sides). */
+export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = null, changeB = null, mid = null }) {
   const phone = usePhone();
   const fig = (side) => (
     <div className={`vfig${phone ? ' c' : ''}`}>
@@ -25,15 +26,16 @@ export function VsHead({ pair, chipsA, chipsB, actionsA, actionsB, changeA = nul
     <div className="vshead">
       <div className="vside l">{fig(pair.A)}<div className="who"><div className="nm"><Name parts={nameParts(pair.A.c.name)} br={!phone} />{changeA}</div>{!phone && <div className="chips">{chipsA}</div>}{actionsA}</div></div>
       <div className="vside r">{fig(pair.B)}<div className="who"><div className="nmrow r"><div className="nm"><Name parts={nameParts(pair.B.c.name)} br={!phone} /></div>{changeB}</div>{!phone && <div className="chips" style={{ justifyContent: 'flex-end' }}>{chipsB}</div>}{actionsB}</div></div>
-      <div className="vsmid"><b>VS</b></div>
+      <div className="vsmid"><b>VS</b>{mid && <div className="vsact">{mid}</div>}</div>
     </div>
   );
 }
 
 /**
- * Swaps the two fighters, each keeping its build and conditions (the live calculator's Swap). It sits with the
- * view switches over the stats, in their style, its ends in each side's colour (round 25, concept B); Change took
- * a ▾ so the arrows mean only this.
+ * Swaps the two fighters, each keeping its build and conditions (the live calculator's Swap). It sits between the
+ * two Change buttons, in the view switches' slanted style with its ends in each side's colour (round 25, concept
+ * B's look; the league moved it up from the switches to sit with Change); Change took a ▾ so the arrows mean only
+ * this.
  */
 export const SwapButton = ({ onSwap }) => (
   <button type="button" className="swapb" onClick={onSwap} title="Swap the two fighters, builds and all">
@@ -385,7 +387,11 @@ export function SkillsCmp({ vs = false }) {
     if (!s) return null;
     const get = (sides) => skillDamage(sides[k], s, vs ? sides[k === 'A' ? 'B' : 'A'] : null)?.damage;
     const name = <>{s.name}<small className="pts">{s.stockCost} pt{s.stockCost === 1 ? '' : 's'}</small></>;
-    return s.damage > 0 ? { name, n: get(pc.pair), value: <Tap title={s.name} get={get} mark={false} /> } : { name };
+    if (!(s.damage > 0)) return { name };
+    // a barrier's reflected ki blast (Stardust Barrier) on its own line
+    const rget = (sides) => skillDamage(sides[k], s, vs ? sides[k === 'A' ? 'B' : 'A'] : null)?.reflect?.damage;
+    const lines = s.display?.reflectPower ? [['Reflected ki blast', <Tap key="r" title={`${s.name}, reflected ki blast`} get={rget} mark={false} />]] : [];
+    return { name, n: get(pc.pair), value: <Tap title={s.name} get={get} mark={false} />, lines };
   };
   return [1, 2].map(n => <Mirror key={n} label={<span className="slot s">S{n}</span>} a={skill('A', n)} b={skill('B', n)} />);
 }
@@ -537,7 +543,7 @@ export function Similar({ id, name, onPick }) {
 }
 
 /** The phone's two-fighter bar: both faces and names, the VS mark, each side's Change. */
-export function PhoneVsBar({ pair, change }) {
+export function PhoneVsBar({ pair, change, mid = null }) {
   return (
     <>
       <div className="cbar">
@@ -545,7 +551,7 @@ export function PhoneVsBar({ pair, change }) {
         <span className="r"><span className="cav"><img src={faceUrl(pair.B.c)} alt="" /></span><span><Name parts={nameParts(pair.B.c.name)} /></span></span>
         <span className="cvs" aria-hidden="true"><b>VS</b></span>
       </div>
-      <div className="cbar-acts">{change('A')}{change('B')}</div>
+      <div className="cbar-acts">{change('A')}{mid}{change('B')}</div>
     </>
   );
 }

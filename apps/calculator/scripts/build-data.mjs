@@ -338,10 +338,15 @@ function buildSkills(id, cc) {
       healthAmount: disp.healthAmount === '' ? null : (num(disp.healthAmount) ?? disp.healthAmount),
       kiAmount: num(disp.kiAmount),
       ...(disp.note ? { note: disp.note } : {}),
+      // a barrier that sends a ki blast back when a ki blast or blast hits it: that shot's Power (measured)
+      ...(num(disp.reflectPower) ? { reflectPower: num(disp.reflectPower) } : {}),
     } : inferDisplay(phases, damage);
     // Interrupts: usable while being hit (the game's explosion and barrier interrupt flags, confirmed 2026-10-11)
     const gm = fm ? fm.movesOf(id).find(g => g.slot === `BlastForte${slot}`) : null;
     if (gm && ['BlastForteParamData.bInterruptibleExplosion', 'BlastForteParamData.bInterruptibleBarrier'].some(f => fm.param(gm.file, f) === 'true')) display.interrupts = true;
+    // A front barrier (only Gogeta (Super) Super Saiyan God Super Saiyan's Stardust Barrier has the flag): a
+    // close-range swipe that hits as melee (the league, 2026-10-13: x1.2 into Sparking! Plus)
+    if (gm && fm.param(gm.file, 'BlastForteParamData.bInterruptibleFrontBarrier') === 'true') display.frontBarrier = true;
     // Skills that act on the opponent do it through their damage and behaviour, not stat effects
     display.affectsOpponent = (display.type || '').split('/').some(t => OPPONENT_SKILL_TYPES.has(t));
     if (!disp) report.inferredSkills.push(`${refById.get(id).name} — ${m.Move}: ${display.type ?? 'no type'}`);

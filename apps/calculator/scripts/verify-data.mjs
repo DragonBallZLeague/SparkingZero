@@ -15,7 +15,7 @@ import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
-import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel, skillHit } from '../src/utils/engine.js';
+import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel, skillHit, skillTaken } from '../src/utils/engine.js';
 import { parseCondition } from '../src/utils/conditions.js';
 import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
 
@@ -325,13 +325,24 @@ if (v2) {
   // (melee defense x1.2, ki x1.1) to tell the defenses apart.
   const sk = (id, name) => Object.values(data.skills).find(s => s.character === id && s.name === name);
   const plus = run('0000_00', { capsules: ['00_0_0132'] });
-  const dealt = (h, def) => Math.ceil(h.damage * def - 1e-9);
-  const ew = skillHit(sk('0020_00', 'Explosive Wave'), run('0020_00'));
-  ig('Vegeta (Z - Scouter) Explosive Wave', ew?.damage, 938);
-  ig('... into Sparking! Plus (ki defense)', ew && dealt(ew, plus.kiBlastDefenseArmor), 1032);
-  const ws = skillHit(sk('0000_11', 'Wild Sense'), run('0000_11'));
-  ig('Goku (Z - Mid) Super Saiyan Wild Sense', ws?.damage, 1708);
-  ig('... into Sparking! Plus (melee defense)', ws && dealt(ws, plus.meleeDefenseStat), 2050);
+  // [who, skill, alone, into Sparking! Plus, which defense]; a second round the same day added the barrier, bind,
+  // push, Gogeta's front barrier (and its reflected ki blast) and armor
+  const skHit = (n, skill) => { const c = named(n); return skillHit(sk(c?.id, skill), run(c?.id)); };
+  const defOf = (h) => (h.defense === 'melee' ? plus.meleeDefenseStat : plus.kiBlastDefenseArmor);
+  for (const [n, skill, alone, intoPlus] of [
+    ['Vegeta (Z - Scouter)', 'Explosive Wave', 938, 1032], ['Vegeta (Z - Early)', 'Explosive Wave', 985, 1083],
+    ['Goku (Z - Mid) Super Saiyan', 'Wild Sense', 1708, 2050], ['Android 18', 'Android Barrier', 985, 1083],
+    ['Majin Buu (Evil)', 'Paralyze Beam', 688, 757], ['Majin Buu (Evil)', 'Mystic Breath', 1032, 1135],
+    ['Gogeta (Super) Super Saiyan God Super Saiyan', 'Stardust Barrier', 1313, 1575],
+  ]) {
+    const h = skHit(n, skill);
+    ig(`${n} ${skill}`, h?.damage, alone);
+    ig(`... into Sparking! Plus`, h && skillTaken(h, defOf(h)), intoPlus);
+  }
+  const reflect = skHit('Gogeta (Super) Super Saiyan God Super Saiyan', 'Stardust Barrier')?.reflect;
+  ig("Gogeta's Stardust Barrier, the reflected ki blast", reflect?.damage, 1750);
+  ig('... into Sparking! Plus (ki defense)', reflect && skillTaken(reflect, plus.kiBlastDefenseArmor), 1925);
+  ig('Vegeta (Z - Scouter) Explosive Wave into Janemba (armor broken or ignored)', skillTaken(skHit('Vegeta (Z - Scouter)', 'Explosive Wave'), run(named('Janemba').id).kiBlastDefenseArmor), 960);
   // timed from video: duration from the first frame the bar drops (about 0.05s late), charge from 5 full bars
   const near = (label, got, want, tol) => { if (!(Math.abs(got - want) <= tol)) game.push(`${label}: got ${got}, game ${want}`); };
   near('Goku (Z - Early) Sparking duration', gk.sparkSeconds, 17.8, 0.1);
