@@ -10,7 +10,7 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .B.app { height: auto; min-height: 100vh; overflow: visible; max-width: 1400px; margin: 0 auto; box-shadow: 0 0 0 1px #1a1f2e; }
 .B.app::before { position: fixed; }
 .app > main { display: block; padding-bottom: 24px; }
-.app.ph > main { padding-bottom: 64px; }
+.app.ph > main { padding-bottom: 8px; }
 /* Under the site's shared bar (packages/ui NavBar: 4px accent + 56px + 1px border, sticky at 0): the calculator's
    own bar is just the view tabs, sticky below it. --top is everything stuck to the top (the phone has only the
    shared bar; its tabs are at the bottom). */
@@ -954,3 +954,12 @@ cell never pushes it up under the tabs (its Done header stays in view) */
 .vsact .swapb:hover::before { background: rgba(30,41,82,.95); }
 .cbar-acts { align-items: center; }
 .cbar-acts .swapb::before { background: rgba(10,13,32,.88); }
+
+/* the Kame House credit under every page (the phone: above the tab bar) */
+.app .credit { display: flex; justify-content: center; padding: 14px 16px 18px; border-top: 1px solid #1a1f2e; }
+.app.ph .credit { padding-bottom: 72px; }
+.app.ph:has(.lobar) .credit { padding-bottom: 120px; }  /* the Fighter page's Loadout bar sits above the tabs */
+.app .credit a { display: inline-flex; align-items: center; gap: 6px; color: #94a3b8; font-size: 12px; font-weight: 600; text-decoration: none; }
+.app .credit a:hover span, .app .credit a:focus-visible span { color: #f97316; }
+.app .credit b { color: #3b82f6; font-weight: 700; }
+.app .credit img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }

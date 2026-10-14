@@ -209,6 +209,13 @@ function App() {
             </div>
           )}
           <main><Boundary at={st.view}>{page}</Boundary></main>
+          {/* the old calculator's credit, kept (the league, 2026-10-13): the one place the UI names a data source */}
+          <footer className="credit">
+            <a href="https://discord.gg/RgpaPb6jbz" target="_blank" rel="noopener noreferrer" title="Kame House Discord">
+              <span>Character data provided by</span><b>Kame House</b>
+              <img src={`${import.meta.env.BASE_URL}general_imgs/KameHouseIcon.png`} alt="" />
+            </a>
+          </footer>
           {sheetSide && (
             <div className="lsheet" role="dialog" aria-label="Loadout">
               <div className="lsh"><b>Loadout</b><small>{pair[sheetSide].c.name}</small><button className="x" onClick={closeCaps}>Done</button></div>
