@@ -270,7 +270,8 @@ that switch to that form.
 
 The league signed off the demo as it stood after round 24 (the Fighter page, Versus, the docked picker, the
 alternates' version marks). A side-by-side check against the live calculator (dev-branch) found four things the
-demo didn't do, added here for the league's sign-off:
+demo didn't do, added here and **signed off by the league the same day** (with Swap, the Duration rule and the
+Characters tab label below):
 - **Skill damage.** 158 of 482 skills deal damage (Wild Sense and its counters, Explosive Wave and the other
   explosions, barriers, binds, pushes). The Fighter page's Skills show it in the Damage column (Quick; a
   damaging skill's duration, if any, moves to a tile) and as the card's big number with its base (Full); Versus

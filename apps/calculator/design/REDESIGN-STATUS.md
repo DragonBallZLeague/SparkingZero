@@ -109,12 +109,14 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    the demo on 2026-10-13 (its README, "Round 23"). **Signed off on 2026-10-13** with round 24 (one Quick layout
    for Versus, the alternates' version marks, the docked picker). A check against the live calculator then added
    four things it had and the demo didn't: skill damage, Sparking charge speed and duration, Copy link and Swap
-   (demo README, "Signed off, then the live calculator's four gaps"), **waiting on the league's sign-off**.
+   (demo README, "Signed off, then the live calculator's four gaps"), **signed off by the league on 2026-10-13** with the follow-ups below.
    Second pass the same day, after the league's in-game tests: Sparking's charge and duration in seconds (the old
    "Spark Duration" turned out to be the pre-Sparking decay), skill damage through the measured defense (counters
    and Gogeta's front-barrier swipe melee, the rest ki, armor ignored; Stardust Barrier's reflected ki blast), and
    **round 25** (`concepts/swap-r25.html`): the league chose **B**'s look for Swap sides, placed between the two
-   Change buttons, and a ▾ icon for Change.
+   Change buttons, and a ▾ icon for Change. Last, the phone's tab bar says Characters like the desktop's, and a
+   damaging skill's Duration leads its primary traits. **The league signed off the demo as it stands on
+   2026-10-13**: it is the design the rebuild builds to.
 2. **URL scheme.** Character pages by name slug, the three views (Characters, Fighter, Versus) as routes, and
    share links that carry the whole build (active skills, stages, Sparking, conditions, ruleset, both sides),
    copied by the Copy link button. Old `#` share links and the website's Teams-page links must keep opening.

@@ -74,7 +74,7 @@ The league chose option B in the 2026-10-09 review doc: rebuild the calculator t
 - **Pinned on Fighter:** a headline strip, the section links and Find, which opens a closed section to reach a match.
 - **The capsule picker never replaces the page.** It docks in the fighter column on a wide screen, where hovering a capsule previews its effect on the headline strip. Narrower, it is a bottom sheet.
 - **Versus** merges Compare and Vs opponent. A Side by side / Matchup switch picks the lens, Quick / Full the depth, and each fighter's build is a rail on its own side. Quick is one layout for both lenses (round 24): the Fighter page's Quick sections, order and rows, mirrored around each stat with roster bars; the lens only changes the numbers (the Matchup: as dealt to the other side, with armor shields). Smash and Charged ki blast show Lv.3 in every Quick view. Ways to switch a costume's alternate blast are mocked in `design/concepts/alternates-r24.html` (the league chose version marks).
-- **Signed off (2026-10-13)**, then four things the live calculator had were added for sign-off:
+- **Signed off (2026-10-13)**, then four things the live calculator had were added and **signed off the same day** (the demo as it stands is what the rebuild builds to):
   - skill damage (`skillHit` / `skillTaken` in `engine.js`, measured 2026-10-13):
     - counters such as Wild Sense are a 1,120-Power smash hit through melee defense;
     - Gogeta's Stardust Barrier (`display.frontBarrier`, the only front barrier) is a melee swipe, plus a reflected 1,000-Power ki blast (`display.reflectPower`, curated);
