@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DBZ League Sparking Zero Character Calculator</title>
-       <link rel="icon" type="image/png" href="/SZLFavicon.png" />
-    <link rel="icon" type="image/png" href="/SparkingZero/calculator/favicon.png" />
+    <title>Character Calculator</title>
+    <link rel="icon" type="image/png" href="/SparkingZero/calculator/SZLFavicon.png" />
+    <style>
+      /* before the app's stylesheet loads: the page colour, and the loading and load-failed messages */
+      html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+      .loading, .loadfail { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 60vh; padding: 16px; text-align: center; }
+      .loading { color: #94a3b8; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
+      .loadfail small { color: #64748b; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><div class="loading">Loading the calculator</div></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -34,7 +34,7 @@ Restores a deep link that the site-root 404 dispatcher had to bounce. GitHub Pag
 
 Added in the Analyzer redesign's Phase 2a, closing out the old `sz-orange`/`dragon-orange`/`dbz.orange` naming split. Exports `brand`, `surface`, `radius` and `font`. **Canonical accent is `#f97316`.**
 
-- **CommonJS on purpose.** Each app's `tailwind.config.js` loads it directly, and those are a mix of CJS (analyzer, match builder) and ESM (website, calculator); `module.exports` is the form both can consume. Do not convert it to ESM.
+- **CommonJS on purpose.** Each app's `tailwind.config.js` loads it directly, and those are a mix of CJS (analyzer, match builder) and ESM (website; the calculator's too until its 2026-10-13 rebuild dropped Tailwind); `module.exports` is the form both can consume. Do not convert it to ESM.
 - All four apps now source their palette from it, and each keeps its **existing token names as aliases** onto the shared values (`dbz.*`, `sz-*`, `dragon-*`) so no existing markup breaks. New work should prefer the shared `brand.*` names.
-- All four `tailwind.config.js` files also scan `../../packages/ui/src/**/*.{js,jsx}`, so Tailwind classes used inside this package are generated. That was previously missing, which is why `NavBar.css` is hand-written plain CSS rather than Tailwind classes.
+- All three `tailwind.config.js` files (website, analyzer, match builder) also scan `../../packages/ui/src/**/*.{js,jsx}`, so Tailwind classes used inside this package are generated. That was previously missing, which is why `NavBar.css` is hand-written plain CSS rather than Tailwind classes.
 - Admin and Submit do **not** consume this package, so tokens do not reach them.

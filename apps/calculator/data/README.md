@@ -250,15 +250,15 @@ skill id `<characterId>:<slot>` as the id, into that skill (e.g. `damage`).
 | File | Shape |
 | --- | --- |
 | `meta.json` | `schemaVersion`, `dataVersion` (content hash; the app fetches every other file with `?v=<dataVersion>`), source versions, `referenceAttacker`, `defaultRuleset`, `rulesets` (total cost, banned ids, group caps) |
-| `characters.json` | array in referencedata order: `id`, `name`, `aliases`, `image`, `class {key, label}`, `dp`, `dpScale`, `stats` (explicit units: defenses are incoming-damage multipliers, ki in bars, `kiBlastLimit` null = unlimited), `coef` (total damage coefficient per channel = DP scale + class add), `classCoef`, `incomingDamage`, `skills` (ids into skills.json), `traits`, `sparking {armor, effects, armorBreakLevel}`, `passives`, `provenance {source: [fields]}`. **The website reads `name` from this file** |
+| `characters.json` | array in referencedata order: `id`, `name`, `slug` (its page address, the Analyzer's slug rule), `aliases`, `image`, `class {key, label}`, `dp`, `dpScale`, `stats` (explicit units: defenses are incoming-damage multipliers, ki in bars, `kiBlastLimit` null = unlimited), `coef` (total damage coefficient per channel = DP scale + class add), `classCoef`, `incomingDamage`, `skills` (ids into skills.json), `traits`, `sparking {armor, effects, armorBreakLevel}`, `passives`, `provenance {source: [fields]}`. **The website reads `name` from this file** |
 | `skills.json` | object keyed `<characterId>:<slot>`: `name`, `stockCost`, `damage`, `duration`, `phases [{duration, effects [{key, value}]}]` (exact game coefficients; `stages: true` when the phases are charge stages, one of which applies), `expiryRule`, `display`, `armor` |
 | `blasts.json` | object keyed by character id: `[{slot, variant, name, kiCost, triggerKi, damage, damageStatus (measured / computed / unmeasured), boostedDamage, recipe?, hits? ([[Power, count]]: the hits the damage is made of, each rounded up on its own), category, type, impactPower, traits, flags, lungeSpeed, moveLimitTime}]` |
-| `capsules.json` | every referencedata capsule: `id`, `name`, `cost`, `description`, `exclusiveTo`, `effects`, `bannedIn` (ruleset names) |
+| `capsules.json` | every referencedata capsule: `id`, `name`, `slug` (its name in links), `cost`, `description`, `exclusiveTo`, `effects`, `bannedIn` (ruleset names) |
 | `teams.json` | `[{name, slug, members: [ids]}]` from the season's master lists, every form included |
 
-`src/data/loadData.js` loads them; `src/data/adapter.js` `toLegacy()` converts them to the shapes the components read.
+`src/data/data.js` loads them; `src/data/adapter.js` `toLegacy()` converts them to the old app's shapes, which only `verify-data` still checks.
 
-Share links (`src/utils/shareLink.js`) are `{v: 2, c: characterId, p: [capsuleId|null x7], o?, op?}`; old links and the website's links carry names and still decode (exact name, then `aliases`, then a case/punctuation-insensitive match).
+Links are page addresses (`src/links.js`): `/calculator/goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking`, by `slug`, with ids accepted. The old share links (`src/utils/shareLink.js`: `{v: 2, c: characterId, p: [capsuleId|null x7], o?, op?}`, and name links like the website's before 2026-10-13) still open and are rewritten to the address (exact name, then `aliases`, then a case/punctuation-insensitive match).
 
 ## The stat engine
 

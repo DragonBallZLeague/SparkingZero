@@ -9,6 +9,15 @@
  * here, not in a copy.
  */
 
+/**
+ * A Calculator name's page address (/calculator/goku-z-early): the slug rule the Calculator and the Analyzer
+ * use (apps/analyzer/src/utils/characterSlug.js). verify-data checks it gives every character's published slug.
+ */
+export function calculatorSlug(name) {
+  return String(name ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 /** transformations.json (id-keyed) -> { [characterName]: [transformsToName, ...] } */
 export function buildTransformAdj(data) {
   const idToName = {};

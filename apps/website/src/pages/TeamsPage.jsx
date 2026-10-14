@@ -5,14 +5,13 @@ import { Users, ChevronDown, ChevronUp, Calendar, UserMinus } from 'lucide-react
 import yaml from 'js-yaml';
 import { useSeasonContext } from '../contexts/SeasonContext';
 import { useCharacterIndex } from '../hooks/useCharacterIndex';
-import { getFormChain } from '../utils/formChain';
+import { getFormChain, calculatorSlug } from '../utils/formChain';
 
-const CALC_BASE = 'https://dragonballzleague.github.io/SparkingZero/calculator/#';
-const NULLS7 = [null, null, null, null, null, null, null];
+// a fighter's Calculator page (/calculator/goku-z-early); the old #<base64> links still open there too
+const CALC_BASE = 'https://dragonballzleague.github.io/SparkingZero/calculator/';
 
 function calcLink(charName) {
-  const json = JSON.stringify({ c: charName, p: NULLS7, op: NULLS7 });
-  return CALC_BASE + btoa(encodeURIComponent(json));
+  return CALC_BASE + calculatorSlug(charName);
 }
 
 function normalizeRoster(roster = []) {

@@ -33,6 +33,8 @@ import { movesetOf } from './lib/moveset.mjs';
 import { rushChainsOf } from './lib/rushChains.mjs';
 import { armorOf } from './lib/armor.mjs';
 import { loadLeagueBuilds } from './lib/lineups.mjs';
+// the Analyzer's slug rule, so a character's link name is the same in both apps
+import { slugifyCharacterName as slugify } from '../../analyzer/src/utils/characterSlug.js';
 import { gameCharacterRows, gameMovePower, gameSkillValues, gamePassives, sameValue } from './lib/gameSource.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -617,7 +619,7 @@ for (const rc of ref.characters) {
   const pas = passives(id);
   const sparkingPassive = pas.find(p => p.condition === 'sparking');
   const c = {
-    id, name: rc.name,
+    id, name: rc.name, slug: slugify(rc.name),
     aliases: aliases.filter(a => a.id === id).map(a => a.alias),
     image,
     class: { key, label: cls.label },
@@ -903,7 +905,7 @@ const rulesets = Object.entries(ref.rules.rulesets || {}).map(([name, rs]) => {
 });
 const defaultRuleset = rulesets.find(r => r.name === ref.rules.default) || rulesets[0];
 const capsules = ref.capsules.map(cap => ({
-  id: cap.id, name: cap.name, cost: cap.cost, type: cap.type, description: cap.description,
+  id: cap.id, name: cap.name, slug: slugify(cap.name), cost: cap.cost, type: cap.type, description: cap.description,
   exclusiveTo: cap.exclusiveTo,
   effects: capsuleEffects.get(cap.id) || [],
   bannedIn: rulesets.filter(rs => rs.banned.includes(cap.id)).map(rs => rs.name),

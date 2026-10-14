@@ -14,7 +14,8 @@ import { readCsv } from './lib/csv.mjs';
 import { loadRefdata, repoRoot } from './lib/refdata.mjs';
 import { toLegacy } from '../src/data/adapter.js';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
-import { buildTransformAdj, getFormChain } from '../../website/src/utils/formChain.js';
+import { linkIndex, readLink, writeLink } from '../src/links.js';
+import { buildTransformAdj, getFormChain, calculatorSlug } from '../../website/src/utils/formChain.js';
 import { APPLIED_KEYS, collectEffects, computeStats, scaleChannel, skillHit, skillTaken } from '../src/utils/engine.js';
 import { parseCondition } from '../src/utils/conditions.js';
 import { kiBlastVolley, armorFactor, damageTaken, calcOutgoingCombo } from '../src/utils/calculator.js';
@@ -108,6 +109,45 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
   }
   const legacyLink = decodeBuild(pack({ c: 'Gohan (Super Hero) Ultimate Gohan', p: ['Light Body', null], o: 'Goku (DAIMA) Super Saiyan 4' }), resolver);
   check(legacyLink?.character?.id === '3000_02' && legacyLink?.opponent?.id === '3120_04', 'an old link naming "Gohan (Super Hero) Ultimate Gohan" vs "Goku (DAIMA) Super Saiyan 4" restores');
+}
+
+// ------------------------------------------------------------------ addresses (src/links.js: /calculator/<fighter>/vs/<opponent>?caps=...)
+if (v2) {
+  // slugs are the link names: unique, never empty, never mistakable for an id or for the path's "vs"
+  const slugIssues = (list, what) => {
+    const seen = new Map(), out = [];
+    for (const x of list) {
+      if (!x.slug) out.push(`${x.name}: no slug`);
+      else if (/_/.test(x.slug) || x.slug === 'vs') out.push(`${x.name}: "${x.slug}" can be read as an id or the path's vs`);
+      else if (seen.has(x.slug)) out.push(`"${x.slug}": ${seen.get(x.slug)} and ${x.name}`);
+      seen.set(x.slug, x.name);
+    }
+    check(!out.length, `every ${what} has its own link name (${list.length} slugs, unique, none like an id)`, out);
+  };
+  slugIssues(chars, 'character');
+  const webSlug = chars.filter(c => calculatorSlug(c.name) !== c.slug).map(c => `${c.name}: ${calculatorSlug(c.name)} vs ${c.slug}`);
+  check(!webSlug.length, 'the website Teams page links each name to its fighter\'s page (formChain.js calculatorSlug gives every published slug)', webSlug);
+  slugIssues(data.capsules, 'capsule');
+  const ix = linkIndex({ characters: chars, capsules: data.capsules, skillsById: data.skills, rulesets: data.meta.rulesets, defaultRuleset: data.meta.defaultRuleset });
+  const caps = data.capsules.filter(c => !c.bannedIn?.length).slice(0, 7).map(c => c.id);
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const bad = [];
+  for (const c of chars) {
+    const skills = {}, stage = {};
+    for (const k of c.skills || []) { const s = data.skills[k]; if (s) { skills[s.slot] = true; if (s.phases?.length > 1) stage[s.slot] = 2; } }
+    const A = { id: c.id, caps, skills, stage, sparking: true, sit: { hp: 0.4, ki: 3, skill: 2, map: 'namek', events: { knockout: true } } };
+    const B = { id: chars[0].id, caps: caps.slice(0, 2), skills: {}, stage: {}, sparking: false, sit: null };
+    const st = { view: 'versus', A, B, rs: data.meta.rulesets.at(-1).name, d: 'full', vl: 'match' };
+    const link = writeLink(st, ix);
+    const [path, search = ''] = link.split('?');
+    const back = readLink(path, search, ix);
+    if (!same(back, st)) bad.push(`${c.name}: ${link}`);
+    const byId = readLink(c.id, '', ix);
+    if (byId.A?.id !== c.id || byId.view !== 'fighter') bad.push(`${c.name}: the id ${c.id} doesn't open it`);
+  }
+  check(!bad.length, `addresses round-trip for all ${chars.length} fighters (both sides, 7 capsules, skills and stages, Sparking, conditions, ruleset, Full, Matchup) and each id opens its fighter`, bad);
+  check(writeLink({ view: 'versus', A: { id: '0000_00', caps: ['00_0_0005', '00_0_0026'], skills: {}, stage: {}, sparking: true, sit: null }, B: { id: '0650_00', caps: [], skills: {}, stage: {}, sparking: false, sit: null }, rs: data.meta.defaultRuleset, d: 'quick', vl: 'side' }, ix)
+    === 'goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking', 'a link reads as names: goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking');
 }
 
 // ------------------------------------------------------------------ field types (legacy shapes, what the components read)

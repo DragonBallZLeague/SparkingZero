@@ -5,6 +5,9 @@ and Full stats as one page), Versus (Compare and Vs opponent as one page), both 
 breakdowns, on the published data and the calculator's own engine. It is a
 throwaway: delete this folder once the real pages ship and match it.
 
+**Moved into the app on 2026-10-13** (`apps/calculator/src/app/`, with real addresses: `src/links.js`). Changes
+go there now; this copy stays only as the signed-off reference until the league signs off the rebuilt app.
+
 ## Run it
 
 From the repo root: `node apps/calculator/design/demo/build-demo.mjs`, then open

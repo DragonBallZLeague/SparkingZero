@@ -117,11 +117,17 @@ them. The health bar marks where each effect turns on; an "In effect" line names
    Change buttons, and a ▾ icon for Change. Last, the phone's tab bar says Characters like the desktop's, and a
    damaging skill's Duration leads its primary traits. **The league signed off the demo as it stands on
    2026-10-13**: it is the design the rebuild builds to.
-2. **URL scheme.** Character pages by name slug, the three views (Characters, Fighter, Versus) as routes, and
-   share links that carry the whole build (active skills, stages, Sparking, conditions, ruleset, both sides),
-   copied by the Copy link button. Old `#` share links and the website's Teams-page links must keep opening.
-   Uses `restoreDeepLink` like the Analyzer.
-3. **Rebuild the app** to the signed-off demo. Then delete `design/concepts/`, `design/demo/` and this file.
+2. **URL scheme: done (2026-10-13).** The league chose the short form, capsules by name and Characters at the root:
+   `/calculator/` Characters, `/calculator/goku-z-early` Fighter, `/calculator/goku-z-early/vs/janemba` Versus, the
+   build as a readable query (`?caps=rush-attack-boost-1,blast-burst&skills=kaioken&sparking&lens=matchup`), ids
+   accepted for fighters and capsules. `src/links.js`; `verify-data` round-trips all 241 fighters and fails on a slug
+   collision. Old `#` share links (the live calculator's and the website's) open and are rewritten; the website's
+   Teams page now links to the addresses (`formChain.js` `calculatorSlug`). Deep links go through the site-root 404
+   page and `restoreDeepLink`, checked on `scripts/serve-dist.js`.
+3. **Rebuild the app: built (2026-10-13), waiting on the league's sign-off.** `src/app/` is the demo moved in with
+   only its imports changed (data fetched at runtime, `src/data/data.js`), the old `App.jsx`, components and
+   Tailwind removed. **From here, changes go in `src/app/`, not `design/demo/`.** Once the league signs off the
+   rebuilt app, delete `design/concepts/`, `design/demo/` and this file.
 4. Keep `apps/calculator/CLAUDE.md` in step at each stage.
 
 ## Conventions
