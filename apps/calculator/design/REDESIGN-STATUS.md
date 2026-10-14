@@ -25,7 +25,7 @@ with the rebuild** (decided 2026-10-13), not on its own.
   the sheet's rows show the main type, primary values and a skill's effects (minor tags only in Full stats, since the Sheet is the slim view), a skill's duration in the
   Damage column. Trait sort: blasts' tiles Clash, Impact power, Speed, Tracking, Lunge speed, Time limit, tags
   Initial cost, Lock-on required, No Step Back, Unguardable, Cinematic, Chargeable, Audience flees, Destroys map,
-  Targets giants; skills' tiles Activation, Targets, Armor, tags Unguardable, Cutscene, Interrupts; Instant ki,
+  Targets giants; skills' tiles (Duration first on a damaging skill, 2026-10-13) Activation, Targets, Armor, tags Unguardable, Cutscene, Interrupts; Instant ki,
   Instant Sparking and stat modifiers in the effect tiles; self-damage a red panel; a Special line; stage buttons
   only for reactivation stages; Grab and Crash types.
 - **Round 14 views (`#more`):** opponent build editing on Vs (skills and Sparking first, then capsules by category

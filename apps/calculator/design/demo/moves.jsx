@@ -89,9 +89,7 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
         <span className="slot s">S{slot}</span>
         <span className="mvn">{s.name}</span>
         <span className="tcell">
-          <span className="tline"><span className="ttype">{SKILL_TYPE(s)}</span>{skillTiles(s).map(t => <span className="pv" key={t.label}><i>{t.label}</i>{t.value}</span>)}
-            {s.damage > 0 && s.duration > 0 && <span className="pv"><i>Duration</i>{s.duration}s</span>}
-            {s.display?.reflectPower && <span className="pv"><i>Reflected ki blast</i><Tap as="span" title={`${s.name}, reflected ki blast`} get={reflectGet(sideKey, s)} /></span>}</span>
+          <span className="tline"><span className="ttype">{SKILL_TYPE(s)}</span>{skillTiles(s).map(t => <span className="pv" key={t.label}><i>{t.label}</i>{t.value}</span>)}            {s.display?.reflectPower && <span className="pv"><i>Reflected ki blast</i><Tap as="span" title={`${s.name}, reflected ki blast`} get={reflectGet(sideKey, s)} /></span>}</span>
           {effects.length > 0 && <span className="tline">{effects.map((t, i) => <span className={`ef${t.kind ? ' ' + t.kind : ''}`} key={i}>{t.short} {t.value}{t.time ? ` for ${t.time}` : ''}</span>)}</span>}
         </span>
         {/* a damaging skill's damage (Wild Sense, Explosive Wave, barriers, binds), else its duration */}
@@ -119,9 +117,7 @@ function SkillCard({ side, sideKey = 'A', slot, onStage }) {
           {s.damage > 0 ? (
             <>
               <Tap as="b" title={s.name} get={skillGet(sideKey, s)} />
-              <small>Base {F.int(skillDamage(side, s).base)}</small>
-              {s.duration > 0 && <small>Duration <i>{s.duration}s</i></small>}
-              {s.display?.reflectPower && <small title="A ki blast or blast hitting the barrier sends a ki blast back">Reflected ki blast <Tap as="i" title={`${s.name}, reflected ki blast`} get={reflectGet(sideKey, s)} /></small>}
+              <small>Base {F.int(skillDamage(side, s).base)}</small>              {s.display?.reflectPower && <small title="A ki blast or blast hitting the barrier sends a ki blast back">Reflected ki blast <Tap as="i" title={`${s.name}, reflected ki blast`} get={reflectGet(sideKey, s)} /></small>}
             </>
           ) : <><b>{s.duration || '–'}{s.duration ? <small>s</small> : null}</b><small>Duration</small></>}
           {s.stages && (

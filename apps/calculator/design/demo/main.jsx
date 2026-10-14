@@ -12,7 +12,8 @@ import { SkillSwitches } from './sheet.jsx';
 import { CharacterPicker, CapsulePicker, QuickPick } from './pickers.jsx';
 import { NavBar } from '../../../../packages/ui/src/index.js';
 
-const TABS = [['roster', 'Characters', 'Roster'], ['fighter', 'Fighter', 'Fighter'], ['versus', 'Versus', 'Versus']];
+// one label per view on every width (the phone's bar once said Roster)
+const TABS = [['roster', 'Characters'], ['fighter', 'Fighter'], ['versus', 'Versus']];
 
 class Boundary extends React.Component {
   constructor(p) { super(p); this.state = { error: null }; }
@@ -157,7 +158,7 @@ function App() {
           )}
           {phone && (
             <nav className="phtabs">
-              {TABS.map(([k, , s]) => <button key={k} className={st.view === k ? 'on' : ''} onClick={() => go(k)}>{s}</button>)}
+              {TABS.map(([k, l]) => <button key={k} className={st.view === k ? 'on' : ''} onClick={() => go(k)}>{l}</button>)}
               <CopyLink phone />
             </nav>
           )}

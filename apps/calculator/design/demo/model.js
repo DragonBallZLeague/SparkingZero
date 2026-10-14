@@ -511,6 +511,9 @@ export function selfDamageText(b, oppDp = null) {
 export const SKILL_TYPE = (s) => (s.display?.type || 'Skill').split('/')[0];
 export function skillTiles(s) {
   const t = [];
+  // a damaging skill shows its damage where a skill's duration usually sits, so a duration (binds' hold, Saiyan
+  // Burst's 30s) leads its primary traits instead
+  if (s.damage > 0 && s.duration > 0) t.push(['Duration', `${s.duration}s`]);
   const at = s.display?.activationTime;
   t.push(['Activation', at ? `${at}s` : 'Instant']);
   t.push(['Targets', s.display?.affectsOpponent ? 'Opponent' : 'Self']);
