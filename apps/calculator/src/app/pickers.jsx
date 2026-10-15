@@ -3,7 +3,7 @@
 // every allowed capsule by type with what it changes on this build).
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  characters, capsules, teams, byId, faceUrl, artUrl, figStyle, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, nameParts,
+  characters, capsules, teams, byId, faceUrl, artUrl, figStyle, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, movePos, gameMoves, nameParts,
   CAPSULE_TYPES, typeClass, capsuleSummary, buildCheck, inAttackGroup, evaluate, blastsOf, blastDamage, volley, conditionNeedsOf, formsOf,
 } from './model.js';
 import { usePhone, Rk, Name, RulesetSelect } from './ui.jsx';
@@ -91,6 +91,7 @@ function Preview({ id, selected, onSelect, onPick, side, onCompare, onVs, curren
   const c = byId.get(id);
   const v = baseView(id);
   const forms = formsOf(id);
+  const smash3 = gameMoves({ c, view: v }).smash.at(-1);
   return (
     <div className="pvw">
       <div className="pvfig"><img src={artUrl(id)} alt="" style={figStyle(byId.get(id))} /></div>
@@ -100,7 +101,8 @@ function Preview({ id, selected, onSelect, onPick, side, onCompare, onVs, curren
         <div className="tiles t2">
           <div className="tile"><span>HP</span><b>{F.int(v.health)}</b></div>
           <div className="tile"><span>Rush 5-hit</span><b>{F.int(v.rush5Hit)}</b><Rk p={rosterPos('rush5', x => x.rush5Hit, v.rush5Hit)} /></div>
-          <div className="tile"><span>Smash</span><b>{F.int(v.smash)}</b><Rk p={rosterPos('smash', x => x.smash, v.smash)} /></div>
+          {/* the smash at full charge (Lv.3), as the sheet's Quick view shows it */}
+          <div className="tile"><span>Smash<em className="kt lv">Lv.3</em></span><b>{F.int(smash3)}</b><Rk p={movePos('smash3', g => g.smash.at(-1), smash3)} /></div>
           <div className="tile"><span>Ki blast limit</span><b>{F.count(v.kiBlastLimit)}</b><Rk p={rosterPos('kibl', x => Math.min(x.kiBlastLimit, 20), Math.min(v.kiBlastLimit, 20))} /></div>
         </div>
         {forms.length > 1 && (
@@ -181,7 +183,7 @@ export function CharacterPicker({ current, side, view, onPick, onClose = null, o
 
 /* ------------------------------------------------------------------ capsule picker */
 const HEADLINE = [
-  ['HP', (s) => s.view.health], ['Rush 5-hit', (s) => s.view.rush5Hit], ['Smash', (s) => s.view.smash], ['Throw', (s) => s.view.throw],
+  ['HP', (s) => s.view.health], ['Rush 5-hit', (s) => s.view.rush5Hit], ['Smash Lv.3', (s) => gameMoves(s).smash.at(-1)], ['Throw', (s) => s.view.throw],
   ['Vanishing Attack', (s) => s.view.vanishingAttack], ['Dragon Smash', (s) => s.view.dragonSmash],
   ['Follow-ups', (s) => s.view.pursuitLimit.general, String], ['Vanishing Attack uses', (s) => s.view.pursuitLimit.vanishingAttack, String], ['Dragon Homing uses', (s) => s.view.pursuitLimit.dragonHoming, String],
   ['Ki blast', (s) => s.view.kiBlastDmg], ['Ki blast limit', (s) => s.view.kiBlastLimit, F.count], ['Full volley', (s) => volley(s.view)],

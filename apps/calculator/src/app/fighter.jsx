@@ -5,7 +5,7 @@
 // opening a closed section to reach it. The capsule picker docks in the fighter column (main.jsx), so the
 // numbers stay in view while capsules go on and off.
 import React, { useEffect, useRef, useState } from 'react';
-import { fiveHitTaken, volley } from './model.js';
+import { fiveHitTaken, volley, gameMoves } from './model.js';
 import { Modes, PhoneSectionNav, usePhone } from './ui.jsx';
 import { QuickBody, FighterColumn } from './sheet.jsx';
 import { sections as fullSections, FullForm, Summary } from './fullstats.jsx';
@@ -21,7 +21,7 @@ export const HEAD = [
   { label: 'Health', title: 'HP', get: (v) => v.health, ph: 1 },
   { label: 'Melee def', title: 'Melee defense', get: (v) => 1 - v.meleeDefenseStat, fmt: (x) => F.def(1 - x), kind: 'def' },
   { label: 'Rush 5-hit', title: 'Rush 5-hit', get: (v) => v.rush5Hit, ph: 1 },
-  { label: 'Smash', title: 'Smash', get: (v) => v.smash, ph: 1 },
+  { label: 'Smash Lv.3', title: 'Smash, Charge Lv.3', get: (v, base, side) => gameMoves(side).smash.at(-1), ph: 1 },
   { label: (v) => (canCharge(v) ? 'Ki charge' : 'Ki regen'), title: (v) => (canCharge(v) ? 'Ki charge' : 'Ki regen'), get: (v, base) => (canCharge(base) ? v.kiCharge : v.kiRegen), fmt: (x) => (x < 1 ? F.dec(x) : F.dec2(x)), unit: '/s', kind: 'dec' },
   { label: 'Ki blast', title: 'Ki blast', get: (v) => v.kiBlastDmg, ph: 1 },
   { label: 'Skill gauge', title: 'Skill gauge per minute', get: (v) => parseFloat(v.skillRegen), fmt: F.dec, unit: '/min', kind: 'dec' },
@@ -35,12 +35,12 @@ const lab = (h, v) => (typeof h.label === 'function' ? h.label(v) : h.label);
 /** What the build changes among the headline numbers (the phone's loadout sheet, above the capsules). */
 export function BuildDelta({ side, base }) {
   if (!side || !base) return null;
-  const g = (h, v) => h.get(v, base.view);
-  const list = HEAD.filter(h => { const a = g(h, base.view), b = g(h, side.view); return typeof a === 'number' && typeof b === 'number' && Math.abs(a - b) > 1e-9; });
+  const g = (h, s) => h.get(s.view, base.view, s);
+  const list = HEAD.filter(h => { const a = g(h, base), b = g(h, side); return typeof a === 'number' && typeof b === 'number' && Math.abs(a - b) > 1e-9; });
   return (
     <div className="delta">
       {list.length ? <>Changed{list.map(h => {
-        const fmt = h.fmt || F.int, a = g(h, base.view), b = g(h, side.view);
+        const fmt = h.fmt || F.int, a = g(h, base), b = g(h, side);
         return <span key={lab(h, base.view)}>{lab(h, base.view)} <s>{fmt(a)}</s> <b className={(h.less ? b < a : b > a) ? 'up' : 'dn'}>{fmt(b)}</b></span>;
       })}</> : <i>No headline number changed yet</i>}
     </div>
