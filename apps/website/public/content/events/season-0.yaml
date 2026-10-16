@@ -139,7 +139,24 @@ events:
     tagline: Best of the Best
     date: 9/19/2026-9/26/2026
     status: completed
-  - participants: []
+  - participants:
+      - name: North Kai
+        description: |-
+          Primal Instinct
+          Z-Fighters
+          Master & Student
+        members:
+          - character: Super Vegeta
+            team: Master & Student
+          - character: SSJ Goku (Mini)
+            team: Primal Instincts
+          - character: SSJ Gohan (Teen)
+            team: Z-Fighters
+          - character: SSJ Goku (Z-Mid)
+            team: Z-Fighters
+        lineup_file: north_kai-1-.yaml.txt
+        color: "#5dc8b7"
+        icon: /SparkingZero/images/1000009520.webp
     blocks:
       - type: markdown
         title: Rules
