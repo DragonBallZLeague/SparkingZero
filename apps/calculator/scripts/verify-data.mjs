@@ -11,7 +11,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { readCsv } from './lib/csv.mjs';
-import { loadRefdata, repoRoot } from './lib/refdata.mjs';
+import yaml from 'js-yaml';
+import { loadRefdata, normName, repoRoot } from './lib/refdata.mjs';
+import { LEAGUE_BUILDS_SHOWN } from './lib/lineups.mjs';
 import { decodeBuild, encodeBuild, makeResolver } from '../src/utils/shareLink.js';
 import { linkIndex, readLink, writeLink } from '../src/links.js';
 import { applyOrder } from './lib/order.mjs';
@@ -463,20 +465,14 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
     ig('Devilmite Beam is wickedness-scaled', beam?.flags?.includes('wickednessScaled'), true);
     ig('Devilmite Beam on Goku (Z - Early)', on('Goku (Z - Early)'), 0);
     ig('Devilmite Beam on Frieza (Z) 1st Form', on('Frieza (Z) 1st Form'), 28350);
-    // the league's own builds (website lineups), the opponent's build presets: at most 3 each, real capsules,
-    // newest season first; Piccolo's top build is Budokai's Season 0 playoff build
-    const capIds = new Set(data.capsules.map(c => c.id));
-    const lb = data.characters.filter(c => c.leagueBuilds);
-    ig('league builds: at most 6 per character, every capsule known', lb.every(c => c.leagueBuilds.top.length <= 6 && c.leagueBuilds.top.every(b => b.capsules.every(id => capIds.has(id)))), true);
-    ig('league builds: newest season first', lb.every(c => c.leagueBuilds.top.every((b, i, a) => !i || a[i - 1].season >= b.season)), true);
-    const picc = data.characters.find(c => c.id === '0040_00')?.leagueBuilds;
-    // grows as the website links new lineups (19 until the 2026-10-14 merge of dev-branch's newer games)
-    ig('Piccolo league builds: lineups, builds', `${picc?.lineups}, ${picc?.builds}`, '20, 7');
-    ig("Piccolo's top league build (Budokai, Season 0 playoffs)", picc?.top?.[0]?.capsules?.map(id => data.capsules.find(c => c.id === id)?.name).sort().join(', '),
-      'Blast Attack Boost 2, Fury!, Indomitable Fighting Spirit, Latent Power Unleashed 2, Latent Power!, Rush Attack Boost 2');
-    // the Command list's Special line: every move with a unique rule carries the league's wording
-    const specials = Object.values(data.blasts).flat().filter(b => b.special).map(b => b.name).sort().join(', ');
-    ig('moves with a Special line', specials, 'Body Change, Devilmite Beam, Evil Containment Wave, Neo Tri-Beam');
+  }
+  {
+    // the Command list's Special line: each curated/move-special.csv row's move carries its wording, and no other move has one
+    const rows = readCsv(path.join(DATA, 'curated', 'move-special.csv')).rows;
+    const want = new Set(rows.map(r => `${r.id} ${r.move}: ${r.special}`));
+    const got = Object.entries(data.blasts).flatMap(([id, bs]) => bs.filter(b => b.special).map(b => `${id} ${b.name}: ${b.special}`));
+    const off = [...[...want].filter(x => !got.includes(x)).map(x => `missing: ${x}`), ...got.filter(x => !want.has(x)).map(x => `not in move-special.csv: ${x}`)];
+    check(!off.length, `every move-special.csv row's move carries its Special line, and no other move has one (${rows.length})`, off);
   }
   {
     const tr = (n, mv) => ['homing', 'steering', 'straight'].find(f => data.blasts[data.characters.find(c => c.name === n)?.id]?.find(b => b.name === mv)?.flags?.includes(f));
@@ -603,6 +599,62 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
     for (const [k, want] of pairs) if (v[k] !== want) drift.push(`${c.name}.${k}: ${v[k]} vs ${want}`);
   }
   check(!drift.length, `with no effects the engine reproduces every character's published stats (${data.characters.length})`, drift);
+}
+
+// ------------------------------------------------------------------ league builds (website lineups)
+// The opponent's build presets, read from the lineups the website's season and event pages link. The
+// league adds lineups through the CMS all season, so nothing here names a count or a build: the published
+// figures are recounted straight from the lineup files, and they must match whatever the content holds.
+{
+  const content = path.join(ROOT, 'apps', 'website', 'public', 'content');
+  // every lineup_file / lineup_file_week<n> the season and event pages name (an empty one is a match not played yet)
+  const linked = new Set();
+  const walk = (node) => {
+    if (Array.isArray(node)) node.forEach(walk);
+    else if (node && typeof node === 'object') for (const [k, v] of Object.entries(node)) {
+      if (/^lineup_file/.test(k)) { if (typeof v === 'string' && v.trim()) linked.add(v.trim()); }
+      else walk(v);
+    }
+  };
+  for (const dir of ['seasons', 'events']) for (const f of fs.readdirSync(path.join(content, dir)).filter(f => /\.ya?ml$/.test(f))) {
+    walk(yaml.load(fs.readFileSync(path.join(content, dir, f), 'utf8')));
+  }
+  const files = [...linked].filter(f => fs.existsSync(path.join(content, 'lineups', f)));
+  // name -> id as build-data resolves it: the name, an alias, then the normalised name
+  const byNorm = new Map(chars.map(c => [normName(c.name), c.id]));
+  const idOf = (n) => chars.find(c => c.name === n)?.id ?? aliasMap[n] ?? byNorm.get(normName(n)) ?? null;
+  const capByName = new Map(data.capsules.map(c => [c.name, c.id]));
+  const recount = new Map(); // id -> { lineups, builds: Map(sorted capsule ids -> uses) }
+  for (const f of files) {
+    const doc = yaml.load(fs.readFileSync(path.join(content, 'lineups', f), 'utf8')) || {};
+    for (const m of [...(doc.members || []), ...(doc.members ? [] : [...(doc.team1 || []), ...(doc.team2 || [])])]) {
+      const id = idOf(String(m.character ?? '').trim());
+      const caps = (m.capsules || []).map(c => capByName.get(String(c).replace(/\s*\(\d+\)\s*$/, '').trim())).filter(Boolean);
+      if (!id || !caps.length) continue;
+      const r = recount.get(id) || { lineups: 0, builds: new Map() };
+      r.lineups++;
+      const key = [...caps].sort().join('|');
+      r.builds.set(key, (r.builds.get(key) || 0) + 1);
+      recount.set(id, r);
+    }
+  }
+  const off = [];
+  for (const c of chars) {
+    const lb = c.leagueBuilds, r = recount.get(c.id);
+    if (!lb && !r) continue;
+    if (!lb || !r) { off.push(`${c.name}: published ${lb ? `${lb.lineups} lineups` : 'none'}, recount ${r ? `${r.lineups} lineups` : 'none'}`); continue; }
+    if (lb.lineups !== r.lineups || lb.builds !== r.builds.size) off.push(`${c.name}: published ${lb.lineups} lineups, ${lb.builds} builds; recount ${r.lineups}, ${r.builds.size}`);
+    for (const b of lb.top) {
+      const uses = r.builds.get([...b.capsules].sort().join('|'));
+      if (uses !== b.uses) off.push(`${c.name}: a top build used ${b.uses} times, recount ${uses ?? 'not found'}`);
+    }
+  }
+  check(!off.length, `league builds match a recount of the ${files.length} linked lineups (lineups, builds and each top build's uses, for ${recount.size} characters)`, off);
+  const lb = chars.filter(c => c.leagueBuilds);
+  const capIds = new Set(data.capsules.map(c => c.id));
+  check(lb.every(c => c.leagueBuilds.top.length <= LEAGUE_BUILDS_SHOWN && c.leagueBuilds.top.every(b => b.capsules.every(id => capIds.has(id)))),
+    `league builds: at most ${LEAGUE_BUILDS_SHOWN} per character, every capsule known`);
+  check(lb.every(c => c.leagueBuilds.top.every((b, i, a) => !i || a[i - 1].season >= b.season)), 'league builds: newest season first');
 }
 
 // ------------------------------------------------------------------ images
