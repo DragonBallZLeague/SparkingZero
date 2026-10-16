@@ -31,6 +31,7 @@ Gotchas:
 - `public/char_thumbnails/T_UI_FaceP1_<id>_00.png` is also read by the Analyzer's `build-portraits` — do not rename or move those files.
 - The one-off scripts that seeded the curated tables from the old JSON and proved the schema-2 conversion lossless were deleted after use (git history, P1–P4 of the 2026-10 rebuild); their results are recorded in `data/rebuild-2026-10/`.
 - Website masterlist names are matched trimmed (`formChain.js`); misspelled ones (e.g. "Zangaya") still show as plain text on the website — `verify-data` lists them, `curated/aliases.csv` resolves them for the calculator's own team filter.
+- **`verify-data` never freezes a count or a list of content that grows**: website lineups, seasons and events (edited through the CMS all season) or a curated list like `move-special.csv`. On 2026-10-16 a check expecting Piccolo in exactly "20 lineups, 7 builds" failed when the CMS added week 2 (21, 8), and since the checks then ran inside the deploy's build, the live site went without that day's Events and Seasons edits. The deploy now runs them in a separate `verify-calculator` job that can't block it (root CLAUDE.md, "Deployment"), but a failing check still fails the run and needs fixing. Check such data against a recount from its source (`leagueBuilds` is recounted from the linked lineup files) or as rules that always hold. Exact values stay for game facts and the league's in-game measurements, which change only when a snapshot is pulled on purpose.
 
 ## Architecture
 

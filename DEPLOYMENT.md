@@ -35,7 +35,7 @@ The GitHub Actions workflow that builds every app and deploys them together to G
 2. Install deps and build **Match Builder** → `dist/matchbuilder`
 3. Install deps for **Analyzer**, run `scripts/fix-json-encoding.js` on `BR_Data`, build → `dist/analyzer`
 4. Install deps and build **Admin** (with `VITE_ADMIN_CLIENT_ID` secret, base `/SparkingZero/admin/`) → `dist/admin`
-5. Install deps and build **Calculator** → `dist/calculator`
+5. Install deps and build **Calculator** → `dist/calculator` (its data checks, `verify-data.mjs`, run in a separate `verify-calculator` job: a failing check fails the run but does not stop the deploy)
 6. Copy the static **Submit** app as-is → `dist/submit`
 7. Sync `referencedata/transformations.json` into `apps/website/public/content/` and `apps/matchbuilder/public/`
 8. Install deps and build **Website** directly into `dist/` (root, `--emptyOutDir=false` so earlier app builds aren't wiped)

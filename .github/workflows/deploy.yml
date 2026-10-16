@@ -68,9 +68,15 @@ jobs:
         working-directory: apps/calculator
         run: npm ci
 
+      # Without its data checks: npm run build's prebuild would run build-data and then verify-data,
+      # and every app ships in one Pages artifact, so a failing check held back the whole site
+      # (2026-10-16). The checks run in the verify-calculator job below instead, which fails the run
+      # without stopping the deploy. --ignore-scripts skips only the prebuild, not the build.
       - name: Build calculator app
         working-directory: apps/calculator
-        run: npm run build -- --outDir=../../dist/calculator
+        run: |
+          npm run data:build
+          npm run build --ignore-scripts -- --outDir=../../dist/calculator
 
       - name: Copy submit app (static site)
         shell: bash
@@ -111,6 +117,31 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
+
+  # The calculator's data checks (apps/calculator/scripts/verify-data.mjs), off the deploy's path:
+  # deploy needs only build, so a failing check marks this run failed (and GitHub emails about it)
+  # while the site, calculator included, still deploys. Fix the data and push again.
+  verify-calculator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies (calculator)
+        working-directory: apps/calculator
+        run: npm ci
+
+      - name: Verify calculator data
+        working-directory: apps/calculator
+        run: |
+          npm run data:build
+          npm run data:verify
 
   deploy:
     environment:
