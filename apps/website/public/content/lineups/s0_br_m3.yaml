@@ -1,0 +1,59 @@
+matchName: S0 BR M3
+team1Name: 'West Kai '
+team2Name: Team 2
+
+# ── 'West Kai ' ─────────────────────────
+team1:
+  - character: Piccolo
+    costume: Outfit 3
+    capsules:
+      - Rush Attack Boost 2 (3)
+      - Blast Attack Boost 2 (3)
+      - Fury! (4)
+      - Latent Power! (5)
+      - Indomitable Fighting Spirit (3)
+      - Latent Power Unleashed 2 (2)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: ''
+    sparking: ''
+
+  - character: Kale Super Saiyan
+    costume: ''
+    capsules:
+      - Master Roshi Training (1)
+      - Latent Power Unleashed 2 (2)
+      - Blast Attack Boost 3 (5)
+      - Perfect Guard (5)
+      - Ki Control (3)
+      - Light Body (4)
+    ai: 'Defense Strategy: Gauge Recovery'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: ''
+
+  - character: Broly (Super) Super Saiyan
+    costume: Outfit 1
+    capsules:
+      - Savior (5)
+      - Master Roshi Training (1)
+      - Rush Attack Boost 3 (5)
+      - Super Warrior (2)
+      - Style of the Strong (2)
+      - Perfect Guard (5)
+    ai: 'Defense Strategy: Skills'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: ''
+
+  - character: Goku Black Super Saiyan Rosé
+    costume: Outfit 1
+    capsules:
+      - Fury! (4)
+      - Rush Attack Boost 3 (5)
+      - Ki Control (3)
+      - Melee Charge 3 (3)
+      - The Secret to Dragon Dashes (5)
+    ai: 'Attack Strategy: Barrage'
+    transformAi: 'Attack Strategy: Barrage'
+    sparking: ''
+
+# ── Team 2 ──────────────────────────────
+team2: []
