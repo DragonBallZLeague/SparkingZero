@@ -817,6 +817,16 @@ for (const bm of blastMoves) {
   let projectileSpeed = null, selfDamage = null;
   if (gm) {
     const add = (f) => { if (!det.flags.includes(f)) det.flags = [...det.flags, f]; };
+    // can clash, from the game files: bCanSpeedImpact (Speed Clash) or bCanBlastImpact (Beam Clash). They win over
+    // the curated and Neo flags (league 2026-10-17: Chi-Chi's Help Me, Goku! Speed Clashes; curated said Beam Clash)
+    const CLASH = ['beamClashCapable', 'dashClashCapable'];
+    const gameClash = fm.param(gm.file, 'bCanSpeedImpact') === 'true' ? 'dashClashCapable' : fm.param(gm.file, 'bCanBlastImpact') === 'true' ? 'beamClashCapable' : null;
+    const prevClash = det.flags.find(f => CLASH.includes(f)) ?? null;
+    if (gameClash !== prevClash) {
+      const name = (f) => ({ beamClashCapable: 'Beam Clash', dashClashCapable: 'Speed Clash' })[f] || 'no';
+      sourceGaps.push([c.name, `${m.Move} can clash (${det.source || 'none'})`, name(prevClash), name(gameClash)]);
+      det.flags = [...det.flags.filter(f => !CLASH.includes(f)), ...(gameClash ? [gameClash] : [])];
+    }
     if (fm.param(gm.file, 'BlastSkillParamData.bBackstepWhenNearMode') === 'false' || fm.param(gm.file, 'BlastUltimateParamData.bBackstepWhenNearMode') === 'false') add('noStepBack');
     // a rush's tracking: homing (follows the target), steering (turned by the player) or straight (none given)
     // (league 2026-10-11: Justice Kick steers but is a cinematic rush; the other steering ones crash)

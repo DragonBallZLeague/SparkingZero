@@ -408,6 +408,7 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
     ['Piccolo (Super Hero)', 'Light Grenade', 'Fire', false, null], ['Mighty Mask', 'Mighty Rush', null, true, null],
     ['Dr. Wheelo', 'Gigantic Bomber', null, null, 'none'], ['Majin Kuu', 'Majin Corkscrew Attack', null, null, 'Speed Clash'],
     ['Giant Gomah', 'Giga Magic Burst', 'Fire', null, 'Beam Clash'], ['Captain Ginyu', 'Galaxy Dynamite', null, null, 'Beam Clash'],
+    ['Chi-Chi', 'Help Me, Goku!', 'Rush', true, 'Speed Clash'], // 2026-10-17
   ]) {
     const b = blastRow(n, move);
     if (cat) ig(`${n} ${move} category`, b?.category, cat);

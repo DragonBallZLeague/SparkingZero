@@ -89,7 +89,7 @@ How many shots land depends on distance, so these use one shot x the hit count t
 | Anilaza | Spread Energy Blast | 5 of 10 x 813 | 4065 | measured 8120 differs; spread value used |
 | Fasha | Energy Bullet | 5 of 10 x 1030 | 5150 | no measured value |
 
-## Blast details: Neo Export vs curated/blasts.csv (12 disagreements)
+## Blast details: Neo Export vs curated/blasts.csv (13 disagreements)
 
 Category, type, traits, Blast Impact power and lunge speed come from curated/blasts.csv, or from the Neo Export's Blasts tab where curated/blasts.csv is blank (97 moves). Where both exist the curated value is used; check these in game and correct whichever is wrong.
 
@@ -100,6 +100,7 @@ Category, type, traits, Blast Impact power and lunge speed come from curated/bla
 | Gohan (Kid) | Ultimate | Wild Rush Blaster | can clash | Speed Impact | Blast Impact |
 | Gohan (Adult) | Ultimate | Super Kamehameha | can clash | Blast Impact | Speed Impact |
 | Cell 2nd Form | Ultimate | Unforgivable! | needs lock-on | yes | no |
+| Chi-Chi | Ultimate | Help Me, Goku! | can clash | Speed Impact | Blast Impact |
 | Captain Ginyu | Super 2 | Galaxy Dynamite | can clash | Blast Impact | Speed Impact |
 | Captain Ginyu | Ultimate | Body Change | unguardable | yes | no |
 | Android 18 | Super 2 SPM3 | Chain Destructo Disc | unguardable | yes | no |
