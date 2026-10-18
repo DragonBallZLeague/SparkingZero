@@ -139,7 +139,75 @@ events:
     tagline: Best of the Best
     date: 9/19/2026-9/26/2026
     status: completed
-  - participants: []
+  - participants:
+      - name: North Kai
+        description: |-
+          Primal Instinct
+          Z-Fighters
+          Master & Student
+        members:
+          - character: Super Vegeta
+            team: Master & Student
+          - character: SSJ Goku (Mini)
+            team: Primal Instincts
+          - character: SSJ Gohan (Teen)
+            team: Z-Fighters
+          - character: SSJ Goku (Z-Mid)
+            team: Z-Fighters
+        lineup_file: s0_br_m1.yaml
+        color: "#5dc8b7"
+        icon: /SparkingZero/images/1000009520.webp
+      - name: East Kai
+        color: "#ceba50"
+        icon: /SparkingZero/images/1000009526.jpg
+        description: |-
+          Malevolent Souls
+          Tiny Terrors
+          Sentai Squad
+        members:
+          - character: Super Garlic Jr
+            team: Malevolent locks
+          - character: Jiren
+            team: Sentai Squad
+          - character: SSJ Trunks (Kid)
+            team: Tiny Terrors
+          - character: Gamma 1
+            team: Sentai Squad
+        lineup_file: s0_br_m2.yaml
+      - name: West Kai
+        icon: /SparkingZero/images/1000009527.webp
+        color: "#7729b0"
+        description: |-
+          Budokai
+          Time Patrol
+          Cinema
+        members:
+          - character: Piccolo
+            team: Budokai
+          - character: SSJ Kale
+            team: Budokai
+          - character: SSJ Broly (Super)
+            team: Cinema
+          - character: SSJ Rosé Goku Black
+            team: Time Patrol
+        lineup_file: s0_br_m3.yaml
+      - name: South Kai
+        color: "#b52c2c"
+        icon: /SparkingZero/images/1000009529.png
+        description: |-
+          Demons
+          Creations
+          Cold Kingdom
+        members:
+          - character: Android 19
+            team: Creations
+          - character: Power Awakening Piccolo (Super Hero)
+            team: Demons
+          - character: Final Form Cooler
+            team: Cold Kingdom
+          - character: Frieza (Super)
+            team: Cold Kingdom
+        lineup_file: s0_br_m4.yaml
     blocks:
       - type: markdown
         title: Rules
@@ -154,6 +222,8 @@ events:
 
 
           Good Luck!
+      - type: participants
+        title: The Kais
     timing: off-season
     name: Boss Rush
     slug: bossrush
