@@ -623,7 +623,9 @@ export function PlayoffBracket({
     return <svg key={`conn-${ri}`} width={BRACKET_CONN_W} height={totalH} style={{ flexShrink: 0 }}>{paths}</svg>;
   };
 
-  const champion = derivedRounds[derivedRounds.length - 1]?.matches?.[0]?.winner ?? null;
+  const finalMatch = derivedRounds[derivedRounds.length - 1]?.matches?.[0];
+  const champion = finalMatch?.winner ?? null;
+  const runnerUp = champion ? (champion === finalMatch.team_a ? finalMatch.team_b : finalMatch.team_a) ?? null : null;
 
   // The 3rd Place Match runs alongside the Tenkaichi Bowl between the two
   // Semifinal losers. It isn't part of the winners bracket tree — deriveRounds
@@ -700,6 +702,12 @@ export function PlayoffBracket({
             <span className="flex items-center gap-1.5">
               <Trophy className="w-4 h-4 text-yellow-400" />
               <span className="font-semibold text-yellow-400">{champion}</span>
+            </span>
+          )}
+          {runnerUp && (
+            <span className="flex items-center gap-1.5">
+              <Medal className={`w-4 h-4 ${darkMode ? 'text-gray-300' : 'text-stone-500'}`} />
+              <span className={`font-semibold ${darkMode ? 'text-gray-300' : 'text-stone-500'}`}>{runnerUp}</span>
             </span>
           )}
           {tpCompleted && thirdPlaceMatch.winner && (
