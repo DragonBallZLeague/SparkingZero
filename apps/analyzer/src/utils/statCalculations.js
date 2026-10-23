@@ -65,12 +65,12 @@ export function extractStats(char, charMap, capsuleMap = {}, position = null, ai
     formNames = forms.map(f => charMap[f] || f).join(', ');
   }
   
-  // Equipment analysis - filter to ONLY capsules (00_0_XXXX pattern)
+  // Equipment analysis - filter to ONLY capsules: capsuleMap holds just the Capsule rows of
+  // referencedata/capsules.csv, the game's (00_0_XXXX) and the league's (DBZL_Cap_N) alike
   const equipItems = play.equipItem || [];
   const equippedCapsules = equipItems
     .map(item => item.key)
-    .filter(key => key && key.startsWith('00_0_')) // Only include actual capsules
-    .filter(key => capsuleMap[key]) // Only include capsules in our reference data
+    .filter(key => key && capsuleMap[key]) // Only include capsules in our reference data
     .map(key => ({
       id: key,
       name: capsuleMap[key].name,
