@@ -23,7 +23,7 @@ Game facts are read from the FModel snapshot first (14696 character values, 2107
 |  | Count |
 | --- | --- |
 | Characters built | 241 |
-| Capsules | 103 from referencedata; 60 change shown stats, the rest are notes only |
+| Capsules | 123 from referencedata; 75 change shown stats, the rest are notes only |
 | Blasts measured | 661 |
 | Blasts computed (calibrated recipe) | 82 |
 | Blasts not measured yet | 0 |
@@ -231,7 +231,6 @@ Turning a skill on applies every one of its effects (all phases at once; the str
 | guardResist | 149: Goku (Z - Early) — Kaioken; Goku (Z - Mid) — I Can't Wait!; Goku (Z - Mid) Super Saiyan — Now I'm Angry!; Goku (Z - End) Super Saiyan 2 — Full Power; ... |
 | useCount | 83: Goku (Z - Mid) Super Saiyan — Wild Sense; Goku (Z - End) — Wild Sense; Goku (Z - End) Super Saiyan — Wild Sense; Goku (Super) Super Saiyan — Wild Sense; ... |
 | healthRestoreFraction | 21: Goten — Sleep; Majin Buu — Sleep; Super Buu — Regeneration; Super Buu (Gotenks Absorbed) — Regeneration; ... |
-| moveSpeed | 14: Goku (Z - Mid) — I Can't Wait!; Goku (Super) Ultra Instinct -Sign- — Even Greater Potential; Yamcha — Power Up to the Very Limit; Master Roshi Full Power — Pump Up; ... |
 | comboScaling | 12: Goku (Z - End) Super Saiyan — Saiyan Spirit; Goku (GT) Super Saiyan 3 — Saiyan Spirit; Vegeta (Super) Super Saiyan — Saiyan Spirit; Vegeta (Super) Super Saiyan God — Saiyan Spirit; ... |
 | kiRestore | 9: Goku (GT) Super Saiyan 3 — High-Tension; Super Buu (Gohan Absorbed) — High-Tension; Pikkon — High-Tension; Super Zarbon — High-Tension; ... |
 | kiPerSecond | 9: Vegeta (Super) Super Saiyan God Super Saiyan — I'm No Pushover!; Vegito — High-Tension; Frieza (Z) 3rd Form — High-Tension; King Cold — King's Dignity; ... |
@@ -266,7 +265,7 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Ki Blast Attack Boost 1 (00_0_0014) | 1 | kiBlastDamage +2.5%; chargedKiBlastDamage +2.5% |  |  |
 | Ki Blast Attack Boost 2 (00_0_0015) | 3 | kiBlastDamage +5%; chargedKiBlastDamage +5% |  |  |
 | Ki Blast Attack Boost 3 (00_0_0016) | 5 | kiBlastDamage +7.5%; chargedKiBlastDamage +7.5% |  |  |
-| Power Unleashed (00_0_0023) | 2 |  |  | burstRushDamage +5% |
+| Power Unleashed (00_0_0023) | 1 |  |  | burstRushDamage +5% |
 | Finishing Blow (00_0_0024) | 1 |  |  | burstMeteorDamage +5% |
 | Blast Burst (00_0_0026) | 1 | blastKiCost +1; superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
 | Ultimate Burst (00_0_0027) | 2 | ultimateKiCost +1; ultimateDamage +5% |  | Collapses into ki burnout when Sparking Mode ends after an Ultimate Blast (cannot act until 1 bar of ki recharges) |
@@ -274,18 +273,18 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Blast Attack Boost 2 (00_0_0029) | 3 | superDamage +5%; ultimateDamage +5% |  | blastComboDamage +5% |
 | Blast Attack Boost 3 (00_0_0030) | 5 | superDamage +7.5%; ultimateDamage +7.5% |  | blastComboDamage +7.5% |
 | Super Warrior (00_0_0031) | 2 |  | rushDamage +5% (sparking) |  |
-| Draconic Aura (00_0_0032) | 4 | armorBreakLevel +3 |  |  |
-| Light Body (00_0_0033) | 4 |  |  | Cannot be flinched by Ki Blasts (Giants and Sparking ignore it) |
-| Dragon Rush (00_0_0035) | 3 |  | armorBreakLevel +3 (against Rush Attack category actions) |  |
-| The Secret to Counters (00_0_0037) | 5 |  |  | Minimum 1 |
+| Draconic Aura (00_0_0032) | 3 | armorBreakLevel +3 |  |  |
+| Light Body (00_0_0033) | 3 |  |  | Cannot be flinched by Ki Blasts (Giants and Sparking ignore it) |
+| Dragon Rush (00_0_0035) | 2 |  | armorBreakLevel +3 (against Rush Attack category actions) |  |
+| The Secret to Counters (00_0_0037) | 3 |  |  | Minimum 1 |
 | Fury! (00_0_0038) | 4 |  | superDamage +5% (health at or below 75%); superDamage +5% (health at or below 50% (10% total)); superDamage +5% (health at or below 25% (15% total)) | blastComboDamage +5% |
 | Active Heart (00_0_0039) | 1 | attackKiGain +10% |  |  |
 | Indomitable Fighting Spirit (00_0_0040) | 3 | attackKiGain +20% |  |  |
-| Warming Up (00_0_0041) | 2 |  |  | Health recovery on standby in Team Battles +50% |
+| Warming Up (00_0_0041) | 1 |  |  | Health recovery on standby in Team Battles +50% |
 | Ready for Anything (00_0_0042) | 1 |  |  | Ki recovery on standby in Team Battles +50% |
-| Z-Burst Dash Master (00_0_0046) | 3 |  |  | zBurstDashCost -50% |
-| The Secret to Z-Burst Dashes (00_0_0047) | 5 |  |  | Free |
-| Proof of Friendship (00_0_0048) | 2 |  |  | Switch gauge starts at maximum |
+| Z-Burst Dash Master (00_0_0046) | 2 |  |  | zBurstDashCost -50% |
+| The Secret to Z-Burst Dashes (00_0_0047) | 4 |  |  | Free |
+| Proof of Friendship (00_0_0048) | 1 |  |  | Switch gauge starts at maximum |
 | Dragon Spirit (00_0_0055) | 3 | skillRecovery +25% |  |  |
 | Super Transformation (00_0_0066) | 1 |  |  | Minimum 1; also Fusions |
 | Fighting Spirit (00_0_0068) | 5 |  | ultimateDamage +5% (health at or below 75%); ultimateDamage +5% (health at or below 50% (10% total)); ultimateDamage +5% (health at or below 25% (15% total)) |  |
@@ -296,12 +295,12 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Power of the Universe (00_0_0076) | 5 |  | allDamage +2.5% (on the Tournament of Power map) |  |
 | Perfect Guard (00_0_0082) | 5 |  |  | Take no damage while guarding |
 | Crisis Avoided (00_0_0092) | 1 | shortDashCost -10% |  |  |
-| Battle Control (00_0_0093) | 2 | switchRecovery +50% |  |  |
+| Battle Control (00_0_0093) | 1 | switchRecovery +50% |  |  |
 | Latent Power Unleashed 1 (00_0_0094) | 1 | startingKi +1 |  |  |
 | Latent Power Unleashed 2 (00_0_0095) | 2 | startingKi +2 |  |  |
 | Big Impact (00_0_0096) | 1 |  |  | Impact Action damage +20% per DP the enemy has over you (up to +100% at 5 DP) |
 | Mind Breaker (00_0_0098) | 1 |  |  | Ki damage dealt after a successful Guard Clash +50% |
-| Waters Blessing (00_0_0099) | 3 |  |  | Regenerates 100 HP and 100 ki per second while in water |
+| Waters Blessing (00_0_0099) | 4 |  |  | Regenerates 100 HP and 100 ki per second while in water |
 | Miracle Master (00_0_0101) | 1 |  |  | Automatically dodges melee attacks when downed (not Ki Blasts) |
 | Latent Power! (00_0_0102) | 5 |  | allResist +2.5% (health at or below 75%); allResist +5% (health at or below 50% (7.5% total)); allResist +7.5% (health at or below 25% (15% total)) |  |
 | Guard Master (00_0_0103) | 1 |  |  | Immune to Guard Clashes |
@@ -319,46 +318,66 @@ What each capsule does in the engine. "Applied" changes the stats; "conditional"
 | Ki Blast Charge 3 (00_0_0121) | 3 |  |  | Smash Ki Blast charging time -5% |
 | Dragon Assault (00_0_0122) | 3 |  |  | vanishingAssaultCost -15% |
 | Power Body (00_0_0123) | 5 | physicalResist -20%; energyResist -10% |  | combativesArmorLevel +3 |
-| Speed Up (00_0_0124) | 3 | shortDashCost -20% |  |  |
+| Speed Up (00_0_0124) | 2 | shortDashCost -20% |  |  |
 | Exquisite Skill (00_0_0125) | 1 |  |  | Your stun/restraint recovery time -20%; the enemy's +20% |
 | Ki Control (00_0_0126) | 3 | kiRecovery -5% |  | dragonDashCost -25% |
-| The Secret to Dragon Dashes (00_0_0127) | 5 |  |  | dragonDashCost -25% |
+| The Secret to Dragon Dashes (00_0_0127) | 4 |  |  | dragonDashCost -25% |
 | Savior (00_0_0128) | 5 |  |  | Sparking Mode on first switch-in (once per team) |
 | Combo Master (00_0_0129) | 1 |  |  | Combo damage scaling -2.5% |
-| Combo King (00_0_0130) | 2 |  |  | Combo damage scaling -5% |
+| Combo King (00_0_0130) | 1 |  |  | Combo damage scaling -5% |
 | God Ki (00_0_0131) | 5 |  |  | Blasts cost 50% less ki; 1 bar of ki back after a missed Blast |
 | Sparking! Plus (00_0_0132) | 1 | sparkingDrain -15%; physicalResist -20%; energyResist -10% |  |  |
 | Style of the Strong (00_0_0133) | 2 | sparkingDrain -15% |  |  |
 | Dragon Break (00_0_0134) | 2 | dragonHomingLimit +1 |  |  |
-| Dragon Crash (00_0_0135) | 2 | dragonSmashDamage +5% |  |  |
+| Dragon Crash (00_0_0135) | 1 | dragonSmashDamage +5% |  |  |
 | Vanishing Break (00_0_0136) | 2 | vanishingLimit +1 |  |  |
-| Vanishing Crash (00_0_0137) | 2 | vanishingAttackDamage +5% |  |  |
-| Secret Measures (00_0_0138) | 2 | skillStart +1 |  |  |
-| Rush Ki Blast 1 (00_0_0139) | 1 |  |  | kiBlastSpeed +5% |
+| Vanishing Crash (00_0_0137) | 1 | vanishingAttackDamage +5% |  |  |
+| Secret Measures (00_0_0138) | 1 | skillStart +1 |  |  |
+| Rush Ki Blast 1 (00_0_0139) | 1 | kiBlastSpeed +5% |  |  |
 | Rush Ki Blast Count Boost (00_0_0140) | 1 | kiBlastCount +2 |  |  |
 | Master Strike (00_0_0141) | 3 | rushDamage +5%; smashDamage +5%; comboDamage +5%; health -5000 |  |  |
-| Master Ki Blast (00_0_0142) | 2 | kiBlastCost -5%; health -5000 |  | kiBlastSpeed +5% |
+| Master Ki Blast (00_0_0142) | 2 | kiBlastSpeed +5%; kiBlastCost -5%; health -5000 |  |  |
 | Master Throw (00_0_0143) | 1 | throwDamage +5% |  |  |
 | High-Speed Movement Master (00_0_0144) | 1 | physicalResist -20%; energyResist -20% |  | hsmSparkingCost -25%; Guarded-hit damage taken +20% (game files: ShaveDamageResist) |
 | The Secret to High-Speed Movements (00_0_0145) | 1 |  |  | hsmSparkingCost -25% |
 | Super Movement Master (00_0_0146) | 1 | physicalResist -20%; energyResist -20% |  | smSparkingCost -25%; Guarded-hit damage taken +20% (game files: ShaveDamageResist) |
 | The Secret to Super Movements (00_0_0147) | 1 |  |  | smSparkingCost -25% |
 | Performer (00_0_0148) | 1 |  | superDamage +5% (for 30 seconds after an emote of 1.5+ seconds); ultimateDamage +5% (for 30 seconds after an emote of 1.5+ seconds) |  |
-| Dragon Heart (00_0_0149) | 3 |  |  | Recovers 25% of the Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement |
+| Dragon Heart (00_0_0149) | 2 |  |  | Recovers 25% of the Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement |
 | King Kai Training (00_0_0150) | 3 | health +5000 |  |  |
 | God of Destruction Training (00_0_0151) | 5 | health +7500 |  |  |
 | Almighty Boost (00_0_0152) | 5 | rushDamage +2.5%; smashDamage +2.5%; comboDamage +2.5%; kiBlastDamage +2.5%; chargedKiBlastDamage +2.5% |  |  |
-| Super Sparking! (00_0_0153) | 4 | sparkingDrain -5% | rushDamage +5% (sparking) |  |
-| Brolys Ring (00_0_0155) | 1 |  |  | Prevents Transformations and Fusions |
-| Heart Virus (DBZL_Cap_1) | 1 |  |  | You and the opponent lose 50 HP per second |
-| Bloodlust (DBZL_Cap_6) | 3 |  | allDamage +15% (for 15 seconds after eliminating an opponent) | Full ki after eliminating an opponent |
-| Halo: Corrupted (DBZL_Cap_14) | 7 |  |  | Blasts cost half ki but a miss costs 2500 HP |
-| Flight (DBZL_Cap_15) | 0 |  |  | Enables flight |
-| Absorption Model (DBZL_Cap_18) | 6 | attackKiGain +2; kiCharge -60%; kiRecovery -60% |  | Guard Crashes give 1 bar of ki |
-| Unstable Power-Up (DBZL_Cap_17) | 4 |  | kiCharge -10% (for 30 seconds after the first transformation); kiRecovery -10% (for 30 seconds after the first transformation); allResist -15% (for 30 seconds after the first transformation) | Enters Sparking Mode on the first transformation |
-| Final Stand! (DBZL_Cap_21) | 5 |  |  | Near death: 2 bars of life that drain over 5 seconds |
-| Vegeta's Technique (DBZL_Cap_28) | 3 |  |  | Ki blast damage, speed and cost depend on current ki (>4 bars: +30% damage/speed, +50% cost ... <1 bar: -10% damage/speed, -50% cost) |
-| Sore Loser (DBZL_Cap_30) | 2 |  |  | When eliminated, drains the opponent's ki, Skill Count and Sparking |
+| Super Sparking! (00_0_0153) | 3 | sparkingDrain -5% | rushDamage +5% (sparking) |  |
+| Brolys Ring (00_0_0155) | 0 |  |  | Prevents Transformations and Fusions |
+| Heart Virus (DBZL_Cap_1) | 2 |  |  | You and the opponent take damage slowly (50 hp/sec) |
+| Bloodlust (DBZL_Cap_6) | 3 |  | meleeDamage +15% (for 15 seconds after eliminating an opponent); kiBlastDamage +15% (for 15 seconds after eliminating an opponent); chargedKiBlastDamage +15% (for 15 seconds after eliminating an opponent); superDamage +15% (for 15 seconds after eliminating an opponent) | After eliminating an opponent gain full ki |
+| Halo: Corrupted (DBZL_Cap_14) | 7 | blastKiCostRate -50% |  | Blasts cost 2500 health on a miss |
+| Flight (DBZL_Cap_15) | 0 |  |  | Enable flight |
+| Absorption Model (DBZL_Cap_18) | 7 | attackKiGain +2; kiCharge -60%; kiRecovery -60% |  | Guard crashes give you 1 bar of ki. |
+| Unstable Power-Up (DBZL_Cap_17) | 3 |  | kiCharge -10% (for 30 seconds after the first transformation); kiRecovery -10% (for 30 seconds after the first transformation); allResist -15% (for 30 seconds after the first transformation) | Upon transforming for the first time immediately go into Sparking! mode |
+| Final Stand! (DBZL_Cap_21) | 6 |  |  | When your brought near death gain 2 bars of life that drains rapidly over 5 seconds |
+| Vegeta's Technique (DBZL_Cap_28) | 2 |  | kiBlastDamage +30% (ki at or above 80%); chargedKiBlastDamage +30% (ki at or above 80%); kiBlastCost +50% (ki at or above 80%); kiBlastDamage +20% (ki at or above 60%, below 80%); chargedKiBlastDamage +20% (ki at or above 60%, below 80%); kiBlastCost +25% (ki at or above 60%, below 80%); kiBlastDamage +10% (ki at or above 40%, below 60%); chargedKiBlastDamage +10% (ki at or above 40%, below 60%); kiBlastCost -25% (ki at or above 20%, below 40%); kiBlastDamage -10% (ki below 20%); chargedKiBlastDamage -10% (ki below 20%); kiBlastCost -50% (ki below 20%); kiBlastSpeed +30% (ki at or above 80%); kiBlastSpeed +20% (ki at or above 60%, below 80%); kiBlastSpeed +10% (ki at or above 40%, below 60%); kiBlastSpeed -10% (ki below 20%) |  |
+| Sore Loser (DBZL_Cap_SoreLoser) | 2 |  |  | When eliminated drain the opponents ki, blaststocks, and sparking mode |
+| Accelerator (DBZL_Cap_2) | 1 |  | moveSpeed -50% (ki below 20%); moveSpeed +50% (ki at or above 40%, below 60%); moveSpeed +1 (ki at or above 60%, below 80%); moveSpeed +1.5 (ki at or above 80%) |  |
+| Counter Blast (DBZL_Cap_3) | 2 |  |  | Blasts cost 1 ki bar for 3 seconds after high-speed dodging a blast |
+| Skillful (DBZL_Cap_4) | 4 | skillLimit +2 |  |  |
+| Energy Conservation (DBZL_Cap_5) | 2 |  | kiBlastCost 0% (ki at or below 40%); kiBlastDamage 0% (ki at or below 40%); chargedKiBlastDamage 0% (ki at or below 40%) |  |
+| Tag Happy (DBZL_Cap_7) | 3 | switchAlwaysReady +1 |  | You can only gain half as much hp on the bench |
+| Power Creep (DBZL_Cap_8) | 3 |  | meleeDamage +5% (every 30 seconds in battle, up to 3 times); superDamage +5% (every 30 seconds in battle, up to 3 times); kiCharge -10% (every 30 seconds in battle, up to 3 times); kiRecovery -10% (every 30 seconds in battle, up to 3 times) |  |
+| Sparking! Endurance (DBZL_Cap_9) | 6 |  |  | Cannot die while in Sparking! |
+| Heavy Sparking! (DBZL_Cap_10) | 4 |  | ultimateBody +3 (sparking); sparkingDrain +1 (sparking) |  |
+| I Fight Alone! (DBZL_Cap_11) | 0 |  |  | Cannot fuse (transformations are still usable) |
+| Ki Guarantee (DBZL_Cap_12) | 4 |  |  | Refund 1 bar of ki on a missed blast |
+| Halo (DBZL_Cap_13) | 4 | blastKiCost -1 |  |  |
+| Dragon Soul (DBZL_Cap_16) | 4 |  |  | Regain 1 Blast Stocks each time high-speed movement is used to dodge a Blast |
+| Saiyan Armor (DBZL_Cap_22) | 3 | allResist +10%; kiCharge -5%; kiRecovery -5% |  |  |
+| Kibito's Secret Art (DBZL_Cap_23) | 3 | skillRecovery -50% |  | Upon switching in start with max blaststocks |
+| Launch's Support (DBZL_Cap_24) | 3 | kiCharge +10%; superDamage -5% |  |  |
+| Guard Splitter (DBZL_Cap_25) | 3 |  |  | Guard crashes always ki break the opponent |
+| Push Your Limits (DBZL_Cap_26) | 1 | noSelfDamage +1; ultimateKiCost +1 |  | Causes stun when Sparking Mode ends after using Ultimate Blast. |
+| Amplified Strike (DBZL_Cap_27) | 1 |  | armorBreakLevel +1 (ki at or above 40%); armorBreakLevel +1 (ki at or above 60%); armorBreakLevel +1 (ki at or above 80%) |  |
+| Stand and Fight! (DBZL_Cap_29) | 1 |  |  | You and your opponent cannot tag out |
+| Supreme Kai's Potara (DBZL_Cap_30) | 0 |  |  | Cannot transform (fusion is still usable) |
 
 ## Teams
 

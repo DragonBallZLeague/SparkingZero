@@ -39,6 +39,8 @@ export function loadRefdata(root, teamsSeason) {
       exclusiveTo: r['Exclusive To'].trim() || null,
       type: capsuleTypes.capsules[r.ID.trim()]?.type ?? null,
       description: r.Effect.replace(/\s*\r?\n\s*/g, ' ').trim(),
+      // its first line: a league capsule's one-line summary in the league's own words (Vegeta's Technique's bands follow it)
+      lead: r.Effect.split(/\r?\n/)[0].trim(),
     }));
 
   const rules = yaml.load(fs.readFileSync(ref('capsule-rules.yaml'), 'utf8'));

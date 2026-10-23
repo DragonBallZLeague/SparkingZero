@@ -591,6 +591,55 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
   if (sitRun('0000_00', [], null).rush !== 390) cond.push('Goku (Z - Early) gets the power-up with no situation');
   check(!unread.length && !cond.length, `every effect condition reads as a known condition (${condTexts.size}), and health steps and low-health power-ups apply only when the conditions meet them`, [...unread.map(t => `unknown condition: ${t}`), ...cond]);
 
+  // League capsules (2026-10-23): ki bands, stacks per ki bar and per 30 seconds of battle, and the stats they added
+  {
+  const lc = [];
+  const gk = byId.get('0000_00');
+  const at = (o) => ({ health: gk.stats.health, ki: 0, skill: 0, map: null, events: {}, time: 0, ...o });
+  const vt = capNamed("Vegeta's Technique"), creep = capNamed('Power Creep'), amp = capNamed('Amplified Strike'), econ = capNamed('Energy Conservation'), accel = capNamed('Accelerator');
+  // the mod's bands are percents of the 5-bar gauge (snapshots/dbzl-mod): 80%+ is 4 and 5 bars, 60-80% is 3, ...
+  for (const [ki, dmg, costRate] of [[5, 0.3, 1.5], [4, 0.3, 1.5], [3, 0.2, 1.25], [2, 0.1, 1], [1, 0, 0.75], [0, -0.1, 0.5]]) {
+    const v = sitRun('0000_00', [vt], at({ ki })), base = sitRun('0000_00', [], at({ ki }));
+    if (add(v, 'kiBlast') !== dmg || add(v, 'chargedKiBlast') !== dmg) lc.push(`Vegeta's Technique at ${ki} bars: ki blast damage ${add(v, 'kiBlast')} / charged ${add(v, 'chargedKiBlast')}, want ${dmg}`);
+    if (Math.abs(v.kiBlastCost / base.kiBlastCost - costRate) > 0.01) lc.push(`Vegeta's Technique at ${ki} bars: ki blast cost x${(v.kiBlastCost / base.kiBlastCost).toFixed(3)}, want x${costRate}`);
+    const speed = ki >= 4 ? 1.3 : ki === 3 ? 1.2 : ki === 2 ? 1.1 : ki === 1 ? 1 : 0.9;
+    if (v.kiBlastSpeed !== speed) lc.push(`Vegeta's Technique at ${ki} bars: ki blast speed x${v.kiBlastSpeed}, want x${speed}`);
+  }
+  for (const [time, want] of [[0, 0], [30, 0.05], [60, 0.1], [90, 0.15], [120, 0.15]]) {
+    const v = sitRun('0000_00', [creep], at({ time }));
+    // Blast damage scaling does not reach ultimates (BlastUltimateDamageScale is their own field; Gohan (Kid)'s
+    // ultimate, measured 2026-10-07, takes his passive's 0.2 once although it sets both fields)
+    for (const ch of ['rush', 'smash', 'combo', 'throw', 'counter', 'followUp', 'super']) if (add(v, ch) !== want) lc.push(`Power Creep at ${time}s: ${ch} ${add(v, ch)}, want ${want}`);
+    if (add(v, 'kiBlast') !== 0 || add(v, 'ultimate') !== 0) lc.push(`Power Creep at ${time}s changes ki blasts or ultimates`);
+    // the general melee modifier reaches the Burst attacks (1,000 and 360 Power)
+    if (v.burstMelee !== Math.ceil(1000 * 1.25 * (1 + want) - 1e-9) || v.burstRush !== Math.ceil(360 * 1.25 * (1 + want) - 1e-9)) lc.push(`Power Creep at ${time}s: Burst attacks ${v.burstMelee} / ${v.burstRush}`);
+  }
+  const rush1 = (ki, caps) => sitRun('0000_00', caps, at({ ki })).breakLevels.rush[0];
+  for (const [ki, up] of [[1, 0], [2, 1], [3, 2], [4, 3], [5, 3]]) if (rush1(ki, [amp]) - rush1(ki, []) !== up) lc.push(`Amplified Strike at ${ki} bars: armor break +${rush1(ki, [amp]) - rush1(ki, [])}, want +${up}`);
+  const ec2 = sitRun('0000_00', [econ], at({ ki: 2 })), ec3 = sitRun('0000_00', [econ], at({ ki: 3 })), plain = sitRun('0000_00', [], at({ ki: 3 }));
+  if (ec2.kiBlastDmg !== 0 || ec2.kiBlastCost !== 0) lc.push(`Energy Conservation at 2 bars: ki blast ${ec2.kiBlastDmg} damage, ${ec2.kiBlastCost} cost, want 0 and 0`);
+  if (ec3.kiBlastDmg !== plain.kiBlastDmg || ec3.kiBlastCost !== plain.kiBlastCost) lc.push('Energy Conservation changes ki blasts at 3 bars');
+  for (const [ki, want] of [[0, 0.5], [1, 1], [2, 1.5], [3, 2], [4, 2.5], [5, 2.5]]) if (sitRun('0000_00', [accel], at({ ki })).moveSpeed !== want) lc.push(`Accelerator at ${ki} bars: movement x${sitRun('0000_00', [accel], at({ ki })).moveSpeed}, want x${want}`);
+  // Heavy Sparking! in Sparking: drain +100% and Ultimate Body (armor levels +3); Goku has no armor of his own, Super Vegeta has Sparking Armor at 3
+  const sparkRun = (id, caps) => { const c = byId.get(id); return computeStats(c, collectEffects({ character: c, capsules: caps.map(cap), sparking: true }), ctx); };
+  const hs = capNamed('Heavy Sparking!');
+  const gkS = sparkRun('0000_00', []), gkH = sparkRun('0000_00', [hs]), svS = sparkRun('0021_20', []), svH = sparkRun('0021_20', [hs]);
+  if (Math.abs(gkH.sparkDrain - gkS.sparkDrain - 1) > 1e-9) lc.push(`Heavy Sparking!: Sparking drain ${gkS.sparkDrain} -> ${gkH.sparkDrain}, want +1`);
+  if (gkH.armor !== 0.1 || gkH.armorLevel !== 3) lc.push(`Heavy Sparking! on Goku (no armor): armor ${gkH.armor} at level ${gkH.armorLevel}, want 0.1 at 3`);
+  if (svH.armor !== svS.armor || svH.armorLevel !== svS.armorLevel + 3) lc.push(`Heavy Sparking! on Super Vegeta: armor ${svH.armor} at level ${svH.armorLevel}, want ${svS.armor} at ${svS.armorLevel + 3}`);
+  if (sitRun('0000_00', [hs], null).armor !== sitRun('0000_00', [], null).armor) lc.push('Heavy Sparking! changes armor outside Sparking');
+  const none = sitRun('0000_00', [], null);
+  const one = (n) => sitRun('0000_00', [capNamed(n)], null);
+  if (one('Skillful').skillLimit !== none.skillLimit + 2) lc.push(`Skillful: max Skill Count ${one('Skillful').skillLimit}, want ${none.skillLimit + 2}`);
+  if (one('Tag Happy').switch !== 0) lc.push(`Tag Happy: switch cooldown ${one('Tag Happy').switch}, want 0`);
+  if (!one('Push Your Limits').noSelfDamage || none.noSelfDamage) lc.push('Push Your Limits does not switch self-damage off (or it is off without the capsule)');
+  if (one('Push Your Limits').ultimateKiCostAdd !== one('Ultimate Burst').ultimateKiCostAdd || !one('Push Your Limits').ultimateKiCostAdd) lc.push("Push Your Limits' ultimate cost is not Ultimate Burst's +1 bar");
+  const bl = sitRun('0000_00', [capNamed('Bloodlust')], at({ events: { knockout: true } }));
+  for (const [ch, want] of [['rush', 0.15], ['kiBlast', 0.15], ['chargedKiBlast', 0.15], ['super', 0.15], ['ultimate', 0]]) if (add(bl, ch) !== want) lc.push(`Bloodlust after a knockout: ${ch} ${add(bl, ch)}, want ${want}`);
+  if (one('Halo: Corrupted').blastKiCostMult !== 0.5) lc.push(`Halo: Corrupted: Blast cost x${one('Halo: Corrupted').blastKiCostMult}, want x0.5`);
+  check(!lc.length, "league capsules apply as the mod's files have them: Vegeta's Technique's, Accelerator's and Amplified Strike's ki bands, Energy Conservation at 2 bars or less, Power Creep's three 30-second stacks on every melee channel, Heavy Sparking!'s drain and Ultimate Body, Skillful, Tag Happy, Push Your Limits, Halo: Corrupted", lc);
+  }
+
   // With no effects the engine must leave every published number alone.
   const drift = [];
   for (const c of data.characters) {

@@ -18,11 +18,13 @@ guardResist,Guarded-hit resistance,resist,ParameterChanging.ShaveDamageResist,Gu
 comboScaling,Combo scaling,rate,ParameterChanging.ComboDamageScalingEffectScale,Combo scaling
 armorLevel,Armor level,level,ParameterChanging.ArmorLevelUp,Armor level
 armorBreakLevel,Armor break level,level,ParameterChanging.ArmorBreakLevelUp,Armor break level
+ultimateBody,Ultimate Body (melee and ki-blast armor level),level,,
 kiRecovery,Ki recovery,rate,ParameterChanging.SPAutoRecoveryScale,Ki recovery
 kiCharge,Ki charge,rate,ParameterChanging.SPChargeSpeedScale,Ki charge
 sparkingCharge,Sparking charge,rate,ParameterChanging.SparkingGaugeChargeSpeedScale,Sparking charge
 preSparkingDrain,Pre-Sparking drain,rate,ParameterChanging.PreSparkingGaugeDecreaseSpeedScale,Pre-Sparking drain
 sparkingDrain,Sparking drain,rate,ParameterChanging.SparkingModeGaugeDecreaseSpeedScale,Sparking drain
+noSelfDamage,No self-damage from Blasts and Ultimates,flat,,
 skillRecovery,Skill Count recovery speed,rate,ParameterChanging.BlastRecoverSpeedScale,
 meleeCharge,Melee charge,rate,ParameterChanging.CombativesChargeScale,Melee charge
 kiShotCharge,Ki-shot charge,rate,ParameterChanging.BulletChargeScale,Ki-shot charge
@@ -31,17 +33,21 @@ kiRestore,Ki restored,resource,ResourceChanging.HealSP,
 kiPerSecond,Ki restored per second,resource,ParameterChanging.HealSPPerSec,
 healthRestore,Health restored,resource,ResourceChanging.HealHP,
 healthRestoreFraction,Health restored (fraction of max),resource,ResourceChanging.HealHPPercentage,
-moveSpeed,Movement speed,display,ParameterChanging.MovesScale.*,
+moveSpeed,Movement speed,rate,ParameterChanging.MovesScale.*,
 useCount,Uses before it ends,display,EffectiveCount,
 allDamage,All attack damage,damage,,
+meleeDamage,All melee damage,damage,ParameterChanging.NormalCombativesDamageScale,
 allResist,All damage resistance,resist,,
 health,Max health,flat,,
 startingKi,Starting ki (bars),flat,,
 skillStart,Starting skill count,flat,,
+skillLimit,Max Skill Count,flat,,
 kiBlastCount,Ki blast count,flat,,
 blastKiCost,Super ki cost (bars),flat,,
+blastKiCostRate,Super ki cost (rate),rate,,
 ultimateKiCost,Ultimate ki cost (bars),flat,,
 switchRecovery,Switch gauge recovery,rate,,
+switchAlwaysReady,Switch gauge always full,flat,,
 attackKiGain,Ki gained from attacks,rate,,
 kiBlastCost,Ki blast ki cost,rate,,
 bulletArmorLevel,Ki-blast armor level,level,,
@@ -56,7 +62,7 @@ dragonDashCost,Dragon Dash ki cost,display,,
 vanishingAssaultCost,Vanishing Assault ki cost,display,,
 hsmSparkingCost,High-Speed Movement Sparking gauge cost,display,,
 smSparkingCost,Super Movement Sparking gauge cost,display,,
-kiBlastSpeed,Rush Ki Blast speed,display,,
+kiBlastSpeed,Rush Ki Blast speed,rate,ParameterChanging.RushBulletSpeedScale,
 superPerceptionCost,Super Perception skill cost,display,,
 transformationCost,Transformation skill cost,display,,
 dragonHomingLimit,Dragon Homing uses,display,,

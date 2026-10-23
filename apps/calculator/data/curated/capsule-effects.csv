@@ -139,19 +139,76 @@ id,name,key,value,op,condition,note
 00_0_0153,Super Sparking!,rushDamage,0.05,,sparking,
 00_0_0153,Super Sparking!,sparkingDrain,-0.05,,,Sparking Mode gauge decrease speed -5%
 00_0_0155,Brolys Ring,display,,,,Prevents Transformations and Fusions
-DBZL_Cap_1,Heart Virus,display,,,,You and the opponent lose 50 HP per second
-DBZL_Cap_6,Bloodlust,allDamage,0.15,,for 15 seconds after eliminating an opponent,
-DBZL_Cap_6,Bloodlust,display,,,,Full ki after eliminating an opponent
-DBZL_Cap_14,Halo: Corrupted,display,,,,Blasts cost half ki but a miss costs 2500 HP
-DBZL_Cap_15,Flight,display,,,,Enables flight
+DBZL_Cap_1,Heart Virus,display,,,,You and the opponent take damage slowly (50 hp/sec)
+DBZL_Cap_6,Bloodlust,meleeDamage,0.15,,for 15 seconds after eliminating an opponent,
+DBZL_Cap_6,Bloodlust,kiBlastDamage,0.15,,for 15 seconds after eliminating an opponent,
+DBZL_Cap_6,Bloodlust,chargedKiBlastDamage,0.15,,for 15 seconds after eliminating an opponent,
+DBZL_Cap_6,Bloodlust,superDamage,0.15,,for 15 seconds after eliminating an opponent,
+DBZL_Cap_6,Bloodlust,display,,,,After eliminating an opponent gain full ki
+DBZL_Cap_14,Halo: Corrupted,blastKiCostRate,-0.5,,,Blasts cost half ki
+DBZL_Cap_14,Halo: Corrupted,display,,,,Blasts cost 2500 health on a miss
+DBZL_Cap_15,Flight,display,,,,Enable flight
 DBZL_Cap_18,Absorption Model,attackKiGain,2,,,Melee ki gain +200%
 DBZL_Cap_18,Absorption Model,kiCharge,-0.6,,,Active ki charge 60% slower
 DBZL_Cap_18,Absorption Model,kiRecovery,-0.6,,,Passive ki charge 60% slower
-DBZL_Cap_18,Absorption Model,display,,,,Guard Crashes give 1 bar of ki
+DBZL_Cap_18,Absorption Model,display,,,,Guard crashes give you 1 bar of ki.
 DBZL_Cap_17,Unstable Power-Up,kiCharge,-0.1,,for 30 seconds after the first transformation,
 DBZL_Cap_17,Unstable Power-Up,kiRecovery,-0.1,,for 30 seconds after the first transformation,
 DBZL_Cap_17,Unstable Power-Up,allResist,-0.15,,for 30 seconds after the first transformation,
-DBZL_Cap_17,Unstable Power-Up,display,,,,Enters Sparking Mode on the first transformation
-DBZL_Cap_21,Final Stand!,display,,,,Near death: 2 bars of life that drain over 5 seconds
-DBZL_Cap_28,Vegeta's Technique,display,,,,"Ki blast damage, speed and cost depend on current ki (>4 bars: +30% damage/speed, +50% cost ... <1 bar: -10% damage/speed, -50% cost)"
-DBZL_Cap_30,Sore Loser,display,,,,"When eliminated, drains the opponent's ki, Skill Count and Sparking"
+DBZL_Cap_17,Unstable Power-Up,display,,,,Upon transforming for the first time immediately go into Sparking! mode
+DBZL_Cap_21,Final Stand!,display,,,,When your brought near death gain 2 bars of life that drains rapidly over 5 seconds
+DBZL_Cap_28,Vegeta's Technique,kiBlastDamage,0.3,,ki at or above 80%,
+DBZL_Cap_28,Vegeta's Technique,chargedKiBlastDamage,0.3,,ki at or above 80%,
+DBZL_Cap_28,Vegeta's Technique,kiBlastCost,0.5,,ki at or above 80%,
+DBZL_Cap_28,Vegeta's Technique,kiBlastDamage,0.2,,"ki at or above 60%, below 80%",
+DBZL_Cap_28,Vegeta's Technique,chargedKiBlastDamage,0.2,,"ki at or above 60%, below 80%",
+DBZL_Cap_28,Vegeta's Technique,kiBlastCost,0.25,,"ki at or above 60%, below 80%",
+DBZL_Cap_28,Vegeta's Technique,kiBlastDamage,0.1,,"ki at or above 40%, below 60%",
+DBZL_Cap_28,Vegeta's Technique,chargedKiBlastDamage,0.1,,"ki at or above 40%, below 60%",
+DBZL_Cap_28,Vegeta's Technique,kiBlastCost,-0.25,,"ki at or above 20%, below 40%",
+DBZL_Cap_28,Vegeta's Technique,kiBlastDamage,-0.1,,ki below 20%,
+DBZL_Cap_28,Vegeta's Technique,chargedKiBlastDamage,-0.1,,ki below 20%,
+DBZL_Cap_28,Vegeta's Technique,kiBlastCost,-0.5,,ki below 20%,
+DBZL_Cap_28,Vegeta's Technique,kiBlastSpeed,0.3,,ki at or above 80%,
+DBZL_Cap_28,Vegeta's Technique,kiBlastSpeed,0.2,,"ki at or above 60%, below 80%",
+DBZL_Cap_28,Vegeta's Technique,kiBlastSpeed,0.1,,"ki at or above 40%, below 60%",
+DBZL_Cap_28,Vegeta's Technique,kiBlastSpeed,-0.1,,ki below 20%,
+DBZL_Cap_SoreLoser,Sore Loser,display,,,,"When eliminated drain the opponents ki, blaststocks, and sparking mode"
+DBZL_Cap_2,Accelerator,moveSpeed,-0.5,,ki below 20%,
+DBZL_Cap_2,Accelerator,moveSpeed,0.5,,"ki at or above 40%, below 60%",
+DBZL_Cap_2,Accelerator,moveSpeed,1,,"ki at or above 60%, below 80%",
+DBZL_Cap_2,Accelerator,moveSpeed,1.5,,ki at or above 80%,
+DBZL_Cap_3,Counter Blast,display,,,,Blasts cost 1 ki bar for 3 seconds after high-speed dodging a blast
+DBZL_Cap_4,Skillful,skillLimit,2,,,Max Skill Count +2
+DBZL_Cap_5,Energy Conservation,kiBlastCost,0,set,ki at or below 40%,Ki blasts cost nothing
+DBZL_Cap_5,Energy Conservation,kiBlastDamage,0,set,ki at or below 40%,Ki blasts deal no damage
+DBZL_Cap_5,Energy Conservation,chargedKiBlastDamage,0,set,ki at or below 40%,Charged ki blasts deal no damage
+DBZL_Cap_7,Tag Happy,switchAlwaysReady,1,,,Switch gauge always full
+DBZL_Cap_7,Tag Happy,display,,,,You can only gain half as much hp on the bench
+DBZL_Cap_8,Power Creep,meleeDamage,0.05,,"every 30 seconds in battle, up to 3 times",
+DBZL_Cap_8,Power Creep,superDamage,0.05,,"every 30 seconds in battle, up to 3 times",
+DBZL_Cap_8,Power Creep,kiCharge,-0.1,,"every 30 seconds in battle, up to 3 times",Active ki charge -10% every 30 seconds
+DBZL_Cap_8,Power Creep,kiRecovery,-0.1,,"every 30 seconds in battle, up to 3 times",Passive ki charge -10% every 30 seconds
+DBZL_Cap_9,Sparking! Endurance,display,,,,Cannot die while in Sparking!
+DBZL_Cap_10,Heavy Sparking!,ultimateBody,3,,sparking,Armor against melee and ki blasts in Sparking! Mode
+DBZL_Cap_10,Heavy Sparking!,sparkingDrain,1,,sparking,Sparking! Mode drains twice as fast
+DBZL_Cap_11,I Fight Alone!,display,,,,Cannot fuse (transformations are still usable)
+DBZL_Cap_12,Ki Guarantee,display,,,,Refund 1 bar of ki on a missed blast
+DBZL_Cap_13,Halo,blastKiCost,-1,,,Blasts cost 1 bar of ki less
+DBZL_Cap_16,Dragon Soul,display,,,,Regain 1 Blast Stocks each time high-speed movement is used to dodge a Blast
+DBZL_Cap_22,Saiyan Armor,allResist,0.1,,,All defense +10%
+DBZL_Cap_22,Saiyan Armor,kiCharge,-0.05,,,Active ki charge 5% slower
+DBZL_Cap_22,Saiyan Armor,kiRecovery,-0.05,,,Passive ki charge 5% slower
+DBZL_Cap_23,Kibito's Secret Art,skillRecovery,-0.5,,,Skill gauge recovery speed -50%
+DBZL_Cap_23,Kibito's Secret Art,display,,,,Upon switching in start with max blaststocks
+DBZL_Cap_24,Launch's Support,kiCharge,0.1,,,Active ki charge 10% faster
+DBZL_Cap_24,Launch's Support,superDamage,-0.05,,,Blast damage -5%
+DBZL_Cap_25,Guard Splitter,display,,,,Guard crashes always ki break the opponent
+DBZL_Cap_26,Push Your Limits,noSelfDamage,1,,,No self-damage from Blasts and Ultimate Blasts
+DBZL_Cap_26,Push Your Limits,ultimateKiCost,1,,,"Ki burnout after the ultimate until 1 bar recharges, so the league counts it as 1 more bar, as for Ultimate Burst"
+DBZL_Cap_26,Push Your Limits,display,,,,Causes stun when Sparking Mode ends after using Ultimate Blast.
+DBZL_Cap_27,Amplified Strike,armorBreakLevel,1,,ki at or above 40%,
+DBZL_Cap_27,Amplified Strike,armorBreakLevel,1,,ki at or above 60%,
+DBZL_Cap_27,Amplified Strike,armorBreakLevel,1,,ki at or above 80%,
+DBZL_Cap_29,Stand and Fight!,display,,,,You and your opponent cannot tag out
+DBZL_Cap_30,Supreme Kai's Potara,display,,,,Cannot transform (fusion is still usable)

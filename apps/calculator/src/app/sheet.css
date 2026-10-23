@@ -122,6 +122,8 @@
 .cost { display: flex; gap: 3px; justify-content: flex-end; align-items: center; }
 .cost i { width: 11px; height: 12px; transform: skewX(-20deg); background: var(--ki); flex: none; }
 .cost i.add { background: transparent; outline: 2px solid var(--ki); outline-offset: -2px; }
+.cost i.off { opacity: .2; }
+.cost i.half { background: linear-gradient(0deg, var(--ki) 50%, color-mix(in srgb, var(--ki) 20%, transparent) 50%); }
 .cost i.spark { width: 67px; background: linear-gradient(90deg, #7e22ce, #c084fc); box-shadow: 0 0 8px rgba(168,85,247,.7); }
 .cost i.burn { width: 11px; background: var(--burn); box-shadow: 0 0 6px rgba(239,68,68,.7); }
 .cost i.pt { background: var(--skill); }
@@ -384,7 +386,9 @@
 .ctag { font-style: normal; font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; margin-left: 8px; padding: 0 6px; background: #f8fafc; color: #0a0d20; vertical-align: 1px; }
 .ctag.g { background: rgba(226,232,240,.18); color: #e2e8f0; }
 .hc { display: inline-flex; width: 24px; height: 27px; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #111; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
-.hc.c1 { background: #cbd5e1; } .hc.c2 { background: #60a5fa; } .hc.c3 { background: #facc15; } .hc.c4 { background: #fb923c; } .hc.c5 { background: #ef4444; color: #fff; }
+/* capsule cost, one ramp 0-10 (costClass in model.js clamps to it): free is dim, cool to hot through 6, purples above, 10 gold on violet */
+.hc.c0 { background: #475569; color: #e2e8f0; } .hc.c1 { background: #cbd5e1; } .hc.c2 { background: #7dd3fc; } .hc.c3 { background: #4ade80; } .hc.c4 { background: #facc15; } .hc.c5 { background: #fb923c; }
+.hc.c6 { background: #ef4444; color: #fff; } .hc.c7 { background: #db2777; color: #fff; } .hc.c8 { background: #a855f7; color: #fff; } .hc.c9 { background: #7c3aed; color: #fff; } .hc.c10 { background: #4c1d95; color: #fde047; }
 .fl span .hc { width: 15px; height: 17px; font-size: 9.5px; vertical-align: -4px; }
 .sw { display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -2px; background: color-mix(in srgb, var(--c1) 55%, #0a0d20); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c1) 70%, transparent); }
 .sw.two { background: linear-gradient(180deg, color-mix(in srgb, var(--c1) 55%, #0a0d20) 0 55%, color-mix(in srgb, var(--c2) 55%, #0a0d20) 55%); }

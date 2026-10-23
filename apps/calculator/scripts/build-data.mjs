@@ -908,15 +908,21 @@ for (const r of curated('capsule-effects.csv')) {
 const rulesets = Object.entries(ref.rules.rulesets || {}).map(([name, rs]) => {
   const banned = new Set();
   const groups = [];
+  const exclusive = [];
   for (const rule of rs.restrictions || []) {
     if (rule.type === 'banned-ids') for (const i of rule.params?.ids || []) banned.add(i);
     if (rule.type === 'max-cost-group-per-character') groups.push({ maxCost: rule.params.maxCost, ids: rule.params.groupIds });
+    // e.g. the Halo capsules: at most maxCount of the group on one character
+    if (rule.type === 'exclusive-group-per-character') for (const g of rule.params?.groups || []) exclusive.push({ name: g.name, maxCount: g.maxCount ?? 1, ids: g.ids });
   }
-  return { name, totalCost: rs.totalCost, banned: [...banned], groups };
+  // mode: "hard" blocks a capsule that breaks a rule, "soft" (Standard - Soft) only warns
+  return { name, totalCost: rs.totalCost, mode: rs.mode === 'soft' ? 'soft' : 'hard', banned: [...banned], groups, exclusive };
 });
 const defaultRuleset = rulesets.find(r => r.name === ref.rules.default) || rulesets[0];
 const capsules = ref.capsules.map(cap => ({
   id: cap.id, name: cap.name, slug: slugify(cap.name), cost: cap.cost, type: cap.type, description: cap.description,
+  // league capsules (DBZL_Cap_*) are summarised in the league's own words, not from their effects
+  ...(cap.id.startsWith('DBZL_') ? { lead: cap.lead } : {}),
   exclusiveTo: cap.exclusiveTo,
   effects: capsuleEffects.get(cap.id) || [],
   bannedIn: rulesets.filter(rs => rs.banned.includes(cap.id)).map(rs => rs.name),

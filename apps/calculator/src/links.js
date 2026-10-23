@@ -14,7 +14,7 @@
  *   caps=rush-attack-boost-1,blast-burst     capsule slugs (capsule ids accepted, for Match Builder later)
  *   skills=kaioken,give-me-your-energy:2     active skills by name slug (or slot 1 / 2), a stage after ':'
  *   sparking                                 Sparking! on
- *   hp=40  ki=3  gauge=2  map=namek  events=knockout,emote    conditions: health %, ki bars, skill stocks
+ *   hp=40  ki=3  gauge=2  map=namek  events=knockout,emote  time=60    conditions: health %, ki bars, skill stocks, battle seconds
  * The right-hand fighter's are the same with `vs-` in front (vs-caps, vs-sparking, ...). Then
  *   rules=standard-soft (only when not the default), full (Full stats), lens=matchup (Versus's Matchup).
  *
@@ -71,6 +71,7 @@ function readSide(q, p, id, ix) {
   if (q.has(p + 'gauge')) sit.skill = +q.get(p + 'gauge') || 0;
   if (q.get(p + 'map')) sit.map = q.get(p + 'map');
   if (q.has(p + 'events')) sit.events = Object.fromEntries(list(q.get(p + 'events')).map(e => [e, true]));
+  if (q.has(p + 'time')) sit.time = Math.max(0, +q.get(p + 'time') || 0);
   return { id: c.id, caps, skills, stage, sparking: q.has(p + 'sparking'), sit: Object.keys(sit).length ? sit : null };
 }
 
@@ -112,6 +113,7 @@ function writeSide(add, p, s, ix) {
   if (sit.map) add(p + 'map', sit.map);
   const ev = Object.entries(sit.events || {}).filter(([, v]) => v).map(([k]) => k);
   if (ev.length) add(p + 'events', ev.join(','));
+  if (sit.time) add(p + 'time', String(sit.time));
 }
 
 /** The address (below the app's base, no leading slash) for a state. */

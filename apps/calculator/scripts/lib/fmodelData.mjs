@@ -34,6 +34,14 @@ export function loadFmodel(dataDir) {
       params.get(r.file).push(r);
     }
   }
+  // The league's capsule mod (scripts/pull-mod.mjs, snapshots/dbzl-mod/): its capsules, effects and buffs join
+  // the game's, so the parity check reads DBZL_Cap_<n> like a game capsule. Its buff files have their own names.
+  const modDir = path.join(dataDir, 'snapshots', 'dbzl-mod');
+  const mod = (f) => (fs.existsSync(path.join(modDir, f)) ? readCsv(path.join(modDir, f)).rows : []);
+  for (const r of mod('buff-params.csv')) {
+    if (!params.has(r.file)) params.set(r.file, []);
+    params.get(r.file).push(r);
+  }
   const param = (file, field) => params.get(file)?.find(r => r.field === field)?.value;
 
   // An action is one part ("None") or several ("1/3発目", …): the files in the game's part order.
@@ -56,7 +64,7 @@ export function loadFmodel(dataDir) {
   const ownBullets = group(rows('bullets.csv'), r => r.id);
   const curves = group(fs.existsSync(path.join(dir, 'curves.csv')) ? rows('curves.csv') : [], r => r.curve);
   const moves = group(rows('moves.csv'), r => r.id);
-  const capsuleEffects = group(rows('capsule-effects.csv'), r => r.id);
+  const capsuleEffects = group([...rows('capsule-effects.csv'), ...mod('capsule-effects.csv')], r => r.id);
 
   return {
     characters,
@@ -83,7 +91,7 @@ export function loadFmodel(dataDir) {
     /** A curve's keys as [time, value] (e.g. a bullet's MoveParam.SpeedCurve). */
     curve: (name) => (curves.get(name) || []).map(r => [Number(r.time), Number(r.value)]),
     movesOf: (id) => moves.get(id) || [],
-    capsules: new Map(rows('capsules.csv').map(r => [r.id, r])),
+    capsules: new Map([...rows('capsules.csv'), ...mod('capsules.csv')].map(r => [r.id, r])),
     capsuleEffectsOf: (id) => capsuleEffects.get(id) || [],
   };
 }

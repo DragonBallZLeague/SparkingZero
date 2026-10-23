@@ -96,6 +96,8 @@ export const CAPSULE_TYPES = [
   { type: 'Defense', k: 'k-tou' }, { type: 'Ki Efficiency', k: 'k-ki' }, { type: 'Skill', k: 'k-skl' }, { type: 'Utility', k: 'k-mov' },
 ];
 export const typeClass = (t) => CAPSULE_TYPES.find(x => x.type === t)?.k ?? 'k-mov';
+/** A capsule cost's badge colour, `.hc.c0` to `.hc.c10` in sheet.css; higher costs share the c10 colour. */
+export const costClass = (n) => `c${Math.max(0, Math.min(10, Math.round(n || 0)))}`;
 
 /* ------------------------------------------------------------------ teams */
 export const teamsOf = new Map();
@@ -135,7 +137,7 @@ function activeSkills(c, spec) {
 function situationOf(c, caps, spec) {
   if (!spec.sit) return null;
   const max = (c.stats.health ?? 0) + caps.reduce((s, x) => s + (x.effects || []).reduce((t, e) => t + (e.key === 'health' && !e.condition ? e.value : 0), 0), 0);
-  return { health: Math.round((spec.sit.hp ?? 1) * max), ki: spec.sit.ki, skill: spec.sit.skill, map: spec.sit.map ?? null, events: spec.sit.events ?? {} };
+  return { health: Math.round((spec.sit.hp ?? 1) * max), ki: spec.sit.ki, skill: spec.sit.skill, map: spec.sit.map ?? null, events: spec.sit.events ?? {}, time: spec.sit.time ?? 0 };
 }
 
 /**
@@ -350,14 +352,17 @@ const SHORT = {
   attackKiGain: ['Ki from hits', 'Ki from hits'], kiBlastCost: ['Ki blast cost', 'Ki blast cost'], skillRecovery: ['Skill gauge gain', 'Skill gain'],
   shortDashCost: ['Short dash cost', 'Short dash cost'], switchRecovery: ['Switch recovery', 'Switch'], sparkingCharge: ['Sparking charge', 'Sparking charge'],
   sparkingDrain: ['Sparking drain', 'Sparking drain'], preSparkingDrain: ['Pre-Sparking drain', 'Pre-Sparking drain'], armorLevel: ['Armor', 'Armor'],
-  armorBreakLevel: ['Armor break level', 'Armor break'], blastKiCost: ['Blast cost', 'Blast cost'], ultimateKiCost: ['Ultimate cost', 'Ultimate cost'],
+  armorBreakLevel: ['Armor break level', 'Armor break'], blastKiCost: ['Blast cost', 'Blast cost'], blastKiCostRate: ['Blast cost', 'Blast cost'], ultimateKiCost: ['Ultimate cost', 'Ultimate cost'],
   kiRestore: ['Ki restored', 'Ki'], kiPerSecond: ['Ki per second', 'Ki per sec'], healthRestore: ['Health restored', 'Health'],
   healthRestoreFraction: ['Health restored', 'Health'], meleeCharge: ['Melee charge time', 'Melee charge'], kiShotCharge: ['Ki blast charge time', 'Charge time'],
   comboScaling: ['Combo scaling', 'Combo scaling'], blastComboDamage: ['Blast combo damage', 'Blast combos'],
   vanishingAttackDamage: ['Vanishing Attack damage', 'Vanishing Attack'], dragonSmashDamage: ['Dragon Smash damage', 'Dragon Smash'],
   vanishingLimit: ['Vanishing Attack uses', 'Vanishing uses'], dragonHomingLimit: ['Dragon Homing uses', 'Dragon Homing uses'],
+  skillLimit: ['Max Skill Count', 'Max Skill Count'], meleeDamage: ['Melee damage', 'Melee'], ultimateBody: ['Ultimate Body', 'Ultimate Body'],
+  switchAlwaysReady: ['Switch', 'Switch'], noSelfDamage: ['Self-damage', 'Self-damage'], moveSpeed: ['Movement speed', 'Movement'],
+  kiBlastSpeed: ['Ki blast speed', 'Ki blast speed'],
 };
-const PCT_KINDS = new Set(['vanishingAttackDamage', 'dragonSmashDamage', 'rushDamage', 'smashDamage', 'comboDamage', 'throwDamage', 'counterDamage', 'followUpDamage', 'kiBlastDamage', 'chargedKiBlastDamage', 'superDamage', 'ultimateDamage', 'skillDamage', 'allDamage', 'physicalResist', 'energyResist', 'blastResist', 'guardResist', 'allResist', 'kiCharge', 'kiRecovery', 'attackKiGain', 'kiBlastCost', 'skillRecovery', 'shortDashCost', 'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'preSparkingDrain', 'meleeCharge', 'kiShotCharge', 'comboScaling', 'blastComboDamage', 'moveSpeed']);
+const PCT_KINDS = new Set(['vanishingAttackDamage', 'dragonSmashDamage', 'rushDamage', 'smashDamage', 'comboDamage', 'throwDamage', 'counterDamage', 'followUpDamage', 'kiBlastDamage', 'chargedKiBlastDamage', 'superDamage', 'ultimateDamage', 'skillDamage', 'allDamage', 'physicalResist', 'energyResist', 'blastResist', 'guardResist', 'allResist', 'kiCharge', 'kiRecovery', 'attackKiGain', 'kiBlastCost', 'blastKiCostRate', 'kiBlastSpeed', 'skillRecovery', 'shortDashCost', 'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'preSparkingDrain', 'meleeDamage', 'meleeCharge', 'kiShotCharge', 'comboScaling', 'blastComboDamage', 'moveSpeed']);
 const signed = (n, d = 1) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(+n.toFixed(d)).toLocaleString('en-US')}`;
 export function effectValueText(e) {
   if (e.op === 'set') return e.value === 'max' ? 'full' : `set to ${e.value}`;
@@ -366,6 +371,9 @@ export function effectValueText(e) {
   if (e.key === 'healthRestoreFraction') return `${v}%`;
   if (e.key === 'blastKiCost' || e.key === 'ultimateKiCost' || e.key === 'startingKi') return `${signed(v)} bar${Math.abs(v) === 1 ? '' : 's'}`;
   if (e.key === 'armorLevel') return 'Yes';
+  if (e.key === 'switchAlwaysReady') return 'always ready';
+  if (e.key === 'ultimateBody') return 'armor against melee and ki blasts';
+  if (e.key === 'noSelfDamage') return 'none';
   if (PCT_KINDS.has(e.key)) return `${signed(v * 100, 1)}%`;
   return signed(v, 3);
 }
@@ -400,7 +408,9 @@ export function effectTiles(effects, { summed = false } = {}) {
   return out;
 }
 /** One short line for a capsule's effects ("Rush +2.5%"); conditions say when. */
+/** A capsule's one line: a league capsule's own words (`lead`, from the league's sheet), else what its effects do. */
 export function capsuleSummary(cap) {
+  if (cap.lead) return cap.lead;
   const always = (cap.effects || []).filter(e => !e.condition && e.key !== 'display');
   const parts = effectTiles(always).map(t => `${t.short} ${t.value}`);
   const conds = (cap.effects || []).filter(e => e.condition && e.key !== 'display');
@@ -417,12 +427,12 @@ export function capsuleSummary(cap) {
 }
 /** What a side's equipped capsules need from the conditions controls. */
 export function conditionNeedsOf(side) {
-  const needs = { health: [], map: [], event: [] };
+  const needs = { health: [], ki: [], map: [], event: [], time: [] };
   for (const cap of side.caps) for (const e of cap.effects || []) {
     if (!e.condition) continue;
     const c = parseCondition(e.condition);
     const n = conditionNeeds(c);
-    if (n && !needs[n].some(x => x.name === cap.name && x.cond.kind === c.kind && x.cond.max === c.max && x.cond.map === c.map && x.cond.event === c.event)) needs[n].push({ name: cap.name, cond: c });
+    if (n && !needs[n].some(x => x.name === cap.name && JSON.stringify(x.cond) === JSON.stringify(c))) needs[n].push({ name: cap.name, cond: c });
   }
   for (const p of side.c.passives || []) {
     const c = parseCondition(p.condition);
@@ -468,6 +478,16 @@ export function blastTags(b) {
   return t;
 }
 export const kiBars = (b) => (b.kiCost != null ? +(b.kiCost / 10000).toFixed(2) : null);
+/**
+ * A Blast's ki cost in bars before (`base`) and after (`total`) the build's capsules: Halo: Corrupted halves it
+ * (exactly: 3 bars become 1.5), then Halo takes 1 bar off or Blast Burst adds 1. A reduction never takes a
+ * Blast below 1 bar (the league's rule, 2026-10-23); one that already costs less keeps its cost.
+ */
+export const blastBars = (side, b) => {
+  const base = kiBars(b) ?? 0, v = side.view;
+  const total = +(base * (v.blastKiCostMult ?? 1) + (v.blastKiCostAdd || 0) / 10000).toFixed(2);
+  return { base, total: total < base ? Math.max(total, Math.min(base, 1)) : total };
+};
 /** A blast's damage with the build (base and Boosted scale on the super or ultimate channel). */
 export function blastDamage(side, b) {
   const chn = b.slot === 'Ultimate' ? 'ultimate' : 'super';
@@ -499,9 +519,10 @@ export function skillDamage(side, s, them = null) {
   const def = (x) => (x.defense === 'melee' ? them.view.meleeDefenseStat : them.view.kiBlastDefenseArmor);
   return { ...h, damage: skillTaken(h, def(h)), reflect: h.reflect && { ...h.reflect, damage: skillTaken(h.reflect, def(h.reflect)) } };
 }
-export function selfDamageText(b, oppDp = null) {
+export function selfDamageText(b, oppDp = null, view = null) {
   const s = b.selfDamage;
   if (!s) return null;
+  if (view?.noSelfDamage) return { amount: 'None', note: 'Push Your Limits' };
   if (s.allHealth || s.power >= 999999) return { amount: 'All health', note: 'Leaves you at 0 HP; self-damage can\'t knock you out' };
   if (s.dpMultiplier) {
     if (oppDp != null) return { amount: `${Math.round(s.power * s.dpMultiplier[oppDp]).toLocaleString('en-US')} HP`, note: `Against DP ${oppDp}` };
@@ -594,11 +615,17 @@ export function buildCheck(capIds, ruleset) {
   if (cost > ruleset.totalCost) problems.push(`Over the budget: ${cost} of ${ruleset.totalCost} points`);
   for (const g of groups) if (g.cost > g.maxCost) problems.push(`Attack boosts over the cap: ${g.cost} of ${g.maxCost} points`);
   for (const x of caps) if (banned.has(x.id)) problems.push(`${x.name} is banned in ${ruleset.name}`);
+  for (const g of ruleset.exclusive || []) {
+    const hit = caps.filter(x => g.ids.includes(x.id));
+    if (hit.length > g.maxCount) problems.push(`Only ${g.maxCount} ${g.name} capsule per character: ${hit.map(x => x.name).join(', ')}`);
+  }
   const seen = new Set();
   for (const x of caps) { if (seen.has(x.id)) problems.push(`${x.name} is equipped twice`); seen.add(x.id); }
   return { caps, cost, groups, problems };
 }
 export const inAttackGroup = (ruleset, id) => (ruleset.groups || []).some(g => g.ids.includes(id));
+/** The exclusive group (e.g. Halo) that already has its fill of capsules in `capIds`, keeping `id` out; null if `id` may be added. */
+export const exclusiveBlock = (ruleset, capIds, id) => (ruleset.exclusive || []).find(g => g.ids.includes(id) && capIds.filter(c => g.ids.includes(c)).length >= g.maxCount) || null;
 
 /* ------------------------------------------------------------------ exchange (Vs opponent) */
 /** What A's attacks deal to B after B's defenses and armor. */

@@ -96,7 +96,7 @@ export function sections(side) {
       id: 'spk', title: 'Sparking! Mode', cls: 'spk',
       groups: [[null, [
         ...[SPARK.charge, SPARK.duration, SPARK.fade].map(r => cell(r.label, A(r.get), { fmt: F[r.fmt], kind: r.kind, less: r.less, long: r.long })),
-        cell('Hyper Smash', GM(g => g.hyperSmash)), cell('Burst Melee Attack', null, { text: '1,250' }), cell('Burst Rush hit', null, { text: '450' }),
+        cell('Hyper Smash', GM(g => g.hyperSmash)), cell('Burst Melee Attack', A(x => x.burstMelee)), cell('Burst Rush hit', A(x => x.burstRush)),
         cell('Violent Rush', null, { text: c.moveset?.unavailable?.includes('Violent Rush') ? 'No' : 'Yes' }),
         cell('Follow-ups', null, { text: `+${ps.sparkingAdd ?? 0}`, long: 'Extra follow-ups' }),
         cell('Armor', null, { text: c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None', long: 'Sparking armor' }),
@@ -259,6 +259,9 @@ function KiFull({ side, phone }) {
         spec.push(['Shots', r.shotsGet ? <Small title="Ki blast limit" get={r.shotsGet} fmt={F.count} /> : r.shots]);
         spec.push(['Ki cost', <span className="nw">{r.costGet ? <Small title="Ki blast cost" get={r.costGet} fmt={F.bars} /> : F.bars(r.cost)}<small> {barUnit(F.bars(r.costGet ? r.costGet({ A: side }) : r.cost))}</small></span>, true]);   // two columns wide, so the unit fits beside the value
         if (r.volley) spec.push(['Volley', <Small title="Full volley" get={A(x => volley(x))} />]);
+        // the game's one ki blast speed modifier (RushBulletSpeedScale) is for rush ki blasts: the standard, jump and
+        // dash shots, which share their damage channel; charged ki blasts have no speed modifier
+        if (!r.lv) spec.push(['Speed', <Small title="Ki blast speed (standard, jump and dash ki blasts; charged ki blasts don't change)" get={A(x => x.kiBlastSpeed)} fmt={(x) => `${Math.round(x * 100)}%`} />]);
         return (
           <Card key={r.label} cls="k" name={r.label} type={r.type} rk={r.rk}
             main={<Big title={r.lv ? `${r.label}, Charge Lv.${last + 1}` : r.label} get={r.lv ? r.lv[last] : r.dmg} />}
@@ -373,6 +376,7 @@ function MobilityFull({ side }) {
       <TT label="Z-Burst Dash" value={num(m.zBurstDash?.start)} unit="bars" sub={per(m.zBurstDash?.perSecond)} rk={bar('zdash', x => x.zBurstDash?.perSecond)} />
       <TT label="Ascend / Descend" value={num(m.dashUp?.start)} unit="bars" sub={per(m.dashUp?.perSecond)} rk={bar('updash', x => x.dashUp?.perSecond)} />
       <TT label="Dragon Homing" value={num(m.dragonHoming?.start)} unit="bars" sub={per(m.dragonHoming?.perSecond)} rk={bar('dhome', x => x.dragonHoming?.perSecond)} />
+      <TV label="Movement speed" title="Movement speed (skill buffs, Accelerator)" get={A(x => x.moveSpeed)} fmt={(x) => `${Math.round(x * 100)}%`} kind="dec" />
       <TT label="Flight" value={m.canFly === false ? "Can't fly" : 'Can fly'} cls="txt" />
     </div>
   );
@@ -434,8 +438,8 @@ export function FullForm({ id, side, phone, abTab, setAbTab }) {
         <div className="tiles t5">
           {/* how fast a partly charged Sparking gauge drops once charging stops (Capsule Corp's "Spark Duration") */}
           <TV label={SPARK.fade.label} title={SPARK.fade.long} get={A(SPARK.fade.get)} fmt={F.rel} kind="rel" less sub="when charging stops" />
-          <TT label="Burst Melee Attack" value="1,250" />
-          <TT label="Burst Rush" value="450" sub="per hit" />
+          <TV label="Burst Melee Attack" get={A(x => x.burstMelee)} />
+          <TV label="Burst Rush" get={A(x => x.burstRush)} sub="first hit" />
           <TT label="Sparking armor" value={c.armor?.sparking ? `${Math.round((1 - c.armor.sparking.damageRate) * 100)}%` : 'None'} sub={c.armor?.sparking ? 'less damage taken' : null} />
           <TT label="Armor break" value={`+${c.sparking?.armorBreakLevel ?? 3}`} sub="levels in Sparking!" />
         </div>

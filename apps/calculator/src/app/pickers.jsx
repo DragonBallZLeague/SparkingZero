@@ -4,7 +4,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   characters, capsules, teams, byId, faceUrl, artUrl, figStyle, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, movePos, gameMoves, nameParts,
-  CAPSULE_TYPES, typeClass, capsuleSummary, buildCheck, inAttackGroup, evaluate, blastsOf, blastDamage, volley, conditionNeedsOf, formsOf,
+  CAPSULE_TYPES, typeClass, costClass, capsuleSummary, buildCheck, inAttackGroup, exclusiveBlock, evaluate, blastsOf, blastDamage, blastBars, volley, conditionNeedsOf, formsOf,
 } from './model.js';
 import { usePhone, Rk, Name, RulesetSelect } from './ui.jsx';
 import { ClassChip } from './sheet.jsx';
@@ -193,15 +193,18 @@ const HEADLINE = [
   ['Skill gauge at start', (s) => s.view.skillStart, String], ['Skill gauge per minute', (s) => parseFloat(s.view.skillRegen), F.dec],
   ['Short dash', (s) => s.view.shortDashCost, F.bars], ['Switch', (s) => s.view.switch, F.secs], ['Armor', (s) => s.view.armor, F.armor],
   ['B1', (s) => blastDamage(s, blastsOf(s.c).find(b => b.slot === 'Super 1' && !b.variant) || {}).damage],
+  ['B1 cost', (s) => { const b = blastsOf(s.c).find(b => b.slot === 'Super 1' && !b.variant); return b ? blastBars(s, b).total : undefined; }, F.bars],
   ['ULT', (s) => blastDamage(s, blastsOf(s.c).find(b => b.slot === 'Ultimate' && !b.variant) || {}).damage],
 ];
 const SPEC_NO_SIT = (spec) => ({ ...spec, sit: null });
+/** The capsule costs in the data, for the cost filter (0 to 7 today; the badge colours go to 10). */
+const COSTS = [...new Set(capsules.map(x => x.cost))].sort((a, b) => a - b);
 /** What adding a capsule changes on this build: the headline stats it moves, else when it works. */
 function changesOf(side, cap) {
   const before = evaluate(SPEC_NO_SIT(side.spec));
   const after = evaluate(SPEC_NO_SIT({ ...side.spec, caps: [...side.spec.caps, cap.id] }));
   const diff = (a, b) => HEADLINE.filter(([, get]) => { const x = get(a), y = get(b); return typeof x === 'number' && typeof y === 'number' && Math.abs(x - y) > 1e-9; })
-    .map(([label, get, fmt = F.int]) => ({ label, from: fmt(get(a)), to: fmt(get(b)), worse: label === 'HP' || label === 'Starting ki' ? get(b) < get(a) : ['Ki blast cost', 'Melee defense', 'Ki-blast defense', 'Blast defense', 'Short dash', 'Switch'].includes(label) ? get(b) > get(a) : get(b) < get(a) }));
+    .map(([label, get, fmt = F.int]) => ({ label, from: fmt(get(a)), to: fmt(get(b)), worse: label === 'HP' || label === 'Starting ki' ? get(b) < get(a) : ['Ki blast cost', 'B1 cost', 'Melee defense', 'Ki-blast defense', 'Blast defense', 'Short dash', 'Switch'].includes(label) ? get(b) > get(a) : get(b) < get(a) }));
   const now = diff(before, after);
   if (now.length) return { kind: 'now', list: now.slice(0, 2) };
   if ((cap.effects || []).some(e => e.condition === 'sparking')) {
@@ -215,6 +218,8 @@ function changesOf(side, cap) {
     if (c.kind === 'healthPct') return { kind: 'when', text: `At ${Math.round(c.max * 100)}% health and below` };
     if (c.kind === 'map') return { kind: 'when', text: 'On its map' };
     if (c.kind === 'event') return { kind: 'when', text: 'For a while after its event' };
+    if (c.kind === 'kiPct') return { kind: 'when', text: 'Depends on current ki' };
+    if (c.kind === 'time') return { kind: 'when', text: 'Builds up over the battle' };
     if (c.kind === 'rushOnly') return { kind: 'now', list: [], text: 'Rush hits break armor 3 levels sooner' };
   }
   return { kind: 'ns' };
@@ -251,7 +256,15 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
   const bannedIds = new Set(ruleset.banned);
   const hovCap = hov ? capsules.find(x => x.id === hov) : null;
   const hovAdds = hovCap && !spec.caps.includes(hovCap.id) ? hovCap : null;
-  const fits = (x) => chk.cost + x.cost <= ruleset.totalCost && (!inAttackGroup(ruleset, x.id) || !group || group.cost + x.cost <= group.maxCost) && spec.caps.length < 7;
+  // the rule adding x would break; a hard ruleset blocks it, a soft one (Standard - Soft) only warns, as in Match Builder
+  const ruleBreak = (x) => {
+    if (chk.cost + x.cost > ruleset.totalCost) return 'Over the budget';
+    if (inAttackGroup(ruleset, x.id) && group && group.cost + x.cost > group.maxCost) return 'Over the attack boosts cap';
+    const ex = exclusiveBlock(ruleset, spec.caps, x.id);
+    return ex ? `${ex.name} capsule already equipped` : null;
+  };
+  const soft = ruleset.mode === 'soft';
+  const fits = (x) => spec.caps.length < 7 && (soft || !ruleBreak(x));
   const add = (x) => { if (!spec.caps.includes(x.id) && fits(x) && !bannedIds.has(x.id)) onChange({ ...spec, caps: [...spec.caps, x.id] }); };
   const remove = (id) => onChange({ ...spec, caps: spec.caps.filter(x => x !== id) });
   const list = capsules.filter(x => (banned || !bannedIds.has(x.id)) && (!type || x.type === type) && (!cost || x.cost === cost)
@@ -292,7 +305,7 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
         <div className={`fl${phone && mode === 'page' ? ' scroll' : ''}`}><button className={!type ? 'on' : ''} onClick={() => setType(null)}>All</button>{CAPSULE_TYPES.map(t => <button key={t.type} className={`${t.k}${type === t.type ? ' on' : ''}`} onClick={() => setType(type === t.type ? null : t.type)}>{t.type}</button>)}</div>
         {!narrow && (
           <div className="fl cost"><small>Cost</small><button className={!cost ? 'on' : ''} onClick={() => setCost(null)}>Any cost</button>
-            {[1, 2, 3, 4, 5].map(n => <button key={n} className={cost === n ? 'on' : ''} onClick={() => setCost(cost === n ? null : n)}><span className={`hc c${n}`}>{n}</span></button>)}
+            {COSTS.map(n => <button key={n} className={cost === n ? 'on' : ''} onClick={() => setCost(cost === n ? null : n)}><span className={`hc ${costClass(n)}`}>{n}</span></button>)}
             <button className={`showb${banned ? ' on' : ''}`} onClick={() => setBanned(!banned)}>{banned ? 'Hide banned' : `Show banned (${ruleset.banned.length})`}</button>
           </div>
         )}
@@ -308,7 +321,7 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
                 return (
                   <button key={x.id} className={`cr${eq ? ' eqd' : ''}${hov === x.id ? ' hov' : ''}${!ok ? ' no' : ''}`} onMouseEnter={() => setHov(x.id)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(x.id)}
                     onClick={() => (eq ? remove(x.id) : add(x))} aria-pressed={eq} title={x.description || undefined}>
-                    <span className={`hc c${x.cost}`}>{x.cost}</span>
+                    <span className={`hc ${costClass(x.cost)}`}>{x.cost}</span>
                     <span className="cn"><b>{x.name}</b>{eq && <em className="ctag">Equipped ✕</em>}{ban && <em className="ctag g">Banned</em>}{!eq && inAttackGroup(ruleset, x.id) && <em className="ctag g">Attack cap</em>}<small>{capsuleSummary(x)}</small></span>
                     <span className="cc">
                       {ch?.kind === 'now' && ch.list.map((d, i) => <React.Fragment key={d.label}>{i > 0 && <br />}{d.label} <s>{d.from}</s> {d.worse ? <em className="dn">{d.to}</em> : d.to}</React.Fragment>)}
@@ -316,7 +329,8 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
                       {ch?.kind === 'sparking' && <><i className="when">In Sparking!</i>{ch.list[0].label} {ch.list[0].to}</>}
                       {ch?.kind === 'when' && <i className="ns">{ch.text}</i>}
                       {ch?.kind === 'ns' && <i className="ns">Not in the stats</i>}
-                      {!ok && !eq && <i className="ns over">{ban ? 'Banned' : spec.caps.length >= 7 ? 'No free slot' : 'Over the budget or cap'}</i>}
+                      {!ok && !eq && <i className="ns over">{ban ? 'Banned' : spec.caps.length >= 7 ? 'No free slot' : ruleBreak(x)}</i>}
+                      {ok && !eq && soft && ruleBreak(x) && <i className="ns over">{ruleBreak(x)}</i>}
                     </span>
                   </button>
                 );

@@ -1,14 +1,14 @@
 // Moves: the Sheet's Command list rows, Full stats' move cards, costs, and Rush Chains.
 import React from 'react';
 import {
-  SLOT_LABEL, blastsOf, skillOf, blastType, blastTiles, blastTags, blastDamage, skillDamage, kiBars, selfDamageText,
+  SLOT_LABEL, blastsOf, skillOf, blastType, blastTiles, blastTags, blastDamage, skillDamage, kiBars, blastBars, selfDamageText,
   SKILL_TYPE, skillTiles, skillTags, skillEffectTiles, skillHeal, toggleable, moveset, perceptionName,
 } from './model.js';
 import { Tap } from './ui.jsx';
 import { F, barsText } from './format.js';
 
-/** Ki pips for a blast (Blast Burst's extra bar outlined), Sparking for an ultimate (Ultimate Burst's burnout in red), points for a skill. */
-export function Cost({ kind, bars = 0, add = 0, points = 0 }) {
+/** Ki pips for a blast (Blast Burst's extra bar outlined, bars the Halo capsules take off faint), Sparking for an ultimate (Ultimate Burst's burnout in red), points for a skill. */
+export function Cost({ kind, bars = 0, add = 0, total = null, points = 0 }) {
   if (kind === 'ult') {
     // with Ultimate Burst the text is just the extra bar: the purple bar already says Sparking
     return (
@@ -20,12 +20,18 @@ export function Cost({ kind, bars = 0, add = 0, points = 0 }) {
   if (kind === 'skill') {
     return <span className="cost">{Array.from({ length: points }, (_, i) => <i key={i} className="pt" />)}<em>{points} point{points === 1 ? '' : 's'}</em></span>;
   }
-  const whole = Math.round(bars);
+  // a blast's cost after capsules (`total`): bars it still takes solid (half a bar as a half pip), bars capsules
+  // add outlined (Blast Burst), bars they take off faint (Halo, Halo: Corrupted)
+  const after = total ?? bars + add;
+  const base = Math.round(bars);
+  const pips = (n, cls, k) => Array.from({ length: Math.max(0, n) }, (_, i) => <i key={`${k}${i}`} className={cls} />);
+  const full = Math.floor(after + 1e-9), half = after < base && after - full >= 0.25;
   return (
-    <span className="cost">
-      {Array.from({ length: whole }, (_, i) => <i key={i} />)}
-      {Array.from({ length: Math.round(add) }, (_, i) => <i key={`a${i}`} className="add" />)}
-      <em>{barsText(bars + add)}</em>
+    <span className="cost" title={after !== bars ? `${barsText(bars)} before capsules` : undefined}>
+      {after >= base
+        ? <>{pips(base, undefined, 'b')}{pips(Math.round(after - base), 'add', 'a')}</>
+        : <>{pips(full, undefined, 'b')}{half && <i className="half" />}{pips(base - full - (half ? 1 : 0), 'off', 'o')}</>}
+      <em>{barsText(after)}</em>
     </span>
   );
 }
@@ -40,7 +46,8 @@ export function orderedBlasts(c, { alternates = true } = {}) {
 
 function blastCost(side, b) {
   if (b.slot === 'Ultimate') return <Cost kind="ult" add={(side.view.ultimateKiCostAdd || 0) / 10000} />;
-  return <Cost kind="blast" bars={kiBars(b) ?? 0} add={(side.view.blastKiCostAdd || 0) / 10000} />;
+  const { base, total } = blastBars(side, b);
+  return <Cost kind="blast" bars={base} total={total} />;
 }
 
 const blastGet = (sideKey, b, field = 'damage') => (sides) => {
@@ -73,7 +80,7 @@ export function CmdRows({ side, sideKey = 'A', only = null }) {
         <span className="mvn">{b.name}{b.variant && <small className="altn">{slot === 'ULT' ? 'Alternate ultimate' : 'Alternate blast'}, with a costume</small>}</span>
         <span className="tcell">
           <span className="tline"><span className="ttype">{blastType(b)}</span>{tiles.map(t => <span className="pv" key={t.label}><i>{t.shortLabel}</i>{t.short}</span>)}</span>
-          {b.selfDamage && <span className="tline"><span className="ef neg">Self-damage {selfDamageText(b).amount}</span></span>}
+          {b.selfDamage && <span className="tline"><span className={`ef${side.view.noSelfDamage ? '' : ' neg'}`}>Self-damage {selfDamageText(b, null, side.view).amount}</span></span>}
         </span>
         <Tap title={b.name} get={blastGet(sideKey, b)} className="dmg">{undefined}</Tap>
         {blastCost(side, b)}
@@ -148,7 +155,7 @@ function BlastCard({ side, sideKey, b }) {
   const slot = SLOT_LABEL[b.slot];
   const u = b.slot === 'Ultimate';
   const d = blastDamage(side, b);
-  const sd = selfDamageText(b);
+  const sd = selfDamageText(b, null, side.view);
   const tags = blastTags(b);
   return (
     <div className={`mcard ${u ? 'u' : 'b'}`}>
@@ -170,7 +177,7 @@ function BlastCard({ side, sideKey, b }) {
           {tags.length > 0 && <div className="minor">{tags.map(([t, v]) => <span key={t}>{t}{v && <> <b>{v}</b></>}</span>)}</div>}
         </div>
       </div>
-      {sd && <div className="fx self"><div className="neg"><span>Self-damage<b>{sd.amount}</b></span>{sd.note && <small>{sd.note}</small>}</div></div>}
+      {sd && <div className="fx self"><div className={side.view.noSelfDamage ? undefined : 'neg'}><span>Self-damage<b>{sd.amount}</b></span>{sd.note && <small>{sd.note}</small>}</div></div>}
       {b.special && <div className="special"><b>Special</b>{b.special}</div>}
     </div>
   );

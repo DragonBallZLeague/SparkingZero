@@ -113,7 +113,7 @@
     "id": "00_0_0023",
     "name": "Power Unleashed",
     "slug": "power-unleashed",
-    "cost": 2,
+    "cost": 1,
     "type": "Melee",
     "description": "Increases Burst Rush damage by 5%.",
     "exclusiveTo": null,
@@ -218,7 +218,7 @@
     "id": "00_0_0032",
     "name": "Draconic Aura",
     "slug": "draconic-aura",
-    "cost": 4,
+    "cost": 3,
     "type": "Utility",
     "description": "Increases armor break level by 3. Beats Power body and Light body.",
     "exclusiveTo": null,
@@ -229,7 +229,7 @@
     "id": "00_0_0033",
     "name": "Light Body",
     "slug": "light-body",
-    "cost": 4,
+    "cost": 3,
     "type": "Defense",
     "description": "Increases bullet armor level by 3. Cannot be flinched by Ki Blasts (Giants and Sparking ignore this capsule).",
     "exclusiveTo": null,
@@ -240,7 +240,7 @@
     "id": "00_0_0035",
     "name": "Dragon Rush",
     "slug": "dragon-rush",
-    "cost": 3,
+    "cost": 2,
     "type": "Utility",
     "description": "Increases armor break level by 3 against Rush Attack category actions. Beats Power Body.",
     "exclusiveTo": null,
@@ -251,7 +251,7 @@
     "id": "00_0_0037",
     "name": "The Secret to Counters",
     "slug": "the-secret-to-counters",
-    "cost": 5,
+    "cost": 3,
     "type": "Skill",
     "description": "Reduces Skill Count needed for Super Perceptions by 1 (minimum 1).",
     "exclusiveTo": null,
@@ -300,7 +300,7 @@
     "id": "00_0_0041",
     "name": "Warming Up",
     "slug": "warming-up",
-    "cost": 2,
+    "cost": 1,
     "type": "Utility",
     "description": "Increases health recovery while on standby in Team Battles by 50%.",
     "exclusiveTo": null,
@@ -322,7 +322,7 @@
     "id": "00_0_0046",
     "name": "Z-Burst Dash Master",
     "slug": "z-burst-dash-master",
-    "cost": 3,
+    "cost": 2,
     "type": "Ki Efficiency",
     "description": "Reduces ki cost for Z-Burst Dashes by 50%.",
     "exclusiveTo": null,
@@ -333,7 +333,7 @@
     "id": "00_0_0047",
     "name": "The Secret to Z-Burst Dashes",
     "slug": "the-secret-to-z-burst-dashes",
-    "cost": 5,
+    "cost": 4,
     "type": "Ki Efficiency",
     "description": "Reduces ki cost for Z-Burst Dashes by 100% (free).",
     "exclusiveTo": null,
@@ -344,9 +344,9 @@
     "id": "00_0_0048",
     "name": "Proof of Friendship",
     "slug": "proof-of-friendship",
-    "cost": 2,
+    "cost": 1,
     "type": "Utility",
-    "description": "Switch gauge starts at maximum.",
+    "description": "Switch gauge full at battle start (one time).",
     "exclusiveTo": null,
     "effects": [{"key":"display","value":null,"note":"Switch gauge starts at maximum"}],
     "bannedIn": []
@@ -469,7 +469,7 @@
     "id": "00_0_0093",
     "name": "Battle Control",
     "slug": "battle-control",
-    "cost": 2,
+    "cost": 1,
     "type": "Utility",
     "description": "Increases Switch gauge recovery by 50% in Team Battles.",
     "exclusiveTo": null,
@@ -524,7 +524,7 @@
     "id": "00_0_0099",
     "name": "Waters Blessing",
     "slug": "waters-blessing",
-    "cost": 3,
+    "cost": 4,
     "type": "Defense",
     "description": "Regenerates 100 HP per second and 100 ki per second while in water (1 bar of health and ki every 100 seconds).",
     "exclusiveTo": null,
@@ -588,7 +588,7 @@
     "description": "Recovers 5,000 HP (half a bar) every 60 seconds.",
     "exclusiveTo": null,
     "effects": [{"key":"display","value":null,"note":"Recovers 5000 HP every 60 seconds"}],
-    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+    "bannedIn": ["Standard","Standard - Soft"]
   },
   {
     "id": "00_0_0112",
@@ -728,13 +728,13 @@
         "note": "Ki-blast and Blast defense -10% (game files: EnergyDamageResist; the description says blast defense)"
       }
     ],
-    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+    "bannedIn": ["Standard","Standard - Soft"]
   },
   {
     "id": "00_0_0124",
     "name": "Speed Up",
     "slug": "speed-up",
-    "cost": 3,
+    "cost": 2,
     "type": "Ki Efficiency",
     "description": "Reduces ki cost for Short Dashes by 20%.",
     "exclusiveTo": null,
@@ -767,7 +767,7 @@
     "id": "00_0_0127",
     "name": "The Secret to Dragon Dashes",
     "slug": "the-secret-to-dragon-dashes",
-    "cost": 5,
+    "cost": 4,
     "type": "Ki Efficiency",
     "description": "Reduces ki cost for Dragon Dashes by 25%.",
     "exclusiveTo": null,
@@ -800,7 +800,7 @@
     "id": "00_0_0130",
     "name": "Combo King",
     "slug": "combo-king",
-    "cost": 2,
+    "cost": 1,
     "type": "Melee",
     "description": "Reduces combo damage scaling by 5%.",
     "exclusiveTo": null,
@@ -816,7 +816,7 @@
     "description": "Reduces ki cost for Blasts by 50%. Recovers 1 bar of ki after unsuccessful Blast.",
     "exclusiveTo": null,
     "effects": [{"key":"display","value":null,"note":"Blasts cost 50% less ki; 1 bar of ki back after a missed Blast"}],
-    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+    "bannedIn": ["Standard","Standard - Soft"]
   },
   {
     "id": "00_0_0132",
@@ -863,7 +863,7 @@
     "id": "00_0_0135",
     "name": "Dragon Crash",
     "slug": "dragon-crash",
-    "cost": 2,
+    "cost": 1,
     "type": "Melee",
     "description": "Increases Dragon Smash damage by 5%.",
     "exclusiveTo": null,
@@ -885,7 +885,7 @@
     "id": "00_0_0137",
     "name": "Vanishing Crash",
     "slug": "vanishing-crash",
-    "cost": 2,
+    "cost": 1,
     "type": "Melee",
     "description": "Increases Vanishing Attack damage by 5%.",
     "exclusiveTo": null,
@@ -896,7 +896,7 @@
     "id": "00_0_0138",
     "name": "Secret Measures",
     "slug": "secret-measures",
-    "cost": 2,
+    "cost": 1,
     "type": "Skill",
     "description": "Grants 1 additional Skill Count.",
     "exclusiveTo": null,
@@ -1040,7 +1040,7 @@
     "id": "00_0_0149",
     "name": "Dragon Heart",
     "slug": "dragon-heart",
-    "cost": 3,
+    "cost": 2,
     "type": "Skill",
     "description": "Recovers 25% of Skill gauge after dodging a Blast or Ultimate Blast with High-Speed Movement.",
     "exclusiveTo": null,
@@ -1067,7 +1067,7 @@
     "description": "Increases maximum health by 7,500 HP (3/4 of a bar).",
     "exclusiveTo": null,
     "effects": [{"key":"health","value":7500}],
-    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+    "bannedIn": ["Standard","Standard - Soft"]
   },
   {
     "id": "00_0_0152",
@@ -1084,13 +1084,13 @@
       {"key":"kiBlastDamage","value":0.025},
       {"key":"chargedKiBlastDamage","value":0.025}
     ],
-    "bannedIn": ["Standard","Standard - Soft","NEO Event"]
+    "bannedIn": ["Standard","Standard - Soft"]
   },
   {
     "id": "00_0_0153",
     "name": "Super Sparking!",
     "slug": "super-sparking",
-    "cost": 4,
+    "cost": 3,
     "type": "Melee",
     "description": "Increases Rush Attack damage by 5% during Sparking Mode. Reduces Sparking Mode gauge decrease speed by 5%.",
     "exclusiveTo": null,
@@ -1101,7 +1101,7 @@
     "id": "00_0_0155",
     "name": "Brolys Ring",
     "slug": "brolys-ring",
-    "cost": 1,
+    "cost": 0,
     "type": "Skill",
     "description": "Prevents Transformations and Fusions during battle",
     "exclusiveTo": null,
@@ -1112,26 +1112,31 @@
     "id": "DBZL_Cap_1",
     "name": "Heart Virus",
     "slug": "heart-virus",
-    "cost": 1,
+    "cost": 2,
     "type": "Utility",
     "description": "You and the opponent take damage slowly (50 hp/sec)",
+    "lead": "You and the opponent take damage slowly (50 hp/sec)",
     "exclusiveTo": null,
-    "effects": [{"key":"display","value":null,"note":"You and the opponent lose 50 HP per second"}],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "effects": [{"key":"display","value":null,"note":"You and the opponent take damage slowly (50 hp/sec)"}],
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_6",
     "name": "Bloodlust",
     "slug": "bloodlust",
     "cost": 3,
-    "type": "Utility",
-    "description": "After eliminating an opponent gain full ki and a 15% increase to all attack damage for 15 seconds",
+    "type": "Melee",
+    "description": "After eliminating an opponent gain full ki and a 15% increase to melee and blast damage for 15 seconds",
+    "lead": "After eliminating an opponent gain full ki and a 15% increase to melee and blast damage for 15 seconds",
     "exclusiveTo": null,
     "effects": [
-      {"key":"allDamage","value":0.15,"condition":"for 15 seconds after eliminating an opponent"},
-      {"key":"display","value":null,"note":"Full ki after eliminating an opponent"}
+      {"key":"meleeDamage","value":0.15,"condition":"for 15 seconds after eliminating an opponent"},
+      {"key":"kiBlastDamage","value":0.15,"condition":"for 15 seconds after eliminating an opponent"},
+      {"key":"chargedKiBlastDamage","value":0.15,"condition":"for 15 seconds after eliminating an opponent"},
+      {"key":"superDamage","value":0.15,"condition":"for 15 seconds after eliminating an opponent"},
+      {"key":"display","value":null,"note":"After eliminating an opponent gain full ki"}
     ],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_14",
@@ -1140,9 +1145,10 @@
     "cost": 7,
     "type": "Blast",
     "description": "Blasts cost half ki but cost 2500 health on a miss",
+    "lead": "Blasts cost half ki but cost 2500 health on a miss",
     "exclusiveTo": null,
-    "effects": [{"key":"display","value":null,"note":"Blasts cost half ki but a miss costs 2500 HP"}],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "effects": [{"key":"blastKiCostRate","value":-0.5,"note":"Blasts cost half ki"},{"key":"display","value":null,"note":"Blasts cost 2500 health on a miss"}],
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_15",
@@ -1151,79 +1157,375 @@
     "cost": 0,
     "type": "Utility",
     "description": "Enable flight",
+    "lead": "Enable flight",
     "exclusiveTo": null,
-    "effects": [{"key":"display","value":null,"note":"Enables flight"}],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "effects": [{"key":"display","value":null,"note":"Enable flight"}],
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_18",
     "name": "Absorption Model",
     "slug": "absorption-model",
-    "cost": 6,
+    "cost": 7,
     "type": "Ki Efficiency",
     "description": "Melee ki gain is increased by 200% but active and passive ki charge is 60% slower. Guard crashes give you 1 bar of ki.",
+    "lead": "Melee ki gain is increased by 200% but active and passive ki charge is 60% slower. Guard crashes give you 1 bar of ki.",
     "exclusiveTo": null,
     "effects": [
       {"key":"attackKiGain","value":2,"note":"Melee ki gain +200%"},
       {"key":"kiCharge","value":-0.6,"note":"Active ki charge 60% slower"},
       {"key":"kiRecovery","value":-0.6,"note":"Passive ki charge 60% slower"},
-      {"key":"display","value":null,"note":"Guard Crashes give 1 bar of ki"}
+      {"key":"display","value":null,"note":"Guard crashes give you 1 bar of ki."}
     ],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_17",
     "name": "Unstable Power-Up",
     "slug": "unstable-power-up",
-    "cost": 4,
+    "cost": 3,
     "type": "Skill",
     "description": "Upon transforming for the first time immediately go into Sparking! mode but get active and passive ki charge -10% and defense -15% for 30 seconds",
+    "lead": "Upon transforming for the first time immediately go into Sparking! mode but get active and passive ki charge -10% and defense -15% for 30 seconds",
     "exclusiveTo": null,
     "effects": [
       {"key":"kiCharge","value":-0.1,"condition":"for 30 seconds after the first transformation"},
       {"key":"kiRecovery","value":-0.1,"condition":"for 30 seconds after the first transformation"},
       {"key":"allResist","value":-0.15,"condition":"for 30 seconds after the first transformation"},
-      {"key":"display","value":null,"note":"Enters Sparking Mode on the first transformation"}
+      {"key":"display","value":null,"note":"Upon transforming for the first time immediately go into Sparking! mode"}
     ],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_21",
     "name": "Final Stand!",
     "slug": "final-stand",
-    "cost": 5,
+    "cost": 6,
     "type": "Defense",
     "description": "When your brought near death gain 2 bars of life that drains rapidly over 5 seconds",
+    "lead": "When your brought near death gain 2 bars of life that drains rapidly over 5 seconds",
     "exclusiveTo": null,
-    "effects": [{"key":"display","value":null,"note":"Near death: 2 bars of life that drain over 5 seconds"}],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "effects": [{"key":"display","value":null,"note":"When your brought near death gain 2 bars of life that drains rapidly over 5 seconds"}],
+    "bannedIn": []
   },
   {
     "id": "DBZL_Cap_28",
     "name": "Vegeta's Technique",
     "slug": "vegeta-s-technique",
-    "cost": 3,
+    "cost": 2,
     "type": "Ki Blast",
     "description": "Ki blast damage, speed, and cost are dependent on how much ki you have >4 bars: +30% Damage and Speed but +50% Cost >3 bars: +20% Damage and Speed but +25% Cost >2 bars: +10% Damage and Speed >1 bars: -25% Cost <1 bars: -10% Damage and Speed but -50% Cost",
+    "lead": "Ki blast damage, speed, and cost are dependent on how much ki you have",
     "exclusiveTo": null,
     "effects": [
-      {
-        "key": "display",
-        "value": null,
-        "note": "Ki blast damage, speed and cost depend on current ki (>4 bars: +30% damage/speed, +50% cost ... <1 bar: -10% damage/speed, -50% cost)"
-      }
+      {"key":"kiBlastDamage","value":0.3,"condition":"ki at or above 80%"},
+      {"key":"chargedKiBlastDamage","value":0.3,"condition":"ki at or above 80%"},
+      {"key":"kiBlastCost","value":0.5,"condition":"ki at or above 80%"},
+      {"key":"kiBlastDamage","value":0.2,"condition":"ki at or above 60%, below 80%"},
+      {"key":"chargedKiBlastDamage","value":0.2,"condition":"ki at or above 60%, below 80%"},
+      {"key":"kiBlastCost","value":0.25,"condition":"ki at or above 60%, below 80%"},
+      {"key":"kiBlastDamage","value":0.1,"condition":"ki at or above 40%, below 60%"},
+      {"key":"chargedKiBlastDamage","value":0.1,"condition":"ki at or above 40%, below 60%"},
+      {"key":"kiBlastCost","value":-0.25,"condition":"ki at or above 20%, below 40%"},
+      {"key":"kiBlastDamage","value":-0.1,"condition":"ki below 20%"},
+      {"key":"chargedKiBlastDamage","value":-0.1,"condition":"ki below 20%"},
+      {"key":"kiBlastCost","value":-0.5,"condition":"ki below 20%"},
+      {"key":"kiBlastSpeed","value":0.3,"condition":"ki at or above 80%"},
+      {"key":"kiBlastSpeed","value":0.2,"condition":"ki at or above 60%, below 80%"},
+      {"key":"kiBlastSpeed","value":0.1,"condition":"ki at or above 40%, below 60%"},
+      {"key":"kiBlastSpeed","value":-0.1,"condition":"ki below 20%"}
     ],
-    "bannedIn": ["Standard","Standard - Soft"]
+    "bannedIn": []
   },
   {
-    "id": "DBZL_Cap_30",
+    "id": "DBZL_Cap_SoreLoser",
     "name": "Sore Loser",
     "slug": "sore-loser",
     "cost": 2,
     "type": "Utility",
     "description": "When eliminated drain the opponents ki, blaststocks, and sparking mode",
+    "lead": "When eliminated drain the opponents ki, blaststocks, and sparking mode",
     "exclusiveTo": null,
-    "effects": [{"key":"display","value":null,"note":"When eliminated, drains the opponent's ki, Skill Count and Sparking"}],
+    "effects": [{"key":"display","value":null,"note":"When eliminated drain the opponents ki, blaststocks, and sparking mode"}],
     "bannedIn": ["Standard","Standard - Soft"]
+  },
+  {
+    "id": "DBZL_Cap_2",
+    "name": "Accelerator",
+    "slug": "accelerator",
+    "cost": 1,
+    "type": "Utility",
+    "description": "The more ki you have the faster your movement is. Above 2 Bars: +50% movement per bar of ki. Under 1 Bar: -50% movement",
+    "lead": "The more ki you have the faster your movement is. Above 2 Bars: +50% movement per bar of ki. Under 1 Bar: -50% movement",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"moveSpeed","value":-0.5,"condition":"ki below 20%"},
+      {"key":"moveSpeed","value":0.5,"condition":"ki at or above 40%, below 60%"},
+      {"key":"moveSpeed","value":1,"condition":"ki at or above 60%, below 80%"},
+      {"key":"moveSpeed","value":1.5,"condition":"ki at or above 80%"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_3",
+    "name": "Counter Blast",
+    "slug": "counter-blast",
+    "cost": 2,
+    "type": "Blast",
+    "description": "Blasts cost 1 ki bar for 3 seconds after high-speed dodging a blast",
+    "lead": "Blasts cost 1 ki bar for 3 seconds after high-speed dodging a blast",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Blasts cost 1 ki bar for 3 seconds after high-speed dodging a blast"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_4",
+    "name": "Skillful",
+    "slug": "skillful",
+    "cost": 4,
+    "type": "Skill",
+    "description": "Max blast stocks are increased by 2",
+    "lead": "Max blast stocks are increased by 2",
+    "exclusiveTo": null,
+    "effects": [{"key":"skillLimit","value":2,"note":"Max Skill Count +2"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_5",
+    "name": "Energy Conservation",
+    "slug": "energy-conservation",
+    "cost": 2,
+    "type": "Ki Blast",
+    "description": "Ki blasts do no damage but cost nothing when under 2 bars of ki",
+    "lead": "Ki blasts do no damage but cost nothing when under 2 bars of ki",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"kiBlastCost","value":0,"op":"set","condition":"ki at or below 40%","note":"Ki blasts cost nothing"},
+      {"key":"kiBlastDamage","value":0,"op":"set","condition":"ki at or below 40%","note":"Ki blasts deal no damage"},
+      {"key":"chargedKiBlastDamage","value":0,"op":"set","condition":"ki at or below 40%","note":"Charged ki blasts deal no damage"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_7",
+    "name": "Tag Happy",
+    "slug": "tag-happy",
+    "cost": 3,
+    "type": "Utility",
+    "description": "Swap Gauge is always full but you can only gain half as much hp on the bench",
+    "lead": "Swap Gauge is always full but you can only gain half as much hp on the bench",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"switchAlwaysReady","value":1,"note":"Switch gauge always full"},
+      {"key":"display","value":null,"note":"You can only gain half as much hp on the bench"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_8",
+    "name": "Power Creep",
+    "slug": "power-creep",
+    "cost": 3,
+    "type": "Melee",
+    "description": "Increase melee and blast damage by 5% every 30 seconds (Max 15%). Active and passive ki charge rate decreases by 10% every 30 seconds (Max -30%)",
+    "lead": "Increase melee and blast damage by 5% every 30 seconds (Max 15%). Active and passive ki charge rate decreases by 10% every 30 seconds (Max -30%)",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"meleeDamage","value":0.05,"condition":"every 30 seconds in battle, up to 3 times"},
+      {"key":"superDamage","value":0.05,"condition":"every 30 seconds in battle, up to 3 times"},
+      {"key":"kiCharge","value":-0.1,"condition":"every 30 seconds in battle, up to 3 times","note":"Active ki charge -10% every 30 seconds"},
+      {"key":"kiRecovery","value":-0.1,"condition":"every 30 seconds in battle, up to 3 times","note":"Passive ki charge -10% every 30 seconds"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_9",
+    "name": "Sparking! Endurance",
+    "slug": "sparking-endurance",
+    "cost": 6,
+    "type": "Defense",
+    "description": "Cannot die while in Sparking!",
+    "lead": "Cannot die while in Sparking!",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Cannot die while in Sparking!"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_10",
+    "name": "Heavy Sparking!",
+    "slug": "heavy-sparking",
+    "cost": 4,
+    "type": "Defense",
+    "description": "Sparking! mode is 50% shorter. Gain Ultimate Body in Sparking!",
+    "lead": "Sparking! mode is 50% shorter. Gain Ultimate Body in Sparking!",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"ultimateBody","value":3,"condition":"sparking","note":"Armor against melee and ki blasts in Sparking! Mode"},
+      {"key":"sparkingDrain","value":1,"condition":"sparking","note":"Sparking! Mode drains twice as fast"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_11",
+    "name": "I Fight Alone!",
+    "slug": "i-fight-alone",
+    "cost": 0,
+    "type": "Skill",
+    "description": "Cannot fuse (transformations are still usable)",
+    "lead": "Cannot fuse (transformations are still usable)",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Cannot fuse (transformations are still usable)"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_12",
+    "name": "Ki Guarantee",
+    "slug": "ki-guarantee",
+    "cost": 4,
+    "type": "Blast",
+    "description": "Refund 1 bar of ki on a missed blast",
+    "lead": "Refund 1 bar of ki on a missed blast",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Refund 1 bar of ki on a missed blast"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_13",
+    "name": "Halo",
+    "slug": "halo",
+    "cost": 4,
+    "type": "Blast",
+    "description": "Blasts cost 1 bar of ki less",
+    "lead": "Blasts cost 1 bar of ki less",
+    "exclusiveTo": null,
+    "effects": [{"key":"blastKiCost","value":-1,"note":"Blasts cost 1 bar of ki less"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_16",
+    "name": "Dragon Soul",
+    "slug": "dragon-soul",
+    "cost": 4,
+    "type": "Skill",
+    "description": "Regain 1 Blast Stocks each time high-speed movement is used to dodge a Blast",
+    "lead": "Regain 1 Blast Stocks each time high-speed movement is used to dodge a Blast",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Regain 1 Blast Stocks each time high-speed movement is used to dodge a Blast"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_22",
+    "name": "Saiyan Armor",
+    "slug": "saiyan-armor",
+    "cost": 3,
+    "type": "Defense",
+    "description": "All defense +10% but active and passive ki charge -5%",
+    "lead": "All defense +10% but active and passive ki charge -5%",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"allResist","value":0.1,"note":"All defense +10%"},
+      {"key":"kiCharge","value":-0.05,"note":"Active ki charge 5% slower"},
+      {"key":"kiRecovery","value":-0.05,"note":"Passive ki charge 5% slower"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_23",
+    "name": "Kibito's Secret Art",
+    "slug": "kibito-s-secret-art",
+    "cost": 3,
+    "type": "Skill",
+    "description": "Upon switching in start with max blaststocks but decrease skill gauge recovery speed by 50%",
+    "lead": "Upon switching in start with max blaststocks but decrease skill gauge recovery speed by 50%",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"skillRecovery","value":-0.5,"note":"Skill gauge recovery speed -50%"},
+      {"key":"display","value":null,"note":"Upon switching in start with max blaststocks"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_24",
+    "name": "Launch's Support",
+    "slug": "launch-s-support",
+    "cost": 3,
+    "type": "Ki Efficiency",
+    "description": "Active ki charge increased by 10% but blast damage decreased by 5%",
+    "lead": "Active ki charge increased by 10% but blast damage decreased by 5%",
+    "exclusiveTo": null,
+    "effects": [{"key":"kiCharge","value":0.1,"note":"Active ki charge 10% faster"},{"key":"superDamage","value":-0.05,"note":"Blast damage -5%"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_25",
+    "name": "Guard Splitter",
+    "slug": "guard-splitter",
+    "cost": 3,
+    "type": "Utility",
+    "description": "Guard crashes always ki break the opponent",
+    "lead": "Guard crashes always ki break the opponent",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Guard crashes always ki break the opponent"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_26",
+    "name": "Push Your Limits",
+    "slug": "push-your-limits",
+    "cost": 1,
+    "type": "Blast",
+    "description": "No longer take self-damage from blasts and ultimates. Causes stun when Sparking Mode ends after using Ultimate Blast.",
+    "lead": "No longer take self-damage from blasts and ultimates. Causes stun when Sparking Mode ends after using Ultimate Blast.",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"noSelfDamage","value":1,"note":"No self-damage from Blasts and Ultimate Blasts"},
+      {
+        "key": "ultimateKiCost",
+        "value": 1,
+        "note": "Ki burnout after the ultimate until 1 bar recharges, so the league counts it as 1 more bar, as for Ultimate Burst"
+      },
+      {"key":"display","value":null,"note":"Causes stun when Sparking Mode ends after using Ultimate Blast."}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_27",
+    "name": "Amplified Strike",
+    "slug": "amplified-strike",
+    "cost": 1,
+    "type": "Utility",
+    "description": "Your attacks can break armor easier the more ki you have (+1 Armor break level per ki bar above 2)",
+    "lead": "Your attacks can break armor easier the more ki you have",
+    "exclusiveTo": null,
+    "effects": [
+      {"key":"armorBreakLevel","value":1,"condition":"ki at or above 40%"},
+      {"key":"armorBreakLevel","value":1,"condition":"ki at or above 60%"},
+      {"key":"armorBreakLevel","value":1,"condition":"ki at or above 80%"}
+    ],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_29",
+    "name": "Stand and Fight!",
+    "slug": "stand-and-fight",
+    "cost": 1,
+    "type": "Utility",
+    "description": "You and your opponent cannot tag out",
+    "lead": "You and your opponent cannot tag out",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"You and your opponent cannot tag out"}],
+    "bannedIn": []
+  },
+  {
+    "id": "DBZL_Cap_30",
+    "name": "Supreme Kai's Potara",
+    "slug": "supreme-kai-s-potara",
+    "cost": 0,
+    "type": "Skill",
+    "description": "Cannot transform (fusion is still usable)",
+    "lead": "Cannot transform (fusion is still usable)",
+    "exclusiveTo": null,
+    "effects": [{"key":"display","value":null,"note":"Cannot transform (fusion is still usable)"}],
+    "bannedIn": []
   }
 ]

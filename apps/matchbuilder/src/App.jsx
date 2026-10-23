@@ -3072,6 +3072,23 @@ const CharacterSlot = ({
         }
       });
     }
+
+    // Rule 4: exclusive-group-per-character (check in both soft and hard mode)
+    const exclusiveGroups = (ruleset?.restrictions || []).find(r => r.type === 'exclusive-group-per-character')?.params?.groups || [];
+    exclusiveGroups.forEach(group => {
+      const groupUsed = used.filter(id => group.ids.includes(id));
+      const maxCount = group.maxCount ?? 1;
+      if (groupUsed.length > maxCount) {
+        const names = groupUsed.map(id => {
+          const cap = capsules.find(c => c.id === id);
+          return cap ? (cap['Item Names'] || cap.name || cap.id) : id;
+        }).join(' and ');
+        violations.push({
+          type: 'exclusive-group',
+          message: `Cannot use ${names} on the same character (only ${maxCount} ${group.name || 'group'} capsule${maxCount === 1 ? '' : 's'} allowed)`
+        });
+      }
+    });
     return violations;
   };
   const violations = computeViolations();
@@ -3265,6 +3282,17 @@ const CharacterSlot = ({
                     ? currentGroupUsage.count - 1 
                     : currentGroupUsage.count;
                   return effectiveCount < capsuleGroup.maxCount;
+                });
+              }
+
+              // Rule 4: exclusive-group-per-character (hard mode only)
+              const exclusiveGroups = (ruleset?.restrictions || []).find(r => r.type === 'exclusive-group-per-character')?.params?.groups || [];
+              if (exclusiveGroups.length > 0 && ruleset?.mode === 'hard') {
+                const usedOther = character.capsules.filter((id, idx) => id && idx !== i);
+                available = available.filter(c => {
+                  if (c.id === capsuleId) return true; // Always allow current selection
+                  return exclusiveGroups.every(g => !g.ids.includes(c.id)
+                    || usedOther.filter(id => g.ids.includes(id)).length < (g.maxCount ?? 1));
                 });
               }
 

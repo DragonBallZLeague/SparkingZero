@@ -57,6 +57,16 @@ REPORT.md's "Game files vs character map" lists every value the two disagree on 
 2026-10-09, apart from float noise in three DP scales). Without a committed snapshot the build
 falls back to the map entirely.
 
+**The league's capsule mod** (`snapshots/dbzl-mod/`, 2026-10-23): the DBZLCapsules mod's own files, exported
+with FModel like the game. `npm run data:mod -- <mod folder>` (the folder holding `DBZL_Cap_*.json`, under
+the export's `Mods/DBZLCapsules/Content/DBZLCapsules`) writes its capsules, their effects and their buffs in the
+game snapshot's long-table form. `fmodelData.mjs` merges them with the game's, so `npm run data:parity` checks
+every league capsule row in `curated/capsule-effects.csv` against the mod, including its ki bands (the mod's
+`SPPercent` conditions: 20% of the gauge is one bar). Re-run it whenever the mod changes, and treat the mod's
+files as the source for the numbers when they and a capsule's description disagree; what players read stays
+the league's own description. Only capsules listed in referencedata are pulled (the mod holds others that are not
+meant for the sites).
+
 **Short dash** now comes from each character's own step data for all 241 (`curated/short-dash-cost.csv`
 and `short-dash-shared.csv` are the league's datamine, kept as the cross-check). Seven characters
 change from Capsule Corp's 0.385 to the game's 0.265: Goku (Mini) SSJ, Vegeta (Mini) and its three
@@ -239,7 +249,7 @@ class key or effect.
 | `short-dash-cost.csv` | id | the league's datamine of the step-cancel dash cost (raw ki, 10000 = 1 bar); half the game's per-dash cost, so raw x 2 / 10000 bars (confirmed in game: 3 short dashes per bar). Since 2026-10-09 the cross-check for the game files' own value; used only when no FModel snapshot is committed |
 | `short-dash-shared.csv` | id | DLC characters with no step data of their own: the game reads `sameAs`'s (league, 2026-10-09: Bardock SSJ from Bardock, Vegeta (GT) and its SSJ from Vegeta (Z - End) SSJ, Ma Junior from Piccolo, Tien (World Tournament) from Tien, Uub (Kid) from Goku (Z - Early), Tora from Raditz) |
 | `effects.csv` | effect key | the effect vocabulary: each key's kind (damage, resist, rate, flat, level, resource, display) and the game field / summary column it reads |
-| `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys, `max` with `op` = set; `condition` blank = always, `sparking` = with Sparking Mode, any other text = shown as a note and not applied; `note` is shown for unmodelled effects |
+| `capsule-effects.csv` | capsule id (one row per effect) | `key` from effects.csv; `value` as a coefficient for damage/resist/rate keys (0.05 = 5%), HP / bars / counts for flat keys (1 for the on/off keys `switchAlwaysReady` and `noSelfDamage`); `op` = set with `max` (starting ki) or a number (a damage channel's coefficient, 0 = no damage; `kiBlastCost`'s rate, 0 = free); `condition` blank = always, `sparking` = with Sparking Mode, else one of the forms in `src/utils/conditions.js`, applied from the Conditions controls: health (`health at or below 75%`), map, event (`after eliminating an opponent`), ki bands in percent of the gauge as the mod writes them (`ki at or above 60%, below 80%`, `ki below 20%`, `ki at or below 40%`) and one that stacks, multiplying the value: `every 30 seconds in battle, up to 3 times` (the Battle time control); verify-data fails on any other text; `note` is shown for unmodelled effects |
 | `skill-targets.csv` | skill id `<characterId>:<slot>` (+ optional phase and key) | `target` = opponent for effects the skill puts on the opponent (applied to the opponent's stats); everything else applies to the user |
 
 `overrides.csv` fields are dotted paths into a character (e.g. `stats.kiBlastDamage`), or, with a
@@ -249,7 +259,7 @@ skill id `<characterId>:<slot>` as the id, into that skill (e.g. `damage`).
 
 | File | Shape |
 | --- | --- |
-| `meta.json` | `schemaVersion`, `dataVersion` (content hash; the app fetches every other file with `?v=<dataVersion>`), source versions, `referenceAttacker`, `defaultRuleset`, `rulesets` (total cost, banned ids, group caps) |
+| `meta.json` | `schemaVersion`, `dataVersion` (content hash; the app fetches every other file with `?v=<dataVersion>`), source versions, `referenceAttacker`, `defaultRuleset`, `rulesets` (total cost, `mode`: `hard` blocks a capsule that breaks a rule, `soft` only warns; banned ids, group caps, `exclusive` groups such as the Halo capsules: at most `maxCount` of them on one build) |
 | `characters.json` | array in the calculator's order (referencedata's, with `curated/character-order.csv`'s moves): `id`, `name`, `slug` (its page address, the Analyzer's slug rule), `aliases`, `image`, `class {key, label}`, `dp`, `dpScale`, `stats` (explicit units: defenses are incoming-damage multipliers, ki in bars, `kiBlastLimit` null = unlimited), `coef` (total damage coefficient per channel = DP scale + class add), `classCoef`, `incomingDamage`, `skills` (ids into skills.json), `traits`, `sparking {armor, effects, armorBreakLevel}`, `passives`, `provenance {source: [fields]}`. **The website reads `name` from this file** |
 | `skills.json` | object keyed `<characterId>:<slot>`: `name`, `stockCost`, `damage`, `duration`, `phases [{duration, effects [{key, value}]}]` (exact game coefficients; `stages: true` when the phases are charge stages, one of which applies), `expiryRule`, `display`, `armor` |
 | `blasts.json` | object keyed by character id: `[{slot, variant, name, kiCost, triggerKi, damage, damageStatus (measured / computed / unmeasured), boostedDamage, recipe?, hits? ([[Power, count]]: the hits the damage is made of, each rounded up on its own), category, type, impactPower, traits, flags, lungeSpeed, moveLimitTime}]` |

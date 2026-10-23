@@ -17,6 +17,7 @@ import { fileURLToPath } from 'url';
 import { readCsv, writeIfChanged } from './lib/csv.mjs';
 import { loadRefdata, repoRoot, normName } from './lib/refdata.mjs';
 import { loadFmodel } from './lib/fmodelData.mjs';
+import { parseCondition } from '../src/utils/conditions.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.resolve(__dirname, '..', 'data');
@@ -301,9 +302,16 @@ for (const f of fieldMap) {
   for (const [k, f, s] of [['health', 'ParameterChanging.AddLife', 1], ['blastKiCost', 'ParameterChanging.BlastExpendSpAdd', 10000],
     ['ultimateKiCost', 'ParameterChanging.UltimateBlastExpendSpAdd', 10000], ['combativesArmorLevel', 'ParameterChanging.CombativesArmorLevelUp', 1],
     ['bulletArmorLevel', 'ParameterChanging.BulletArmorLevelUp', 1], ['blastComboDamage', 'ParameterChanging.BlastComboDamageScale', 1],
-    ['startingKi', 'ParameterChanging.AddInitialSP', 10000]]) FIELDS.set(k, [[f, s]]);
+    ['startingKi', 'ParameterChanging.AddInitialSP', 10000],
+    // the league's capsule mod (snapshots/dbzl-mod)
+    ['skillLimit', 'ParameterChanging.AdditionalMaxSkillStock', 1], ['noSelfDamage', 'ParameterChanging.SelfDamageResist', 1],
+    ['blastKiCostRate', 'ParameterChanging.BrastExpendSpScale', 1], ['kiBlastCost', 'ParameterChanging.BulletExpendEnergyScale', 1],
+    ['moveSpeed', 'ParameterChanging.MovesScale.NormalMove.MaxSpeedScale', 1]]) FIELDS.set(k, [[f, s]]);
+  // Ultimate Body is both armor level-ups at once (Power Body's melee and Light Body's ki-blast armor)
+  FIELDS.set('ultimateBody', [['ParameterChanging.CombativesArmorLevelUp', 1], ['ParameterChanging.BulletArmorLevelUp', 1]]);
+  FIELDS.set('switchAlwaysReady', [['ResourceChanging.MaxChangeGauge', 1]]);
   // Fields a matched key also accounts for in the same effect (the battle-start refill of a starting-ki capsule)
-  const ALSO = { startingKi: /^ResourceChanging\.HealSP$/, allDamage: /DamageScale$/ };
+  const ALSO = { startingKi: /^ResourceChanging\.HealSP$/, allDamage: /DamageScale$/, moveSpeed: /^ParameterChanging\.MovesScale\./, ultimateBody: /ArmorLevelUp$/ };
   FIELDS.get('armorBreakLevel').push(['ParameterChanging.ActionCategoryArmorBreakLevelUp[0].Value', 1]);
   FIELDS.set('allDamage', [['ParameterChanging.RushDamageScale', 1], ['ParameterChanging.BlastDamageScale', 1], ['ParameterChanging.BlastUltimateDamageScale', 1]]);
   FIELDS.set('allResist', [['ParameterChanging.CombativesDamageResist', 1], ['ParameterChanging.EnergyDamageResist', 1]]);
@@ -317,13 +325,26 @@ for (const f of fieldMap) {
       const m = g.field.match(/^Effects\[(\d+)\]\.(.*)$/);
       if (!m) continue;
       const k = `${g.effect}:${m[1]}`;
-      if (!out.has(k)) out.set(k, { cond: [], values: new Map() });
+      if (!out.has(k)) out.set(k, { cond: [], values: new Map(), sp: new Map() });
       const e = out.get(k);
-      if (m[2].startsWith('Conditions[')) { if (g.value === 'true' && /\.b\w+$/.test(m[2])) e.cond.push(m[2].replace(/^Conditions\[\d+\]\./, '')); }
+      const sp = m[2].match(/^Conditions\[(\d+)\]\.SPPercent\.(Num|Inequality)$/);
+      if (sp) { if (!e.sp.has(sp[1])) e.sp.set(sp[1], { num: 0 }); e.sp.get(sp[1])[sp[2] === 'Num' ? 'num' : 'ineq'] = sp[2] === 'Num' ? Number(g.value) : g.value.replace(/^.*::/, ''); }
+      else if (m[2].startsWith('Conditions[')) { if (g.value === 'true' && /\.b\w+$/.test(m[2])) e.cond.push(m[2].replace(/^Conditions\[\d+\]\./, '')); }
       else if (m[2] === 'Buff') for (const p of fm.paramsOf(g.value)) e.values.set(p.field, p.value);
       else e.values.set(m[2], g.value);
     }
     return [...out.values()];
+  }
+  // A game effect's SPPercent conditions as a ki band in percent (null when it has none), the shape of a kiPct condition
+  function spBand(e) {
+    if (!e.sp.size) return 'null';
+    const b = { min: null, below: null, max: null };
+    for (const { num, ineq } of e.sp.values()) {
+      if (ineq === 'NotLessThan' || ineq === 'MoreThan') b.min = num || null;
+      else if (ineq === 'LessThan') b.below = num;
+      else if (ineq === 'NoMoreThan') b.max = num;
+    }
+    return JSON.stringify(b);
   }
   const rows = curated('capsule-effects.csv');
   const d = []; let n = 0;
@@ -337,12 +358,22 @@ for (const f of fieldMap) {
       n++;
       const want = Number(r.value);
       // "set starting ki to max" (Rising Fighting Spirit) is the game's ResourceChanging.MaxSP flag; Ultimate
-      // Burst's +1 bar is the league's reading of its collapse (ki burnout until 1 bar recharges)
-      const flag = r.value === 'max' ? 'ResourceChanging.MaxSP' : r.key === 'ultimateKiCost' && id === '00_0_0027' ? 'ParameterChanging.bStunWhenEndSparkingAfterUltimate' : null;
-      const hit = flag ? effects.find(e => e.values.get(flag) === 'true') : effects.find(e => fields.some(([f, s]) => e.values.has(f) && same(String(Number(e.values.get(f)) / s), String(want)))
-        && (r.condition === 'sparking') === e.cond.includes('bSparking'));
+      // Burst's +1 bar is the league's reading of its collapse (ki burnout until 1 bar recharges); Tag Happy's
+      // always-full switch gauge is MaxChangeGauge
+      // (Push Your Limits has the same stun, so the same +1 bar)
+      const flag = r.value === 'max' ? 'ResourceChanging.MaxSP' : r.key === 'ultimateKiCost' && ['00_0_0027', 'DBZL_Cap_26'].includes(id) ? 'ParameterChanging.bStunWhenEndSparkingAfterUltimate'
+        : r.key === 'switchAlwaysReady' ? 'ResourceChanging.MaxChangeGauge' : null;
+      const pc = r.condition && r.condition !== 'sparking' ? parseCondition(r.condition) : null;
+      // A stacking time row (Power Creep, +5% every 30 seconds) is the game's full-strength buff: value x stacks.
+      const target = pc?.kind === 'time' ? want * pc.max : want;
+      // A "set to 0" row is the game's large negative scale (Energy Conservation's -1000).
+      const valueOk = (gv) => (r.op === 'set' && want === 0 ? gv <= -1 : same(String(gv), String(target)));
+      // A ki band ("ki at or above 60%, below 80%") must be the game effect's SPPercent band.
+      const band = pc?.kind === 'kiPct' ? JSON.stringify({ min: pc.min || null, below: pc.below ?? null, max: pc.max ?? null }) : 'null';
+      const hit = flag ? effects.find(e => e.values.get(flag) === 'true') : effects.find(e => fields.some(([f, s]) => e.values.has(f) && valueOk(Number(e.values.get(f)) / s))
+        && (r.condition === 'sparking') === e.cond.includes('bSparking') && spBand(e) === band);
       if (!hit) {
-        const seen = effects.flatMap(e => fields.filter(([f]) => e.values.has(f)).map(([f, s]) => `${Number(e.values.get(f)) / s}${e.cond.length ? ` (${e.cond.join(', ')})` : ''}`));
+        const seen = effects.flatMap(e => fields.filter(([f]) => e.values.has(f)).map(([f, s]) => `${Number(e.values.get(f)) / s}${e.cond.length ? ` (${e.cond.join(', ')})` : ''}${e.sp.size ? ` SP ${spBand(e)}` : ''}`));
         d.push(`${r.name} (${id}) ${r.key} ${r.value}${r.condition ? ` [${r.condition}]` : ''}: game ${seen.join('; ') || 'has no such effect'}`);
       } else {
         for (const [f] of fields) used.add(`${effects.indexOf(hit)}|${f}`);

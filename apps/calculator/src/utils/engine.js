@@ -28,7 +28,7 @@
  * meleeDefenseStat, energy, kiBlastDmg, ...) so components only render.
  */
 
-import { parseCondition, conditionMet } from './conditions.js';
+import { parseCondition, conditionMet, conditionStacks } from './conditions.js';
 
 /**
  * Damage taken from a list of hits: the game rounds each hit up after defense (the same rule as
@@ -47,6 +47,8 @@ export const CHANNEL_OF = {
   chargedKiBlastDamage: 'chargedKiBlast', skillDamage: 'skill', superDamage: 'super', ultimateDamage: 'ultimate',
 };
 const ALL_DAMAGE = ['rush', 'smash', 'combo', 'throw', 'counter', 'followUp', 'kiBlast', 'chargedKiBlast', 'super', 'ultimate'];
+/** The game's NormalCombativesDamageScale (meleeDamage): every melee channel (data/EXPANSION.md, "Burst attacks"). */
+const MELEE_DAMAGE = ['rush', 'smash', 'combo', 'throw', 'counter', 'followUp'];
 const RESIST_OF = { physicalResist: ['physical'], energyResist: ['energy'], blastResist: ['blast'], allResist: ['physical', 'energy'] };
 /** rate effect key -> [shown stat, class coefficient key (or null)] */
 const RATES = {
@@ -61,7 +63,8 @@ const FLAT = new Set(['health', 'startingKi', 'skillStart', 'kiBlastCount', 'bla
 /** Pursuit effects (Vanishing Crash / Dragon Crash +5% damage, Vanishing Break / Dragon Break +1 use). */
 const PURSUIT = new Set(['vanishingAttackDamage', 'dragonSmashDamage', 'vanishingLimit', 'dragonHomingLimit']);
 const HANDLED = new Set([...Object.keys(CHANNEL_OF), 'allDamage', ...Object.keys(RESIST_OF), ...Object.keys(RATES), ...FLAT, ...PURSUIT,
-  'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'armorLevel', 'armorBreakLevel']);
+  'switchRecovery', 'sparkingCharge', 'sparkingDrain', 'armorLevel', 'armorBreakLevel', 'blastKiCostRate',
+  'skillLimit', 'switchAlwaysReady', 'noSelfDamage', 'moveSpeed', 'meleeDamage', 'ultimateBody', 'kiBlastSpeed']);
 /** Effect keys that change a shown stat (everything else is listed as a note). */
 export const APPLIED_KEYS = HANDLED;
 
@@ -147,6 +150,7 @@ export function collectEffects({ character, capsules = [], skills = [], sparking
   // health conditions read the side's maximum health: its own plus every unconditional health effect
   const sit = situation && {
     ...situation,
+    maxKi: character?.stats?.maxKi ?? 5,
     maxHealth: (character?.stats?.health ?? 0) + capsules.reduce((s, c) => s + (c?.effects || [])
       .reduce((t, e) => t + (e.key === 'health' && !e.condition && typeof e.value === 'number' ? e.value : 0), 0), 0),
   };
@@ -154,10 +158,14 @@ export function collectEffects({ character, capsules = [], skills = [], sparking
     const cond = e.condition || 'always';
     // Dragon Rush: armor break level +3 on Rush Attack category actions (the rush hits)
     if (e.key === 'armorBreakLevel' && /rush attack/i.test(cond)) { applied.push({ ...e, ...extra, source, rushOnly: true }); return; }
-    const met = cond !== 'always' && cond !== 'sparking' && sit && conditionMet(parseCondition(cond), sit);
+    const pc = cond !== 'always' && cond !== 'sparking' ? parseCondition(cond) : null;
+    const met = pc && sit && conditionMet(pc, sit);
     if (cond === 'always' || (cond === 'sparking' && sparking) || met) {
+      // a stacking condition (per ki bar, per 30 seconds) multiplies the value by its stacks
+      const stacks = met ? conditionStacks(pc, sit) : 1;
+      const value = stacks > 1 && typeof e.value === 'number' ? round(e.value * stacks, 6) : e.value;
       if (e.key === 'display' || (!HANDLED.has(e.key) && e.op !== 'set')) notes.push({ source, text: e.note || describe(e) });
-      else applied.push({ ...e, ...extra, source, ...(met ? { when: cond } : {}) });
+      else applied.push({ ...e, value, ...extra, source, ...(met ? { when: cond, ...(stacks > 1 ? { stacks } : {}) } : {}) });
     } else if (cond === 'sparking' && ULTIMATE_KEYS.has(e.key)) {
       // Ultimates are always used in Sparking Mode: Sparking-only ultimate damage applies to them anyway
       applied.push({ ...e, ultimateOnly: true, source });
@@ -216,22 +224,27 @@ export function computeStats(c, effects, ctx = {}) {
   const s = c.stats;
   const add = {};
   const plus = (k, v) => { add[k] = (add[k] || 0) + v; };
-  let setMaxKi = false, armorLevel = false, sparkingArmor = false, breakUp = 0, rushBreakUp = 0;
+  let setMaxKi = false, armorLevel = false, sparkingArmor = false, breakUp = 0, rushBreakUp = 0, ultimateBody = 0;
+  // numeric "set" effects: on a damage channel the coefficient (0 = no damage), on kiBlastCost the rate (0 = free)
+  const set = {};
   for (const e of effects.applied) {
     const v = typeof e.value === 'number' ? e.value : 0;
-    if (e.op === 'set') { if (e.key === 'startingKi' && e.value === 'max') setMaxKi = true; continue; }
+    if (e.op === 'set') { if (e.key === 'startingKi' && e.value === 'max') setMaxKi = true; else if (typeof e.value === 'number') set[e.key] = e.value; continue; }
     if (e.ultimateOnly) { plus('dmg.ultimate', v); continue; }
     if (CHANNEL_OF[e.key]) { if (!(e.passive && e.key === 'ultimateDamage')) plus(`dmg.${CHANNEL_OF[e.key]}`, v); }
     else if (e.key === 'allDamage') for (const ch of ALL_DAMAGE) { if (!(e.passive && ch === 'ultimate')) plus(`dmg.${ch}`, v); }
+    else if (e.key === 'meleeDamage') { for (const ch of MELEE_DAMAGE) plus(`dmg.${ch}`, v); plus('meleeDamage', v); }
     else if (RESIST_OF[e.key]) for (const r of RESIST_OF[e.key]) plus(`res.${r}`, v);
     else if (e.key === 'armorLevel') armorLevel = armorLevel || v > 0;
     else if (e.key === 'armorBreakLevel') { if (e.rushOnly) rushBreakUp += v; else breakUp += v; }
     else if (e.key === 'sparkingArmor') sparkingArmor = true;
+    else if (e.key === 'ultimateBody') ultimateBody = Math.max(ultimateBody, v);
     else plus(e.key, v);
   }
   // The ultimate coefficient always includes the Sparking passive (ultimates need Sparking Mode)
   const k0 = { ...c.coef, ultimate: c.coef.ultimate + sparkingUltimateBonus(c) };
   const k1 = Object.fromEntries(Object.entries(k0).map(([ch, k]) => [ch, k + (add[`dmg.${ch}`] || 0)]));
+  for (const [key, ch] of Object.entries(CHANNEL_OF)) if (set[key] != null) k1[ch] = set[key];
   const P = c.power || {};
 
   const hits = [
@@ -264,7 +277,9 @@ export function computeStats(c, effects, ctx = {}) {
   let startingKi = (s.startingKi ?? 0) + (add.startingKi || 0);
   if (setMaxKi) startingKi = maxKi;
   startingKi = Math.max(0, Math.min(maxKi, round(startingKi)));
-  const skillStart = Math.max(0, Math.min(s.skillLimit ?? Infinity, (s.skillStart ?? 0) + (add.skillStart || 0)));
+  const skillLimit = s.skillLimit == null ? null : s.skillLimit + (add.skillLimit || 0);
+  const skillStart = Math.max(0, Math.min(skillLimit ?? Infinity, (s.skillStart ?? 0) + (add.skillStart || 0)));
+  const sparkingDrainTotal = (cls.sparkingDrain || 0) + (add.sparkingDrain || 0);
   const kiBlastLimit = s.kiBlastLimit == null ? null : s.kiBlastLimit + (add.kiBlastCount || 0);
 
   // Armor does not stack: Sparking armor (25%) or skill armor (10%) replaces a lower base armor.
@@ -276,10 +291,15 @@ export function computeStats(c, effects, ctx = {}) {
   // The armor's level (a hit with a lower break level is reduced by it): Sparking Armor at the level
   // the game gives this character (3, or 4 for hyper-armor holders); Hyper Armor at 2. Skill armor's
   // 10% is Hyper Armor's damage rate, so it is taken at Hyper Armor's level.
+  // Ultimate Body (Heavy Sparking!, in Sparking): the game raises the melee and the ki-blast armor level by 3
+  // (CombativesArmorLevelUp and BulletArmorLevelUp, Power Body's and Light Body's armor at once). A side with
+  // armor keeps its damage rate at a higher level; one without gets Hyper Armor's rate (10%, as Light Body is
+  // read) at that level.
+  const hadArmor = armor > 0;
+  if (ultimateBody > 0 && !hadArmor) armor = SKILL_ARMOR;
   const A = c.armor || {};
-  const armorLevelNow = !(armor > 0) ? null
-    : sparkingArmor ? (A.sparking?.level ?? 3)
-      : (A.base?.level ?? 2);
+  const baseLevel = !hadArmor ? 0 : sparkingArmor ? (A.sparking?.level ?? 3) : (A.base?.level ?? 2);
+  const armorLevelNow = !(armor > 0) ? null : baseLevel + ultimateBody;
   // This side's attacks' break levels, with every armor-break-level effect added
   const bl = A.breakLevels;
   const up = (v, extra = 0) => (v == null ? null : v + breakUp + extra);
@@ -316,7 +336,7 @@ export function computeStats(c, effects, ctx = {}) {
     id: c.id, name: c.name, class: c.class.label, dp: c.dp,
     // stats, in the old field names the panels read
     health: (s.health ?? 0) + (add.health || 0),
-    switch: add.switchRecovery ? round(s.switch / (1 + add.switchRecovery), 2) : s.switch,
+    switch: add.switchAlwaysReady ? 0 : add.switchRecovery ? round(s.switch / (1 + add.switchRecovery), 2) : s.switch,
     armorBreak: s.armorBreak,
     armor,
     armorLevel: armorLevelNow,
@@ -341,7 +361,7 @@ export function computeStats(c, effects, ctx = {}) {
     chain: round(k1.combo - 1), perception: round(k1.counter - 1), sCounter: round(k1.counter - 1),
     super: round(k1.super - 1), ultimate: round(k1.ultimate - 1), kiBlast: round(k1.kiBlast - 1), skillDmg: round(k1.skill - 1),
     shortDashCost: rate('shortDashCost', s.shortDashCost),
-    kiBlastCost: rate('kiBlastCost', s.kiBlastCost),
+    kiBlastCost: set.kiBlastCost != null && typeof s.kiBlastCost === 'number' ? round(s.kiBlastCost * set.kiBlastCost) : rate('kiBlastCost', s.kiBlastCost),
     kiBlastLimit: kiBlastLimit ?? 999,
     startingKi,
     kiCharge: rate('kiCharge', s.kiCharge),
@@ -349,16 +369,16 @@ export function computeStats(c, effects, ctx = {}) {
     kiRegen: rate('kiRecovery', s.kiRegen),
     kiRegenRange: s.kiRegenRange,
     skillStart,
-    skillLimit: s.skillLimit,
+    skillLimit,
     skillRegen: s.skillRegen != null ? `${rate('skillRecovery', s.skillRegen)} Points/m` : null,
     sparkCharge: round((cls.sparkingCharge || 0) + (add.sparkingCharge || 0)),
     sparkDuration: round((s.sparkDuration ?? 0) - (add.sparkingDrain || 0)),
     // Sparking! Mode's gauge (2026-10-13). The old panels' sparkDuration above is Capsule Corp's "Spark Duration",
     // which matches the class's PRE-Sparking decay for every class (a partly charged gauge fading when charging
     // stops), not how long Sparking lasts. Rates add like the other rates: (1 + class + capsules).
-    sparkDrain: round((cls.sparkingDrain || 0) + (add.sparkingDrain || 0)),
+    sparkDrain: round(sparkingDrainTotal),
     sparkPreDrain: round((cls.preSparkingDrain || 0) + (add.preSparkingDrain || 0)),
-    sparkSeconds: sparkingSeconds(maxKi, (cls.sparkingDrain || 0) + (add.sparkingDrain || 0)),
+    sparkSeconds: sparkingSeconds(maxKi, sparkingDrainTotal),
     sparkChargeSeconds: sparkingChargeSeconds((cls.sparkingCharge || 0) + (add.sparkingCharge || 0)),
     skill1Damage: skillDamage(ctx.skillDamage?.[0]),
     skill2Damage: skillDamage(ctx.skillDamage?.[1]),
@@ -367,6 +387,14 @@ export function computeStats(c, effects, ctx = {}) {
     coef: k1,
     blastFactor: { super: k1.super / k0.super, ultimate: k1.ultimate / k0.ultimate },
     blastKiCostAdd: (add.blastKiCost || 0) * 10000,
+    blastKiCostMult: 1 + (add.blastKiCostRate || 0), // Halo: Corrupted halves a Blast's ki cost (before blastKiCostAdd)
+    moveSpeed: round(1 + (add.moveSpeed || 0), 3), // movement speed scale: skill buffs, Accelerator
+    kiBlastSpeed: round(1 + (add.kiBlastSpeed || 0), 3), // rush ki blast speed scale: Rush Ki Blast 1, Master Ki Blast, Vegeta's Technique
+    // Burst Melee Attack (1,000 Power) and the first Burst Rush hit (360): fixed by class and DP, and no damage
+    // channel reaches them (measured 2026-10-10, data/EXPANSION.md); the general melee modifier does
+    burstMelee: hit(1000, 1 + (add.meleeDamage || 0), K),
+    burstRush: hit(360, 1 + (add.meleeDamage || 0), K),
+    noSelfDamage: !!add.noSelfDamage, // Push Your Limits: Blasts and Ultimates deal no self-damage
     ultimateKiCostAdd: (add.ultimateKiCost || 0) * 10000,
     referenceHits: refHits,
     damageConstant: K,

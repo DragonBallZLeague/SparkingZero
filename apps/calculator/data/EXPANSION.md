@@ -153,8 +153,9 @@ Kaioken. The files explain why:
 - **But one modifier does reach them:** `NormalCombativesDamageScale`, a general melee damage modifier (league,
   2026-10-10). It raises Burst attacks and most likely every melee attack. Today only capsules outside the league's
   list use it: Evil Strike and Strike of Justice (+5% per step), Melee Attack Boost Ultra, and Melee Attack Zero.
-  The engine needs an "all melee damage" effect for it, applying to every melee channel and to Burst attacks,
-  before any league capsule or buff uses it.
+  The engine has it as `meleeDamage` since 2026-10-23 (Bloodlust and Power Creep, league capsules, use it), on
+  every melee channel: rush, smash, Rush Chains, throw, counters and pursuits. Burst attacks are still shown as
+  their fixed 1,250 and 450, without it.
 
 The engine needs this mapping (category to channel) once the other rush follow-ups and counters are published.
 Not in the published data yet.

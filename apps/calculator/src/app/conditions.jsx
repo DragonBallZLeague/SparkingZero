@@ -1,8 +1,8 @@
-// Conditions: a side's health, ki bars and skill gauge, and the map and timed events when an equipped
-// capsule needs them. Effects that depend on them then apply with exact numbers (src/utils/conditions.js).
+// Conditions: a side's health, ki bars and skill gauge, and the map, timed events and battle time when an
+// equipped capsule needs them. Effects that depend on them then apply with exact numbers (src/utils/conditions.js).
 import React, { useRef } from 'react';
 import { conditionNeedsOf, effectTiles, nameParts } from './model.js';
-import { MAPS, EVENTS } from '../utils/conditions.js';
+import { MAPS, EVENTS, TIME_STEPS } from '../utils/conditions.js';
 import { F } from './format.js';
 
 export const sitOf = (side) => ({
@@ -11,6 +11,7 @@ export const sitOf = (side) => ({
   skill: side.spec.sit?.skill ?? side.view.skillStart,
   map: side.spec.sit?.map ?? null,
   events: side.spec.sit?.events ?? {},
+  time: side.spec.sit?.time ?? 0,
 });
 
 /** The effects the conditions turned on, by source: [{ source, text }]. */
@@ -111,6 +112,12 @@ export function Conditions({ side, onChange, compact = false, who = null, right 
         <div className="sitr"><span className="sl">Events</span>
           <span className="steps">{[...new Set(needs.event.map(n => n.cond.event))].map(ev => (
             <button key={ev} className={sit.events[ev] ? 'on' : ''} onClick={() => set({ events: { ...sit.events, [ev]: !sit.events[ev] } })}>{EVENTS[ev]}</button>
+          ))}</span><b></b></div>
+      )}
+      {needs.time.length > 0 && (
+        <div className="sitr"><span className="sl">Battle time</span>
+          <span className="steps">{TIME_STEPS.map(t => (
+            <button key={t} className={sit.time === t ? 'on' : ''} onClick={() => set({ time: t })}>{t ? `${t}s` : 'Start'}</button>
           ))}</span><b></b></div>
       )}
       {compact && effects.length > 0 && (
