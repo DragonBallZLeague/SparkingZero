@@ -94,6 +94,29 @@ const getActiveFusions = (team, transformations) => {
   return result;
 };
 
+// Capsules that don't use one of a character's 7 capsule slots (`freeSlots` in capsule-rules.yaml:
+// the league's mod lets the game take them on top of the 7). A character keeps them in `free`.
+const freeSlotIdsOf = (rulesets) => new Set((rulesets && rulesets.freeSlots) || []);
+
+// A character's capsule ids split into the 7 slots and the free slots (saved files list them together)
+const splitCapsules = (ids, freeIds) => {
+  const all = (ids || []).filter(Boolean);
+  const slots = all.filter((id) => !freeIds.has(id)).slice(0, 7);
+  return {
+    capsules: [...slots, ...Array(7 - slots.length).fill('')],
+    free: [...new Set(all.filter((id) => freeIds.has(id)))],
+  };
+};
+
+// Every capsule a character carries: the 7 slots, then the free slots
+const allCapsules = (char) => [...((char && char.capsules) || []).filter(Boolean), ...((char && char.free) || [])];
+
+// Capsule ids for a list of display names ("Name" or "Name (cost)"); unknown names are dropped
+const capsuleIdsFromNames = (names, capsules) => (Array.isArray(names) ? names : []).map((n) => {
+  const name = String(n ?? '').trim().replace(/\s*\(\d+\)\s*$/, '').trim().toLowerCase();
+  return name ? ((capsules || []).find((c) => (c.name || '').trim().toLowerCase() === name)?.id || '') : '';
+}).filter(Boolean);
+
 // Hoisted RulesetSelector so it's available before it's referenced in JSX
 function RulesetSelector({ rulesets, activeKey, onChange }) {
   const items = Object.keys((rulesets && rulesets.rulesets) || {}).map((k) => ({
@@ -187,7 +210,7 @@ const MatchBuilder = () => {
           character: char.name || (characters.find(c => c.id === char.id)?.name || ""),
           costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : "",
           // map capsule ids to names with cost, but filter out engine-placeholder ids like '00_0_0061'
-          capsules: (char.capsules || [])
+          capsules: allCapsules(char)
             .map((cid) => {
               const found = capsules.find((c) => c.id === cid);
               if (found) {
@@ -252,14 +275,7 @@ const MatchBuilder = () => {
             name: charObj.name,
             id: charObj.id || "",
             costume: m.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || "").trim().toLowerCase() === (m.costume || "").toString().trim().toLowerCase())?.id || "") : "",
-            capsules: Array(7).fill("").map((_, i) => {
-              if (m.capsules && m.capsules[i]) {
-                const capNameRaw = (m.capsules[i] || "").toString().trim();
-                const capName = normalizeCapsuleName(capNameRaw).toLowerCase();
-                return capsules.find(c => (c.name || "").trim().toLowerCase() === capName)?.id || "";
-              }
-              return "";
-            }),
+            ...splitCapsules(capsuleIdsFromNames(m.capsules, capsules), freeSlotIdsOf(rulesets)),
             ai: m.ai ? findAiIdFromValue(m.ai, aiItems) : "",
             transformAi: m.transformAi ? findAiIdFromValue(m.transformAi, aiItems) : "",
             sparking: m.sparking ? (sparkingMusic.find(s => (s.name || "").trim().toLowerCase() === (m.sparking || "").toString().trim().toLowerCase())?.id || "") : ""
@@ -368,7 +384,7 @@ const MatchBuilder = () => {
       team1: (match.team1 || []).map((char) => ({
         character: char.name || (characters.find(c => c.id === char.id)?.name || ""),
         costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : "",
-        capsules: (char.capsules || [])
+        capsules: allCapsules(char)
           .map((cid) => {
             const cap = capsules.find((c) => c.id === cid);
             if (cap) {
@@ -386,7 +402,7 @@ const MatchBuilder = () => {
       team2: (match.team2 || []).map((char) => ({
         character: char.name || (characters.find(c => c.id === char.id)?.name || ""),
         costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : "",
-        capsules: (char.capsules || [])
+        capsules: allCapsules(char)
           .map((cid) => {
             const cap = capsules.find((c) => c.id === cid);
             if (cap) {
@@ -448,14 +464,7 @@ const MatchBuilder = () => {
             name: charObj.name,
             id: charObj.id,
             costume: char.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || "").trim().toLowerCase() === (char.costume || "").toString().trim().toLowerCase())?.id || "") : "",
-            capsules: Array(7).fill("").map((_, i) => {
-              if (char.capsules && char.capsules[i]) {
-                const capNameRaw = (char.capsules[i] || "").toString().trim();
-                const capName = normalizeCapsuleName(capNameRaw).toLowerCase();
-                return capsules.find(c => (c.name || "").trim().toLowerCase() === capName)?.id || "";
-              }
-              return "";
-            }),
+            ...splitCapsules(capsuleIdsFromNames(char.capsules, capsules), freeSlotIdsOf(rulesets)),
             ai: char.ai ? findAiIdFromValue(char.ai, aiItems) : "",
             transformAi: char.transformAi ? findAiIdFromValue(char.transformAi, aiItems) : "",
             sparking: char.sparking ? (sparkingMusic.find(s => (s.name || "").trim().toLowerCase() === (char.sparking || "").toString().trim().toLowerCase())?.id || "") : ""
@@ -469,14 +478,7 @@ const MatchBuilder = () => {
             name: charObj.name,
             id: charObj.id,
             costume: char.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || "").trim().toLowerCase() === (char.costume || "").toString().trim().toLowerCase())?.id || "") : "",
-            capsules: Array(7).fill("").map((_, i) => {
-              if (char.capsules && char.capsules[i]) {
-                const capNameRaw = (char.capsules[i] || "").toString().trim();
-                const capName = normalizeCapsuleName(capNameRaw).toLowerCase();
-                return capsules.find(c => (c.name || "").trim().toLowerCase() === capName)?.id || "";
-              }
-              return "";
-            }),
+            ...splitCapsules(capsuleIdsFromNames(char.capsules, capsules), freeSlotIdsOf(rulesets)),
             ai: char.ai ? findAiIdFromValue(char.ai, aiItems) : "",
             transformAi: char.transformAi ? findAiIdFromValue(char.transformAi, aiItems) : "",
             sparking: char.sparking ? (sparkingMusic.find(s => (s.name || "").trim().toLowerCase() === (char.sparking || "").toString().trim().toLowerCase())?.id || "") : ""
@@ -549,7 +551,7 @@ const MatchBuilder = () => {
     const build = {
       character: character.name || (characters.find(c => c.id === character.id)?.name || ''),
       costume: character.costume ? (costumes.find(c => c.id === character.costume)?.name || '') : '',
-      capsules: (character.capsules || []).map(cid => {
+      capsules: allCapsules(character).map(cid => {
         const found = capsules.find(c => c.id === cid);
         if (found) {
           const cost = Number(found.cost || found.Cost || 0) || 0;
@@ -599,12 +601,7 @@ const MatchBuilder = () => {
         slot.sparking = spObj ? spObj.id : '';
       }
       if (Array.isArray(data.capsules)) {
-        slot.capsules = Array(7).fill('').map((_, i) => {
-          if (!data.capsules[i]) return '';
-          const capName = normalizeCapsuleName(data.capsules[i].toString()).toLowerCase();
-          const found = capsules.find(cap => (cap.name || '').trim().toLowerCase() === capName);
-          return found ? found.id : '';
-        });
+        Object.assign(slot, splitCapsules(capsuleIdsFromNames(data.capsules, capsules), freeSlotIdsOf(rulesets)));
       }
       replaceCharacter(matchId, teamKey, slotIndex, slot);
       setSuccess('Applied character YAML.');
@@ -634,7 +631,7 @@ const MatchBuilder = () => {
       const mapTeam = (team) => (team || []).map((char) => ({
         character: char.name || (characters.find(c => c.id === char.id)?.name || ''),
         costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : '',
-        capsules: (char.capsules || []).map((cid) => {
+        capsules: allCapsules(char).map((cid) => {
           const cap = capsules.find((c) => c.id === cid);
           if (cap) {
             const cost = Number(cap.cost || cap.Cost || 0) || 0;
@@ -742,13 +739,7 @@ const MatchBuilder = () => {
           name: charObj.name,
           id: charObj.id || '',
           costume: m.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || '').trim().toLowerCase() === (m.costume || '').toString().trim().toLowerCase())?.id || '') : '',
-          capsules: Array(7).fill('').map((_, i) => {
-            if (m.capsules && m.capsules[i]) {
-              const capName = normalizeCapsuleName(m.capsules[i].toString()).toLowerCase();
-              return capsules.find(c => (c.name || '').trim().toLowerCase() === capName)?.id || '';
-            }
-            return '';
-          }),
+          ...splitCapsules(capsuleIdsFromNames(m.capsules, capsules), freeSlotIdsOf(rulesets)),
           ai: m.ai ? findAiIdFromValue(m.ai, aiItems) : '',
           transformAi: m.transformAi ? findAiIdFromValue(m.transformAi, aiItems) : '',
           sparking: m.sparking ? (sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (m.sparking || '').toString().trim().toLowerCase())?.id || '') : '',
@@ -1224,10 +1215,12 @@ const MatchBuilder = () => {
       team1: original.team1.map((char) => ({
         ...char,
         capsules: [...char.capsules],
+        free: [...(char.free || [])],
       })),
       team2: original.team2.map((char) => ({
         ...char,
         capsules: [...char.capsules],
+        free: [...(char.free || [])],
       })),
     };
     setMatches([...matches, duplicated]);
@@ -1335,7 +1328,8 @@ const MatchBuilder = () => {
         sparking: slotObj?.sparking || "",
         capsules: Array.isArray(slotObj?.capsules)
           ? slotObj.capsules.map((c) => (c || ""))
-          : Array(7).fill("")
+          : Array(7).fill(""),
+        free: Array.isArray(slotObj?.free) ? [...slotObj.free] : [],
       };
 
       // Guarantee exactly 7 capsule slots
@@ -1475,7 +1469,7 @@ const MatchBuilder = () => {
           if (!char.id) return;
           const items = [];
           if (char.costume) items.push({ key: char.costume });
-          (char.capsules || []).filter(Boolean).forEach((c) => items.push({ key: c }));
+          allCapsules(char).forEach((c) => items.push({ key: c }));
           if (char.ai) items.push({ key: char.ai });
           if (char.sparking) items.push({ key: char.sparking });
           addCharEntry(char.id, teamSlot, items);
@@ -1613,8 +1607,7 @@ const MatchBuilder = () => {
               else if (item.key.startsWith("00_6_")) sparking = item.key;
               else capsules.push(item.key);
             });
-            const padLen = Math.max(0, 7 - capsules.length);
-            char.capsules = [...capsules, ...Array(padLen).fill("")].slice(0, 7);
+            Object.assign(char, splitCapsules(capsules, freeSlotIdsOf(rulesets)));
             char.costume = costume;
             char.ai = ai;
             char.sparking = sparking;
@@ -2013,7 +2006,7 @@ const MatchBuilder = () => {
                 const mapTeam = (team) => (team || []).map((char) => ({
                   character: char.name || (characters.find(c => c.id === char.id)?.name || ''),
                   costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : '',
-                  capsules: (char.capsules || []).map((cid) => {
+                  capsules: allCapsules(char).map((cid) => {
                     const cap = capsules.find((c) => c.id === cid);
                     if (cap) { const cost = Number(cap.cost || cap.Cost || 0) || 0; return `${cap.name}${cost ? ` (${cost})` : ''}`; }
                     if (cid && cid.toString().startsWith('00_0_')) return '';
@@ -2045,7 +2038,7 @@ const MatchBuilder = () => {
                     return {
                       name: charObj.name, id: charObj.id || '',
                       costume: char.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || '').trim().toLowerCase() === (char.costume || '').toString().trim().toLowerCase())?.id || '') : '',
-                      capsules: Array(7).fill('').map((_, i) => { if (char.capsules && char.capsules[i]) { const capName = normalizeCapsuleName(char.capsules[i].toString()).toLowerCase(); return capsules.find(c => (c.name || '').trim().toLowerCase() === capName)?.id || ''; } return ''; }),
+                      ...splitCapsules(capsuleIdsFromNames(char.capsules, capsules), freeSlotIdsOf(rulesets)),
                       ai: char.ai ? findAiIdFromValue(char.ai, aiItems) : '',
                       transformAi: char.transformAi ? findAiIdFromValue(char.transformAi, aiItems) : '',
                       sparking: char.sparking ? (sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (char.sparking || '').toString().trim().toLowerCase())?.id || '') : '',
@@ -2088,7 +2081,7 @@ const MatchBuilder = () => {
                   members: team.map((char) => ({
                     character: char.name || (characters.find(c => c.id === char.id)?.name || ''),
                     costume: char.costume ? (costumes.find(c => c.id === char.costume)?.name || char.costume) : '',
-                    capsules: (char.capsules || []).map((cid) => {
+                    capsules: allCapsules(char).map((cid) => {
                       const found = capsules.find((c) => c.id === cid);
                       if (found) { const cost = Number(found.cost || found.Cost || 0) || 0; return `${found.name}${cost ? ` (${cost})` : ''}`; }
                       if (cid && cid.toString().startsWith('00_0_')) return '';
@@ -2122,7 +2115,7 @@ const MatchBuilder = () => {
                     return {
                       name: charObj.name, id: charObj.id || '',
                       costume: m.costume ? (costumes.find(c => c.exclusiveFor === charObj.name && (c.name || '').trim().toLowerCase() === (m.costume || '').toString().trim().toLowerCase())?.id || '') : '',
-                      capsules: Array(7).fill('').map((_, i) => { if (m.capsules && m.capsules[i]) { const capName = normalizeCapsuleName(m.capsules[i].toString()).toLowerCase(); return capsules.find(c => (c.name || '').trim().toLowerCase() === capName)?.id || ''; } return ''; }),
+                      ...splitCapsules(capsuleIdsFromNames(m.capsules, capsules), freeSlotIdsOf(rulesets)),
                       ai: m.ai ? findAiIdFromValue(m.ai, aiItems) : '',
                       transformAi: m.transformAi ? findAiIdFromValue(m.transformAi, aiItems) : '',
                       sparking: m.sparking ? (sparkingMusic.find(s => (s.name || '').trim().toLowerCase() === (m.sparking || '').toString().trim().toLowerCase())?.id || '') : '',
@@ -2979,7 +2972,7 @@ const CharacterSlot = ({
     const ruleset = rulesets?.rulesets?.[activeRulesetKey];
     if (!ruleset) return violations;
     const costMap = Object.fromEntries((capsules||[]).map(c => [c.id, Number(c.cost || 0)]));
-    const used = (character.capsules||[]).filter(Boolean);
+    const used = allCapsules(character);
     
     // Check violations in both soft and hard mode (warnings can still appear in hard mode if violations occur)
     if (ruleset.scope === 'per-character' && ruleset.totalCost) {
@@ -2991,7 +2984,7 @@ const CharacterSlot = ({
     
     const uniqueTeam = (ruleset?.restrictions || []).some(r => r.type === 'unique-per-team' && r.params?.enabled);
     if (uniqueTeam) {
-      const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+      const teamUsed = (team || []).flatMap(allCapsules);
       // duplicates in team
       const dupSet = used.filter(id => teamUsed.filter(x => x === id).length > 1);
       if (dupSet.length > 0) violations.push({ type: 'duplicate-team', message: 'Duplicate capsule(s) used within the same team' });
@@ -3000,7 +2993,7 @@ const CharacterSlot = ({
     // Rule 1: max-same-per-team (check in both soft and hard mode)
     const maxSamePerTeam = (ruleset?.restrictions || []).find(r => r.type === 'max-same-per-team');
     if (maxSamePerTeam) {
-      const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+      const teamUsed = (team || []).flatMap(allCapsules);
       const defaultMax = maxSamePerTeam.params?.maxCount || 2;
       const overrides = maxSamePerTeam.params?.overrides || {};
       const counts = {};
@@ -3037,7 +3030,7 @@ const CharacterSlot = ({
     // Rule 3: mutually-exclusive-team (check in both soft and hard mode)
     const mutuallyExclusive = (ruleset?.restrictions || []).find(r => r.type === 'mutually-exclusive-team');
     if (mutuallyExclusive) {
-      const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+      const teamUsed = (team || []).flatMap(allCapsules);
       const groups = mutuallyExclusive.params?.groups || [];
       
       // Check if multiple groups are used
@@ -3174,7 +3167,7 @@ const CharacterSlot = ({
                   if (!ruleset) return '';
                   if (ruleset.scope !== 'per-character') return '';
                   const costMap = Object.fromEntries((capsules||[]).map(c => [c.id, Number(c.Cost || c.cost || 0)]));
-                  const used = (character.capsules||[]).filter(Boolean);
+                  const used = allCapsules(character);
                   const sumUsed = used.reduce((s, id) => s + (costMap[id] || 0), 0);
                   const total = ruleset.totalCost || 0;
                   const over = sumUsed - total;
@@ -3188,7 +3181,7 @@ const CharacterSlot = ({
             const ruleset = rulesets?.rulesets?.[activeRulesetKey];
             const usedCapsuleIds = (character.capsules || []).filter(Boolean);
             // teamUsed includes capsules used by other characters in same team
-            const teamUsed = (team || []).flatMap(ch => ch.capsules || []).filter(Boolean);
+            const teamUsed = (team || []).flatMap(allCapsules);
             const costMap = Object.fromEntries((capsules||[]).map(c => [c.id, Number(c.Cost || c.cost || 0)]));
 
             return character.capsules.map((capsuleId, i) => {
@@ -3196,6 +3189,10 @@ const CharacterSlot = ({
               // banned ids
               const banned = (ruleset?.restrictions || []).find(r => r.type === 'banned-ids')?.params?.ids || [];
               available = available.filter(c => c && !banned.includes(c.id));
+
+              // free-slot capsules are picked under Free Slots, not in the 7 slots
+              const freeIds = freeSlotIdsOf(rulesets);
+              available = available.filter(c => c.id === capsuleId || !freeIds.has(c.id));
 
               // unique-per-character
               const uniqueChar = (ruleset?.restrictions || []).some(r => r.type === 'unique-per-character' && r.params?.enabled);
@@ -3320,7 +3317,7 @@ const CharacterSlot = ({
                       renderItemRight={(it) => {
                         const cost = Number(it.cost || it.Cost || 0);
                         // compute per-character overage
-                        const used = (character.capsules||[]).filter(Boolean);
+                        const used = allCapsules(character);
                         const sumUsed = used.reduce((s, id) => s + (costMap[id] || 0), 0);
                         const total = (ruleset && ruleset.totalCost) ? ruleset.totalCost : 0;
                         const over = sumUsed - total;
@@ -3347,7 +3344,7 @@ const CharacterSlot = ({
                       }}
                       renderValueRight={(it) => {
                         const cost = Number(it.cost || it.Cost || 0);
-                        const used = (character.capsules||[]).filter(Boolean);
+                        const used = allCapsules(character);
                         const sumUsed = used.reduce((s, id) => s + (costMap[id] || 0), 0);
                         const total = (ruleset && ruleset.totalCost) ? ruleset.totalCost : 0;
                         const over = sumUsed - total;
@@ -3381,6 +3378,98 @@ const CharacterSlot = ({
                 </div>
               );
             });
+          })()}
+
+          {(() => {
+            // Free Slots: capsules on top of the 7 (capsule-rules.yaml `freeSlots`). Capsules there that share a
+            // one-per-character group (Form Lock) pick as radio buttons, the rest switch on and off.
+            const freeIds = [...freeSlotIdsOf(rulesets)].filter(id => (capsules || []).some(c => c.id === id));
+            if (freeIds.length === 0) return null;
+            const ruleset = rulesets?.rulesets?.[activeRulesetKey];
+            const restrictions = ruleset?.restrictions || [];
+            const hard = ruleset?.mode === 'hard';
+            const banned = restrictions.find(r => r.type === 'banned-ids')?.params?.ids || [];
+            const maxSame = restrictions.find(r => r.type === 'max-same-per-team');
+            const teamMax = (id) => {
+              if (!maxSame) return Infinity;
+              const overrides = maxSame.params?.overrides || {};
+              return Object.prototype.hasOwnProperty.call(overrides, id) ? overrides[id] : (maxSame.params?.maxCount || 2);
+            };
+            const othersUsed = (team || []).filter((_, i) => i !== index).flatMap(allCapsules);
+            const free = character.free || [];
+            const capOf = (id) => (capsules || []).find(c => c.id === id);
+            // Why an option can't be picked (hard mode); soft mode lets it through and warns above
+            const blockedWhy = (id) => {
+              if (free.includes(id)) return '';
+              if (banned.includes(id)) return 'Not allowed in this ruleset';
+              const max = teamMax(id);
+              if (hard && othersUsed.filter(x => x === id).length >= max) return `Your team already has ${max} (${max} per team)`;
+              return '';
+            };
+            const groups = ((restrictions.find(r => r.type === 'exclusive-group-per-character')?.params?.groups) || [])
+              .map(g => ({ ...g, ids: g.ids.filter(id => freeIds.includes(id)) }))
+              .filter(g => g.ids.length > 1 && (g.maxCount ?? 1) === 1);
+            const grouped = new Set(groups.flatMap(g => g.ids));
+            const toggles = freeIds.filter(id => !grouped.has(id));
+            const pill = (on, off) => `inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs border transition-colors ${
+              off ? 'opacity-40 cursor-not-allowed border-slate-500 text-slate-300'
+                : on ? 'bg-cyan-600 border-cyan-400 text-white cursor-pointer'
+                : 'bg-slate-700 border-slate-500 text-slate-200 hover:border-cyan-400 cursor-pointer'}`;
+            return (
+              <div className="mt-2 pt-2 border-t border-slate-500">
+                <label className="block text-xs font-semibold text-cyan-300 mb-1 uppercase tracking-wide">
+                  Free Slots <span className="normal-case font-normal text-slate-400 tracking-normal">(don't use a capsule slot)</span>
+                </label>
+                {toggles.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-1.5">
+                    {toggles.map(id => {
+                      const on = free.includes(id);
+                      const why = blockedWhy(id);
+                      return (
+                        <label key={id} className={pill(on, !!why)} title={why || capOf(id)?.effect || ''}>
+                          <input
+                            type="checkbox"
+                            className="accent-cyan-400"
+                            checked={on}
+                            disabled={!!why}
+                            onChange={() => onUpdate('free', on ? free.filter(x => x !== id) : [...free, id])}
+                          />
+                          {capOf(id)?.name || id}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+                {groups.map(g => {
+                  const picked = free.find(id => g.ids.includes(id)) || '';
+                  const pick = (id) => onUpdate('free', [...free.filter(x => !g.ids.includes(x)), ...(id ? [id] : [])]);
+                  return (
+                    <div key={g.name} role="radiogroup" aria-label={g.name}>
+                      <div className="text-xs text-slate-300 mb-1">{g.name}</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {['', ...g.ids].map(id => {
+                          const why = id ? blockedWhy(id) : '';
+                          return (
+                            <label key={id || 'none'} className={pill(picked === id, !!why)} title={why || (id ? capOf(id)?.effect : '') || ''}>
+                              <input
+                                type="radio"
+                                className="accent-cyan-400"
+                                name={`${matchId}-${teamName}-${index}-${g.name}`}
+                                checked={picked === id}
+                                disabled={!!why}
+                                onChange={() => pick(id)}
+                              />
+                              {id ? (capOf(id)?.name || id) : 'None'}
+                            </label>
+                          );
+                        })}
+                      </div>
+                      {picked && <div className="mt-1 text-xs text-slate-400">{capOf(picked)?.effect}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            );
           })()}
 
           <div className="mt-2 pt-2 border-t border-slate-500">
@@ -3486,7 +3575,7 @@ const CharacterSlot = ({
                     const build = {
                       character: character.name || (characters.find(c => c.id === character.id)?.name || ''),
                       costume: character.costume ? (costumes.find(c => c.id === character.costume)?.name || '') : '',
-                      capsules: (character.capsules || []).map(cid => capsules.find(c => c.id === cid)?.name || ''),
+                      capsules: allCapsules(character).map(cid => capsules.find(c => c.id === cid)?.name || ''),
                       ai: character.ai ? (aiItems.find(a => a.id === character.ai)?.name || '') : '',
                       transformAi: character.transformAi ? (aiItems.find(a => a.id === character.transformAi)?.name || '') : '',
                       sparking: character.sparking ? (sparkingMusic.find(s => s.id === character.sparking)?.name || character.sparking) : '',
@@ -3566,11 +3655,7 @@ const CharacterSlot = ({
                       }
 
                       if (Array.isArray(data.capsules)) {
-                        slot.capsules = Array(7).fill('').map((_, i) => {
-                          if (!data.capsules[i]) return '';
-                          const found = capsules.find(cap => (cap.name || '').toString().trim().toLowerCase() === data.capsules[i].toString().trim().toLowerCase());
-                          return found ? found.id : '';
-                        });
+                        Object.assign(slot, splitCapsules(capsuleIdsFromNames(data.capsules, capsules), freeSlotIdsOf(rulesets)));
                       }
 
                       // Debug: show parsed YAML and constructed slot object before applying

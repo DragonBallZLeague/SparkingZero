@@ -603,9 +603,15 @@ export function similarFighters(id, n = 5, m = 3) {
 
 /* ------------------------------------------------------------------ rules */
 export const rulesetOf = (name) => meta.rulesets.find(r => r.name === name) || meta.rulesets.find(r => r.name === meta.defaultRuleset);
+/** Capsules that don't use one of the 7 capsule slots (Flight, the Form Lock capsules): capsule-rules.yaml `freeSlots`. */
+export const freeSlots = new Set(meta.freeSlots || []);
+export const SLOTS = 7;
+
 export function buildCheck(capIds, ruleset) {
   const caps = capIds.map(id => capsuleById.get(id)).filter(Boolean);
   const cost = caps.reduce((s, x) => s + (x.cost || 0), 0);
+  // the capsules in the 7 slots; Free Slot capsules ride on top of them
+  const slotted = caps.filter(x => !freeSlots.has(x.id));
   const banned = new Set(ruleset.banned);
   const groups = (ruleset.groups || []).map(g => {
     const ids = new Set(g.ids);
@@ -621,7 +627,8 @@ export function buildCheck(capIds, ruleset) {
   }
   const seen = new Set();
   for (const x of caps) { if (seen.has(x.id)) problems.push(`${x.name} is equipped twice`); seen.add(x.id); }
-  return { caps, cost, groups, problems };
+  if (slotted.length > SLOTS) problems.push(`More than ${SLOTS} capsules: ${slotted.length}`);
+  return { caps, cost, groups, problems, slotted, used: slotted.length };
 }
 export const inAttackGroup = (ruleset, id) => (ruleset.groups || []).some(g => g.ids.includes(id));
 /** The exclusive group (e.g. Halo) that already has its fill of capsules in `capIds`, keeping `id` out; null if `id` may be added. */

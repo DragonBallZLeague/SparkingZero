@@ -1,5 +1,5 @@
 title: Legal Capsules
-last_updated: 2026-04-17
+last_updated: 2026-10-23
 intro: >
   Capsules are how your characters are customized. Every character has a
   20-point budget to spend. Below are the rules for how capsules can be used in
@@ -18,8 +18,19 @@ rules_content: >-
   * No more than 6 stars can be used on the following Capsule types **per character per week**:
 
     * Rush Attack Boost Capsules
-    * Smash Attack Boost Capsules
     * Blast Attack Boost Capsules
+
+  ## League Capsules
+
+
+  The league's own capsules (at the end of the capsule reference below) are legal in your builds. A few carry extra limits:
+
+
+  * **Only 1 per team per week:** Heart Virus, Halo, Halo: Corrupted, Absorption Model and Final Stand!
+
+  * **Halo capsules:** Ki Guarantee, Halo and Halo: Corrupted cannot be combined. Each character may carry only one of them.
+
+  * **Flight:** exempt from the 2 per team limit. Every character on a team may use it.
 
   ## Banned Capsules
 
@@ -81,7 +92,7 @@ capsules:
     effect: Increases Rush Ki Blast damage by 7.5%. Increases Smash Ki Blast damage
       by 7.5%.
   - name: Power Unleashed
-    cost: 2
+    cost: 1
     effect: Increases Burst Rush damage by 5%.
   - name: Finishing Blow
     cost: 1
@@ -111,18 +122,18 @@ capsules:
     cost: 2
     effect: Increases Rush Attack damage by 5% during Sparking Mode.
   - name: Draconic Aura
-    cost: 4
+    cost: 3
     effect: Increases armor break level by 3. Beats Power body and Light body.
   - name: Light Body
-    cost: 4
+    cost: 3
     effect: Increases bullet armor level by 3. Cannot be flinched by Ki Blasts
       (Giants and Sparking ignore this capsule).
   - name: Dragon Rush
-    cost: 3
+    cost: 2
     effect: Increases armor break level by 3 against Rush Attack category actions.
       Beats Power Body.
   - name: The Secret to Counters
-    cost: 5
+    cost: 3
     effect: Reduces Skill Count needed for Super Perceptions by 1 (minimum 1).
   - name: Fury!
     cost: 4
@@ -136,20 +147,20 @@ capsules:
     cost: 3
     effect: Increases ki gained from landing attacks by 20%.
   - name: Warming Up
-    cost: 2
+    cost: 1
     effect: Increases health recovery while on standby in Team Battles by 50%.
   - name: Ready for Anything
     cost: 1
     effect: Increases ki recovery per second while on standby in Team Battles by 50%.
   - name: Z-Burst Dash Master
-    cost: 3
+    cost: 2
     effect: Reduces ki cost for Z-Burst Dashes by 50%.
   - name: The Secret to Z-Burst Dashes
-    cost: 5
+    cost: 4
     effect: Reduces ki cost for Z-Burst Dashes by 100% (free).
   - name: Proof of Friendship
-    cost: 2
-    effect: Switch gauge starts at maximum.
+    cost: 1
+    effect: Switch gauge full at battle start (one time).
   - name: Dragon Spirit
     cost: 3
     effect: Increases skill gauge recovery speed by 25%.
@@ -189,7 +200,7 @@ capsules:
     cost: 1
     effect: Reduces ki cost for Short Dashes by 10%.
   - name: Battle Control
-    cost: 2
+    cost: 1
     effect: Increases Switch gauge recovery by 50% in Team Battles.
   - name: Latent Power Unleashed 1
     cost: 1
@@ -206,7 +217,7 @@ capsules:
     cost: 1
     effect: Increases ki damage dealt after successful Guard Clash by 50%.
   - name: Water's Blessing
-    cost: 3
+    cost: 4
     effect: Regenerates 100 HP per second and 100 ki per second while in water (1
       bar of health and ki every 100 seconds). Can only be used once on each
       team per week.
@@ -274,7 +285,7 @@ capsules:
       Reduces blast defense by 10%.
     banned: true
   - name: Speed Up
-    cost: 3
+    cost: 2
     effect: Reduces ki cost for Short Dashes by 20%.
   - name: Exquisite Skill
     cost: 1
@@ -285,7 +296,7 @@ capsules:
     effect: Reduces ki cost for Dragon Dashes by 25%. Reduces automatic ki recovery
       by 5%.
   - name: The Secret to Dragon Dashes
-    cost: 5
+    cost: 4
     effect: Reduces ki cost for Dragon Dashes by 25%.
   - name: Savior
     cost: 5
@@ -295,7 +306,7 @@ capsules:
     cost: 1
     effect: Reduces combo damage scaling by 2.5%.
   - name: Combo King
-    cost: 2
+    cost: 1
     effect: Reduces combo damage scaling by 5%.
   - name: God Ki
     cost: 5
@@ -313,16 +324,16 @@ capsules:
     cost: 2
     effect: Increases Dragon Homing use limit by 1.
   - name: Dragon Crash
-    cost: 2
+    cost: 1
     effect: Increases Dragon Smash damage by 5%.
   - name: Vanishing Break
     cost: 2
     effect: Increases Vanishing Attack use limit by 1.
   - name: Vanishing Crash
-    cost: 2
+    cost: 1
     effect: Increases Vanishing Attack damage by 5%.
   - name: Secret Measures
-    cost: 2
+    cost: 1
     effect: Grants 1 additional Skill Count.
   - name: Rush Ki Blast 1
     cost: 1
@@ -361,7 +372,7 @@ capsules:
     cost: 1
     effect: Increases Blast by 5% for 30 seconds after using an emote for 1.5+ seconds.
   - name: Dragon Heart
-    cost: 3
+    cost: 2
     effect: Recovers 25% of Skill gauge after dodging a Blast or Ultimate Blast with
       High-Speed Movement.
   - name: King Kai Training
@@ -378,9 +389,101 @@ capsules:
       by 2.5%. Increases Smash Ki Blast damage by 2.5%.
     banned: true
   - name: Super Sparking!
-    cost: 4
+    cost: 3
     effect: Increases Rush Attack damage by 5% during Sparking Mode. Reduces
       Sparking Mode gauge decrease speed by 5%.
   - name: Broly's Ring
-    cost: 1
+    cost: 0
     effect: Prevents Transformations and Fusions during battle.
+  - name: Heart Virus
+    cost: 2
+    effect: You and the opponent take damage slowly (50 hp/sec)
+  - name: Accelerator
+    cost: 1
+    effect: "The more ki you have the faster your movement is. Above 2 Bars: +50% movement per bar of ki. Under 1 Bar: -50% movement"
+  - name: Counter Blast
+    cost: 2
+    effect: Blasts cost 1 ki bar for 3 seconds after high-speed dodging a blast
+  - name: Skillful
+    cost: 4
+    effect: Max blast stocks are increased by 2
+  - name: Energy Conservation
+    cost: 2
+    effect: Ki blasts do no damage but cost nothing when under 2 bars of ki
+  - name: Bloodlust
+    cost: 3
+    effect: After eliminating an opponent gain full ki and a 15% increase to melee and blast damage for 15 seconds
+  - name: Tag Happy
+    cost: 3
+    effect: Swap Gauge is always full but you can only gain half as much hp on the bench
+  - name: Power Creep
+    cost: 3
+    effect: Increase melee and blast damage by 5% every 30 seconds (Max 15%). Active and passive ki charge rate decreases by 10% every 30 seconds (Max -30%)
+  - name: Sparking! Endurance
+    cost: 6
+    effect: Cannot die while in Sparking!
+  - name: Heavy Sparking!
+    cost: 4
+    effect: Sparking! mode is 50% shorter. Gain Ultimate Body in Sparking!
+  - name: I Fight Alone!
+    cost: 0
+    effect: Cannot fuse (transformations are still usable)
+  - name: Ki Guarantee
+    cost: 4
+    effect: Refund 1 bar of ki on a missed blast
+  - name: Halo
+    cost: 4
+    effect: Blasts cost 1 bar of ki less
+  - name: "Halo: Corrupted"
+    cost: 7
+    effect: Blasts cost half ki but cost 2500 health on a miss
+  - name: Flight
+    cost: 0
+    effect: Enable flight
+  - name: Dragon Soul
+    cost: 4
+    effect: Regain 1 Blast Stocks each time high-speed movement is used to dodge a Blast
+  - name: Unstable Power-Up
+    cost: 3
+    effect: Upon transforming for the first time immediately go into Sparking! mode but get active and passive ki charge -10% and defense -15% for 30 seconds
+  - name: Absorption Model
+    cost: 7
+    effect: Melee ki gain is increased by 200% but active and passive ki charge is 60% slower. Guard crashes give you 1 bar of ki.
+  - name: Final Stand!
+    cost: 6
+    effect: When your brought near death gain 2 bars of life that drains rapidly over 5 seconds
+  - name: Saiyan Armor
+    cost: 3
+    effect: All defense +10% but active and passive ki charge -5%
+  - name: Kibito's Secret Art
+    cost: 3
+    effect: Upon switching in start with max blaststocks but decrease skill gauge recovery speed by 50%
+  - name: Launch's Support
+    cost: 3
+    effect: Active ki charge increased by 10% but blast damage decreased by 5%
+  - name: Guard Splitter
+    cost: 3
+    effect: Guard crashes always ki break the opponent
+  - name: Push Your Limits
+    cost: 1
+    effect: No longer take self-damage from blasts and ultimates. Causes stun when Sparking Mode ends after using Ultimate Blast.
+  - name: Amplified Strike
+    cost: 1
+    effect: |-
+      Your attacks can break armor easier the more ki you have
+      (+1 Armor break level per ki bar above 2)
+  - name: Vegeta's Technique
+    cost: 2
+    effect: |-
+      Ki blast damage, speed, and cost are dependent on how much ki you have
+      >4 bars: +30% Damage and Speed but +50% Cost
+      >3 bars: +20% Damage and Speed but +25% Cost
+      >2 bars: +10% Damage and Speed
+      >1 bars: -25% Cost
+      <1 bars: -10% Damage and Speed but -50% Cost
+  - name: Stand and Fight!
+    cost: 1
+    effect: You and your opponent cannot tag out
+  - name: Supreme Kai's Potara
+    cost: 0
+    effect: Cannot transform (fusion is still usable)

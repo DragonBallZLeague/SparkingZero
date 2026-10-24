@@ -1,9 +1,9 @@
 title: Build Rules
-last_updated: 2026-10-21
+last_updated: 2026-10-23
 point_budget: 20
 max_per_capsule: 2
 max_per_capsule_note: Only 2 of each capsule can be used in your weekly builds,
-  stat capsules included.
+  stat capsules included. Water's Blessing is limited to 1 per team.
 banned_capsules:
   - name: God Ki
     reason: ""
@@ -31,12 +31,11 @@ health_capsule_limit:
 boost_cap:
   max_stars: 6
   description: >
-    No more than 6 stars total may be used on Rush Attack, Smash Attack, and/or
-    Blast Boosts on any individual character. These categories are combined when
-    counting toward the cap.
+    No more than 6 stars total may be used on Rush Attack and/or Blast Boosts on
+    any individual character. These categories are combined when counting toward
+    the cap.
   categories:
     - Rush Attack Boosts
-    - Smash Attack Boosts
     - Blast Boosts
 form_restriction: No forms above Super Saiyan are allowed starting at this time
   excluding Majuub, Super Trunks, Super Vegeta, and Super Baby 2

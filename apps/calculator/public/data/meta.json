@@ -11,7 +11,10 @@
       "mode": "hard",
       "banned": ["00_0_0151","00_0_0152","00_0_0111","00_0_0131","00_0_0123","DBZL_Cap_SoreLoser"],
       "groups": [{"maxCost":6,"ids":["00_0_0028","00_0_0029","00_0_0030","00_0_0005","00_0_0006","00_0_0007"]}],
-      "exclusive": [{"name":"Halo","maxCount":1,"ids":["DBZL_Cap_12","DBZL_Cap_13","DBZL_Cap_14"]}]
+      "exclusive": [
+        {"name":"Halo","maxCount":1,"ids":["DBZL_Cap_12","DBZL_Cap_13","DBZL_Cap_14"]},
+        {"name":"Form Lock","maxCount":1,"ids":["00_0_0155","DBZL_Cap_30","DBZL_Cap_11"]}
+      ]
     },
     {
       "name": "Standard - Soft",
@@ -19,8 +22,12 @@
       "mode": "soft",
       "banned": ["00_0_0151","00_0_0152","00_0_0111","00_0_0131","00_0_0123","DBZL_Cap_SoreLoser"],
       "groups": [{"maxCost":6,"ids":["00_0_0028","00_0_0029","00_0_0030","00_0_0005","00_0_0006","00_0_0007"]}],
-      "exclusive": [{"name":"Halo","maxCount":1,"ids":["DBZL_Cap_12","DBZL_Cap_13","DBZL_Cap_14"]}]
+      "exclusive": [
+        {"name":"Halo","maxCount":1,"ids":["DBZL_Cap_12","DBZL_Cap_13","DBZL_Cap_14"]},
+        {"name":"Form Lock","maxCount":1,"ids":["00_0_0155","DBZL_Cap_30","DBZL_Cap_11"]}
+      ]
     }
   ],
-  "dataVersion": "b5b0bac6c3f0"
+  "freeSlots": ["DBZL_Cap_15","00_0_0155","DBZL_Cap_30","DBZL_Cap_11"],
+  "dataVersion": "e3881337654a"
 }

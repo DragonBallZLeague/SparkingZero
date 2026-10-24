@@ -977,6 +977,8 @@ const v2 = {
     damageConstant: K,
     defaultRuleset: defaultRuleset?.name ?? null,
     rulesets,
+    // capsules that don't use one of the 7 capsule slots (capsule-rules.yaml `freeSlots`, the league's mod)
+    freeSlots: (ref.rules.freeSlots || []).filter(id => capsules.some(c => c.id === id)),
   },
 };
 const dataVersion = crypto.createHash('sha256').update(JSON.stringify(v2)).digest('hex').slice(0, 12);

@@ -295,6 +295,11 @@ html, body { margin: 0; background: #07080d; color: #e5e7eb; font: 14px/1.45 "Se
 .ph .cbuild { position: static; }
 .ph .crows { height: auto; }
 .fl > button.dd::after { content: ' \25BE'; }
+/* Free Slots in the capsule picker (Flight, Form Lock) */
+.fl.frees > button:disabled { opacity: .4; cursor: not-allowed; }
+.freeg { display: grid; gap: 4px; }
+.freeg > small, .freed { font-size: 11px; color: var(--muted); }
+.freed { margin: 0; }
 
 /* Change fighter: the button, the clickable name, and the quick list */
 .nmb { display: block; text-align: left; text-transform: inherit; letter-spacing: inherit; font-style: inherit; }

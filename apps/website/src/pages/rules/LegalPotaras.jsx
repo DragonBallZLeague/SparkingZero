@@ -4,11 +4,17 @@ import MarkdownContent from './MarkdownContent';
 import { Search } from 'lucide-react';
 
 const COST_COLORS = {
+  0: 'bg-slate-500',
   1: 'bg-emerald-500',
   2: 'bg-lime-500',
   3: 'bg-yellow-500',
   4: 'bg-orange-500',
   5: 'bg-red-500',
+  6: 'bg-pink-600',
+  7: 'bg-purple-600',
+  8: 'bg-violet-700',
+  9: 'bg-indigo-800',
+  10: 'bg-indigo-950',
 };
 
 /**
@@ -24,6 +30,9 @@ export function LegalPotarasView({ data, darkMode = true }) {
 
 
   if (!data) return <div className="animate-pulse py-20 text-center text-sm">Loading...</div>;
+
+  // One filter button per cost the list actually uses
+  const costs = [...new Set((data.capsules || []).map(c => c.cost))].sort((a, b) => a - b);
 
   const filtered = (data.capsules || []).filter(c => {
     if (!showBanned && c.banned) return false;
@@ -70,7 +79,7 @@ export function LegalPotarasView({ data, darkMode = true }) {
               />
             </div>
             <div className="flex items-center gap-1 flex-wrap shrink-0">
-              {['all', '1', '2', '3', '4', '5'].map(v => (
+              {['all', ...costs.map(String)].map(v => (
                 <button
                   key={v}
                   onClick={() => setCostFilter(v)}
@@ -144,7 +153,7 @@ export function LegalPotarasView({ data, darkMode = true }) {
                           {capsule.cost}
                         </span>
                       </td>
-                      <td className={`px-4 py-2.5 ${
+                      <td className={`px-4 py-2.5 whitespace-pre-line ${
                         capsule.banned
                           ? darkMode ? 'text-red-300/60' : 'text-red-700/60'
                           : darkMode ? 'text-gray-300' : 'text-stone-600'

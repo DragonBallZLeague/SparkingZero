@@ -4,7 +4,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   characters, capsules, teams, byId, faceUrl, artUrl, figStyle, classColours, classFilterOf, CLASS_FILTERS, baseView, rosterPos, movePos, gameMoves, nameParts,
-  CAPSULE_TYPES, typeClass, costClass, capsuleSummary, buildCheck, inAttackGroup, exclusiveBlock, evaluate, blastsOf, blastDamage, blastBars, volley, conditionNeedsOf, formsOf,
+  CAPSULE_TYPES, typeClass, costClass, capsuleSummary, buildCheck, inAttackGroup, exclusiveBlock, freeSlots, SLOTS, evaluate, blastsOf, blastDamage, blastBars, volley, conditionNeedsOf, formsOf,
 } from './model.js';
 import { usePhone, Rk, Name, RulesetSelect } from './ui.jsx';
 import { ClassChip } from './sheet.jsx';
@@ -236,6 +236,48 @@ function Meter({ label, now, hover, of, gray = false }) {
 }
 
 /**
+ * Free Slots: the capsules that don't use one of the 7 slots (Flight, the Form Lock capsules). Ones that share a
+ * one-per-character group (Form Lock) pick as radio buttons, with None; the rest switch on and off.
+ */
+function FreeSlots({ spec, ruleset, onChange }) {
+  const free = capsules.filter(x => freeSlots.has(x.id));
+  if (!free.length) return null;
+  const banned = new Set(ruleset.banned);
+  const groups = (ruleset.exclusive || []).filter(g => g.maxCount === 1)
+    .map(g => ({ name: g.name, caps: free.filter(x => g.ids.includes(x.id)) })).filter(g => g.caps.length > 1);
+  const grouped = new Set(groups.flatMap(g => g.caps.map(x => x.id)));
+  const toggles = free.filter(x => !grouped.has(x.id));
+  const on = (x) => spec.caps.includes(x.id);
+  const set = (out, x) => onChange({ ...spec, caps: [...spec.caps.filter(id => !out.includes(id)), ...(x ? [x.id] : [])] });
+  const about = (x) => x.description || capsuleSummary(x);
+  return (
+    <>
+      <h6 className="bgh"><span>Free Slots</span><em>Don't use a capsule slot</em></h6>
+      {toggles.length > 0 && (
+        <div className="fl frees">
+          {toggles.map(x => <button key={x.id} className={on(x) ? 'on' : ''} aria-pressed={on(x)} disabled={banned.has(x.id) && !on(x)} title={about(x)} onClick={() => set([x.id], on(x) ? null : x)}>{x.name}</button>)}
+        </div>
+      )}
+      {groups.map(g => {
+        const picked = g.caps.find(on) || null;
+        return (
+          <div key={g.name} className="freeg">
+            <small>{g.name}</small>
+            <div className="fl frees" role="radiogroup" aria-label={g.name}>
+              {[null, ...g.caps].map(x => (
+                <button key={x ? x.id : 'none'} role="radio" aria-checked={picked === x} className={picked === x ? 'on' : ''} disabled={!!x && banned.has(x.id) && picked !== x}
+                  title={x ? about(x) : undefined} onClick={() => set(g.caps.map(c => c.id), x)}>{x ? x.name : 'None'}</button>
+              ))}
+            </div>
+            {picked && <p className="freed">{about(picked)}</p>}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+/**
  * The capsule picker. `mode` places it (round 23): 'dock' in the fighter's column or a Versus rail, beside the
  * numbers it changes; 'sheet' in the phone's (and tablet's) half-height bottom sheet; 'page' on its own.
  * `onHover(id)` reports the capsule under the pointer, so the page can preview what it would change.
@@ -264,10 +306,10 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
     return ex ? `${ex.name} capsule already equipped` : null;
   };
   const soft = ruleset.mode === 'soft';
-  const fits = (x) => spec.caps.length < 7 && (soft || !ruleBreak(x));
+  const fits = (x) => (freeSlots.has(x.id) || chk.used < SLOTS) && (soft || !ruleBreak(x));
   const add = (x) => { if (!spec.caps.includes(x.id) && fits(x) && !bannedIds.has(x.id)) onChange({ ...spec, caps: [...spec.caps, x.id] }); };
   const remove = (id) => onChange({ ...spec, caps: spec.caps.filter(x => x !== id) });
-  const list = capsules.filter(x => (banned || !bannedIds.has(x.id)) && (!type || x.type === type) && (!cost || x.cost === cost)
+  const list = capsules.filter(x => !freeSlots.has(x.id) && (banned || !bannedIds.has(x.id)) && (!type || x.type === type) && (!cost || x.cost === cost)
     && (!q || `${x.name} ${capsuleSummary(x)} ${x.description || ''}`.toLowerCase().includes(q.toLowerCase())));
   const changes = useMemo(() => new Map(list.map(x => [x.id, spec.caps.includes(x.id) ? null : changesOf(side, x)])), [list.map(x => x.id).join(), spec.caps.join(), spec.skills, spec.sparking, side.c.id]);
   const notShown = [];
@@ -286,11 +328,12 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
         {mode === 'page' && head}
         <h6 className="bgh"><span>Equipped</span>{chk.caps.length > 0 && <button className="clr" onClick={() => onChange({ ...spec, caps: [] })}>Clear</button>}</h6>
         <div className="caps">
-          {chk.caps.map(x => (
+          {chk.slotted.map(x => (
             <div key={x.id} className={`caprow ${typeClass(x.type)}`}><span className="cst">{x.cost}</span><b title={capsuleSummary(x)}>{x.name}</b><button className="rm" aria-label={`Remove ${x.name}`} onClick={() => remove(x.id)}>✕</button></div>
           ))}
-          {Array.from({ length: mode === 'page' ? 7 - chk.caps.length : Math.min(1, 7 - chk.caps.length) }, (_, i) => <div key={i} className="caprow empty"><span className="cst"></span><b>{mode !== 'page' ? `${7 - chk.caps.length} free, pick below` : i === 0 ? 'Pick a capsule on the right' : 'Empty slot'}</b><em></em></div>)}
+          {Array.from({ length: mode === 'page' ? SLOTS - chk.used : Math.min(1, SLOTS - chk.used) }, (_, i) => <div key={i} className="caprow empty"><span className="cst"></span><b>{mode !== 'page' ? `${SLOTS - chk.used} free, pick below` : i === 0 ? 'Pick a capsule on the right' : 'Empty slot'}</b><em></em></div>)}
         </div>
+        <FreeSlots spec={spec} ruleset={ruleset} onChange={onChange} />
         <h6 className="bgh"><span>Rules</span></h6>
         <div className="meterl rsrow"><span>Ruleset</span><RulesetSelect /></div>
         <Meter label="Budget" now={chk.cost} hover={hovAdds ? hovAdds.cost : 0} of={ruleset.totalCost} />
@@ -329,7 +372,7 @@ export function CapsulePicker({ side, ruleset, onChange, onClose, who, mode = 'p
                       {ch?.kind === 'sparking' && <><i className="when">In Sparking!</i>{ch.list[0].label} {ch.list[0].to}</>}
                       {ch?.kind === 'when' && <i className="ns">{ch.text}</i>}
                       {ch?.kind === 'ns' && <i className="ns">Not in the stats</i>}
-                      {!ok && !eq && <i className="ns over">{ban ? 'Banned' : spec.caps.length >= 7 ? 'No free slot' : ruleBreak(x)}</i>}
+                      {!ok && !eq && <i className="ns over">{ban ? 'Banned' : chk.used >= SLOTS ? 'No free slot' : ruleBreak(x)}</i>}
                       {ok && !eq && soft && ruleBreak(x) && <i className="ns over">{ruleBreak(x)}</i>}
                     </span>
                   </button>

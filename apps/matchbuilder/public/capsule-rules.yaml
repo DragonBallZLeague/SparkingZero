@@ -1,6 +1,15 @@
 version: 1
 default: "Standard"
 
+# Capsules that don't use one of a character's 7 capsule slots (the league's mod lets the game take
+# them on top of the 7). The other rules still apply to them; the Match Builder and Calculator show
+# them under "Free Slots".
+freeSlots:
+  - "DBZL_Cap_15"  # Flight
+  - "00_0_0155"    # Broly's Ring
+  - "DBZL_Cap_30"  # Supreme Kai's Potara
+  - "DBZL_Cap_11"  # I Fight Alone!
+
 rulesets:
   Standard:
     metadata:
@@ -28,6 +37,7 @@ rulesets:
         params:
           maxCount: 2
           overrides:
+            "00_0_0099": 1    # Water's Blessing only allowed once per team
             "DBZL_Cap_1": 1   # Heart Virus only allowed once per team
             "DBZL_Cap_13": 1  # Halo only allowed once per team
             "DBZL_Cap_14": 1  # Halo: Corrupted only allowed once per team
@@ -60,6 +70,12 @@ rulesets:
                 - "DBZL_Cap_12"  # Ki Guarantee
                 - "DBZL_Cap_13"  # Halo
                 - "DBZL_Cap_14"  # Halo: Corrupted
+            - name: "Form Lock"
+              maxCount: 1
+              ids:
+                - "00_0_0155"    # Broly's Ring
+                - "DBZL_Cap_30"  # Supreme Kai's Potara
+                - "DBZL_Cap_11"  # I Fight Alone!
 
   Standard - Soft:
     metadata:
@@ -87,6 +103,7 @@ rulesets:
         params:
           maxCount: 2
           overrides:
+            "00_0_0099": 1    # Water's Blessing only allowed once per team
             "DBZL_Cap_1": 1   # Heart Virus only allowed once per team
             "DBZL_Cap_13": 1  # Halo only allowed once per team
             "DBZL_Cap_14": 1  # Halo: Corrupted only allowed once per team
@@ -119,3 +136,9 @@ rulesets:
                 - "DBZL_Cap_12"  # Ki Guarantee
                 - "DBZL_Cap_13"  # Halo
                 - "DBZL_Cap_14"  # Halo: Corrupted
+            - name: "Form Lock"
+              maxCount: 1
+              ids:
+                - "00_0_0155"    # Broly's Ring
+                - "DBZL_Cap_30"  # Supreme Kai's Potara
+                - "DBZL_Cap_11"  # I Fight Alone!

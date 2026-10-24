@@ -143,6 +143,16 @@ if (fs.existsSync(path.join(DATA, 'snapshots', 'fmodel', 'MANIFEST.json'))) {
   check(!bad.length, `addresses round-trip for all ${chars.length} fighters (both sides, 7 capsules, skills and stages, Sparking, conditions, ruleset, Full, Matchup) and each id opens its fighter`, bad);
   check(writeLink({ view: 'versus', A: { id: '0000_00', caps: ['00_0_0005', '00_0_0026'], skills: {}, stage: {}, sparking: true, sit: null }, B: { id: '0650_00', caps: [], skills: {}, stage: {}, sparking: false, sit: null }, rs: data.meta.defaultRuleset, d: 'quick', vl: 'side' }, ix)
     === 'goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking', 'a link reads as names: goku-z-early/vs/janemba?caps=rush-attack-boost-1,blast-burst&sparking');
+  // Free Slots (capsule-rules.yaml freeSlots): capsules on top of the 7, so a build can carry 9
+  const free = data.meta.freeSlots || [];
+  const freeBad = free.filter(id => !data.capsules.some(c => c.id === id));
+  check(free.length > 0 && !freeBad.length, `Free Slot capsules are all capsules (${free.length})`, freeBad);
+  const lockBad = data.meta.rulesets.filter(rs => !rs.exclusive.some(g => g.name === 'Form Lock' && g.maxCount === 1 && g.ids.length > 1 && g.ids.every(id => free.includes(id)))).map(rs => rs.name);
+  check(!lockBad.length, 'every ruleset has a Form Lock group (one per character) made of Free Slot capsules', lockBad);
+  const nine = [...caps.filter(id => !free.includes(id)).slice(0, 7), 'DBZL_Cap_15', 'DBZL_Cap_30'];
+  const st9 = { view: 'fighter', A: { id: chars[0].id, caps: nine, skills: {}, stage: {}, sparking: false, sit: null }, B: null, rs: data.meta.defaultRuleset, d: 'quick', vl: 'side' };
+  const [p9, s9 = ''] = writeLink(st9, ix).split('?');
+  check(same(readLink(p9, s9, ix).A?.caps, nine), 'an address keeps 7 capsules plus Flight and Supreme Kai\'s Potara (Free Slots)');
 }
 
 // ------------------------------------------------------------------ field types (characters.json stats, blasts.json)

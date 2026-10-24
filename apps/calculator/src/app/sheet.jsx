@@ -3,7 +3,7 @@
 import React from 'react';
 import {
   artUrl, faceUrl, nameParts, classColours, chipText, rosterPos, movePos, chevrons, fiveHitTaken, volley, gameMoves, skillOf, toggleable,
-  capsuleSummary, typeClass, buildCheck, isGiant, figHeight, figStyle, formsOf, byId, capsuleById, SPARK,
+  capsuleSummary, typeClass, buildCheck, freeSlots, isGiant, figHeight, figStyle, formsOf, byId, capsuleById, SPARK,
 } from './model.js';
 import { Tap, Rk, Chev, Name, Switch, RulesetSelect, usePhone } from './ui.jsx';
 import { CmdRows, SheetChains } from './moves.jsx';
@@ -97,11 +97,11 @@ export function CapsuleRows({ side, ruleset, onEdit, onClear = null, slots = 7, 
       <div className="caps">
         {chk.caps.map((x, i) => (
           <button key={i} className={`caprow ${typeClass(x.type)}`} onClick={onEdit} title={capsuleSummary(x)}>
-            <span className="cst">{x.cost}</span><b>{x.name}</b><em>{x.type}</em>
+            <span className="cst">{x.cost}</span><b>{x.name}</b><em>{freeSlots.has(x.id) ? 'Free slot' : x.type}</em>
           </button>
         ))}
-        {chk.caps.length < slots && (
-          <button className="caprow empty" onClick={onEdit}><span className="cst">+</span><b>{chk.caps.length ? 'Add a capsule' : 'Add capsules'}</b><em>{slots - chk.caps.length} free</em></button>
+        {chk.used < slots && (
+          <button className="caprow empty" onClick={onEdit}><span className="cst">+</span><b>{chk.caps.length ? 'Add a capsule' : 'Add capsules'}</b><em>{slots - chk.used} free</em></button>
         )}
       </div>
       <div className="capacts">
