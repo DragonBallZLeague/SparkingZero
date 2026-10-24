@@ -2197,7 +2197,7 @@ const Combobox = ({
 
   const filtered = input
     ? items.filter((it) => getName(it).toLowerCase().includes(input.toLowerCase()))
-    : items.slice(0, 50);
+    : items;
 
   const selectedItem = items.find((it) => it.id === valueId);
   // Tooltip state for showing item effects on hover/focus
