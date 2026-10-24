@@ -21,8 +21,8 @@
   "0002_50": { "name": "Goku (Teen)", "transformsTo": [] },
 
   "0020_00": { "name": "Vegeta (Z - Scouter)", "transformsTo": ["0023_00"] },
-  "0020_10": { "name": "Vegeta (Z - Early)", "transformsTo": ["0020_11"] },
-  "0020_11": { "name": "Vegeta (Z - Early) Super Saiyan", "transformsTo": ["0020_10"] },
+  "0020_10": { "name": "Vegeta (Z - Early)", "transformsTo": ["0020_11", "0021_20"] },
+  "0020_11": { "name": "Vegeta (Z - Early) Super Saiyan", "transformsTo": ["0021_20", "0020_10"] },
   "0020_30": { "name": "Vegeta (Z - End)", "transformsTo": ["0020_31", "0020_32"] },
   "0020_31": { "name": "Vegeta (Z - End) Super Saiyan", "transformsTo": ["0020_32", "0020_30"] },
   "0020_32": { "name": "Vegeta (Z - End) Super Saiyan 2", "transformsTo": ["0020_30"] },
@@ -32,7 +32,7 @@
   "0020_61": { "name": "Vegeta (Super) Super Saiyan", "transformsTo": ["0022_62", "0020_63", "0020_60"] },
   "0022_62": { "name": "Vegeta (Super) Super Saiyan God", "transformsTo": ["0020_63", "0020_60"] },
   "0020_63": { "name": "Vegeta (Super) Super Saiyan God Super Saiyan", "transformsTo": ["0020_60"] },
-  "0021_20": { "name": "Super Vegeta", "transformsTo": [] },
+  "0021_20": { "name": "Super Vegeta", "transformsTo": ["0020_10"] },
   "0023_00": { "name": "Great Ape Vegeta", "transformsTo": [] },
 
   "0030_00": { "name": "Gohan (Kid)", "transformsTo": [] },
@@ -136,7 +136,7 @@
 
   "0160_00": { "name": "Cell 1st Form", "transformsTo": ["0161_00"] },
   "0161_00": { "name": "Cell 2nd Form", "transformsTo": ["0162_00"] },
-  "0162_00": { "name": "Cell Perfect Form", "transformsTo": ["0162_01"] },
+  "0162_00": { "name": "Cell Perfect Form", "transformsTo": [] },
   "0162_01": { "name": "Perfect Cell", "transformsTo": [] },
   "0163_00": { "name": "Cell Jr.", "transformsTo": [] },
 
